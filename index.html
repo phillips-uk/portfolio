@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lewis Phillips — Performance Marketing</title>
-  <meta name="description" content="Performance marketing manager with 11 years' experience managing £50M+ annual paid media across Google, Microsoft, Meta, and Apple Search Ads, across 8 international markets.">
+  <title>Lewis Phillips — Performance Marketing & Agentic AI</title>
+  <meta name="description" content="Performance marketing specialist and agentic AI builder. 11 years managing £50M+ annual paid media. I build AI-powered marketing workflows that analyse, recommend, and act — not just report.">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -370,6 +370,81 @@
       line-height: 1.55;
     }
 
+    /* ── AGENTIC ── */
+    #agentic {
+      background: var(--ink);
+      padding: 88px 0;
+    }
+
+    #agentic .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
+
+    .agentic-top {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 64px;
+      align-items: end;
+      margin-bottom: 56px;
+    }
+
+    #agentic .section-label { color: var(--amber); margin-bottom: 0; padding-top: 4px; }
+
+    .agentic-headline {
+      font-size: clamp(32px, 4.5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--white);
+    }
+
+    .agentic-headline em {
+      font-style: normal;
+      color: var(--amber);
+    }
+
+    .agentic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .agentic-card {
+      background: rgba(255,255,255,0.03);
+      padding: 32px 28px;
+      transition: background 0.15s;
+    }
+    .agentic-card:hover { background: rgba(255,255,255,0.07); }
+
+    .agentic-card-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      margin-bottom: 16px;
+    }
+
+    .agentic-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .agentic-card p {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.65;
+    }
+
+    .agentic-card p strong {
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+    }
+
     /* ── CERTIFICATIONS ── */
     .cert-grid {
       display: grid;
@@ -457,6 +532,10 @@
       .hero-stats { gap: 28px; }
       .work-grid, .service-grid { grid-template-columns: 1fr; }
       .client-grid { grid-template-columns: repeat(3, 1fr); }
+      .agentic-top { grid-template-columns: 1fr; gap: 16px; }
+      .agentic-grid { grid-template-columns: 1fr; }
+      #agentic .container { padding: 0 24px; }
+      #agentic { padding: 64px 0; }
       .tool-list li { grid-template-columns: 1fr; gap: 6px; }
       #contact { padding: 72px 24px; }
       footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
@@ -473,10 +552,10 @@
 
   <!-- HERO -->
   <section id="hero">
-    <p class="eyebrow">Performance Marketing &amp; Automation</p>
+    <p class="eyebrow">Performance Marketing &amp; Agentic AI</p>
     <h1>Lewis<br>Phillips</h1>
     <p class="hero-sub">
-      Performance marketing manager with 11 years' experience running paid media programmes across Google, Microsoft, Meta, and Apple Search Ads — and building the tools to run them properly.
+      Performance marketing specialist and agentic AI builder. I run paid media programmes across Google, Microsoft, Meta, and Apple Search Ads — and build AI-powered systems that analyse, recommend, and act without waiting for a weekly meeting.
     </p>
 
     <div class="hero-stats">
@@ -499,6 +578,8 @@
       <span class="tag">Apple Search Ads</span>
       <span class="tag">Microsoft Ads</span>
       <span class="tag">Meta Ads</span>
+      <span class="tag">Agentic AI</span>
+      <span class="tag">Claude API</span>
       <span class="tag">Conversion Tracking</span>
       <span class="tag">GA4 &amp; GTM</span>
       <span class="tag">Technical SEO</span>
@@ -516,10 +597,10 @@
         <span class="section-label">About</span>
         <div>
           <p>
-            Performance marketing manager with 11 years' experience managing £50M+ annual paid media investment across Google, Microsoft, Meta, LinkedIn, and Apple Search Ads. I've worked across 8 international markets with a track record of improving performance through structured experimentation, AI-assisted workflows, and data-driven bidding strategy.
+            Performance marketing specialist and agentic AI builder with 11 years' experience managing £50M+ annual paid media investment across Google, Microsoft, Meta, LinkedIn, and Apple Search Ads. I've worked across 8 international markets with a track record of improving performance through structured experimentation, data-driven bidding strategy, and AI-assisted workflows.
           </p>
           <p>
-            I'm Google Ads and Apple Ads certified, and a former founder — I built a self-funded designer marketplace from zero to £1M/year before moving into in-house performance marketing. Alongside campaign management, I build custom Python tooling that automates the analysis work most teams do manually: weekly reporting, conversion tracking audits, feed management, and technical SEO.
+            I'm Google Ads and Apple Ads certified, and a former founder — I built a self-funded designer marketplace from zero to £1M/year. Alongside campaign management, I build agentic marketing systems using the Claude API and Python: autonomous reporting pipelines, AI-powered auditing tools, and one-command workflows that replace hours of manual analysis.
           </p>
         </div>
       </div>
@@ -737,6 +818,37 @@
       </div>
     </div>
   </div>
+
+  <!-- AGENTIC -->
+  <section id="agentic">
+    <div class="container">
+      <div class="agentic-top">
+        <span class="section-label">Agentic Marketing</span>
+        <h2 class="agentic-headline">AI that acts,<br>not just <em>reports</em></h2>
+      </div>
+      <div class="agentic-grid">
+
+        <div class="agentic-card">
+          <div class="agentic-card-num">01</div>
+          <h3>AI-Powered Audit Agents</h3>
+          <p>Every audit tool I've built runs on the <strong>Claude API</strong> — not just pulling data, but generating prioritised fix plans with specific implementation steps. GTM containers, GA4 properties, Merchant Center feeds, and Shopify SEO data are all analysed and actioned automatically.</p>
+        </div>
+
+        <div class="agentic-card">
+          <div class="agentic-card-num">02</div>
+          <h3>Autonomous Weekly Reporting</h3>
+          <p>Scripts pull Google Ads performance data, run a full search term audit for wasted spend, generate the campaign deep-dive, and post prioritised action items to project management — <strong>zero manual steps</strong>. Every Monday, before the first client call.</p>
+        </div>
+
+        <div class="agentic-card">
+          <div class="agentic-card-num">03</div>
+          <h3>Agentic SEO Workflows</h3>
+          <p>On-page audits that don't just flag issues — they <strong>propose AI-generated title tags and meta descriptions</strong> across an entire product catalogue, ready for one-click review and bulk apply via the Shopify API. Months of manual SEO work reduced to an afternoon.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <hr class="rule">
 
