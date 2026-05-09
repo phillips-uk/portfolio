@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lewis Phillips — Performance Marketing</title>
+  <meta name="description" content="UK-based performance marketing specialist. Google Ads, conversion tracking, technical SEO, and custom Python automation for e-commerce brands.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --amber:   #985830;
+      --amber-l: #b8722e;
+      --ink:     #1A1A1A;
+      --cream:   #FDF6EE;
+      --border:  #E8D8C4;
+      --mid:     #6B6B6B;
+      --white:   #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mark {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .mark span { color: var(--amber); }
+
+    nav a.cta {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--amber);
+      text-decoration: none;
+      border: 1.5px solid var(--amber);
+      padding: 8px 18px;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    nav a.cta:hover { background: var(--amber); color: var(--white); }
+
+    /* ── SECTIONS ── */
+    section { padding: 96px 48px; max-width: 1000px; margin: 0 auto; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 120px;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(48px, 7vw, 80px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    .hero-sub {
+      font-size: clamp(17px, 2.2vw, 20px);
+      color: var(--mid);
+      max-width: 560px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 3px;
+    }
+
+    /* ── DIVIDER ── */
+    .rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 6px;
+    }
+
+    #about p {
+      font-size: 18px;
+      line-height: 1.75;
+      color: var(--ink);
+    }
+
+    #about p + p { margin-top: 16px; }
+
+    /* ── SERVICES ── */
+    #services {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .service-card {
+      background: var(--white);
+      padding: 28px 24px;
+      transition: background 0.15s;
+    }
+    .service-card:hover { background: var(--cream); }
+
+    .service-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .service-card p {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── TOOLS ── */
+    #tools {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .tools-intro {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+
+    .tool-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .tool-list li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: baseline;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tool-list li:first-child { border-top: 1px solid var(--border); }
+
+    .tool-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      letter-spacing: -0.1px;
+    }
+
+    .tool-desc {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--cream);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+      padding: 80px 48px;
+      text-align: center;
+    }
+
+    #contact .inner { max-width: 1000px; margin: 0 auto; }
+
+    #contact h2 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    #contact p {
+      font-size: 16px;
+      color: var(--mid);
+      margin-bottom: 36px;
+    }
+
+    #contact a.email-link {
+      display: inline-block;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--amber);
+      text-decoration: none;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 2px;
+      transition: border-color 0.15s;
+    }
+    #contact a.email-link:hover { border-color: var(--amber); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 28px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer .mark { font-size: 18px; }
+
+    footer p {
+      font-size: 12px;
+      color: var(--mid);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 720px) {
+      nav { padding: 16px 24px; }
+      section { padding: 64px 24px; }
+      #hero { padding-left: 24px; padding-right: 24px; min-height: auto; padding-top: 100px; padding-bottom: 64px; }
+      .rule { margin: 0 24px; }
+      #about, #services, #tools { grid-template-columns: 1fr; gap: 32px; }
+      .service-grid { grid-template-columns: 1fr; }
+      #contact { padding: 64px 24px; }
+      footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="mark">P<span>.</span></a>
+    <a href="#contact" class="cta">Get in touch</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <p class="eyebrow">Performance Marketing &amp; Automation</p>
+    <h1>Lewis<br>Phillips</h1>
+    <p class="hero-sub">
+      I run paid search programmes for e-commerce brands and build the tools to run them properly — from campaign strategy through to conversion tracking, feed management, and technical SEO.
+    </p>
+    <div class="hero-tags">
+      <span class="tag">Google Ads</span>
+      <span class="tag">Apple Ads</span>
+      <span class="tag">Conversion Tracking</span>
+      <span class="tag">GA4 &amp; GTM</span>
+      <span class="tag">Technical SEO</span>
+      <span class="tag">Python Automation</span>
+      <span class="tag">Shopify</span>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">About</div>
+    <div>
+      <p>
+        I'm a UK-based performance marketing specialist with deep experience in paid search and e-commerce growth. I work with brands that want more from their ad spend — not just more clicks, but the measurement infrastructure to understand exactly what's working and why.
+      </p>
+      <p>
+        Alongside campaign management, I build custom Python tooling that automates the analysis work most agencies do manually: weekly performance reporting, conversion tracking audits, product feed health checks, and technical SEO audits. My clients get faster insight and fewer spreadsheets.
+      </p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-label">Services</div>
+    <div class="service-grid">
+
+      <div class="service-card">
+        <h3>Paid Search</h3>
+        <p>Google Ads and Apple Ads strategy, build, and management. Smart Bidding, Shopping, Search, and Performance Max.</p>
+      </div>
+
+      <div class="service-card">
+        <h3>Conversion Tracking</h3>
+        <p>GTM, GA4, Enhanced Conversions, Consent Mode v2. Full-funnel measurement that gives Smart Bidding accurate signals.</p>
+      </div>
+
+      <div class="service-card">
+        <h3>Technical SEO</h3>
+        <p>Shopify on-page audits, Core Web Vitals, Search Console analysis, and structured data. Built for e-commerce scale.</p>
+      </div>
+
+      <div class="service-card">
+        <h3>Automation &amp; Tooling</h3>
+        <p>Custom Python scripts that replace manual reporting, flag issues before they cost money, and surface opportunities faster.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- TOOLS -->
+  <section id="tools">
+    <div class="section-label">Tools Built</div>
+    <div>
+      <p class="tools-intro">
+        I've built a suite of Python tools that run across my client accounts — each one automates something that would otherwise take hours of manual analysis per week.
+      </p>
+      <ul class="tool-list">
+        <li>
+          <span class="tool-name">Tracking Audit</span>
+          <span class="tool-desc">Checks GTM containers, Google Ads tags, GA4 purchase events, Enhanced Conversions, and Consent Mode v2 across all accounts. Flags critical issues with a prioritised fix plan.</span>
+        </li>
+        <li>
+          <span class="tool-name">Weekly Performance</span>
+          <span class="tool-desc">Pulls Google Ads data, runs a search term audit for wasted spend, generates a campaign deep-dive, and posts action items to Monday.com automatically.</span>
+        </li>
+        <li>
+          <span class="tool-name">Feed Health</span>
+          <span class="tool-desc">Audits Merchant Center approvals and Shopify product data in one run. Proposes title fixes using a keyword-first formula and applies approved changes via the Shopify API.</span>
+        </li>
+        <li>
+          <span class="tool-name">SEO Audit</span>
+          <span class="tool-desc">Full Shopify on-page analysis — title tags, meta descriptions, image alt text, thin content, orphan products — combined with Core Web Vitals and Search Console data.</span>
+        </li>
+        <li>
+          <span class="tool-name">Search Console</span>
+          <span class="tool-desc">Weekly analysis of ranking movements: quick wins at positions 5–15, CTR gaps versus position benchmarks, declining queries, and new entries to the top 20.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="inner">
+      <h2>Let's work together</h2>
+      <p>E-commerce brand, agency, or in-house team — I'm open to new projects.</p>
+      <a href="mailto:hello@phillips-uk.com" class="email-link">hello@phillips-uk.com</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#" class="mark">P<span style="color:#985830">.</span></a>
+    <p>Lewis Phillips &mdash; Performance Marketing &amp; Automation</p>
+  </footer>
+
+</body>
+</html>
