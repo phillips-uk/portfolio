@@ -445,6 +445,68 @@
       font-weight: 600;
     }
 
+    /* ── ANALYSIS ── */
+    .analysis-list { list-style: none; }
+
+    .analysis-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 32px;
+      align-items: start;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .analysis-item:first-child { border-top: 1px solid var(--border); }
+
+    .analysis-num {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--amber);
+      line-height: 1;
+      padding-top: 2px;
+    }
+
+    .analysis-num-sub {
+      font-size: 11px;
+      color: var(--mid);
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    .analysis-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
+    }
+
+    .analysis-method {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+    }
+
+    .analysis-desc {
+      font-size: 13.5px;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+
+    .analysis-desc strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
     /* ── CERTIFICATIONS ── */
     .cert-grid {
       display: grid;
@@ -537,6 +599,7 @@
       #agentic .container { padding: 0 24px; }
       #agentic { padding: 64px 0; }
       .tool-list li { grid-template-columns: 1fr; gap: 6px; }
+      .analysis-item { grid-template-columns: 1fr; gap: 12px; }
       #contact { padding: 72px 24px; }
       footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
     }
@@ -699,27 +762,32 @@
           </div>
           <div class="work-metrics">
             <div class="work-metric">
+              <span class="work-metric-val">£50M+</span>
+              <span class="work-metric-label">Annual paid media managed</span>
+            </div>
+            <div class="work-metric">
               <span class="work-metric-val">30%</span>
               <span class="work-metric-label">B2B CPA reduction YoY</span>
             </div>
             <div class="work-metric">
-              <span class="work-metric-val">75%</span>
-              <span class="work-metric-label">Apple Search Ads CPI reduction</span>
+              <span class="work-metric-val">16.2%</span>
+              <span class="work-metric-label">B2C margin improvement (geo-bucketing)</span>
             </div>
             <div class="work-metric">
-              <span class="work-metric-val">£50M+</span>
-              <span class="work-metric-label">Annual media managed</span>
+              <span class="work-metric-val">75%</span>
+              <span class="work-metric-label">Apple Search Ads CPI reduction<br>£2.09 → £0.52</span>
             </div>
           </div>
           <p class="work-desc">
-            Led paid search across the Angi group — MyBuilder (UK), Homestars (Canada), Werkspot (Netherlands), Instapro (US), Travaux (France), and MyHammer (Germany). Delivered multi-market campaign architecture, Smart Bidding progression from manual CPC through to tROAS, US market launch, AI Max deployment, and Apple Search Ads from first build through to 75% cost-per-install reduction (£2.09 → £0.52). A full keyword strategy and ad copy rebuild lifted CTR by 109% and generated £1M in incremental margin.
+            Led performance marketing across the Angi group — MyBuilder (UK), Homestars (Canada), Werkspot (Netherlands), Instapro (US), Travaux (France), and MyHammer (Germany). Built geo-bucketed tCPA models from demand, margin, and conversion data. Ran statistically validated experiments across ad copy, bidding, and campaign architecture including an RSA headline programme across 6 markets and a keyword strategy rebuild that lifted CTR 109% and generated £1M in incremental margin. Scoped and delivered the Boston US market launch, publicly recognised by the CEO.
           </p>
           <div class="work-tags">
             <span class="work-tag">Google Ads</span>
             <span class="work-tag">Microsoft Ads</span>
             <span class="work-tag">Apple Search Ads</span>
             <span class="work-tag">Meta Ads</span>
-            <span class="work-tag">tCPA / tROAS</span>
+            <span class="work-tag">Geo-Bucketing</span>
+            <span class="work-tag">Z-Test</span>
             <span class="work-tag">AI Max</span>
           </div>
         </div>
@@ -740,8 +808,8 @@
               <span class="work-metric-label">Designer brands, 40 countries</span>
             </div>
             <div class="work-metric">
-              <span class="work-metric-val">250k+</span>
-              <span class="work-metric-label">SKUs managed</span>
+              <span class="work-metric-val">100k+</span>
+              <span class="work-metric-label">Monthly website visitors at peak</span>
             </div>
           </div>
           <p class="work-desc">
@@ -765,16 +833,20 @@
           </div>
           <div class="work-metrics">
             <div class="work-metric">
-              <span class="work-metric-val">78%</span>
-              <span class="work-metric-label">ROAS improvement</span>
+              <span class="work-metric-val">4.85×</span>
+              <span class="work-metric-label">ROAS in 2025 (was 2.72× in 2022)</span>
+            </div>
+            <div class="work-metric">
+              <span class="work-metric-val">£150k</span>
+              <span class="work-metric-label">Revenue driven in 2025</span>
             </div>
             <div class="work-metric">
               <span class="work-metric-val">Top 5</span>
-              <span class="work-metric-label">Organic rankings, core terms</span>
+              <span class="work-metric-label">Organic rankings for 5+ commercial terms</span>
             </div>
           </div>
           <p class="work-desc">
-            Full-service digital marketing for a premium Hatton Garden fine jewellery brand, retained for 4+ years. Built the Google Ads account and SEO presence from scratch. Manage Search, Shopping, and Performance Max campaigns across a 5,000-SKU catalogue, with product feed optimisation, headline testing, and keyword research. Achieved top 5 organic rankings for non-brand commercial terms including cherry blossom rings, ladybird jewellery, and book necklaces.
+            Full-service digital marketing for a premium Hatton Garden fine jewellery brand, retained for 4+ years. Built the Google Ads account, Shopify website, and SEO presence from scratch. ROAS grew from 2.72× at account inception (2022) to 4.85× in 2025, peaking at 8.85× in December 2024. Manage Search, Shopping, and Performance Max across a 5,000-SKU catalogue, with product feed optimisation, headline testing, and keyword research. Achieved top 5 organic rankings for cherry blossom rings, ladybird jewellery, book necklaces, tie pins, and lapel pins.
           </p>
           <div class="work-tags">
             <span class="work-tag">Google Ads</span>
@@ -815,6 +887,76 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ANALYSIS -->
+  <div class="section-wrap">
+    <div class="container">
+      <div class="two-col">
+        <span class="section-label">Selected Analysis</span>
+        <ul class="analysis-list">
+
+          <li class="analysis-item">
+            <div>
+              <div class="analysis-num">16.2%</div>
+              <div class="analysis-num-sub">margin improvement</div>
+            </div>
+            <div>
+              <div class="analysis-title">Geo-Bucketing Bid Model</div>
+              <span class="analysis-method">tCPA Modelling · Location Data</span>
+              <p class="analysis-desc">
+                Replaced flat national tCPA targets with granular geo-buckets built from trade demand, conversion rate, and margin data by location. Routed budget dynamically toward high-value areas. Delivered a <strong>12% cost reduction</strong>, <strong>16.2% margin improvement</strong>, and <strong>19% growth in high-value location conversions</strong> on B2C homeowner acquisition.
+              </p>
+            </div>
+          </li>
+
+          <li class="analysis-item">
+            <div>
+              <div class="analysis-num">+25%</div>
+              <div class="analysis-num-sub">impression-to-conversion rate</div>
+            </div>
+            <div>
+              <div class="analysis-title">RSA Headline Theme Analysis</div>
+              <span class="analysis-method">Z-Test · Multi-Market · 1,300 Headlines</span>
+              <p class="analysis-desc">
+                Built a 1,300-row RSA headline library for the UK market, then used Z-test statistical validation to separate click-driving messages from conversion-driving messages — two different populations with different optimal copy. Deployed across a six-market programme (UK, DE, FR, NL, CA, IT) in five languages, with a policy compliance audit identifying 25+ non-compliant terms and approved alternatives for each.
+              </p>
+            </div>
+          </li>
+
+          <li class="analysis-item">
+            <div>
+              <div class="analysis-num">9.4%</div>
+              <div class="analysis-num-sub">of total margin on 7.8% of spend</div>
+            </div>
+            <div>
+              <div class="analysis-title">AI Max Incremental Evaluation</div>
+              <span class="analysis-method">Incrementality Testing · 4 Markets</span>
+              <p class="analysis-desc">
+                Built a methodology to measure AI Max's true additive contribution rather than Google's blended reporting. Ran across UK, Germany, France, and Netherlands. Found that <strong>Post A Job landing pages account for ~75% of UK AI Max margin</strong> — a finding that determined which campaigns to scale and which to hold back. Used results to inform a phased rollout generating £6,930 additional margin in the UK alone.
+              </p>
+            </div>
+          </li>
+
+          <li class="analysis-item">
+            <div>
+              <div class="analysis-num">+29.3%</div>
+              <div class="analysis-num-sub">conversions across 7 campaigns</div>
+            </div>
+            <div>
+              <div class="analysis-title">DKI Headline Experiment</div>
+              <span class="analysis-method">Controlled A/B · Z-Test · 4 Months</span>
+              <p class="analysis-desc">
+                Ran keyword insertion on H1 headlines across 7 UK trade campaigns simultaneously. Z-tested results per trade and found DKI effective for trades with high search query diversity — <strong>Carpenters +80% margin, Plumbers +79% margin</strong> — and counterproductive for homogeneous search patterns (Builders, Plasterers). The trade-level finding prevented a blanket roll-out that would have degraded performance in the losing segments.
+              </p>
+            </div>
+          </li>
+
+        </ul>
       </div>
     </div>
   </div>
