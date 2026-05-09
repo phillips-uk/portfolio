@@ -598,18 +598,19 @@
       margin-bottom: 36px;
     }
 
-    #contact a.email-link {
+    #contact a.contact-cta {
       display: inline-block;
-      font-size: 20px;
+      background: var(--amber);
+      color: var(--white);
+      font-size: 15px;
       font-weight: 600;
-      color: var(--amber);
+      letter-spacing: 0.04em;
       text-decoration: none;
-      letter-spacing: -0.3px;
-      border-bottom: 2px solid rgba(152,88,48,0.3);
-      padding-bottom: 3px;
-      transition: border-color 0.15s;
+      padding: 14px 36px;
+      border-radius: 4px;
+      transition: background 0.15s;
     }
-    #contact a.email-link:hover { border-color: var(--amber); }
+    #contact a.contact-cta:hover { background: #7a4525; }
 
     /* ── FOOTER ── */
     footer {
@@ -1238,7 +1239,7 @@
   <section id="contact">
     <h2>Let's work together</h2>
     <p>Open to senior performance marketing, growth and paid acquisition roles, alongside selected consulting projects.</p>
-    <a href="mailto:hello@phillips-uk.com" class="email-link">hello@phillips-uk.com</a>
+    <a href="mailto:hello@phillips-uk.com" class="contact-cta">Get in touch</a>
   </section>
 
   <!-- FOOTER -->
