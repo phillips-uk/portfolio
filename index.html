@@ -176,14 +176,19 @@
 
     /* ── CLIENTS ── */
     .client-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1px;
-      background: var(--border);
       border: 1px solid var(--border);
       border-radius: 6px;
       overflow: hidden;
     }
+
+    .client-row {
+      display: grid;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .client-row--5 { grid-template-columns: repeat(5, 1fr); }
+    .client-row--7 { grid-template-columns: repeat(7, 1fr); }
 
     .client-cell {
       background: var(--white);
@@ -599,7 +604,8 @@
       .two-col .section-label { margin-bottom: 0; }
       .hero-stats { gap: 28px; }
       .work-grid, .service-grid { grid-template-columns: 1fr; }
-      .client-grid { grid-template-columns: repeat(3, 1fr); }
+      .client-row--5 { grid-template-columns: repeat(3, 1fr); }
+      .client-row--7 { grid-template-columns: repeat(4, 1fr); }
       .agentic-top { grid-template-columns: 1fr; gap: 16px; }
       .agentic-grid { grid-template-columns: 1fr; }
       #agentic .container { padding: 0 24px; }
@@ -684,48 +690,48 @@
       <p class="section-label">Clients &amp; Brands</p>
       <div class="client-grid">
 
-        <div class="client-cell">
-          <img src="logos/angi.svg" alt="Angi">
+        <!-- Row 1: freelance / founder clients -->
+        <div class="client-row client-row--5">
+          <div class="client-cell">
+            <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
+          </div>
+          <div class="client-cell">
+            <img src="logos/myiabonner.png" alt="Myia Bonner">
+          </div>
+          <div class="client-cell">
+            <img src="logos/enginehouse.png" alt="The Engine House Bexley">
+          </div>
+          <div class="client-cell">
+            <img src="logos/pommier.jpg" alt="The Pommier">
+          </div>
+          <div class="client-cell">
+            <img src="logos/gogglesquad.png" alt="Goggle Squad">
+          </div>
         </div>
 
-        <div class="client-cell">
-          <img src="logos/mybuilder.svg" alt="MyBuilder">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/homestars.svg" alt="HomeStars">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/werkspot.svg" alt="Werkspot">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/instapro.svg" alt="Instapro">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/travaux.svg" alt="Travaux.com">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/myhammer.svg" alt="MyHammer">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/myiabonner.png" alt="Myia Bonner">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/enginehouse.png" alt="The Engine House Bexley">
-        </div>
-
-        <div class="client-cell">
-          <img src="logos/pommier.jpg" alt="The Pommier">
+        <!-- Row 2: Angi group brands -->
+        <div class="client-row client-row--7">
+          <div class="client-cell">
+            <img src="logos/angi.svg" alt="Angi">
+          </div>
+          <div class="client-cell">
+            <img src="logos/mybuilder.svg" alt="MyBuilder">
+          </div>
+          <div class="client-cell">
+            <img src="logos/homestars.svg" alt="HomeStars">
+          </div>
+          <div class="client-cell">
+            <img src="logos/werkspot.svg" alt="Werkspot">
+          </div>
+          <div class="client-cell">
+            <img src="logos/instapro.svg" alt="Instapro">
+          </div>
+          <div class="client-cell">
+            <img src="logos/travaux.svg" alt="Travaux.com">
+          </div>
+          <div class="client-cell">
+            <img src="logos/myhammer.svg" alt="MyHammer">
+          </div>
         </div>
 
       </div>
