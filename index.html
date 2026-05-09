@@ -3,8 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lewis Phillips - Performance Marketing & AI Workflows</title>
-  <meta name="description" content="Performance marketer managing £50M+ in paid media across international markets. I build practical AI-assisted workflows to speed up analysis, improve tracking, and make better optimisation decisions.">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- SEO -->
+  <title>Lewis Phillips | Senior Performance Marketing & AI Automation</title>
+  <meta name="description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
+  <meta name="author" content="Lewis Phillips">
+  <link rel="canonical" href="https://phillips-uk.com">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+
+  <!-- Open Graph (LinkedIn, Facebook, iMessage, Slack etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://phillips-uk.com">
+  <meta property="og:title" content="Lewis Phillips | Senior Performance Marketing & AI Automation">
+  <meta property="og:description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
+  <meta property="og:image" content="https://phillips-uk.com/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://phillips-uk.com">
+  <meta name="twitter:title" content="Lewis Phillips | Senior Performance Marketing & AI Automation">
+  <meta name="twitter:description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
+  <meta name="twitter:image" content="https://phillips-uk.com/images/og-image.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,13 +76,16 @@
     }
 
     .mark {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--ink);
+      display: inline-flex;
       text-decoration: none;
+      line-height: 0;
     }
-    .mark span { color: var(--amber); }
+    .mark img {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: block;
+    }
 
     nav a.cta {
       font-size: 13px;
@@ -182,6 +217,17 @@
     }
     #about p + p { margin-top: 18px; }
 
+    .hero-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 15%;
+      display: block;
+      margin-bottom: 28px;
+      border: 2px solid var(--border);
+    }
+
     /* ── CLIENTS ── */
     .client-grid {
       border: 1px solid var(--border);
@@ -216,6 +262,7 @@
       width: auto;
       height: auto;
       object-fit: contain;
+      mix-blend-mode: multiply;
       filter: grayscale(100%) opacity(0.45);
       transition: filter 0.25s;
     }
@@ -230,6 +277,8 @@
       transition: color 0.15s;
     }
     .client-cell:hover .brand-text { color: var(--amber); }
+    a.client-cell { text-decoration: none; cursor: pointer; outline: none; }
+    a.client-cell:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
 
     /* ── SELECTED WORK ── */
     .work-grid {
@@ -390,10 +439,16 @@
       line-height: 1.55;
     }
 
+    /* ── CREAM SECTIONS ── */
+    #analysis-section,
+    #toolkit-section {
+      background: var(--cream);
+    }
+
     /* ── AGENTIC ── */
     #agentic {
       background: var(--ink);
-      padding: 88px 0;
+      padding: 104px 0;
     }
 
     #agentic .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
@@ -456,7 +511,7 @@
 
     .agentic-card p {
       font-size: 13.5px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.62);
       line-height: 1.65;
     }
 
@@ -483,6 +538,105 @@
       transition: background 0.15s;
     }
     .agentic-cta-btn:hover { background: #7a4525; }
+
+    /* ── BRAIN BLOCK ── */
+    .brain-block {
+      margin-top: 72px;
+      padding-top: 56px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .brain-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--amber);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .brain-headline {
+      font-size: clamp(22px, 2.6vw, 30px);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+
+    .brain-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.7;
+    }
+
+    .brain-nodes {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .brain-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+    }
+
+    .brain-node-num {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      min-width: 20px;
+      padding-top: 2px;
+    }
+
+    .brain-node-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.45;
+    }
+
+    .brain-connector {
+      display: flex;
+      align-items: center;
+      padding: 5px 20px;
+      color: rgba(255,255,255,0.18);
+      font-size: 13px;
+    }
+
+    .brain-visual {
+      margin-top: 64px;
+      margin-left: -24px;
+      margin-right: -24px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .brain-visual img {
+      width: 100%;
+      display: block;
+    }
+
+    .brain-visual-caption {
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.22);
+      padding: 12px 16px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.02);
+    }
 
     /* ── ANALYSIS ── */
     .analysis-list { list-style: none; }
@@ -577,10 +731,71 @@
       margin-top: 3px;
     }
 
+    /* ── TESTIMONIALS ── */
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .testimonial-quote {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--ink);
+      margin: 0;
+      font-style: italic;
+    }
+
+    .testimonial-attribution {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+
+    .testimonial-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .testimonial-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .testimonial-role {
+      font-size: 12px;
+      color: var(--mid);
+    }
+
     /* ── CONTACT ── */
     #contact {
       background: var(--ink);
-      padding: 100px 48px;
+      padding: 100px 48px 80px;
       text-align: center;
     }
 
@@ -612,16 +827,13 @@
     }
     #contact a.contact-cta:hover { background: #7a4525; }
 
-    /* ── FOOTER ── */
-    footer {
-      padding: 28px 48px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid var(--border);
-    }
+    .social-links { display: flex; gap: 20px; align-items: center; }
+    .social-links a { color: var(--mid); display: flex; transition: color 0.2s; }
+    .social-links a:hover { color: var(--amber); }
 
-    footer p { font-size: 12px; color: var(--mid); }
+    .contact-socials { display: flex; gap: 20px; justify-content: center; margin-top: 28px; }
+    .contact-socials a { color: rgba(255,255,255,0.5); display: flex; transition: color 0.2s; }
+    .contact-socials a:hover { color: #fff; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 760px) {
@@ -634,10 +846,14 @@
       .hero-stats { gap: 28px; }
       .work-grid, .service-grid { grid-template-columns: 1fr; }
       .client-row--6 { grid-template-columns: repeat(3, 1fr); }
+      .client-cell { padding: 16px 10px; min-height: 64px; }
+      .client-cell img { max-width: 80px; max-height: 28px; }
+      .testimonial-grid { grid-template-columns: 1fr; }
       .agentic-top { grid-template-columns: 1fr; gap: 16px; }
       .agentic-grid { grid-template-columns: 1fr; }
       #agentic .container { padding: 0 24px; }
       #agentic { padding: 64px 0; }
+      .brain-block { grid-template-columns: 1fr; gap: 40px; }
       .tool-list li { grid-template-columns: 1fr; gap: 6px; }
       .analysis-item { grid-template-columns: 1fr; gap: 12px; }
       #contact { padding: 72px 24px; }
@@ -646,10 +862,14 @@
   </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
   <!-- NAV -->
   <nav>
-    <a href="#" class="mark">P<span>.</span></a>
+    <a href="#" class="mark"><img src="nav-mark.svg" alt="Phillips."></a>
     <div class="nav-ctas">
       <a href="lewis-phillips-cv.pdf" download class="cta cta--filled">Download CV</a>
       <a href="#contact" class="cta">Get in touch</a>
@@ -658,6 +878,7 @@
 
   <!-- HERO -->
   <section id="hero">
+    <img src="images/profile.jpg" alt="Lewis Phillips" class="hero-avatar">
     <p class="eyebrow">Performance Marketing &amp; AI Workflows</p>
     <h1>Lewis<br>Phillips</h1>
     <p class="hero-sub">
@@ -727,46 +948,46 @@
 
         <!-- Row 1: Angi + freelance / founder clients -->
         <div class="client-row client-row--6">
-          <div class="client-cell">
+          <a class="client-cell" href="https://www.angi.com" target="_blank" rel="noopener">
             <img src="logos/angi.svg" alt="Angi">
-          </div>
-          <div class="client-cell">
+          </a>
+          <a class="client-cell" href="https://www.leerenee.com/" target="_blank" rel="noopener">
             <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
-          </div>
-          <div class="client-cell">
+          </a>
+          <a class="client-cell" href="https://www.myiabonner.com" target="_blank" rel="noopener">
             <img src="logos/myiabonner.png" alt="Myia Bonner">
-          </div>
-          <div class="client-cell">
+          </a>
+          <a class="client-cell" href="https://enginehousebexley.co.uk/" target="_blank" rel="noopener">
             <img src="logos/enginehouse.png" alt="The Engine House Bexley">
-          </div>
+          </a>
           <div class="client-cell">
             <img src="logos/pommier.jpg" alt="The Pommier">
           </div>
-          <div class="client-cell">
+          <a class="client-cell" href="https://www.gogglesquad.co.uk/" target="_blank" rel="noopener">
             <img src="logos/gogglesquad.png" alt="Goggle Squad">
-          </div>
+          </a>
         </div>
 
         <!-- Row 2: remaining Angi group brands -->
         <div class="client-row client-row--6">
-          <div class="client-cell">
-            <img src="logos/mybuilder.svg" alt="MyBuilder">
-          </div>
-          <div class="client-cell">
-            <img src="logos/homestars.svg" alt="HomeStars">
-          </div>
-          <div class="client-cell">
-            <img src="logos/werkspot.svg" alt="Werkspot">
-          </div>
-          <div class="client-cell">
-            <img src="logos/instapro.svg" alt="Instapro">
-          </div>
-          <div class="client-cell">
-            <img src="logos/travaux.svg" alt="Travaux.com">
-          </div>
-          <div class="client-cell">
-            <img src="logos/myhammer.svg" alt="MyHammer">
-          </div>
+          <a class="client-cell" href="https://www.mybuilder.com" target="_blank" rel="noopener">
+            <img src="logos/mybuilder.png" alt="MyBuilder">
+          </a>
+          <a class="client-cell" href="https://www.homestars.com" target="_blank" rel="noopener">
+            <img src="logos/homestars.png" alt="HomeStars">
+          </a>
+          <a class="client-cell" href="https://www.werkspot.nl" target="_blank" rel="noopener">
+            <img src="logos/werkspot.png" alt="Werkspot">
+          </a>
+          <a class="client-cell" href="https://www.instapro.it" target="_blank" rel="noopener">
+            <img src="logos/instapro.png" alt="Instapro">
+          </a>
+          <a class="client-cell" href="https://www.travaux.com" target="_blank" rel="noopener">
+            <img src="logos/travaux.png" alt="Travaux.com">
+          </a>
+          <a class="client-cell" href="https://www.myhammer.de" target="_blank" rel="noopener">
+            <img src="logos/myhammer.png" alt="MyHammer">
+          </a>
         </div>
 
       </div>
@@ -974,7 +1195,7 @@
   <hr class="rule">
 
   <!-- ANALYSIS -->
-  <div class="section-wrap">
+  <div class="section-wrap" id="analysis-section">
     <div class="container">
       <div class="two-col">
         <span class="section-label">Selected Analysis</span>
@@ -1010,7 +1231,7 @@
 
           <li class="analysis-item">
             <div>
-              <div class="analysis-num">26%</div>
+              <div class="analysis-num">+26%</div>
               <div class="analysis-num-sub">incremental conversion rate</div>
             </div>
             <div>
@@ -1094,6 +1315,41 @@
         <a href="https://github.com/phillips-uk/google-ads-automation/tree/main" target="_blank" rel="noopener" class="agentic-cta-btn">View the GitHub repo</a>
       </div>
 
+      <div class="brain-block">
+        <div>
+          <span class="brain-label">The Knowledge Layer</span>
+          <h3 class="brain-headline">A performance knowledge base that improves with every workflow</h3>
+          <p class="brain-desc">Every audit, report and performance check writes structured output into a persistent knowledge base. Each new cycle can reference previous findings, recurring issues, decisions made and results observed - so analysis compounds over time rather than starting from scratch.</p>
+          <p class="brain-desc" style="margin-top: 14px;">The goal is simple: make performance workflows faster, more consistent and better informed every time they run.</p>
+        </div>
+        <div class="brain-nodes">
+          <div class="brain-node">
+            <span class="brain-node-num">01</span>
+            <span class="brain-node-text">Workflow runs - audit, report or performance check completes</span>
+          </div>
+          <div class="brain-connector">↓</div>
+          <div class="brain-node">
+            <span class="brain-node-num">02</span>
+            <span class="brain-node-text">Output is stored - structured, dated and searchable</span>
+          </div>
+          <div class="brain-connector">↓</div>
+          <div class="brain-node">
+            <span class="brain-node-num">03</span>
+            <span class="brain-node-text">Next cycle reads history - patterns, context and previous decisions carry forward</span>
+          </div>
+          <div class="brain-connector">↓</div>
+          <div class="brain-node">
+            <span class="brain-node-num">04</span>
+            <span class="brain-node-text">Actions improve - recommendations become sharper over time</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brain-visual">
+        <img src="images/graph.png" alt="Live knowledge graph showing hundreds of connected notes across performance marketing workflows">
+        <div class="brain-visual-caption">Live knowledge graph - every note connected, every cycle building on the last</div>
+      </div>
+
     </div>
   </section>
 
@@ -1144,7 +1400,7 @@
   <hr class="rule">
 
   <!-- TOOLS -->
-  <div class="section-wrap">
+  <div class="section-wrap" id="toolkit-section">
     <div class="container">
       <div class="two-col">
         <span class="section-label">Automation Toolkit</span>
@@ -1238,18 +1494,66 @@
     </div>
   </div>
 
+  <!-- TESTIMONIALS -->
+  <div class="section-wrap">
+    <div class="container">
+      <div class="two-col">
+        <span class="section-label">References</span>
+        <div class="testimonial-grid">
+
+          <div class="testimonial-card">
+            <p class="testimonial-quote">"Lewis led performance delivery for paid search, paid social and display on MyBuilder.com for four-plus years. Passionate, driven and entrepreneurial - he consistently delivered within his domain and helped teammates achieve their goals too. I can wholeheartedly recommend him for any performance marketing role."</p>
+            <div class="testimonial-attribution">
+              <img src="images/testimonial-vladimir.jpg" alt="Vladimir Musaev" class="testimonial-avatar">
+              <div class="testimonial-meta">
+                <span class="testimonial-name">Vladimir Musaev</span>
+                <span class="testimonial-role">Director of Performance Marketing, Angi - managed Lewis directly</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-quote">"Lewis is professionally incredibly strong - he consistently delivered great work, supported the team whenever needed and made a real difference through his experience and reliability. Working with him was not only easy but genuinely fun."</p>
+            <div class="testimonial-attribution">
+              <img src="images/testimonial-jonas.jpg" alt="Jonas Theurich" class="testimonial-avatar">
+              <div class="testimonial-meta">
+                <span class="testimonial-name">Jonas Theurich</span>
+                <span class="testimonial-role">Performance Marketing Manager, MyHammer - peer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-quote">"Lewis was my Claude before Claude - as a colleague, if I ever had any SEM / SEO questions or needed help gathering data on the performance of my creatives, he would be my first stop. Not only would he always give me a detailed, accessible explanation of what is what, he helped me in crafting creative that would benefit the business. Now, with his own AI-powered techniques that he has picked up and taught - he is truly set to be one of the best in class at what he does. Every chance I got to work with Lewis was always informative and, thanks to his natural wit and humour, entertaining too."</p>
+            <div class="testimonial-attribution">
+              <img src="images/testimonial-aiden.jpg" alt="Aiden Pryor" class="testimonial-avatar">
+              <div class="testimonial-meta">
+                <span class="testimonial-name">Aiden Pryor</span>
+                <span class="testimonial-role">Senior Marketing Content Producer, Angi - peer</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CONTACT -->
   <section id="contact">
     <h2>Let's work together</h2>
     <p>Open to senior performance marketing, growth and paid acquisition roles, alongside selected consulting projects.</p>
-    <a href="mailto:hello@phillips-uk.com" class="contact-cta">Get in touch</a>
+    <a href="mailto:lewis@phillips-uk.com" class="contact-cta">Get in touch</a>
+    <div class="contact-socials">
+      <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://github.com/phillips-uk" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.929.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+    </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <a href="#" class="mark">P<span style="color:#985830">.</span></a>
-    <p>Lewis Phillips &mdash; Performance Marketing &amp; Automation</p>
-  </footer>
 
 </body>
 </html>
