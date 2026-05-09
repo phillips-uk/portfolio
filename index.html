@@ -187,8 +187,7 @@
       background: var(--border);
     }
 
-    .client-row--5 { grid-template-columns: repeat(5, 1fr); }
-    .client-row--7 { grid-template-columns: repeat(7, 1fr); }
+    .client-row--6 { grid-template-columns: repeat(6, 1fr); }
 
     .client-cell {
       background: var(--white);
@@ -604,8 +603,7 @@
       .two-col .section-label { margin-bottom: 0; }
       .hero-stats { gap: 28px; }
       .work-grid, .service-grid { grid-template-columns: 1fr; }
-      .client-row--5 { grid-template-columns: repeat(3, 1fr); }
-      .client-row--7 { grid-template-columns: repeat(4, 1fr); }
+      .client-row--6 { grid-template-columns: repeat(3, 1fr); }
       .agentic-top { grid-template-columns: 1fr; gap: 16px; }
       .agentic-grid { grid-template-columns: 1fr; }
       #agentic .container { padding: 0 24px; }
@@ -690,8 +688,11 @@
       <p class="section-label">Clients &amp; Brands</p>
       <div class="client-grid">
 
-        <!-- Row 1: freelance / founder clients -->
-        <div class="client-row client-row--5">
+        <!-- Row 1: Angi + freelance / founder clients -->
+        <div class="client-row client-row--6">
+          <div class="client-cell">
+            <img src="logos/angi.svg" alt="Angi">
+          </div>
           <div class="client-cell">
             <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
           </div>
@@ -709,11 +710,8 @@
           </div>
         </div>
 
-        <!-- Row 2: Angi group brands -->
-        <div class="client-row client-row--7">
-          <div class="client-cell">
-            <img src="logos/angi.svg" alt="Angi">
-          </div>
+        <!-- Row 2: remaining Angi group brands -->
+        <div class="client-row client-row--6">
           <div class="client-cell">
             <img src="logos/mybuilder.svg" alt="MyBuilder">
           </div>
