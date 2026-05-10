@@ -16,27 +16,27 @@
   <title>Lewis Phillips | Senior Performance Marketing & AI Automation</title>
   <meta name="description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
   <meta name="author" content="Lewis Phillips">
-  <link rel="canonical" href="https://phillips-uk.com">
+  <link rel="canonical" href="https://www.phillips-uk.com">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 
   <!-- Open Graph (LinkedIn, Facebook, iMessage, Slack etc.) -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://phillips-uk.com">
+  <meta property="og:url" content="https://www.phillips-uk.com">
   <meta property="og:title" content="Lewis Phillips | Senior Performance Marketing & AI Automation">
   <meta property="og:description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
-  <meta property="og:image" content="https://phillips-uk.com/images/og-image.png">
+  <meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="en_GB">
 
   <!-- Twitter / X Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://phillips-uk.com">
+  <meta name="twitter:url" content="https://www.phillips-uk.com">
   <meta name="twitter:title" content="Lewis Phillips | Senior Performance Marketing & AI Automation">
   <meta name="twitter:description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
-  <meta name="twitter:image" content="https://phillips-uk.com/images/og-image.png">
+  <meta name="twitter:image" content="https://www.phillips-uk.com/images/og-image.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -77,14 +77,16 @@
 
     .mark {
       display: inline-flex;
+      align-items: center;
       text-decoration: none;
-      line-height: 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1;
     }
-    .mark img {
-      height: 26px;
-      width: auto;
-      display: block;
-    }
+    .mark .dot { color: var(--amber); }
 
     nav a.cta {
       font-size: 13px;
@@ -577,6 +579,22 @@
     }
     .agentic-cta-btn:hover { background: #7a4525; }
 
+    .agentic-cta-btn--outline {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      margin-left: 12px;
+    }
+    .agentic-cta-btn--outline:hover { background: rgba(255,255,255,0.08); }
+
+    .agentic-cta-note {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.02em;
+    }
+
     /* ── BRAIN BLOCK ── */
     .brain-block {
       margin-top: 72px;
@@ -982,9 +1000,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- NAV -->
   <nav>
-    <a href="#" class="mark"><img src="nav-wordmark.svg" alt="Phillips."></a>
+    <a href="#" class="mark">Phillips<span class="dot">.</span></a>
     <div class="nav-ctas">
-      <a href="/audit.html" class="cta">Free audit</a>
       <a href="#contact" class="cta cta--filled">Get in touch</a>
     </div>
   </nav>
@@ -1459,6 +1476,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="agentic-cta">
         <a href="https://github.com/phillips-uk/google-ads-automation/tree/main" target="_blank" rel="noopener" class="agentic-cta-btn">View the GitHub repo</a>
+        <a href="/audit.html" class="agentic-cta-btn agentic-cta-btn--outline">Try the Google Ads audit tool →</a>
+        <span class="agentic-cta-note">Live demo — connects to your own account, read-only</span>
       </div>
 
       <div class="brain-block">

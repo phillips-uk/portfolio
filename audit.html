@@ -14,12 +14,12 @@
 
   <title>Free Google Ads Audit | Phillips.</title>
   <meta name="description" content="Get a free, instant Google Ads audit. Connect your account and receive a priority-ordered report with actionable recommendations in under 60 seconds.">
-  <link rel="canonical" href="https://phillips-uk.com/audit.html">
+  <link rel="canonical" href="https://www.phillips-uk.com/audit.html">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://phillips-uk.com/audit.html">
+  <meta property="og:url" content="https://www.phillips-uk.com/audit.html">
   <meta property="og:title" content="Free Google Ads Audit | Phillips.">
   <meta property="og:description" content="Instant account audit. Priority-ordered recommendations. No agency pitch.">
 
@@ -65,12 +65,17 @@
     }
 
     .nav-logo {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       text-decoration: none;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1;
     }
-
-    .nav-logo img { height: 26px; width: auto; }
+    .nav-logo .dot { color: var(--amber); }
 
     .nav-back {
       font-size: 14px;
@@ -521,6 +526,70 @@
 
     .pass-icon { font-size: 14px; }
 
+    /* ── Category sections ────────────────────────────────────────── */
+    .audit-categories { margin-bottom: 24px; }
+
+    .category-section { margin-bottom: 28px; }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .category-icon { font-size: 15px; line-height: 1; }
+    .category-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .category-status { margin-left: auto; font-size: 12px; font-weight: 600; }
+
+    .issue-recommendation {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--ink);
+      background: var(--light);
+      border-left: 2px solid var(--amber);
+      border-radius: 0 6px 6px 0;
+      padding: 8px 12px;
+      line-height: 1.5;
+    }
+
+    .issue-rec-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--amber);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .issue-hours {
+      font-size: 11px;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    .cat-passes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .cat-pass-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--green);
+      background: #E8F5E9;
+      border: 1px solid #C8E6C9;
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
     /* ── CTA ──────────────────────────────────────────────────────── */
     .report-cta {
       border-top: 1px solid var(--border);
@@ -616,6 +685,35 @@
 
     .trust-icon { color: var(--green); }
 
+    /* ── Download button ──────────────────────────────────────────── */
+    .report-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 24px;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--white);
+      color: var(--amber);
+      border: 1.5px solid var(--amber);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-download:hover { background: var(--amber); color: var(--white); }
+
+    /* ── Print-only header ────────────────────────────────────────── */
+    .print-header {
+      display: none;
+    }
+
     /* ── Responsive ───────────────────────────────────────────────── */
     @media (max-width: 600px) {
       nav { padding: 0 20px; }
@@ -623,6 +721,7 @@
       .passes-list { grid-template-columns: 1fr; }
       .score-block { flex-direction: column; align-items: flex-start; gap: 16px; }
     }
+
   </style>
 </head>
 <body>
@@ -641,9 +740,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ── Nav ────────────────────────────────────────────────────────────── -->
 <nav>
-  <a href="/" class="nav-logo">
-    <img src="/nav-wordmark.svg" alt="Phillips.">
-  </a>
+  <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
   <a href="/" class="nav-back">← Back to site</a>
 </nav>
 
@@ -886,7 +983,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // ── Render report ─────────────────────────────────────────────────────────
+  let currentAuditData = null;
+
   function showReport(data) {
+    currentAuditData = data;
     setStep(3);
     const section = document.getElementById("report-section");
     section.innerHTML = buildReportHTML(data);
@@ -894,14 +994,165 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     section.style.display = "block";
   }
 
+  // ── PDF download — opens clean standalone window and prints it ────────────
+  function downloadPDF(data) {
+    if (!data) return;
+    const score      = data.score || 0;
+    const summary    = data.summary || {};
+    const categories = data.categories || {};
+    const narrative  = data.narrative || {};
+    const headline   = narrative.headline || "";
+    const actions    = narrative.priority_actions || [];
+    const cid        = formatCid(data.customer_id || "");
+    const userName   = data.user_name ? escHtml(data.user_name) : "";
+    const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+    const scoreColors = { excellent: "#2E7D32", good: "#558B2F", average: "#D4691B", poor: "#BF360C", critical: "#C0392B" };
+    const scoreClass  = score >= 80 ? "excellent" : score >= 65 ? "good" : score >= 45 ? "average" : score >= 25 ? "poor" : "critical";
+    const scoreBg     = scoreColors[scoreClass];
+
+    const CATEGORY_ORDER = [
+      "conversion_foundation", "account_structure", "keyword_hygiene",
+      "ai_automation", "creative", "traffic_quality",
+    ];
+    const CATEGORY_ICONS = {
+      conversion_foundation: "🎯", account_structure: "🏗", keyword_hygiene: "🔑",
+      ai_automation: "🤖", creative: "✏️", traffic_quality: "📊",
+    };
+
+    function pdfIssueCard(f) {
+      const badgeBg    = f.severity === "critical" ? "#FFEBEE" : f.severity === "high" ? "#FFF3E0" : "#FFFDE7";
+      const badgeColor = f.severity === "critical" ? "#C62828" : f.severity === "high" ? "#E65100" : "#F57F17";
+      const recHTML = f.recommendation ? `
+        <div style="margin-top:8px;font-size:12px;color:#1A1A1A;background:#F5F0EB;border-left:2px solid #985830;border-radius:0 5px 5px 0;padding:7px 11px;line-height:1.5;">
+          <span style="display:block;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#985830;margin-bottom:2px;">Fix</span>
+          ${escHtml(f.recommendation)}
+        </div>` : "";
+      const hoursHTML = f.hours_estimate ? `<div style="font-size:11px;color:#6B6B6B;margin-top:5px;">⏱ Est. fix time: ${f.hours_estimate}h</div>` : "";
+      return `
+        <div style="border:1px solid #E8D8C4;border-radius:8px;padding:13px 17px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;break-inside:avoid;">
+          <span style="font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;flex-shrink:0;margin-top:2px;background:${badgeBg};color:${badgeColor};">${f.severity}</span>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:600;color:#1A1A1A;margin-bottom:3px;">${escHtml(f.title)}</div>
+            <div style="font-size:13px;color:#6B6B6B;line-height:1.5;">${escHtml(f.detail)}</div>
+            ${recHTML}
+            ${hoursHTML}
+          </div>
+        </div>`;
+    }
+
+    const categorySectionsHTML = CATEGORY_ORDER.map(catKey => {
+      const cat = categories[catKey];
+      if (!cat) return "";
+      const catIssues = cat.issues || [];
+      const catPasses = cat.passes || [];
+      if (catIssues.length === 0 && catPasses.length === 0) return "";
+
+      const allPass    = catIssues.length === 0;
+      const statusCol  = allPass ? "#2E7D32" : catIssues.some(f => f.severity === "critical") ? "#C0392B" : "#D4691B";
+      const statusText = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
+      const passChips  = catPasses.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${catPasses.map(p =>
+        `<span style="font-size:12px;color:#2E7D32;background:#E8F5E9;border:1px solid #C8E6C9;border-radius:20px;padding:3px 10px;">✓ ${escHtml(p.title || p)}</span>`
+      ).join("")}</div>` : "";
+
+      return `
+        <div style="margin-bottom:24px;break-inside:avoid;">
+          <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px;margin-bottom:10px;border-bottom:1.5px solid #E8D8C4;">
+            <span>${CATEGORY_ICONS[catKey] || "•"}</span>
+            <span style="font-size:13px;font-weight:700;color:#1A1A1A;">${escHtml(cat.label)}</span>
+            <span style="margin-left:auto;font-size:12px;font-weight:600;color:${statusCol};">${statusText}</span>
+          </div>
+          ${catIssues.map(pdfIssueCard).join("")}
+          ${passChips}
+        </div>`;
+    }).join("");
+
+    const actionsHTML = actions.map((a, i) => `
+      <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #E8D8C4;font-size:14px;color:#1A1A1A;line-height:1.5;break-inside:avoid;">
+        <div style="width:22px;height:22px;border-radius:50%;background:#985830;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i + 1}</div>
+        <span>${escHtml(a)}</span>
+      </div>`).join("");
+
+    const pillsHTML = [
+      summary.critical && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;">⬤ ${summary.critical} Critical</span>`,
+      summary.high     && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#FFF3E0;color:#E65100;border:1px solid #FFE0B2;">⬤ ${summary.high} High</span>`,
+      summary.medium   && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#FFFDE7;color:#F57F17;border:1px solid #FFF9C4;">⬤ ${summary.medium} Medium</span>`,
+      summary.passing  && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;">✓ ${summary.passing} Passing</span>`,
+    ].filter(Boolean).join(" ");
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Ads Audit — ${cid} | Phillips.</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #1A1A1A; background: #fff; padding: 48px 56px; max-width: 820px; margin: 0 auto; }
+    @media print { body { padding: 0; } @page { margin: 20mm 18mm; } }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #985830;padding-bottom:14px;margin-bottom:32px;">
+    <div style="font-weight:700;font-size:20px;color:#1A1A1A;letter-spacing:-0.01em;">Phillips<span style="color:#985830;">.</span></div>
+    <div style="font-size:11px;color:#6B6B6B;text-align:right;line-height:1.7;">
+      Google Ads Audit Report<br>
+      ${userName ? `Prepared for: <strong>${userName}</strong><br>` : ""}
+      CID: ${cid} &nbsp;·&nbsp; ${reportDate}
+    </div>
+  </div>
+
+  <!-- Score -->
+  <div style="display:flex;align-items:center;gap:24px;margin-bottom:20px;">
+    <div style="width:80px;height:80px;border-radius:50%;background:${scoreBg};display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;">
+      <span style="font-size:26px;font-weight:800;color:#fff;line-height:1;">${score}</span>
+      <span style="font-size:10px;color:rgba(255,255,255,0.85);letter-spacing:0.05em;">/100</span>
+    </div>
+    <div>
+      <div style="font-size:19px;font-weight:700;margin-bottom:3px;">Account Health Score</div>
+      <div style="font-size:13px;color:#6B6B6B;">Customer ID: <span style="font-family:monospace;color:#985830;">${cid}</span></div>
+    </div>
+  </div>
+
+  <!-- Pills -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">${pillsHTML}</div>
+
+  ${headline ? `
+  <!-- Headline -->
+  <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-left:3px solid #985830;border-radius:8px;padding:14px 18px;font-size:14px;color:#1A1A1A;line-height:1.55;margin-bottom:28px;">${escHtml(headline)}</div>` : ""}
+
+  ${actions.length ? `
+  <!-- Priority actions -->
+  <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-radius:10px;padding:20px 24px;margin-bottom:28px;break-inside:avoid;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:14px;">Priority Actions</div>
+    ${actionsHTML}
+  </div>` : ""}
+
+  <!-- Audit by category -->
+  ${categorySectionsHTML}
+
+  <!-- Footer -->
+  <div style="border-top:1px solid #E8D8C4;padding-top:16px;margin-top:8px;display:flex;justify-content:space-between;font-size:11px;color:#6B6B6B;">
+    <span>Generated by phillips-uk.com/audit</span>
+    <span>${reportDate}</span>
+  </div>
+</body>
+</html>`;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); }, 400);
+  }
+
   function buildReportHTML(d) {
-    const score    = d.score || 0;
-    const summary  = d.summary || {};
-    const issues   = d.issues || [];
-    const passes   = d.passes || [];
-    const narrative = d.narrative || {};
-    const headline  = narrative.headline || "";
-    const actions   = narrative.priority_actions || [];
+    const score      = d.score || 0;
+    const summary    = d.summary || {};
+    const categories = d.categories || {};
+    const narrative  = d.narrative || {};
+    const headline   = narrative.headline || "";
+    const actions    = narrative.priority_actions || [];
 
     const scoreClass = score >= 80 ? "excellent"
                      : score >= 65 ? "good"
@@ -909,27 +1160,72 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                      : score >= 25 ? "poor"
                      : "critical";
 
-    const issuesHTML = issues.map(f => `
-      <div class="issue-card">
-        <span class="issue-badge badge-${f.severity.toLowerCase()}">${f.severity}</span>
-        <div class="issue-content">
-          <h4>${escHtml(f.title)}</h4>
-          <p>${escHtml(f.detail)}</p>
-        </div>
-      </div>
-    `).join("");
+    const CATEGORY_ORDER = [
+      "conversion_foundation", "account_structure", "keyword_hygiene",
+      "ai_automation", "creative", "traffic_quality",
+    ];
+    const CATEGORY_ICONS = {
+      conversion_foundation: "🎯",
+      account_structure:     "🏗",
+      keyword_hygiene:       "🔑",
+      ai_automation:         "🤖",
+      creative:              "✏️",
+      traffic_quality:       "📊",
+    };
+
+    function buildIssueCard(f) {
+      const recHTML = f.recommendation ? `
+        <div class="issue-recommendation">
+          <span class="issue-rec-label">Fix</span>
+          ${escHtml(f.recommendation)}
+        </div>` : "";
+      const hoursHTML = f.hours_estimate ? `<div class="issue-hours">⏱ Est. fix time: ${f.hours_estimate}h</div>` : "";
+      return `
+        <div class="issue-card">
+          <span class="issue-badge badge-${f.severity.toLowerCase()}">${f.severity}</span>
+          <div class="issue-content">
+            <h4>${escHtml(f.title)}</h4>
+            <p>${escHtml(f.detail)}</p>
+            ${recHTML}
+            ${hoursHTML}
+          </div>
+        </div>`;
+    }
+
+    const categorySectionsHTML = CATEGORY_ORDER.map(catKey => {
+      const cat = categories[catKey];
+      if (!cat) return "";
+      const catIssues = cat.issues || [];
+      const catPasses = cat.passes || [];
+      if (catIssues.length === 0 && catPasses.length === 0) return "";
+
+      const icon = CATEGORY_ICONS[catKey] || "•";
+      const allPass = catIssues.length === 0;
+      const hasCritical = catIssues.some(f => f.severity === "critical");
+      const statusColour = allPass ? "var(--green)" : (hasCritical ? "var(--red)" : "var(--orange)");
+      const statusText   = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
+
+      const catPassesHTML = catPasses.length ? `
+        <div class="cat-passes">
+          ${catPasses.map(p => `<div class="cat-pass-item"><span>✓</span>${escHtml(p.title || p)}</div>`).join("")}
+        </div>` : "";
+
+      return `
+        <div class="category-section">
+          <div class="category-header">
+            <span class="category-icon">${icon}</span>
+            <span class="category-title">${escHtml(cat.label)}</span>
+            <span class="category-status" style="color:${statusColour};">${statusText}</span>
+          </div>
+          ${catIssues.map(buildIssueCard).join("")}
+          ${catPassesHTML}
+        </div>`;
+    }).join("");
 
     const actionsHTML = actions.map((a, i) => `
       <div class="action-item">
         <div class="action-num">${i + 1}</div>
         <span>${escHtml(a)}</span>
-      </div>
-    `).join("");
-
-    const passesHTML = passes.map(p => `
-      <div class="pass-item">
-        <span class="pass-icon">✓</span>
-        ${escHtml(p.title || p)}
       </div>
     `).join("");
 
@@ -940,7 +1236,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       summary.passing  && `<div class="pill pill-pass">✓ ${summary.passing} Passing</div>`,
     ].filter(Boolean).join("");
 
+    const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    const cidFormatted = formatCid(d.customer_id || "");
+
     return `
+      <div class="print-header">
+        <div class="print-header-brand">Phillips<span>.</span></div>
+        <div class="print-header-meta">
+          Google Ads Audit Report<br>
+          CID: ${cidFormatted} &nbsp;·&nbsp; ${reportDate}
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn-download" onclick="downloadPDF(currentAuditData)">
+          ↓ Download PDF
+        </button>
+      </div>
+
       <div class="report-header">
         <div class="score-block">
           <div class="score-circle ${scoreClass}">
@@ -948,7 +1261,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="score-meta">
             <h2>Account Health Score</h2>
-            <p>Customer ID: <span style="font-family:monospace;color:var(--amber);">${formatCid(d.customer_id || "")}</span></p>
+            <p>Customer ID: <span style="font-family:monospace;color:var(--amber);">${cidFormatted}</span></p>
           </div>
         </div>
         <div class="summary-pills">${pillsHTML}</div>
@@ -962,19 +1275,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       ` : ""}
 
-      ${issues.length ? `
-        <div class="issues-list">
-          <p class="section-title">Issues Found (${issues.length})</p>
-          ${issuesHTML}
-        </div>
-      ` : ""}
-
-      ${passes.length ? `
-        <div>
-          <p class="section-title">Checks Passing (${passes.length})</p>
-          <div class="passes-list">${passesHTML}</div>
-        </div>
-      ` : ""}
+      <div class="audit-categories">
+        ${categorySectionsHTML}
+      </div>
 
       <div class="report-cta">
         <p>Want help acting on these findings? <a href="/#contact">Get in touch</a> — no agency pitch, just straight advice.</p>
