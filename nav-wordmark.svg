@@ -1,0 +1,24 @@
+<svg width="420" height="100" viewBox="0 0 420 100" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Amber accent bar -->
+  <rect x="0" y="22" width="2.5" height="38" rx="1.25" fill="#985830"/>
+
+  <!-- PHILLIPS. wordmark — period in amber via tspan -->
+  <text
+    x="20" y="52"
+    font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+    font-weight="700"
+    font-size="30"
+    letter-spacing="9"
+    fill="#1A1A1A">PHILLIPS<tspan fill="#985830" letter-spacing="0">.</tspan></text>
+
+  <!-- Tagline -->
+  <text
+    x="21" y="72"
+    font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+    font-weight="300"
+    font-size="11"
+    letter-spacing="5"
+    fill="#985830">PERFORMANCE MARKETING</text>
+
+</svg>

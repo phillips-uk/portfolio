@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+  <!-- End Google Tag Manager -->
+
+  <title>Free Google Ads Audit | Phillips.</title>
+  <meta name="description" content="Get a free, instant Google Ads audit. Connect your account and receive a priority-ordered report with actionable recommendations in under 60 seconds.">
+  <link rel="canonical" href="https://phillips-uk.com/audit.html">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://phillips-uk.com/audit.html">
+  <meta property="og:title" content="Free Google Ads Audit | Phillips.">
+  <meta property="og:description" content="Instant account audit. Priority-ordered recommendations. No agency pitch.">
+
+  <style>
+    /* ── Design tokens (matches brand) ───────────────────────────── */
+    :root {
+      --amber:  #985830;
+      --amber-light: #b87040;
+      --ink:    #1A1A1A;
+      --cream:  #FDF6EE;
+      --border: #E8D8C4;
+      --mid:    #6B6B6B;
+      --light:  #F5F0EB;
+      --white:  #FFFFFF;
+      --red:    #C0392B;
+      --green:  #2E7D32;
+      --orange: #D4691B;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .nav-logo img { height: 26px; width: auto; }
+
+    .nav-back {
+      font-size: 14px;
+      color: var(--mid);
+      text-decoration: none;
+    }
+
+    .nav-back:hover { color: var(--amber); }
+
+    /* ── Page wrapper ─────────────────────────────────────────────── */
+    main {
+      min-height: 100vh;
+      padding-top: 64px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      padding: 60px 24px 80px;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: var(--amber); }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--mid);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Step indicators ──────────────────────────────────────────── */
+    .steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--mid);
+    }
+
+    .step.active { color: var(--amber); font-weight: 600; }
+    .step.done { color: var(--green); }
+
+    .step-num {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--light);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step.active .step-num {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: var(--white);
+    }
+
+    .step.done .step-num {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+    }
+
+    .step-divider {
+      width: 32px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Cards ────────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+    }
+
+    /* ── Form ─────────────────────────────────────────────────────── */
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    label .hint {
+      font-weight: 400;
+      color: var(--mid);
+      margin-left: 6px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      color: var(--ink);
+      background: var(--white);
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(152, 88, 48, 0.08);
+    }
+
+    input[type="text"]::placeholder { color: #BFBFBF; }
+
+    .input-hint {
+      font-size: 12px;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    /* ── Buttons ──────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: var(--white);
+      width: 100%;
+    }
+
+    .btn-primary:hover { background: var(--amber-light); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-google {
+      background: var(--white);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      width: 100%;
+      font-size: 15px;
+    }
+
+    .btn-google:hover { background: var(--light); border-color: #ccc; }
+
+    .btn-google img { width: 20px; height: 20px; }
+
+    /* ── Loading ──────────────────────────────────────────────────── */
+    #loading-section {
+      display: none;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 24px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .loading-sub {
+      font-size: 14px;
+      color: var(--mid);
+    }
+
+    .progress-steps {
+      margin-top: 32px;
+      text-align: left;
+      background: var(--light);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--mid);
+      padding: 5px 0;
+      transition: color 0.3s;
+    }
+
+    .progress-step.done { color: var(--green); }
+    .progress-step.active { color: var(--amber); font-weight: 600; }
+
+    .progress-icon { font-size: 14px; width: 18px; text-align: center; }
+
+    /* ── Report ───────────────────────────────────────────────────── */
+    #report-section { display: none; }
+
+    .report-header {
+      margin-bottom: 32px;
+    }
+
+    .score-block {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .score-circle {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .score-circle small {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+    }
+
+    .score-circle.excellent { background: var(--green); }
+    .score-circle.good { background: #558B2F; }
+    .score-circle.average { background: var(--orange); }
+    .score-circle.poor { background: #BF360C; }
+    .score-circle.critical { background: var(--red); }
+
+    .score-meta h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .score-meta p {
+      font-size: 14px;
+      color: var(--mid);
+    }
+
+    .headline-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 15px;
+      color: var(--ink);
+      line-height: 1.55;
+      margin-bottom: 32px;
+    }
+
+    /* ── Summary pills ───────────────────────────────────────────── */
+    .summary-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .pill-critical { background: #FFEBEE; color: #C62828; border-color: #FFCDD2; }
+    .pill-high     { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; }
+    .pill-medium   { background: #FFFDE7; color: #F57F17; border-color: #FFF9C4; }
+    .pill-pass     { background: #E8F5E9; color: #2E7D32; border-color: #C8E6C9; }
+
+    /* ── Issues list ──────────────────────────────────────────────── */
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    .issues-list { margin-bottom: 32px; }
+
+    .issue-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .issue-badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .badge-critical { background: #FFEBEE; color: #C62828; }
+    .badge-high     { background: #FFF3E0; color: #E65100; }
+    .badge-medium   { background: #FFFDE7; color: #F57F17; }
+
+    .issue-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .issue-content p {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+
+    /* ── Priority actions ─────────────────────────────────────────── */
+    .priority-actions {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .priority-actions .section-title { margin-bottom: 16px; }
+
+    .action-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .action-item:last-child { border-bottom: none; }
+
+    .action-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--amber);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Passes ───────────────────────────────────────────────────── */
+    .passes-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .pass-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--green);
+      background: #E8F5E9;
+      border: 1px solid #C8E6C9;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .pass-icon { font-size: 14px; }
+
+    /* ── CTA ──────────────────────────────────────────────────────── */
+    .report-cta {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      text-align: center;
+    }
+
+    /* ── Feedback ─────────────────────────────────────────────────── */
+    .feedback-section {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 24px;
+      text-align: center;
+    }
+    .star-row { margin: 8px 0 12px; }
+    .star {
+      font-size: 28px;
+      color: #D0D0D0;
+      cursor: pointer;
+      transition: color 0.15s;
+      padding: 0 3px;
+    }
+    .star.on { color: var(--amber); }
+    .feedback-textarea {
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      display: block;
+      margin: 0 auto;
+      color: var(--text);
+    }
+    .feedback-textarea:focus { outline: none; border-color: var(--amber); }
+
+    .report-cta p {
+      font-size: 14px;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    .report-cta a {
+      color: var(--amber);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .report-cta a:hover { text-decoration: underline; }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--amber);
+      border: 1.5px solid var(--amber);
+      width: auto;
+      padding: 12px 24px;
+      font-size: 14px;
+    }
+
+    .btn-outline:hover { background: var(--cream); }
+
+    /* ── Error state ──────────────────────────────────────────────── */
+    .error-box {
+      background: #FFEBEE;
+      border: 1px solid #FFCDD2;
+      border-radius: 10px;
+      padding: 20px 24px;
+      color: #C62828;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    /* ── Trust signals ────────────────────────────────────────────── */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--mid);
+    }
+
+    .trust-icon { color: var(--green); }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      nav { padding: 0 20px; }
+      .card { padding: 28px 20px; }
+      .passes-list { grid-template-columns: 1fr; }
+      .score-block { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+<!-- Netlify Form — detected at build time, submitted via AJAX from report -->
+<form name="audit-feedback" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="audit-feedback">
+  <input name="bot-field">
+  <input name="rating">
+  <input name="customer_id">
+  <textarea name="comment"></textarea>
+</form>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- ── Nav ────────────────────────────────────────────────────────────── -->
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="/nav-wordmark.svg" alt="Phillips.">
+  </a>
+  <a href="/" class="nav-back">← Back to site</a>
+</nav>
+
+<!-- ── Main ───────────────────────────────────────────────────────────── -->
+<main>
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-tag">Free Account Audit</div>
+      <h1>Your Google Ads account,<br><span>honestly assessed.</span></h1>
+      <p>Connect your account and get a priority-ordered report — what's working, what's wasting budget, and what to fix first.</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps" id="step-indicators">
+      <div class="step active" id="step-1">
+        <div class="step-num">1</div>
+        <span>Your account</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step-2">
+        <div class="step-num">2</div>
+        <span>Connect</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step-3">
+        <div class="step-num">3</div>
+        <span>Results</span>
+      </div>
+    </div>
+
+    <!-- ── Section 1: Enter CID ──────────────────────────────────────── -->
+    <div class="card" id="section-cid">
+      <div class="form-group">
+        <label>
+          Google Ads Customer ID
+          <span class="hint">10 digits, no dashes</span>
+        </label>
+        <input type="text" id="customer-id-input" placeholder="123-456-7890" maxlength="12" autocomplete="off">
+        <p class="input-hint">Find this in the top-right corner of your Google Ads account, or in Account Settings.</p>
+      </div>
+      <div class="error-box" id="cid-error"></div>
+      <button class="btn btn-primary" id="btn-continue" onclick="handleContinue()">
+        Continue
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="trust-row">
+        <div class="trust-item"><span class="trust-icon">✓</span> Read-only access only</div>
+        <div class="trust-item"><span class="trust-icon">✓</span> No data stored after audit</div>
+        <div class="trust-item"><span class="trust-icon">✓</span> No agency pitch</div>
+      </div>
+    </div>
+
+    <!-- ── Section 2: OAuth ───────────────────────────────────────────── -->
+    <div class="card" id="section-oauth" style="display:none;">
+      <p style="font-size:15px; color:var(--mid); margin-bottom:24px; line-height:1.6;">
+        We need read-only access to pull your account data. No changes will be made. You'll be redirected to Google to sign in and grant access.
+      </p>
+      <p style="font-size:13px; color:var(--mid); margin-bottom:24px; line-height:1.5;">
+        <strong style="color:var(--ink)">Account ID:</strong> <span id="display-cid" style="font-family:monospace; color:var(--amber);"></span>
+      </p>
+      <div class="error-box" id="oauth-error"></div>
+      <button class="btn btn-google" id="btn-google-auth" onclick="handleGoogleAuth()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Connect Google Ads account
+      </button>
+      <button class="btn" style="background:none; color:var(--mid); font-size:13px; margin-top:12px; width:100%;" onclick="goBack()">
+        ← Change account ID
+      </button>
+    </div>
+
+    <!-- ── Loading ────────────────────────────────────────────────────── -->
+    <div class="card" id="loading-section">
+      <div class="spinner"></div>
+      <p class="loading-text">Auditing your account</p>
+      <p class="loading-sub">This takes around 30–60 seconds.</p>
+      <div class="progress-steps">
+        <div class="progress-step active" id="prog-connect">
+          <span class="progress-icon">⟳</span> Connecting to Google Ads API
+        </div>
+        <div class="progress-step" id="prog-data">
+          <span class="progress-icon">○</span> Pulling campaign &amp; keyword data
+        </div>
+        <div class="progress-step" id="prog-analyse">
+          <span class="progress-icon">○</span> Running 10 audit checks
+        </div>
+        <div class="progress-step" id="prog-ai">
+          <span class="progress-icon">○</span> Generating recommendations
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Report ─────────────────────────────────────────────────────── -->
+    <div id="report-section" class="card">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Error fallback -->
+    <div class="card" id="error-section" style="display:none;">
+      <div class="error-box" id="global-error" style="display:block;"></div>
+      <button class="btn btn-outline" onclick="resetToStart()">Try again</button>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let customerId = "";
+  let sessionId = "";
+
+  // ── OAuth config (injected at build or set as JS var) ─────────────────────
+  // Client ID is a public value (it appears in the OAuth URL the user sees).
+  const GOOGLE_CLIENT_ID = "339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com";
+  function getGoogleClientId() {
+    return GOOGLE_CLIENT_ID;
+  }
+
+  const REDIRECT_URI = "https://phillips-uk.com/.netlify/functions/auth-callback";
+  const SCOPE = "https://www.googleapis.com/auth/adwords openid email profile";
+
+  // ── Init: check URL params ─────────────────────────────────────────────────
+  window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const token   = params.get("token");
+    const cid     = params.get("customer_id");
+    const error   = params.get("error");
+
+    if (error) {
+      showGlobalError(errorMessage(error));
+      return;
+    }
+
+    if (token && cid) {
+      // Returned from OAuth — run the audit
+      customerId = cid;
+      showLoading();
+      runAudit(token, cid);
+      return;
+    }
+
+    // Default: show CID entry
+    showSection("section-cid");
+  });
+
+  // ── Step 1: CID entry ─────────────────────────────────────────────────────
+  function handleContinue() {
+    const raw = document.getElementById("customer-id-input").value.trim();
+    const cleaned = raw.replace(/[-\s]/g, "");
+
+    if (!/^\d{10}$/.test(cleaned)) {
+      showError("cid-error", "Please enter a valid 10-digit Google Ads Customer ID — e.g. 1234567890");
+      return;
+    }
+
+    hideError("cid-error");
+    customerId = cleaned;
+    document.getElementById("display-cid").textContent = formatCid(cleaned);
+    setStep(2);
+    showSection("section-oauth");
+  }
+
+  // ── Step 2: OAuth ─────────────────────────────────────────────────────────
+  function handleGoogleAuth() {
+    const clientId = getGoogleClientId();
+    if (!clientId) {
+      showError("oauth-error", "OAuth is not yet configured. Please check back soon.");
+      return;
+    }
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: REDIRECT_URI,
+      response_type: "code",
+      scope: SCOPE,
+      access_type: "offline",
+      prompt: "consent",
+      state: customerId,
+    });
+
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+  }
+
+  // ── Step 3: Run audit via Netlify Function ────────────────────────────────
+  async function runAudit(token, cid) {
+    animateProgress();
+
+    try {
+      const res = await fetch("/.netlify/functions/trigger-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, customer_id: cid }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 429 && data.error === "already_audited") {
+          showGlobalError("This Google account has already received a free audit. Get in touch directly for a full ongoing review.");
+          return;
+        }
+        const msg = data.detail || data.error || `Server error ${res.status}`;
+        throw new Error(msg);
+      }
+
+      showReport(data);
+
+    } catch (err) {
+      console.error("Audit error:", err);
+      showGlobalError(`Audit failed: ${err.message}. Please try again.`);
+    }
+  }
+
+  // ── Progress animation ────────────────────────────────────────────────────
+  function animateProgress() {
+    const steps = ["prog-connect", "prog-data", "prog-analyse", "prog-ai"];
+    const icons = ["✓", "✓", "✓", "✓"];
+    let i = 0;
+
+    function advance() {
+      if (i > 0) {
+        const prev = document.getElementById(steps[i - 1]);
+        prev.classList.remove("active");
+        prev.classList.add("done");
+        prev.querySelector(".progress-icon").textContent = "✓";
+      }
+      if (i < steps.length) {
+        const curr = document.getElementById(steps[i]);
+        curr.classList.add("active");
+        curr.querySelector(".progress-icon").textContent = "⟳";
+        i++;
+        // Rough timing: connect fast, data ~5s, analyse ~8s, AI ~12s
+        const delays = [1200, 5000, 8000, 14000];
+        if (i < steps.length) setTimeout(advance, delays[i] || 3000);
+      }
+    }
+
+    advance();
+  }
+
+  // ── Render report ─────────────────────────────────────────────────────────
+  function showReport(data) {
+    setStep(3);
+    const section = document.getElementById("report-section");
+    section.innerHTML = buildReportHTML(data);
+    hideAll();
+    section.style.display = "block";
+  }
+
+  function buildReportHTML(d) {
+    const score    = d.score || 0;
+    const summary  = d.summary || {};
+    const issues   = d.issues || [];
+    const passes   = d.passes || [];
+    const narrative = d.narrative || {};
+    const headline  = narrative.headline || "";
+    const actions   = narrative.priority_actions || [];
+
+    const scoreClass = score >= 80 ? "excellent"
+                     : score >= 65 ? "good"
+                     : score >= 45 ? "average"
+                     : score >= 25 ? "poor"
+                     : "critical";
+
+    const issuesHTML = issues.map(f => `
+      <div class="issue-card">
+        <span class="issue-badge badge-${f.severity.toLowerCase()}">${f.severity}</span>
+        <div class="issue-content">
+          <h4>${escHtml(f.title)}</h4>
+          <p>${escHtml(f.detail)}</p>
+        </div>
+      </div>
+    `).join("");
+
+    const actionsHTML = actions.map((a, i) => `
+      <div class="action-item">
+        <div class="action-num">${i + 1}</div>
+        <span>${escHtml(a)}</span>
+      </div>
+    `).join("");
+
+    const passesHTML = passes.map(p => `
+      <div class="pass-item">
+        <span class="pass-icon">✓</span>
+        ${escHtml(p.title || p)}
+      </div>
+    `).join("");
+
+    const pillsHTML = [
+      summary.critical && `<div class="pill pill-critical">⬤ ${summary.critical} Critical</div>`,
+      summary.high     && `<div class="pill pill-high">⬤ ${summary.high} High</div>`,
+      summary.medium   && `<div class="pill pill-medium">⬤ ${summary.medium} Medium</div>`,
+      summary.passing  && `<div class="pill pill-pass">✓ ${summary.passing} Passing</div>`,
+    ].filter(Boolean).join("");
+
+    return `
+      <div class="report-header">
+        <div class="score-block">
+          <div class="score-circle ${scoreClass}">
+            ${score}<small>/100</small>
+          </div>
+          <div class="score-meta">
+            <h2>Account Health Score</h2>
+            <p>Customer ID: <span style="font-family:monospace;color:var(--amber);">${formatCid(d.customer_id || "")}</span></p>
+          </div>
+        </div>
+        <div class="summary-pills">${pillsHTML}</div>
+        ${headline ? `<div class="headline-box">${escHtml(headline)}</div>` : ""}
+      </div>
+
+      ${actions.length ? `
+        <div class="priority-actions">
+          <p class="section-title">Priority Actions</p>
+          ${actionsHTML}
+        </div>
+      ` : ""}
+
+      ${issues.length ? `
+        <div class="issues-list">
+          <p class="section-title">Issues Found (${issues.length})</p>
+          ${issuesHTML}
+        </div>
+      ` : ""}
+
+      ${passes.length ? `
+        <div>
+          <p class="section-title">Checks Passing (${passes.length})</p>
+          <div class="passes-list">${passesHTML}</div>
+        </div>
+      ` : ""}
+
+      <div class="report-cta">
+        <p>Want help acting on these findings? <a href="/#contact">Get in touch</a> — no agency pitch, just straight advice.</p>
+        <button class="btn btn-outline" onclick="resetToStart()" style="margin-top:4px;">
+          Audit another account
+        </button>
+      </div>
+
+      <div class="feedback-section" id="feedback-section">
+        <p class="section-title">Was this report useful?</p>
+        <div class="star-row" id="star-row">
+          ${[1,2,3,4,5].map(n => `<span class="star" data-v="${n}" onclick="setRating(${n})">★</span>`).join("")}
+        </div>
+        <textarea id="feedback-comment" class="feedback-textarea" placeholder="Optional — what would make this more useful? (never shared publicly)" rows="3"></textarea>
+        <button class="btn btn-outline" onclick="submitFeedback('${d.customer_id || ''}')" id="feedback-btn" style="margin-top:8px;">
+          Send feedback
+        </button>
+        <p id="feedback-confirm" style="display:none;color:var(--green);font-size:13px;margin-top:8px;">Thanks — feedback received.</p>
+      </div>
+    `;
+  }
+
+  // ── UI helpers ────────────────────────────────────────────────────────────
+  function showSection(id) {
+    ["section-cid", "section-oauth", "loading-section", "report-section", "error-section"]
+      .forEach(s => {
+        const el = document.getElementById(s);
+        if (el) el.style.display = s === id ? "block" : "none";
+      });
+  }
+
+  function hideAll() {
+    showSection("__none__");
+  }
+
+  function showLoading() {
+    setStep(3);
+    showSection("loading-section");
+  }
+
+  function showGlobalError(msg) {
+    document.getElementById("global-error").textContent = msg;
+    showSection("error-section");
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = msg; el.style.display = "block"; }
+  }
+
+  function hideError(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  }
+
+  function setStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      const el = document.getElementById(`step-${i}`);
+      if (!el) continue;
+      el.classList.remove("active", "done");
+      if (i < n) el.classList.add("done");
+      if (i === n) el.classList.add("active");
+    }
+  }
+
+  function goBack() {
+    setStep(1);
+    showSection("section-cid");
+  }
+
+  function resetToStart() {
+    customerId = ""; sessionId = "";
+    document.getElementById("customer-id-input").value = "";
+    setStep(1);
+    showSection("section-cid");
+    history.replaceState(null, "", "/audit.html");
+  }
+
+  function formatCid(cid) {
+    const s = cid.replace(/\D/g, "");
+    return s.length === 10 ? `${s.slice(0,3)}-${s.slice(3,6)}-${s.slice(6)}` : s;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // ── Feedback ─────────────────────────────────────────────────────────────
+  let feedbackRating = 0;
+
+  function setRating(n) {
+    feedbackRating = n;
+    document.querySelectorAll(".star").forEach((s, i) => {
+      s.classList.toggle("on", i < n);
+    });
+  }
+
+  async function submitFeedback(customerId) {
+    if (!feedbackRating) { return; }
+    const comment = document.getElementById("feedback-comment").value.trim();
+    const btn = document.getElementById("feedback-btn");
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+    try {
+      const body = new URLSearchParams({
+        "form-name": "audit-feedback",
+        rating: feedbackRating,
+        comment,
+        customer_id: customerId,
+      });
+      await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() });
+      btn.style.display = "none";
+      document.getElementById("feedback-confirm").style.display = "block";
+    } catch {
+      btn.disabled = false;
+      btn.textContent = "Send feedback";
+    }
+  }
+
+  function errorMessage(code) {
+    const msgs = {
+      missing_code:          "The Google authorisation failed — no code was returned. Please try again.",
+      token_exchange_failed: "Failed to exchange authorisation code. Please try again.",
+      no_refresh_token:      "Google didn't return a refresh token. Please try connecting again.",
+      encryption_failed:     "A server error occurred. Please try again.",
+      session_store_failed:  "A server error occurred. Please try again.",
+      access_denied:         "Access was denied. Please grant the required permissions to run the audit.",
+    };
+    return msgs[code] || `An error occurred (${code}). Please try again.`;
+  }
+
+  // ── Allow Enter key on CID input ─────────────────────────────────────────
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && document.getElementById("section-cid").style.display !== "none") {
+      handleContinue();
+    }
+  });
+</script>
+</body>
+</html>

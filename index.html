@@ -81,9 +81,8 @@
       line-height: 0;
     }
     .mark img {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
+      height: 26px;
+      width: auto;
       display: block;
     }
 
@@ -110,7 +109,7 @@
 
     /* ── LAYOUT ── */
     .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
-    .section-wrap { padding: 88px 0; }
+    .section-wrap { padding: 60px 0; }
     .rule { border: none; border-top: 1px solid var(--border); }
 
     .section-label {
@@ -230,20 +229,14 @@
 
     /* ── CLIENTS ── */
     .client-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      background: var(--border);
       border: 1px solid var(--border);
       border-radius: 6px;
       overflow: hidden;
     }
-
-    .client-row {
-      display: grid;
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .client-row:first-child { border-bottom: 1px solid var(--border); }
-
-    .client-row--6 { grid-template-columns: repeat(6, 1fr); }
 
     .client-cell {
       background: var(--white);
@@ -263,7 +256,7 @@
       height: auto;
       object-fit: contain;
       mix-blend-mode: multiply;
-      filter: grayscale(100%) opacity(0.45);
+      filter: grayscale(100%) opacity(0.5);
       transition: filter 0.25s;
     }
     .client-cell:hover img { filter: grayscale(0%) opacity(1); }
@@ -356,7 +349,52 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: auto;
+      margin-top: 4px;
+    }
+
+    /* ── WORK CARD ACCORDION ── */
+    .work-card__body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.32s ease;
+    }
+    .work-card__body > div {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .work-card.is-open .work-card__body {
+      grid-template-rows: 1fr;
+    }
+    .work-card__body > div > *:first-child {
+      padding-top: 16px;
+    }
+
+    .work-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--amber);
+      text-transform: uppercase;
+      font-family: inherit;
+    }
+    .work-toggle:hover { opacity: 0.75; }
+    .work-toggle__icon {
+      display: inline-block;
+      transition: transform 0.32s ease;
+      line-height: 1;
+    }
+    .work-card.is-open .work-toggle__icon {
+      transform: rotate(180deg);
     }
 
     .work-tag {
@@ -448,7 +486,7 @@
     /* ── AGENTIC ── */
     #agentic {
       background: var(--ink);
-      padding: 104px 0;
+      padding: 72px 0;
     }
 
     #agentic .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
@@ -700,6 +738,47 @@
       font-weight: 600;
     }
 
+    /* ── ANALYSIS ACCORDION ── */
+    .analysis-item__body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.32s ease;
+    }
+    .analysis-item__body > div { overflow: hidden; }
+    .analysis-item.is-open .analysis-item__body {
+      grid-template-rows: 1fr;
+    }
+    .analysis-item__body > div > *:first-child { padding-top: 10px; }
+
+    .analysis-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-top: 12px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      text-transform: uppercase;
+      font-family: inherit;
+    }
+    .analysis-toggle:hover { opacity: 0.75; }
+    .analysis-toggle__icon {
+      display: inline-block;
+      transition: transform 0.32s ease;
+    }
+    .analysis-item.is-open .analysis-toggle__icon { transform: rotate(180deg); }
+
+    /* ── MOBILE-ONLY ACCORDION (services + agentic) ── */
+    .mobile-toggle { display: none; }
+
+    .agentic-card h3,
+    .service-card h3 { margin-bottom: 0; }
+
     /* ── CERTIFICATIONS ── */
     .cert-grid {
       display: grid;
@@ -733,8 +812,8 @@
 
     /* ── TESTIMONIALS ── */
     .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      display: flex;
+      flex-direction: column;
       gap: 20px;
     }
 
@@ -742,33 +821,26 @@
       background: var(--cream);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 28px 28px 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .testimonial-quote {
-      font-size: 14px;
-      line-height: 1.75;
-      color: var(--ink);
-      margin: 0;
-      font-style: italic;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 32px;
+      align-items: center;
     }
 
     .testimonial-attribution {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
+      text-align: center;
       gap: 12px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
+      padding-right: 32px;
+      border-right: 1px solid var(--border);
     }
 
     .testimonial-avatar {
-      width: 44px;
-      height: 44px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
@@ -778,7 +850,7 @@
     .testimonial-meta {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
 
     .testimonial-name {
@@ -790,12 +862,21 @@
     .testimonial-role {
       font-size: 12px;
       color: var(--mid);
+      line-height: 1.4;
+    }
+
+    .testimonial-quote {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--ink);
+      margin: 0;
+      font-style: italic;
     }
 
     /* ── CONTACT ── */
     #contact {
       background: var(--ink);
-      padding: 100px 48px 80px;
+      padding: 72px 48px 60px;
       text-align: center;
     }
 
@@ -839,25 +920,57 @@
     @media (max-width: 760px) {
       nav { padding: 16px 24px; }
       .container { padding: 0 24px; }
-      .section-wrap { padding: 64px 0; }
-      #hero { padding: 110px 24px 64px; min-height: auto; }
+      .section-wrap { padding: 44px 0; }
+      #hero { padding: 90px 24px 48px; min-height: auto; }
       .two-col { grid-template-columns: 1fr; gap: 24px; }
       .two-col .section-label { margin-bottom: 0; }
       .hero-stats { gap: 28px; }
       .work-grid, .service-grid { grid-template-columns: 1fr; }
-      .client-row--6 { grid-template-columns: repeat(3, 1fr); }
-      .client-cell { padding: 16px 10px; min-height: 64px; }
-      .client-cell img { max-width: 80px; max-height: 28px; }
-      .testimonial-grid { grid-template-columns: 1fr; }
+      .client-grid { grid-template-columns: repeat(3, 1fr); }
+      .client-cell { padding: 14px 8px; min-height: 56px; }
+      .client-cell img { max-width: 72px; max-height: 26px; }
+      .testimonial-card { grid-template-columns: 1fr; gap: 20px; }
+      .testimonial-attribution { flex-direction: row; text-align: left; padding-right: 0; border-right: none; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+      .testimonial-avatar { width: 44px; height: 44px; }
       .agentic-top { grid-template-columns: 1fr; gap: 16px; }
       .agentic-grid { grid-template-columns: 1fr; }
       #agentic .container { padding: 0 24px; }
-      #agentic { padding: 64px 0; }
+      #agentic { padding: 44px 0; }
       .brain-block { grid-template-columns: 1fr; gap: 40px; }
       .tool-list li { grid-template-columns: 1fr; gap: 6px; }
       .analysis-item { grid-template-columns: 1fr; gap: 12px; }
       #contact { padding: 72px 24px; }
       footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+
+      /* mobile-only accordions */
+      .mobile-toggle {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: none;
+        border: none;
+        padding: 0;
+        margin-top: 10px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--amber);
+        text-transform: uppercase;
+        font-family: inherit;
+      }
+      .mobile-toggle:hover { opacity: 0.75; }
+      .mobile-toggle__icon { display: inline-block; transition: transform 0.32s ease; }
+      .is-mobile-open .mobile-toggle__icon { transform: rotate(180deg); }
+
+      .mobile-accordion__body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.32s ease;
+      }
+      .mobile-accordion__body > div { overflow: hidden; }
+      .is-mobile-open .mobile-accordion__body { grid-template-rows: 1fr; }
+      .mobile-accordion__body > div > *:first-child { padding-top: 10px; }
     }
   </style>
 </head>
@@ -869,10 +982,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- NAV -->
   <nav>
-    <a href="#" class="mark"><img src="nav-mark.svg" alt="Phillips."></a>
+    <a href="#" class="mark"><img src="nav-wordmark.svg" alt="Phillips."></a>
     <div class="nav-ctas">
-      <a href="lewis-phillips-cv.pdf" download class="cta cta--filled">Download CV</a>
-      <a href="#contact" class="cta">Get in touch</a>
+      <a href="/audit.html" class="cta">Free audit</a>
+      <a href="#contact" class="cta cta--filled">Get in touch</a>
     </div>
   </nav>
 
@@ -945,51 +1058,42 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="container">
       <p class="section-label">Clients &amp; Brands</p>
       <div class="client-grid">
-
-        <!-- Row 1: Angi + freelance / founder clients -->
-        <div class="client-row client-row--6">
-          <a class="client-cell" href="https://www.angi.com" target="_blank" rel="noopener">
-            <img src="logos/angi.svg" alt="Angi">
-          </a>
-          <a class="client-cell" href="https://www.leerenee.com/" target="_blank" rel="noopener">
-            <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
-          </a>
-          <a class="client-cell" href="https://www.myiabonner.com" target="_blank" rel="noopener">
-            <img src="logos/myiabonner.png" alt="Myia Bonner">
-          </a>
-          <a class="client-cell" href="https://enginehousebexley.co.uk/" target="_blank" rel="noopener">
-            <img src="logos/enginehouse.png" alt="The Engine House Bexley">
-          </a>
-          <div class="client-cell">
-            <img src="logos/pommier.jpg" alt="The Pommier">
-          </div>
-          <a class="client-cell" href="https://www.gogglesquad.co.uk/" target="_blank" rel="noopener">
-            <img src="logos/gogglesquad.png" alt="Goggle Squad">
-          </a>
+        <a class="client-cell" href="https://www.angi.com" target="_blank" rel="noopener">
+          <img src="logos/angi.svg" alt="Angi">
+        </a>
+        <a class="client-cell" href="https://www.leerenee.com/" target="_blank" rel="noopener">
+          <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
+        </a>
+        <a class="client-cell" href="https://www.myiabonner.com" target="_blank" rel="noopener">
+          <img src="logos/myiabonner.png" alt="Myia Bonner">
+        </a>
+        <a class="client-cell" href="https://enginehousebexley.co.uk/" target="_blank" rel="noopener">
+          <img src="logos/enginehouse.png" alt="The Engine House Bexley">
+        </a>
+        <div class="client-cell">
+          <img src="logos/pommier.jpg" alt="The Pommier">
         </div>
-
-        <!-- Row 2: remaining Angi group brands -->
-        <div class="client-row client-row--6">
-          <a class="client-cell" href="https://www.mybuilder.com" target="_blank" rel="noopener">
-            <img src="logos/mybuilder.png" alt="MyBuilder">
-          </a>
-          <a class="client-cell" href="https://www.homestars.com" target="_blank" rel="noopener">
-            <img src="logos/homestars.png" alt="HomeStars">
-          </a>
-          <a class="client-cell" href="https://www.werkspot.nl" target="_blank" rel="noopener">
-            <img src="logos/werkspot.png" alt="Werkspot">
-          </a>
-          <a class="client-cell" href="https://www.instapro.it" target="_blank" rel="noopener">
-            <img src="logos/instapro.png" alt="Instapro">
-          </a>
-          <a class="client-cell" href="https://www.travaux.com" target="_blank" rel="noopener">
-            <img src="logos/travaux.png" alt="Travaux.com">
-          </a>
-          <a class="client-cell" href="https://www.myhammer.de" target="_blank" rel="noopener">
-            <img src="logos/myhammer.png" alt="MyHammer">
-          </a>
-        </div>
-
+        <a class="client-cell" href="https://www.gogglesquad.co.uk/" target="_blank" rel="noopener">
+          <img src="logos/gogglesquad.png" alt="Goggle Squad">
+        </a>
+        <a class="client-cell" href="https://www.mybuilder.com" target="_blank" rel="noopener">
+          <img src="logos/mybuilder-purple.png" alt="MyBuilder">
+        </a>
+        <a class="client-cell" href="https://www.homestars.com" target="_blank" rel="noopener">
+          <img src="logos/homestars-purple.png" alt="HomeStars">
+        </a>
+        <a class="client-cell" href="https://www.werkspot.nl" target="_blank" rel="noopener">
+          <img src="logos/werkspot-purple.png" alt="Werkspot">
+        </a>
+        <a class="client-cell" href="https://www.instapro.it" target="_blank" rel="noopener">
+          <img src="logos/instapro-purple.png" alt="Instapro">
+        </a>
+        <a class="client-cell" href="https://www.travaux.com" target="_blank" rel="noopener">
+          <img src="logos/travaux-purple.png" alt="Travaux.com">
+        </a>
+        <a class="client-cell" href="https://www.myhammer.de" target="_blank" rel="noopener">
+          <img src="logos/myhammer-purple.png" alt="MyHammer">
+        </a>
       </div>
     </div>
   </div>
@@ -1026,28 +1130,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="work-metric-label">B2C margin improvement</span>
             </div>
           </div>
-          <p class="work-desc">
-            Led performance marketing across Angi's international home-services marketplaces, including MyBuilder UK, HomeStars Canada, Werkspot Netherlands and Instapro US, with wider support across European markets. Managed £50M+ annual paid media investment across B2B contractor and B2C homeowner acquisition funnels.
-          </p>
-          <p class="work-desc">
-            Built geo-bucketed tCPA models using demand, margin and conversion data, improving B2C margin by 16.2%. On the B2B side, developed multi-stage acquisition funnels that reduced CPA by 30% YoY while growing volume.
-          </p>
-          <p class="work-desc">
-            Also led structured experimentation across ad copy, bidding and campaign architecture, including RSA headline testing across 6 markets, Apple Search Ads optimisation, and new market launches including Boston.
-          </p>
-          <div class="work-tags">
-            <span class="work-tag work-tag--type">B2B</span>
-            <span class="work-tag work-tag--type">B2C</span>
-            <span class="work-tag work-tag--type">Marketplace Growth</span>
-            <span class="work-tag">Google Ads</span>
-            <span class="work-tag">Meta Ads</span>
-            <span class="work-tag">Apple Search Ads</span>
-            <span class="work-tag">Verizon / Yahoo</span>
-            <span class="work-tag">LinkedIn</span>
-            <span class="work-tag">Affiliate Marketing</span>
-            <span class="work-tag">Conversion Tracking</span>
-            <span class="work-tag">Google Analytics</span>
-            <span class="work-tag">Looker</span>
+          <button class="work-toggle" aria-expanded="false">
+            <span>View details</span>
+            <span class="work-toggle__icon">↓</span>
+          </button>
+          <div class="work-card__body">
+            <div>
+              <p class="work-desc">
+                Led performance marketing across Angi's international home-services marketplaces, including MyBuilder UK, HomeStars Canada, Werkspot Netherlands and Instapro US, with wider support across European markets. Managed £50M+ annual paid media investment across B2B contractor and B2C homeowner acquisition funnels.
+              </p>
+              <p class="work-desc">
+                Built geo-bucketed tCPA models using demand, margin and conversion data, improving B2C margin by 16.2%. On the B2B side, developed multi-stage acquisition funnels that reduced CPA by 30% YoY while growing volume.
+              </p>
+              <p class="work-desc">
+                Also led structured experimentation across ad copy, bidding and campaign architecture, including RSA headline testing across 6 markets, Apple Search Ads optimisation, and new market launches including Boston.
+              </p>
+              <div class="work-tags">
+                <span class="work-tag work-tag--type">B2B</span>
+                <span class="work-tag work-tag--type">B2C</span>
+                <span class="work-tag work-tag--type">Marketplace Growth</span>
+                <span class="work-tag">Google Ads</span>
+                <span class="work-tag">Meta Ads</span>
+                <span class="work-tag">Apple Search Ads</span>
+                <span class="work-tag">Verizon / Yahoo</span>
+                <span class="work-tag">LinkedIn</span>
+                <span class="work-tag">Affiliate Marketing</span>
+                <span class="work-tag">Conversion Tracking</span>
+                <span class="work-tag">Google Analytics</span>
+                <span class="work-tag">Looker</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1075,29 +1187,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="work-metric-label">Employees hired and led</span>
             </div>
           </div>
-          <p class="work-desc">
-            Founded and scaled a self-funded omni-channel fashion marketplace, combining ecommerce with physical retail in Covent Garden and Boxpark Shoreditch. Built the business across multiple revenue streams: B2C product sales, B2B seller subscriptions, transaction fees and paid retail placement.
-          </p>
-          <p class="work-desc">
-            Grew the partner network to 260 independent brands across 40 countries using designer scouting, HubSpot CRM, email nurturing and seller upsell journeys. Managed up to £25k/month in paid media across Google Search, Shopping, Display, Facebook and Instagram, including product feed management across a 250k+ SKU catalogue.
-          </p>
-          <p class="work-desc">
-            Hired and led an 11-person team across retail, fulfilment, marketing and ecommerce operations.
-          </p>
-          <div class="work-tags">
-            <span class="work-tag work-tag--type">B2B</span>
-            <span class="work-tag work-tag--type">B2C</span>
-            <span class="work-tag work-tag--type">Founder</span>
-            <span class="work-tag work-tag--type">Marketplace Growth</span>
-            <span class="work-tag">Google Ads</span>
-            <span class="work-tag">Meta Ads</span>
-            <span class="work-tag">SEO</span>
-            <span class="work-tag">CRM</span>
-            <span class="work-tag">Affiliate Marketing</span>
-            <span class="work-tag">Retail Operations</span>
-            <span class="work-tag">Conversion Tracking</span>
-            <span class="work-tag">Shopify</span>
-            <span class="work-tag">Google Analytics</span>
+          <button class="work-toggle" aria-expanded="false">
+            <span>View details</span>
+            <span class="work-toggle__icon">↓</span>
+          </button>
+          <div class="work-card__body">
+            <div>
+              <p class="work-desc">
+                Founded and scaled a self-funded omni-channel fashion marketplace, combining ecommerce with physical retail in Covent Garden and Boxpark Shoreditch. Built the business across multiple revenue streams: B2C product sales, B2B seller subscriptions, transaction fees and paid retail placement.
+              </p>
+              <p class="work-desc">
+                Grew the partner network to 260 independent brands across 40 countries using designer scouting, HubSpot CRM, email nurturing and seller upsell journeys. Managed up to £25k/month in paid media across Google Search, Shopping, Display, Facebook and Instagram, including product feed management across a 250k+ SKU catalogue.
+              </p>
+              <p class="work-desc">
+                Hired and led an 11-person team across retail, fulfilment, marketing and ecommerce operations.
+              </p>
+              <div class="work-tags">
+                <span class="work-tag work-tag--type">B2B</span>
+                <span class="work-tag work-tag--type">B2C</span>
+                <span class="work-tag work-tag--type">Founder</span>
+                <span class="work-tag work-tag--type">Marketplace Growth</span>
+                <span class="work-tag">Google Ads</span>
+                <span class="work-tag">Meta Ads</span>
+                <span class="work-tag">SEO</span>
+                <span class="work-tag">CRM</span>
+                <span class="work-tag">Affiliate Marketing</span>
+                <span class="work-tag">Retail Operations</span>
+                <span class="work-tag">Conversion Tracking</span>
+                <span class="work-tag">Shopify</span>
+                <span class="work-tag">Google Analytics</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1117,31 +1237,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="work-metric-label">Peak monthly ROAS</span>
             </div>
             <div class="work-metric">
-              <span class="work-metric-val">£150k+</span>
-              <span class="work-metric-label">Revenue driven in 2025</span>
+              <span class="work-metric-val">+49%</span>
+              <span class="work-metric-label">Revenue growth YoY</span>
             </div>
             <div class="work-metric">
               <span class="work-metric-val">Top 5</span>
               <span class="work-metric-label">Organic rankings for commercial terms</span>
             </div>
           </div>
-          <p class="work-desc">
-            Full-service digital marketing for a premium Hatton Garden jewellery brand, retained for 4+ years. Built the Shopify website, Google Ads account and SEO presence from scratch, then scaled acquisition across Search, Shopping, PMax and organic search.
-          </p>
-          <p class="work-desc">
-            Grew ROAS from 2.72× in 2022 to 4.85× in 2025, with a peak month of 8.85× ROAS in December 2024. Managed campaigns across a 5,000-SKU catalogue, covering product feed optimisation, keyword research, ad copy testing and landing page improvements.
-          </p>
-          <p class="work-desc">
-            Built organic visibility from zero, achieving top 5 rankings for commercial non-brand terms including cherry blossom rings, ladybird jewellery, book necklaces, tie pins and lapel pins.
-          </p>
-          <div class="work-tags">
-            <span class="work-tag work-tag--type">DTC</span>
-            <span class="work-tag work-tag--type">eCommerce</span>
-            <span class="work-tag">Google Ads</span>
-            <span class="work-tag">SEO</span>
-            <span class="work-tag">Conversion Tracking</span>
-            <span class="work-tag">Shopify</span>
-            <span class="work-tag">Google Analytics</span>
+          <button class="work-toggle" aria-expanded="false">
+            <span>View details</span>
+            <span class="work-toggle__icon">↓</span>
+          </button>
+          <div class="work-card__body">
+            <div>
+              <p class="work-desc">
+                Full-service digital marketing for a premium Hatton Garden jewellery brand, retained for 4+ years. Built the Shopify website, Google Ads account and SEO presence from scratch, then scaled acquisition across Search, Shopping, PMax and organic search.
+              </p>
+              <p class="work-desc">
+                Grew ROAS from 2.72× in 2022 to 4.85× in 2025, with a peak month of 8.85× ROAS in December 2024. Managed campaigns across a 5,000-SKU catalogue, covering product feed optimisation, keyword research, ad copy testing and landing page improvements.
+              </p>
+              <p class="work-desc">
+                Built organic visibility from zero, achieving top 5 rankings for commercial non-brand terms including cherry blossom rings, ladybird jewellery, book necklaces, tie pins and lapel pins.
+              </p>
+              <div class="work-tags">
+                <span class="work-tag work-tag--type">DTC</span>
+                <span class="work-tag work-tag--type">eCommerce</span>
+                <span class="work-tag">Google Ads</span>
+                <span class="work-tag">SEO</span>
+                <span class="work-tag">Conversion Tracking</span>
+                <span class="work-tag">Shopify</span>
+                <span class="work-tag">Google Analytics</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1169,22 +1297,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="work-metric-label">Serviced office lead generation</span>
             </div>
           </div>
-          <p class="work-desc">
-            Took over a self-built Google Ads and tracking setup for a serviced office and meeting room provider where conversion tracking was unreliable, broad match was wasting spend, and campaign structure was limiting control.
-          </p>
-          <p class="work-desc">
-            Rebuilt the measurement foundation from scratch, including GTM container architecture, GA4 configuration, Consent Mode v2, Enhanced Conversions with form email capture, and cross-domain tracking across two domains.
-          </p>
-          <p class="work-desc">
-            Restructured Google Ads activity around cleaner intent groups, tighter keyword control and lead-form conversions, while improving landing page relevance and conversion focus so paid traffic had a better chance of turning into enquiries.
-          </p>
-          <div class="work-tags">
-            <span class="work-tag work-tag--type">B2B</span>
-            <span class="work-tag work-tag--type">Lead Gen</span>
-            <span class="work-tag">Conversion Tracking</span>
-            <span class="work-tag">Shopify</span>
-            <span class="work-tag">Google Ads</span>
-            <span class="work-tag">Google Analytics</span>
+          <button class="work-toggle" aria-expanded="false">
+            <span>View details</span>
+            <span class="work-toggle__icon">↓</span>
+          </button>
+          <div class="work-card__body">
+            <div>
+              <p class="work-desc">
+                Took over a self-built Google Ads and tracking setup for a serviced office and meeting room provider where conversion tracking was unreliable, broad match was wasting spend, and campaign structure was limiting control.
+              </p>
+              <p class="work-desc">
+                Rebuilt the measurement foundation from scratch, including GTM container architecture, GA4 configuration, Consent Mode v2, Enhanced Conversions with form email capture, and cross-domain tracking across two domains.
+              </p>
+              <p class="work-desc">
+                Restructured Google Ads activity around cleaner intent groups, tighter keyword control and lead-form conversions, while improving landing page relevance and conversion focus so paid traffic had a better chance of turning into enquiries.
+              </p>
+              <div class="work-tags">
+                <span class="work-tag work-tag--type">B2B</span>
+                <span class="work-tag work-tag--type">Lead Gen</span>
+                <span class="work-tag">Conversion Tracking</span>
+                <span class="work-tag">Shopify</span>
+                <span class="work-tag">Google Ads</span>
+                <span class="work-tag">Google Analytics</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1209,9 +1345,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <div class="analysis-title">Geo-Bucketing Bid Model</div>
               <span class="analysis-method">tCPA Modelling · Location Value · B2C Acquisition</span>
-              <p class="analysis-desc">
-                Replaced flat national CPA targets with location-based bidding tiers built from trade demand, conversion rate and margin data. This allowed high-value areas to be pushed more aggressively while lower-value areas were managed more conservatively. Delivered a <strong>12% cost reduction</strong>, <strong>16.2% margin improvement</strong> and <strong>19% growth in high-value location conversions</strong> across B2C homeowner acquisition.
-              </p>
+              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
+              <div class="analysis-item__body"><div>
+                <p class="analysis-desc">Replaced flat national CPA targets with location-based bidding tiers built from trade demand, conversion rate and margin data. This allowed high-value areas to be pushed more aggressively while lower-value areas were managed more conservatively. Delivered a <strong>12% cost reduction</strong>, <strong>16.2% margin improvement</strong> and <strong>19% growth in high-value location conversions</strong> across B2C homeowner acquisition.</p>
+              </div></div>
             </div>
           </li>
 
@@ -1223,9 +1360,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <div class="analysis-title">RSA Headline Theme Analysis</div>
               <span class="analysis-method">Creative Testing · Z-Test · Multi-Market</span>
-              <p class="analysis-desc">
-                Built a 1,300-row RSA headline library and grouped assets by message type, including question-led, location-led, CTA, price-led and keyword insertion headlines. Used Z-test validation to separate headlines that drove clicks from headlines that drove conversions, then applied the learnings across six markets in five languages. Also completed a policy compliance review, identifying 25+ risky terms and approved alternatives.
-              </p>
+              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
+              <div class="analysis-item__body"><div>
+                <p class="analysis-desc">Built a 1,300-row RSA headline library and grouped assets by message type, including question-led, location-led, CTA, price-led and keyword insertion headlines. Used Z-test validation to separate headlines that drove clicks from headlines that drove conversions, then applied the learnings across six markets in five languages. Also completed a policy compliance review, identifying 25+ risky terms and approved alternatives.</p>
+              </div></div>
             </div>
           </li>
 
@@ -1237,12 +1375,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <div class="analysis-title">AI Max Incremental Evaluation</div>
               <span class="analysis-method">Incrementality Testing · 4 Markets · Budget Allocation</span>
-              <p class="analysis-desc">
-                Built a framework to measure AI Max's true contribution beyond Google's blended platform reporting. Tested performance across the UK, Germany, France and Netherlands to separate genuinely incremental conversions from existing keyword overlap.
-              </p>
-              <p class="analysis-desc">
-                The analysis showed that <strong>74% of UK AI Max volume was already covered by existing keywords</strong>, while only 26% represented net-new incremental conversions. Post a Job landing pages generated around <strong>75% of total UK AI Max margin</strong>, helping determine which campaigns to scale aggressively, which to limit, and where closer monitoring was needed.
-              </p>
+              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
+              <div class="analysis-item__body"><div>
+                <p class="analysis-desc">Built a framework to measure AI Max's true contribution beyond Google's blended platform reporting. Tested performance across the UK, Germany, France and Netherlands to separate genuinely incremental conversions from existing keyword overlap.</p>
+                <p class="analysis-desc" style="margin-top:10px">The analysis showed that <strong>74% of UK AI Max volume was already covered by existing keywords</strong>, while only 26% represented net-new incremental conversions. Post a Job landing pages generated around <strong>75% of total UK AI Max margin</strong>, helping determine which campaigns to scale aggressively, which to limit, and where closer monitoring was needed.</p>
+              </div></div>
             </div>
           </li>
 
@@ -1254,12 +1391,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <div class="analysis-title">Weighted Funnel tROAS Model</div>
               <span class="analysis-method">B2B Lead Gen · Funnel Modelling · Value-Based Bidding</span>
-              <p class="analysis-desc">
-                Built a weighted six-stage contractor acquisition funnel from application start through to completed submission. Assigned value to each funnel stage based on its contribution to downstream conversion, then segmented campaigns into high, medium and low trade-value portfolios with separate tROAS bidding strategies.
-              </p>
-              <p class="analysis-desc">
-                This shifted optimisation away from raw lead volume and toward qualified acquisition behaviour, delivering <strong>~30% CPA reduction</strong> alongside <strong>~20% YoY volume growth</strong>.
-              </p>
+              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
+              <div class="analysis-item__body"><div>
+                <p class="analysis-desc">Built a weighted six-stage contractor acquisition funnel from application start through to completed submission. Assigned value to each funnel stage based on its contribution to downstream conversion, then segmented campaigns into high, medium and low trade-value portfolios with separate tROAS bidding strategies.</p>
+                <p class="analysis-desc" style="margin-top:10px">This shifted optimisation away from raw lead volume and toward qualified acquisition behaviour, delivering <strong>~30% CPA reduction</strong> alongside <strong>~20% YoY volume growth</strong>.</p>
+              </div></div>
             </div>
           </li>
 
@@ -1271,9 +1407,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <div class="analysis-title">Apple Search Ads Rebuild</div>
               <span class="analysis-method">App Growth · Search Intent · Keyword Promotion</span>
-              <p class="analysis-desc">
-                Rebuilt the Apple Search Ads account around clear intent segments: brand, competitor, discovery and high-intent exact match campaigns. Created a keyword promotion workflow that moved proven search terms from broad discovery into exact match campaigns, reducing CPI from <strong>£2.09 to £0.52</strong> while improving signal quality and campaign control.
-              </p>
+              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
+              <div class="analysis-item__body"><div>
+                <p class="analysis-desc">Rebuilt the Apple Search Ads account around clear intent segments: brand, competitor, discovery and high-intent exact match campaigns. Created a keyword promotion workflow that moved proven search terms from broad discovery into exact match campaigns, reducing CPI from <strong>£2.09 to £0.52</strong> while improving signal quality and campaign control.</p>
+              </div></div>
             </div>
           </li>
 
@@ -1291,22 +1428,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="agentic-grid">
 
-        <div class="agentic-card">
+        <div class="agentic-card" data-mobile-accordion>
           <div class="agentic-card-num">01</div>
           <h3>Tracking &amp; Measurement Audits</h3>
-          <p>Automates checks across GTM, Google Ads, GA4, Enhanced Conversions and Consent Mode v2, then produces a prioritised fix plan instead of a generic issue list. Built to catch tracking problems before they distort reporting or bidding signals.</p>
+          <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+          <div class="mobile-accordion__body"><div>
+            <p>Automates checks across GTM, Google Ads, GA4, Enhanced Conversions and Consent Mode v2, then produces a prioritised fix plan instead of a generic issue list. Built to catch tracking problems before they distort reporting or bidding signals.</p>
+          </div></div>
         </div>
 
-        <div class="agentic-card">
+        <div class="agentic-card" data-mobile-accordion>
           <div class="agentic-card-num">02</div>
           <h3>Weekly Performance Workflow</h3>
-          <p>Pulls Google Ads performance data, runs search term checks, highlights wasted spend and produces a weekly account deep-dive with clear action items. Reports are written into Obsidian, exported where needed, and pushed into Monday.com so analysis turns into follow-through.</p>
+          <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+          <div class="mobile-accordion__body"><div>
+            <p>Pulls Google Ads performance data, runs search term checks, highlights wasted spend and produces a weekly account deep-dive with clear action items. Reports are written into Obsidian, exported where needed, and pushed into Monday.com so analysis turns into follow-through.</p>
+          </div></div>
         </div>
 
-        <div class="agentic-card">
+        <div class="agentic-card" data-mobile-accordion>
           <div class="agentic-card-num">03</div>
           <h3>Feed &amp; SEO Optimisation</h3>
-          <p>Audits Merchant Center and Shopify product data, then proposes improvements to Shopping titles, product types, SEO titles and meta descriptions. The workflow keeps human review in place before anything is applied, so automation speeds up the work without blindly changing live accounts.</p>
+          <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+          <div class="mobile-accordion__body"><div>
+            <p>Audits Merchant Center and Shopify product data, then proposes improvements to Shopping titles, product types, SEO titles and meta descriptions. The workflow keeps human review in place before anything is applied, so automation speeds up the work without blindly changing live accounts.</p>
+          </div></div>
         </div>
 
       </div>
@@ -1362,34 +1508,52 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="section-label">Services</span>
         <div class="service-grid">
 
-          <div class="service-card">
+          <div class="service-card" data-mobile-accordion>
             <h3>Performance Marketing Strategy</h3>
-            <p>Full-funnel acquisition planning across B2B, B2C and eCommerce. Channel mix, budget allocation, testing roadmaps and commercial targets built around growth, CPA, ROAS and margin.</p>
+            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+            <div class="mobile-accordion__body"><div>
+              <p>Full-funnel acquisition planning across B2B, B2C and eCommerce. Channel mix, budget allocation, testing roadmaps and commercial targets built around growth, CPA, ROAS and margin.</p>
+            </div></div>
           </div>
 
-          <div class="service-card">
+          <div class="service-card" data-mobile-accordion>
             <h3>Paid Media Management</h3>
-            <p>Google Ads, Microsoft Ads, Apple Search Ads, Meta and LinkedIn - from account structure and bidding strategy to creative testing, scaling decisions and ongoing optimisation.</p>
+            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+            <div class="mobile-accordion__body"><div>
+              <p>Google Ads, Microsoft Ads, Apple Search Ads, Meta and LinkedIn - from account structure and bidding strategy to creative testing, scaling decisions and ongoing optimisation.</p>
+            </div></div>
           </div>
 
-          <div class="service-card">
+          <div class="service-card" data-mobile-accordion>
             <h3>eCommerce &amp; Shopping Growth</h3>
-            <p>Google Shopping, Performance Max, Shopify, Merchant Center and product feed optimisation. Built for large catalogues, product-level visibility and profitable revenue growth.</p>
+            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+            <div class="mobile-accordion__body"><div>
+              <p>Google Shopping, Performance Max, Shopify, Merchant Center and product feed optimisation. Built for large catalogues, product-level visibility and profitable revenue growth.</p>
+            </div></div>
           </div>
 
-          <div class="service-card">
+          <div class="service-card" data-mobile-accordion>
             <h3>Conversion Tracking &amp; Attribution</h3>
-            <p>GTM, GA4, Enhanced Conversions, Consent Mode v2 and cross-domain tracking. Measurement foundations that give bidding systems cleaner signals and teams clearer reporting.</p>
+            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+            <div class="mobile-accordion__body"><div>
+              <p>GTM, GA4, Enhanced Conversions, Consent Mode v2 and cross-domain tracking. Measurement foundations that give bidding systems cleaner signals and teams clearer reporting.</p>
+            </div></div>
           </div>
 
-          <div class="service-card">
+          <div class="service-card" data-mobile-accordion>
             <h3>SEO &amp; Organic Growth</h3>
-            <p>Technical SEO, Shopify on-page optimisation, Search Console analysis, Core Web Vitals and structured data. Practical SEO focused on visibility, catalogue quality and commercial search demand.</p>
+            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+            <div class="mobile-accordion__body"><div>
+              <p>Technical SEO, Shopify on-page optimisation, Search Console analysis, Core Web Vitals and structured data. Practical SEO focused on visibility, catalogue quality and commercial search demand.</p>
+            </div></div>
           </div>
 
-          <div class="service-card">
+          <div class="service-card" data-mobile-accordion>
             <h3>Marketing Automation &amp; AI Workflows</h3>
-            <p>Python and AI-assisted workflows that reduce manual analysis, flag issues early and turn performance data into clear next actions across Google Ads, Merchant Center, Shopify and tracking systems.</p>
+            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
+            <div class="mobile-accordion__body"><div>
+              <p>Python and AI-assisted workflows that reduce manual analysis, flag issues early and turn performance data into clear next actions across Google Ads, Merchant Center, Shopify and tracking systems.</p>
+            </div></div>
           </div>
 
         </div>
@@ -1494,6 +1658,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
+  <div style="border-top: 1px solid var(--border); margin: 0 48px;"></div>
+
   <!-- TESTIMONIALS -->
   <div class="section-wrap">
     <div class="container">
@@ -1502,18 +1668,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="testimonial-grid">
 
           <div class="testimonial-card">
-            <p class="testimonial-quote">"Lewis led performance delivery for paid search, paid social and display on MyBuilder.com for four-plus years. Passionate, driven and entrepreneurial - he consistently delivered within his domain and helped teammates achieve their goals too. I can wholeheartedly recommend him for any performance marketing role."</p>
             <div class="testimonial-attribution">
               <img src="images/testimonial-vladimir.jpg" alt="Vladimir Musaev" class="testimonial-avatar">
               <div class="testimonial-meta">
                 <span class="testimonial-name">Vladimir Musaev</span>
-                <span class="testimonial-role">Director of Performance Marketing, Angi - managed Lewis directly</span>
+                <span class="testimonial-role">Director of Performance Marketing, Instapro Group - managed Lewis directly</span>
               </div>
             </div>
+            <p class="testimonial-quote">"I'll be short and sweet: Lewis is an absolute legend to work with! He was on my team for four-plus years, leading performance delivery and execution for paid search, paid social, and display for our UK brand, MyBuilder.com. Passionate, driven, entrepreneurial, Lewis has a can-do attitude towards any curveball or complex project that comes his way. He's a fantastic team player who consistently delivered not only within his domain but also helped other teammates achieve their goals. He brings new ideas and shares his experience across the board. Without him, MyBuilder wouldn't be where it is today! Lewis also brings heart, humor, banter, and a good mood to any team meeting, workshop, retrospective, or anything else. He's an absolute joy to be around and work with. I can wholeheartedly recommend him for any performance marketing role - he would be a tremendous asset to any company. Thanks for the good times, Lewis!"</p>
           </div>
 
           <div class="testimonial-card">
-            <p class="testimonial-quote">"Lewis is professionally incredibly strong - he consistently delivered great work, supported the team whenever needed and made a real difference through his experience and reliability. Working with him was not only easy but genuinely fun."</p>
+            <div class="testimonial-attribution">
+              <img src="images/testimonial-lee.jpg" alt="Lee Preston" class="testimonial-avatar">
+              <div class="testimonial-meta">
+                <span class="testimonial-name">Lee Preston</span>
+                <span class="testimonial-role">Founder &amp; CEO, Lee Renee Jewellery - client</span>
+              </div>
+            </div>
+            <p class="testimonial-quote">"Lewis has worked for me for 6 years now on helping me develop my e-commerce store in every way. He is very committed, hard working, results-focused, insightful and goes the extra mile. He's also very easy to work with and a nice guy to boot, which really helps make my life much easier as a small business owner. I highly recommend him."</p>
+          </div>
+
+          <div class="testimonial-card">
             <div class="testimonial-attribution">
               <img src="images/testimonial-jonas.jpg" alt="Jonas Theurich" class="testimonial-avatar">
               <div class="testimonial-meta">
@@ -1521,10 +1697,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <span class="testimonial-role">Performance Marketing Manager, MyHammer - peer</span>
               </div>
             </div>
+            <p class="testimonial-quote">"Lewis is professionally incredibly strong - he consistently delivered great work, supported the team whenever needed and made a real difference through his experience and reliability. Working with him was not only easy but genuinely fun."</p>
           </div>
 
           <div class="testimonial-card">
-            <p class="testimonial-quote">"Lewis was my Claude before Claude - as a colleague, if I ever had any SEM / SEO questions or needed help gathering data on the performance of my creatives, he would be my first stop. Not only would he always give me a detailed, accessible explanation of what is what, he helped me in crafting creative that would benefit the business. Now, with his own AI-powered techniques that he has picked up and taught - he is truly set to be one of the best in class at what he does. Every chance I got to work with Lewis was always informative and, thanks to his natural wit and humour, entertaining too."</p>
             <div class="testimonial-attribution">
               <img src="images/testimonial-aiden.jpg" alt="Aiden Pryor" class="testimonial-avatar">
               <div class="testimonial-meta">
@@ -1532,6 +1708,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <span class="testimonial-role">Senior Marketing Content Producer, Angi - peer</span>
               </div>
             </div>
+            <p class="testimonial-quote">"Lewis was my Claude before Claude - as a colleague, if I ever had any SEM / SEO questions or needed help gathering data on the performance of my creatives, he would be my first stop. Not only would he always give me a detailed, accessible explanation of what is what, he helped me in crafting creative that would benefit the business. Now, with his own AI-powered techniques that he has picked up and taught - he is truly set to be one of the best in class at what he does. Every chance I got to work with Lewis was always informative and, thanks to his natural wit and humour, entertaining too."</p>
           </div>
 
         </div>
@@ -1554,6 +1731,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <script>
+    document.querySelectorAll('.work-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.work-card');
+        const isOpen = card.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', isOpen);
+        btn.querySelector('span').textContent = isOpen ? 'Hide details' : 'View details';
+      });
+    });
+    document.querySelectorAll('.analysis-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.analysis-item');
+        const isOpen = item.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', isOpen);
+        btn.querySelector('span').textContent = isOpen ? 'Hide' : 'Read more';
+      });
+    });
+    document.querySelectorAll('.mobile-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('[data-mobile-accordion]');
+        const isOpen = card.classList.toggle('is-mobile-open');
+        btn.setAttribute('aria-expanded', isOpen);
+        btn.querySelector('span').textContent = isOpen ? 'Hide' : 'Expand';
+      });
+    });
+  </script>
 
 </body>
 </html>
