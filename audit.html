@@ -505,6 +505,73 @@
       font-style: italic;
     }
 
+    /* Feed summary ──────────────────────────────────────────────────────────── */
+    .feed-summary {
+      margin-top: 16px;
+    }
+    .feed-summary-stats {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .feed-stat {
+      flex: 1;
+      padding: 12px 16px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .feed-stat:last-child { border-right: none; }
+    .feed-stat-num {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1;
+      color: var(--ink);
+    }
+    .feed-stat-label {
+      font-size: 11px;
+      color: var(--mid);
+    }
+    .feed-table-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 8px;
+    }
+    .feed-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .feed-th {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .feed-td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--light);
+      color: var(--ink);
+      vertical-align: top;
+    }
+    .feed-td-title { max-width: 200px; word-break: break-word; }
+    .feed-td-num   { text-align: right; white-space: nowrap; }
+    .feed-conv-good { color: var(--green); font-weight: 600; }
+    .feed-conv-zero { color: var(--mid); }
+    .feed-table tr:last-child .feed-td { border-bottom: none; }
+
     /* IS split sub-row */
     .is-split {
       display: flex;
@@ -1392,6 +1459,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       account_structure:     "🏗",
       keyword_hygiene:       "🔑",
       ai_automation:         "🤖",
+      feed_health:           "📦",
       creative:              "✏️",
       traffic_quality:       "📊",
     };
@@ -1401,7 +1469,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       { key:"conversion",   eyebrow:"Foundation",                  titleHtml:"Conversion <em>Tracking</em>",        channelRequired:null,                            categories:["conversion_foundation"] },
       { key:"account",      eyebrow:"Budget & Structure",           titleHtml:"Account <em>Health</em>",             channelRequired:null,                            categories:["account_structure"] },
       { key:"search",       eyebrow:"Search Campaigns",             titleHtml:"Keywords, Ads & <em>Quality</em>",    channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","creative","traffic_quality"] },
-      { key:"pmax",         eyebrow:"Performance Max & Shopping",   titleHtml:"Automation & <em>Feed Health</em>",   channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation"] },
+      { key:"pmax",         eyebrow:"Performance Max & Shopping",   titleHtml:"Automation & <em>Feed Health</em>",   channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation","feed_health"] },
       { key:"demand_gen",   eyebrow:"Demand Generation",            titleHtml:"Demand Gen <em>Campaigns</em>",       channelRequired:["DEMAND_GEN"],   channelLabel:"Demand Gen",    categories:[] },
       { key:"video",        eyebrow:"YouTube & Video",              titleHtml:"Video <em>Campaigns</em>",            channelRequired:["VIDEO"],        channelLabel:"Video",         categories:[] },
       { key:"display",      eyebrow:"Display Network",              titleHtml:"Display & <em>Remarketing</em>",      channelRequired:["DISPLAY"],      channelLabel:"Display",       categories:[] },
@@ -1529,6 +1597,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>`;
     }
 
+    function buildFeedSummary(fs) {
+      if (!fs || !fs.top_products || fs.top_products.length === 0) return "";
+      const convRate = fs.products_active > 0
+        ? Math.round(fs.products_converting / fs.products_active * 100) : 0;
+      const rows = fs.top_products.map(p => `
+        <tr>
+          <td class="feed-td feed-td-title">${escHtml(p.title)}</td>
+          <td class="feed-td feed-td-num">£${p.spend.toFixed(2)}</td>
+          <td class="feed-td feed-td-num ${p.conversions > 0 ? 'feed-conv-good' : 'feed-conv-zero'}">${p.conversions > 0 ? p.conversions.toFixed(1) : '—'}</td>
+          <td class="feed-td feed-td-num">${p.ctr}%</td>
+        </tr>`).join("");
+      return `
+        <div class="feed-summary">
+          <div class="feed-summary-stats">
+            <div class="feed-stat">
+              <span class="feed-stat-num">${fs.products_active}</span>
+              <span class="feed-stat-label">Products active</span>
+            </div>
+            <div class="feed-stat">
+              <span class="feed-stat-num ${convRate >= 50 ? 'p-good' : convRate >= 25 ? 'p-ok' : 'p-poor'}">${fs.products_converting}</span>
+              <span class="feed-stat-label">Converting (${convRate}%)</span>
+            </div>
+            <div class="feed-stat">
+              <span class="feed-stat-num">£${fs.total_spend.toFixed(0)}</span>
+              <span class="feed-stat-label">Product spend</span>
+            </div>
+          </div>
+          <div class="feed-table-label">Top products by spend (last 30 days)</div>
+          <table class="feed-table">
+            <thead>
+              <tr>
+                <th class="feed-th">Product</th>
+                <th class="feed-th feed-td-num">Spend</th>
+                <th class="feed-th feed-td-num">Conv.</th>
+                <th class="feed-th feed-td-num">CTR</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
     function buildIssueCard(f) {
       const sev = f.severity.toLowerCase();
       const recHTML = f.recommendation ? `
@@ -1540,6 +1650,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ? `<div class="issue-hours">⏱ Estimated fix time: ${f.hours_estimate}h</div>` : "";
       const qsHistHTML = (f.id === "low_quality_score" && bm.qs_distribution)
         ? buildQsHistogram(bm.qs_distribution) : "";
+
+      // Feed summary card — shown on feed_wasted_spend finding (issue or pass)
+      const fs = (f.data || {}).feed_summary;
+      const feedSummaryHTML = (f.id === "feed_wasted_spend" && fs) ? buildFeedSummary(fs) : "";
+
       return `
         <div class="issue-card sev-${sev}">
           <div class="issue-sev sev-${sev}">${f.severity}</div>
@@ -1547,6 +1662,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="issue-detail">${escHtml(f.detail)}</div>
           ${recHTML}
           ${qsHistHTML}
+          ${feedSummaryHTML}
           ${hoursHTML}
         </div>`;
     }
@@ -1564,9 +1680,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const statusCol   = allPass ? "var(--green)" : (hasCritical ? "var(--red)" : "var(--orange)");
       const statusText  = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
 
+      // Feed summary — pull from feed_wasted_spend pass data if present
+      const feedPassData = catPasses.find(p => p.id === "feed_wasted_spend" && (p.data || {}).feed_summary);
+      const feedPassSummaryHTML = feedPassData ? buildFeedSummary(feedPassData.data.feed_summary) : "";
+
       const passesHTML = catPasses.length ? `
         <div class="cat-passes">
           ${catPasses.map(p => `<span class="cat-pass-item">✓ ${escHtml(p.title || p)}</span>`).join("")}
+          ${feedPassSummaryHTML}
         </div>` : "";
 
       return `
@@ -1716,14 +1837,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       { key:"conversion", eyebrow:"Foundation",                 title:"Conversion Tracking",       channelRequired:null,                            categories:["conversion_foundation"] },
       { key:"account",    eyebrow:"Budget & Structure",          title:"Account Health",            channelRequired:null,                            categories:["account_structure"] },
       { key:"search",     eyebrow:"Search Campaigns",            title:"Keywords, Ads & Quality",   channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","creative","traffic_quality"] },
-      { key:"pmax",       eyebrow:"Performance Max & Shopping",  title:"Automation & Feed Health",  channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation"] },
+      { key:"pmax",       eyebrow:"Performance Max & Shopping",  title:"Automation & Feed Health",  channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation","feed_health"] },
       { key:"demand_gen", eyebrow:"Demand Generation",           title:"Demand Gen Campaigns",      channelRequired:["DEMAND_GEN"],   channelLabel:"Demand Gen",    categories:[] },
       { key:"video",      eyebrow:"YouTube & Video",             title:"Video Campaigns",           channelRequired:["VIDEO"],        channelLabel:"Video",         categories:[] },
       { key:"display",    eyebrow:"Display Network",             title:"Display & Remarketing",     channelRequired:["DISPLAY"],      channelLabel:"Display",       categories:[] },
     ];
     const PDF_CAT_ICONS = {
       conversion_foundation: "🎯", account_structure: "🏗", keyword_hygiene: "🔑",
-      ai_automation: "🤖", creative: "✏️", traffic_quality: "📊",
+      ai_automation: "🤖", feed_health: "📦", creative: "✏️", traffic_quality: "📊",
     };
     const pdfActiveChannels  = ((data.metadata || {}).active_channel_types) || [];
     const pdfHasChannelData  = pdfActiveChannels.length > 0;
