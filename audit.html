@@ -336,90 +336,254 @@
     /* ── Report ───────────────────────────────────────────────────── */
     #report-section { display: none; }
 
-    .report-header {
+    .report-header { padding: 52px 0 0; }
+
+    .report-top-meta {
+      font-size: 12px;
+      color: var(--mid);
       margin-bottom: 32px;
     }
 
-    .score-block {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      margin-bottom: 24px;
+    /* Score hero */
+    .score-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 12px;
     }
 
-    .score-circle {
-      width: 88px; height: 88px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column;
-      font-size: 28px;
-      font-weight: 800;
+    .score-display {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .score-num {
+      font-size: 88px;
+      font-weight: 700;
+      letter-spacing: -5px;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .score-denom {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--mid);
+      letter-spacing: -1px;
+      padding-bottom: 14px;
+    }
+
+    .score-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 3px;
       color: var(--white);
+    }
+
+    .score-tag.excellent { background: var(--green); }
+    .score-tag.good      { background: #558B2F; }
+    .score-tag.average   { background: var(--orange); }
+    .score-tag.poor      { background: #BF360C; }
+    .score-tag.critical  { background: var(--red); }
+
+    /* Performance metrics */
+    .perf-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 40px 0;
+    }
+
+    .perf-item {
+      padding: 22px 24px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .perf-item:nth-child(3n) { border-right: none; }
+    .perf-item:nth-last-child(-n+3) { border-bottom: none; }
+
+    .perf-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 14px;
+    }
+
+    .perf-value {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      color: var(--ink);
+      border-bottom: 2.5px solid var(--amber);
+      display: inline-block;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    .perf-value.p-good { color: var(--green); border-color: var(--green); }
+    .perf-value.p-ok   { color: var(--orange); border-color: var(--orange); }
+    .perf-value.p-poor { color: var(--red); border-color: var(--red); }
+
+    .perf-tier {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .perf-tier.p-good { color: var(--green); }
+    .perf-tier.p-ok   { color: var(--orange); }
+    .perf-tier.p-poor { color: var(--red); }
+    .perf-tier.p-neutral { color: var(--mid); }
+
+    .perf-bench { font-size: 11px; color: var(--mid); line-height: 1.4; }
+
+    /* IS split sub-row */
+    .is-split {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .is-split-item {
+      font-size: 10px;
+      color: var(--mid);
+      line-height: 1.4;
+    }
+    .is-split-item strong { color: var(--ink); }
+
+    /* QS histogram */
+    .qs-histogram {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .qs-hist-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 10px;
+    }
+    .qs-hist-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 60px;
+    }
+    .qs-hist-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .qs-hist-bar {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      min-height: 2px;
+    }
+    .qs-hist-bar.bar-poor   { background: var(--red); opacity: 0.8; }
+    .qs-hist-bar.bar-ok     { background: var(--orange); opacity: 0.8; }
+    .qs-hist-bar.bar-good   { background: var(--green); opacity: 0.8; }
+    .qs-hist-bar.bar-bench  { background: #C8C8C8; opacity: 0.5; }
+    .qs-hist-tick {
+      font-size: 9px;
+      color: var(--mid);
+      font-weight: 600;
+    }
+    .qs-hist-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .qs-hist-legend-item {
+      font-size: 10px;
+      color: var(--mid);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .qs-hist-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
       flex-shrink: 0;
     }
 
-    .score-circle small {
-      font-size: 11px;
-      font-weight: 500;
-      opacity: 0.85;
-      letter-spacing: 0.05em;
+    /* At-a-glance counts */
+    .glance-stats {
+      display: flex;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
     }
 
-    .score-circle.excellent { background: var(--green); }
-    .score-circle.good { background: #558B2F; }
-    .score-circle.average { background: var(--orange); }
-    .score-circle.poor { background: #BF360C; }
-    .score-circle.critical { background: var(--red); }
+    .glance-stat { flex: 1; }
 
-    .score-meta h2 {
-      font-size: 20px;
+    .glance-num {
+      font-size: 40px;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 4px;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 7px;
     }
 
-    .score-meta p {
-      font-size: 14px;
+    .glance-num.g-critical { color: var(--red); }
+    .glance-num.g-high     { color: var(--orange); }
+    .glance-num.g-medium   { color: #D97706; }
+    .glance-num.g-passing  { color: var(--green); }
+
+    .glance-label {
+      font-size: 12px;
       color: var(--mid);
+      font-weight: 500;
+      letter-spacing: 0.02em;
     }
 
-    .headline-box {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--amber);
-      border-radius: 8px;
-      padding: 16px 20px;
-      font-size: 15px;
-      color: var(--ink);
-      line-height: 1.55;
-      margin-bottom: 32px;
+    /* Headline */
+    .report-headline {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--mid);
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
     }
 
-    /* ── Summary pills ───────────────────────────────────────────── */
-    .summary-pills {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 32px;
+    /* Section eyebrow */
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 24px;
     }
 
-    .pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid;
-    }
-
-    .pill-critical { background: #FFEBEE; color: #C62828; border-color: #FFCDD2; }
-    .pill-high     { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; }
-    .pill-medium   { background: #FFFDE7; color: #F57F17; border-color: #FFF9C4; }
-    .pill-pass     { background: #E8F5E9; color: #2E7D32; border-color: #C8E6C9; }
-
-    /* ── Issues list ──────────────────────────────────────────────── */
+    /* Section title (feedback) */
     .section-title {
       font-size: 13px;
       font-weight: 700;
@@ -429,165 +593,143 @@
       margin-bottom: 16px;
     }
 
-    .issues-list { margin-bottom: 32px; }
+    /* Priority actions */
+    .priority-block { margin-bottom: 56px; }
 
-    .issue-card {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 10px;
+    .priority-row {
       display: flex;
-      gap: 14px;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
       align-items: flex-start;
     }
 
-    .issue-badge {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 4px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
+    .priority-row:last-child { border-bottom: none; }
 
-    .badge-critical { background: #FFEBEE; color: #C62828; }
-    .badge-high     { background: #FFF3E0; color: #E65100; }
-    .badge-medium   { background: #FFFDE7; color: #F57F17; }
-
-    .issue-content h4 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-
-    .issue-content p {
-      font-size: 13px;
-      color: var(--mid);
-      line-height: 1.5;
-    }
-
-    /* ── Priority actions ─────────────────────────────────────────── */
-    .priority-actions {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 32px;
-    }
-
-    .priority-actions .section-title { margin-bottom: 16px; }
-
-    .action-item {
-      display: flex;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      color: var(--ink);
-      line-height: 1.5;
-    }
-
-    .action-item:last-child { border-bottom: none; }
-
-    .action-num {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: var(--amber);
-      color: var(--white);
+    .priority-n {
       font-size: 11px;
       font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
+      color: var(--amber);
+      padding-top: 3px;
+      width: 16px;
       flex-shrink: 0;
-      margin-top: 1px;
     }
 
-    /* ── Passes ───────────────────────────────────────────────────── */
-    .passes-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 32px;
+    .priority-text {
+      font-size: 15px;
+      color: var(--ink);
+      line-height: 1.65;
     }
 
-    .pass-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--green);
-      background: #E8F5E9;
-      border: 1px solid #C8E6C9;
-      border-radius: 8px;
-      padding: 10px 14px;
+    /* Findings */
+    .findings-block { margin-bottom: 48px; }
+
+    .category-section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
     }
 
-    .pass-icon { font-size: 14px; }
+    .category-section:last-child { border-bottom: none; }
 
-    /* ── Category sections ────────────────────────────────────────── */
-    .audit-categories { margin-bottom: 24px; }
-
-    .category-section { margin-bottom: 28px; }
-
-    .category-header {
+    .category-hdr {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1.5px solid var(--border);
     }
 
-    .category-icon { font-size: 15px; line-height: 1; }
-    .category-title { font-size: 14px; font-weight: 700; color: var(--ink); }
-    .category-status { margin-left: auto; font-size: 12px; font-weight: 600; }
-
-    .issue-recommendation {
-      margin-top: 8px;
-      font-size: 12px;
+    .category-hdr-name {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       color: var(--ink);
-      background: var(--light);
-      border-left: 2px solid var(--amber);
-      border-radius: 0 6px 6px 0;
-      padding: 8px 12px;
-      line-height: 1.5;
     }
 
-    .issue-rec-label {
+    .category-hdr-status {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Issue card */
+    .issue-card {
+      margin-top: 20px;
+      padding: 22px 24px;
+      border: 1px solid var(--border);
+      border-left-width: 3px;
+      border-radius: 10px;
+      background: var(--white);
+    }
+
+    .issue-card.sev-critical { border-left-color: var(--red); }
+    .issue-card.sev-high     { border-left-color: var(--orange); }
+    .issue-card.sev-medium   { border-left-color: #D97706; }
+
+    .issue-sev {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .issue-sev.sev-critical { color: var(--red); }
+    .issue-sev.sev-high     { color: var(--orange); }
+    .issue-sev.sev-medium   { color: #D97706; }
+
+    .issue-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .issue-detail {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .issue-fix-block {
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+    }
+
+    .issue-fix-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--amber);
-      display: block;
-      margin-bottom: 3px;
+      margin-bottom: 6px;
     }
 
-    .issue-hours {
-      font-size: 11px;
-      color: var(--mid);
-      margin-top: 6px;
+    .issue-fix-text {
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.65;
     }
 
+    .issue-hours { font-size: 12px; color: var(--mid); }
+
+    /* Pass items */
     .cat-passes {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 16px 24px;
+      margin-top: 20px;
     }
 
     .cat-pass-item {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
+      gap: 7px;
+      font-size: 13px;
       color: var(--green);
-      background: #E8F5E9;
-      border: 1px solid #C8E6C9;
-      border-radius: 20px;
-      padding: 4px 12px;
     }
 
     /* ── Lead CTA ────────────────────────────────────────────────── */
@@ -758,49 +900,7 @@
       display: none;
     }
 
-    /* ── Benchmark strip ─────────────────────────────────────────── */
-    .benchmark-strip {
-      display: flex;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 16px 0 20px;
-    }
 
-    .bm-item {
-      flex: 1;
-      padding: 12px 16px;
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .bm-item:last-child { border-right: none; }
-
-    .bm-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--mid);
-    }
-
-    .bm-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--ink);
-      line-height: 1.1;
-    }
-
-    .bm-good { color: var(--green); }
-    .bm-ok   { color: var(--orange); }
-    .bm-poor { color: var(--red); }
-
-    .bm-vs {
-      font-size: 11px;
-      color: var(--mid);
-    }
 
     /* ── Landing hero ─────────────────────────────────────────────── */
     .landing-cta {
@@ -882,17 +982,24 @@
     }
 
     /* ── Responsive ───────────────────────────────────────────────── */
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       nav { padding: 0 20px; }
       .card { padding: 28px 20px; }
-      .passes-list { grid-template-columns: 1fr; }
-      .score-block { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .score-num { font-size: 64px; letter-spacing: -3px; }
+      .perf-grid { grid-template-columns: 1fr 1fr; }
+      .perf-item:nth-child(3n) { border-right: 1px solid var(--border); }
+      .perf-item:nth-child(2n) { border-right: none; }
+      .perf-item:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+      .perf-item:nth-last-child(-n+2) { border-bottom: none; }
+      .glance-stats { flex-wrap: wrap; gap: 24px; padding: 28px 0; }
+      .glance-stat { flex: 0 0 40%; }
       .lead-cta { flex-direction: column; padding: 24px; }
       .lead-cta-btn { width: 100%; justify-content: center; }
       .landing-cta { width: 100%; justify-content: center; }
       .landing-features { grid-template-columns: 1fr; }
       .feature-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
       .feature-col { padding: 22px 24px; }
+      .cat-passes { gap: 12px; }
     }
 
   </style>
@@ -1203,6 +1310,276 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     section.style.display = "block";
   }
 
+
+  function buildReportHTML(d) {
+    const score      = d.score || 0;
+    const summary    = d.summary || {};
+    const categories = d.categories || {};
+    const narrative  = d.narrative || {};
+    const headline   = narrative.headline || "";
+    const actions    = narrative.priority_actions || [];
+
+    const scoreClass = score >= 80 ? "excellent"
+                     : score >= 65 ? "good"
+                     : score >= 45 ? "average"
+                     : score >= 25 ? "poor"
+                     : "critical";
+
+    const scoreTagText = score >= 80 ? "Strong Account"
+                       : score >= 65 ? "Good Account"
+                       : score >= 45 ? "Needs Attention"
+                       : score >= 25 ? "Poor Health"
+                       : "Needs Immediate Attention";
+
+    const CATEGORY_ORDER = [
+      "conversion_foundation", "account_structure", "keyword_hygiene",
+      "ai_automation", "creative", "traffic_quality",
+    ];
+    const CATEGORY_ICONS = {
+      conversion_foundation: "🎯",
+      account_structure:     "🏗",
+      keyword_hygiene:       "🔑",
+      ai_automation:         "🤖",
+      creative:              "✏️",
+      traffic_quality:       "📊",
+    };
+
+    const meta = d.metadata || {};
+    const bm   = meta.benchmarks || {};
+
+    function bmClass(val, good, ok) {
+      if (val === null || val === undefined) return "";
+      return val >= good ? "p-good" : val >= ok ? "p-ok" : "p-poor";
+    }
+
+    function bmTier(val, good, ok, labels) {
+      if (val === null || val === undefined) return "";
+      const [goodLabel, okLabel, poorLabel] = labels;
+      if (val >= good) return `<span class="perf-tier p-good">${goodLabel}</span>`;
+      if (val >= ok)   return `<span class="perf-tier p-ok">${okLabel}</span>`;
+      return `<span class="perf-tier p-poor">${poorLabel}</span>`;
+    }
+
+    const currency = "£";
+    const hasBm = bm.ctr != null || bm.cvr != null || bm.is_acquired != null;
+
+    const perfGridHTML = hasBm ? `
+      <div class="perf-grid">
+        ${bm.ctr != null ? `<div class="perf-item">
+          <span class="perf-label">Click-through Rate</span>
+          <span class="perf-value ${bmClass(bm.ctr, 5, 2)}">${bm.ctr}%</span>
+          ${bmTier(bm.ctr, 5, 2, ["Strong", "Average", "Below average"])}
+          <span class="perf-bench">Target ≥ 5% (Search)</span>
+        </div>` : ""}
+        ${bm.avg_qs != null ? `<div class="perf-item">
+          <span class="perf-label">Avg. Quality Score</span>
+          <span class="perf-value ${bmClass(bm.avg_qs, 7, 5)}">${bm.avg_qs}</span>
+          ${bmTier(bm.avg_qs, 7, 5, ["Good", "Average", "Needs work"])}
+          <span class="perf-bench">Target ≥ 7 / 10</span>
+        </div>` : ""}
+        ${bm.is_acquired != null ? `<div class="perf-item">
+          <span class="perf-label">Impression Share</span>
+          <span class="perf-value ${bmClass(bm.is_acquired, 70, 50)}">${bm.is_acquired}%</span>
+          ${bmTier(bm.is_acquired, 70, 50, ["Healthy", "Moderate", "Concerning"])}
+          <div class="is-split">
+            ${bm.is_lost_budget != null ? `<span class="is-split-item"><strong>${bm.is_lost_budget}%</strong> lost to budget</span>` : ""}
+            ${bm.is_lost_rank   != null ? `<span class="is-split-item"><strong>${bm.is_lost_rank}%</strong> lost to rank</span>` : ""}
+          </div>
+        </div>` : ""}
+        ${bm.cvr != null ? `<div class="perf-item">
+          <span class="perf-label">Conversion Rate</span>
+          <span class="perf-value ${bmClass(bm.cvr, 3, 1)}">${bm.cvr}%</span>
+          ${bmTier(bm.cvr, 3, 1, ["Strong", "Average", "Below average"])}
+          <span class="perf-bench">Typical 2–4%</span>
+        </div>` : ""}
+        ${bm.avg_cpc != null ? `<div class="perf-item">
+          <span class="perf-label">Avg. Cost per Click</span>
+          <span class="perf-value">${currency}${bm.avg_cpc}</span>
+          <span class="perf-tier p-neutral">Industry varies</span>
+          <span class="perf-bench">Context-dependent</span>
+        </div>` : ""}
+        ${bm.cost_per_conv != null ? `<div class="perf-item">
+          <span class="perf-label">Cost per Conversion</span>
+          <span class="perf-value">${currency}${bm.cost_per_conv}</span>
+          <span class="perf-tier p-neutral">Industry varies</span>
+          <span class="perf-bench">Context-dependent</span>
+        </div>` : ""}
+      </div>` : "";
+
+    const glanceHTML = `
+      <div class="glance-stats">
+        ${summary.critical ? `<div class="glance-stat">
+          <div class="glance-num g-critical">${summary.critical}</div>
+          <div class="glance-label">Critical</div>
+        </div>` : ""}
+        ${summary.high ? `<div class="glance-stat">
+          <div class="glance-num g-high">${summary.high}</div>
+          <div class="glance-label">High</div>
+        </div>` : ""}
+        ${summary.medium ? `<div class="glance-stat">
+          <div class="glance-num g-medium">${summary.medium}</div>
+          <div class="glance-label">Medium</div>
+        </div>` : ""}
+        ${summary.passing ? `<div class="glance-stat">
+          <div class="glance-num g-passing">${summary.passing}</div>
+          <div class="glance-label">Passing</div>
+        </div>` : ""}
+      </div>`;
+
+    function buildQsHistogram(dist) {
+      // dist = { "1": impressions, "2": impressions, ... "10": impressions }
+      const vals = [1,2,3,4,5,6,7,8,9,10].map(i => dist[String(i)] || 0);
+      const maxVal = Math.max(...vals, 1);
+      // Industry benchmark distribution: rough shape peaking at QS 7 (normalised to same max)
+      const benchShape = [0.02, 0.04, 0.07, 0.10, 0.14, 0.17, 0.22, 0.13, 0.07, 0.02];
+      const benchMax = Math.max(...benchShape);
+      const barClass = (i) => i <= 3 ? "bar-poor" : i <= 6 ? "bar-ok" : "bar-good";
+      const bars = vals.map((v, i) => {
+        const accountH = Math.round((v / maxVal) * 56);
+        const benchH   = Math.round((benchShape[i] / benchMax) * 56);
+        return `
+          <div class="qs-hist-col">
+            <div style="display:flex;align-items:flex-end;gap:2px;height:56px;">
+              <div class="qs-hist-bar ${barClass(i+1)}" style="width:calc(50% - 1px);height:${Math.max(accountH,2)}px;" title="QS ${i+1}: ${v.toLocaleString()} impressions"></div>
+              <div class="qs-hist-bar bar-bench" style="width:calc(50% - 1px);height:${benchH}px;" title="Industry benchmark"></div>
+            </div>
+            <span class="qs-hist-tick">${i+1}</span>
+          </div>`;
+      }).join("");
+      return `
+        <div class="qs-histogram">
+          <div class="qs-hist-label">Impressions by Quality Score</div>
+          <div class="qs-hist-bars">${bars}</div>
+          <div class="qs-hist-legend">
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--red);opacity:0.8;"></span>Your account (QS 1–3)</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--orange);opacity:0.8;"></span>Your account (QS 4–6)</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--green);opacity:0.8;"></span>Your account (QS 7–10)</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:#C8C8C8;"></span>Industry benchmark</span>
+          </div>
+        </div>`;
+    }
+
+    function buildIssueCard(f) {
+      const sev = f.severity.toLowerCase();
+      const recHTML = f.recommendation ? `
+        <div class="issue-fix-block">
+          <div class="issue-fix-label">Fix</div>
+          <div class="issue-fix-text">${escHtml(f.recommendation)}</div>
+        </div>` : "";
+      const hoursHTML = f.hours_estimate
+        ? `<div class="issue-hours">⏱ Estimated fix time: ${f.hours_estimate}h</div>` : "";
+      const qsHistHTML = (f.id === "low_quality_score" && bm.qs_distribution)
+        ? buildQsHistogram(bm.qs_distribution) : "";
+      return `
+        <div class="issue-card sev-${sev}">
+          <div class="issue-sev sev-${sev}">${f.severity}</div>
+          <div class="issue-title">${escHtml(f.title)}</div>
+          <div class="issue-detail">${escHtml(f.detail)}</div>
+          ${recHTML}
+          ${qsHistHTML}
+          ${hoursHTML}
+        </div>`;
+    }
+
+    const categorySectionsHTML = CATEGORY_ORDER.map(catKey => {
+      const cat = categories[catKey];
+      if (!cat) return "";
+      const catIssues = cat.issues || [];
+      const catPasses = cat.passes || [];
+      if (catIssues.length === 0 && catPasses.length === 0) return "";
+
+      const icon        = CATEGORY_ICONS[catKey] || "•";
+      const allPass     = catIssues.length === 0;
+      const hasCritical = catIssues.some(f => f.severity === "critical");
+      const statusCol   = allPass ? "var(--green)" : (hasCritical ? "var(--red)" : "var(--orange)");
+      const statusText  = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
+
+      const passesHTML = catPasses.length ? `
+        <div class="cat-passes">
+          ${catPasses.map(p => `<span class="cat-pass-item">✓ ${escHtml(p.title || p)}</span>`).join("")}
+        </div>` : "";
+
+      return `
+        <div class="category-section">
+          <div class="category-hdr">
+            <span>${icon}</span>
+            <span class="category-hdr-name">${escHtml(cat.label)}</span>
+            <span class="category-hdr-status" style="color:${statusCol};">${statusText}</span>
+          </div>
+          ${catIssues.map(buildIssueCard).join("")}
+          ${passesHTML}
+        </div>`;
+    }).join("");
+
+    const actionsHTML = actions.map((a, i) => `
+      <div class="priority-row">
+        <span class="priority-n">${i + 1}</span>
+        <span class="priority-text">${escHtml(a)}</span>
+      </div>`).join("");
+
+    const reportDate   = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    const cidFormatted = formatCid(d.customer_id || "");
+
+    return `
+      <div class="report-actions">
+        <button class="btn-download" onclick="downloadPDF(currentAuditData)">
+          ↓ Download PDF
+        </button>
+      </div>
+
+      <div class="report-header">
+        <p class="report-top-meta">Customer ID: ${cidFormatted} · ${reportDate}</p>
+        <p class="score-eyebrow">Account Health Score</p>
+        <div class="score-display">
+          <span class="score-num">${score}</span>
+          <span class="score-denom">/100</span>
+        </div>
+        <span class="score-tag ${scoreClass}">${scoreTagText}</span>
+        ${perfGridHTML}
+        ${glanceHTML}
+      </div>
+
+      ${headline ? `<p class="report-headline">${escHtml(headline)}</p>` : ""}
+
+      ${actions.length ? `
+        <div class="priority-block">
+          <p class="section-eyebrow">Priority Actions</p>
+          ${actionsHTML}
+        </div>` : ""}
+
+      <div class="findings-block">
+        <p class="section-eyebrow">Detailed Findings</p>
+        ${categorySectionsHTML}
+      </div>
+
+      <div class="lead-cta">
+        <div class="lead-cta-copy">
+          <h3>Want help fixing these?</h3>
+          <p>I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</p>
+        </div>
+        <a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">
+          Get in touch →
+        </a>
+      </div>
+
+      <div class="feedback-section" id="feedback-section">
+        <p class="section-title">Was this report useful?</p>
+        <div class="star-row" id="star-row">
+          ${[1,2,3,4,5].map(n => `<span class="star" data-v="${n}" onclick="setRating(${n})">&#9733;</span>`).join("")}
+        </div>
+        <textarea id="feedback-comment" class="feedback-textarea" placeholder="Optional — what would make this more useful? (never shared publicly)" rows="3"></textarea>
+        <button class="btn btn-outline" onclick="submitFeedback('${d.customer_id || ''}')" id="feedback-btn" style="margin-top:8px;">
+          Send feedback
+        </button>
+        <p id="feedback-confirm" style="display:none;color:var(--green);font-size:13px;margin-top:8px;">Thanks — feedback received.</p>
+      </div>
+
+      <div class="report-restart">
+        <button onclick="resetToStart()">← Audit another account</button>
+      </div>
+    `;
+  }
+
   // ── PDF download — opens clean standalone window and prints it ────────────
   function downloadPDF(data) {
     if (!data) return;
@@ -1217,9 +1594,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
     const pdfBm      = (data.metadata || {}).benchmarks || {};
 
-    const scoreColors = { excellent: "#2E7D32", good: "#558B2F", average: "#D4691B", poor: "#BF360C", critical: "#C0392B" };
     const scoreClass  = score >= 80 ? "excellent" : score >= 65 ? "good" : score >= 45 ? "average" : score >= 25 ? "poor" : "critical";
-    const scoreBg     = scoreColors[scoreClass];
+    const scoreTag    = score >= 80 ? "Strong Account" : score >= 65 ? "Good Account" : score >= 45 ? "Needs Attention" : score >= 25 ? "Poor Health" : "Needs Immediate Attention";
+    const scoreTagBg  = { excellent: "#2E7D32", good: "#558B2F", average: "#D4691B", poor: "#BF360C", critical: "#C0392B" }[scoreClass];
 
     const CATEGORY_ORDER = [
       "conversion_foundation", "account_structure", "keyword_hygiene",
@@ -1230,24 +1607,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       ai_automation: "🤖", creative: "✏️", traffic_quality: "📊",
     };
 
+    function pdfBmClass(val, good, ok) {
+      if (val == null) return "#1A1A1A";
+      return val >= good ? "#2E7D32" : val >= ok ? "#D4691B" : "#C0392B";
+    }
+
+    function pdfBmTier(val, good, ok, labels) {
+      if (val == null) return "";
+      const [goodLabel, okLabel, poorLabel] = labels;
+      const col = pdfBmClass(val, good, ok);
+      const label = val >= good ? goodLabel : val >= ok ? okLabel : poorLabel;
+      return `<div style="font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${col};margin-bottom:5px;">${label}</div>`;
+    }
+
     function pdfIssueCard(f) {
-      const badgeBg    = f.severity === "critical" ? "#FFEBEE" : f.severity === "high" ? "#FFF3E0" : "#FFFDE7";
-      const badgeColor = f.severity === "critical" ? "#C62828" : f.severity === "high" ? "#E65100" : "#F57F17";
+      const sev = f.severity.toLowerCase();
+      const leftCol = sev === "critical" ? "#C0392B" : sev === "high" ? "#D4691B" : "#D97706";
+      const sevCol  = leftCol;
       const recHTML = f.recommendation ? `
-        <div style="margin-top:8px;font-size:12px;color:#1A1A1A;background:#F5F0EB;border-left:2px solid #985830;border-radius:0 5px 5px 0;padding:7px 11px;line-height:1.5;">
-          <span style="display:block;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#985830;margin-bottom:2px;">Fix</span>
-          ${escHtml(f.recommendation)}
+        <div style="background:#FDF6EE;border-radius:6px;padding:12px 16px;margin-bottom:10px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:5px;">Fix</div>
+          <div style="font-size:12px;color:#1A1A1A;line-height:1.6;">${escHtml(f.recommendation)}</div>
         </div>` : "";
-      const hoursHTML = f.hours_estimate ? `<div style="font-size:11px;color:#6B6B6B;margin-top:5px;">⏱ Est. fix time: ${f.hours_estimate}h</div>` : "";
+      const hoursHTML = f.hours_estimate
+        ? `<div style="font-size:11px;color:#6B6B6B;">⏱ Est. fix time: ${f.hours_estimate}h</div>` : "";
       return `
-        <div style="border:1px solid #E8D8C4;border-radius:8px;padding:13px 17px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;break-inside:avoid;">
-          <span style="font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;flex-shrink:0;margin-top:2px;background:${badgeBg};color:${badgeColor};">${f.severity}</span>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:600;color:#1A1A1A;margin-bottom:3px;">${escHtml(f.title)}</div>
-            <div style="font-size:13px;color:#6B6B6B;line-height:1.5;">${escHtml(f.detail)}</div>
-            ${recHTML}
-            ${hoursHTML}
-          </div>
+        <div style="border:1px solid #E8D8C4;border-left:3px solid ${leftCol};border-radius:9px;padding:18px 20px;margin-top:16px;break-inside:avoid;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${sevCol};margin-bottom:7px;">${f.severity}</div>
+          <div style="font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#1A1A1A;margin-bottom:7px;line-height:1.3;">${escHtml(f.title)}</div>
+          <div style="font-size:13px;color:#6B6B6B;line-height:1.65;margin-bottom:14px;">${escHtml(f.detail)}</div>
+          ${recHTML}${hoursHTML}
         </div>`;
     }
 
@@ -1257,19 +1646,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const catIssues = cat.issues || [];
       const catPasses = cat.passes || [];
       if (catIssues.length === 0 && catPasses.length === 0) return "";
-
       const allPass    = catIssues.length === 0;
       const statusCol  = allPass ? "#2E7D32" : catIssues.some(f => f.severity === "critical") ? "#C0392B" : "#D4691B";
       const statusText = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
-      const passChips  = catPasses.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${catPasses.map(p =>
-        `<span style="font-size:12px;color:#2E7D32;background:#E8F5E9;border:1px solid #C8E6C9;border-radius:20px;padding:3px 10px;">✓ ${escHtml(p.title || p)}</span>`
-      ).join("")}</div>` : "";
-
+      const passChips  = catPasses.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:16px;">
+          ${catPasses.map(p => `<span style="font-size:12px;color:#2E7D32;">✓ ${escHtml(p.title || p)}</span>`).join("")}
+        </div>` : "";
       return `
-        <div style="margin-bottom:24px;break-inside:avoid;">
-          <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px;margin-bottom:10px;border-bottom:1.5px solid #E8D8C4;">
+        <div style="padding:24px 0;border-bottom:1px solid #E8D8C4;break-inside:avoid-page;">
+          <div style="display:flex;align-items:center;gap:9px;">
             <span>${CATEGORY_ICONS[catKey] || "•"}</span>
-            <span style="font-size:13px;font-weight:700;color:#1A1A1A;">${escHtml(cat.label)}</span>
+            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;color:#1A1A1A;">${escHtml(cat.label)}</span>
             <span style="margin-left:auto;font-size:12px;font-weight:600;color:${statusCol};">${statusText}</span>
           </div>
           ${catIssues.map(pdfIssueCard).join("")}
@@ -1278,17 +1666,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }).join("");
 
     const actionsHTML = actions.map((a, i) => `
-      <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #E8D8C4;font-size:14px;color:#1A1A1A;line-height:1.5;break-inside:avoid;">
-        <div style="width:22px;height:22px;border-radius:50%;background:#985830;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i + 1}</div>
-        <span>${escHtml(a)}</span>
+      <div style="display:flex;gap:18px;padding:16px 0;border-bottom:1px solid #E8D8C4;align-items:flex-start;">
+        <span style="font-size:11px;font-weight:700;color:#985830;padding-top:3px;width:14px;flex-shrink:0;">${i + 1}</span>
+        <span style="font-size:14px;color:#1A1A1A;line-height:1.65;">${escHtml(a)}</span>
       </div>`).join("");
 
-    const pillsHTML = [
-      summary.critical && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;">⬤ ${summary.critical} Critical</span>`,
-      summary.high     && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#FFF3E0;color:#E65100;border:1px solid #FFE0B2;">⬤ ${summary.high} High</span>`,
-      summary.medium   && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#FFFDE7;color:#F57F17;border:1px solid #FFF9C4;">⬤ ${summary.medium} Medium</span>`,
-      summary.passing  && `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;">✓ ${summary.passing} Passing</span>`,
-    ].filter(Boolean).join(" ");
+    const glanceHTML = `
+      <div style="display:flex;padding:28px 0;border-top:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;margin-bottom:32px;">
+        ${summary.critical ? `<div style="flex:1;"><div style="font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;color:#C0392B;margin-bottom:5px;">${summary.critical}</div><div style="font-size:11px;color:#6B6B6B;">Critical</div></div>` : ""}
+        ${summary.high     ? `<div style="flex:1;"><div style="font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;color:#D4691B;margin-bottom:5px;">${summary.high}</div><div style="font-size:11px;color:#6B6B6B;">High</div></div>` : ""}
+        ${summary.medium   ? `<div style="flex:1;"><div style="font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;color:#D97706;margin-bottom:5px;">${summary.medium}</div><div style="font-size:11px;color:#6B6B6B;">Medium</div></div>` : ""}
+        ${summary.passing  ? `<div style="flex:1;"><div style="font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;color:#2E7D32;margin-bottom:5px;">${summary.passing}</div><div style="font-size:11px;color:#6B6B6B;">Passing</div></div>` : ""}
+      </div>`;
+
+    const perfGridHTML = (pdfBm.ctr != null || pdfBm.is_acquired != null) ? `
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #E8D8C4;border-radius:10px;overflow:hidden;margin:32px 0;">
+        ${pdfBm.ctr != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Click-through Rate</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.ctr,5,2)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.ctr,5,2)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.ctr}%</div>
+          ${pdfBmTier(pdfBm.ctr, 5, 2, ["Strong", "Average", "Below average"])}
+          <div style="font-size:10px;color:#6B6B6B;">Target ≥ 5% (Search)</div>
+        </div>` : ""}
+        ${pdfBm.avg_qs != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Avg. Quality Score</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.avg_qs,7,5)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.avg_qs,7,5)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.avg_qs}</div>
+          ${pdfBmTier(pdfBm.avg_qs, 7, 5, ["Good", "Average", "Needs work"])}
+          <div style="font-size:10px;color:#6B6B6B;">Target ≥ 7 / 10</div>
+        </div>` : ""}
+        ${pdfBm.is_acquired != null ? `<div style="padding:18px 20px;border-bottom:1px solid #E8D8C4;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Impression Share</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.is_acquired,70,50)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.is_acquired,70,50)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.is_acquired}%</div>
+          ${pdfBmTier(pdfBm.is_acquired, 70, 50, ["Healthy", "Moderate", "Concerning"])}
+          <div style="font-size:10px;color:#6B6B6B;">${pdfBm.is_lost_budget != null ? `${pdfBm.is_lost_budget}% budget · ` : ""}${pdfBm.is_lost_rank != null ? `${pdfBm.is_lost_rank}% rank` : ""}</div>
+        </div>` : ""}
+        ${pdfBm.cvr != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Conversion Rate</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.cvr,3,1)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.cvr,3,1)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.cvr}%</div>
+          ${pdfBmTier(pdfBm.cvr, 3, 1, ["Strong", "Average", "Below average"])}
+          <div style="font-size:10px;color:#6B6B6B;">Typical 2–4%</div>
+        </div>` : ""}
+        ${pdfBm.avg_cpc != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Avg. Cost per Click</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:#1A1A1A;border-bottom:2.5px solid #985830;display:inline-block;padding-bottom:3px;margin-bottom:6px;">£${pdfBm.avg_cpc}</div>
+          <div style="font-size:10px;color:#6B6B6B;margin-top:17px;">Context-dependent</div>
+        </div>` : ""}
+        ${pdfBm.cost_per_conv != null ? `<div style="padding:18px 20px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Cost per Conversion</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:#1A1A1A;border-bottom:2.5px solid #985830;display:inline-block;padding-bottom:3px;margin-bottom:6px;">£${pdfBm.cost_per_conv}</div>
+          <div style="font-size:10px;color:#6B6B6B;margin-top:17px;">Context-dependent</div>
+        </div>` : ""}
+      </div>` : "";
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -1303,7 +1730,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </head>
 <body>
   <!-- Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #985830;padding-bottom:14px;margin-bottom:32px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #985830;padding-bottom:14px;margin-bottom:36px;">
     <div style="font-weight:700;font-size:20px;color:#1A1A1A;letter-spacing:-0.01em;">Phillips<span style="color:#985830;">.</span></div>
     <div style="font-size:11px;color:#6B6B6B;text-align:right;line-height:1.7;">
       Google Ads Audit Report<br>
@@ -1313,65 +1740,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 
   <!-- Score -->
-  <div style="display:flex;align-items:center;gap:24px;margin-bottom:20px;">
-    <div style="width:80px;height:80px;border-radius:50%;background:${scoreBg};display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;">
-      <span style="font-size:26px;font-weight:800;color:#fff;line-height:1;">${score}</span>
-      <span style="font-size:10px;color:rgba(255,255,255,0.85);letter-spacing:0.05em;">/100</span>
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#985830;margin-bottom:10px;">Account Health Score</div>
+    <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:12px;">
+      <span style="font-size:72px;font-weight:700;letter-spacing:-4px;line-height:1;color:#1A1A1A;">${score}</span>
+      <span style="font-size:22px;font-weight:400;color:#6B6B6B;letter-spacing:-1px;padding-bottom:12px;">/100</span>
     </div>
-    <div>
-      <div style="font-size:19px;font-weight:700;margin-bottom:3px;">Account Health Score</div>
-      <div style="font-size:13px;color:#6B6B6B;">Customer ID: <span style="font-family:monospace;color:#985830;">${cid}</span></div>
-    </div>
+    <span style="display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 12px;border-radius:3px;color:#fff;background:${scoreTagBg};">${scoreTag}</span>
   </div>
 
-  <!-- Benchmarks -->
-  ${(pdfBm.ctr != null || pdfBm.cvr != null) ? `<div style="display:flex;border:1px solid #E8D8C4;border-radius:10px;overflow:hidden;margin-bottom:20px;">
-    ${pdfBm.ctr != null ? `<div style="flex:1;padding:11px 15px;border-right:1px solid #E8D8C4;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">CTR</div>
-      <div style="font-size:19px;font-weight:700;line-height:1.1;color:${pdfBm.ctr>=3?"#2E7D32":pdfBm.ctr>=1.5?"#D4691B":"#C0392B"};">${pdfBm.ctr}%</div>
-      <div style="font-size:11px;color:#6B6B6B;">Typical 2–5%</div>
-    </div>` : ""}
-    ${pdfBm.cvr != null ? `<div style="flex:1;padding:11px 15px;border-right:1px solid #E8D8C4;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">Conv. Rate</div>
-      <div style="font-size:19px;font-weight:700;line-height:1.1;color:${pdfBm.cvr>=3?"#2E7D32":pdfBm.cvr>=1?"#D4691B":"#C0392B"};">${pdfBm.cvr}%</div>
-      <div style="font-size:11px;color:#6B6B6B;">Typical 2–4%</div>
-    </div>` : ""}
-    ${pdfBm.avg_cpc != null ? `<div style="flex:1;padding:11px 15px;border-right:1px solid #E8D8C4;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">Avg. CPC</div>
-      <div style="font-size:19px;font-weight:700;line-height:1.1;color:#1A1A1A;">£${pdfBm.avg_cpc}</div>
-      <div style="font-size:11px;color:#6B6B6B;">Varies by industry</div>
-    </div>` : ""}
-    ${pdfBm.cost_per_conv != null ? `<div style="flex:1;padding:11px 15px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">Cost / Conv.</div>
-      <div style="font-size:19px;font-weight:700;line-height:1.1;color:#1A1A1A;">£${pdfBm.cost_per_conv}</div>
-      <div style="font-size:11px;color:#6B6B6B;">Varies by industry</div>
-    </div>` : ""}
-  </div>` : ""}
+  <!-- Performance metrics -->
+  ${perfGridHTML}
 
-  <!-- Pills -->
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">${pillsHTML}</div>
+  <!-- At a glance -->
+  ${glanceHTML}
 
   ${headline ? `
   <!-- Headline -->
-  <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-left:3px solid #985830;border-radius:8px;padding:14px 18px;font-size:14px;color:#1A1A1A;line-height:1.55;margin-bottom:28px;">${escHtml(headline)}</div>` : ""}
+  <p style="font-size:15px;line-height:1.75;color:#6B6B6B;padding-bottom:32px;border-bottom:1px solid #E8D8C4;margin-bottom:36px;">${escHtml(headline)}</p>` : ""}
 
   ${actions.length ? `
   <!-- Priority actions -->
-  <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-radius:10px;padding:20px 24px;margin-bottom:28px;break-inside:avoid;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:14px;">Priority Actions</div>
+  <div style="margin-bottom:40px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#985830;margin-bottom:20px;">Priority Actions</div>
     ${actionsHTML}
   </div>` : ""}
 
-  <!-- Audit by category -->
+  <!-- Detailed findings -->
+  <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#985830;margin-bottom:20px;">Detailed Findings</div>
   ${categorySectionsHTML}
 
   <!-- Lead CTA -->
-  <div style="background:#1A1A1A;border-radius:12px;padding:28px 32px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:24px;break-inside:avoid;">
+  <div style="background:#1A1A1A;border-radius:12px;padding:28px 32px;margin:32px 0;display:flex;align-items:center;justify-content:space-between;gap:24px;break-inside:avoid;">
     <div>
-      <div style="font-size:17px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;margin-bottom:6px;">Want help fixing these?</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.55;max-width:400px;">I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</div>
+      <div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.02em;margin-bottom:6px;">Want help fixing these?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;max-width:400px;">I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</div>
     </div>
-    <a href="mailto:lewis@phillips-uk.com?subject=Google%20Ads%20Audit%20Enquiry%20%E2%80%94%20CID%20${encodeURIComponent(cid)}&body=Hi%20Lewis%2C%0A%0AI%20just%20ran%20an%20audit%20of%20my%20Google%20Ads%20account%20and%20would%20like%20to%20discuss%20the%20findings.%0A%0ACID%3A%20${encodeURIComponent(cid)}" style="display:inline-flex;align-items:center;gap:7px;background:#985830;color:#FFFFFF;border-radius:8px;padding:12px 20px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;">Get in touch →</a>
+    <a href="mailto:lewis@phillips-uk.com?subject=Google%20Ads%20Audit%20Enquiry%20%E2%80%94%20CID%20${encodeURIComponent(cid)}&body=Hi%20Lewis%2C%0A%0AI%20just%20ran%20an%20audit%20of%20my%20Google%20Ads%20account%20and%20would%20like%20to%20discuss%20the%20findings.%0A%0ACID%3A%20${encodeURIComponent(cid)}" style="display:inline-flex;align-items:center;gap:7px;background:#985830;color:#fff;border-radius:6px;padding:11px 20px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;">Get in touch →</a>
   </div>
 
   <!-- Footer -->
@@ -1389,199 +1794,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     setTimeout(() => { win.print(); }, 400);
   }
 
-  function buildReportHTML(d) {
-    const score      = d.score || 0;
-    const summary    = d.summary || {};
-    const categories = d.categories || {};
-    const narrative  = d.narrative || {};
-    const headline   = narrative.headline || "";
-    const actions    = narrative.priority_actions || [];
-
-    const scoreClass = score >= 80 ? "excellent"
-                     : score >= 65 ? "good"
-                     : score >= 45 ? "average"
-                     : score >= 25 ? "poor"
-                     : "critical";
-
-    const CATEGORY_ORDER = [
-      "conversion_foundation", "account_structure", "keyword_hygiene",
-      "ai_automation", "creative", "traffic_quality",
-    ];
-    const CATEGORY_ICONS = {
-      conversion_foundation: "🎯",
-      account_structure:     "🏗",
-      keyword_hygiene:       "🔑",
-      ai_automation:         "🤖",
-      creative:              "✏️",
-      traffic_quality:       "📊",
-    };
-
-    // Benchmark strip
-    const meta = d.metadata || {};
-    const bm   = meta.benchmarks || {};
-    function bmClass(val, good, ok) {
-      if (val === null || val === undefined) return "";
-      return val >= good ? "bm-good" : val >= ok ? "bm-ok" : "bm-poor";
-    }
-    const currency = "£";
-    const benchmarkStripHTML = (bm.ctr != null || bm.cvr != null) ? `
-      <div class="benchmark-strip">
-        ${bm.ctr != null ? `<div class="bm-item">
-          <span class="bm-label">CTR</span>
-          <span class="bm-value ${bmClass(bm.ctr, 3, 1.5)}">${bm.ctr}%</span>
-          <span class="bm-vs">Typical 2–5%</span>
-        </div>` : ""}
-        ${bm.cvr != null ? `<div class="bm-item">
-          <span class="bm-label">Conv. Rate</span>
-          <span class="bm-value ${bmClass(bm.cvr, 3, 1)}">${bm.cvr}%</span>
-          <span class="bm-vs">Typical 2–4%</span>
-        </div>` : ""}
-        ${bm.avg_cpc != null ? `<div class="bm-item">
-          <span class="bm-label">Avg. CPC</span>
-          <span class="bm-value">${currency}${bm.avg_cpc}</span>
-          <span class="bm-vs">Varies by industry</span>
-        </div>` : ""}
-        ${bm.cost_per_conv != null ? `<div class="bm-item">
-          <span class="bm-label">Cost / Conv.</span>
-          <span class="bm-value">${currency}${bm.cost_per_conv}</span>
-          <span class="bm-vs">Varies by industry</span>
-        </div>` : ""}
-      </div>` : "";
-
-    function buildIssueCard(f) {
-      const recHTML = f.recommendation ? `
-        <div class="issue-recommendation">
-          <span class="issue-rec-label">Fix</span>
-          ${escHtml(f.recommendation)}
-        </div>` : "";
-      const hoursHTML = f.hours_estimate ? `<div class="issue-hours">⏱ Est. fix time: ${f.hours_estimate}h</div>` : "";
-      return `
-        <div class="issue-card">
-          <span class="issue-badge badge-${f.severity.toLowerCase()}">${f.severity}</span>
-          <div class="issue-content">
-            <h4>${escHtml(f.title)}</h4>
-            <p>${escHtml(f.detail)}</p>
-            ${recHTML}
-            ${hoursHTML}
-          </div>
-        </div>`;
-    }
-
-    const categorySectionsHTML = CATEGORY_ORDER.map(catKey => {
-      const cat = categories[catKey];
-      if (!cat) return "";
-      const catIssues = cat.issues || [];
-      const catPasses = cat.passes || [];
-      if (catIssues.length === 0 && catPasses.length === 0) return "";
-
-      const icon = CATEGORY_ICONS[catKey] || "•";
-      const allPass = catIssues.length === 0;
-      const hasCritical = catIssues.some(f => f.severity === "critical");
-      const statusColour = allPass ? "var(--green)" : (hasCritical ? "var(--red)" : "var(--orange)");
-      const statusText   = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
-
-      const catPassesHTML = catPasses.length ? `
-        <div class="cat-passes">
-          ${catPasses.map(p => `<div class="cat-pass-item"><span>✓</span>${escHtml(p.title || p)}</div>`).join("")}
-        </div>` : "";
-
-      return `
-        <div class="category-section">
-          <div class="category-header">
-            <span class="category-icon">${icon}</span>
-            <span class="category-title">${escHtml(cat.label)}</span>
-            <span class="category-status" style="color:${statusColour};">${statusText}</span>
-          </div>
-          ${catIssues.map(buildIssueCard).join("")}
-          ${catPassesHTML}
-        </div>`;
-    }).join("");
-
-    const actionsHTML = actions.map((a, i) => `
-      <div class="action-item">
-        <div class="action-num">${i + 1}</div>
-        <span>${escHtml(a)}</span>
-      </div>
-    `).join("");
-
-    const pillsHTML = [
-      summary.critical && `<div class="pill pill-critical">⬤ ${summary.critical} Critical</div>`,
-      summary.high     && `<div class="pill pill-high">⬤ ${summary.high} High</div>`,
-      summary.medium   && `<div class="pill pill-medium">⬤ ${summary.medium} Medium</div>`,
-      summary.passing  && `<div class="pill pill-pass">✓ ${summary.passing} Passing</div>`,
-    ].filter(Boolean).join("");
-
-    const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-    const cidFormatted = formatCid(d.customer_id || "");
-
-    return `
-      <div class="print-header">
-        <div class="print-header-brand">Phillips<span>.</span></div>
-        <div class="print-header-meta">
-          Google Ads Audit Report<br>
-          CID: ${cidFormatted} &nbsp;·&nbsp; ${reportDate}
-        </div>
-      </div>
-
-      <div class="report-actions">
-        <button class="btn-download" onclick="downloadPDF(currentAuditData)">
-          ↓ Download PDF
-        </button>
-      </div>
-
-      <div class="report-header">
-        <div class="score-block">
-          <div class="score-circle ${scoreClass}">
-            ${score}<small>/100</small>
-          </div>
-          <div class="score-meta">
-            <h2>Account Health Score</h2>
-            <p>Customer ID: <span style="font-family:monospace;color:var(--amber);">${cidFormatted}</span></p>
-          </div>
-        </div>
-        ${benchmarkStripHTML}
-        <div class="summary-pills">${pillsHTML}</div>
-        ${headline ? `<div class="headline-box">${escHtml(headline)}</div>` : ""}
-      </div>
-
-      ${actions.length ? `
-        <div class="priority-actions">
-          <p class="section-title">Priority Actions</p>
-          ${actionsHTML}
-        </div>
-      ` : ""}
-
-      <div class="audit-categories">
-        ${categorySectionsHTML}
-      </div>
-
-      <div class="lead-cta">
-        <div class="lead-cta-copy">
-          <h3>Want help fixing these?</h3>
-          <p>I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</p>
-        </div>
-        <a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">
-          Get in touch →
-        </a>
-      </div>
-
-      <div class="feedback-section" id="feedback-section">
-        <p class="section-title">Was this report useful?</p>
-        <div class="star-row" id="star-row">
-          ${[1,2,3,4,5].map(n => `<span class="star" data-v="${n}" onclick="setRating(${n})">★</span>`).join("")}
-        </div>
-        <textarea id="feedback-comment" class="feedback-textarea" placeholder="Optional — what would make this more useful? (never shared publicly)" rows="3"></textarea>
-        <button class="btn btn-outline" onclick="submitFeedback('${d.customer_id || ''}')" id="feedback-btn" style="margin-top:8px;">
-          Send feedback
-        </button>
-        <p id="feedback-confirm" style="display:none;color:var(--green);font-size:13px;margin-top:8px;">Thanks — feedback received.</p>
-      </div>
-
-      <div class="report-restart">
-        <button onclick="resetToStart()">← Audit another account</button>
-      </div>
-    `;
-  }
 
   // ── UI helpers ────────────────────────────────────────────────────────────
   function showSection(id) {
