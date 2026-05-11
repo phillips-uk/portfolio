@@ -758,6 +758,85 @@
       display: none;
     }
 
+    /* ── Landing hero ─────────────────────────────────────────────── */
+    .landing-cta {
+      width: auto;
+      margin-top: 28px;
+    }
+
+    .landing-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 40px 0 24px;
+    }
+
+    .feature-col {
+      padding: 28px 32px;
+    }
+
+    .feature-col:first-child {
+      border-right: 1px solid var(--border);
+    }
+
+    .feature-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .feature-list li .feat-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      line-height: 1;
+    }
+
+    .feature-list li .feat-pass {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--green);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .why-free {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.55;
+      margin-bottom: 40px;
+    }
+
+    .why-free-q {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
     /* ── Responsive ───────────────────────────────────────────────── */
     @media (max-width: 600px) {
       nav { padding: 0 20px; }
@@ -766,6 +845,10 @@
       .score-block { flex-direction: column; align-items: flex-start; gap: 16px; }
       .lead-cta { flex-direction: column; padding: 24px; }
       .lead-cta-btn { width: 100%; justify-content: center; }
+      .landing-cta { width: 100%; justify-content: center; }
+      .landing-features { grid-template-columns: 1fr; }
+      .feature-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+      .feature-col { padding: 22px 24px; }
     }
 
   </style>
@@ -794,12 +877,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <main>
   <div class="container">
 
-    <!-- Hero -->
-    <div class="hero">
-      <div class="hero-tag">Free Account Audit</div>
-      <h1>Your Google Ads account,<br><span>honestly assessed.</span></h1>
-      <p>Connect your account and get a priority-ordered report — what's working, what's wasting budget, and what to fix first.</p>
-    </div>
+    <!-- Landing hero — hidden after CID entry -->
+    <div id="landing-hero">
+
+      <div class="hero">
+        <div class="hero-tag">Free · Read-only · Results in ~60 seconds</div>
+        <h1>Your Google Ads account,<br><span>honestly assessed.</span></h1>
+        <p>Connect your account and get a full diagnostic in under a minute — grouped by what matters, with a specific fix for every issue found.</p>
+        <button class="btn btn-primary landing-cta" onclick="scrollToForm()">
+          Run my audit
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="landing-features">
+        <div class="feature-col">
+          <p class="feature-col-title">What gets checked</p>
+          <ul class="feature-list">
+            <li><span class="feat-icon">🎯</span><span>Conversion tracking — is it recording correctly?</span></li>
+            <li><span class="feat-icon">🏗</span><span>Account structure — budget, spend &amp; learning phase</span></li>
+            <li><span class="feat-icon">🔑</span><span>Keyword hygiene — quality scores, duplicates, negatives</span></li>
+            <li><span class="feat-icon">🤖</span><span>AI &amp; automation — Smart Bidding setup &amp; PMax assets</span></li>
+            <li><span class="feat-icon">✏️</span><span>Ad creative — RSA strength, ad variety &amp; extensions</span></li>
+            <li><span class="feat-icon">📊</span><span>Traffic quality — wasted queries &amp; attribution model</span></li>
+          </ul>
+        </div>
+        <div class="feature-col">
+          <p class="feature-col-title">What you receive</p>
+          <ul class="feature-list">
+            <li><span class="feat-pass">✓</span><span>Account health score (0–100)</span></li>
+            <li><span class="feat-pass">✓</span><span>Issues ranked by severity and impact</span></li>
+            <li><span class="feat-pass">✓</span><span>A specific fix recommendation for every issue</span></li>
+            <li><span class="feat-pass">✓</span><span>Estimated hours to fix each one</span></li>
+            <li><span class="feat-pass">✓</span><span>Downloadable PDF to share or take to a meeting</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="why-free">
+        <span class="why-free-q">Why is this free?</span> It's a working demo of my audit methodology. If it finds real problems in your account, you know where to reach me.
+      </div>
+
+    </div><!-- /landing-hero -->
 
     <!-- Steps -->
     <div class="steps" id="step-indicators">
@@ -872,7 +991,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="progress-icon">○</span> Pulling campaign &amp; keyword data
         </div>
         <div class="progress-step" id="prog-analyse">
-          <span class="progress-icon">○</span> Running 10 audit checks
+          <span class="progress-icon">○</span> Running audit checks across 6 categories
         </div>
         <div class="progress-step" id="prog-ai">
           <span class="progress-icon">○</span> Generating recommendations
@@ -1364,6 +1483,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   // ── UI helpers ────────────────────────────────────────────────────────────
   function showSection(id) {
+    // Landing hero: visible only on the initial CID step
+    const hero = document.getElementById("landing-hero");
+    if (hero) hero.style.display = id === "section-cid" ? "" : "none";
+
+    // Step indicators: visible during form steps, hidden during loading/report/error
+    const inDeepFlow = ["loading-section", "report-section", "error-section", "__none__"].includes(id);
+    const steps = document.getElementById("step-indicators");
+    if (steps) steps.style.display = inDeepFlow ? "none" : "flex";
+
     ["section-cid", "section-oauth", "loading-section", "report-section", "error-section"]
       .forEach(s => {
         const el = document.getElementById(s);
@@ -1378,6 +1506,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function showLoading() {
     setStep(3);
     showSection("loading-section");
+  }
+
+  function scrollToForm() {
+    document.getElementById("section-cid").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function showGlobalError(msg) {
