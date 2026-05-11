@@ -758,6 +758,50 @@
       display: none;
     }
 
+    /* ── Benchmark strip ─────────────────────────────────────────── */
+    .benchmark-strip {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0 20px;
+    }
+
+    .bm-item {
+      flex: 1;
+      padding: 12px 16px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .bm-item:last-child { border-right: none; }
+
+    .bm-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .bm-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .bm-good { color: var(--green); }
+    .bm-ok   { color: var(--orange); }
+    .bm-poor { color: var(--red); }
+
+    .bm-vs {
+      font-size: 11px;
+      color: var(--mid);
+    }
+
     /* ── Landing hero ─────────────────────────────────────────────── */
     .landing-cta {
       width: auto;
@@ -1171,6 +1215,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const cid        = formatCid(data.customer_id || "");
     const userName   = data.user_name ? escHtml(data.user_name) : "";
     const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    const pdfBm      = (data.metadata || {}).benchmarks || {};
 
     const scoreColors = { excellent: "#2E7D32", good: "#558B2F", average: "#D4691B", poor: "#BF360C", critical: "#C0392B" };
     const scoreClass  = score >= 80 ? "excellent" : score >= 65 ? "good" : score >= 45 ? "average" : score >= 25 ? "poor" : "critical";
@@ -1279,6 +1324,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
+  <!-- Benchmarks -->
+  ${(pdfBm.ctr != null || pdfBm.cvr != null) ? `<div style="display:flex;border:1px solid #E8D8C4;border-radius:10px;overflow:hidden;margin-bottom:20px;">
+    ${pdfBm.ctr != null ? `<div style="flex:1;padding:11px 15px;border-right:1px solid #E8D8C4;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">CTR</div>
+      <div style="font-size:19px;font-weight:700;line-height:1.1;color:${pdfBm.ctr>=3?"#2E7D32":pdfBm.ctr>=1.5?"#D4691B":"#C0392B"};">${pdfBm.ctr}%</div>
+      <div style="font-size:11px;color:#6B6B6B;">Typical 2–5%</div>
+    </div>` : ""}
+    ${pdfBm.cvr != null ? `<div style="flex:1;padding:11px 15px;border-right:1px solid #E8D8C4;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">Conv. Rate</div>
+      <div style="font-size:19px;font-weight:700;line-height:1.1;color:${pdfBm.cvr>=3?"#2E7D32":pdfBm.cvr>=1?"#D4691B":"#C0392B"};">${pdfBm.cvr}%</div>
+      <div style="font-size:11px;color:#6B6B6B;">Typical 2–4%</div>
+    </div>` : ""}
+    ${pdfBm.avg_cpc != null ? `<div style="flex:1;padding:11px 15px;border-right:1px solid #E8D8C4;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">Avg. CPC</div>
+      <div style="font-size:19px;font-weight:700;line-height:1.1;color:#1A1A1A;">£${pdfBm.avg_cpc}</div>
+      <div style="font-size:11px;color:#6B6B6B;">Varies by industry</div>
+    </div>` : ""}
+    ${pdfBm.cost_per_conv != null ? `<div style="flex:1;padding:11px 15px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">Cost / Conv.</div>
+      <div style="font-size:19px;font-weight:700;line-height:1.1;color:#1A1A1A;">£${pdfBm.cost_per_conv}</div>
+      <div style="font-size:11px;color:#6B6B6B;">Varies by industry</div>
+    </div>` : ""}
+  </div>` : ""}
+
   <!-- Pills -->
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">${pillsHTML}</div>
 
@@ -1346,6 +1415,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       creative:              "✏️",
       traffic_quality:       "📊",
     };
+
+    // Benchmark strip
+    const meta = d.metadata || {};
+    const bm   = meta.benchmarks || {};
+    function bmClass(val, good, ok) {
+      if (val === null || val === undefined) return "";
+      return val >= good ? "bm-good" : val >= ok ? "bm-ok" : "bm-poor";
+    }
+    const currency = "£";
+    const benchmarkStripHTML = (bm.ctr != null || bm.cvr != null) ? `
+      <div class="benchmark-strip">
+        ${bm.ctr != null ? `<div class="bm-item">
+          <span class="bm-label">CTR</span>
+          <span class="bm-value ${bmClass(bm.ctr, 3, 1.5)}">${bm.ctr}%</span>
+          <span class="bm-vs">Typical 2–5%</span>
+        </div>` : ""}
+        ${bm.cvr != null ? `<div class="bm-item">
+          <span class="bm-label">Conv. Rate</span>
+          <span class="bm-value ${bmClass(bm.cvr, 3, 1)}">${bm.cvr}%</span>
+          <span class="bm-vs">Typical 2–4%</span>
+        </div>` : ""}
+        ${bm.avg_cpc != null ? `<div class="bm-item">
+          <span class="bm-label">Avg. CPC</span>
+          <span class="bm-value">${currency}${bm.avg_cpc}</span>
+          <span class="bm-vs">Varies by industry</span>
+        </div>` : ""}
+        ${bm.cost_per_conv != null ? `<div class="bm-item">
+          <span class="bm-label">Cost / Conv.</span>
+          <span class="bm-value">${currency}${bm.cost_per_conv}</span>
+          <span class="bm-vs">Varies by industry</span>
+        </div>` : ""}
+      </div>` : "";
 
     function buildIssueCard(f) {
       const recHTML = f.recommendation ? `
@@ -1438,6 +1539,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p>Customer ID: <span style="font-family:monospace;color:var(--amber);">${cidFormatted}</span></p>
           </div>
         </div>
+        ${benchmarkStripHTML}
         <div class="summary-pills">${pillsHTML}</div>
         ${headline ? `<div class="headline-box">${escHtml(headline)}</div>` : ""}
       </div>
