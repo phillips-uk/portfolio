@@ -1739,9 +1739,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="section-hero-meta">${heroMetaHTML}</div>
         </div>`;
 
-      if (!channelActive) {
-        return heroHTML + `<div class="no-active-banner">No ${sec.channelLabel || "campaigns of this type"} are currently active in this account.</div>`;
-      }
+      if (!channelActive) return "";
 
       const catBlocksHTML = sec.categories.map(buildCategoryBlock).join("");
       return heroHTML + catBlocksHTML;
@@ -1938,9 +1936,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="font-size:11px;font-weight:700;color:${heroStatusCol};">${heroStatusText}</div>
         </div>`;
 
-      if (!channelActive) {
-        return sectionHero + `<p style="padding:20px 0 4px;font-size:12px;color:#6B6B6B;font-style:italic;">No ${sec.channelLabel || "campaigns of this type"} are currently active in this account.</p>`;
-      }
+      if (!channelActive) return "";
 
       const catBlocksHTML = sec.categories.map(pdfCatBlock).join("");
       return sectionHero + catBlocksHTML;
