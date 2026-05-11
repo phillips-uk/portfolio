@@ -590,12 +590,70 @@
       padding: 4px 12px;
     }
 
-    /* ── CTA ──────────────────────────────────────────────────────── */
-    .report-cta {
-      border-top: 1px solid var(--border);
-      padding-top: 28px;
-      text-align: center;
+    /* ── Lead CTA ────────────────────────────────────────────────── */
+    .lead-cta {
+      background: var(--ink);
+      border-radius: 14px;
+      padding: 32px 36px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
     }
+
+    .lead-cta-copy h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .lead-cta-copy p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.55;
+      max-width: 400px;
+    }
+
+    .lead-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--amber);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .lead-cta-btn:hover { background: var(--amber-light); }
+
+    .report-restart {
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .report-restart button {
+      background: none;
+      border: none;
+      font-size: 13px;
+      color: var(--mid);
+      cursor: pointer;
+      font-family: inherit;
+      padding: 4px 8px;
+    }
+
+    .report-restart button:hover { color: var(--amber); }
 
     /* ── Feedback ─────────────────────────────────────────────────── */
     .feedback-section {
@@ -627,20 +685,6 @@
       color: var(--text);
     }
     .feedback-textarea:focus { outline: none; border-color: var(--amber); }
-
-    .report-cta p {
-      font-size: 14px;
-      color: var(--mid);
-      margin-bottom: 16px;
-    }
-
-    .report-cta a {
-      color: var(--amber);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .report-cta a:hover { text-decoration: underline; }
 
     .btn-outline {
       background: var(--white);
@@ -720,6 +764,8 @@
       .card { padding: 28px 20px; }
       .passes-list { grid-template-columns: 1fr; }
       .score-block { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .lead-cta { flex-direction: column; padding: 24px; }
+      .lead-cta-btn { width: 100%; justify-content: center; }
     }
 
   </style>
@@ -1279,11 +1325,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ${categorySectionsHTML}
       </div>
 
-      <div class="report-cta">
-        <p>Want help acting on these findings? <a href="/#contact">Get in touch</a> — no agency pitch, just straight advice.</p>
-        <button class="btn btn-outline" onclick="resetToStart()" style="margin-top:4px;">
-          Audit another account
-        </button>
+      <div class="lead-cta">
+        <div class="lead-cta-copy">
+          <h3>Want help fixing these?</h3>
+          <p>I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</p>
+        </div>
+        <a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">
+          Get in touch →
+        </a>
       </div>
 
       <div class="feedback-section" id="feedback-section">
@@ -1296,6 +1345,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           Send feedback
         </button>
         <p id="feedback-confirm" style="display:none;color:var(--green);font-size:13px;margin-top:8px;">Thanks — feedback received.</p>
+      </div>
+
+      <div class="report-restart">
+        <button onclick="resetToStart()">← Audit another account</button>
       </div>
     `;
   }
