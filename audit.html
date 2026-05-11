@@ -1648,12 +1648,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>` : "";
       const hoursHTML = f.hours_estimate
         ? `<div class="issue-hours">⏱ Estimated fix time: ${f.hours_estimate}h</div>` : "";
-      const qsHistHTML = (f.id === "low_quality_score" && bm.qs_distribution)
+      const qsHistHTML = (f.check === "low_quality_score" && bm.qs_distribution)
         ? buildQsHistogram(bm.qs_distribution) : "";
 
       // Feed summary card — shown on feed_wasted_spend finding (issue or pass)
       const fs = (f.data || {}).feed_summary;
-      const feedSummaryHTML = (f.id === "feed_wasted_spend" && fs) ? buildFeedSummary(fs) : "";
+      const feedSummaryHTML = (f.check === "feed_wasted_spend" && fs) ? buildFeedSummary(fs) : "";
 
       return `
         <div class="issue-card sev-${sev}">
@@ -1681,7 +1681,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const statusText  = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
 
       // Feed summary — pull from feed_wasted_spend pass data if present
-      const feedPassData = catPasses.find(p => p.id === "feed_wasted_spend" && (p.data || {}).feed_summary);
+      const feedPassData = catPasses.find(p => p.check === "feed_wasted_spend" && (p.data || {}).feed_summary);
       const feedPassSummaryHTML = feedPassData ? buildFeedSummary(feedPassData.data.feed_summary) : "";
 
       const passesHTML = catPasses.length ? `
