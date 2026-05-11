@@ -1410,7 +1410,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const meta               = d.metadata || {};
     const bm                 = meta.benchmarks || {};
     const activeChannelTypes = meta.active_channel_types || [];
-    const hasSearch          = activeChannelTypes.includes("SEARCH");
+    // If the worker hasn't returned active_channel_types yet, don't gate on channels —
+    // fall back to showing any section that has category data.
+    const hasChannelData     = activeChannelTypes.length > 0;
+    const hasSearch          = hasChannelData ? activeChannelTypes.includes("SEARCH")
+                                              : Object.keys(d.categories || {}).some(k => ["keyword_hygiene","creative","traffic_quality"].includes(k));
 
     function bmClass(val, good, ok) {
       if (val === null || val === undefined) return "";
@@ -1579,8 +1583,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     const categorySectionsHTML = SECTIONS.map(sec => {
       // Is the section's channel type active?
-      const channelActive = !sec.channelRequired ||
-        sec.channelRequired.some(ch => activeChannelTypes.includes(ch));
+      // If active_channel_types not yet returned by worker, fall back to: show if any category has data.
+      const channelActive = !sec.channelRequired || (
+        hasChannelData
+          ? sec.channelRequired.some(ch => activeChannelTypes.includes(ch))
+          : sec.categories.some(catKey => !!categories[catKey])
+      );
 
       // Count issues/passes across all categories in this section
       let secIssues = 0, secPasses = 0;
@@ -1717,7 +1725,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       conversion_foundation: "🎯", account_structure: "🏗", keyword_hygiene: "🔑",
       ai_automation: "🤖", creative: "✏️", traffic_quality: "📊",
     };
-    const pdfActiveChannels = ((data.metadata || {}).active_channel_types) || [];
+    const pdfActiveChannels  = ((data.metadata || {}).active_channel_types) || [];
+    const pdfHasChannelData  = pdfActiveChannels.length > 0;
 
     function pdfBmClass(val, good, ok) {
       if (val == null) return "#1A1A1A";
@@ -1778,8 +1787,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     const categorySectionsHTML = PDF_SECTIONS.map(sec => {
-      const channelActive = !sec.channelRequired ||
-        sec.channelRequired.some(ch => pdfActiveChannels.includes(ch));
+      const channelActive = !sec.channelRequired || (
+        pdfHasChannelData
+          ? sec.channelRequired.some(ch => pdfActiveChannels.includes(ch))
+          : sec.categories.some(catKey => !!categories[catKey])
+      );
 
       let secIssues = 0;
       sec.categories.forEach(catKey => {
@@ -1827,7 +1839,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ${summary.passing  ? `<div style="flex:1;"><div style="font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;color:#2E7D32;margin-bottom:5px;">${summary.passing}</div><div style="font-size:11px;color:#6B6B6B;">Passing</div></div>` : ""}
       </div>`;
 
-    const pdfHasSearch = pdfActiveChannels.includes("SEARCH");
+    const pdfHasSearch = pdfHasChannelData
+      ? pdfActiveChannels.includes("SEARCH")
+      : Object.keys(categories).some(k => ["keyword_hygiene","creative","traffic_quality"].includes(k));
     const perfGridHTML = (pdfBm.search_ctr != null || pdfBm.cvr != null || pdfBm.is_acquired != null) ? `
       <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #E8D8C4;border-radius:10px;overflow:hidden;margin:32px 0;">
         ${pdfBm.search_ctr != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
