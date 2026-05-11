@@ -1,0 +1,19 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Route OAuth callback to the Netlify Function
+[[redirects]]
+  from = "/auth/callback"
+  to   = "/.netlify/functions/auth-callback"
+  status = 200
+
+# Redirect apex → www (belt-and-braces alongside _redirects)
+[[redirects]]
+  from = "https://phillips-uk.com/*"
+  to   = "https://www.phillips-uk.com/:splat"
+  status = 301
+  force  = true

@@ -1238,6 +1238,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       state: customerId,
     });
 
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ event: 'audit_started', customer_id: customerId });
+
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
   }
 
@@ -1308,6 +1311,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     section.innerHTML = buildReportHTML(data);
     hideAll();
     section.style.display = "block";
+
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ event: 'audit_report_viewed', score: data.score || 0 });
   }
 
 
