@@ -336,7 +336,10 @@
     /* ── Report ───────────────────────────────────────────────────── */
     #report-section { display: none; }
 
-    .report-header { padding: 52px 0 0; }
+    .report-header {
+      padding: 52px 0 0;
+      text-align: center;
+    }
 
     .report-top-meta {
       font-size: 12px;
@@ -359,6 +362,7 @@
       align-items: flex-end;
       gap: 8px;
       margin-bottom: 14px;
+      justify-content: center;
     }
 
     .score-num {
@@ -454,6 +458,52 @@
     .perf-tier.p-neutral { color: var(--mid); }
 
     .perf-bench { font-size: 11px; color: var(--mid); line-height: 1.4; }
+
+    /* ── Section hero banners ─────────────────────────────────── */
+    .section-hero {
+      background: var(--ink);
+      margin: 48px -28px 0;
+      padding: 36px 28px 30px;
+    }
+    @media (max-width: 600px) {
+      .section-hero { margin: 40px -24px 0; padding: 30px 24px 24px; }
+    }
+    .section-hero-eyebrow {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 14px;
+    }
+    .section-hero-title {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      color: #fff;
+      margin: 0;
+    }
+    .section-hero-title em {
+      color: var(--amber);
+      font-style: normal;
+    }
+    .section-hero-meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .sh-issue    { font-size: 12px; font-weight: 700; color: #ff8a80; }
+    .sh-pass     { font-size: 12px; font-weight: 700; color: #a5d6a7; }
+    .sh-inactive { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.35); }
+    .sh-sep      { font-size: 12px; color: rgba(255,255,255,0.25); }
+    .no-active-banner {
+      padding: 24px 0 8px;
+      font-size: 13px;
+      color: var(--mid);
+      font-style: italic;
+    }
 
     /* IS split sub-row */
     .is-split {
@@ -1337,10 +1387,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                        : score >= 25 ? "Poor Health"
                        : "Needs Immediate Attention";
 
-    const CATEGORY_ORDER = [
-      "conversion_foundation", "account_structure", "keyword_hygiene",
-      "ai_automation", "creative", "traffic_quality",
-    ];
     const CATEGORY_ICONS = {
       conversion_foundation: "🎯",
       account_structure:     "🏗",
@@ -1350,8 +1396,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       traffic_quality:       "📊",
     };
 
-    const meta = d.metadata || {};
-    const bm   = meta.benchmarks || {};
+    // Section structure — drives report order and hero banners
+    const SECTIONS = [
+      { key:"conversion",   eyebrow:"Foundation",                  titleHtml:"Conversion <em>Tracking</em>",        channelRequired:null,                            categories:["conversion_foundation"] },
+      { key:"account",      eyebrow:"Budget & Structure",           titleHtml:"Account <em>Health</em>",             channelRequired:null,                            categories:["account_structure"] },
+      { key:"search",       eyebrow:"Search Campaigns",             titleHtml:"Keywords, Ads & <em>Quality</em>",    channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","creative","traffic_quality"] },
+      { key:"pmax",         eyebrow:"Performance Max & Shopping",   titleHtml:"Automation & <em>Feed Health</em>",   channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation"] },
+      { key:"demand_gen",   eyebrow:"Demand Generation",            titleHtml:"Demand Gen <em>Campaigns</em>",       channelRequired:["DEMAND_GEN"],   channelLabel:"Demand Gen",    categories:[] },
+      { key:"video",        eyebrow:"YouTube & Video",              titleHtml:"Video <em>Campaigns</em>",            channelRequired:["VIDEO"],        channelLabel:"Video",         categories:[] },
+      { key:"display",      eyebrow:"Display Network",              titleHtml:"Display & <em>Remarketing</em>",      channelRequired:["DISPLAY"],      channelLabel:"Display",       categories:[] },
+    ];
+
+    const meta               = d.metadata || {};
+    const bm                 = meta.benchmarks || {};
+    const activeChannelTypes = meta.active_channel_types || [];
+    const hasSearch          = activeChannelTypes.includes("SEARCH");
 
     function bmClass(val, good, ok) {
       if (val === null || val === undefined) return "";
@@ -1367,29 +1426,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     const currency = "£";
-    const hasBm = bm.ctr != null || bm.cvr != null || bm.is_acquired != null;
+    // Show metrics grid if any relevant metric exists
+    const hasBm = bm.search_ctr != null || bm.cvr != null || bm.is_acquired != null || bm.cost_per_conv != null;
 
     const perfGridHTML = hasBm ? `
       <div class="perf-grid">
-        ${bm.ctr != null ? `<div class="perf-item">
-          <span class="perf-label">Click-through Rate</span>
-          <span class="perf-value ${bmClass(bm.ctr, 5, 2)}">${bm.ctr}%</span>
-          ${bmTier(bm.ctr, 5, 2, ["Strong", "Average", "Below average"])}
-          <span class="perf-bench">Target ≥ 5% (Search)</span>
+        ${bm.search_ctr != null ? `<div class="perf-item">
+          <span class="perf-label">Search CTR</span>
+          <span class="perf-value ${bmClass(bm.search_ctr, 5, 2)}">${bm.search_ctr}%</span>
+          ${bmTier(bm.search_ctr, 5, 2, ["Strong", "Average", "Below average"])}
+          <span class="perf-bench">Target ≥ 5% · Search only</span>
         </div>` : ""}
-        ${bm.avg_qs != null ? `<div class="perf-item">
+        ${bm.avg_qs != null && hasSearch ? `<div class="perf-item">
           <span class="perf-label">Avg. Quality Score</span>
           <span class="perf-value ${bmClass(bm.avg_qs, 7, 5)}">${bm.avg_qs}</span>
           ${bmTier(bm.avg_qs, 7, 5, ["Good", "Average", "Needs work"])}
           <span class="perf-bench">Target ≥ 7 / 10</span>
         </div>` : ""}
-        ${bm.is_acquired != null ? `<div class="perf-item">
-          <span class="perf-label">Impression Share</span>
+        ${bm.is_acquired != null && hasSearch ? `<div class="perf-item">
+          <span class="perf-label">Search Impression Share</span>
           <span class="perf-value ${bmClass(bm.is_acquired, 70, 50)}">${bm.is_acquired}%</span>
           ${bmTier(bm.is_acquired, 70, 50, ["Healthy", "Moderate", "Concerning"])}
           <div class="is-split">
-            ${bm.is_lost_budget != null ? `<span class="is-split-item"><strong>${bm.is_lost_budget}%</strong> lost to budget</span>` : ""}
-            ${bm.is_lost_rank   != null ? `<span class="is-split-item"><strong>${bm.is_lost_rank}%</strong> lost to rank</span>` : ""}
+            ${bm.is_lost_budget != null ? `<span class="is-split-item"><strong>${bm.is_lost_budget}%</strong> budget</span>` : ""}
+            ${bm.is_lost_rank   != null ? `<span class="is-split-item"><strong>${bm.is_lost_rank}%</strong> rank</span>` : ""}
           </div>
         </div>` : ""}
         ${bm.cvr != null ? `<div class="perf-item">
@@ -1401,13 +1461,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ${bm.avg_cpc != null ? `<div class="perf-item">
           <span class="perf-label">Avg. Cost per Click</span>
           <span class="perf-value">${currency}${bm.avg_cpc}</span>
-          <span class="perf-tier p-neutral">Industry varies</span>
+          <span class="perf-tier p-neutral">Account average</span>
           <span class="perf-bench">Context-dependent</span>
         </div>` : ""}
         ${bm.cost_per_conv != null ? `<div class="perf-item">
           <span class="perf-label">Cost per Conversion</span>
           <span class="perf-value">${currency}${bm.cost_per_conv}</span>
-          <span class="perf-tier p-neutral">Industry varies</span>
+          <span class="perf-tier p-neutral">Account average</span>
           <span class="perf-bench">Context-dependent</span>
         </div>` : ""}
       </div>` : "";
@@ -1487,7 +1547,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>`;
     }
 
-    const categorySectionsHTML = CATEGORY_ORDER.map(catKey => {
+    function buildCategoryBlock(catKey) {
       const cat = categories[catKey];
       if (!cat) return "";
       const catIssues = cat.issues || [];
@@ -1515,6 +1575,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           ${catIssues.map(buildIssueCard).join("")}
           ${passesHTML}
         </div>`;
+    }
+
+    const categorySectionsHTML = SECTIONS.map(sec => {
+      // Is the section's channel type active?
+      const channelActive = !sec.channelRequired ||
+        sec.channelRequired.some(ch => activeChannelTypes.includes(ch));
+
+      // Count issues/passes across all categories in this section
+      let secIssues = 0, secPasses = 0;
+      sec.categories.forEach(catKey => {
+        const cat = categories[catKey];
+        if (cat) {
+          secIssues += (cat.issues || []).length;
+          secPasses += (cat.passes || []).length;
+        }
+      });
+
+      let heroMetaHTML;
+      if (!channelActive) {
+        heroMetaHTML = `<span class="sh-inactive">No active campaigns</span>`;
+      } else if (sec.categories.length === 0) {
+        heroMetaHTML = `<span class="sh-inactive">No checks available</span>`;
+      } else {
+        heroMetaHTML = secIssues > 0
+          ? `<span class="sh-issue">${secIssues} issue${secIssues > 1 ? "s" : ""} found</span>`
+          : `<span class="sh-pass">✓ All clear</span>`;
+      }
+
+      const heroHTML = `
+        <div class="section-hero">
+          <div class="section-hero-eyebrow">${sec.eyebrow}</div>
+          <div class="section-hero-title">${sec.titleHtml}</div>
+          <div class="section-hero-meta">${heroMetaHTML}</div>
+        </div>`;
+
+      if (!channelActive) {
+        return heroHTML + `<div class="no-active-banner">No ${sec.channelLabel || "campaigns of this type"} are currently active in this account.</div>`;
+      }
+
+      const catBlocksHTML = sec.categories.map(buildCategoryBlock).join("");
+      return heroHTML + catBlocksHTML;
     }).join("");
 
     const actionsHTML = actions.map((a, i) => `
@@ -1554,7 +1655,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>` : ""}
 
       <div class="findings-block">
-        <p class="section-eyebrow">Detailed Findings</p>
         ${categorySectionsHTML}
       </div>
 
@@ -1604,14 +1704,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const scoreTag    = score >= 80 ? "Strong Account" : score >= 65 ? "Good Account" : score >= 45 ? "Needs Attention" : score >= 25 ? "Poor Health" : "Needs Immediate Attention";
     const scoreTagBg  = { excellent: "#2E7D32", good: "#558B2F", average: "#D4691B", poor: "#BF360C", critical: "#C0392B" }[scoreClass];
 
-    const CATEGORY_ORDER = [
-      "conversion_foundation", "account_structure", "keyword_hygiene",
-      "ai_automation", "creative", "traffic_quality",
+    const PDF_SECTIONS = [
+      { key:"conversion", eyebrow:"Foundation",                 title:"Conversion Tracking",       channelRequired:null,                            categories:["conversion_foundation"] },
+      { key:"account",    eyebrow:"Budget & Structure",          title:"Account Health",            channelRequired:null,                            categories:["account_structure"] },
+      { key:"search",     eyebrow:"Search Campaigns",            title:"Keywords, Ads & Quality",   channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","creative","traffic_quality"] },
+      { key:"pmax",       eyebrow:"Performance Max & Shopping",  title:"Automation & Feed Health",  channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation"] },
+      { key:"demand_gen", eyebrow:"Demand Generation",           title:"Demand Gen Campaigns",      channelRequired:["DEMAND_GEN"],   channelLabel:"Demand Gen",    categories:[] },
+      { key:"video",      eyebrow:"YouTube & Video",             title:"Video Campaigns",           channelRequired:["VIDEO"],        channelLabel:"Video",         categories:[] },
+      { key:"display",    eyebrow:"Display Network",             title:"Display & Remarketing",     channelRequired:["DISPLAY"],      channelLabel:"Display",       categories:[] },
     ];
-    const CATEGORY_ICONS = {
+    const PDF_CAT_ICONS = {
       conversion_foundation: "🎯", account_structure: "🏗", keyword_hygiene: "🔑",
       ai_automation: "🤖", creative: "✏️", traffic_quality: "📊",
     };
+    const pdfActiveChannels = ((data.metadata || {}).active_channel_types) || [];
 
     function pdfBmClass(val, good, ok) {
       if (val == null) return "#1A1A1A";
@@ -1646,7 +1752,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>`;
     }
 
-    const categorySectionsHTML = CATEGORY_ORDER.map(catKey => {
+    function pdfCatBlock(catKey) {
       const cat = categories[catKey];
       if (!cat) return "";
       const catIssues = cat.issues || [];
@@ -1662,13 +1768,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return `
         <div style="padding:24px 0;border-bottom:1px solid #E8D8C4;break-inside:avoid-page;">
           <div style="display:flex;align-items:center;gap:9px;">
-            <span>${CATEGORY_ICONS[catKey] || "•"}</span>
+            <span>${PDF_CAT_ICONS[catKey] || "•"}</span>
             <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;color:#1A1A1A;">${escHtml(cat.label)}</span>
             <span style="margin-left:auto;font-size:12px;font-weight:600;color:${statusCol};">${statusText}</span>
           </div>
           ${catIssues.map(pdfIssueCard).join("")}
           ${passChips}
         </div>`;
+    }
+
+    const categorySectionsHTML = PDF_SECTIONS.map(sec => {
+      const channelActive = !sec.channelRequired ||
+        sec.channelRequired.some(ch => pdfActiveChannels.includes(ch));
+
+      let secIssues = 0;
+      sec.categories.forEach(catKey => {
+        const cat = categories[catKey];
+        if (cat) secIssues += (cat.issues || []).length;
+      });
+
+      const heroStatusText = !channelActive
+        ? "No active campaigns"
+        : sec.categories.length === 0
+          ? "No checks available"
+          : secIssues > 0
+            ? `${secIssues} issue${secIssues > 1 ? "s" : ""} found`
+            : "✓ All clear";
+      const heroStatusCol = !channelActive || sec.categories.length === 0
+        ? "rgba(255,255,255,0.35)"
+        : secIssues > 0 ? "#ff8a80" : "#a5d6a7";
+
+      const sectionHero = `
+        <div style="background:#1A1A1A;margin:36px -56px 0;padding:28px 56px 24px;break-inside:avoid;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#985830;margin-bottom:10px;">${sec.eyebrow}</div>
+          <div style="font-size:24px;font-weight:700;letter-spacing:-0.4px;line-height:1.15;color:#fff;margin-bottom:10px;">${sec.title}</div>
+          <div style="font-size:11px;font-weight:700;color:${heroStatusCol};">${heroStatusText}</div>
+        </div>`;
+
+      if (!channelActive) {
+        return sectionHero + `<p style="padding:20px 0 4px;font-size:12px;color:#6B6B6B;font-style:italic;">No ${sec.channelLabel || "campaigns of this type"} are currently active in this account.</p>`;
+      }
+
+      const catBlocksHTML = sec.categories.map(pdfCatBlock).join("");
+      return sectionHero + catBlocksHTML;
     }).join("");
 
     const actionsHTML = actions.map((a, i) => `
@@ -1685,21 +1827,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ${summary.passing  ? `<div style="flex:1;"><div style="font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;color:#2E7D32;margin-bottom:5px;">${summary.passing}</div><div style="font-size:11px;color:#6B6B6B;">Passing</div></div>` : ""}
       </div>`;
 
-    const perfGridHTML = (pdfBm.ctr != null || pdfBm.is_acquired != null) ? `
+    const pdfHasSearch = pdfActiveChannels.includes("SEARCH");
+    const perfGridHTML = (pdfBm.search_ctr != null || pdfBm.cvr != null || pdfBm.is_acquired != null) ? `
       <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #E8D8C4;border-radius:10px;overflow:hidden;margin:32px 0;">
-        ${pdfBm.ctr != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
-          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Click-through Rate</div>
-          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.ctr,5,2)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.ctr,5,2)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.ctr}%</div>
-          ${pdfBmTier(pdfBm.ctr, 5, 2, ["Strong", "Average", "Below average"])}
-          <div style="font-size:10px;color:#6B6B6B;">Target ≥ 5% (Search)</div>
+        ${pdfBm.search_ctr != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Search CTR</div>
+          <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.search_ctr,5,2)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.search_ctr,5,2)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.search_ctr}%</div>
+          ${pdfBmTier(pdfBm.search_ctr, 5, 2, ["Strong", "Average", "Below average"])}
+          <div style="font-size:10px;color:#6B6B6B;">Target ≥ 5% · Search only</div>
         </div>` : ""}
-        ${pdfBm.avg_qs != null ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
+        ${pdfBm.avg_qs != null && pdfHasSearch ? `<div style="padding:18px 20px;border-right:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
           <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Avg. Quality Score</div>
           <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.avg_qs,7,5)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.avg_qs,7,5)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.avg_qs}</div>
           ${pdfBmTier(pdfBm.avg_qs, 7, 5, ["Good", "Average", "Needs work"])}
           <div style="font-size:10px;color:#6B6B6B;">Target ≥ 7 / 10</div>
         </div>` : ""}
-        ${pdfBm.is_acquired != null ? `<div style="padding:18px 20px;border-bottom:1px solid #E8D8C4;">
+        ${pdfBm.is_acquired != null && pdfHasSearch ? `<div style="padding:18px 20px;border-bottom:1px solid #E8D8C4;">
           <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;margin-bottom:12px;">Impression Share</div>
           <div style="font-size:26px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:${pdfBmClass(pdfBm.is_acquired,70,50)};border-bottom:2.5px solid ${pdfBmClass(pdfBm.is_acquired,70,50)};display:inline-block;padding-bottom:3px;margin-bottom:6px;">${pdfBm.is_acquired}%</div>
           ${pdfBmTier(pdfBm.is_acquired, 70, 50, ["Healthy", "Moderate", "Concerning"])}
@@ -1773,7 +1916,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>` : ""}
 
   <!-- Detailed findings -->
-  <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#985830;margin-bottom:20px;">Detailed Findings</div>
   ${categorySectionsHTML}
 
   <!-- Lead CTA -->
