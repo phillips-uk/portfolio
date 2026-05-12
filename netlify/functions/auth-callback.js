@@ -5,15 +5,16 @@
  * Flow:
  *  1. Google redirects here with ?code=... after user grants access
  *  2. Exchange code for tokens (access_token + refresh_token)
- *  3. Encrypt { refreshToken, customerId } with AES-256-GCM using WORKER_SECRET
- *  4. Redirect to /audit.html?token=<encrypted>&customer_id=<cid>
- *     (no server-side storage required)
+ *  3. Call Cloud Run worker /accounts to discover accessible Google Ads accounts
+ *  4. Encrypt { refreshToken, userEmail, userName, accountIds } with AES-256-GCM
+ *  5. Redirect to /audit.html?token=<encrypted>&accounts=<base64url-json>
  *
  * Env vars required:
  *   GOOGLE_CLIENT_ID
  *   GOOGLE_CLIENT_SECRET
  *   OAUTH_REDIRECT_URI   e.g. https://phillips-uk.com/.netlify/functions/auth-callback
  *   WORKER_SECRET        shared secret used for encryption + Cloud Run auth
+ *   WORKER_URL           Cloud Run worker base URL
  */
 
 const crypto = require("crypto");
@@ -21,7 +22,6 @@ const crypto = require("crypto");
 exports.handler = async function (event) {
   const params = event.queryStringParameters || {};
   const code = params.code;
-  const state = params.state || ""; // customer_id passed through state param
   const error = params.error;
 
   if (error) {
@@ -32,7 +32,7 @@ exports.handler = async function (event) {
     return redirect("/audit.html?error=missing_code");
   }
 
-  // Exchange code for tokens
+  // 1. Exchange code for tokens
   let tokens;
   try {
     tokens = await exchangeCode(code);
@@ -46,11 +46,8 @@ exports.handler = async function (event) {
     return redirect("/audit.html?error=no_refresh_token");
   }
 
-  const customerId = state || "";
-
-  // Fetch the user's email and name from Google UserInfo
-  let userEmail = "";
-  let userName = "";
+  // 2. Fetch user email / name
+  let userEmail = "", userName = "";
   try {
     const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
@@ -58,25 +55,56 @@ exports.handler = async function (event) {
     if (userInfoRes.ok) {
       const userInfo = await userInfoRes.json();
       userEmail = userInfo.email || "";
-      userName = userInfo.name || "";
+      userName  = userInfo.name  || "";
     }
   } catch (e) {
     console.warn("UserInfo fetch failed (non-fatal):", e.message);
   }
 
-  // Encrypt { refreshToken, customerId, userEmail, userName } into a URL param
-  // No server-side storage needed — the token is self-contained
+  // 3. Discover accessible Google Ads accounts via Cloud Run worker
+  let accounts = [];
+  try {
+    const workerUrl    = process.env.WORKER_URL;
+    const workerSecret = process.env.WORKER_SECRET || "";
+    if (workerUrl) {
+      const accountsRes = await fetch(`${workerUrl}/accounts`, {
+        method: "POST",
+        headers: {
+          "Content-Type":    "application/json",
+          "X-Worker-Secret": workerSecret,
+        },
+        body: JSON.stringify({ access_token: tokens.access_token }),
+      });
+      if (accountsRes.ok) {
+        accounts = await accountsRes.json();
+      }
+    }
+  } catch (e) {
+    console.warn("Account listing failed (non-fatal):", e.message);
+  }
+
+  // 4. Encrypt payload
   let encryptedToken;
   try {
-    encryptedToken = encrypt(JSON.stringify({ refreshToken, customerId, userEmail, userName }));
+    encryptedToken = encrypt(JSON.stringify({
+      refreshToken,
+      userEmail,
+      userName,
+      accountIds: accounts.map(a => a.id),
+    }));
   } catch (e) {
     console.error("Encryption failed:", e.message);
     return redirect("/audit.html?error=encryption_failed");
   }
 
-  return redirect(
-    `/audit.html?token=${encodeURIComponent(encryptedToken)}&customer_id=${encodeURIComponent(customerId)}`
-  );
+  // 5. Redirect with accounts list (or no_accounts flag if empty)
+  const tokenParam = `token=${encodeURIComponent(encryptedToken)}`;
+  if (accounts.length === 0) {
+    return redirect(`/audit.html?${tokenParam}&no_accounts=1`);
+  }
+
+  const accountsParam = Buffer.from(JSON.stringify(accounts)).toString("base64url");
+  return redirect(`/audit.html?${tokenParam}&accounts=${accountsParam}`);
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -84,16 +112,16 @@ exports.handler = async function (event) {
 async function exchangeCode(code) {
   const body = new URLSearchParams({
     code,
-    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_id:     process.env.GOOGLE_CLIENT_ID,
     client_secret: process.env.GOOGLE_CLIENT_SECRET,
-    redirect_uri: process.env.OAUTH_REDIRECT_URI,
-    grant_type: "authorization_code",
+    redirect_uri:  process.env.OAUTH_REDIRECT_URI,
+    grant_type:    "authorization_code",
   });
 
   const res = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
+    method:  "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body.toString(),
+    body:    body.toString(),
   });
 
   if (!res.ok) {
@@ -105,20 +133,18 @@ async function exchangeCode(code) {
 }
 
 /**
- * AES-256-GCM encrypt. Returns "iv:authTag:ciphertext" as hex, base64url encoded.
- * Key derived from WORKER_SECRET via SHA-256 (32 bytes).
+ * AES-256-GCM encrypt. Returns iv(12)+authTag(16)+ciphertext packed as base64url.
+ * Key is derived from WORKER_SECRET via SHA-256.
  */
 function encrypt(plaintext) {
   const secret = process.env.WORKER_SECRET;
   if (!secret) throw new Error("WORKER_SECRET not set");
-  const key = crypto.createHash("sha256").update(secret).digest(); // 32 bytes
-  const iv = crypto.randomBytes(12); // 96-bit IV for GCM
+  const key    = crypto.createHash("sha256").update(secret).digest();
+  const iv     = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
   const encrypted = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
-  const authTag = cipher.getAuthTag();
-  // Pack as iv(12) + authTag(16) + ciphertext, base64url
-  const packed = Buffer.concat([iv, authTag, encrypted]);
-  return packed.toString("base64url");
+  const authTag   = cipher.getAuthTag();
+  return Buffer.concat([iv, authTag, encrypted]).toString("base64url");
 }
 
 function redirect(location) {

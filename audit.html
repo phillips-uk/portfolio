@@ -281,6 +281,21 @@
 
     .btn-google img { width: 20px; height: 20px; }
 
+    /* Account picker */
+    .account-list { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 8px; }
+    .account-item {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 16px 20px;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      background: white; cursor: pointer; text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .account-item:hover { border-color: var(--amber); background: var(--light); }
+    .account-item-inner { display: flex; flex-direction: column; gap: 3px; }
+    .account-item-name { font-weight: 600; font-size: 15px; color: var(--ink); }
+    .account-item-id { font-family: monospace; font-size: 12px; color: var(--mid); }
+    .account-item-arrow { color: var(--amber); font-size: 20px; flex-shrink: 0; }
+
     /* ── Loading ──────────────────────────────────────────────────── */
     #loading-section {
       display: none;
@@ -1164,10 +1179,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <ul class="feature-list">
             <li><span class="feat-icon">🎯</span><span>Conversion tracking — is it recording correctly?</span></li>
             <li><span class="feat-icon">🏗</span><span>Account structure — budget, spend &amp; learning phase</span></li>
+            <li><span class="feat-icon">💰</span><span>Bidding &amp; budget — strategy, targets &amp; impression share</span></li>
             <li><span class="feat-icon">🔑</span><span>Keyword hygiene — quality scores, duplicates, negatives</span></li>
+            <li><span class="feat-icon">👥</span><span>Audiences — remarketing lists &amp; Customer Match coverage</span></li>
             <li><span class="feat-icon">🤖</span><span>AI &amp; automation — Smart Bidding setup &amp; PMax assets</span></li>
+            <li><span class="feat-icon">📦</span><span>Feed health — product spend, missing data &amp; titles</span></li>
             <li><span class="feat-icon">✏️</span><span>Ad creative — RSA strength, ad variety &amp; extensions</span></li>
-            <li><span class="feat-icon">📊</span><span>Traffic quality — wasted queries &amp; attribution model</span></li>
+            <li><span class="feat-icon">📊</span><span>Landing pages — destination URLs &amp; wasted queries</span></li>
           </ul>
         </div>
         <div class="feature-col">
@@ -1192,12 +1210,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="steps" id="step-indicators">
       <div class="step active" id="step-1">
         <div class="step-num">1</div>
-        <span>Your account</span>
+        <span>Connect</span>
       </div>
       <div class="step-divider"></div>
       <div class="step" id="step-2">
         <div class="step-num">2</div>
-        <span>Connect</span>
+        <span>Select account</span>
       </div>
       <div class="step-divider"></div>
       <div class="step" id="step-3">
@@ -1206,43 +1224,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- ── Section 1: Enter CID ──────────────────────────────────────── -->
+    <!-- ── Section 1: Connect ────────────────────────────────────────── -->
     <div class="card" id="section-cid">
-      <div class="form-group">
-        <label>
-          Google Ads Customer ID
-          <span class="hint">10 digits, no dashes</span>
-        </label>
-        <input type="text" id="customer-id-input" placeholder="123-456-7890" maxlength="12" autocomplete="off">
-        <p class="input-hint">Find this in the top-right corner of your Google Ads account, or in Account Settings.</p>
-      </div>
+      <p style="font-size:15px; color:var(--mid); margin-bottom:28px; line-height:1.6; text-align:center;">
+        Sign in with Google and we'll automatically find your account — no IDs to look up.
+      </p>
       <div class="error-box" id="cid-error"></div>
-      <button class="btn btn-primary" id="btn-continue" onclick="handleContinue()">
-        Continue
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <button class="btn btn-google" id="btn-connect" onclick="handleGoogleAuth()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Connect Google Ads
       </button>
-      <div class="trust-row">
+      <div class="trust-row" style="margin-top:20px;">
         <div class="trust-item"><span class="trust-icon">✓</span> Read-only access only</div>
         <div class="trust-item"><span class="trust-icon">✓</span> No data stored after audit</div>
         <div class="trust-item"><span class="trust-icon">✓</span> No agency pitch</div>
       </div>
     </div>
 
-    <!-- ── Section 2: OAuth ───────────────────────────────────────────── -->
+    <!-- ── Section 2: Account picker ────────────────────────────────── -->
     <div class="card" id="section-oauth" style="display:none;">
-      <p style="font-size:15px; color:var(--mid); margin-bottom:24px; line-height:1.6;">
-        We need read-only access to pull your account data. No changes will be made. You'll be redirected to Google to sign in and grant access.
-      </p>
-      <p style="font-size:13px; color:var(--mid); margin-bottom:24px; line-height:1.5;">
-        <strong style="color:var(--ink)">Account ID:</strong> <span id="display-cid" style="font-family:monospace; color:var(--amber);"></span>
-      </p>
+      <h3 style="font-size:17px; font-weight:700; color:var(--ink); margin-bottom:8px;">Select your account</h3>
+      <p style="font-size:14px; color:var(--mid); margin-bottom:4px; line-height:1.5;" id="accounts-subtitle">We found the following Google Ads accounts on your Google login.</p>
       <div class="error-box" id="oauth-error"></div>
-      <button class="btn btn-google" id="btn-google-auth" onclick="handleGoogleAuth()">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-        Connect Google Ads account
-      </button>
-      <button class="btn" style="background:none; color:var(--mid); font-size:13px; margin-top:12px; width:100%;" onclick="goBack()">
-        ← Change account ID
+      <div id="account-list" class="account-list"></div>
+      <button class="btn" style="background:none; color:var(--mid); font-size:13px; margin-top:8px; width:100%;" onclick="resetToStart()">
+        ← Use a different Google account
       </button>
     </div>
 
@@ -1297,26 +1303,44 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   const SCOPE = "https://www.googleapis.com/auth/adwords openid email profile";
 
   // ── Init: check URL params ─────────────────────────────────────────────────
+  let savedAuditToken = "";
+
   window.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const token   = params.get("token");
-    const cid     = params.get("customer_id");
-    const error   = params.get("error");
+    const params    = new URLSearchParams(window.location.search);
+    const token     = params.get("token");
+    const accounts  = params.get("accounts");   // base64url JSON — new flow
+    const cid       = params.get("customer_id"); // legacy
+    const noAccounts = params.get("no_accounts");
+    const error     = params.get("error");
 
     if (error) {
       showGlobalError(errorMessage(error));
       return;
     }
 
+    // New flow: accounts discovered post-OAuth
+    if (token && accounts) {
+      savedAuditToken = token;
+      showAccountPicker(token, accounts);
+      return;
+    }
+
+    // Fallback: no accounts returned (developer token not configured or no accounts)
+    if (token && noAccounts) {
+      savedAuditToken = token;
+      showNoAccountsFallback(token);
+      return;
+    }
+
+    // Legacy flow: CID was passed in state
     if (token && cid) {
-      // Returned from OAuth — run the audit
       customerId = cid;
       showLoading();
       runAudit(token, cid);
       return;
     }
 
-    // Default: show CID entry
+    // Default: show connect screen
     showSection("section-cid");
   });
 
@@ -1337,28 +1361,86 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     showSection("section-oauth");
   }
 
-  // ── Step 2: OAuth ─────────────────────────────────────────────────────────
+  // ── Step 1: Connect with Google ───────────────────────────────────────────
   function handleGoogleAuth() {
     const clientId = getGoogleClientId();
     if (!clientId) {
-      showError("oauth-error", "OAuth is not yet configured. Please check back soon.");
+      showError("cid-error", "OAuth is not yet configured. Please check back soon.");
       return;
     }
 
     const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: REDIRECT_URI,
+      client_id:     clientId,
+      redirect_uri:  REDIRECT_URI,
       response_type: "code",
-      scope: SCOPE,
-      access_type: "offline",
-      prompt: "consent",
-      state: customerId,
+      scope:         SCOPE,
+      access_type:   "offline",
+      prompt:        "consent",
+      // No state — account is selected after OAuth via the account picker
     });
 
     window.dataLayer = window.dataLayer || [];
-    dataLayer.push({ event: 'audit_started', customer_id: customerId });
+    dataLayer.push({ event: "audit_connect_clicked" });
 
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+  }
+
+  // ── Step 2: Account picker ─────────────────────────────────────────────────
+  function decodeBase64Url(str) {
+    str = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (str.length % 4) str += "=";
+    return JSON.parse(atob(str));
+  }
+
+  function showAccountPicker(token, accountsB64) {
+    let accounts;
+    try {
+      accounts = decodeBase64Url(accountsB64);
+    } catch (e) {
+      showGlobalError("Couldn't read account list. Please try connecting again.");
+      return;
+    }
+
+    // Single account — auto-select and run immediately
+    if (accounts.length === 1) {
+      customerId = accounts[0].id;
+      showLoading();
+      runAudit(token, accounts[0].id);
+      return;
+    }
+
+    // Multiple accounts — show picker
+    const listEl = document.getElementById("account-list");
+    const subtitle = document.getElementById("accounts-subtitle");
+    if (subtitle) subtitle.textContent = `We found ${accounts.length} Google Ads accounts on your login. Pick the one to audit.`;
+
+    listEl.innerHTML = accounts.map(a => `
+      <button class="account-item" onclick="selectAccount('${escAttr(a.id)}')">
+        <div class="account-item-inner">
+          <span class="account-item-name">${escHtml(a.name)}${a.manager ? ' <span style="font-size:11px;color:var(--mid);font-weight:400;">(Manager)</span>' : ""}</span>
+          <span class="account-item-id">${formatCid(a.id)}</span>
+        </div>
+        <span class="account-item-arrow">→</span>
+      </button>
+    `).join("");
+
+    setStep(2);
+    showSection("section-oauth");
+  }
+
+  function showNoAccountsFallback(token) {
+    // No accounts discovered — show helpful error with option to retry
+    showGlobalError("We couldn't find any Google Ads accounts linked to your Google login. Make sure you sign in with the Google account that has access to your Google Ads, then try again.");
+  }
+
+  function selectAccount(cid) {
+    customerId = cid;
+    showLoading();
+    runAudit(savedAuditToken, cid);
+  }
+
+  function escAttr(str) {
+    return String(str).replace(/['"&<>]/g, c => ({ "'": "&#39;", '"': "&quot;", "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   }
 
   // ── Step 3: Run audit via Netlify Function ────────────────────────────────
@@ -2105,7 +2187,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   function scrollToForm() {
-    document.getElementById("section-cid").scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("section-cid").scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   function showGlobalError(msg) {
@@ -2139,8 +2221,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   function resetToStart() {
-    customerId = ""; sessionId = "";
-    document.getElementById("customer-id-input").value = "";
+    customerId = ""; sessionId = ""; savedAuditToken = "";
     setStep(1);
     showSection("section-cid");
     history.replaceState(null, "", "/audit.html");

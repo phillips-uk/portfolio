@@ -39,8 +39,13 @@ exports.handler = async function (event) {
     return json({ error: "Invalid or tampered token" }, 401);
   }
 
-  // Validate customer_id matches what was encoded at auth time
-  if (payload.customerId && payload.customerId !== customer_id) {
+  // Validate customer_id against the allowed accounts list (new flow)
+  if (payload.accountIds && payload.accountIds.length > 0) {
+    if (!payload.accountIds.includes(customer_id)) {
+      return json({ error: "customer_id not in accessible accounts" }, 403);
+    }
+  } else if (payload.customerId && payload.customerId !== customer_id) {
+    // Legacy flow: single CID encoded at auth time
     return json({ error: "customer_id mismatch" }, 403);
   }
 
