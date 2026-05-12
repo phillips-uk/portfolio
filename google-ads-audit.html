@@ -1756,11 +1756,183 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   const REDIRECT_URI = "https://phillips-uk.com/.netlify/functions/auth-callback";
   const SCOPE = "https://www.googleapis.com/auth/adwords openid email profile";
 
+  // ── Preview / demo mode ───────────────────────────────────────────────────
+  const MOCK_REPORT_DATA = {
+    customer_id: "1234567890",
+    user_name: "Demo Account",
+    score: 47,
+    summary: { critical: 2, high: 3, medium: 4, passing: 12 },
+    narrative: {
+      headline: "Conversion tracking is unreliable and Smart Bidding is optimising toward the wrong signals. Fix that first — everything else depends on it.",
+      priority_actions: [
+        "Fix the GA4 import set as a primary conversion action — it is undercounting and corrupting Smart Bidding signals.",
+        "Add a dedicated purchase GACT tag fired directly from GTM and set it as the sole primary conversion action.",
+        "Remove three broad match keywords with over £800 spend and zero conversions in the last 90 days.",
+        "Upload a customer match list — you have no first-party audience signals in the account.",
+        "Add sitelink and callout assets to the two Search campaigns that are currently running with no assets."
+      ]
+    },
+    metadata: {
+      active_channel_types: ["SEARCH", "PERFORMANCE_MAX", "SHOPPING"],
+      benchmarks: {
+        search_ctr: 2.4,
+        avg_qs: 5.8,
+        is_acquired: 38,
+        is_lost_budget: 24,
+        is_lost_rank: 38,
+        cvr: 1.1,
+        avg_cpc: 1.24,
+        cost_per_conv: 112.50,
+        qs_distribution: { "1":120,"2":310,"3":890,"4":1400,"5":2100,"6":3200,"7":4100,"8":1800,"9":620,"10":90 }
+      }
+    },
+    categories: {
+      conversion_foundation: {
+        label: "Conversion Tracking",
+        issues: [
+          { check:"ga4_primary_import", severity:"critical", title:"GA4 import is set as a primary conversion action", detail:"Your GA4 purchase event is imported into Google Ads and marked as 'Include in Conversions'. Smart Bidding is treating GA4 and your GACT tag as the same conversion, double-counting in some sessions and producing corrupted tROAS signals.", recommendation:"Go to Tools > Conversions, find the GA4 import, and set it to 'Observation only'. Your GTM-fired GACT tag should be the sole primary conversion action.", hours_estimate:0.5 },
+          { check:"missing_gact", severity:"high", title:"No direct GACT purchase tag in GTM", detail:"The account has no Google Ads Conversion Tracking tag firing directly from GTM. All conversion data currently routes through the GA4 import, which is unreliable as a primary Smart Bidding signal.", recommendation:"Create a new GACT tag in GTM triggered on the order confirmation page. Set the conversion value dynamically from the transaction data layer variable.", hours_estimate:2 }
+        ],
+        passes: [
+          { check:"conversion_window", title:"Conversion windows are set correctly" },
+          { check:"view_through", title:"View-through conversions excluded from Smart Bidding" }
+        ]
+      },
+      account_structure: {
+        label: "Account Structure",
+        issues: [
+          { check:"single_ad_group", severity:"medium", title:"4 ad groups contain only one active ad", detail:"Single-ad ad groups prevent Google from running ad rotation tests. Without at least two ads per group, you have no data to identify which messaging performs better.", recommendation:"Add a second responsive search ad to each single-ad group. Vary the headlines — test a benefit-led headline against a feature-led one.", hours_estimate:1.5 }
+        ],
+        passes: [
+          { check:"campaign_naming", title:"Campaign naming convention is consistent" },
+          { check:"ad_group_count", title:"Ad group count per campaign is within recommended range" }
+        ]
+      },
+      bidding: {
+        label: "Bidding & Budget",
+        issues: [
+          { check:"tROAS_corrupted", severity:"critical", title:"tROAS target is based on corrupted conversion data", detail:"Your Target ROAS of 320% was set while GA4 double-counting was active. The actual ROAS the account is achieving against clean conversions is materially lower. Smart Bidding is under-bidding on profitable queries as a result.", recommendation:"After fixing conversion tracking, allow 2–3 weeks of clean data before resetting the tROAS target. Temporarily switch to Maximise Conversions to rebuild signal quality.", hours_estimate:0.5 },
+          { check:"budget_waste", severity:"high", title:"38% of Search impression share lost to rank", detail:"Over a third of eligible impressions are being lost because bids are too low relative to Quality Scores. This is compounded by low QS on broad match keywords pulling down account-level quality signals.", recommendation:"Pause the lowest-QS broad match keywords first. Once QS improves, the same budget will buy more impressions at a lower CPM.", hours_estimate:1 }
+        ],
+        passes: [
+          { check:"budget_distribution", title:"Budget is allocated to top-performing campaigns" },
+          { check:"shared_budget", title:"No shared budgets in use" }
+        ]
+      },
+      keyword_hygiene: {
+        label: "Keyword & Quality Score",
+        issues: [
+          { check:"low_quality_score", severity:"high", title:"Average Quality Score of 5.8 is below the 7+ target", detail:"41% of keyword impressions are on keywords with a QS of 4 or below. Low Quality Scores raise CPCs across the entire campaign, not just the affected keywords.", recommendation:"Identify the 10–15 keywords with the highest spend and lowest QS. Check landing page relevance and ad copy alignment. Tighten ad groups so that each group covers a tighter keyword theme.", hours_estimate:3, data: {} },
+          { check:"broad_waste", severity:"medium", title:"3 broad match keywords with £800+ spend and zero conversions", detail:"These keywords are consuming budget without contributing any conversion signal. Their search term reports show significant off-topic query matching.", recommendation:"Pause these three keywords. If the theme is important, recreate them as phrase match with tighter ad groups and dedicated landing pages.", hours_estimate:0.5 }
+        ],
+        passes: [
+          { check:"negative_list", title:"Account-level negative keyword list is in place" },
+          { check:"search_terms", title:"Search term review is up to date (last 7 days)" }
+        ]
+      },
+      audiences: {
+        label: "Audiences",
+        issues: [
+          { check:"no_customer_match", severity:"medium", title:"No customer match audiences uploaded", detail:"The account has no first-party audience data. Without customer match lists, Smart Bidding and Performance Max have no basis to find similar high-value users.", recommendation:"Export your customer email list from your CRM, hash it, and upload it via the Audience Manager. Minimum 1,000 records for Google to activate the match.", hours_estimate:1 },
+          { check:"remarketing_gaps", severity:"medium", title:"Remarketing list excludes users who abandoned checkout", detail:"The current remarketing setup tracks homepage visitors but has no segment for checkout abandoners — typically the highest-intent, lowest-cost audience to target.", recommendation:"Create a new audience segment in GA4 for users who reach the checkout URL but do not complete the purchase. Import into Google Ads and add to Search and PMax campaigns as an observation audience.", hours_estimate:1.5 }
+        ],
+        passes: [
+          { check:"audience_observation", title:"Audiences added in observation mode to all Search campaigns" }
+        ]
+      },
+      ai_automation: {
+        label: "Smart Bidding & Performance Max",
+        issues: [],
+        passes: [
+          { check:"pmax_assets", title:"Performance Max asset groups meet minimum asset requirements" },
+          { check:"pmax_exclusions", title:"Brand exclusions applied to Performance Max" },
+          { check:"final_url_expansion", title:"Final URL expansion is off — landing pages are controlled" }
+        ]
+      },
+      feed_health: {
+        label: "Product Feed",
+        issues: [
+          { check:"feed_wasted_spend", severity:"medium", title:"22% of product spend going to items with zero conversions in 90 days", detail:"37 products have received meaningful spend over the last 90 days without recording a single conversion. These are not necessarily poor products — they may have attribution or landing page issues.", recommendation:"Review the 37 zero-conversion products. Check their landing pages load correctly and that conversion tracking fires on their specific thank-you URLs. Suppress products with persistent zero-conversion spend using custom labels.", hours_estimate:2,
+            data: { feed_summary: { products_active: 168, products_converting: 94, total_spend: 3420.50, top_products: [
+              { title:"Classic Leather Tote — Tan", spend: 412.30, conversions: 8.0, ctr: 3.2 },
+              { title:"Canvas Backpack — Navy", spend: 287.10, conversions: 5.0, ctr: 2.8 },
+              { title:"Suede Crossbody — Black", spend: 198.40, conversions: 0, ctr: 1.1 },
+              { title:"Woven Belt — Cognac", spend: 154.70, conversions: 3.0, ctr: 2.4 },
+              { title:"Leather Card Holder", spend: 143.20, conversions: 0, ctr: 0.9 }
+            ]}}
+          }
+        ],
+        passes: [
+          { check:"feed_errors", title:"No disapproved products in Merchant Center" },
+          { check:"gtin", title:"GTINs present on all products where required" }
+        ]
+      },
+      creative: {
+        label: "Ad Creative & Assets",
+        issues: [
+          { check:"missing_assets", severity:"high", title:"2 Search campaigns have no sitelink or callout assets", detail:"Assets increase ad prominence and CTR. Campaigns running with no sitelinks are leaving SERP real estate unused, which depresses CTR and feeds back into lower Quality Scores.", recommendation:"Add a minimum of 4 sitelinks and 4 callouts to each Search campaign. Sitelinks should point to high-intent landing pages, not the homepage.", hours_estimate:1 }
+        ],
+        passes: [
+          { check:"rsa_strength", title:"All RSAs rated 'Good' or 'Excellent'" },
+          { check:"ad_variations", title:"Each ad group has at least 2 active ads" }
+        ]
+      },
+      traffic_quality: {
+        label: "Landing Pages",
+        issues: [],
+        passes: [
+          { check:"landing_page_speed", title:"Landing page load time is within acceptable range" },
+          { check:"destination_match", title:"Final URLs match the ad messaging on key campaigns" },
+          { check:"mobile_experience", title:"Mobile landing page experience rated as above average" }
+        ]
+      }
+    }
+  };
+
+  const MOCK_ACCOUNTS = [
+    { id: "1234567890", name: "Demo Retail Account", currency: "GBP", manager: false },
+    { id: "9876543210", name: "Demo Lead Gen Account", currency: "GBP", manager: false },
+    { id: "5551234567", name: "Demo Manager Account", currency: "GBP", manager: true }
+  ];
+
   // ── Init: check URL params ─────────────────────────────────────────────────
   let savedAuditToken = "";
 
   window.addEventListener("DOMContentLoaded", () => {
     const params    = new URLSearchParams(window.location.search);
+
+    // Preview mode — no OAuth required
+    const preview = params.get("preview");
+    if (preview === "report") {
+      customerId = "1234567890";
+      showReport(MOCK_REPORT_DATA);
+      return;
+    }
+    if (preview === "loading") {
+      showLoading();
+      return;
+    }
+    if (preview === "picker") {
+      setStep(2);
+      const el = document.getElementById("section-oauth");
+      if (el) el.style.display = "block";
+      document.querySelector(".connect-wrap").style.display = "none";
+      document.getElementById("landing-hero").style.display = "none";
+      const steps = document.getElementById("step-indicators");
+      if (steps) steps.style.display = "flex";
+      const list = document.getElementById("account-list");
+      if (list) {
+        list.innerHTML = MOCK_ACCOUNTS.map(a => `
+          <div class="account-item" onclick="">
+            <div class="account-info">
+              <div class="account-name">${a.name}${a.manager ? ' <span style="font-size:11px;font-weight:600;color:var(--amber);">(Manager)</span>' : ''}</div>
+              <div class="account-id">${formatCid(a.id)}</div>
+            </div>
+            <span class="account-arrow">→</span>
+          </div>`).join("");
+      }
+      return;
+    }
     const token     = params.get("token");
     const accounts  = params.get("accounts");   // base64url JSON — new flow
     const cid       = params.get("customer_id"); // legacy
