@@ -1457,7 +1457,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const CATEGORY_ICONS = {
       conversion_foundation: "🎯",
       account_structure:     "🏗",
+      bidding:               "💰",
       keyword_hygiene:       "🔑",
+      audiences:             "🎯",
       ai_automation:         "🤖",
       feed_health:           "📦",
       creative:              "✏️",
@@ -1467,8 +1469,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Section structure — drives report order and hero banners
     const SECTIONS = [
       { key:"conversion",   eyebrow:"Foundation",                  titleHtml:"Conversion <em>Tracking</em>",        channelRequired:null,                            categories:["conversion_foundation"] },
-      { key:"account",      eyebrow:"Budget & Structure",           titleHtml:"Account <em>Health</em>",             channelRequired:null,                            categories:["account_structure"] },
-      { key:"search",       eyebrow:"Search Campaigns",             titleHtml:"Keywords, Ads & <em>Quality</em>",    channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","creative","traffic_quality"] },
+      { key:"account",      eyebrow:"Budget & Structure",           titleHtml:"Account <em>Health</em>",             channelRequired:null,                            categories:["account_structure","bidding"] },
+      { key:"search",       eyebrow:"Search Campaigns",             titleHtml:"Keywords, Ads & <em>Quality</em>",    channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","audiences","creative","traffic_quality"] },
       { key:"pmax",         eyebrow:"Performance Max & Shopping",   titleHtml:"Automation & <em>Feed Health</em>",   channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation","feed_health"] },
       { key:"demand_gen",   eyebrow:"Demand Generation",            titleHtml:"Demand Gen <em>Campaigns</em>",       channelRequired:["DEMAND_GEN"],   channelLabel:"Demand Gen",    categories:[] },
       { key:"video",        eyebrow:"YouTube & Video",              titleHtml:"Video <em>Campaigns</em>",            channelRequired:["VIDEO"],        channelLabel:"Video",         categories:[] },
@@ -1833,16 +1835,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     const PDF_SECTIONS = [
       { key:"conversion", eyebrow:"Foundation",                 title:"Conversion Tracking",       channelRequired:null,                            categories:["conversion_foundation"] },
-      { key:"account",    eyebrow:"Budget & Structure",          title:"Account Health",            channelRequired:null,                            categories:["account_structure"] },
-      { key:"search",     eyebrow:"Search Campaigns",            title:"Keywords, Ads & Quality",   channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","creative","traffic_quality"] },
+      { key:"account",    eyebrow:"Budget & Structure",          title:"Account Health",            channelRequired:null,                            categories:["account_structure","bidding"] },
+      { key:"search",     eyebrow:"Search Campaigns",            title:"Keywords, Ads & Quality",   channelRequired:["SEARCH"],       channelLabel:"Search",        categories:["keyword_hygiene","audiences","creative","traffic_quality"] },
       { key:"pmax",       eyebrow:"Performance Max & Shopping",  title:"Automation & Feed Health",  channelRequired:["PERFORMANCE_MAX","SHOPPING"], channelLabel:"PMax / Shopping", categories:["ai_automation","feed_health"] },
       { key:"demand_gen", eyebrow:"Demand Generation",           title:"Demand Gen Campaigns",      channelRequired:["DEMAND_GEN"],   channelLabel:"Demand Gen",    categories:[] },
       { key:"video",      eyebrow:"YouTube & Video",             title:"Video Campaigns",           channelRequired:["VIDEO"],        channelLabel:"Video",         categories:[] },
       { key:"display",    eyebrow:"Display Network",             title:"Display & Remarketing",     channelRequired:["DISPLAY"],      channelLabel:"Display",       categories:[] },
     ];
     const PDF_CAT_ICONS = {
-      conversion_foundation: "🎯", account_structure: "🏗", keyword_hygiene: "🔑",
-      ai_automation: "🤖", feed_health: "📦", creative: "✏️", traffic_quality: "📊",
+      conversion_foundation: "🎯", account_structure: "🏗", bidding: "💰",
+      keyword_hygiene: "🔑", audiences: "🎯", ai_automation: "🤖",
+      feed_health: "📦", creative: "✏️", traffic_quality: "📊",
     };
     const pdfActiveChannels  = ((data.metadata || {}).active_channel_types) || [];
     const pdfHasChannelData  = pdfActiveChannels.length > 0;
