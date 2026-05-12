@@ -73,7 +73,8 @@ exports.handler = async function (event) {
           "Content-Type":    "application/json",
           "X-Worker-Secret": workerSecret,
         },
-        body: JSON.stringify({ access_token: tokens.access_token }),
+        // Use refresh_token — the Python client uses the same auth as audits
+        body: JSON.stringify({ refresh_token: refreshToken }),
       });
       if (accountsRes.ok) {
         accounts = await accountsRes.json();
