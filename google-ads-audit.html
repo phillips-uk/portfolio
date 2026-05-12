@@ -12,16 +12,111 @@
   })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
   <!-- End Google Tag Manager -->
 
-  <title>Free Google Ads Audit | Phillips.</title>
-  <meta name="description" content="Get a free, instant Google Ads audit. Connect your account and receive a priority-ordered report with actionable recommendations in under 60 seconds.">
-  <link rel="canonical" href="https://www.phillips-uk.com/audit.html">
+  <title>Free Google Ads Audit Tool — Run a Full Account Diagnostic | Phillips</title>
+  <meta name="description" content="Connect your Google Ads account and get a full 9-point diagnostic in under 60 seconds. Severity-ranked issues, specific fixes, and a downloadable PDF report. Free. Read-only. No data retained.">
+  <link rel="canonical" href="https://www.phillips-uk.com/google-ads-audit">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.phillips-uk.com/audit.html">
-  <meta property="og:title" content="Free Google Ads Audit | Phillips.">
-  <meta property="og:description" content="Instant account audit. Priority-ordered recommendations. No agency pitch.">
+  <meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
+  <meta property="og:title" content="Free Google Ads Audit Tool | Phillips">
+  <meta property="og:description" content="Connect your Google Ads account and get a full 9-point diagnostic in under 60 seconds. Severity-ranked issues, specific fixes, and a PDF report. Free. Read-only.">
+
+  <!-- Schema: SoftwareApplication + FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Phillips Google Ads Audit",
+    "url": "https://www.phillips-uk.com/google-ads-audit",
+    "description": "Free Google Ads account audit tool. Connect your account and get a 9-point diagnostic with severity-ranked issues, specific fixes, and a PDF report in under 60 seconds.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "GBP"
+    },
+    "creator": {
+      "@type": "Person",
+      "name": "Lewis Phillips",
+      "url": "https://www.phillips-uk.com"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this Google Ads audit really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, completely free. This tool is a working demo of a real audit methodology built by a senior performance marketer with 11 years of experience. There is no upsell, no agency pitch, and no charge."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the audit access my Google Ads account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The audit uses Google's official OAuth 2.0 authentication. You sign in with Google and grant read-only access. The tool can view your account data but cannot make any changes. No data is retained after the audit is complete."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What Google Ads issues does this tool detect?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The audit checks 9 categories: conversion tracking accuracy, account structure and budget allocation, bidding strategy and Smart Bidding setup, keyword hygiene and Quality Scores, audience coverage including remarketing and Customer Match, AI automation and Performance Max assets, product feed health, ad creative variety and extensions, and landing page quality and query waste."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does the Google Ads audit take?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The audit completes in under 60 seconds. After you connect your Google Ads account and select which account to audit, the diagnostic runs automatically and returns a full report with severity-ranked issues and specific fix recommendations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What do I receive after the audit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You receive an account health score from 0 to 100, a severity-ranked list of every issue found, a specific fix recommendation for each issue with an estimated time to resolve, and a downloadable PDF report you can share with your team or take into a client meeting."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you store my Google Ads data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Your Google Ads data is used only to generate your report and is not retained after the audit session ends. The tool has read-only access and cannot modify your account in any way."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who is this audit for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This audit is built for Google Ads advertisers who want an honest, unbiased assessment of their account — whether you manage it yourself, work with an agency, or are evaluating a new account. It is particularly useful before making major changes to budgets, bidding strategies, or campaign structure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is this different from the WordStream Performance Grader?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most free audit tools give you a score from 0 to 100 and generic recommendations. This tool gives you a severity-ranked issue list, tells you exactly what to fix, why it matters, and how long it will take — and produces a PDF you can act on. The 9-category framework reflects what an experienced Google Ads consultant checks when taking on a new account."
+        }
+      }
+    ]
+  }
+  </script>
 
   <style>
     /* ── Design tokens (matches brand) ───────────────────────────── */
@@ -41,12 +136,15 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 16px;
       line-height: 1.6;
       color: var(--ink);
       background: var(--white);
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── Nav ──────────────────────────────────────────────────────── */
@@ -78,12 +176,18 @@
     .nav-logo .dot { color: var(--amber); }
 
     .nav-back {
-      font-size: 14px;
-      color: var(--mid);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--amber);
       text-decoration: none;
+      border: 1.5px solid var(--amber);
+      padding: 8px 18px;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .nav-back:hover { color: var(--amber); }
+    .nav-back:hover { background: var(--amber); color: var(--white); }
 
     /* ── Page wrapper ─────────────────────────────────────────────── */
     main {
@@ -145,6 +249,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      margin-top: 56px;
       margin-bottom: 40px;
     }
 
@@ -1060,9 +1165,9 @@
     .feature-col-title {
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--mid);
+      color: var(--amber);
       margin-bottom: 16px;
     }
 
@@ -1083,9 +1188,10 @@
     }
 
     .feature-list li .feat-icon {
-      font-size: 15px;
+      font-size: 8px;
+      color: var(--amber);
       flex-shrink: 0;
-      margin-top: 1px;
+      margin-top: 5px;
       line-height: 1;
     }
 
@@ -1111,6 +1217,261 @@
     .why-free-q {
       font-weight: 700;
       color: var(--ink);
+    }
+
+    /* ── SEO content sections ────────────────────────────────────── */
+    .seo-section {
+      margin-top: 56px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+
+    .seo-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+
+    .seo-section-title {
+      font-size: clamp(24px, 3.5vw, 34px);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: 28px;
+      line-height: 1.15;
+    }
+
+    .seo-section-title em {
+      font-style: normal;
+      color: var(--amber);
+    }
+
+    /* ── Audit categories accordion ──────────────────────────────── */
+    .audit-categories {
+      display: flex;
+      flex-direction: column;
+    }
+
+    details.audit-category {
+      border-bottom: 1px solid var(--border);
+    }
+
+    details.audit-category:last-child { border-bottom: none; }
+
+    details.audit-category summary.audit-category-name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      list-style: none;
+      user-select: none;
+    }
+
+    details.audit-category summary.audit-category-name::-webkit-details-marker { display: none; }
+
+    details.audit-category summary.audit-category-name::after {
+      content: '+';
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--amber);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    details[open].audit-category summary.audit-category-name::after { content: '−'; }
+
+    details.audit-category summary.audit-category-name:hover { color: var(--amber); }
+
+    .audit-category-desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.65;
+      padding-bottom: 20px;
+    }
+
+    /* ── FAQ accordion ────────────────────────────────────────────── */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    details.faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    details.faq-item:last-child { border-bottom: none; }
+
+    details.faq-item summary.faq-q {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.4;
+      list-style: none;
+      user-select: none;
+    }
+
+    details.faq-item summary.faq-q::-webkit-details-marker { display: none; }
+
+    details.faq-item summary.faq-q::after {
+      content: '+';
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--amber);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    details[open].faq-item summary.faq-q::after { content: '−'; }
+
+    details.faq-item summary.faq-q:hover { color: var(--amber); }
+
+    .faq-a {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.65;
+      padding-bottom: 20px;
+    }
+
+    .methodology-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 28px;
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+
+    .methodology-box strong { color: var(--ink); }
+
+    /* ── Closing CTA ──────────────────────────────────────────────── */
+    .audit-cta {
+      background: var(--ink);
+      border-radius: 12px;
+      padding: 48px 40px;
+      text-align: center;
+      margin-top: 56px;
+    }
+
+    .audit-cta-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 16px;
+    }
+
+    .audit-cta-headline {
+      font-size: clamp(24px, 3.5vw, 34px);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .audit-cta-headline em {
+      font-style: normal;
+      color: var(--amber);
+    }
+
+    .audit-cta-body {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.65;
+      max-width: 460px;
+      margin: 0 auto 32px;
+    }
+
+    .audit-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--amber);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .audit-cta-btn:hover { background: var(--amber-light); }
+
+    /* ── Connect section dark wrapper ─────────────────────────────── */
+    .connect-wrap {
+      background: var(--ink);
+      border-radius: 16px;
+      padding: 36px 40px 44px;
+      margin-top: 40px;
+    }
+
+    .connect-wrap .steps {
+      margin-top: 0;
+      margin-bottom: 32px;
+    }
+
+    .connect-wrap .step { color: rgba(255,255,255,0.38); }
+    .connect-wrap .step.active { color: var(--amber); font-weight: 600; }
+    .connect-wrap .step.done { color: var(--green); }
+
+    .connect-wrap .step-num {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.38);
+    }
+
+    .connect-wrap .step.active .step-num {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: var(--white);
+    }
+
+    .connect-wrap .step.done .step-num {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+    }
+
+    .connect-wrap .step-divider { background: rgba(255,255,255,0.12); }
+
+    .connect-wrap .card {
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .connect-intro {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 28px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .connect-wrap .trust-item { color: rgba(255,255,255,0.45); }
+
+    @media (max-width: 640px) {
+      .audit-category { grid-template-columns: 1fr; gap: 6px; }
+      .audit-cta { padding: 36px 24px; }
+      .connect-wrap { padding: 28px 24px 36px; }
     }
 
     /* ── Responsive ───────────────────────────────────────────────── */
@@ -1165,8 +1526,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="hero">
         <div class="hero-tag">Free · Read-only · Results in ~60 seconds</div>
-        <h1>Your Google Ads account,<br><span>honestly assessed.</span></h1>
-        <p>Connect your account and get a full diagnostic in under a minute — grouped by what matters, with a specific fix for every issue found.</p>
+        <h1>Free Google Ads Audit Tool</h1>
+        <p style="font-size:15px; color:var(--amber); font-weight:600; margin-bottom:8px; margin-top:-4px;">Your account, honestly assessed — in under 60 seconds.</p>
+        <p>Connect your Google Ads account and get a full 9-point diagnostic. Issues ranked by severity, with a specific fix for every finding and a downloadable PDF to share or act on.</p>
         <button class="btn btn-primary landing-cta" onclick="scrollToForm()">
           Run my audit
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1177,15 +1539,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="feature-col">
           <p class="feature-col-title">What gets checked</p>
           <ul class="feature-list">
-            <li><span class="feat-icon">🎯</span><span>Conversion tracking — is it recording correctly?</span></li>
-            <li><span class="feat-icon">🏗</span><span>Account structure — budget, spend &amp; learning phase</span></li>
-            <li><span class="feat-icon">💰</span><span>Bidding &amp; budget — strategy, targets &amp; impression share</span></li>
-            <li><span class="feat-icon">🔑</span><span>Keyword hygiene — quality scores, duplicates, negatives</span></li>
-            <li><span class="feat-icon">👥</span><span>Audiences — remarketing lists &amp; Customer Match coverage</span></li>
-            <li><span class="feat-icon">🤖</span><span>AI &amp; automation — Smart Bidding setup &amp; PMax assets</span></li>
-            <li><span class="feat-icon">📦</span><span>Feed health — product spend, missing data &amp; titles</span></li>
-            <li><span class="feat-icon">✏️</span><span>Ad creative — RSA strength, ad variety &amp; extensions</span></li>
-            <li><span class="feat-icon">📊</span><span>Landing pages — destination URLs &amp; wasted queries</span></li>
+            <li><span class="feat-icon">●</span><span>Conversion tracking — is it recording correctly?</span></li>
+            <li><span class="feat-icon">●</span><span>Account structure — budget, spend &amp; learning phase</span></li>
+            <li><span class="feat-icon">●</span><span>Bidding &amp; budget — strategy, targets &amp; impression share</span></li>
+            <li><span class="feat-icon">●</span><span>Keyword hygiene — quality scores, duplicates, negatives</span></li>
+            <li><span class="feat-icon">●</span><span>Audiences — remarketing lists &amp; Customer Match coverage</span></li>
+            <li><span class="feat-icon">●</span><span>AI &amp; automation — Smart Bidding setup &amp; PMax assets</span></li>
+            <li><span class="feat-icon">●</span><span>Feed health — product spend, missing data &amp; titles</span></li>
+            <li><span class="feat-icon">●</span><span>Ad creative — RSA strength, ad variety &amp; extensions</span></li>
+            <li><span class="feat-icon">●</span><span>Landing pages — destination URLs &amp; wasted queries</span></li>
           </ul>
         </div>
         <div class="feature-col">
@@ -1201,10 +1563,126 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="why-free">
-        <span class="why-free-q">Why is this free?</span> It's a working demo of my audit methodology. If it finds real problems in your account, you know where to reach me.
+        <span class="why-free-q">Why is this free?</span> It's a working demo of my audit methodology. If it finds something worth fixing and you want help with it, just give me a shout.
       </div>
 
+      <!-- ── SEO Content Section ──────────────────────────────────────── -->
+
+      <section class="seo-section">
+        <p class="seo-section-label">What gets checked</p>
+        <h2 class="seo-section-title">9 audit categories, every account <em>reviewed the same way</em></h2>
+        <div class="audit-categories">
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Conversion Tracking</summary>
+            <div class="audit-category-desc">The most important thing to get right in any Google Ads account. Smart Bidding optimises toward whatever conversion signals it receives. Get those signals wrong and every campaign is heading in the wrong direction. I check for broken tags, duplicate counting, GA4 imports incorrectly set as primary, and whether Enhanced Conversions is set up. This is the first thing I look at because nothing else matters until it's clean.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Account Structure</summary>
+            <div class="audit-category-desc">Bad structure is usually invisible until you look for it. I check for keyword duplication across campaigns, ad groups that are too broad to generate meaningful Quality Scores, and whether the campaign hierarchy actually maps to how the business works. It's rarely the flashy problem, but it's the one that makes everything else harder to fix.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Bidding &amp; Budget</summary>
+            <div class="audit-category-desc">I check whether the bidding strategy fits the account. tCPA and tROAS need enough conversion volume to work. Set them too early and Smart Bidding is guessing. I also flag campaigns stuck in learning phase due to constant changes, and budgets that are quietly capping campaigns that should be spending more.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Keyword &amp; Quality Score</summary>
+            <div class="audit-category-desc">Quality Score is a diagnostic tool, not a target in itself. Low QS means there's a mismatch somewhere between keyword, ad copy, and landing page, and that mismatch costs you in higher CPCs. I check QS distribution across the account, flag the worst-performing ad groups, and look for Broad Match expanding spend into territory you probably didn't intend.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Audiences</summary>
+            <div class="audit-category-desc">Most accounts have remarketing audiences set up in GA4 and never connected to Google Ads. Customer Match lists often go unused entirely. These are free signals that help Smart Bidding understand who's converting, and most accounts are just leaving them on the table. I check what's set up, what's missing, and whether observation mode audiences are actually attached to campaigns.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Smart Bidding &amp; PMax</summary>
+            <div class="audit-category-desc">Performance Max needs active management even though it's designed to run on autopilot. I check asset group quality (Google will auto-generate video if you don't provide it, and it's always bad), whether URL expansion is serving spend to irrelevant pages, and whether PMax and standard Search campaigns are competing with each other for the same queries.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Product Feed</summary>
+            <div class="audit-category-desc">For Shopping campaigns, the feed is everything. A well-structured campaign running on a poor feed will always underperform. I pull the Merchant Center data and check for disapproved products, missing GTINs, pricing mismatches between the feed and website, and title quality. Feed problems are usually fixable fast. They just rarely get looked at.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Ad Creative &amp; Assets</summary>
+            <div class="audit-category-desc">RSAs need variety to work. Google's system tests headline and description combinations. Give it three headlines and two descriptions and it has almost nothing to test. I check ad strength scores, whether sitelinks and callouts are present on all campaigns, and flag asset groups where thin creative is limiting delivery without it showing up anywhere obvious in the data.</div>
+          </details>
+
+          <details class="audit-category">
+            <summary class="audit-category-name">Landing Pages</summary>
+            <div class="audit-category-desc">The keyword, ad copy, and landing page need to tell the same story. When they don't, Quality Score drops and conversion rate suffers. You pay more to get traffic you then lose. I check for message match across the chain, flag slow pages (LCP above 2.5s is a known QS penalty trigger), and look for campaigns sending all traffic to the homepage when better destination pages exist.</div>
+          </details>
+
+        </div>
+      </section>
+
+      <section class="seo-section">
+        <p class="seo-section-label">Frequently asked questions</p>
+        <h2 class="seo-section-title">Common questions about <em>the audit</em></h2>
+        <div class="faq-list">
+
+          <details class="faq-item">
+            <summary class="faq-q">Is this Google Ads audit really free?</summary>
+            <p class="faq-a">Yes. No trial, no credit card, no upsell partway through. The full audit runs and you get the full PDF report. It's free because a working audit that finds real problems in your account is a better pitch than any case study I could write.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">How does the audit access my Google Ads account?</summary>
+            <p class="faq-a">Via Google's standard OAuth, the same "Sign in with Google" flow you use everywhere. You grant read-only access. The tool can't make changes, can't touch your budget, can't modify campaigns or bids. You can revoke access any time from your Google Account settings.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">Do you store my Google Ads data?</summary>
+            <p class="faq-a">No. Your data is fetched, used to generate the report, and not stored anywhere. The PDF is generated and downloaded directly to your machine. I don't keep account data, spend data, or anything else from your Google Ads account.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">What Google Ads issues does this tool detect?</summary>
+            <p class="faq-a">The audit checks nine areas: conversion tracking, account structure, bidding and budget, keyword quality and Quality Scores, audience setup, Smart Bidding and Performance Max, product feed health, ad creative and assets, and landing pages. Every issue is rated Critical, Warning, or Improvement, with a specific fix and an estimate of how long it takes to resolve.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">How long does the Google Ads audit take?</summary>
+            <p class="faq-a">Under 60 seconds. Once you connect your account it reads the data, runs the checks, and generates the PDF in one pass. There's no waiting around and no manual steps.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">What do I receive after the audit?</summary>
+            <p class="faq-a">A downloadable PDF with a severity-ranked list of every issue found across the 9 categories, a specific fix for each one, and an estimated time to resolve it. It's designed to be used as a working action list, not a score you screenshot and forget.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">Who is this audit for?</summary>
+            <p class="faq-a">Anyone running Google Ads who wants to know what's actually wrong with their account. That's usually business owners managing their own spend, marketing managers keeping tabs on agency work, or consultants reviewing a new account before taking it on. You need an active Google Ads account with some history for the results to be meaningful.</p>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-q">How is this different from WordStream's Performance Grader?</summary>
+            <p class="faq-a">WordStream gives you a score benchmarked against averages. This gives you a list of specific problems and how to fix them. It's the difference between being told your account scores 62/100 and being told your GA4 import is set as a primary conversion action and Smart Bidding is undercounting conversions as a result. One is a number. The other tells you what to do on Monday morning.</p>
+          </details>
+
+        </div>
+      </section>
+
+      <section class="seo-section">
+        <p class="seo-section-label">About the methodology</p>
+        <h2 class="seo-section-title">Built by a <em>practitioner</em>, not a platform</h2>
+        <div class="methodology-box">
+          <p style="margin-bottom:14px;">I'm Lewis Phillips. I've been running Google Ads accounts for 11 years across e-commerce, lead generation, and B2B, managing over £50 million in paid media spend in that time.</p>
+          <p style="margin-bottom:14px;">The 9 audit categories are the 9 things I check when I take on a new account. Every check maps to a real issue I've found in real accounts, usually more than once. The severity ratings reflect how much each problem typically costs to leave unfixed, based on what I've actually seen in the data.</p>
+          <p>If the audit surfaces something significant and you want help fixing it, you can reach me at <a href="https://www.phillips-uk.com" style="color:var(--amber);">phillips-uk.com</a>.</p>
+        </div>
+      </section>
+
     </div><!-- /landing-hero -->
+
+    <!-- ── Connect wrapper (dark) ──────────────────────────────────── -->
+    <div class="connect-wrap">
 
     <!-- Steps -->
     <div class="steps" id="step-indicators">
@@ -1226,7 +1704,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- ── Section 1: Connect ────────────────────────────────────────── -->
     <div class="card" id="section-cid">
-      <p style="font-size:15px; color:var(--mid); margin-bottom:28px; line-height:1.6; text-align:center;">
+      <p class="connect-intro">
         Sign in with Google and we'll automatically find your account — no IDs to look up.
       </p>
       <div class="error-box" id="cid-error"></div>
@@ -1240,6 +1718,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="trust-item"><span class="trust-icon">✓</span> No agency pitch</div>
       </div>
     </div>
+
+    </div><!-- /connect-wrap -->
 
     <!-- ── Section 2: Account picker ────────────────────────────────── -->
     <div class="card" id="section-oauth" style="display:none;">

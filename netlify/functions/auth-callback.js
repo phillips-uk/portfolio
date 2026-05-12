@@ -7,7 +7,7 @@
  *  2. Exchange code for tokens (access_token + refresh_token)
  *  3. Call Cloud Run worker /accounts to discover accessible Google Ads accounts
  *  4. Encrypt { refreshToken, userEmail, userName, accountIds } with AES-256-GCM
- *  5. Redirect to /audit.html?token=<encrypted>&accounts=<base64url-json>
+ *  5. Redirect to /google-ads-audit.html?token=<encrypted>&accounts=<base64url-json>
  *
  * Env vars required:
  *   GOOGLE_CLIENT_ID
@@ -25,11 +25,11 @@ exports.handler = async function (event) {
   const error = params.error;
 
   if (error) {
-    return redirect(`/audit.html?error=${encodeURIComponent(error)}`);
+    return redirect(`/google-ads-audit.html?error=${encodeURIComponent(error)}`);
   }
 
   if (!code) {
-    return redirect("/audit.html?error=missing_code");
+    return redirect("/google-ads-audit.html?error=missing_code");
   }
 
   // 1. Exchange code for tokens
@@ -38,12 +38,12 @@ exports.handler = async function (event) {
     tokens = await exchangeCode(code);
   } catch (e) {
     console.error("Token exchange failed:", e.message);
-    return redirect("/audit.html?error=token_exchange_failed");
+    return redirect("/google-ads-audit.html?error=token_exchange_failed");
   }
 
   const refreshToken = tokens.refresh_token;
   if (!refreshToken) {
-    return redirect("/audit.html?error=no_refresh_token");
+    return redirect("/google-ads-audit.html?error=no_refresh_token");
   }
 
   // 2. Fetch user email / name
@@ -95,17 +95,17 @@ exports.handler = async function (event) {
     }));
   } catch (e) {
     console.error("Encryption failed:", e.message);
-    return redirect("/audit.html?error=encryption_failed");
+    return redirect("/google-ads-audit.html?error=encryption_failed");
   }
 
   // 5. Redirect with accounts list (or no_accounts flag if empty)
   const tokenParam = `token=${encodeURIComponent(encryptedToken)}`;
   if (accounts.length === 0) {
-    return redirect(`/audit.html?${tokenParam}&no_accounts=1`);
+    return redirect(`/google-ads-audit.html?${tokenParam}&no_accounts=1`);
   }
 
   const accountsParam = Buffer.from(JSON.stringify(accounts)).toString("base64url");
-  return redirect(`/audit.html?${tokenParam}&accounts=${accountsParam}`);
+  return redirect(`/google-ads-audit.html?${tokenParam}&accounts=${accountsParam}`);
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
