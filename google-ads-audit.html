@@ -433,7 +433,8 @@
     .progress-steps {
       margin-top: 32px;
       text-align: left;
-      background: var(--light);
+      background: var(--cream);
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px 24px;
     }
@@ -1423,33 +1424,6 @@
       margin-top: 40px;
     }
 
-    .connect-wrap .steps {
-      margin-top: 0;
-      margin-bottom: 32px;
-    }
-
-    .connect-wrap .step { color: rgba(255,255,255,0.38); }
-    .connect-wrap .step.active { color: var(--amber); font-weight: 600; }
-    .connect-wrap .step.done { color: var(--green); }
-
-    .connect-wrap .step-num {
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.38);
-    }
-
-    .connect-wrap .step.active .step-num {
-      background: var(--amber);
-      border-color: var(--amber);
-      color: var(--white);
-    }
-
-    .connect-wrap .step.done .step-num {
-      background: var(--green);
-      border-color: var(--green);
-      color: var(--white);
-    }
-
     .connect-wrap .step-divider { background: rgba(255,255,255,0.12); }
 
     .connect-wrap .card {
@@ -1681,9 +1655,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     </div><!-- /landing-hero -->
 
-    <!-- ── Connect wrapper (dark) ──────────────────────────────────── -->
-    <div class="connect-wrap">
-
     <!-- Steps -->
     <div class="steps" id="step-indicators">
       <div class="step active" id="step-1">
@@ -1702,10 +1673,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
+    <!-- ── Connect wrapper (dark) ──────────────────────────────────── -->
+    <div class="connect-wrap">
+
     <!-- ── Section 1: Connect ────────────────────────────────────────── -->
     <div class="card" id="section-cid">
       <p class="connect-intro">
-        Sign in with Google and we'll automatically find your account — no IDs to look up.
+        Sign in with Google and I'll find your account automatically — no IDs to look up.
       </p>
       <div class="error-box" id="cid-error"></div>
       <button class="btn btn-google" id="btn-connect" onclick="handleGoogleAuth()">
@@ -1724,7 +1698,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- ── Section 2: Account picker ────────────────────────────────── -->
     <div class="card" id="section-oauth" style="display:none;">
       <h3 style="font-size:17px; font-weight:700; color:var(--ink); margin-bottom:8px;">Select your account</h3>
-      <p style="font-size:14px; color:var(--mid); margin-bottom:4px; line-height:1.5;" id="accounts-subtitle">We found the following Google Ads accounts on your Google login.</p>
+      <p style="font-size:14px; color:var(--mid); margin-bottom:4px; line-height:1.5;" id="accounts-subtitle">I found the following Google Ads accounts on your login. Pick the one to audit.</p>
       <div class="error-box" id="oauth-error"></div>
       <div id="account-list" class="account-list"></div>
       <button class="btn" style="background:none; color:var(--mid); font-size:13px; margin-top:8px; width:100%;" onclick="resetToStart()">
@@ -2649,6 +2623,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const inDeepFlow = ["loading-section", "report-section", "error-section", "__none__"].includes(id);
     const steps = document.getElementById("step-indicators");
     if (steps) steps.style.display = inDeepFlow ? "none" : "flex";
+
+    // Connect wrap (dark card): only visible on step 1
+    const connectWrap = document.querySelector(".connect-wrap");
+    if (connectWrap) connectWrap.style.display = id === "section-cid" ? "" : "none";
 
     ["section-cid", "section-oauth", "loading-section", "report-section", "error-section"]
       .forEach(s => {
