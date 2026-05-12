@@ -1735,20 +1735,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- ── Loading ────────────────────────────────────────────────────── -->
     <div class="card" id="loading-section">
       <div class="spinner"></div>
-      <p class="loading-text">Auditing your account</p>
-      <p class="loading-sub">This takes around 30–60 seconds.</p>
+      <p class="loading-text">Running your audit</p>
+      <p class="loading-sub">Under 60 seconds. I'll check every area of your account in one pass.</p>
       <div class="progress-steps">
         <div class="progress-step active" id="prog-connect">
-          <span class="progress-icon">⟳</span> Connecting to Google Ads API
+          <span class="progress-icon">⟳</span> Connecting to Google Ads
         </div>
         <div class="progress-step" id="prog-data">
-          <span class="progress-icon">○</span> Pulling campaign &amp; keyword data
+          <span class="progress-icon">○</span> Reading campaign and account data
         </div>
         <div class="progress-step" id="prog-analyse">
-          <span class="progress-icon">○</span> Running audit checks across 6 categories
+          <span class="progress-icon">○</span> Running 9-point diagnostic
         </div>
         <div class="progress-step" id="prog-ai">
-          <span class="progress-icon">○</span> Generating recommendations
+          <span class="progress-icon">○</span> Building your report
         </div>
       </div>
     </div>
@@ -2017,15 +2017,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                        : "Needs Immediate Attention";
 
     const CATEGORY_ICONS = {
-      conversion_foundation: "🎯",
-      account_structure:     "🏗",
-      bidding:               "💰",
-      keyword_hygiene:       "🔑",
-      audiences:             "🎯",
-      ai_automation:         "🤖",
-      feed_health:           "📦",
-      creative:              "✏️",
-      traffic_quality:       "📊",
+      conversion_foundation: "●",
+      account_structure:     "●",
+      bidding:               "●",
+      keyword_hygiene:       "●",
+      audiences:             "●",
+      ai_automation:         "●",
+      feed_health:           "●",
+      creative:              "●",
+      traffic_quality:       "●",
     };
 
     // Section structure — drives report order and hero banners
@@ -2211,7 +2211,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="issue-fix-text">${escHtml(f.recommendation)}</div>
         </div>` : "";
       const hoursHTML = f.hours_estimate
-        ? `<div class="issue-hours">⏱ Estimated fix time: ${f.hours_estimate}h</div>` : "";
+        ? `<div class="issue-hours">Est. fix time: ${f.hours_estimate}h</div>` : "";
       const qsHistHTML = (f.check === "low_quality_score" && bm.qs_distribution)
         ? buildQsHistogram(bm.qs_distribution) : "";
 
@@ -2257,7 +2257,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return `
         <div class="category-section">
           <div class="category-hdr">
-            <span>${icon}</span>
+            <span style="color:var(--amber);font-size:10px;">${icon}</span>
             <span class="category-hdr-name">${escHtml(cat.label)}</span>
             <span class="category-hdr-status" style="color:${statusCol};">${statusText}</span>
           </div>
@@ -2351,8 +2351,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="lead-cta">
         <div class="lead-cta-copy">
-          <h3>Want help fixing these?</h3>
-          <p>I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</p>
+          <h3>I can fix what the audit found.</h3>
+          <p>I work directly with businesses on exactly these issues — broken conversion tracking, wasted budget, weak bid strategies. No agency overhead, no account managers.</p>
         </div>
         <a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">
           Get in touch →
@@ -2405,9 +2405,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       { key:"display",    eyebrow:"Display Network",             title:"Display & Remarketing",     channelRequired:["DISPLAY"],      channelLabel:"Display",       categories:[] },
     ];
     const PDF_CAT_ICONS = {
-      conversion_foundation: "🎯", account_structure: "🏗", bidding: "💰",
-      keyword_hygiene: "🔑", audiences: "🎯", ai_automation: "🤖",
-      feed_health: "📦", creative: "✏️", traffic_quality: "📊",
+      conversion_foundation: "●", account_structure: "●", bidding: "●",
+      keyword_hygiene: "●", audiences: "●", ai_automation: "●",
+      feed_health: "●", creative: "●", traffic_quality: "●",
     };
     const pdfActiveChannels  = ((data.metadata || {}).active_channel_types) || [];
     const pdfHasChannelData  = pdfActiveChannels.length > 0;
@@ -2435,7 +2435,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="font-size:12px;color:#1A1A1A;line-height:1.6;">${escHtml(f.recommendation)}</div>
         </div>` : "";
       const hoursHTML = f.hours_estimate
-        ? `<div style="font-size:11px;color:#6B6B6B;">⏱ Est. fix time: ${f.hours_estimate}h</div>` : "";
+        ? `<div style="font-size:11px;color:#6B6B6B;">Est. fix time: ${f.hours_estimate}h</div>` : "";
       return `
         <div style="border:1px solid #E8D8C4;border-left:3px solid ${leftCol};border-radius:9px;padding:18px 20px;margin-top:16px;break-inside:avoid;">
           <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${sevCol};margin-bottom:7px;">${f.severity}</div>
@@ -2461,7 +2461,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return `
         <div style="padding:24px 0;border-bottom:1px solid #E8D8C4;break-inside:avoid-page;">
           <div style="display:flex;align-items:center;gap:9px;">
-            <span>${PDF_CAT_ICONS[catKey] || "•"}</span>
+            <span style="color:#985830;font-size:10px;">${PDF_CAT_ICONS[catKey] || "●"}</span>
             <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;color:#1A1A1A;">${escHtml(cat.label)}</span>
             <span style="margin-left:auto;font-size:12px;font-weight:600;color:${statusCol};">${statusText}</span>
           </div>
