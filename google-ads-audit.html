@@ -457,11 +457,6 @@
     /* ── Report ───────────────────────────────────────────────────── */
     #report-section { display: none; }
 
-    .report-header {
-      padding: 52px 0 0;
-      text-align: center;
-    }
-
     .report-top-meta {
       font-size: 12px;
       color: var(--mid);
@@ -1110,18 +1105,47 @@
     .trust-icon { color: var(--green); }
 
     /* ── Download button ──────────────────────────────────────────── */
-    .report-actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 24px;
+    /* ── Report header (dark hero) ───────────────────────────────── */
+    .report-header {
+      background: var(--ink);
+      margin: -40px -40px 0;
+      padding: 40px 40px 44px;
+      text-align: center;
+      border-radius: 16px 16px 0 0;
     }
+    .report-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 44px;
+    }
+    .report-brand {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: rgba(255,255,255,0.75);
+    }
+    .report-brand span { color: var(--amber); }
+    .report-header .report-top-meta {
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 32px;
+    }
+    .report-header .score-num { color: #fff; }
+    .report-header .score-denom { color: rgba(255,255,255,0.35); }
+    .report-header .glance-stats {
+      border-top-color: rgba(255,255,255,0.1);
+      border-bottom-color: rgba(255,255,255,0.1);
+      margin-top: 36px;
+      margin-bottom: 0;
+    }
+    .report-header .glance-label { color: rgba(255,255,255,0.4); }
 
     .btn-download {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: var(--white);
-      color: var(--amber);
+      background: var(--amber);
+      color: var(--white);
       border: 1.5px solid var(--amber);
       border-radius: 6px;
       padding: 8px 16px;
@@ -1129,9 +1153,9 @@
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
+      transition: background 0.15s, opacity 0.15s;
     }
-    .btn-download:hover { background: var(--amber); color: var(--white); }
+    .btn-download:hover { opacity: 0.85; }
 
     /* ── Print-only header ────────────────────────────────────────── */
     .print-header {
@@ -1417,6 +1441,30 @@
     .audit-cta-btn:hover { background: var(--amber-light); }
 
     /* ── Connect section dark wrapper ─────────────────────────────── */
+    /* ── Connect brand mark ─────────────────────────────────────── */
+    .connect-brand {
+      text-align: center;
+      padding-bottom: 32px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .connect-brand-mark {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+      line-height: 1;
+    }
+    .connect-brand-mark span { color: var(--amber); }
+    .connect-brand-sub {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-top: 8px;
+    }
+
     .connect-wrap {
       background: var(--ink);
       border-radius: 16px;
@@ -1675,6 +1723,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- ── Connect wrapper (dark) ──────────────────────────────────── -->
     <div class="connect-wrap">
+
+    <div class="connect-brand">
+      <div class="connect-brand-mark">Phillips<span>.</span></div>
+      <p class="connect-brand-sub">Free Google Ads audit</p>
+    </div>
 
     <!-- ── Section 1: Connect ────────────────────────────────────────── -->
     <div class="card" id="section-cid">
@@ -2038,7 +2091,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Multiple accounts — show picker
     const listEl = document.getElementById("account-list");
     const subtitle = document.getElementById("accounts-subtitle");
-    if (subtitle) subtitle.textContent = `We found ${accounts.length} Google Ads accounts on your login. Pick the one to audit.`;
+    if (subtitle) subtitle.textContent = `I found ${accounts.length} Google Ads accounts on your login. Pick the one to audit.`;
 
     listEl.innerHTML = accounts.map(a => `
       <button class="account-item" onclick="selectAccount('${escAttr(a.id)}')">
@@ -2465,13 +2518,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const cidFormatted = formatCid(d.customer_id || "");
 
     return `
-      <div class="report-actions">
-        <button class="btn-download" onclick="downloadPDF(currentAuditData)">
-          ↓ Download PDF
-        </button>
-      </div>
-
       <div class="report-header">
+        <div class="report-header-top">
+          <div class="report-brand">Phillips<span>.</span></div>
+          <button class="btn-download" onclick="downloadPDF(currentAuditData)">↓ Download PDF</button>
+        </div>
         <p class="report-top-meta">Customer ID: ${cidFormatted} · ${reportDate}</p>
         <p class="score-eyebrow">Account Health Score</p>
         <div class="score-display">
@@ -2479,9 +2530,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="score-denom">/100</span>
         </div>
         <span class="score-tag ${scoreClass}">${scoreTagText}</span>
-        ${perfGridHTML}
         ${glanceHTML}
       </div>
+
+      ${perfGridHTML}
 
       ${headline ? `<p class="report-headline">${escHtml(headline)}</p>` : ""}
 
