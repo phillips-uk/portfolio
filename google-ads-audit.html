@@ -515,6 +515,53 @@
     .score-tag.poor      { background: #BF360C; }
     .score-tag.critical  { background: var(--red); }
 
+    /* Score info toggle */
+    .score-info-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: none;
+      border: 1.5px solid #bbb;
+      color: #999;
+      font-size: 10px;
+      font-weight: 700;
+      font-style: italic;
+      font-family: Georgia, serif;
+      cursor: pointer;
+      margin-left: 7px;
+      vertical-align: middle;
+      line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+      padding: 0;
+    }
+    .score-info-btn:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+    .score-info-panel {
+      display: none;
+      text-align: left;
+      background: #fdf6ee;
+      border: 1px solid #e8d8c4;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 12px auto 0;
+      max-width: 380px;
+      font-size: 12px;
+      color: #555;
+      line-height: 1.65;
+    }
+    .score-info-panel.open { display: block; }
+    .score-info-panel strong { color: #333; }
+    .score-info-panel table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11.5px; }
+    .score-info-panel td { padding: 5px 8px; border-bottom: 1px solid #e8d8c4; }
+    .score-info-panel tr:last-child td { border-bottom: none; }
+    .score-info-panel td:first-child { color: #888; white-space: nowrap; }
+    .score-info-panel .sev-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+
     /* Performance metrics */
     .perf-grid {
       display: grid;
@@ -2529,12 +2576,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button class="btn-download" onclick="downloadPDF(currentAuditData)">↓ Download PDF</button>
         </div>
         <p class="report-top-meta">Customer ID: ${cidFormatted} · ${reportDate}</p>
-        <p class="score-eyebrow">Account Health Score</p>
+        <p class="report-top-meta" style="margin-top:2px;color:#999;">Analysis period: ${(d.metadata || {}).lookback || "Last 30 days"}</p>
+        <p class="score-eyebrow">
+          Account Health Score
+          <button class="score-info-btn" onclick="toggleScoreInfo()" title="How is this score calculated?">i</button>
+        </p>
         <div class="score-display">
           <span class="score-num">${score}</span>
           <span class="score-denom">/100</span>
         </div>
         <span class="score-tag ${scoreClass}">${scoreTagText}</span>
+        <div class="score-info-panel" id="score-info-panel">
+          <strong>How this score is calculated</strong><br>
+          The audit runs ${d.total_checks || "25+"} checks across 9 categories. The score starts at 100 and deducts points for each issue found, weighted by severity:
+          <table>
+            <tr><td><span class="sev-dot" style="background:#C0392B;"></span>Critical</td><td>−15 points</td><td>Broken tracking, zero conversions</td></tr>
+            <tr><td><span class="sev-dot" style="background:#DD6B20;"></span>High</td><td>−8 points</td><td>Significant wasted spend or structural gaps</td></tr>
+            <tr><td><span class="sev-dot" style="background:#D4A017;"></span>Medium</td><td>−4 points</td><td>Best practice gaps, optimisation opportunities</td></tr>
+          </table>
+          <br><strong>Score bands</strong>
+          <table>
+            <tr><td>80–100</td><td>Strong — well-structured, minor tweaks only</td></tr>
+            <tr><td>65–79</td><td>Good — a few things to tighten up</td></tr>
+            <tr><td>45–64</td><td>Needs attention — clear priority actions</td></tr>
+            <tr><td>25–44</td><td>Poor health — structural issues costing budget</td></tr>
+            <tr><td>0–24</td><td>Critical — immediate action required</td></tr>
+          </table>
+          <br><strong>Analysis period:</strong> ${(d.metadata || {}).lookback || "Last 30 days"}<br>
+          <strong>Note:</strong> Wasted spend severity scales with account size — £20 on a £5k/month account scores differently to £20 on a £500/month account.
+        </div>
         ${glanceHTML}
       </div>
 
@@ -2783,7 +2853,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div style="font-size:11px;color:#6B6B6B;text-align:right;line-height:1.7;">
       Google Ads Audit Report<br>
       ${userName ? `Prepared for: <strong>${userName}</strong><br>` : ""}
-      CID: ${cid} &nbsp;·&nbsp; ${reportDate}
+      CID: ${cid} &nbsp;·&nbsp; ${reportDate}<br>
+      Analysis period: ${(data.metadata || {}).lookback || "Last 30 days"}
     </div>
   </div>
 
@@ -2795,6 +2866,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span style="font-size:22px;font-weight:400;color:#6B6B6B;letter-spacing:-1px;padding-bottom:12px;">/100</span>
     </div>
     <span style="display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 12px;border-radius:3px;color:#fff;background:${scoreTagBg};">${scoreTag}</span>
+    <p style="font-size:9.5px;color:#999;margin:8px 0 0;line-height:1.6;">Score starts at 100. Critical issues −15 pts · High −8 · Medium −4. Wasted spend severity scales with account size.</p>
   </div>
 
   <!-- Performance metrics -->
@@ -2905,6 +2977,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function goBack() {
     setStep(1);
     showSection("section-cid");
+  }
+
+  function toggleScoreInfo() {
+    const panel = document.getElementById("score-info-panel");
+    if (panel) panel.classList.toggle("open");
   }
 
   function resetToStart() {
