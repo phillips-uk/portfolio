@@ -2255,6 +2255,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="btn btn-outline" onclick="resetToStart()">Try again</button>
     </div>
 
+    <!-- Manual CID entry — shown when account auto-discovery returns nothing -->
+    <div class="card" id="section-manual-cid" style="display:none;">
+      <div class="error-box" style="display:block;margin-bottom:20px;">
+        We couldn't automatically find your Google Ads accounts — this can happen if your account is on a manager/MCC structure. Enter your Customer ID below and we'll run the audit directly.
+      </div>
+      <label class="input-label" for="manual-cid-input">Google Ads Customer ID</label>
+      <input class="cid-input" id="manual-cid-input" type="text" inputmode="numeric"
+             placeholder="e.g. 936-474-8087 or 9364748087"
+             autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="field-error" id="manual-cid-error" style="display:none;"></div>
+      <p style="font-size:12px;color:var(--mid);margin:10px 0 18px;">
+        Find it in Google Ads: click the grid icon (top right) → your account name → the 10-digit number shown below.
+      </p>
+      <button class="btn btn-primary" onclick="handleManualCid()">
+        Run audit →
+      </button>
+    </div>
+
   </div>
 </main>
 
@@ -2660,8 +2678,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   function showNoAccountsFallback(token) {
-    // No accounts discovered — show helpful error with option to retry
-    showGlobalError("We couldn't find any Google Ads accounts linked to your Google login. Make sure you sign in with the Google account that has access to your Google Ads, then try again.");
+    // Token is valid but account discovery returned nothing (MCC/manager account structure)
+    // Show manual CID entry — the audit can still run with the token we have
+    hideAll();
+    setStep(1);
+    const section = document.getElementById("section-manual-cid");
+    if (section) section.style.display = "block";
+  }
+
+  function handleManualCid() {
+    const raw = (document.getElementById("manual-cid-input") || {}).value || "";
+    const cleaned = raw.replace(/[-\s]/g, "").trim();
+    if (!/^\d{10}$/.test(cleaned)) {
+      showError("manual-cid-error", "Please enter a valid 10-digit Customer ID — e.g. 9364748087");
+      return;
+    }
+    hideError("manual-cid-error");
+    customerId = cleaned;
+    showLoading();
+    runAudit(savedAuditToken, cleaned);
   }
 
   function selectAccount(cid) {
@@ -3726,7 +3761,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const connectWrap = document.querySelector(".connect-wrap");
     if (connectWrap) connectWrap.style.display = id === "section-cid" ? "" : "none";
 
-    ["section-cid", "section-oauth", "loading-section", "report-section", "error-section"]
+    ["section-cid", "section-oauth", "loading-section", "report-section", "error-section", "section-manual-cid"]
       .forEach(s => {
         const el = document.getElementById(s);
         if (el) el.style.display = s === id ? "block" : "none";
@@ -3845,10 +3880,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return msgs[code] || `An error occurred (${code}). Please try again.`;
   }
 
-  // ── Allow Enter key on CID input ─────────────────────────────────────────
+  // ── Allow Enter key on CID inputs ────────────────────────────────────────
   document.addEventListener("keydown", e => {
-    if (e.key === "Enter" && document.getElementById("section-cid").style.display !== "none") {
+    if (e.key !== "Enter") return;
+    if (document.getElementById("section-cid").style.display !== "none") {
       handleContinue();
+    } else if (document.getElementById("section-manual-cid").style.display !== "none") {
+      handleManualCid();
     }
   });
 
