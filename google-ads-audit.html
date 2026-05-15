@@ -1141,10 +1141,27 @@
     }
 
     .category-hdr-status {
-      margin-left: auto;
       font-size: 12px;
       font-weight: 600;
     }
+
+    /* Three-tier verdict badge */
+    .verdict-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+
+    .verdict-pass   { background: rgba(46,125,50,0.10);  color: #2E7D32; border: 1px solid rgba(46,125,50,0.25); }
+    .verdict-review { background: rgba(212,105,27,0.10); color: #D4691B; border: 1px solid rgba(212,105,27,0.25); }
+    .verdict-fail   { background: rgba(192,57,43,0.10);  color: var(--red); border: 1px solid rgba(192,57,43,0.25); }
 
     /* Issue card */
     .issue-card {
@@ -3204,9 +3221,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const catPasses = cat.passes || [];
       if (catIssues.length === 0 && catPasses.length === 0) return "";
 
-      const icon        = CATEGORY_ICONS[catKey] || "•";
-      const allPass     = catIssues.length === 0;
-      const hasCritical = catIssues.some(f => f.severity === "critical");
+      const icon          = CATEGORY_ICONS[catKey] || "•";
+      const allPass       = catIssues.length === 0;
+      const hasCritical   = catIssues.some(f => f.severity === "critical");
+      const hasHigh       = catIssues.some(f => f.severity === "high");
+      // Three-tier verdict: Pass / Review / Fail
+      const verdict       = allPass ? "pass" : (hasCritical || hasHigh) ? "fail" : "review";
+      const verdictLabel  = allPass ? "✓ Pass" : (hasCritical || hasHigh) ? "✕ Fail" : "⚠ Review";
+      const issueCountText = !allPass ? ` · ${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}` : "";
       const statusCol   = allPass ? "var(--green)" : (hasCritical ? "var(--red)" : "var(--orange)");
       const statusText  = allPass ? "✓ All clear" : `${catIssues.length} issue${catIssues.length > 1 ? "s" : ""}`;
 
@@ -3225,7 +3247,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="category-hdr">
             <span style="color:var(--amber);font-size:10px;">${icon}</span>
             <span class="category-hdr-name">${escHtml(cat.label)}</span>
-            <span class="category-hdr-status" style="color:${statusCol};">${statusText}</span>
+            ${!allPass ? `<span class="category-hdr-status" style="color:${statusCol};">${issueCountText.trim()}</span>` : ""}
+            <span class="verdict-badge verdict-${verdict}">${verdictLabel}</span>
           </div>
           ${catIssues.map(buildIssueCard).join("")}
           ${passesHTML}
