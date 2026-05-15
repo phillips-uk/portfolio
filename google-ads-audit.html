@@ -716,6 +716,128 @@
     .ngram-metric.waste  { color: var(--red); }
     .ngram-metric.good   { color: var(--green); }
 
+    /* ── Kill Zone heatmap ────────────────────────────────────── */
+    .heatmap-section {
+      margin: 0 0 40px;
+    }
+
+    .heatmap-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .heatmap-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .heatmap-toggle {
+      display: flex;
+      gap: 2px;
+      margin-left: auto;
+    }
+
+    .heatmap-toggle-btn {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--mid);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .heatmap-toggle-btn:first-child { border-radius: 4px 0 0 4px; }
+    .heatmap-toggle-btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
+
+    .heatmap-toggle-btn.active {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .heatmap-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 28px repeat(24, 1fr);
+      gap: 2px;
+      min-width: 580px;
+    }
+
+    .heatmap-cell {
+      height: 28px;
+      border-radius: 3px;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      font-size: 0;
+      position: relative;
+      cursor: default;
+    }
+
+    .heatmap-cell[data-tip]:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 4px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .heatmap-day-label {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .heatmap-hour-label {
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: var(--mid);
+    }
+
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--mid);
+    }
+
+    .heatmap-legend-swatch {
+      width: 48px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
     /* ── Section hero banners ─────────────────────────────────── */
     .section-hero {
       background: var(--ink);
@@ -2028,7 +2150,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           { ngram: "near me", n: 2, cvr: 9.6, cost: 44.50, clicks: 83, conversions: 8.0, impressions: 2300 },
           { ngram: "best price", n: 2, cvr: 8.1, cost: 27.80, clicks: 62, conversions: 5.0, impressions: 1700 }
         ]
-      }
+      },
+      heatmap: { cells: (function(){
+        // Generate realistic demo heatmap: Mon-Fri busier, peak 9-17, low late nights
+        const cells=[];
+        const dayProfiles=[0.9,1.0,1.0,0.95,0.85,0.35,0.20]; // Mon-Sun
+        const hourProfiles=[0.05,0.03,0.02,0.02,0.03,0.06,0.12,0.35,0.75,0.95,0.90,0.88,0.80,0.85,0.92,0.88,0.75,0.60,0.50,0.42,0.35,0.25,0.18,0.10];
+        for(let d=0;d<7;d++){
+          for(let h=0;h<24;h++){
+            const baseCost=120*dayProfiles[d]*hourProfiles[h]*(0.85+Math.random()*0.3);
+            const baseConv=baseCost>5?(dayProfiles[d]*hourProfiles[h]*(h>=9&&h<=17?2.2:0.8)*(0.7+Math.random()*0.6)):0;
+            if(baseCost>0.5) cells.push({day:d,hour:h,cost:Math.round(baseCost*100)/100,conversions:Math.round(baseConv*10)/10,clicks:Math.round(baseCost*8*(0.8+Math.random()*0.4)),impressions:Math.round(baseCost*120)});
+          }
+        }
+        return cells;
+      })() }
     },
     categories: {
       conversion_foundation: {
@@ -2595,6 +2731,131 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>` : "";
 
+    // ── Kill Zone heatmap ────────────────────────────────────────────────────
+    const hmCells   = ((meta.heatmap || {}).cells) || [];
+    const hmDays    = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    const hmHours   = Array.from({length:24},(_,i)=>i);
+    const hmId      = "hm-" + Math.random().toString(36).slice(2,8);
+
+    let heatmapSectionHTML = "";
+    if (hmCells.length > 0) {
+      // Build lookup: matrix[day][hour] = {cost, conversions, clicks}
+      const hmMatrix = {};
+      for (let d=0;d<7;d++) { hmMatrix[d]={}; for (let h=0;h<24;h++) hmMatrix[d][h]={cost:0,conversions:0,clicks:0}; }
+      hmCells.forEach(c => {
+        if (hmMatrix[c.day] && hmMatrix[c.day][c.hour] !== undefined) {
+          hmMatrix[c.day][c.hour] = {cost:c.cost, conversions:c.conversions, clicks:c.clicks};
+        }
+      });
+
+      const hmMaxCost = Math.max(...hmCells.map(c=>c.cost), 0.01);
+      const hmMaxConv = Math.max(...hmCells.map(c=>c.conversions), 0.01);
+
+      function hmCellMarkup(mode, day, hour) {
+        const cell = hmMatrix[day][hour];
+        if (!cell || cell.cost === 0) return `<div class="heatmap-cell" style="opacity:0.15;"></div>`;
+        let intensity, r, g, b, tip;
+        if (mode === "cost") {
+          intensity = cell.cost / hmMaxCost;
+          // Amber (#985830) at full intensity, light paper at zero
+          r = Math.round(248 + (152-248)*intensity);
+          g = Math.round(244 + (88-244)*intensity);
+          b = Math.round(237 + (48-237)*intensity);
+          tip = `${hmDays[day]} ${hour}:00 · £${cell.cost.toFixed(2)} spend · ${cell.conversions} conv`;
+        } else {
+          intensity = cell.conversions / hmMaxConv;
+          // Green (#2E7D32) at full, paper at zero
+          r = Math.round(248 + (46-248)*intensity);
+          g = Math.round(244 + (125-244)*intensity);
+          b = Math.round(237 + (50-237)*intensity);
+          const cvr = cell.clicks>0 ? (cell.conversions/cell.clicks*100).toFixed(1) : "0.0";
+          tip = `${hmDays[day]} ${hour}:00 · ${cell.conversions} conv · ${cvr}% CVR`;
+        }
+        const bg = `rgb(${r},${g},${b})`;
+        return `<div class="heatmap-cell" style="background:${bg};" data-tip="${escAttr(tip)}"></div>`;
+      }
+
+      function hmGridMarkup(mode) {
+        const rows = [];
+        // Hour header row
+        let headerRow = `<div class="heatmap-day-label"></div>`;
+        hmHours.forEach(h => {
+          headerRow += `<div class="heatmap-hour-label">${h%3===0?h:""}</div>`;
+        });
+        rows.push(headerRow);
+        // Data rows
+        hmDays.forEach((dayLabel,d) => {
+          let row = `<div class="heatmap-day-label">${dayLabel}</div>`;
+          hmHours.forEach(h => { row += hmCellMarkup(mode, d, h); });
+          rows.push(row);
+        });
+        return rows.join("");
+      }
+
+      // Render cost view by default; toggle switches via inline onclick
+      const legendGradCost = "linear-gradient(to right, #F8F4ED, #985830)";
+      const legendGradConv = "linear-gradient(to right, #F8F4ED, #2E7D32)";
+
+      heatmapSectionHTML = `
+      <div class="heatmap-section">
+        <div class="heatmap-header">
+          <span class="heatmap-title">Day &amp; Hour Performance</span>
+          <div class="heatmap-toggle">
+            <button class="heatmap-toggle-btn active" id="${hmId}-cost"
+              onclick="document.getElementById('${hmId}-grid').innerHTML=hmGrid_${hmId}('cost');document.getElementById('${hmId}-legend').style.background='${legendGradCost}';this.classList.add('active');document.getElementById('${hmId}-conv').classList.remove('active');">
+              Spend
+            </button>
+            <button class="heatmap-toggle-btn" id="${hmId}-conv"
+              onclick="document.getElementById('${hmId}-grid').innerHTML=hmGrid_${hmId}('conv');document.getElementById('${hmId}-legend').style.background='${legendGradConv}';this.classList.add('active');document.getElementById('${hmId}-cost').classList.remove('active');">
+              Conversions
+            </button>
+          </div>
+        </div>
+        <div class="heatmap-wrap">
+          <div class="heatmap-grid" id="${hmId}-grid">
+            ${hmGridMarkup("cost")}
+          </div>
+        </div>
+        <div class="heatmap-legend">
+          <span>Low</span>
+          <div class="heatmap-legend-swatch" id="${hmId}-legend" style="background:${legendGradCost};"></div>
+          <span>High</span>
+        </div>
+      </div>
+      <script>
+        function hmGrid_${hmId}(mode) {
+          const cells = ${JSON.stringify(hmCells)};
+          const days = ${JSON.stringify(hmDays)};
+          const maxCost = ${hmMaxCost};
+          const maxConv = ${hmMaxConv};
+          const mat = {};
+          for(let d=0;d<7;d++){mat[d]={};for(let h=0;h<24;h++)mat[d][h]={cost:0,conversions:0,clicks:0};}
+          cells.forEach(c=>{if(mat[c.day]&&mat[c.day][c.hour]!==undefined)mat[c.day][c.hour]={cost:c.cost,conversions:c.conversions,clicks:c.clicks};});
+          function esc(s){return String(s).replace(/"/g,'&quot;');}
+          function cell(d,h){
+            const cv=mat[d][h];
+            if(!cv||cv.cost===0)return '<div class="heatmap-cell" style="opacity:0.15;"></div>';
+            let intensity,r,g,b,tip;
+            if(mode==='cost'){
+              intensity=cv.cost/maxCost;
+              r=Math.round(248+(152-248)*intensity);g=Math.round(244+(88-244)*intensity);b=Math.round(237+(48-237)*intensity);
+              tip=days[d]+' '+h+':00 · £'+cv.cost.toFixed(2)+' · '+cv.conversions+' conv';
+            }else{
+              intensity=cv.conversions/maxConv;
+              r=Math.round(248+(46-248)*intensity);g=Math.round(244+(125-244)*intensity);b=Math.round(237+(50-237)*intensity);
+              const cvr=cv.clicks>0?(cv.conversions/cv.clicks*100).toFixed(1):'0.0';
+              tip=days[d]+' '+h+':00 · '+cv.conversions+' conv · '+cvr+'% CVR';
+            }
+            return '<div class="heatmap-cell" style="background:rgb('+r+','+g+','+b+');" data-tip="'+esc(tip)+'"></div>';
+          }
+          let out='<div class="heatmap-day-label"></div>';
+          [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].forEach(h=>out+='<div class="heatmap-hour-label">'+(h%3===0?h:'')+'</div>');
+          days.forEach((_,d)=>{out+='<div class="heatmap-day-label">'+days[d]+'</div>';for(let h=0;h<24;h++)out+=cell(d,h);});
+          return out;
+        }
+      </scr` + `ipt>`;
+    }
+
     const glanceHTML = `
       <div class="glance-stats">
         ${summary.critical ? `<div class="glance-stat">
@@ -2849,6 +3110,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       ${perfGridHTML}
       ${ngramSectionHTML}
+      ${heatmapSectionHTML}
 
       ${headline ? `<p class="report-headline">${escHtml(headline)}</p>` : ""}
 
