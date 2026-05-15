@@ -1212,6 +1212,32 @@
 
     .issue-hours { font-size: 12px; color: var(--mid); }
 
+    /* Waste confidence badge */
+    .waste-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .waste-badge.confirmed {
+      background: rgba(192, 57, 43, 0.08);
+      color: var(--red);
+      border: 1px solid rgba(192, 57, 43, 0.2);
+    }
+
+    .waste-badge.estimated {
+      background: rgba(212, 105, 27, 0.08);
+      color: var(--orange);
+      border: 1px solid rgba(212, 105, 27, 0.2);
+    }
+
     /* Fix flag button */
     .issue-footer {
       display: flex;
@@ -2300,7 +2326,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       conversion_foundation: {
         label: "Conversion Tracking",
         issues: [
-          { check:"ga4_primary_import", severity:"critical", title:"GA4 import is set as a primary conversion action", detail:"Your GA4 purchase event is imported into Google Ads and marked as 'Include in Conversions'. Smart Bidding is treating GA4 and your GACT tag as the same conversion, double-counting in some sessions and producing corrupted tROAS signals.", recommendation:"Go to Tools > Conversions, find the GA4 import, and set it to 'Observation only'. Your GTM-fired GACT tag should be the sole primary conversion action.", hours_estimate:0.5 },
+          { check:"ga4_primary_import", severity:"critical", title:"GA4 import is set as a primary conversion action", detail:"Your GA4 purchase event is imported into Google Ads and marked as 'Include in Conversions'. Smart Bidding is treating GA4 and your GACT tag as the same conversion, double-counting in some sessions and producing corrupted tROAS signals.", recommendation:"Go to Tools > Conversions, find the GA4 import, and set it to 'Observation only'. Your GTM-fired GACT tag should be the sole primary conversion action.", hours_estimate:0.5, data:{ waste_confidence:"estimated" } },
           { check:"missing_gact", severity:"high", title:"No direct GACT purchase tag in GTM", detail:"The account has no Google Ads Conversion Tracking tag firing directly from GTM. All conversion data currently routes through the GA4 import, which is unreliable as a primary Smart Bidding signal.", recommendation:"Create a new GACT tag in GTM triggered on the order confirmation page. Set the conversion value dynamically from the transaction data layer variable.", hours_estimate:2 }
         ],
         passes: [
@@ -2333,7 +2359,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         label: "Keyword & Quality Score",
         issues: [
           { check:"low_quality_score", severity:"high", title:"Average Quality Score of 5.8 is below the 7+ target", detail:"41% of keyword impressions are on keywords with a QS of 4 or below. Low Quality Scores raise CPCs across the entire campaign, not just the affected keywords.", recommendation:"Identify the 10–15 keywords with the highest spend and lowest QS. Check landing page relevance and ad copy alignment. Tighten ad groups so that each group covers a tighter keyword theme.", hours_estimate:3, data: {} },
-          { check:"broad_waste", severity:"medium", title:"3 broad match keywords with £800+ spend and zero conversions", detail:"These keywords are consuming budget without contributing any conversion signal. Their search term reports show significant off-topic query matching.", recommendation:"Pause these three keywords. If the theme is important, recreate them as phrase match with tighter ad groups and dedicated landing pages.", hours_estimate:0.5 }
+          { check:"broad_waste", severity:"medium", title:"3 broad match keywords with £800+ spend and zero conversions", detail:"These keywords are consuming budget without contributing any conversion signal. Their search term reports show significant off-topic query matching.", recommendation:"Pause these three keywords. If the theme is important, recreate them as phrase match with tighter ad groups and dedicated landing pages.", hours_estimate:0.5, data:{ waste_confidence:"confirmed" } }
         ],
         passes: [
           { check:"negative_list", title:"Account-level negative keyword list is in place" },
@@ -3132,10 +3158,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const fs = (f.data || {}).feed_summary;
       const feedSummaryHTML = (f.check === "feed_wasted_spend" && fs) ? buildFeedSummary(fs) : "";
 
+      const wasteConf = (f.data || {}).waste_confidence;
+      const wasteBadgeHTML = wasteConf === "confirmed"
+        ? `<div class="waste-badge confirmed">● Confirmed waste</div>`
+        : wasteConf === "estimated"
+          ? `<div class="waste-badge estimated">~ Estimated risk</div>`
+          : "";
+
       const flagId = "flag-" + Math.random().toString(36).slice(2, 10);
       return `
         <div class="issue-card sev-${sev}" id="${flagId}-card">
           <div class="issue-sev sev-${sev}">${f.severity}</div>
+          ${wasteBadgeHTML}
           <div class="issue-title">${escHtml(f.title)}</div>
           <div class="issue-detail">${escHtml(f.detail)}</div>
           ${recHTML}
