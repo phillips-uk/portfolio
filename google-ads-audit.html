@@ -1109,9 +1109,7 @@
       font-size: 16px;
       line-height: 1.75;
       color: var(--mid);
-      padding-bottom: 40px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 48px;
+      margin-bottom: 28px;
     }
 
     /* Section eyebrow */
@@ -1135,7 +1133,7 @@
     }
 
     /* Priority actions */
-    .priority-block { margin-bottom: 56px; }
+    .priority-block { margin-bottom: 56px; border-top: 1px solid var(--border); padding-top: 48px; }
 
     .priority-row {
       display: flex;
@@ -1604,7 +1602,7 @@
       font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.3px;
-      color: rgba(255,255,255,0.75);
+      color: #fff;
     }
     .report-brand span { color: var(--amber); }
     .report-header .report-top-meta {
@@ -2819,6 +2817,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     setStep(3);
     const section = document.getElementById("report-section");
     section.innerHTML = buildReportHTML(data);
+    // innerHTML doesn't execute <script> tags — re-run them so heatmap toggle works
+    section.querySelectorAll("script").forEach(s => {
+      const el = document.createElement("script");
+      el.textContent = s.textContent;
+      document.body.appendChild(el);
+      el.remove();
+    });
     hideAll();
     section.style.display = "block";
 
@@ -3540,12 +3545,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       ${ngramSectionHTML}
       ${heatmapSectionHTML}
 
-      ${headline ? `<p class="report-headline">${escHtml(headline)}</p>` : ""}
-
-      ${actions.length ? `
+      ${(headline || actions.length) ? `
         <div class="priority-block">
-          <p class="section-eyebrow">Priority Actions</p>
-          ${actionsHTML}
+          ${headline ? `<p class="report-headline">${escHtml(headline)}</p>` : ""}
+          ${actions.length ? `<p class="section-eyebrow">Priority Actions</p>${actionsHTML}` : ""}
         </div>` : ""}
 
       <div class="findings-block">
@@ -3563,15 +3566,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="feedback-section" id="feedback-section">
-        <p class="section-title">Was this report useful?</p>
+        <p class="section-title">Leave a review — help spread the word</p>
         <div class="star-row" id="star-row">
           ${[1,2,3,4,5].map(n => `<span class="star" data-v="${n}" onclick="setRating(${n})">&#9733;</span>`).join("")}
         </div>
-        <textarea id="feedback-comment" class="feedback-textarea" placeholder="Optional — what would make this more useful? (never shared publicly)" rows="3"></textarea>
+        <textarea id="feedback-comment" class="feedback-textarea" placeholder="Optional — what did you find most useful?" rows="3"></textarea>
         <button class="btn btn-outline" onclick="submitFeedback('${d.customer_id || ''}')" id="feedback-btn" style="margin-top:8px;">
-          Send feedback
+          Leave a review
         </button>
-        <p id="feedback-confirm" style="display:none;color:var(--green);font-size:13px;margin-top:8px;">Thanks — feedback received.</p>
+        <p id="feedback-confirm" style="display:none;color:var(--green);font-size:13px;margin-top:8px;">Thanks — review received.</p>
       </div>
 
       <div class="report-restart">
