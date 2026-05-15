@@ -3080,7 +3080,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const hmCells   = ((meta.heatmap || {}).cells) || [];
     const hmDays    = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
     const hmHours   = Array.from({length:24},(_,i)=>i);
-    const hmId      = "hm-" + Math.random().toString(36).slice(2,8);
+    const hmId      = "hm" + Math.random().toString(36).slice(2,8);
 
     let heatmapSectionHTML = "";
     if (hmCells.length > 0) {
