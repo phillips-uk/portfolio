@@ -2827,8 +2827,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       history.replaceState(null, "", "/google-ads-audit?report=" + data.audit_id);
     }
 
+    // Dynamic page title for GA4 tracking
+    const _acctName = data.user_name || data.account_name || "";
+    const _acctId   = formatCid(data.customer_id || "");
+    const _rptDate  = new Date().toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" });
+    const _titleParts = [_acctName, _acctId, _rptDate].filter(Boolean);
+    document.title = _titleParts.length
+      ? _titleParts.join(" — ") + " | Google Ads Audit | Phillips."
+      : "Google Ads Audit Report | Phillips.";
+
     window.dataLayer = window.dataLayer || [];
-    dataLayer.push({ event: "audit_report_viewed", score: data.score || 0 });
+    dataLayer.push({
+      event:        "audit_report_viewed",
+      score:        data.score || 0,
+      account_id:   _acctId,
+      account_name: _acctName,
+      report_date:  _rptDate,
+    });
   }
 
 
@@ -2857,8 +2872,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function shareReport(auditId) {
     const url = `${window.location.origin}/google-ads-audit?report=${auditId}`;
     const btn = document.getElementById("share-btn");
+    const _fireShare = () => {
+      window.dataLayer = window.dataLayer || [];
+      dataLayer.push({
+        event:      "audit_report_shared",
+        account_id: currentAuditData ? formatCid(currentAuditData.customer_id || "") : "",
+        audit_id:   auditId,
+      });
+    };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(() => {
+        _fireShare();
         if (btn) {
           btn.textContent = "✓ Link copied!";
           setTimeout(() => { btn.textContent = "⇧ Share"; }, 2500);
@@ -2866,6 +2890,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }).catch(() => { prompt("Copy this link:", url); });
     } else {
       prompt("Copy this link:", url);
+      _fireShare();
     }
   }
 
@@ -3361,7 +3386,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const base = _DEEP_LINKS[f.check];
                 const cidClean = (d.customer_id || "").replace(/-/g,"");
                 const href = cidClean ? `${base}?ocid=${cidClean}` : base;
-                return `<a class="btn-deep-link" href="${escAttr(href)}" target="_blank" rel="noopener" title="Open in Google Ads">↗ Fix in Ads</a>`;
+                return `<a class="btn-deep-link" href="${escAttr(href)}" target="_blank" rel="noopener" title="Open in Google Ads" onclick="window.dataLayer=window.dataLayer||[];dataLayer.push({event:'audit_fix_in_ads_clicked',issue_check:'${escAttr(f.check)}',severity:'${escAttr(f.severity)}',account_id:'${escAttr((d.customer_id||'').replace(/-/g,''))}'})">↗ Fix in Ads</a>`;
               })() : ""}
               <button class="btn-flag" id="${flagId}"
                 data-title="${escAttr(f.title)}"
@@ -3532,7 +3557,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h3>I can fix what the audit found.</h3>
           <p>I work directly with businesses on exactly these issues — broken conversion tracking, wasted budget, weak bid strategies. No agency overhead, no account managers.</p>
         </div>
-        <a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">
+        <a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn" onclick="window.dataLayer=window.dataLayer||[];dataLayer.push({event:'audit_get_in_touch_clicked',source:'lead_cta',account_id:currentAuditData?formatCid(currentAuditData.customer_id||''):''})">
           Get in touch →
         </a>
       </div>
@@ -3558,6 +3583,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ── PDF download — opens clean standalone window and prints it ────────────
   function downloadPDF(data) {
     if (!data) return;
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      event:        "audit_pdf_downloaded",
+      account_id:   formatCid(data.customer_id || ""),
+      account_name: data.user_name || data.account_name || "",
+      score:        data.score || 0,
+    });
     const score      = data.score || 0;
     const summary    = data.summary || {};
     const categories = data.categories || {};
@@ -3800,7 +3832,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.02em;margin-bottom:6px;">Want help fixing these?</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;max-width:400px;">I work directly with businesses to fix exactly these issues — from broken conversion tracking to wasted budget and weak bid strategies. No agency overhead.</div>
     </div>
-    <a href="mailto:lewis@phillips-uk.com?subject=Google%20Ads%20Audit%20Enquiry%20%E2%80%94%20CID%20${encodeURIComponent(cid)}&body=Hi%20Lewis%2C%0A%0AI%20just%20ran%20an%20audit%20of%20my%20Google%20Ads%20account%20and%20would%20like%20to%20discuss%20the%20findings.%0A%0ACID%3A%20${encodeURIComponent(cid)}" style="display:inline-flex;align-items:center;gap:7px;background:#985830;color:#fff;border-radius:6px;padding:11px 20px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;">Get in touch →</a>
+    <a href="mailto:lewis@phillips-uk.com?subject=Google%20Ads%20Audit%20Enquiry%20%E2%80%94%20CID%20${encodeURIComponent(cid)}&body=Hi%20Lewis%2C%0A%0AI%20just%20ran%20an%20audit%20of%20my%20Google%20Ads%20account%20and%20would%20like%20to%20discuss%20the%20findings.%0A%0ACID%3A%20${encodeURIComponent(cid)}" style="display:inline-flex;align-items:center;gap:7px;background:#985830;color:#fff;border-radius:6px;padding:11px 20px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;" onclick="window.dataLayer=window.dataLayer||[];dataLayer.push({event:'audit_get_in_touch_clicked',source:'report_cta',account_id:'${escAttr(cid.replace(/-/g,""))}',score:${score}})">Get in touch →</a>
   </div>
 
   <!-- Footer -->
@@ -3947,6 +3979,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         customer_id: customerId,
       });
       await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() });
+      window.dataLayer = window.dataLayer || [];
+      dataLayer.push({
+        event:       "audit_feedback_submitted",
+        rating:      feedbackRating,
+        account_id:  currentAuditData ? formatCid(currentAuditData.customer_id || "") : customerId,
+      });
       btn.style.display = "none";
       document.getElementById("feedback-confirm").style.display = "block";
     } catch {
@@ -3983,10 +4021,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function toggleFlag(flagId) {
     const btn = document.getElementById(flagId);
     if (!btn) return;
+    window.dataLayer = window.dataLayer || [];
     if (_flagged.has(flagId)) {
       _flagged.delete(flagId);
       btn.classList.remove("flagged");
       btn.textContent = "↳ Add to fix list";
+      dataLayer.push({
+        event:        "audit_issue_unflagged",
+        issue_id:     flagId,
+        issue_title:  btn.dataset.title || "",
+        severity:     btn.dataset.sev   || "",
+        account_id:   currentAuditData ? formatCid(currentAuditData.customer_id || "") : "",
+      });
     } else {
       _flagged.set(flagId, {
         title: btn.dataset.title || "",
@@ -3996,6 +4042,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       });
       btn.classList.add("flagged");
       btn.textContent = "✓ In fix list";
+      dataLayer.push({
+        event:        "audit_issue_flagged",
+        issue_id:     flagId,
+        issue_title:  btn.dataset.title || "",
+        severity:     btn.dataset.sev   || "",
+        account_id:   currentAuditData ? formatCid(currentAuditData.customer_id || "") : "",
+      });
     }
     _updateFixBar();
   }
