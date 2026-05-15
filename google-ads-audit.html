@@ -3138,7 +3138,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         return `
           <div class="qs-hist-col">
             <div style="display:flex;align-items:flex-end;gap:2px;height:56px;">
-              <div class="qs-hist-bar ${barClass(i+1)}" style="width:calc(50% - 1px);height:${Math.max(accountH,2)}px;" title="QS ${i+1}: ${v.toLocaleString()} impressions"></div>
+              <div class="qs-hist-bar ${barClass(i+1)}" style="width:calc(50% - 1px);height:${Math.max(accountH,2)}px;" title="QS ${i+1}: ${v.toLocaleString()} keyword${v !== 1 ? 's' : ''}"></div>
               <div class="qs-hist-bar bar-bench" style="width:calc(50% - 1px);height:${benchH}px;" title="Industry benchmark"></div>
             </div>
             <span class="qs-hist-tick">${i+1}</span>
@@ -3146,13 +3146,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }).join("");
       return `
         <div class="qs-histogram">
-          <div class="qs-hist-label">Impressions by Quality Score</div>
+          <div class="qs-hist-label">Keywords by Quality Score</div>
           <div class="qs-hist-bars">${bars}</div>
           <div class="qs-hist-legend">
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--red);opacity:0.8;"></span>Your account (QS 1–3)</span>
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--orange);opacity:0.8;"></span>Your account (QS 4–6)</span>
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--green);opacity:0.8;"></span>Your account (QS 7–10)</span>
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:#C8C8C8;"></span>Industry benchmark</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--red);opacity:0.8;"></span>Your keywords (QS 1–3)</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--orange);opacity:0.8;"></span>Your keywords (QS 4–6)</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--green);opacity:0.8;"></span>Your keywords (QS 7–10)</span>
+            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:#C8C8C8;"></span>Typical distribution</span>
           </div>
         </div>`;
     }
@@ -3272,7 +3272,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="issue-footer-actions">
               ${_DEEP_LINKS[f.check] ? (() => {
                 const base = _DEEP_LINKS[f.check];
-                const cidClean = cid.replace(/-/g,"");
+                const cidClean = (d.customer_id || "").replace(/-/g,"");
                 const href = cidClean ? `${base}?ocid=${cidClean}` : base;
                 return `<a class="btn-deep-link" href="${escAttr(href)}" target="_blank" rel="noopener" title="Open in Google Ads">↗ Fix in Ads</a>`;
               })() : ""}
