@@ -2011,10 +2011,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="landing-hero">
 
       <div class="hero">
-        <div class="hero-tag">Free · Read-only · Results in ~60 seconds</div>
-        <h1>Free Google Ads Audit Tool</h1>
-        <p style="font-size:15px; color:var(--amber); font-weight:600; margin-bottom:8px; margin-top:-4px;">Your account, honestly assessed — in under 60 seconds.</p>
-        <p>Connect your Google Ads account and get a full 9-point diagnostic. Issues ranked by severity, with a specific fix for every finding and a downloadable PDF to share or act on.</p>
+        <div class="hero-tag" id="hero-tag">Free · Read-only · Results in ~60 seconds</div>
+        <h1 id="hero-h1">Free Google Ads Audit Tool</h1>
+        <p id="hero-sub" style="font-size:15px; color:var(--amber); font-weight:600; margin-bottom:8px; margin-top:-4px;">Your account, honestly assessed — in under 60 seconds.</p>
+        <p id="hero-body">Connect your Google Ads account and get a full 9-point diagnostic. Issues ranked by severity, with a specific fix for every finding and a downloadable PDF to share or act on.</p>
         <button class="btn btn-primary landing-cta" onclick="scrollToForm()">
           Run my audit
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2024,7 +2024,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="landing-features">
         <div class="feature-col">
           <p class="feature-col-title">What gets checked</p>
-          <ul class="feature-list">
+          <ul class="feature-list" id="hero-checklist">
             <li><span class="feat-icon">●</span><span>Conversion tracking — is it recording correctly?</span></li>
             <li><span class="feat-icon">●</span><span>Account structure — budget, spend &amp; learning phase</span></li>
             <li><span class="feat-icon">●</span><span>Bidding &amp; budget — strategy, targets &amp; impression share</span></li>
@@ -2048,7 +2048,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
-      <div class="why-free">
+      <div class="why-free" id="why-free-text">
         <span class="why-free-q">Why is this free?</span> It's a working demo of my audit methodology. If it finds something worth fixing and you want help with it, just give me a shout.
       </div>
 
@@ -2190,7 +2190,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="connect-brand">
       <div class="connect-brand-mark">Phillips<span>.</span></div>
-      <p class="connect-brand-sub">Free Google Ads audit</p>
+      <p class="connect-brand-sub" id="connect-brand-sub">Free Google Ads audit</p>
     </div>
 
     <!-- ── Section 1: Connect ────────────────────────────────────────── -->
@@ -2453,6 +2453,46 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   window.addEventListener("DOMContentLoaded", () => {
     const params    = new URLSearchParams(window.location.search);
+
+    // ── Shopify landing variant ──────────────────────────────────────────────
+    if (params.get("type") === "shopify") {
+      // Page meta
+      document.title = "Free Google Ads Audit for Shopify Stores | Phillips.";
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute("content",
+        "Free Google Ads audit built for Shopify stores. Checks your purchase tracking setup, PMax feed health, product spend waste, and Shopping campaign structure in under 60 seconds.");
+
+      // Hero copy
+      const h1 = document.getElementById("hero-h1");
+      if (h1) h1.textContent = "Free Google Ads Audit for Shopify Stores";
+      const sub = document.getElementById("hero-sub");
+      if (sub) sub.textContent = "Built specifically for Shopify — checks the issues that kill Shopping and PMax performance.";
+      const body = document.getElementById("hero-body");
+      if (body) body.textContent = "Connect your Google Ads account and get a Shopify-specific diagnostic: purchase tracking architecture, PMax feed quality, product-level spend waste, and Shopping campaign structure. Full report in under 60 seconds.";
+      const tag = document.getElementById("hero-tag");
+      if (tag) tag.textContent = "Free · Read-only · Shopify-specific checks";
+
+      // Checklist
+      const list = document.getElementById("hero-checklist");
+      if (list) list.innerHTML = `
+        <li><span class="feat-icon">●</span><span>Purchase tracking — app vs GTM architecture check</span></li>
+        <li><span class="feat-icon">●</span><span>PMax feed health — disapproved products &amp; title quality</span></li>
+        <li><span class="feat-icon">●</span><span>Product spend waste — items with budget but zero sales</span></li>
+        <li><span class="feat-icon">●</span><span>Shopping campaign structure — listing groups &amp; labels</span></li>
+        <li><span class="feat-icon">●</span><span>Bidding — tROAS targets vs actual ROAS achieved</span></li>
+        <li><span class="feat-icon">●</span><span>Search term waste — irrelevant queries draining budget</span></li>
+        <li><span class="feat-icon">●</span><span>Audiences — Customer Match &amp; remarketing coverage</span></li>
+        <li><span class="feat-icon">●</span><span>Ad creative — asset strength for PMax asset groups</span></li>
+        <li><span class="feat-icon">●</span><span>Account health — Smart Bidding signals &amp; learning phase</span></li>`;
+
+      // Connect area tagline
+      const brandSub = document.getElementById("connect-brand-sub");
+      if (brandSub) brandSub.textContent = "Free Shopify Google Ads audit";
+
+      // Why-free note
+      const whyFree = document.getElementById("why-free-text");
+      if (whyFree) whyFree.innerHTML = `<span class="why-free-q">Why is this free?</span> The Shopify Google Ads setup has a lot of common failure points that are easy to miss. This surfaces them. If you want help fixing any of it, <a href="mailto:lewis@phillips-uk.com" style="color:var(--amber);">get in touch</a>.`;
+    }
 
     // Shared report link — load without OAuth
     const report = params.get("report");
