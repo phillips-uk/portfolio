@@ -622,6 +622,100 @@
 
     .perf-bench { font-size: 11px; color: var(--mid); line-height: 1.4; }
 
+    /* ── N-gram patterns section ──────────────────────────────── */
+    .ngram-section {
+      margin: 0 0 40px;
+    }
+
+    .ngram-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 20px;
+    }
+
+    .ngram-tables {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .ngram-tables { grid-template-columns: 1fr; }
+    }
+
+    .ngram-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .ngram-table-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--paper);
+    }
+
+    .ngram-table-head-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .ngram-table-head-sub {
+      font-size: 11px;
+      color: var(--mid);
+      margin-left: auto;
+    }
+
+    .ngram-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ngram-row:last-child { border-bottom: none; }
+
+    .ngram-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ngram-n-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--mid);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ngram-metric {
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ngram-metric.waste  { color: var(--red); }
+    .ngram-metric.good   { color: var(--green); }
+
     /* ── Section hero banners ─────────────────────────────────── */
     .section-hero {
       background: var(--ink);
@@ -1912,6 +2006,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         avg_cpc: 1.24,
         cost_per_conv: 112.50,
         qs_distribution: { "1":120,"2":310,"3":890,"4":1400,"5":2100,"6":3200,"7":4100,"8":1800,"9":620,"10":90 }
+      },
+      ngrams: {
+        total_terms_analyzed: 142,
+        wasted: [
+          { ngram: "free", n: 1, cost: 48.20, clicks: 94, conversions: 0, impressions: 3200 },
+          { ngram: "cheap", n: 1, cost: 31.50, clicks: 67, conversions: 0, impressions: 2100 },
+          { ngram: "free delivery", n: 2, cost: 29.10, clicks: 58, conversions: 0, impressions: 1800 },
+          { ngram: "diy", n: 1, cost: 22.80, clicks: 43, conversions: 0, impressions: 1400 },
+          { ngram: "how make", n: 2, cost: 18.40, clicks: 36, conversions: 0, impressions: 980 },
+          { ngram: "template", n: 1, cost: 14.20, clicks: 28, conversions: 0, impressions: 820 },
+          { ngram: "free template", n: 2, cost: 11.90, clicks: 24, conversions: 0, impressions: 710 },
+          { ngram: "tutorial", n: 1, cost: 9.60, clicks: 19, conversions: 0, impressions: 560 },
+          { ngram: "cheap near me", n: 3, cost: 8.30, clicks: 16, conversions: 0, impressions: 490 },
+          { ngram: "example", n: 1, cost: 6.70, clicks: 13, conversions: 0, impressions: 380 }
+        ],
+        performing: [
+          { ngram: "buy now", n: 2, cvr: 18.4, cost: 23.10, clicks: 49, conversions: 9.0, impressions: 1200 },
+          { ngram: "order online", n: 2, cvr: 14.2, cost: 18.40, clicks: 35, conversions: 5.0, impressions: 940 },
+          { ngram: "same day", n: 2, cvr: 11.8, cost: 31.20, clicks: 59, conversions: 7.0, impressions: 1600 },
+          { ngram: "near me", n: 2, cvr: 9.6, cost: 44.50, clicks: 83, conversions: 8.0, impressions: 2300 },
+          { ngram: "best price", n: 2, cvr: 8.1, cost: 27.80, clicks: 62, conversions: 5.0, impressions: 1700 }
+        ]
       }
     },
     categories: {
@@ -2436,6 +2552,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>` : ""}
       </div>` : "";
 
+    const ngrams = meta.ngrams || {};
+    const ngramWasted     = ngrams.wasted     || [];
+    const ngramPerforming = ngrams.performing  || [];
+    const ngramTotal      = ngrams.total_terms_analyzed || 0;
+
+    function ngramBadge(n) {
+      const labels = { 1: "1-word", 2: "2-word", 3: "3-word" };
+      return `<span class="ngram-n-badge">${labels[n] || n + "-gram"}</span>`;
+    }
+
+    const ngramSectionHTML = (ngramWasted.length || ngramPerforming.length) && hasSearch ? `
+      <div class="ngram-section">
+        <div class="ngram-section-title">Search Term Patterns${ngramTotal ? ` · ${ngramTotal} terms analysed` : ""}</div>
+        <div class="ngram-tables">
+          ${ngramWasted.length ? `
+          <div class="ngram-table-wrap">
+            <div class="ngram-table-head">
+              <span class="ngram-table-head-label">⚠ Wasted Patterns</span>
+              <span class="ngram-table-head-sub">Spend, no conversions</span>
+            </div>
+            ${ngramWasted.slice(0, 10).map(x => `
+            <div class="ngram-row">
+              <span class="ngram-text">${escHtml(x.ngram)}</span>
+              ${ngramBadge(x.n)}
+              <span class="ngram-metric waste">${currency}${x.cost.toFixed(2)}</span>
+            </div>`).join("")}
+          </div>` : ""}
+          ${ngramPerforming.length ? `
+          <div class="ngram-table-wrap">
+            <div class="ngram-table-head">
+              <span class="ngram-table-head-label">✓ Performing Patterns</span>
+              <span class="ngram-table-head-sub">CVR above average</span>
+            </div>
+            ${ngramPerforming.slice(0, 10).map(x => `
+            <div class="ngram-row">
+              <span class="ngram-text">${escHtml(x.ngram)}</span>
+              ${ngramBadge(x.n)}
+              <span class="ngram-metric good">${x.cvr}% CVR</span>
+            </div>`).join("")}
+          </div>` : ""}
+        </div>
+      </div>` : "";
+
     const glanceHTML = `
       <div class="glance-stats">
         ${summary.critical ? `<div class="glance-stat">
@@ -2689,6 +2848,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       ${perfGridHTML}
+      ${ngramSectionHTML}
 
       ${headline ? `<p class="report-headline">${escHtml(headline)}</p>` : ""}
 
