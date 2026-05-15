@@ -637,13 +637,9 @@
     }
 
     .ngram-tables {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 20px;
-    }
-
-    @media (max-width: 700px) {
-      .ngram-tables { grid-template-columns: 1fr; }
     }
 
     .ngram-table-wrap {
@@ -653,10 +649,10 @@
     }
 
     .ngram-table-head {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 8px;
-      padding: 14px 16px 12px;
+      padding: 12px 16px 10px;
       border-bottom: 1px solid var(--border);
       background: var(--paper);
     }
@@ -672,15 +668,42 @@
     .ngram-table-head-sub {
       font-size: 11px;
       color: var(--mid);
-      margin-left: auto;
     }
 
-    .ngram-row {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      padding: 10px 16px;
+    /* Column header row */
+    .ngram-col-heads {
+      display: grid;
+      grid-template-columns: 1fr 56px 72px 72px 80px 72px;
+      gap: 0;
+      padding: 6px 16px;
+      background: #fafaf9;
       border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 600px) {
+      .ngram-col-heads { grid-template-columns: 1fr 50px 64px 64px 70px; }
+      .ngram-col-heads .ngram-ch:nth-child(3) { display: none; }
+    }
+    .ngram-ch {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-align: right;
+    }
+    .ngram-ch:first-child { text-align: left; }
+
+    .ngram-row {
+      display: grid;
+      grid-template-columns: 1fr 56px 72px 72px 80px 72px;
+      align-items: center;
+      gap: 0;
+      padding: 9px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 600px) {
+      .ngram-row { grid-template-columns: 1fr 50px 64px 64px 70px; }
+      .ngram-row .ngram-cell:nth-child(3) { display: none; }
     }
 
     .ngram-row:last-child { border-bottom: none; }
@@ -689,8 +712,10 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--ink);
-      flex: 1;
       min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .ngram-n-badge {
@@ -701,20 +726,21 @@
       color: var(--mid);
       border: 1px solid var(--border);
       border-radius: 3px;
-      padding: 1px 5px;
+      padding: 1px 4px;
       white-space: nowrap;
-      flex-shrink: 0;
+      justify-self: start;
     }
 
-    .ngram-metric {
+    .ngram-cell {
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
+      text-align: right;
       white-space: nowrap;
-      flex-shrink: 0;
+      color: var(--dark);
     }
-
-    .ngram-metric.waste  { color: var(--red); }
-    .ngram-metric.good   { color: var(--green); }
+    .ngram-cell.waste { color: var(--red); }
+    .ngram-cell.good  { color: var(--green); }
+    .ngram-cell.muted { color: var(--mid); font-weight: 400; }
 
     /* ── Kill Zone heatmap ────────────────────────────────────── */
     .heatmap-section {
@@ -2965,6 +2991,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return `<span class="ngram-n-badge">${labels[n] || n + "-gram"}</span>`;
     }
 
+    const ngramColHeads = (lastCol) => `
+      <div class="ngram-col-heads">
+        <span class="ngram-ch">Pattern</span>
+        <span class="ngram-ch">Type</span>
+        <span class="ngram-ch">Impr</span>
+        <span class="ngram-ch">Clicks</span>
+        <span class="ngram-ch">Cost</span>
+        <span class="ngram-ch">${lastCol}</span>
+      </div>`;
+
+    const fmt = (n) => n >= 1000 ? (n/1000).toFixed(1)+"k" : String(n);
+
     const ngramSectionHTML = (ngramWasted.length || ngramPerforming.length) && hasSearch ? `
       <div class="ngram-section">
         <div class="ngram-section-title">Search Term Patterns${ngramTotal ? ` · ${ngramTotal} terms analysed` : ""}</div>
@@ -2973,26 +3011,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="ngram-table-wrap">
             <div class="ngram-table-head">
               <span class="ngram-table-head-label">⚠ Wasted Patterns</span>
-              <span class="ngram-table-head-sub">Spend, no conversions</span>
+              <span class="ngram-table-head-sub">Spend, zero conversions</span>
             </div>
+            ${ngramColHeads("Cost")}
             ${ngramWasted.slice(0, 10).map(x => `
             <div class="ngram-row">
               <span class="ngram-text">${escHtml(x.ngram)}</span>
               ${ngramBadge(x.n)}
-              <span class="ngram-metric waste">${currency}${x.cost.toFixed(2)}</span>
+              <span class="ngram-cell muted">${fmt(x.impressions||0)}</span>
+              <span class="ngram-cell muted">${fmt(x.clicks||0)}</span>
+              <span class="ngram-cell waste">${currency}${x.cost.toFixed(2)}</span>
+              <span class="ngram-cell muted">—</span>
             </div>`).join("")}
           </div>` : ""}
           ${ngramPerforming.length ? `
           <div class="ngram-table-wrap">
             <div class="ngram-table-head">
               <span class="ngram-table-head-label">✓ Performing Patterns</span>
-              <span class="ngram-table-head-sub">CVR above average</span>
+              <span class="ngram-table-head-sub">Have conversions</span>
             </div>
+            ${ngramColHeads("CVR")}
             ${ngramPerforming.slice(0, 10).map(x => `
             <div class="ngram-row">
               <span class="ngram-text">${escHtml(x.ngram)}</span>
               ${ngramBadge(x.n)}
-              <span class="ngram-metric good">${x.cvr}% CVR</span>
+              <span class="ngram-cell muted">${fmt(x.impressions||0)}</span>
+              <span class="ngram-cell muted">${fmt(x.clicks||0)}</span>
+              <span class="ngram-cell">${currency}${x.cost.toFixed(2)}</span>
+              <span class="ngram-cell good">${x.cvr}%</span>
             </div>`).join("")}
           </div>` : ""}
         </div>
