@@ -1249,6 +1249,35 @@
       color: #fff;
     }
 
+    .btn-deep-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      background: none;
+      color: var(--mid);
+      text-decoration: none;
+      transition: border-color 0.12s, color 0.12s;
+    }
+
+    .btn-deep-link:hover {
+      border-color: #4285F4;
+      color: #4285F4;
+    }
+
+    .issue-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
     /* Fix queue sticky bar */
     .fix-queue-bar {
       position: fixed;
@@ -3052,6 +3081,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>`;
     }
 
+    // Deep links into Google Ads UI — keyed by check name
+    // All links accept optional ?ocid=CID to scope to the account
+    const _DEEP_LINKS = {
+      conversion_tracking:        "https://ads.google.com/aw/conversions",
+      primary_conversions:        "https://ads.google.com/aw/conversions",
+      enhanced_conversions:       "https://ads.google.com/aw/conversions",
+      attribution_model:          "https://ads.google.com/aw/conversions",
+      smart_bidding_no_target:    "https://ads.google.com/aw/campaigns",
+      manual_cpc_viable_for_smart:"https://ads.google.com/aw/campaigns",
+      broad_match_manual_cpc:     "https://ads.google.com/aw/campaigns",
+      budget_constrained:         "https://ads.google.com/aw/campaigns",
+      learning_phase:             "https://ads.google.com/aw/campaigns",
+      spend_no_conversions:       "https://ads.google.com/aw/campaigns",
+      no_schedule_adjustments:    "https://ads.google.com/aw/campaigns",
+      no_device_bid_adjustments:  "https://ads.google.com/aw/campaigns",
+      no_negative_keywords:       "https://ads.google.com/aw/negativeKeywords",
+      low_quality_score:          "https://ads.google.com/aw/keywords",
+      duplicate_keywords:         "https://ads.google.com/aw/keywords",
+      bloated_ad_groups:          "https://ads.google.com/aw/adgroups",
+      empty_ad_groups:            "https://ads.google.com/aw/adgroups",
+      single_ad_in_group:         "https://ads.google.com/aw/ads",
+      rsa_ad_strength:            "https://ads.google.com/aw/ads",
+      rsa_url_paths:              "https://ads.google.com/aw/ads",
+      missing_assets:             "https://ads.google.com/aw/assets",
+      pmax_asset_strength:        "https://ads.google.com/aw/assetGroups",
+      no_audience_lists:          "https://ads.google.com/aw/audiences",
+      search_term_waste:          "https://ads.google.com/aw/keywordmanager/terms",
+      search_term_navigational:   "https://ads.google.com/aw/keywordmanager/terms",
+      feed_wasted_spend:          "https://merchants.google.com/mc/products",
+      feed_short_titles:          "https://merchants.google.com/mc/products",
+      feed_missing_type:          "https://merchants.google.com/mc/products",
+      feed_no_custom_labels:      "https://merchants.google.com/mc/products",
+      homepage_landing_pages:     "https://ads.google.com/aw/ads",
+    };
+
     function buildIssueCard(f) {
       const sev = f.severity.toLowerCase();
       const recHTML = f.recommendation ? `
@@ -3079,14 +3143,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           ${feedSummaryHTML}
           <div class="issue-footer">
             ${hoursHTML}
-            <button class="btn-flag" id="${flagId}"
-              data-title="${escAttr(f.title)}"
-              data-rec="${escAttr(f.recommendation || "")}"
-              data-sev="${escAttr(f.severity)}"
-              data-hours="${escAttr(String(f.hours_estimate || ""))}"
-              onclick="toggleFlag('${flagId}')">
-              ↳ Add to fix list
-            </button>
+            <div class="issue-footer-actions">
+              ${_DEEP_LINKS[f.check] ? (() => {
+                const base = _DEEP_LINKS[f.check];
+                const cidClean = cid.replace(/-/g,"");
+                const href = cidClean ? `${base}?ocid=${cidClean}` : base;
+                return `<a class="btn-deep-link" href="${escAttr(href)}" target="_blank" rel="noopener" title="Open in Google Ads">↗ Fix in Ads</a>`;
+              })() : ""}
+              <button class="btn-flag" id="${flagId}"
+                data-title="${escAttr(f.title)}"
+                data-rec="${escAttr(f.recommendation || "")}"
+                data-sev="${escAttr(f.severity)}"
+                data-hours="${escAttr(String(f.hours_estimate || ""))}"
+                onclick="toggleFlag('${flagId}')">
+                ↳ Add to fix list
+              </button>
+            </div>
           </div>
         </div>`;
     }
