@@ -627,6 +627,27 @@
       margin: 0 0 40px;
     }
 
+    .section-insight {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .section-insight strong { color: var(--ink); font-weight: 600; }
+    .section-insight .insight-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      display: block;
+      margin-bottom: 4px;
+    }
+
     .ngram-section-title {
       font-size: 10px;
       font-weight: 700;
@@ -3074,6 +3095,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>`).join("")}
           </div>` : ""}
         </div>
+        <div class="section-insight">
+          <span class="insight-label">What to do with this</span>
+          ${(() => {
+            const parts = [];
+            if (ngramWasted.length) {
+              parts.push(`<strong>Wasted patterns</strong> — add these as negative keywords to block spend on queries that never convert. Go to Keywords → Negative keywords in Google Ads and add them at campaign or account level.`);
+            }
+            if (ngramPerforming.length) {
+              parts.push(`<strong>Performing patterns</strong> — these word combinations consistently drive conversions. Consider adding them as exact match keywords in a dedicated ad group to bid on them directly, rather than relying on broad match to find them.`);
+            }
+            return parts.join(" ");
+          })()}
+        </div>
       </div>` : "";
 
     // ── Kill Zone heatmap ────────────────────────────────────────────────────
@@ -3165,6 +3199,65 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span>Low</span>
           <div class="heatmap-legend-swatch" id="${hmId}-legend" style="background:${legendGradCost};"></div>
           <span>High</span>
+        </div>
+        <div class="section-insight">
+          <span class="insight-label">What to do with this</span>
+          ${(() => {
+            // Derive insight from the heatmap data
+            const dayNames = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+            const spendByDay  = Array(7).fill(0);
+            const convByDay   = Array(7).fill(0);
+            const spendByHour = Array(24).fill(0);
+            const convByHour  = Array(24).fill(0);
+            hmCells.forEach(c => {
+              spendByDay[c.day]  = (spendByDay[c.day]  || 0) + c.cost;
+              convByDay[c.day]   = (convByDay[c.day]   || 0) + c.conversions;
+              spendByHour[c.hour] = (spendByHour[c.hour] || 0) + c.cost;
+              convByHour[c.hour]  = (convByHour[c.hour]  || 0) + c.conversions;
+            });
+            const totalSpend = spendByDay.reduce((a,b)=>a+b,0);
+            const totalConv  = convByDay.reduce((a,b)=>a+b,0);
+            // Peak spend day
+            const peakSpendDay = spendByDay.indexOf(Math.max(...spendByDay));
+            // Weekend vs weekday
+            const weekdaySpend  = spendByDay.slice(0,5).reduce((a,b)=>a+b,0);
+            const weekendSpend  = spendByDay.slice(5).reduce((a,b)=>a+b,0);
+            const weekdayConv   = convByDay.slice(0,5).reduce((a,b)=>a+b,0);
+            const weekendConv   = convByDay.slice(5).reduce((a,b)=>a+b,0);
+            // Peak conversion hours (top 6 hours)
+            const sortedConvHours = convByHour.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+            const topConvHours = sortedConvHours.slice(0,6).map(x=>x.i).sort((a,b)=>a-b);
+            const convHourRange = topConvHours.length ? topConvHours[0]+':00–'+topConvHours[topConvHours.length-1]+':00' : '';
+            // Dead hours: midnight-5am spend
+            const nightSpend = spendByHour.slice(0,5).reduce((a,b)=>a+b,0);
+            const nightSpendPct = totalSpend > 0 ? (nightSpend/totalSpend*100).toFixed(0) : 0;
+            // Check if on smart bidding by looking for manual bidding issue
+            const biddingCat = (d.categories || {}).bidding || {};
+            const hasManualIssue = (biddingCat.issues || []).some(f => f.check === 'manual_cpc');
+            const onSmartBidding = !hasManualIssue;
+
+            let insight = '';
+            if (onSmartBidding) {
+              insight += '<strong>Smart Bidding is active</strong> — it automatically adjusts bids by time of day and day of week, so no manual ad schedule is needed. ';
+              insight += 'Use this chart to spot anomalies (e.g. unusually high weekend spend with low conversions) or to inform budget decisions rather than to set bid adjustments.';
+            } else {
+              insight += '<strong>You\'re on manual bidding</strong> — consider adding ad schedule bid adjustments to reduce bids during low-conversion periods. ';
+            }
+            if (convHourRange) {
+              insight += ` Conversions are concentrated between <strong>${convHourRange}</strong>.`;
+            }
+            if (weekendSpend > 0 && totalConv > 0) {
+              const weekendConvRate = weekendConv / totalConv * 100;
+              const weekendSpendRate = weekendSpend / totalSpend * 100;
+              if (weekendSpendRate > 20 && weekendConvRate < weekendSpendRate * 0.7) {
+                insight += ` Weekend spend is <strong>${weekendSpendRate.toFixed(0)}%</strong> of total but only <strong>${weekendConvRate.toFixed(0)}%</strong> of conversions — worth reviewing whether weekend budget is efficient.`;
+              }
+            }
+            if (nightSpendPct > 5) {
+              insight += ` <strong>${nightSpendPct}%</strong> of spend occurs midnight–5am — review whether this is intentional.`;
+            }
+            return insight;
+          })()}
         </div>
       </div>
       <script>
