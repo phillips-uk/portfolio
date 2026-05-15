@@ -354,11 +354,10 @@
       margin-top: 4px;
     }
 
-    /* ── WORK CARD ACCORDION ── */
+    /* ── WORK CARD ACCORDION ── desktop: always expanded */
     .work-card__body {
       display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.32s ease;
+      grid-template-rows: 1fr;
     }
     .work-card__body > div {
       overflow: hidden;
@@ -366,38 +365,10 @@
       flex-direction: column;
       gap: 12px;
     }
-    .work-card.is-open .work-card__body {
-      grid-template-rows: 1fr;
-    }
     .work-card__body > div > *:first-child {
       padding-top: 16px;
     }
-
-    .work-toggle {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 16px;
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--amber);
-      text-transform: uppercase;
-      font-family: inherit;
-    }
-    .work-toggle:hover { opacity: 0.75; }
-    .work-toggle__icon {
-      display: inline-block;
-      transition: transform 0.32s ease;
-      line-height: 1;
-    }
-    .work-card.is-open .work-toggle__icon {
-      transform: rotate(180deg);
-    }
+    .work-toggle { display: none; }
 
     .work-tag {
       font-size: 10px;
@@ -768,40 +739,14 @@
       font-weight: 600;
     }
 
-    /* ── ANALYSIS ACCORDION ── */
+    /* ── ANALYSIS ACCORDION ── desktop: always expanded */
     .analysis-item__body {
       display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.32s ease;
-    }
-    .analysis-item__body > div { overflow: hidden; }
-    .analysis-item.is-open .analysis-item__body {
       grid-template-rows: 1fr;
     }
+    .analysis-item__body > div { overflow: hidden; }
     .analysis-item__body > div > *:first-child { padding-top: 10px; }
-
-    .analysis-toggle {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: none;
-      border: none;
-      padding: 0;
-      margin-top: 12px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      color: var(--amber);
-      text-transform: uppercase;
-      font-family: inherit;
-    }
-    .analysis-toggle:hover { opacity: 0.75; }
-    .analysis-toggle__icon {
-      display: inline-block;
-      transition: transform 0.32s ease;
-    }
-    .analysis-item.is-open .analysis-toggle__icon { transform: rotate(180deg); }
+    .analysis-toggle { display: none; }
 
     /* ── MOBILE-ONLY ACCORDION (services + agentic) ── */
     .mobile-toggle { display: none; }
@@ -971,6 +916,58 @@
       .analysis-item { grid-template-columns: 1fr; gap: 12px; }
       #contact { padding: 72px 24px; }
       footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+
+      /* work-card accordion — mobile only */
+      .work-card__body {
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.32s ease;
+      }
+      .work-card.is-open .work-card__body { grid-template-rows: 1fr; }
+      .work-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--amber);
+        text-transform: uppercase;
+        font-family: inherit;
+      }
+      .work-toggle:hover { opacity: 0.75; }
+      .work-toggle__icon { display: inline-block; transition: transform 0.32s ease; line-height: 1; }
+      .work-card.is-open .work-toggle__icon { transform: rotate(180deg); }
+
+      /* analysis accordion — mobile only */
+      .analysis-item__body {
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.32s ease;
+      }
+      .analysis-item.is-open .analysis-item__body { grid-template-rows: 1fr; }
+      .analysis-toggle {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: none;
+        border: none;
+        padding: 0;
+        margin-top: 12px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--amber);
+        text-transform: uppercase;
+        font-family: inherit;
+      }
+      .analysis-toggle:hover { opacity: 0.75; }
+      .analysis-toggle__icon { display: inline-block; transition: transform 0.32s ease; }
+      .analysis-item.is-open .analysis-toggle__icon { transform: rotate(180deg); }
 
       /* mobile-only accordions */
       .mobile-toggle {
