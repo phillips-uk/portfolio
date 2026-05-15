@@ -1212,6 +1212,107 @@
 
     .issue-hours { font-size: 12px; color: var(--mid); }
 
+    /* Fix flag button */
+    .issue-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+
+    .btn-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      background: none;
+      color: var(--mid);
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+      user-select: none;
+    }
+
+    .btn-flag:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .btn-flag.flagged {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: #fff;
+    }
+
+    /* Fix queue sticky bar */
+    .fix-queue-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--ink);
+      color: #fff;
+      display: none;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 28px;
+      z-index: 100;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+    }
+
+    .fix-queue-bar.visible { display: flex; }
+
+    .fix-queue-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .fix-queue-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      flex: 1;
+    }
+
+    .btn-queue-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 5px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      background: none;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+
+    .btn-queue-action:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.6);
+    }
+
+    .btn-queue-clear {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .btn-queue-clear:hover { color: rgba(255,255,255,0.7); }
+
     /* Pass items */
     .cat-passes {
       display: flex;
@@ -2967,15 +3068,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const fs = (f.data || {}).feed_summary;
       const feedSummaryHTML = (f.check === "feed_wasted_spend" && fs) ? buildFeedSummary(fs) : "";
 
+      const flagId = "flag-" + Math.random().toString(36).slice(2, 10);
       return `
-        <div class="issue-card sev-${sev}">
+        <div class="issue-card sev-${sev}" id="${flagId}-card">
           <div class="issue-sev sev-${sev}">${f.severity}</div>
           <div class="issue-title">${escHtml(f.title)}</div>
           <div class="issue-detail">${escHtml(f.detail)}</div>
           ${recHTML}
           ${qsHistHTML}
           ${feedSummaryHTML}
-          ${hoursHTML}
+          <div class="issue-footer">
+            ${hoursHTML}
+            <button class="btn-flag" id="${flagId}"
+              data-title="${escAttr(f.title)}"
+              data-rec="${escAttr(f.recommendation || "")}"
+              data-sev="${escAttr(f.severity)}"
+              data-hours="${escAttr(String(f.hours_estimate || ""))}"
+              onclick="toggleFlag('${flagId}')">
+              ↳ Add to fix list
+            </button>
+          </div>
         </div>`;
     }
 
@@ -3570,6 +3682,83 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       handleContinue();
     }
   });
+
+  // ── Fix queue ─────────────────────────────────────────────────────────────
+  const _flagged = new Map(); // flagId → {title, rec, sev, hours}
+
+  function toggleFlag(flagId) {
+    const btn = document.getElementById(flagId);
+    if (!btn) return;
+    if (_flagged.has(flagId)) {
+      _flagged.delete(flagId);
+      btn.classList.remove("flagged");
+      btn.textContent = "↳ Add to fix list";
+    } else {
+      _flagged.set(flagId, {
+        title: btn.dataset.title || "",
+        rec:   btn.dataset.rec   || "",
+        sev:   btn.dataset.sev   || "",
+        hours: btn.dataset.hours || "",
+      });
+      btn.classList.add("flagged");
+      btn.textContent = "✓ In fix list";
+    }
+    _updateFixBar();
+  }
+
+  function _updateFixBar() {
+    const bar = document.getElementById("fix-queue-bar");
+    if (!bar) return;
+    const n = _flagged.size;
+    if (n === 0) {
+      bar.classList.remove("visible");
+    } else {
+      bar.classList.add("visible");
+      const countEl = document.getElementById("fix-queue-count");
+      const labelEl = document.getElementById("fix-queue-label");
+      if (countEl) countEl.textContent = n;
+      if (labelEl) labelEl.textContent = n === 1 ? "issue flagged" : "issues flagged";
+    }
+  }
+
+  function copyFixList() {
+    if (_flagged.size === 0) return;
+    const lines = ["Fix List — Google Ads Audit", ""];
+    let i = 1;
+    _flagged.forEach(item => {
+      lines.push(`${i}. [${item.sev.toUpperCase()}] ${item.title}`);
+      if (item.rec)   lines.push(`   Fix: ${item.rec}`);
+      if (item.hours) lines.push(`   Est. time: ${item.hours}h`);
+      lines.push("");
+      i++;
+    });
+    const text = lines.join("\n");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("fix-copy-btn");
+        if (btn) { btn.textContent = "✓ Copied"; setTimeout(() => { btn.textContent = "Copy fix list"; }, 2500); }
+      }).catch(() => prompt("Copy your fix list:", text));
+    } else {
+      prompt("Copy your fix list:", text);
+    }
+  }
+
+  function clearFixList() {
+    _flagged.forEach((_, id) => {
+      const btn = document.getElementById(id);
+      if (btn) { btn.classList.remove("flagged"); btn.textContent = "↳ Add to fix list"; }
+    });
+    _flagged.clear();
+    _updateFixBar();
+  }
 </script>
+
+<!-- Fix queue sticky bar (injected into main page, not the PDF popup) -->
+<div class="fix-queue-bar" id="fix-queue-bar">
+  <span class="fix-queue-count" id="fix-queue-count">0</span>
+  <span class="fix-queue-label" id="fix-queue-label">issues flagged</span>
+  <button class="btn-queue-action" id="fix-copy-btn" onclick="copyFixList()">Copy fix list</button>
+  <button class="btn-queue-clear" onclick="clearFixList()">Clear</button>
+</div>
 </body>
 </html>
