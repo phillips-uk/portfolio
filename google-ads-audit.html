@@ -3482,12 +3482,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="issue-footer">
             ${hoursHTML}
             <div class="issue-footer-actions">
-              ${_DEEP_LINKS[f.check] ? (() => {
-                const base = _DEEP_LINKS[f.check];
-                const cidClean = (d.customer_id || "").replace(/-/g,"");
-                const href = cidClean ? `${base}?ocid=${cidClean}` : base;
-                return `<a class="btn-deep-link" href="${escAttr(href)}" target="_blank" rel="noopener" title="Open in Google Ads" onclick="window.dataLayer=window.dataLayer||[];dataLayer.push({event:'audit_fix_in_ads_clicked',issue_check:'${escAttr(f.check)}',severity:'${escAttr(f.severity)}',account_id:'${escAttr((d.customer_id||'').replace(/-/g,''))}'})">↗ Fix in Ads</a>`;
-              })() : ""}
               <button class="btn-flag" id="${flagId}"
                 data-title="${escAttr(f.title)}"
                 data-rec="${escAttr(f.recommendation || "")}"
