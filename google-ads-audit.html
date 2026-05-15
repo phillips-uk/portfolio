@@ -977,13 +977,18 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--mid);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
+    }
+    .qs-summary {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      line-height: 1.4;
     }
     .qs-hist-bars {
       display: flex;
       align-items: flex-end;
-      gap: 4px;
-      height: 60px;
+      gap: 6px;
     }
     .qs-hist-col {
       flex: 1;
@@ -991,42 +996,56 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      height: 100%;
+    }
+    .qs-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: flex-end;
+      width: 100%;
+      gap: 3px;
+    }
+    .qs-bar-count {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1;
     }
     .qs-hist-bar {
       width: 100%;
-      border-radius: 3px 3px 0 0;
-      min-height: 2px;
+      border-radius: 4px 4px 0 0;
     }
-    .qs-hist-bar.bar-poor   { background: var(--red); opacity: 0.8; }
-    .qs-hist-bar.bar-ok     { background: var(--orange); opacity: 0.8; }
-    .qs-hist-bar.bar-good   { background: var(--green); opacity: 0.8; }
-    .qs-hist-bar.bar-bench  { background: #C8C8C8; opacity: 0.5; }
+    .qs-hist-bar.bar-poor   { background: var(--red); opacity: 0.85; }
+    .qs-hist-bar.bar-ok     { background: var(--orange); opacity: 0.85; }
+    .qs-hist-bar.bar-good   { background: var(--green); opacity: 0.85; }
+    .qs-hist-pills {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .qs-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1.5px solid;
+      background: #fff;
+    }
+    .qs-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
     .qs-hist-tick {
       font-size: 9px;
       color: var(--mid);
       font-weight: 600;
     }
-    .qs-hist-legend {
-      display: flex;
-      gap: 14px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-    .qs-hist-legend-item {
-      font-size: 10px;
-      color: var(--mid);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .qs-hist-legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
+
 
     /* At-a-glance counts */
     .glance-stats {
@@ -3125,35 +3144,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>`;
 
     function buildQsHistogram(dist) {
-      // dist = { "1": impressions, "2": impressions, ... "10": impressions }
-      const vals = [1,2,3,4,5,6,7,8,9,10].map(i => dist[String(i)] || 0);
-      const maxVal = Math.max(...vals, 1);
-      // Industry benchmark distribution: rough shape peaking at QS 7 (normalised to same max)
-      const benchShape = [0.02, 0.04, 0.07, 0.10, 0.14, 0.17, 0.22, 0.13, 0.07, 0.02];
-      const benchMax = Math.max(...benchShape);
+      // dist = { "1": count, "2": count, ... "10": count } — keyword counts per QS bucket
+      const vals    = [1,2,3,4,5,6,7,8,9,10].map(i => dist[String(i)] || 0);
+      const total   = vals.reduce((a,b)=>a+b, 0);
+      const maxVal  = Math.max(...vals, 1);
+      const BAR_H   = 96; // px — chart area height
+
+      // Summary headline
+      const poor   = vals.slice(0,3).reduce((a,b)=>a+b,0);   // QS 1–3
+      const ok     = vals.slice(3,6).reduce((a,b)=>a+b,0);   // QS 4–6
+      const good   = vals.slice(6).reduce((a,b)=>a+b,0);     // QS 7–10
+      let summaryHTML = "";
+      if (total > 0) {
+        const poorPct = Math.round(poor/total*100);
+        const goodPct = Math.round(good/total*100);
+        const summaryColor = poor > good ? "var(--red)" : poor > 0 ? "var(--orange)" : "var(--green)";
+        const summaryText  = poor > 0
+          ? `${poor} keyword${poor>1?"s":""} (${poorPct}%) score QS 3 or below — paying a CPC premium on every click`
+          : `${goodPct}% of keywords are high-quality (QS 7+)`;
+        summaryHTML = `<div class="qs-summary" style="color:${summaryColor};">${summaryText}</div>`;
+      }
+
       const barClass = (i) => i <= 3 ? "bar-poor" : i <= 6 ? "bar-ok" : "bar-good";
       const bars = vals.map((v, i) => {
-        const accountH = Math.round((v / maxVal) * 56);
-        const benchH   = Math.round((benchShape[i] / benchMax) * 56);
+        const h = v > 0 ? Math.max(Math.round((v / maxVal) * BAR_H), 8) : 0;
+        const countLabel = v > 0 ? `<span class="qs-bar-count">${v}</span>` : "";
         return `
-          <div class="qs-hist-col">
-            <div style="display:flex;align-items:flex-end;gap:2px;height:56px;">
-              <div class="qs-hist-bar ${barClass(i+1)}" style="width:calc(50% - 1px);height:${Math.max(accountH,2)}px;" title="QS ${i+1}: ${v.toLocaleString()} keyword${v !== 1 ? 's' : ''}"></div>
-              <div class="qs-hist-bar bar-bench" style="width:calc(50% - 1px);height:${benchH}px;" title="Industry benchmark"></div>
+          <div class="qs-hist-col" style="--bar-h:${BAR_H}px;">
+            <div class="qs-bar-wrap" style="height:${BAR_H}px;">
+              ${countLabel}
+              <div class="qs-hist-bar ${barClass(i+1)}" style="height:${h}px;" title="QS ${i+1}: ${v} keyword${v!==1?'s':''}"></div>
             </div>
             <span class="qs-hist-tick">${i+1}</span>
           </div>`;
       }).join("");
+
+      // Colour-coded bucket summary pills
+      const pills = [
+        { label:"QS 1–3", count:poor, color:"var(--red)" },
+        { label:"QS 4–6", count:ok,   color:"var(--orange)" },
+        { label:"QS 7–10",count:good, color:"var(--green)" },
+      ].map(p => `<span class="qs-pill" style="border-color:${p.color};color:${p.color};">
+        <span class="qs-pill-dot" style="background:${p.color};"></span>
+        ${p.label}: <strong>${p.count}</strong>
+      </span>`).join("");
+
       return `
         <div class="qs-histogram">
           <div class="qs-hist-label">Keywords by Quality Score</div>
+          ${summaryHTML}
           <div class="qs-hist-bars">${bars}</div>
-          <div class="qs-hist-legend">
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--red);opacity:0.8;"></span>Your keywords (QS 1–3)</span>
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--orange);opacity:0.8;"></span>Your keywords (QS 4–6)</span>
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:var(--green);opacity:0.8;"></span>Your keywords (QS 7–10)</span>
-            <span class="qs-hist-legend-item"><span class="qs-hist-legend-dot" style="background:#C8C8C8;"></span>Typical distribution</span>
-          </div>
+          <div class="qs-hist-pills">${pills}</div>
         </div>`;
     }
 
