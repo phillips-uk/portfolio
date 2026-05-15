@@ -1187,6 +1187,12 @@
     }
     .report-header .glance-label { color: rgba(255,255,255,0.4); }
 
+    .report-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .btn-download {
       display: inline-flex;
       align-items: center;
@@ -1203,6 +1209,28 @@
       transition: background 0.15s, opacity 0.15s;
     }
     .btn-download:hover { opacity: 0.85; }
+
+    .btn-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-share:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.6);
+      color: #fff;
+    }
 
     /* ── Print-only header ────────────────────────────────────────── */
     .print-header {
@@ -2001,6 +2029,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   window.addEventListener("DOMContentLoaded", () => {
     const params    = new URLSearchParams(window.location.search);
 
+    // Shared report link — load without OAuth
+    const report = params.get("report");
+    if (report) {
+      showSharedReport(report);
+      return;
+    }
+
     // Preview mode — no OAuth required
     const preview = params.get("preview");
     if (preview === "report") {
@@ -2242,10 +2277,52 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     hideAll();
     section.style.display = "block";
 
+    // Update URL to shareable permalink (only if we didn't already load from one)
+    if (data.audit_id && !new URLSearchParams(window.location.search).get("report")) {
+      history.replaceState(null, "", "/google-ads-audit?report=" + data.audit_id);
+    }
+
     window.dataLayer = window.dataLayer || [];
-    dataLayer.push({ event: 'audit_report_viewed', score: data.score || 0 });
+    dataLayer.push({ event: "audit_report_viewed", score: data.score || 0 });
   }
 
+
+  // ── Shared report loader ──────────────────────────────────────────────────
+  async function showSharedReport(auditId) {
+    showLoading();
+    try {
+      const res = await fetch(`/.netlify/functions/get-report?id=${encodeURIComponent(auditId)}`);
+      if (res.status === 404) {
+        showGlobalError("This report link has expired or doesn't exist. Run a new audit to get a fresh report.");
+        return;
+      }
+      if (!res.ok) {
+        showGlobalError("Could not load this report. Please try again.");
+        return;
+      }
+      const data = await res.json();
+      showReport(data);
+    } catch (e) {
+      console.error("Shared report load error:", e);
+      showGlobalError("Could not load this report. Please check your connection and try again.");
+    }
+  }
+
+  // ── Share button — copies permalink to clipboard ──────────────────────────
+  function shareReport(auditId) {
+    const url = `${window.location.origin}/google-ads-audit?report=${auditId}`;
+    const btn = document.getElementById("share-btn");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        if (btn) {
+          btn.textContent = "✓ Link copied!";
+          setTimeout(() => { btn.textContent = "⇧ Share"; }, 2500);
+        }
+      }).catch(() => { prompt("Copy this link:", url); });
+    } else {
+      prompt("Copy this link:", url);
+    }
+  }
 
   function buildReportHTML(d) {
     const score      = d.score || 0;
@@ -2573,7 +2650,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="report-header">
         <div class="report-header-top">
           <div class="report-brand">Phillips<span>.</span></div>
-          <button class="btn-download" onclick="downloadPDF(currentAuditData)">↓ Download PDF</button>
+          <div class="report-header-actions">
+            ${d.audit_id ? `<button class="btn-share" id="share-btn" onclick="shareReport('${escAttr(d.audit_id)}')">⇧ Share</button>` : ""}
+            <button class="btn-download" onclick="downloadPDF(currentAuditData)">↓ Download PDF</button>
+          </div>
         </div>
         <p class="report-top-meta">Customer ID: ${cidFormatted} · ${reportDate}</p>
         <p class="report-top-meta" style="margin-top:2px;color:#999;">Analysis period: ${(d.metadata || {}).lookback || "Last 30 days"}</p>
