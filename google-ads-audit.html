@@ -2998,7 +2998,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="ngram-ch">Impr</span>
         <span class="ngram-ch">Clicks</span>
         <span class="ngram-ch">Cost</span>
-        <span class="ngram-ch">${lastCol}</span>
+        <span class="ngram-ch">Conv. Value</span>
       </div>`;
 
     const fmt = (n) => n >= 1000 ? (n/1000).toFixed(1)+"k" : String(n);
@@ -3013,7 +3013,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="ngram-table-head-label">⚠ Wasted Patterns</span>
               <span class="ngram-table-head-sub">Spend, zero conversions</span>
             </div>
-            ${ngramColHeads("Cost")}
+            ${ngramColHeads("Convs")}
             ${ngramWasted.slice(0, 10).map(x => `
             <div class="ngram-row">
               <span class="ngram-text">${escHtml(x.ngram)}</span>
@@ -3038,7 +3038,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="ngram-cell muted">${fmt(x.impressions||0)}</span>
               <span class="ngram-cell muted">${fmt(x.clicks||0)}</span>
               <span class="ngram-cell">${currency}${x.cost.toFixed(2)}</span>
-              <span class="ngram-cell good">${x.cvr}%</span>
+              <span class="ngram-cell good">${x.conversion_value > 0 ? currency + x.conversion_value.toFixed(2) : x.cvr + "% CVR"}</span>
             </div>`).join("")}
           </div>` : ""}
         </div>
