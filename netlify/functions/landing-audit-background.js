@@ -579,14 +579,14 @@ function parseHtml (html, url, isHttps, fetchError) {
 async function fetchPsi (url, strategy, key, attempt = 1) {
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${strategy}&key=${key}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000); // 30s — most pages respond in <10s; fail fast so retry completes in time
+  const timeout = setTimeout(() => controller.abort(), 45000); // 45s — some sites are slow to Lighthouse; background fn has 15min so we can afford it
   try {
     const res  = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
     if (!res.ok) {
       console.error(`[psi] ${strategy} attempt ${attempt} failed — HTTP ${res.status}`);
       if (attempt < 2) {
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 1000));
         return fetchPsi(url, strategy, key, attempt + 1);
       }
       return null;
@@ -723,6 +723,9 @@ RULES:
 - Prioritise findings by impact on Google Ads Quality Score and conversion rate
 - Do NOT generate findings about: H1 presence or absence (covered by structural checks), total link count or navigation menu presence (covered separately), or form field count (covered separately)
 - Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum
+- Be honest and calibrated — do not overstate. LOW findings must use measured language: "may reduce", "can affect", "tends to lower". Reserve "directly harms" and "significantly damages" for critical/high findings only
+- In `detail`: lead with what you actually observed on THIS page (quote specific text, name specific elements, cite specific counts). Then explain the impact. Do not open with a generic claim.
+- In `impact`: be realistic. Say "typically improves", "can reduce", "tends to lift". Avoid absolute guarantees. Name the specific metric (conversion rate, CPA, Quality Score, bounce rate) but keep the claim proportionate to the severity level
 
 Return ONLY valid JSON (no markdown, no fences):
 {
@@ -760,9 +763,9 @@ Return ONLY valid JSON (no markdown, no fences):
       "category": "keyword_clarity|landing_page_experience|conversion_architecture|trust_signals",
       "severity": "pass|critical|high|medium|low",
       "title": "short, specific title — reference page content where possible",
-      "detail": "2-3 sentences. For issues: what is happening on this page and why it hurts conversion or Quality Score — reference actual page content. For pass findings: what is working and why it matters for paid traffic.",
-      "fix": "one sentence — specific action, not a generic recommendation",
-      "impact": "one sentence — what fixing this unlocks in Google Ads terms. Name the specific metric: Quality Score, CPA, conversion rate, CPCs, bounce rate. For pass findings: what this element contributes to paid traffic performance."
+      "detail": "2-3 sentences. Lead with what you actually observed on this page (quote the specific text, name the specific element, cite the specific count). Then explain why it matters for conversion or Quality Score. Keep language proportionate to severity.",
+      "fix": "one sentence — specific action referencing the actual element, not a generic recommendation",
+      "impact": "one sentence — name the specific metric (conversion rate, CPA, Quality Score, bounce rate) and use proportionate language: 'can improve', 'tends to reduce', 'may lift'. For pass findings: what this element contributes. Reserve 'directly harms' for critical findings only."
     }
   ]
 }`;
