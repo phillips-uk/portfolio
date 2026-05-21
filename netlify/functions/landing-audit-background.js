@@ -744,8 +744,8 @@ RULES:
 - Do NOT generate findings about: H1 presence or absence (covered by structural checks), total link count or navigation menu presence (covered separately), or form field count (covered separately)
 - Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum
 - Be honest and calibrated — do not overstate. LOW findings must use measured language: "may reduce", "can affect", "tends to lower". Reserve "directly harms" and "significantly damages" for critical/high findings only
-- In `detail`: lead with what you actually observed on THIS page (quote specific text, name specific elements, cite specific counts). Then explain the impact. Do not open with a generic claim.
-- In `impact`: be realistic. Say "typically improves", "can reduce", "tends to lift". Avoid absolute guarantees. Name the specific metric (conversion rate, CPA, Quality Score, bounce rate) but keep the claim proportionate to the severity level
+- In 'detail': lead with what you actually observed on THIS page (quote specific text, name specific elements, cite specific counts). Then explain the impact. Do not open with a generic claim.
+- In 'impact': be realistic. Say "typically improves", "can reduce", "tends to lift". Avoid absolute guarantees. Name the specific metric (conversion rate, CPA, Quality Score, bounce rate) but keep the claim proportionate to the severity level
 
 Return ONLY valid JSON (no markdown, no fences):
 {
