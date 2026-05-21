@@ -570,14 +570,14 @@ function parseHtml (html, url, isHttps, fetchError) {
 async function fetchPsi (url, strategy, key, attempt = 1) {
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${strategy}&key=${key}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 55000); // 55s — slow pages take 25-30s
+  const timeout = setTimeout(() => controller.abort(), 30000); // 30s — most pages respond in <10s; fail fast so retry completes in time
   try {
     const res  = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
     if (!res.ok) {
       console.error(`[psi] ${strategy} attempt ${attempt} failed — HTTP ${res.status}`);
       if (attempt < 2) {
-        await new Promise(r => setTimeout(r, 4000));
+        await new Promise(r => setTimeout(r, 2000));
         return fetchPsi(url, strategy, key, attempt + 1);
       }
       return null;
@@ -626,7 +626,7 @@ async function fetchPsi (url, strategy, key, attempt = 1) {
     clearTimeout(timeout);
     console.error(`[psi] ${strategy} attempt ${attempt} exception:`, e.message);
     if (attempt < 2) {
-      await new Promise(r => setTimeout(r, 4000));
+      await new Promise(r => setTimeout(r, 2000));
       return fetchPsi(url, strategy, key, attempt + 1);
     }
     return null;

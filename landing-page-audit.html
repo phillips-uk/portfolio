@@ -706,7 +706,7 @@
   <div id="loading-section" class="card">
     <div class="spinner"></div>
     <div class="loading-text" id="loading-title">Fetching page...</div>
-    <div class="loading-sub">This takes around 30 seconds — we're running real PageSpeed tests.</div>
+    <div class="loading-sub">This takes 30–90 seconds — we're running real PageSpeed tests.</div>
     <div class="progress-steps">
       <div class="progress-step active" id="step-1"><span class="progress-icon">⏳</span> Fetching page and parsing content</div>
       <div class="progress-step"        id="step-2"><span class="progress-icon">○</span>  Running PageSpeed Insights (mobile + desktop)</div>
@@ -899,11 +899,16 @@
     if (!currentJobId) return;
     pollCount++;
 
-    // Timeout after 120s
-    if (pollCount > 60) {
+    // Timeout after 3 minutes (180s) — PSI + Claude can take up to ~2.5min on slow pages
+    if (pollCount > 90) {
       clearInterval(pollInterval);
       showError('The audit is taking longer than expected. Please try again.');
       return;
+    }
+    // After 90s show a "still running" reassurance without stopping
+    if (pollCount === 45) {
+      var sub = document.querySelector('.loading-sub');
+      if (sub) sub.textContent = 'Still running — PageSpeed tests on slow pages can take up to 2 minutes.';
     }
 
     fetch('/.netlify/functions/landing-audit-status?id=' + currentJobId)
