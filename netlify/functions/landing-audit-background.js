@@ -194,6 +194,57 @@ function extractUrlKeyword (url) {
   } catch { return null; }
 }
 
+// ─── N-gram keyword analysis ─────────────────────────────────────────────────
+
+const STOPWORDS = new Set([
+  'a','an','the','and','or','but','in','on','at','to','of','is','it','as','by',
+  'if','up','we','my','do','so','be','us','am','no','go','me','he','i','s',
+  'are','was','for','not','you','all','any','can','had','her','one','our','out',
+  'get','has','him','his','how','its','may','new','now','see','two','way','who',
+  'did','man','put','say','she','too','use','also','back','been','come','does',
+  'each','even','from','give','good','have','here','just','know','like','long',
+  'make','many','more','most','much','must','name','need','only','open','over',
+  'same','seem','some','such','take','than','that','them','then','there','they',
+  'this','time','very','well','were','what','when','where','will','with','your',
+  'about','after','again','along','being','below','could','every','first','found',
+  'going','great','group','into','large','later','learn','light','might','never',
+  'often','other','place','right','small','sound','still','study','their','these',
+  'thing','think','those','three','until','using','while','world','would','years'
+]);
+
+function computeTopNgrams (bodyText, urlSlug, h1, title) {
+  const words = bodyText.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !STOPWORDS.has(w));
+
+  const counts = {};
+  for (let n = 2; n <= 3; n++) {
+    for (let i = 0; i <= words.length - n; i++) {
+      const gram = words.slice(i, i + n).join(' ');
+      counts[gram] = (counts[gram] || 0) + 1;
+    }
+  }
+
+  const urlLower   = (urlSlug  || '').toLowerCase();
+  const h1Lower    = (h1       || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+  const titleLower = (title    || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+
+  return Object.entries(counts)
+    .filter(([, count]) => count >= 2)
+    .map(([phrase, count]) => {
+      const pw     = phrase.split(' ');
+      const inUrl  = pw.every(w => urlLower.includes(w));
+      const inH1   = pw.every(w => h1Lower.includes(w));
+      const inTitle = pw.every(w => titleLower.includes(w));
+      const bonus  = (inUrl ? 3 : 0) + (inH1 ? 3 : 0) + (inTitle ? 1 : 0);
+      return { phrase, count, inUrl, inH1, inTitle, _score: count + bonus * 2 };
+    })
+    .sort((a, b) => b._score - a._score || b.count - a.count)
+    .slice(0, 5)
+    .map(({ phrase, count, inUrl, inH1, inTitle }) => ({ phrase, count, inUrl, inH1, inTitle }));
+}
+
 // ─── HTML parsing ────────────────────────────────────────────────────────────
 
 function parseHtml (html, url, isHttps, fetchError) {
@@ -285,6 +336,10 @@ function parseHtml (html, url, isHttps, fetchError) {
   const contactRx      = /\+?[\d\s\-\(\)]{7,}|[\w.]+@[\w.]+\.\w+|call us|contact us|phone|email us/i;
   const contactSignals  = contactRx.test(bodyText) ? 'present' : '';
 
+  // N-gram keyword analysis (full body text before substring trim)
+  const urlSlug = extractUrlKeyword(url) || '';
+  const topNgrams = computeTopNgrams(bodyText, urlSlug, h1, title);
+
   return {
     fetchFailed: false, isHttps,
     title, metaDescription, h1, h2s,
@@ -295,7 +350,9 @@ function parseHtml (html, url, isHttps, fetchError) {
     socialProofText, authoritySignals, contactSignals,
     // Richer trust signals
     testimonialBlockCount, hasVideoContent, hasTrustBadges,
-    starRatingPresent, namedTestimonialPresent
+    starRatingPresent, namedTestimonialPresent,
+    // Keyword analysis
+    topNgrams
   };
 }
 
@@ -516,7 +573,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   if (parsed.formFieldCount >= 7)
     findings.push({ category: 'conversion_architecture', severity: 'high', title: `${parsed.formFieldCount}-field form — high abandonment risk`, detail: `A ${parsed.formFieldCount}-field form is a significant barrier for users who clicked an ad in a moment of intent. EConsultancy research found that reducing form fields from 11 to 4 increased conversions by 160%. For paid traffic especially, every field is a reason to leave.`, fix: 'Reduce to 3 fields maximum for the initial enquiry. You can collect additional details in the follow-up process after the first conversion event.' });
   else if (parsed.formFieldCount >= 4)
-    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.formFieldCount}-field form — reducing length could lift completions`, detail: `A ${parsed.formFieldCount}-field form is above the optimal length for paid traffic. Research shows reducing from 5 to 3 fields can improve form completion rates by 20–30%. Is every field genuinely needed before you can respond to an enquiry?`, fix: 'Review each field. If any information can be collected after first contact, remove it from this form.' });
+    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.formFieldCount}-field form — adds friction for paid traffic`, detail: `Paid search visitors are less patient than organic ones — they clicked an ad in a moment of intent and expect a fast path to what they want. A ${parsed.formFieldCount}-field form introduces friction at exactly that moment. Each extra field reduces your conversion rate and raises your effective CPA, weakening the case for increasing bids. Every field that can be deferred should be.`, fix: 'Reduce to the minimum fields needed for first contact. Collect any additional information after the initial enquiry, not before.' });
 
   // ── Merge Claude content findings ──────────────────────────────────────────
   const claudeFindings = (claude.findings || []).filter(f => f.severity && f.title && f.detail && f.fix);
@@ -594,11 +651,12 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
         ttfb: psiMobile?.ttfb != null ? Math.round(psiMobile.ttfb) + 'ms'      : null
       },
       keyword_clarity: {
-        inferred_keyword: claude.inferred_keyword,
-        confidence:       claude.keyword_confidence,
+        inferred_keyword:  claude.inferred_keyword,
+        confidence:        claude.keyword_confidence,
         confidence_reason: claude.keyword_confidence_reason,
-        intent_type:      claude.intent_type,
-        specificity:      claude.keyword_specificity
+        intent_type:       claude.intent_type,
+        specificity:       claude.keyword_specificity,
+        top_ngrams:        parsed.topNgrams || []
       },
       landing_page_experience: {
         h1:                        parsed.h1 || null,

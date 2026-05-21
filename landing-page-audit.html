@@ -406,6 +406,21 @@
     .keyword-card-meta { font-size: 12px; color: var(--mid); line-height: 1.6; }
     .keyword-none { font-size: 14px; color: var(--red); font-weight: 600; }
 
+    /* N-gram keyword table */
+    .ngram-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .ngram-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 8px; }
+    .ngram-table { width: 100%; border-collapse: collapse; }
+    .ngram-table td { padding: 5px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .ngram-table tr:last-child td { border-bottom: none; }
+    .ngram-phrase { font-weight: 600; color: var(--ink); width: 55%; }
+    .ngram-count  { color: var(--mid); font-variant-numeric: tabular-nums; width: 15%; }
+    .ngram-badges { width: 30%; text-align: right; }
+    .ngram-badge  { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+                    text-transform: uppercase; padding: 2px 5px; border-radius: 3px; margin-left: 3px; }
+    .badge-url    { background: var(--amber); color: #fff; }
+    .badge-h1     { background: var(--ink); color: #fff; }
+    .badge-title  { background: var(--border); color: var(--ink); }
+
     /* Tracking status row */
     .tracking-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     .tracking-row:last-child { border-bottom: none; }
@@ -619,20 +634,20 @@
       <div>
         <div class="col-label">What gets checked</div>
         <ul class="check-list">
-          <li>Core Web Vitals (LCP, CLS, INP) from Google's PageSpeed data</li>
-          <li>Keyword clarity — inferred automatically from your headline and copy</li>
+          <li>Core Web Vitals (LCP, CLS, INP where field data is available) from Google's PageSpeed API</li>
+          <li>Keyword signals — top N-grams inferred from URL, H1, title tag, and page frequency</li>
           <li>Landing Page Experience signals (H1, title tag, above-fold relevance)</li>
-          <li>Conversion architecture (CTA presence, attention ratio, form length)</li>
+          <li>Conversion architecture (CTA presence, form length, conversion goal clarity)</li>
           <li>Trust signals (social proof, contact information, security)</li>
           <li>Tracking health (GTM, GA4, Google Ads conversion tag)</li>
-          <li>Mobile experience (performance score, viewport, tap targets)</li>
+          <li>Mobile experience (performance score, viewport, tap targets where available)</li>
         </ul>
       </div>
       <div>
         <div class="col-label">What you receive</div>
         <ul class="check-list">
           <li>Real CWV scores for mobile and desktop — not estimates</li>
-          <li>The keyword your page appears to target, inferred automatically</li>
+          <li>The top keyword phrases your page is built around, with URL, H1 and title tag signals flagged</li>
           <li>An assessment of how Google's quality system sees your page</li>
           <li>A diagnosis of what's stopping users from converting</li>
           <li>Which credibility signals are present or missing</li>
@@ -665,7 +680,7 @@
           How is the keyword inferred?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">AI analyses your headline, title tag, meta description and opening copy — the same signals Google uses to score relevance for Landing Page Experience. If a clear keyword cannot be inferred, that ambiguity is itself the finding: Google cannot determine it either.</div>
+        <div class="faq-a">Two methods run in parallel. First, the tool counts every 2 and 3-word phrase across the page and surfaces the top five by frequency — weighted by whether the phrase also appears in the URL, H1, or title tag. Second, AI analyses the headline, title tag, meta description, and opening copy to infer a single primary keyword with a confidence rating. If a clear keyword cannot be inferred, that ambiguity is itself the finding: Google cannot determine it either.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -956,6 +971,24 @@
     if (cats.keyword_clarity) {
       var kc = cats.keyword_clarity;
       if (kc.inferred_keyword) {
+        var ngramHtml = '';
+        if (kc.top_ngrams && kc.top_ngrams.length) {
+          ngramHtml = '<div class="ngram-section">'
+            + '<div class="ngram-label">Top keyword phrases on this page</div>'
+            + '<table class="ngram-table">';
+          kc.top_ngrams.forEach(function(ng) {
+            ngramHtml += '<tr>'
+              + '<td class="ngram-phrase">' + esc(ng.phrase) + '</td>'
+              + '<td class="ngram-count">&times;' + ng.count + '</td>'
+              + '<td class="ngram-badges">'
+              + (ng.inUrl   ? '<span class="ngram-badge badge-url">URL</span>'   : '')
+              + (ng.inH1    ? '<span class="ngram-badge badge-h1">H1</span>'     : '')
+              + (ng.inTitle ? '<span class="ngram-badge badge-title">Title</span>' : '')
+              + '</td>'
+              + '</tr>';
+          });
+          ngramHtml += '</table></div>';
+        }
         kwCard = '<div class="keyword-card">'
           + '<div class="keyword-card-label">Inferred target keyword</div>'
           + '<div class="keyword-card-kw">' + esc(kc.inferred_keyword) + '</div>'
@@ -964,7 +997,9 @@
           + (kc.confidence_reason ? ' — ' + esc(kc.confidence_reason) : '')
           + (kc.intent_type ? '<br>Intent type: <strong>' + esc(kc.intent_type) + '</strong>' : '')
           + (kc.specificity ? ' &middot; Specificity: <strong>' + esc(kc.specificity) + '</strong>' : '')
-          + '</div></div>';
+          + '</div>'
+          + ngramHtml
+          + '</div>';
       } else {
         kwCard = '<div class="issue-card sev-critical" style="margin-top:20px">'
           + '<div class="issue-sev sev-critical">Critical</div>'
