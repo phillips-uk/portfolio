@@ -1103,11 +1103,8 @@
       + '<div class="share-confirm" id="share-confirm">Link copied to clipboard.</div>'
       + '<div class="report-eyebrow">Landing Page Audit</div>'
       + '<div class="score-display"><span class="score-num">' + r.health_score + '</span><span class="score-denom">/100</span></div>'
-      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      + '<div>'
       + '<span class="score-tag ' + bandClass + '">' + esc(r.score_band) + '</span>'
-      + (r.page_meta && r.page_meta.page_type === 'ecommerce'
-          ? '<span class="page-type-badge page-type-ecommerce">eCommerce' + (r.page_meta.ecommerce_platform ? ' · ' + esc(r.page_meta.ecommerce_platform) : '') + '</span>'
-          : '')
       + '<button class="score-info-btn" onclick="toggleScoreInfo()" title="How is this score calculated?">i</button>'
       + '</div>'
       + '<div class="score-info-panel" id="score-info-panel">'
@@ -1130,6 +1127,13 @@
       + '</div>'
       + '<div class="report-url-line">' + esc(r.url) + ' &middot; ' + new Date(r.audited_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) + '</div>'
       + kwText
+      + (r.page_meta && r.page_meta.page_type === 'ecommerce'
+          ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">'
+            + '<span class="page-type-badge page-type-ecommerce">eCommerce'
+            + (r.page_meta.ecommerce_platform ? ' · ' + esc(r.page_meta.ecommerce_platform) : '')
+            + '</span>'
+            + '</div>'
+          : '')
       + '</div>';
 
     // Metrics grid

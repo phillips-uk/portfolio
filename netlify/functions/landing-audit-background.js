@@ -503,14 +503,21 @@ function parseHtml (html, url, isHttps, fetchError) {
 
 // ─── PageSpeed Insights ───────────────────────────────────────────────────────
 
-async function fetchPsi (url, strategy, key) {
+async function fetchPsi (url, strategy, key, attempt = 1) {
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${strategy}&key=${key}`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 55000); // 55s — slow pages take 25-30s
   try {
     const res  = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[psi] ${strategy} attempt ${attempt} failed — HTTP ${res.status}`);
+      if (attempt < 2) {
+        await new Promise(r => setTimeout(r, 4000));
+        return fetchPsi(url, strategy, key, attempt + 1);
+      }
+      return null;
+    }
     const data    = await res.json();
     const audits  = data.lighthouseResult?.audits || {};
     const cats    = data.lighthouseResult?.categories || {};
@@ -519,6 +526,7 @@ async function fetchPsi (url, strategy, key) {
     const networkUrls = (audits['network-requests']?.details?.items || [])
       .map(i => i.url || '').join('\n');
 
+    console.log(`[psi] ${strategy} ok — score: ${Math.round((cats.performance?.score || 0) * 100)}`);
     return {
       score:      Math.round((cats.performance?.score || 0) * 100),
       lcp:        audits['largest-contentful-paint']?.numericValue ?? null,
@@ -540,8 +548,13 @@ async function fetchPsi (url, strategy, key) {
         hasHttps:         /^https:/i.test(url)
       }
     };
-  } catch {
+  } catch (e) {
     clearTimeout(timeout);
+    console.error(`[psi] ${strategy} attempt ${attempt} exception:`, e.message);
+    if (attempt < 2) {
+      await new Promise(r => setTimeout(r, 4000));
+      return fetchPsi(url, strategy, key, attempt + 1);
+    }
     return null;
   }
 }
