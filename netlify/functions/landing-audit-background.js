@@ -879,8 +879,20 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   if (!parsed.fetchFailed) {
 
   // ── Landing page experience ────────────────────────────────────────────────
-  if (!parsed.h1)
-    findings.push({ category: 'landing_page_experience', severity: 'critical', title: 'No H1 tag found', detail: "The H1 is one of the primary on-page signals Google uses to assess page relevance. Without it, the page has no explicit keyword anchor for Google's quality assessment — this directly affects Landing Page Experience, which is one of the three inputs to Quality Score. Adding a keyword-rich H1 is one of the fastest ways to improve relevance signals for this URL.", fix: 'Add a clear H1 that includes your primary target keyword. It should be the first prominent heading a visitor sees on the page.' });
+  if (!parsed.h1) {
+    const isShopify = knownPlatform === 'shopify';
+    findings.push({
+      category: 'landing_page_experience',
+      severity: 'critical',
+      title: 'No H1 tag found' + (isShopify ? ' — common Shopify theme issue' : ''),
+      detail: isShopify
+        ? "The main heading on this page is likely coded as an H2, not an H1 — a pattern common across Shopify themes where the site logo/brand name is treated as the implicit H1, demoting all content headings by one level. Google uses the H1 as a primary relevance signal for Landing Page Experience and Quality Score. This is straightforward to fix in the Shopify theme editor without changing how the heading looks visually."
+        : "The H1 is one of the primary on-page signals Google uses to assess page relevance. Without it, the page has no explicit keyword anchor for Google's quality assessment — this directly affects Landing Page Experience, which is one of the three inputs to Quality Score. Adding a keyword-rich H1 is one of the fastest ways to improve relevance signals for this URL.",
+      fix: isShopify
+        ? 'In your Shopify theme editor, find the page template (pages/default or similar) and change the main heading tag from <h2> to <h1>. This is a template-level change — it applies to all pages using that template.'
+        : 'Add a clear H1 that includes your primary target keyword. It should be the first prominent heading a visitor sees on the page.'
+    });
+  }
 
   if (!parsed.hasPrivacyLink)
     findings.push({ category: 'trust_signals', severity: 'medium', title: 'No privacy policy link detected', detail: 'No privacy policy link was found in the accessible content of this page. If it exists in a JavaScript-rendered footer our tool may have missed it — verify in your browser. If it is genuinely missing: beyond GDPR compliance, users arriving from paid ads are actively evaluating your credibility. A visible privacy policy reduces friction for first-time visitors making a booking enquiry.', fix: 'Add a link to your privacy policy in the page footer. If one already exists via dynamic loading, no action needed — verify it renders in your browser.' });
