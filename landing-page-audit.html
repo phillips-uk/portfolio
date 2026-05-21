@@ -378,11 +378,11 @@
     .issue-card.sev-high     { border-left-color: var(--orange); }
     .issue-card.sev-medium   { border-left-color: #D97706; }
     .issue-card.sev-low      { border-left-color: #ccc; }
-    .issue-sev { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-    .issue-sev.sev-critical { color: var(--red); }
-    .issue-sev.sev-high     { color: var(--orange); }
-    .issue-sev.sev-medium   { color: #D97706; }
-    .issue-sev.sev-low      { color: var(--mid); }
+    .issue-sev { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; padding: 3px 10px; border-radius: 20px; line-height: 1.4; }
+    .issue-sev.sev-critical { color: #B71C1C; background: rgba(183,28,28,0.1); }
+    .issue-sev.sev-high     { color: #C85A00; background: rgba(200,90,0,0.1); }
+    .issue-sev.sev-medium   { color: #B45309; background: rgba(180,83,9,0.1); }
+    .issue-sev.sev-low      { color: #6B6B6B; background: rgba(107,107,107,0.1); }
     .issue-title  { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 8px; line-height: 1.35; }
     .issue-detail { font-size: 14px; color: var(--mid); line-height: 1.7; margin-bottom: 16px; }
     .issue-fix-block { background: var(--cream); border-radius: 8px; padding: 14px 18px; }
@@ -627,9 +627,10 @@
 
     /* Pass severity — what's working */
     .issue-card.sev-pass { border-left-color: var(--green); border-color: rgba(46,125,50,0.25); background: #F1F8F1; }
-    .issue-card.sev-pass .issue-sev { color: var(--green); }
+    .issue-card.sev-pass .issue-sev { color: #2E7D32; background: rgba(46,125,50,0.12); }
     .issue-card.sev-pass .issue-fix-label { color: var(--green); }
     .issue-card.sev-pass .issue-fix-block { background: rgba(46,125,50,0.06); }
+    .issue-card.sev-info .issue-sev { color: #1565C0; background: rgba(21,101,192,0.1); }
     /* What's working section header */
     .working-section-hdr {
       font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
@@ -1241,11 +1242,13 @@
       + '</div>'
       + '<div class="report-url-line">' + esc(r.url) + ' &middot; ' + new Date(r.audited_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) + '</div>'
       + kwText
-      + (r.page_meta && r.page_meta.page_type === 'ecommerce'
+      + (r.page_meta
           ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">'
-            + '<span class="page-type-badge page-type-ecommerce">eCommerce'
-            + (r.page_meta.ecommerce_platform ? ' · ' + esc(r.page_meta.ecommerce_platform) : '')
-            + '</span>'
+            + (r.page_meta.page_type === 'ecommerce'
+                ? '<span class="page-type-badge page-type-ecommerce">eCommerce'
+                  + (r.page_meta.ecommerce_platform ? ' · ' + esc(r.page_meta.ecommerce_platform) : '')
+                  + '</span>'
+                : '<span class="page-type-badge page-type-lead-gen">Lead Generation</span>')
             + '</div>'
           : '')
       + '</div>';

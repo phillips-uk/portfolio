@@ -469,6 +469,15 @@ function parseHtml (html, url, isHttps, fetchError) {
   } else {
     formFieldCount = $('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input:not([type]), textarea').length;
   }
+  // Collect unique input types across ALL forms — passed to Claude so it can't
+  // incorrectly claim fields are missing when they exist in a sibling form
+  const formFieldTypeSet = new Set();
+  $('input:not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]), textarea, select').each((_, el) => {
+    const tag = el.tagName.toLowerCase();
+    const type = tag === 'input' ? ($(el).attr('type') || 'text').toLowerCase() : tag;
+    formFieldTypeSet.add(type);
+  });
+  const formFieldTypes = formFieldTypeSet.size > 0 ? [...formFieldTypeSet].join(', ') : 'none detected';
 
   // CTA detection (first 2000 chars of body HTML)
   const bodyHtmlSnip   = ($('body').html() || '').substring(0, 2000);
@@ -549,7 +558,7 @@ function parseHtml (html, url, isHttps, fetchError) {
     fetchFailed: false, isHttps,
     title, metaDescription, h1, h2s, h3s,
     aboveFoldText, bodyText: bodyText.substring(0, 5000),
-    linkCount, navLinkCount, formFieldCount, hasAboveFoldCta, ctaText, ctaTexts,
+    linkCount, navLinkCount, formFieldCount, formFieldTypes, hasAboveFoldCta, ctaText, ctaTexts,
     hasGtm, hasGa4, hasAdsConversion, hasRemarketingOnly,
     hasViewport, hasPrivacyLink,
     socialProofText, authoritySignals, contactSignals,
@@ -692,7 +701,7 @@ Star ratings in copy:     ${parsed.starRatingPresent ? 'Yes' : 'No'}
 Named testimonials:       ${parsed.namedTestimonialPresent ? 'Detected' : 'No'}
 Video content:            ${parsed.hasVideoContent ? 'Yes' : 'No'}
 Trust badges / accreditations: ${parsed.hasTrustBadges ? 'Detected' : 'No'}
-Form fields:              ${parsed.formFieldCount}
+Form fields (max in one form): ${parsed.formFieldCount} — input types across page: ${parsed.formFieldTypes || 'unknown'}
 Total page links:         ${parsed.linkCount}
 
 ━━━ YOUR THREE-PART ANALYSIS ━━━
@@ -933,28 +942,34 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   const claudeFindings = (claude.findings || []).filter(f => f.severity && f.title && f.detail && f.fix);
   findings.push(...claudeFindings);
 
+  // Helper — true if Claude already generated a finding about this topic
+  // (prevents hardcoded fallbacks from duplicating Claude's specific findings)
+  const claudeCovers = (category, keywords) =>
+    claudeFindings.some(f => f.category === category &&
+      keywords.some(k => (f.title + ' ' + (f.detail || '')).toLowerCase().includes(k.toLowerCase())));
+
   // ── Value proposition ──────────────────────────────────────────────────────
-  if (claude.value_proposition_clarity === 'weak')
+  if (claude.value_proposition_clarity === 'weak' && !claudeCovers('landing_page_experience', ['value prop', 'proposition', 'above the fold', 'above fold']))
     findings.push({ category: 'landing_page_experience', severity: 'medium', title: 'Value proposition is unclear above the fold', detail: `The first thing a paid traffic visitor should be able to answer is "why here, why now?" If that answer is not obvious within 5 seconds, conversion research (Nielsen Norman Group) shows most users leave. A clear above-fold statement of what you offer, who it is for, and why you are the right choice is one of the highest-leverage copy changes on any landing page.`, fix: 'Rewrite your hero headline and subtitle to answer three questions: what you offer, who it is for, and what makes you the right choice. Make it scannable in under 5 seconds.', impact: "Pages with a clear above-fold value proposition convert up to 4x better than generic ones — rewriting the hero copy is the highest-leverage content change available." });
-  else if (claude.value_proposition_clarity === 'missing')
+  else if (claude.value_proposition_clarity === 'missing' && !claudeCovers('landing_page_experience', ['value prop', 'proposition', 'above the fold', 'above fold']))
     findings.push({ category: 'landing_page_experience', severity: 'high', title: 'No clear value proposition detected', detail: `Paid traffic arrives with specific intent — if the page does not immediately confirm "you are in the right place," the click is wasted. Research shows pages with a clear, differentiated value proposition above the fold convert up to 4x better than generic introductions. This is especially important for Quality Score, which assesses expected relevance from the user's perspective.`, fix: 'Add a headline that states specifically what you offer and the primary benefit. Follow it with a 1-2 sentence supporting statement that addresses the visitor\'s main concern.', impact: "Paid traffic that can't immediately understand your offer bounces — adding a clear above-fold statement directly reduces wasted spend and improves conversion rate." });
 
   // ── Message match ──────────────────────────────────────────────────────────
-  if (claude.message_match_strength === 'weak')
+  if (claude.message_match_strength === 'weak' && !claudeCovers('landing_page_experience', ['message match', 'ad copy', 'headline']))
     findings.push({ category: 'landing_page_experience', severity: 'high', title: 'Weak message match between page and likely ad copy', detail: `Message match is one of the most predictable conversion levers in paid search. When the language on the landing page echoes the ad that drove the click, Google research shows post-click engagement and conversion rate both improve significantly. Weak alignment between the page headline and the ad intent also reduces Quality Score.`, fix: 'Mirror your primary ad headline in the page H1, and use the same language (keyword, offer framing, call to action) in your above-fold copy. Visitors should feel they landed exactly where they expected.', impact: "Strong message match between ad and page improves conversion rate by 20-30% and strengthens Quality Score — it's the most reliable lever for CPC reduction." });
 
   // ── CTA specificity ────────────────────────────────────────────────────────
-  if (claude.cta_specificity === 'generic' && parsed.hasAboveFoldCta)
+  if (claude.cta_specificity === 'generic' && parsed.hasAboveFoldCta && !claudeCovers('conversion_architecture', ['cta', 'call to action', 'button']))
     findings.push({ category: 'conversion_architecture', severity: 'low', title: 'CTA could be more specific', detail: `Generic CTAs like "Submit" or "Click here" underperform specific action-oriented language. WordStream research found that personalised or outcome-focused CTAs outperform generic button text by up to 202%. A CTA that tells the visitor exactly what happens next reduces hesitation.`, fix: `Replace generic CTA text with a specific outcome: "Book Your Free Trial", "Get Your Quote in 2 Minutes", or similar language tied to your conversion goal.`, impact: "Specific CTAs outperform generic ones by up to 202% — this is a one-line copy change with measurable conversion rate impact." });
 
   // ── Risk reducer ───────────────────────────────────────────────────────────
-  if (claude.risk_reducer_present === false && !parsed.hasRemarketingOnly)
+  if (claude.risk_reducer_present === false && !parsed.hasRemarketingOnly && !claudeCovers('trust_signals', ['risk', 'guarantee', 'no commitment', 'no obligation']))
     findings.push({ category: 'trust_signals', severity: 'low', title: 'No risk reducer present', detail: `First-time visitors from paid ads are evaluating risk alongside opportunity. A risk reducer (satisfaction guarantee, no-commitment trial, clear cancellation policy, or money-back promise) directly addresses the hesitation that prevents conversion. EConsultancy research shows risk reducers increase enquiry conversion by 10–15% in service-category landing pages.`, fix: 'Add a brief risk statement near your CTA: a guarantee, a free first session, a "no obligation" commitment, or similar. Even a single sentence reduces the friction of saying yes.', impact: "Risk reducers increase conversion rate by 10-15% for service pages — a one-sentence addition near the CTA requires no design work." });
 
   // ── Social proof quality ───────────────────────────────────────────────────
-  if (claude.social_proof_quality === 'none' && parsed.testimonialBlockCount === 0 && !parsed.starRatingPresent)
+  if (claude.social_proof_quality === 'none' && parsed.testimonialBlockCount === 0 && !parsed.starRatingPresent && !claudeCovers('trust_signals', ['social proof', 'testimonial', 'review', 'rating']))
     findings.push({ category: 'trust_signals', severity: 'medium', title: 'No social proof detected', detail: `Visitors from paid ads have not heard of you before. Social proof (reviews, star ratings, testimonials with names) is the fastest way to reduce scepticism. BrightLocal research shows 91% of consumers read online reviews before contacting a local service business. Pages with visible social proof convert significantly better than pages relying on copy alone.`, fix: 'Add at least 3 testimonials with names (and photos if possible) above or near your CTA. If you have Google reviews, embed the rating and review count on the page.', impact: "Social proof is consistently the highest-ROI trust addition for paid landing pages — testimonials directly reduce scepticism from visitors who have never heard of you." });
-  else if (claude.social_proof_quality === 'weak' || (parsed.testimonialBlockCount > 0 && !parsed.namedTestimonialPresent))
+  else if ((claude.social_proof_quality === 'weak' || (parsed.testimonialBlockCount > 0 && !parsed.namedTestimonialPresent)) && !claudeCovers('trust_signals', ['social proof', 'testimonial', 'review', 'rating']))
     findings.push({ category: 'trust_signals', severity: 'low', title: 'Social proof present but could be stronger', detail: `Anonymous testimonials or generic review statements carry less weight than named, specific social proof. Research shows testimonials with a name, role, and specific outcome are 3x more credible than generic quotes. For local service businesses, a named parent or customer removes a significant trust barrier.`, fix: 'Upgrade anonymous testimonials to include the reviewer\'s name and specific outcome ("My son went from nervous to confident in 4 weeks — Jane P., parent"). Photos increase trust further.', impact: "Named, specific testimonials are 3x more credible than anonymous ones — upgrading them directly improves conversion rate without changing page structure." });
 
   } // end !parsed.fetchFailed content block
