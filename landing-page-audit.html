@@ -388,6 +388,16 @@
     .issue-fix-block { background: var(--cream); border-radius: 8px; padding: 14px 18px; }
     .issue-fix-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; }
     .issue-fix-text  { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    /* Problem / Fix / Impact three-part card structure */
+    .issue-pfi { margin-top: 12px; border-top: 1px solid var(--border); }
+    .issue-pfi-row { display: flex; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .issue-pfi-row:last-child { border-bottom: none; }
+    .pfi-label { flex-shrink: 0; width: 66px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
+    .pfi-problem { color: var(--mid); }
+    .pfi-fix     { color: var(--amber); }
+    .pfi-impact  { color: #2E7D32; }
+    .pfi-text { font-size: 13px; color: var(--ink); line-height: 1.6; flex: 1; }
+    .pfi-impact-text { color: #2E7D32; font-weight: 500; }
 
     /* JS-rendered warning */
     .js-warning {
@@ -611,6 +621,9 @@
     /* Reset inherited text-transform on the card wrapper — only the badge should be uppercase */
     .issue-card.sev-info { border-color: #BBDEFB; background: #F8FBFF; text-transform: none; letter-spacing: normal; }
     .issue-card.sev-info .issue-fix-label { color: #1565C0; }
+    .issue-card.sev-info .pfi-fix { color: #1565C0; }
+    .issue-card.sev-pass .pfi-impact { color: var(--green); }
+    .issue-card.sev-pass .pfi-impact-text { color: var(--green); }
 
     /* Pass severity — what's working */
     .issue-card.sev-pass { border-left-color: var(--green); border-color: rgba(46,125,50,0.25); background: #F1F8F1; }
@@ -1363,8 +1376,11 @@
         kwCard = '<div class="issue-card sev-critical" style="margin-top:20px">'
           + '<div class="issue-sev sev-critical">Critical</div>'
           + '<div class="issue-title">No clear keyword identifiable</div>'
-          + '<div class="issue-detail">The AI could not identify a clear target keyword from this page\'s headline, title tag, or opening copy. If it cannot tell, Google\'s relevance scoring system cannot tell either. This is directly hurting your Quality Score.</div>'
-          + '<div class="issue-fix-block"><div class="issue-fix-label">Fix</div><div class="issue-fix-text">Rewrite the H1 and title tag to include a specific, targeted keyword that reflects what users are searching for when they see your ad.</div></div>'
+          + '<div class="issue-pfi">'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Problem</span><span class="pfi-text">The AI could not identify a clear target keyword from this page\'s headline, title tag, or opening copy. If it cannot tell, Google\'s relevance scoring system cannot tell either — this is directly hurting your Quality Score.</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">Rewrite the H1 and title tag to include a specific, targeted keyword that reflects what users are searching for when they see your ad.</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">Keyword clarity is the foundation of Landing Page Experience relevance — fixing this directly improves Quality Score and reduces CPCs.</span></div>'
+          + '</div>'
           + '</div>';
       }
     }
@@ -1414,8 +1430,11 @@
           html += '<div class="issue-card sev-' + esc(f.severity) + '">'
             + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(f.severity.toUpperCase()) + '</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
-            + '<div class="issue-detail">' + esc(f.detail) + '</div>'
-            + '<div class="issue-fix-block"><div class="issue-fix-label">Fix</div><div class="issue-fix-text">' + escWithLinks(f.fix) + '</div></div>'
+            + '<div class="issue-pfi">'
+            + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Problem</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+            + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
+            + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
+            + '</div>'
             + '</div>';
         });
       }
@@ -1427,8 +1446,11 @@
           html += '<div class="issue-card sev-pass">'
             + '<div class="issue-sev sev-pass">✓ WORKING</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
-            + '<div class="issue-detail">' + esc(f.detail) + '</div>'
-            + (f.fix ? '<div class="issue-fix-block"><div class="issue-fix-label">Why it matters</div><div class="issue-fix-text">' + escWithLinks(f.fix) + '</div></div>' : '')
+            + '<div class="issue-pfi">'
+            + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Detail</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+            + (f.fix ? '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Strengthen</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>' : '')
+            + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
+            + '</div>'
             + '</div>';
         });
       }
@@ -1438,8 +1460,10 @@
         html += '<div class="issue-card sev-info">'
           + '<div class="issue-sev sev-info">ℹ INFO</div>'
           + '<div class="issue-title">' + esc(f.title) + '</div>'
-          + '<div class="issue-detail">' + esc(f.detail) + '</div>'
-          + '<div class="issue-fix-block"><div class="issue-fix-label" style="color:#1565C0">Note</div><div class="issue-fix-text">' + escWithLinks(f.fix) + '</div></div>'
+          + '<div class="issue-pfi">'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Detail</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix" style="color:#1565C0">Note</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
+          + '</div>'
           + '</div>';
       });
 
