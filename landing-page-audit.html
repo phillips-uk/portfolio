@@ -396,6 +396,14 @@
     }
     .js-warning strong { color: #5D4037; }
 
+    /* Blocked-page warning */
+    .blocked-warning {
+      background: #FDECEA; border: 1px solid #F5C6C2; border-radius: 8px;
+      padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #7B2D28; line-height: 1.6;
+    }
+    .blocked-warning strong { color: #5B1E1B; }
+    .blocked-warning .bw-note { margin-top: 6px; font-size: 12px; color: #9E6461; }
+
     /* Keyword inference card */
     .keyword-card {
       background: var(--cream); border: 1px solid var(--border);
@@ -1130,6 +1138,13 @@
       + '</div>';
 
     // JS-rendered warning
+    if (r.page_meta && r.page_meta.is_blocked) {
+      html += '<div class="blocked-warning">'
+        + '<strong>Page blocked our content scanner (Cloudflare / bot protection detected).</strong>'
+        + ' Performance scores are real — they come from Google\'s PageSpeed Insights API, which uses Googlebot and is not affected by the block.'
+        + '<div class="bw-note">Keyword inference, trust signal detection, CTA analysis, and tracking checks are unavailable for this page. Only performance findings are shown below.</div>'
+        + '</div>';
+    }
     if (r.page_meta && r.page_meta.is_js_rendered) {
       html += '<div class="js-warning"><strong>JavaScript-rendered page detected.</strong> Performance data comes from Google\'s real rendering engine and is accurate. Content analysis (keyword inference, H1 detection) may be limited because the page renders its content via JavaScript.</div>';
     }

@@ -60,19 +60,42 @@ exports.handler = async function (event) {
     // 1. Fetch HTML
     let html = '';
     let fetchError = null;
+    let fetchStatus = 200;
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 10000);
       const res = await fetch(url, {
         signal: controller.signal,
+        redirect: 'follow',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+          'User-Agent':                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Accept':                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+          'Accept-Language':           'en-GB,en;q=0.9',
+          'Accept-Encoding':           'gzip, deflate, br',
+          'Cache-Control':             'no-cache',
+          'Pragma':                    'no-cache',
+          'Sec-Fetch-Dest':            'document',
+          'Sec-Fetch-Mode':            'navigate',
+          'Sec-Fetch-Site':            'none',
+          'Upgrade-Insecure-Requests': '1'
         }
       });
       clearTimeout(timeout);
-      html = await res.text();
+      fetchStatus = res.status;
+      if (!res.ok) {
+        fetchError = `HTTP ${res.status}`;
+      } else {
+        html = await res.text();
+      }
     } catch (e) {
       fetchError = e.message;
+    }
+
+    // Detect bot-block pages (Cloudflare, WAFs) even when response was 200
+    const isBlocked = !fetchError && !!detectBotBlock(html);
+    if (isBlocked) {
+      console.log('[audit] page blocked by bot protection');
+      fetchError = 'blocked';
     }
 
     console.log('[audit] html fetched, length:', html.length, 'error:', fetchError || 'none');
@@ -245,18 +268,38 @@ function computeTopNgrams (bodyText, urlSlug, h1, title) {
     .map(({ phrase, count, inUrl, inH1, inTitle }) => ({ phrase, count, inUrl, inH1, inTitle }));
 }
 
+// ─── Bot-block detection ─────────────────────────────────────────────────────
+
+function detectBotBlock (html) {
+  if (!html) return false;
+  // Cloudflare challenge / block pages
+  if (/cf-error-details|cf_chl_opt|_cf_chl_enter/i.test(html))          return 'cloudflare';
+  if (/Ray ID:[\s\S]{0,80}Cloudflare/i.test(html))                       return 'cloudflare';
+  // Title-based signals (Cloudflare + generic WAFs)
+  const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const titleText  = titleMatch ? titleMatch[1].toLowerCase() : '';
+  if (/just a moment|attention required/i.test(titleText))               return 'cloudflare';
+  if (/access denied|403 forbidden|blocked/i.test(titleText))            return 'waf';
+  // H1-level block messages
+  if (/<h1[^>]*>[^<]*(sorry.*blocked|you have been blocked|access denied|403 forbidden)[^<]*<\/h1>/i.test(html)) return 'blocked';
+  // Common WAF vendors
+  if (/Incapsula incident|sucuri-cloudproxy|Barracuda Networks/i.test(html)) return 'waf';
+  return false;
+}
+
 // ─── HTML parsing ────────────────────────────────────────────────────────────
 
 function parseHtml (html, url, isHttps, fetchError) {
   if (!html || fetchError) {
     return {
-      fetchFailed: true, isHttps,
+      fetchFailed: true, fetchError: fetchError || null, isHttps,
       title: '', metaDescription: '', h1: '', h2s: [],
       aboveFoldText: '', bodyText: '', linkCount: 0,
       formFieldCount: 0, hasAboveFoldCta: false, ctaText: '',
       hasGtm: false, hasGa4: false, hasAdsConversion: false, hasRemarketingOnly: false,
       hasViewport: false, hasPrivacyLink: false,
-      socialProofText: '', authoritySignals: '', contactSignals: ''
+      socialProofText: '', authoritySignals: '', contactSignals: '',
+      topNgrams: []
     };
   }
 
@@ -480,6 +523,18 @@ Only include a finding when there is a genuine issue. Do not manufacture finding
 
 function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetchError) {
   const findings = [];
+  const isBlocked = parsed.fetchFailed && parsed.fetchError === 'blocked';
+
+  // ── Block notice (shown first so it anchors the rest of the report) ─────────
+  if (isBlocked) {
+    findings.push({
+      category: 'landing_page_experience',
+      severity: 'high',
+      title: 'Page blocked our content scanner',
+      detail: 'This page uses Cloudflare or a WAF that blocked the server-side fetch we use for content analysis. Performance data (LCP, CLS, mobile score) is still real — it comes from Google\'s PageSpeed Insights API which uses Googlebot. Keyword inference, trust signals, CTA detection, and tracking checks are not available for this audit.',
+      fix: 'Content analysis limitations are unavoidable for heavily protected pages. The performance findings below are accurate. To audit content manually, open the URL in a browser and compare it against the keyword clarity and trust signal checks listed on the tool page.'
+    });
+  }
 
   // ── Technical Performance ──────────────────────────────────────────────────
   if (psiMobile) {
@@ -526,6 +581,9 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     if (psiMobile.tapTargets != null && psiMobile.tapTargets < 0.9)
       findings.push({ category: 'mobile', severity: 'low', title: 'Some tap targets may be too small for mobile', detail: 'PageSpeed data shows some interactive elements may be below the recommended 48x48px touch target size. Small tap targets cause misclicks on mobile, which can redirect users away from your CTA.', fix: 'Ensure all buttons and links are at least 48x48 CSS pixels with 8px of space between them.' });
   }
+
+  // ── Content-dependent findings (skip entirely if page was blocked) ──────────
+  if (!parsed.fetchFailed) {
 
   // ── Mobile structure ───────────────────────────────────────────────────────
   if (!parsed.hasViewport)
@@ -602,6 +660,8 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     findings.push({ category: 'trust_signals', severity: 'medium', title: 'No social proof detected', detail: `Visitors from paid ads have not heard of you before. Social proof (reviews, star ratings, testimonials with names) is the fastest way to reduce scepticism. BrightLocal research shows 91% of consumers read online reviews before contacting a local service business. Pages with visible social proof convert significantly better than pages relying on copy alone.`, fix: 'Add at least 3 testimonials with names (and photos if possible) above or near your CTA. If you have Google reviews, embed the rating and review count on the page.' });
   else if (claude.social_proof_quality === 'weak' || (parsed.testimonialBlockCount > 0 && !parsed.namedTestimonialPresent))
     findings.push({ category: 'trust_signals', severity: 'low', title: 'Social proof present but could be stronger', detail: `Anonymous testimonials or generic review statements carry less weight than named, specific social proof. Research shows testimonials with a name, role, and specific outcome are 3x more credible than generic quotes. For local service businesses, a named parent or customer removes a significant trust barrier.`, fix: 'Upgrade anonymous testimonials to include the reviewer\'s name and specific outcome ("My son went from nervous to confident in 4 weeks — Jane P., parent"). Photos increase trust further.' });
+
+  } // end !parsed.fetchFailed content block
 
   // ── Score ──────────────────────────────────────────────────────────────────
   let score = 100;
@@ -716,6 +776,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       h1:             parsed.h1,
       meta_description: parsed.metaDescription,
       fetch_failed:   parsed.fetchFailed || false,
+      is_blocked:     parsed.fetchFailed && parsed.fetchError === 'blocked',
       is_js_rendered: claude.is_js_rendered_likely || false
     }
   };
