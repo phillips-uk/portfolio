@@ -604,16 +604,10 @@
   <!-- ── Report ── -->
   <div id="report-section" class="card">
     <div id="report-html"></div>
-
-    <!-- Below-fold content rendered after report -->
-    <div class="crosslink-bar">
-      <span class="crosslink-text">Want to check the account side too?</span>
-      <a href="/google-ads-audit" class="crosslink-link">Free Google Ads Audit Tool →</a>
-    </div>
   </div>
 
   <!-- ── Below-fold content (SEO + value) ── -->
-  <div class="content-section">
+  <div class="content-section" id="below-fold-1">
     <h2>Every check framed in paid search terms</h2>
     <p>Most landing page tools give you generic CRO advice. This one tells you what each finding means for your Quality Score, your CPCs, and your Landing Page Experience rating.</p>
 
@@ -651,7 +645,7 @@
   </div>
 
   <!-- ── FAQ ── -->
-  <div class="content-section" style="padding-top: 0; border-top: none;">
+  <div class="content-section" id="below-fold-2" style="padding-top: 0; border-top: none;">
     <h2>Common questions</h2>
 
     <div class="faq-list">
@@ -707,7 +701,7 @@
   </div>
 
   <!-- ── CTA section ── -->
-  <div class="cta-section">
+  <div class="cta-section" id="below-fold-3">
     <div class="cta-eyebrow">Work with me.</div>
     <h2 class="cta-heading">The audit finds it.<br><em>I can fix it.</em></h2>
     <a href="https://www.phillips-uk.com/#contact" class="btn-cta">Contact Phillips. →</a>
@@ -825,6 +819,9 @@
     document.getElementById('loading-section').style.display  = 'none';
     document.getElementById('report-section').style.display   = 'block';
     document.getElementById('report-html').innerHTML = buildReportHTML(report);
+    ['below-fold-1','below-fold-2','below-fold-3'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
     document.getElementById('report-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     // GTM event
     window.dataLayer = window.dataLayer || [];
@@ -845,6 +842,9 @@
     document.getElementById('report-section').style.display = 'none';
     document.getElementById('input-section').style.display  = 'block';
     document.getElementById('url-input').value = '';
+    ['below-fold-1','below-fold-2','below-fold-3'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.style.display = '';
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
