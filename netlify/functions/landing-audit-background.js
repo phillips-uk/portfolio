@@ -129,6 +129,38 @@ exports.handler = async function (event) {
 
     console.log('[audit] report built, score:', report.health_score);
     await store.set(jobId, JSON.stringify({ status: 'complete', data: report }));
+
+    // Write lightweight lead record so Lewis can track who is scanning
+    try {
+      const leadsStore = getStore({
+        name:   'landing-audit-leads',
+        siteID: process.env.NETLIFY_SITE_ID,
+        token:  process.env.NETLIFY_PERSONAL_TOKEN
+      });
+      const hostname = (() => {
+        try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
+      })();
+      const clientName = (() => {
+        const n = hostname.split('.')[0];
+        return n.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      })();
+      const leadKey = 'lead-' + report.audited_at.slice(0, 10) + '-' + jobId.slice(0, 8);
+      await leadsStore.set(leadKey, JSON.stringify({
+        jobId,
+        url,
+        domain:    hostname,
+        clientName,
+        score:     report.health_score,
+        band:      report.score_band,
+        keyword:   report.inferred_keyword || null,
+        auditedAt: report.audited_at
+      }));
+      console.log('[audit] lead stored:', leadKey, hostname);
+    } catch (leadErr) {
+      // Non-fatal — audit result is already saved
+      console.error('[audit] lead store error:', leadErr.message);
+    }
+
     console.log('[audit] complete');
 
   } catch (e) {
