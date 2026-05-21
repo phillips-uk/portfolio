@@ -575,7 +575,7 @@ function parseHtml (html, url, isHttps, fetchError) {
   return {
     fetchFailed: false, isHttps,
     title, metaDescription, h1, h2s, h3s,
-    aboveFoldText, bodyText: bodyText.substring(0, 3000),
+    aboveFoldText, bodyText: bodyText.substring(0, 5000),
     linkCount, navLinkCount, formFieldCount, formFieldTypes, hasAboveFoldCta, ctaText, ctaTexts,
     hasGtm, hasGa4, hasAdsConversion, hasRemarketingOnly,
     hasViewport, hasPrivacyLink,
@@ -795,10 +795,10 @@ Return ONLY valid JSON (no markdown, no fences):
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey, timeout: 60000 }); // 60s — haiku is fast, generous headroom
+    const anthropic = new Anthropic({ apiKey, timeout: 90000 }); // 90s — sonnet depth worth the wait; two-phase rendering means user sees results before PSI anyway
     const msg  = await anthropic.messages.create({
-      model:      'claude-3-5-haiku-20241022',
-      max_tokens: 3000,
+      model:      'claude-sonnet-4-5-20250929',
+      max_tokens: 5000,
       system:     'You are a PPC conversion specialist. You audit landing pages used as Google Ads destinations. Every finding must be grounded in the actual page content provided — specific, not generic. Frame all analysis in paid search terms: Quality Score, Landing Page Experience, conversion rate, CPA. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
     });
