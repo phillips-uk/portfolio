@@ -500,7 +500,8 @@
     /* Action plan */
     .action-plan-banner {
       background: var(--cream); border: 1px solid var(--border); border-radius: 8px;
-      padding: 14px 18px; font-size: 13px; color: var(--mid); line-height: 1.5; margin-bottom: 16px;
+      padding: 14px 18px; font-size: 13px; color: var(--mid); line-height: 1.5;
+      margin-top: 24px; margin-bottom: 16px;
     }
     .action-plan-banner strong { color: var(--ink); }
     .action-item {
@@ -607,7 +608,8 @@
 
     /* Info severity (eCommerce tracking notes etc.) */
     .sev-info { background: #E3F2FD; color: #1565C0; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; padding: 2px 7px; text-transform: uppercase; display: inline-block; }
-    .issue-card.sev-info { border-color: #BBDEFB; background: #F8FBFF; }
+    /* Reset inherited text-transform on the card wrapper — only the badge should be uppercase */
+    .issue-card.sev-info { border-color: #BBDEFB; background: #F8FBFF; text-transform: none; letter-spacing: normal; }
     .issue-card.sev-info .issue-fix-label { color: #1565C0; }
 
     /* Pass severity — what's working */
