@@ -950,7 +950,10 @@
       .then(function(data) {
         if (data.status === 'complete') {
           clearInterval(pollInterval);
-          showReport(data.data);
+          showReport(data.data, false);
+        } else if (data.status === 'partial') {
+          // Claude done, PSI still running — show findings immediately, keep polling for perf data
+          showReport(data.data, true);
         } else if (data.status === 'error') {
           clearInterval(pollInterval);
           showError(data.message || 'Audit failed. Please try again.');
@@ -967,16 +970,18 @@
     alert('Error: ' + msg);
   }
 
-  function showReport(report) {
+  function showReport(report, psiPending) {
     stopLoaderMessages();
     currentReport = report;
     document.getElementById('loading-section').style.display  = 'none';
     document.getElementById('report-section').style.display   = 'block';
-    document.getElementById('report-html').innerHTML = buildReportHTML(report);
+    document.getElementById('report-html').innerHTML = buildReportHTML(report, psiPending);
     ['below-fold-1','below-fold-2','below-fold-3'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.style.display = 'none';
     });
-    document.getElementById('report-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!psiPending) {
+      document.getElementById('report-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     // GTM event
     window.dataLayer = window.dataLayer || [];
     dataLayer.push({
@@ -1233,8 +1238,16 @@
     return html;
   }
 
-  function buildReportHTML(r) {
+  function buildReportHTML(r, psiPending) {
     var html = '';
+
+    // PSI pending banner — performance data still arriving
+    if (psiPending) {
+      html += '<div style="background:rgba(152,88,48,0.08);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:13px;color:var(--mid);display:flex;align-items:center;gap:8px;">'
+        + '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--amber);border-top-color:transparent;animation:spin 0.8s linear infinite;flex-shrink:0"></span>'
+        + 'Content analysis complete. Page speed data still measuring — this section will update automatically.'
+        + '</div>';
+    }
 
     // Score header
     var bandClass = { 'Strong': 'strong', 'Average': 'average', 'Needs work': 'needs-work', 'Critical': 'critical' }[r.score_band] || 'critical';

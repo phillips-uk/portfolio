@@ -120,34 +120,67 @@ exports.handler = async function (event) {
 
     console.log('[audit] html parsed, h1:', parsed.h1 || 'none');
 
-    // 3 + 4. PSI and Claude run in parallel — PSI only needs the URL, Claude only needs
-    //        the parsed HTML. Running them sequentially was the main speed bottleneck.
-    //        PSI content fallback (bot-blocked pages) is applied after both settle;
-    //        it enriches hardcoded findings only — Claude already handles fetchFailed gracefully.
+    // 3 + 4. PSI and Claude run in parallel.
+    //   • Claude only needs parsed HTML — starts immediately after page fetch.
+    //   • When Claude finishes (~10s), store a partial result so the frontend
+    //     can render findings right away instead of waiting for PSI (~30-40s).
+    //   • When PSI finishes, update to a full result with performance data.
     const psiKey = process.env.PSI_API_KEY;
-    const [psiSettled, claudeSettled] = await Promise.allSettled([
-      psiKey
-        ? Promise.allSettled([fetchPsi(url, 'mobile', psiKey), fetchPsi(url, 'desktop', psiKey)])
-        : Promise.resolve([{ status: 'fulfilled', value: null }, { status: 'fulfilled', value: null }]),
-      analyzeWithClaude(parsed)
-    ]);
-
     let psiMobile = null, psiDesktop = null;
-    if (psiSettled.status === 'fulfilled') {
-      const [mRes, dRes] = psiSettled.value;
-      psiMobile  = mRes.status === 'fulfilled' ? mRes.value : null;
-      psiDesktop = dRes.status === 'fulfilled' ? dRes.value : null;
+    let psiDone   = false;
+
+    // Helper — keyword fallback chain used in both partial and final result
+    function applyKeywordFallback (cr) {
+      if (!cr.inferred_keyword) {
+        if (parsed.urlKeyword) {
+          cr.inferred_keyword           = parsed.urlKeyword;
+          cr.keyword_confidence         = 'high';
+          cr.keyword_confidence_reason  = 'Inferred from the URL slug — the most explicit keyword signal on the page.';
+        } else if (parsed.h1) {
+          cr.inferred_keyword = parsed.h1.trim();
+          const h1Words   = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+          const titleLow  = (parsed.title || '').toLowerCase();
+          const ratio     = h1Words.length ? h1Words.filter(w => titleLow.includes(w)).length / h1Words.length : 0;
+          cr.keyword_confidence        = ratio >= 0.5 ? 'high' : 'medium';
+          cr.keyword_confidence_reason = ratio >= 0.5
+            ? 'H1 and title tag share the same core keyword — strong alignment.'
+            : 'Inferred from H1 heading. Title tag alignment is partial.';
+        }
+      }
     }
-    const claudeResult = claudeSettled.status === 'fulfilled'
-      ? claudeSettled.value
-      : { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Analysis failed.', findings: [] };
+
+    const psiPromise = (psiKey
+      ? Promise.allSettled([fetchPsi(url, 'mobile', psiKey), fetchPsi(url, 'desktop', psiKey)])
+      : Promise.resolve([{ status: 'fulfilled', value: null }, { status: 'fulfilled', value: null }])
+    ).then(([mRes, dRes]) => {
+      psiMobile = mRes?.status === 'fulfilled' ? mRes.value : null;
+      psiDesktop = dRes?.status === 'fulfilled' ? dRes.value : null;
+      psiDone = true;
+      console.log('[audit] psi done — mobile:', psiMobile ? `score ${psiMobile.score}, src: ${psiMobile.dataSource}` : 'NULL', '| desktop:', psiDesktop ? `score ${psiDesktop.score}` : 'NULL');
+    });
+
+    let claudeResult = { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Analysis failed.', findings: [] };
+    const claudePromise = analyzeWithClaude(parsed).then(async res => {
+      claudeResult = res;
+      applyKeywordFallback(claudeResult);
+      console.log('[audit] claude done, keyword:', claudeResult.inferred_keyword || 'none', 'findings:', (claudeResult.findings || []).length);
+      // PSI still running — save partial result now so frontend can show findings immediately
+      if (!psiDone) {
+        try {
+          const partial = buildReport(url, parsed, null, null, claudeResult, isHttps, fetchError, 'pending');
+          partial.psi_pending = true;
+          await store.set(jobId, JSON.stringify({ status: 'partial', data: partial }));
+          console.log('[audit] partial result stored — awaiting PSI');
+        } catch (e) { console.error('[audit] partial store error:', e.message); }
+      }
+    });
+
+    await Promise.allSettled([psiPromise, claudePromise]);
 
     const psiStatus = psiMobile ? 'ok' : 'failed';
-    console.log('[audit] psi done — mobile:', psiMobile ? `score ${psiMobile.score}, src: ${psiMobile.dataSource}` : 'NULL', '| desktop:', psiDesktop ? `score ${psiDesktop.score}` : 'NULL');
 
-    // PSI content fallback — when direct fetch is blocked, use Lighthouse's Chrome render.
-    // Googlebot bypasses Cloudflare/WAF, so this gives us what Google actually sees.
-    // Populates: title, meta, tracking signals. Body text / H1 / trust signals remain unavailable.
+    // PSI content fallback — when direct fetch is blocked, Googlebot bypasses WAF.
+    // Populates: title, meta, tracking signals (body / H1 / trust remain unavailable).
     if (parsed.fetchFailed && psiMobile?.contentSignals) {
       const cs = psiMobile.contentSignals;
       if (cs.title)           parsed.title           = cs.title;
@@ -157,32 +190,10 @@ exports.handler = async function (event) {
       parsed.hasAdsConversion   = cs.hasAdsConversion;
       parsed.hasRemarketingOnly = !cs.hasAdsConversion && cs.hasRemarketingTag;
       parsed.contentFromPsi     = true;
-      console.log('[audit] psi content fallback applied — title:', cs.title || 'none', 'gtm:', cs.hasGtm, 'ga4:', cs.hasGa4);
+      console.log('[audit] psi content fallback applied — title:', cs.title || 'none');
     }
 
-    // Keyword fallback chain: URL slug → H1 → title (in descending confidence)
-    if (!claudeResult.inferred_keyword) {
-      if (parsed.urlKeyword) {
-        // URL slug is the strongest signal — chosen explicitly by the site owner
-        claudeResult.inferred_keyword        = parsed.urlKeyword;
-        claudeResult.keyword_confidence      = 'high';
-        claudeResult.keyword_confidence_reason = 'Inferred from the URL slug — the most explicit keyword signal on the page.';
-      } else if (parsed.h1) {
-        claudeResult.inferred_keyword = parsed.h1.trim();
-        const h1Words    = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-        const titleLower = (parsed.title || '').toLowerCase();
-        const matchCount = h1Words.filter(w => titleLower.includes(w)).length;
-        const matchRatio = h1Words.length > 0 ? matchCount / h1Words.length : 0;
-        claudeResult.keyword_confidence        = matchRatio >= 0.5 ? 'high' : 'medium';
-        claudeResult.keyword_confidence_reason = matchRatio >= 0.5
-          ? 'H1 and title tag share the same core keyword — strong alignment.'
-          : 'Inferred from H1 heading. Title tag alignment is partial.';
-      }
-    }
-
-    console.log('[audit] claude done, keyword:', claudeResult.inferred_keyword || 'none', 'findings:', (claudeResult.findings || []).length);
-
-    // 5. Build final report
+    // 5. Build final report (with PSI data now available)
     const report = buildReport(url, parsed, psiMobile, psiDesktop, claudeResult, isHttps, fetchError, psiStatus);
 
     console.log('[audit] report built, score:', report.health_score);
@@ -564,7 +575,7 @@ function parseHtml (html, url, isHttps, fetchError) {
   return {
     fetchFailed: false, isHttps,
     title, metaDescription, h1, h2s, h3s,
-    aboveFoldText, bodyText: bodyText.substring(0, 5000),
+    aboveFoldText, bodyText: bodyText.substring(0, 3000),
     linkCount, navLinkCount, formFieldCount, formFieldTypes, hasAboveFoldCta, ctaText, ctaTexts,
     hasGtm, hasGa4, hasAdsConversion, hasRemarketingOnly,
     hasViewport, hasPrivacyLink,
@@ -784,10 +795,10 @@ Return ONLY valid JSON (no markdown, no fences):
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey, timeout: 90000 }); // 90s — background function has 15min, PSI can eat 80s
+    const anthropic = new Anthropic({ apiKey, timeout: 60000 }); // 60s — haiku is fast, generous headroom
     const msg  = await anthropic.messages.create({
-      model:      'claude-sonnet-4-5-20250929',
-      max_tokens: 5000,
+      model:      'claude-3-5-haiku-20241022',
+      max_tokens: 3000,
       system:     'You are a PPC conversion specialist. You audit landing pages used as Google Ads destinations. Every finding must be grounded in the actual page content provided — specific, not generic. Frame all analysis in paid search terms: Quality Score, Landing Page Experience, conversion rate, CPA. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
     });
