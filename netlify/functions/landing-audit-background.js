@@ -318,10 +318,14 @@ function detectBotBlock (html) {
 // ─── Page type detection ─────────────────────────────────────────────────────
 
 function detectPageType (html, url) {
-  const htmlSafe  = html  || '';
-  const urlLower  = (url  || '').toLowerCase();
+  const htmlSafe = html  || '';
+  const urlLower = (url  || '').toLowerCase();
 
-  // Platform detection from HTML signals
+  // ── Platform detection ────────────────────────────────────────────────────
+  // Platform is used ONLY to contextualise the tracking section and the H1 finding.
+  // It has NO bearing on page type classification — Shopify/WooCommerce sites host
+  // both product pages and lead-gen/service pages, and loose HTML signals in theme
+  // JS can produce false positives if we score platform toward eCommerce.
   let platform = null;
   if (/cdn\.shopify\.com|myshopify\.com|Shopify\.theme|Shopify\.config|\/cdn\/shop\//i.test(htmlSafe))
     platform = 'shopify';
@@ -332,39 +336,39 @@ function detectPageType (html, url) {
   else if (/\bmagento\b|Mage\.Cookies|mage\//i.test(htmlSafe))
     platform = 'magento';
 
-  // URL-based page subtype
+  // ── URL-based subtype — unambiguous signal ────────────────────────────────
   let subtype = null;
-  if (/\/collections\/[^/?#]+/i.test(urlLower))                     subtype = 'collection';
-  else if (/\/products\/[^/?#]+/i.test(urlLower))                   subtype = 'product';
-  else if (/\/category\/|\/categories\/|\/cat\//i.test(urlLower))   subtype = 'collection';
-  else if (/\/p\/[^/?#]+|\/item\/[^/?#]+/i.test(urlLower))         subtype = 'product';
+  if      (/\/collections\/[^/?#]+/i.test(urlLower))                   subtype = 'collection';
+  else if (/\/products\/[^/?#]+/i.test(urlLower))                      subtype = 'product';
+  else if (/\/cart\b|\/checkout\b/i.test(urlLower))                    subtype = 'cart';
+  else if (/\/category\/|\/categories\/|\/cat\//i.test(urlLower))      subtype = 'collection';
+  else if (/\/p\/[^/?#]+|\/item\/[^/?#]+/i.test(urlLower))            subtype = 'product';
 
-  // Structured data — strong eCommerce signals
-  const hasProductSchema   = /"@type"\s*:\s*"Product"/i.test(htmlSafe);
-  const hasOfferSchema     = /"@type"\s*:\s*"Offer"/i.test(htmlSafe);
-  const hasItemListSchema  = /"@type"\s*:\s*"ItemList"/i.test(htmlSafe);
+  // ── Schema — only inside JSON-LD blocks, never loose JS strings ───────────
+  // Scanning raw HTML for "@type":"Product" produces false positives from theme JS.
+  // Restrict to actual <script type="application/ld+json"> blocks only.
+  const jsonLdContent = (htmlSafe.match(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [])
+    .map(s => s.replace(/<[^>]+>/g, '')).join('\n');
+  const hasProductSchema  = /"@type"\s*:\s*"Product"/i.test(jsonLdContent);
+  const hasOfferSchema    = /"@type"\s*:\s*"Offer"/i.test(jsonLdContent);
+  const hasItemListSchema = /"@type"\s*:\s*"ItemList"/i.test(jsonLdContent);
 
-  // Content signals
-  const hasAddToCart    = /add.to.cart|addtocart|add_to_cart/i.test(htmlSafe);
-  const hasPriceEl      = /itemprop=["']price["']|data-product-price|class=["'][^"']*price/i.test(htmlSafe);
-  const hasOgProduct    = /<meta[^>]+property=["']og:type["'][^>]+content=["']product/i.test(htmlSafe);
+  // ── Add-to-cart — only actual submit buttons, not JS strings ─────────────
+  const hasAddToCart = /name=["']add["'][^>]*type=["']submit["']|type=["']submit["'][^>]*add.to.cart|<button[^>]*>\s*Add to (Cart|Bag)/i.test(htmlSafe);
 
-  let ecomScore = 0;
-  // Platform alone is insufficient evidence — a Shopify/WooCommerce site can host
-  // service pages, booking pages, and lead-gen pages alongside product pages.
-  // Platform contributes 2 points; a second signal is required to cross the threshold.
-  if (platform)                              ecomScore += 2;
-  if (subtype)                               ecomScore += 3;
-  if (hasProductSchema || hasOfferSchema)    ecomScore += 3;
-  if (hasItemListSchema)                     ecomScore += 2;
-  if (hasAddToCart)                          ecomScore += 2;
-  if (hasPriceEl)                            ecomScore += 1;
-  if (hasOgProduct)                          ecomScore += 2;
+  // ── og:type product ───────────────────────────────────────────────────────
+  const hasOgProduct = /<meta[^>]+property=["']og:type["'][^>]+content=["']product["']/i.test(htmlSafe)
+                    || /<meta[^>]+content=["']product["'][^>]+property=["']og:type["']/i.test(htmlSafe);
+
+  // ── Classification — requires at least one definitive signal ──────────────
+  // Platform alone is never sufficient. The page must have a URL pattern, verified
+  // schema markup, a real add-to-cart button, or og:type=product to be eCommerce.
+  const isEcommerce = subtype || hasProductSchema || hasOfferSchema || hasItemListSchema || hasAddToCart || hasOgProduct;
 
   return {
-    type:     ecomScore >= 3 ? 'ecommerce' : 'lead_gen',
+    type:     isEcommerce ? 'ecommerce' : 'lead_gen',
     platform: platform,
-    subtype:  subtype || (ecomScore >= 3 ? 'generic' : null)
+    subtype:  subtype || (isEcommerce ? 'generic' : null)
   };
 }
 
