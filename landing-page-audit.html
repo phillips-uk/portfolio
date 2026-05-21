@@ -751,7 +751,7 @@
 
     // GTM event
     window.dataLayer = window.dataLayer || [];
-    dataLayer.push({ event: 'lp_audit_started', audited_url: url });
+    dataLayer.push({ event: 'lp_audit_started', audited_url: url, client_name: extractClientName(url), client_domain: extractClientDomain(url) });
 
     // Trigger background function (returns 202)
     fetch('/.netlify/functions/landing-audit-background', {
@@ -828,6 +828,8 @@
     dataLayer.push({
       event:           'lp_audit_completed',
       audited_url:     report.url,
+      client_name:     extractClientName(report.url),
+      client_domain:   extractClientDomain(report.url),
       audit_score:     report.health_score,
       audit_band:      report.score_band,
       inferred_keyword: report.inferred_keyword || ''
@@ -1051,6 +1053,22 @@
 
   // ── Helper functions ───────────────────────────────────────────────────────
 
+  function extractClientName(url) {
+    try {
+      var hostname = new URL(url).hostname.replace(/^www\./, '');
+      // Take the first label (e.g. "gogglesquad" from "gogglesquad.co.uk")
+      var name = hostname.split('.')[0];
+      // Replace hyphens/underscores, title-case each word
+      return name.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    } catch(e) { return ''; }
+  }
+
+  function extractClientDomain(url) {
+    try {
+      return new URL(url).hostname.replace(/^www\./, '');
+    } catch(e) { return ''; }
+  }
+
   function esc(s) {
     if (s == null) return '';
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1202,7 +1220,7 @@
     } else {
       prompt('Copy your report link:', reportUrl);
     }
-    dataLayer.push({ event: 'report_shared', share_channel: 'copy_link', audited_url: currentReport ? currentReport.url : '' });
+    dataLayer.push({ event: 'report_shared', share_channel: 'copy_link', audited_url: currentReport ? currentReport.url : '', client_name: currentReport ? extractClientName(currentReport.url) : '', client_domain: currentReport ? extractClientDomain(currentReport.url) : '' });
   }
 
   function shareOnTwitter() {
@@ -1212,27 +1230,33 @@
     var score      = currentReport.health_score;
     var text       = encodeURIComponent('Just ran a free landing page audit for Google Ads' + kw + '. Score: ' + score + '/100. Full report:');
     window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + reportUrl, '_blank');
-    dataLayer.push({ event: 'report_shared', share_channel: 'twitter', audited_url: currentReport.url });
+    dataLayer.push({ event: 'report_shared', share_channel: 'twitter', audited_url: currentReport.url, client_name: extractClientName(currentReport.url), client_domain: extractClientDomain(currentReport.url) });
   }
 
   function shareOnLinkedIn() {
     if (!currentReport) return;
     var reportUrl = encodeURIComponent(window.location.origin + '/landing-page-audit?id=' + currentJobId);
     window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + reportUrl, '_blank');
-    dataLayer.push({ event: 'report_shared', share_channel: 'linkedin', audited_url: currentReport.url });
+    dataLayer.push({ event: 'report_shared', share_channel: 'linkedin', audited_url: currentReport.url, client_name: extractClientName(currentReport.url), client_domain: extractClientDomain(currentReport.url) });
   }
 
   function exportMarkdown() {
     if (!currentReport) return;
-    var r    = currentReport;
-    var cats = r.categories || {};
-    var perf = cats.performance || {};
+    var r          = currentReport;
+    var cats       = r.categories || {};
+    var perf       = cats.performance || {};
+    var clientName = extractClientName(r.url);
+    var clientDomain = extractClientDomain(r.url);
     var date = new Date(r.audited_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    var slug = (r.url || '').replace(/https?:\/\//,'').replace(/[^a-z0-9]/gi,'-').toLowerCase().substring(0, 60);
+    var slug = clientName
+      ? clientName.toLowerCase().replace(/\s+/g, '-') + '-landing-page-audit-' + (r.audited_at || '').slice(0, 10)
+      : (r.url || '').replace(/https?:\/\//,'').replace(/[^a-z0-9]/gi,'-').toLowerCase().substring(0, 60);
 
     var lines = [
       '---',
       'tags: [landing-page-audit, google-ads]',
+      'client: "' + (clientName || clientDomain || '') + '"',
+      'domain: "' + clientDomain + '"',
       'url: "' + (r.url || '') + '"',
       'audited: ' + (r.audited_at || '').slice(0, 10),
       'score: ' + r.health_score,
@@ -1240,10 +1264,12 @@
       'keyword: "' + (r.inferred_keyword || 'unknown') + '"',
       '---',
       '',
-      '# Landing Page Audit — ' + (r.inferred_keyword || r.url),
+      '# Landing Page Audit — ' + (clientName || r.url),
       '',
       '| | |',
       '|---|---|',
+      (clientName ? '| **Client** | ' + clientName + ' |' : ''),
+      '| **Domain** | ' + clientDomain + ' |',
       '| **URL** | ' + (r.url || '') + ' |',
       '| **Audited** | ' + date + ' |',
       '| **Score** | ' + r.health_score + '/100 — ' + r.score_band + ' |',
