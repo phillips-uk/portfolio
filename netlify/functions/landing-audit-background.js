@@ -707,6 +707,7 @@ H2 headings:  ${h2List}
 H3 headings:  ${h3List}
 
 CTA / button text: ${ctaList}
+⚠️ NOTE: CTA text is extracted as raw DOM text — dropdown options and lists appear concatenated without spaces (e.g. 'FeaturedBest sellingPrice low to high' is a correctly rendered sort dropdown, not broken UI). Do NOT flag spacing or formatting issues in sort/filter/dropdown text — the actual rendered UI has proper spacing. Only flag CTA issues you can verify are real problems, not extraction artifacts.
 
 Above-fold copy (first 500 chars):
 ${parsed.aboveFoldText || '(none)'}
