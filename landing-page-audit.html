@@ -268,7 +268,13 @@
     .me-row { display: flex; flex-direction: column; gap: 2px; }
     .me-label { font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; }
     .me-desc { font-size: 12px; line-height: 1.5; }
-    @media (max-width: 540px) { .metrics-explainer-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 540px) {
+      .metrics-explainer-grid { grid-template-columns: 1fr; }
+      .lead-cta { flex-direction: column; padding: 24px; }
+      .lead-cta-btn { width: 100%; justify-content: center; }
+      .report-header-top { margin-bottom: 24px; }
+      .btn-share, .btn-download { padding: 7px 12px; font-size: 12px; }
+    }
 
     .report-url-line { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 8px; word-break: break-all; }
     .keyword-line {
@@ -464,25 +470,60 @@
     .btn-cta:hover { background: var(--amber-light); }
 
     /* Share & export */
-    .share-bar {
-      margin-top: 40px; padding: 24px;
-      background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
+    /* Report header top bar (brand + actions) */
+    .report-header-top {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px;
     }
-    .share-bar-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); margin-bottom: 14px; }
-    .share-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-    .share-btn {
-      padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
-      border: 1.5px solid var(--border); background: #fff; color: var(--ink);
-      text-decoration: none; display: inline-block; transition: border-color 0.15s, color 0.15s;
+    .report-brand { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+    .report-brand span { color: var(--amber); }
+    .report-header-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--amber); color: var(--white);
+      border: 1.5px solid var(--amber); border-radius: 6px;
+      padding: 8px 16px; font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: opacity 0.15s; text-decoration: none;
     }
-    .share-btn:hover { border-color: var(--amber); color: var(--amber); }
-    .share-btn-primary { background: var(--amber); border-color: var(--amber); color: #fff; }
-    .share-btn-primary:hover { background: var(--amber-light); border-color: var(--amber-light); color: #fff; }
-    .share-confirm { font-size: 12px; color: var(--amber); margin-top: 10px; display: none; }
+    .btn-download:hover { opacity: 0.85; }
+    .btn-share {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; color: rgba(255,255,255,0.85);
+      border: 1.5px solid rgba(255,255,255,0.35); border-radius: 6px;
+      padding: 8px 16px; font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer; white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn-share:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); color: #fff; }
+    .share-confirm { font-size: 12px; color: var(--amber); margin-top: 6px; display: none; text-align: right; }
+
+    /* Lead CTA */
+    .lead-cta {
+      background: var(--ink); border-radius: 14px;
+      padding: 32px 36px; margin: 40px 0 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .lead-cta-copy h3 { font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: -0.02em; margin-bottom: 6px; }
+    .lead-cta-copy p { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.55; max-width: 400px; }
+    .lead-cta-btn {
+      display: inline-flex; align-items: center; background: var(--amber);
+      color: var(--white); border: none; border-radius: 8px;
+      padding: 12px 22px; font-size: 14px; font-weight: 600;
+      font-family: inherit; text-decoration: none; white-space: nowrap;
+      cursor: pointer; transition: background 0.15s; flex-shrink: 0;
+    }
+    .lead-cta-btn:hover { background: var(--amber-light); }
+
+    /* Report restart */
+    .report-restart { text-align: center; margin-top: 8px; }
+    .report-restart button {
+      background: none; border: none; font-size: 13px;
+      color: var(--mid); cursor: pointer; font-family: inherit; padding: 4px 8px;
+    }
+    .report-restart button:hover { color: var(--amber); }
 
     /* Cross-link */
     .crosslink-bar {
-      margin-top: 48px; padding: 20px 24px;
+      margin-top: 24px; padding: 20px 24px;
       background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
       display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
     }
@@ -492,7 +533,7 @@
 
     /* PDF print */
     @media print {
-      nav, #input-section, #loading-section, .content-section, .cta-section, .crosslink-bar, .share-bar { display: none !important; }
+      nav, #input-section, #loading-section, .content-section, .cta-section, .crosslink-bar, .lead-cta, .report-restart, .report-header-actions, .share-confirm { display: none !important; }
       #report-section { display: block !important; }
       .report-header { margin: 0; border-radius: 8px; }
       .metrics-grid { margin: 0 0 32px; border-radius: 8px; }
@@ -820,7 +861,14 @@
       : '<div class="keyword-line"><span class="kw-label">Targeting</span><span style="color:#ff8a80">Could not infer a clear keyword from this page.</span></div>';
 
     html += '<div class="report-header">'
-      + '<div class="report-eyebrow">Landing Page Audit — Phillips.</div>'
+      + '<div class="report-header-top">'
+      + '<div class="report-brand">Phillips<span>.</span></div>'
+      + '<div class="report-header-actions">'
+      + '<button class="btn-share" id="copy-link-btn" onclick="copyReportLink()">⇧ Share</button>'
+      + '<button class="btn-download" onclick="window.print()">↓ Download PDF</button>'
+      + '</div></div>'
+      + '<div class="share-confirm" id="share-confirm">Link copied to clipboard.</div>'
+      + '<div class="report-eyebrow">Landing Page Audit</div>'
       + '<div class="score-display"><span class="score-num">' + r.health_score + '</span><span class="score-denom">/100</span></div>'
       + '<div><span class="score-tag ' + bandClass + '">' + esc(r.score_band) + '</span>'
       + '<button class="score-info-btn" onclick="toggleScoreInfo()" title="How is this score calculated?">i</button></div>'
@@ -982,22 +1030,20 @@
       html += '</div>';
     });
 
-    // Restart button
-    html += '<div style="margin-top:32px;padding-top:28px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center;">'
-      + '<button onclick="resetToStart()" style="background:none;border:1.5px solid var(--border);color:var(--mid);padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">← Audit another page</button>'
-      + '<button onclick="window.print()" style="background:none;border:1.5px solid var(--border);color:var(--mid);padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">Download PDF</button>'
+    // Lead CTA
+    html += '<div class="lead-cta">'
+      + '<div class="lead-cta-copy">'
+      + '<h3>The audit checks it. <em>I can fix it.</em></h3>'
+      + '<p>I work directly with businesses on exactly these issues — slow pages, weak conversion architecture, broken tracking. No agency overhead. Direct access to someone who does this every day.</p>'
+      + '</div>'
+      + '<a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">Get in touch →</a>'
       + '</div>';
 
-    // Share & export bar
-    html += '<div class="share-bar">'
-      + '<div class="share-bar-label">Share this report</div>'
-      + '<div class="share-buttons">'
-      + '<button class="share-btn share-btn-primary" id="copy-link-btn" onclick="copyReportLink()">Copy report link</button>'
-      + '<a href="#" class="share-btn" onclick="shareOnTwitter();return false;">Share on X</a>'
-      + '<a href="#" class="share-btn" onclick="shareOnLinkedIn();return false;">Share on LinkedIn</a>'
-      + '<button class="share-btn" onclick="exportMarkdown()" title="Download as .md file for Obsidian or Notion">Export to Obsidian</button>'
-      + '</div>'
-      + '<div class="share-confirm" id="share-confirm">Link copied to clipboard.</div>'
+    // Restart + crosslink
+    html += '<div class="report-restart"><button onclick="resetToStart()">← Audit another page</button></div>';
+    html += '<div class="crosslink-bar">'
+      + '<span class="crosslink-text">Want to check the account side too?</span>'
+      + '<a href="/google-ads-audit" class="crosslink-link">Free Google Ads Audit Tool →</a>'
       + '</div>';
 
     return html;
@@ -1150,7 +1196,7 @@
       navigator.clipboard.writeText(reportUrl).then(function () {
         var btn = document.getElementById('copy-link-btn');
         var msg = document.getElementById('share-confirm');
-        if (btn) { btn.textContent = '✓ Copied'; setTimeout(function () { btn.textContent = 'Copy report link'; }, 2500); }
+        if (btn) { btn.textContent = '✓ Copied'; setTimeout(function () { btn.textContent = '⇧ Share'; }, 2500); }
         if (msg) { msg.style.display = 'block'; setTimeout(function () { msg.style.display = 'none'; }, 3000); }
       }).catch(function () { prompt('Copy your report link:', reportUrl); });
     } else {
