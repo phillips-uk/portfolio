@@ -459,10 +459,12 @@ function parseHtml (html, url, isHttps, fetchError) {
   const hasAboveFoldCta = /(<button|<input[^>]*type=["']submit["'])/i.test(bodyHtmlSnip) || ctaKeywordsRx.test(bodyHtmlSnip.substring(0, 1000));
 
   // All CTA button texts (deduplicated, for Claude)
+  // Exclude known analytics/tag-manager UI strings injected into the DOM
+  const ctaToolNoise = /^(track new element|add a tag|preview|submit|debug|tag assistant|fire|variable|trigger|pause|resume|recording|gtm|google tag|element visibility)$/i;
   const ctaTexts = [];
   $('button, input[type="submit"], .btn, .cta, [class*="button"], a[class*="btn"], a[class*="cta"]').each((_, el) => {
     const t = $(el).text().trim() || $(el).attr('value') || '';
-    if (t && t.length < 80 && !ctaTexts.includes(t)) ctaTexts.push(t);
+    if (t && t.length < 80 && !ctaTexts.includes(t) && !ctaToolNoise.test(t)) ctaTexts.push(t);
   });
   const ctaText = ctaTexts[0] || '';
 
@@ -750,8 +752,17 @@ Return ONLY valid JSON (no markdown, no fences):
       system:     'You are a PPC conversion specialist. You audit landing pages used as Google Ads destinations. Every finding must be grounded in the actual page content provided — specific, not generic. Frame all analysis in paid search terms: Quality Score, Landing Page Experience, conversion rate, CPA. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
     });
-    const text = msg.content[0]?.text || '{}';
-    return JSON.parse(text);
+    const raw = msg.content[0]?.text || '{}';
+    // Strip markdown fences Claude sometimes adds despite instructions
+    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+    try {
+      return JSON.parse(text);
+    } catch (parseErr) {
+      // Second attempt: extract first {...} block in case of extra prose
+      const match = text.match(/\{[\s\S]*\}/);
+      if (match) return JSON.parse(match[0]);
+      throw parseErr;
+    }
   } catch (e) {
     console.error('Claude error:', e.message);
     return { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Content analysis failed.', findings: [] };
