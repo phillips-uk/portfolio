@@ -1140,9 +1140,21 @@
     // JS-rendered warning
     if (r.page_meta && r.page_meta.is_blocked) {
       html += '<div class="blocked-warning">'
-        + '<strong>Page blocked our content scanner (Cloudflare / bot protection detected).</strong>'
-        + ' Performance scores are real — they come from Google\'s PageSpeed Insights API, which uses Googlebot and is not affected by the block.'
-        + '<div class="bw-note">Keyword inference, trust signal detection, CTA analysis, and tracking checks are unavailable for this page. Only performance findings are shown below.</div>'
+        + '<strong>Page blocked our content scanner (bot protection detected).</strong>'
+        + ' Performance scores are real — they come from Google\'s PageSpeed Insights API, which uses Googlebot and is unaffected by bot protection.'
+        + '<div class="bw-note">Keyword inference, trust signals, CTA analysis, and tracking checks are unavailable. Performance findings are still shown below.</div>'
+        + '</div>';
+    } else if (r.page_meta && r.page_meta.is_timeout) {
+      html += '<div class="blocked-warning">'
+        + '<strong>Page timed out — content checks unavailable.</strong>'
+        + ' The page took over 10 seconds to respond. Performance data from PageSpeed Insights is shown where available.'
+        + '<div class="bw-note">A slow server response affects real visitors too — see the performance findings below.</div>'
+        + '</div>';
+    } else if (r.page_meta && r.page_meta.is_unreachable) {
+      html += '<div class="blocked-warning">'
+        + '<strong>Page returned an error — content checks unavailable.</strong>'
+        + ' The server rejected the request. Verify the URL is correct and publicly accessible without login.'
+        + '<div class="bw-note">Performance data from PageSpeed Insights may still be shown below if Google has crawled this page.</div>'
         + '</div>';
     }
     if (r.page_meta && r.page_meta.is_js_rendered) {

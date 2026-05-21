@@ -91,12 +91,24 @@ exports.handler = async function (event) {
       fetchError = e.message;
     }
 
+    // Classify HTTP error codes into readable keys
+    if (fetchError === 'HTTP 403' || fetchError === 'HTTP 429')
+      fetchError = 'blocked';
+    else if (fetchError && fetchError.startsWith('HTTP 4'))
+      fetchError = 'http_client_error';
+    else if (fetchError && fetchError.startsWith('HTTP 5'))
+      fetchError = 'http_server_error';
+    else if (fetchError && /abort|timeout/i.test(fetchError))
+      fetchError = 'timeout';
+    else if (fetchError)
+      fetchError = 'network_error';
+
     // Detect bot-block pages (Cloudflare, WAFs) even when response was 200
-    const isBlocked = !fetchError && !!detectBotBlock(html);
-    if (isBlocked) {
-      console.log('[audit] page blocked by bot protection');
+    if (!fetchError && !!detectBotBlock(html)) {
       fetchError = 'blocked';
     }
+
+    console.log('[audit] fetch result:', fetchError || 'ok', 'html length:', html.length);
 
     console.log('[audit] html fetched, length:', html.length, 'error:', fetchError || 'none');
 
@@ -523,16 +535,35 @@ Only include a finding when there is a genuine issue. Do not manufacture finding
 
 function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetchError) {
   const findings = [];
-  const isBlocked = parsed.fetchFailed && parsed.fetchError === 'blocked';
+  const fetchErr  = parsed.fetchError || null;
+  const isBlocked = parsed.fetchFailed && (fetchErr === 'blocked');
+  const isTimeout = parsed.fetchFailed && (fetchErr === 'timeout');
+  const isUnreachable = parsed.fetchFailed && (fetchErr === 'network_error' || fetchErr === 'http_server_error' || fetchErr === 'http_client_error');
 
-  // ── Block notice (shown first so it anchors the rest of the report) ─────────
+  // ── Fetch-failure notices (shown first so they anchor the rest of the report) ─
   if (isBlocked) {
     findings.push({
       category: 'landing_page_experience',
       severity: 'high',
-      title: 'Page blocked our content scanner',
-      detail: 'This page uses Cloudflare or a WAF that blocked the server-side fetch we use for content analysis. Performance data (LCP, CLS, mobile score) is still real — it comes from Google\'s PageSpeed Insights API which uses Googlebot. Keyword inference, trust signals, CTA detection, and tracking checks are not available for this audit.',
-      fix: 'Content analysis limitations are unavoidable for heavily protected pages. The performance findings below are accurate. To audit content manually, open the URL in a browser and compare it against the keyword clarity and trust signal checks listed on the tool page.'
+      title: 'Page blocked our content scanner (bot protection detected)',
+      detail: 'This page uses Cloudflare, a WAF, or another bot-protection system that blocked the server-side fetch used for content analysis. Performance data is still real — it comes from Google\'s PageSpeed Insights API, which uses Googlebot and bypasses these protections. Keyword inference, trust signals, CTA detection, and tracking checks are unavailable for this audit.',
+      fix: 'Performance findings below are accurate. For content analysis, open the page in a browser and check keyword clarity, trust signals, and CTA manually against the checklist at phillips-uk.com/landing-page-audit.'
+    });
+  } else if (isTimeout) {
+    findings.push({
+      category: 'landing_page_experience',
+      severity: 'high',
+      title: 'Page did not respond in time — content checks unavailable',
+      detail: 'The page took longer than 10 seconds to respond to our content fetch, so keyword inference, trust signals, and CTA analysis could not run. This slow response affects paid traffic directly — if the page is this slow to a server, it will be this slow to visitors on mobile networks too. Performance data from PageSpeed Insights is still shown below.',
+      fix: 'Check the page loads in under 3 seconds on a simulated 4G connection. Review server response time (TTFB) and eliminate any blocking resources in the page head.'
+    });
+  } else if (isUnreachable) {
+    findings.push({
+      category: 'landing_page_experience',
+      severity: 'high',
+      title: 'Page could not be reached — content checks unavailable',
+      detail: `The page returned an error (${fetchErr === 'http_client_error' ? 'HTTP 4xx' : fetchErr === 'http_server_error' ? 'HTTP 5xx' : 'network error'}) when our scanner tried to fetch it. Content-based checks are unavailable. If this URL is live and accessible in a browser, it may be returning different responses to server-side requests. PageSpeed Insights performance data may still be available below.`,
+      fix: 'Verify the URL is correct and publicly accessible without login. If the page is live in a browser, the server may be rejecting non-browser requests — check your server logs or CDN rules.'
     });
   }
 
@@ -666,9 +697,9 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   // ── Score ──────────────────────────────────────────────────────────────────
   let score = 100;
   let criticalCount = 0;
-  // Score cap for missing conversion tag only applies when there is definitely no GTM container
-  // (GTM may be firing a conversion tag we cannot see from outside)
-  const noConversionAndNoGtm = !parsed.hasAdsConversion && !parsed.hasGtm;
+  // Score cap for missing conversion tag only applies when page was actually analysed
+  // (when fetch failed, hasAdsConversion/hasGtm are false by default — cap would be misleading)
+  const noConversionAndNoGtm = !parsed.fetchFailed && !parsed.hasAdsConversion && !parsed.hasGtm;
 
   for (const f of findings) {
     if      (f.severity === 'critical') { score -= 20; criticalCount++; }
@@ -776,7 +807,10 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       h1:             parsed.h1,
       meta_description: parsed.metaDescription,
       fetch_failed:   parsed.fetchFailed || false,
-      is_blocked:     parsed.fetchFailed && parsed.fetchError === 'blocked',
+      fetch_error:    parsed.fetchError  || null,
+      is_blocked:     isBlocked,
+      is_timeout:     isTimeout,
+      is_unreachable: isUnreachable,
       is_js_rendered: claude.is_js_rendered_likely || false
     }
   };
