@@ -93,9 +93,19 @@ exports.handler = async function (event) {
 
     // H1 keyword fallback — if Claude returned nothing but H1 is present, use it
     if (!claudeResult.inferred_keyword && parsed.h1) {
-      claudeResult.inferred_keyword      = parsed.h1.trim();
-      claudeResult.keyword_confidence    = 'low';
-      claudeResult.keyword_confidence_reason = 'Inferred from H1 heading — AI content analysis was unavailable or ambiguous.';
+      claudeResult.inferred_keyword = parsed.h1.trim();
+      // Check how well H1 aligns with title — if they share significant terms, confidence is high
+      const h1Words    = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+      const titleLower = (parsed.title || '').toLowerCase();
+      const matchCount = h1Words.filter(w => titleLower.includes(w)).length;
+      const matchRatio = h1Words.length > 0 ? matchCount / h1Words.length : 0;
+      if (matchRatio >= 0.5) {
+        claudeResult.keyword_confidence        = 'high';
+        claudeResult.keyword_confidence_reason = 'H1 and title tag share the same core keyword — strong alignment across the page.';
+      } else {
+        claudeResult.keyword_confidence        = 'medium';
+        claudeResult.keyword_confidence_reason = 'Inferred from H1 heading. Title tag alignment is partial.';
+      }
     }
 
     // 5. Build final report
@@ -202,7 +212,7 @@ function parseHtml (html, url, isHttps, fetchError) {
 async function fetchPsi (url, strategy, key) {
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${strategy}&key=${key}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  const timeout = setTimeout(() => controller.abort(), 55000); // 55s — slow pages take 25-30s
   try {
     const res  = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);

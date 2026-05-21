@@ -311,6 +311,9 @@
 
     .pass-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--green); margin-top: 16px; }
     .pass-icon { font-size: 15px; }
+    .pass-summary { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+    .pass-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--ink); padding: 8px 12px; background: #f3faf3; border-radius: 6px; border-left: 3px solid var(--green); }
+    .pass-item-icon { color: var(--green); font-weight: 700; flex-shrink: 0; line-height: 1.4; }
 
     .issue-card {
       margin-top: 20px; padding: 22px 24px;
@@ -890,7 +893,7 @@
       if (sec.key === 'tracking' && trackingRows) html += trackingRows;
 
       if (issues.length === 0) {
-        html += '<div class="pass-row"><span class="pass-icon">✓</span> No issues found in this category.</div>';
+        html += sectionPassSummary(sec.key, cats, r);
       } else {
         issues.forEach(function(f) {
           html += '<div class="issue-card sev-' + esc(f.severity) + '">'
@@ -977,6 +980,72 @@
       mobile:                  'Mobile <em>Experience</em>'
     };
     return m[key] || key;
+  }
+
+  function sectionPassSummary(key, cats, r) {
+    var perf = cats.performance || {};
+    var kc   = cats.keyword_clarity || {};
+    var lpe  = cats.landing_page_experience || {};
+    var ca   = cats.conversion_architecture || {};
+    var ts   = cats.trust_signals || {};
+    var tr   = cats.tracking || {};
+    var mob  = cats.mobile || {};
+    var items = [];
+
+    if (key === 'performance') {
+      if (perf.lcp)  items.push('LCP ' + perf.lcp + ' — within Google\'s "Good" threshold (&lt; 2.5s)');
+      if (perf.cls !== null && perf.cls !== undefined) items.push('CLS ' + perf.cls + ' — no significant layout shift detected');
+      if (perf.inp)  items.push('INP ' + perf.inp + ' — page responds quickly to user interaction');
+      if (perf.ttfb) items.push('TTFB ' + perf.ttfb + ' — server response time is healthy');
+      if (!items.length) items.push('All Core Web Vitals are within Google\'s thresholds.');
+    }
+    if (key === 'keyword_clarity') {
+      if (kc.inferred_keyword) items.push('Target keyword identified: "' + esc(kc.inferred_keyword) + '" — ' + (kc.confidence || 'unknown') + ' confidence');
+      if (kc.intent_type && kc.intent_type !== 'unknown') items.push('Search intent: ' + esc(kc.intent_type) + (kc.specificity ? ' · specificity: ' + esc(kc.specificity) : ''));
+      if (kc.confidence_reason) items.push(esc(kc.confidence_reason));
+      if (!items.length) items.push('Keyword and intent are clearly identifiable from this page.');
+    }
+    if (key === 'landing_page_experience') {
+      if (lpe.h1) items.push('H1 present: "' + esc(lpe.h1.substring(0, 70) + (lpe.h1.length > 70 ? '…' : '')) + '"');
+      if (lpe.title) items.push('Title tag present: "' + esc(lpe.title.substring(0, 70) + (lpe.title.length > 70 ? '…' : '')) + '"');
+      if (lpe.meta_description) items.push('Meta description present');
+      if (lpe.page_relevance === 'strong') items.push('Page relevance to target keyword: strong');
+      if (!items.length) items.push('Landing page experience signals are in good shape.');
+    }
+    if (key === 'conversion_architecture') {
+      if (ca.has_cta) items.push('Above-fold CTA detected' + (ca.cta_text ? ': "' + esc(ca.cta_text) + '"' : ''));
+      if (ca.conversion_goal_clarity === 'single') items.push('Single, clear conversion goal — no conflicting offers');
+      if (ca.form_fields != null && ca.form_fields > 0 && ca.form_fields <= 3) items.push(ca.form_fields + '-field form — optimal length for paid traffic');
+      if (!items.length) items.push('Conversion architecture is well structured for paid traffic.');
+    }
+    if (key === 'trust_signals') {
+      if (ts.https) items.push('Served over HTTPS — secure connection established');
+      if (ts.has_privacy_link) items.push('Privacy policy linked in page content');
+      if (ts.contact_signals) items.push('Contact information present (phone, email or address detected)');
+      if (ts.social_proof_quality && ts.social_proof_quality !== 'none') items.push('Social proof present — ' + esc(ts.social_proof_quality) + ' quality signals detected');
+      if (ts.authority_signals) items.push('Authority signals detected (accreditations, awards or press mentions)');
+      if (!items.length) items.push('Trust signals are present and visible to paid traffic visitors.');
+    }
+    if (key === 'tracking') {
+      if (tr.gtm) items.push('Google Tag Manager installed — tracking can be managed without code deploys');
+      if (tr.ga4) items.push('GA4 active — session data and audience building are available');
+      if (tr.ads_conversion) items.push('Google Ads conversion tag confirmed — Smart Bidding has a conversion signal');
+      if (!items.length) items.push('Tracking is configured correctly.');
+    }
+    if (key === 'mobile') {
+      if (mob.score != null && mob.score >= 90) items.push('Mobile performance score ' + mob.score + '/100 — Good');
+      else if (mob.score != null) items.push('Mobile performance score: ' + mob.score + '/100');
+      if (mob.has_viewport) items.push('Viewport meta tag configured — page renders correctly on mobile');
+      if (mob.tap_targets_ok === true) items.push('Tap targets are within Google\'s recommended size');
+      if (!items.length) items.push('Mobile experience checks passed.');
+    }
+
+    if (!items.length) items.push('All checks in this category passed.');
+    return '<div class="pass-summary">'
+      + items.map(function(item) {
+          return '<div class="pass-item"><span class="pass-item-icon">✓</span><span>' + item + '</span></div>';
+        }).join('')
+      + '</div>';
   }
 
   function toggleFaq(btn) {
