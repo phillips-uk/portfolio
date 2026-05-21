@@ -745,7 +745,7 @@ Return ONLY valid JSON (no markdown, no fences):
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey, timeout: 45000 }); // 45s — Sonnet needs more room
+    const anthropic = new Anthropic({ apiKey, timeout: 90000 }); // 90s — background function has 15min, PSI can eat 80s
     const msg  = await anthropic.messages.create({
       model:      'claude-sonnet-4-5-20250929',
       max_tokens: 5000,
