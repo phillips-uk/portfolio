@@ -191,7 +191,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-    .loading-sub  { font-size: 14px; color: var(--mid); }
+    .loading-sub  { font-size: 14px; color: var(--mid); min-height: 20px; transition: opacity 0.3s ease; }
     .progress-steps {
       margin-top: 32px; text-align: left;
       background: var(--cream); border: 1px solid var(--border);
@@ -707,7 +707,7 @@
   <div id="loading-section" class="card">
     <div class="spinner"></div>
     <div class="loading-text" id="loading-title">Fetching page...</div>
-    <div class="loading-sub">This takes 30–90 seconds — we're running real PageSpeed tests.</div>
+    <div class="loading-sub" id="loading-sub">Running real PageSpeed tests — not estimates.</div>
     <div class="progress-steps">
       <div class="progress-step active" id="step-1"><span class="progress-icon">⏳</span> Fetching page and parsing content</div>
       <div class="progress-step"        id="step-2"><span class="progress-icon">○</span>  Running PageSpeed Insights (mobile + desktop)</div>
@@ -843,6 +843,52 @@
     }
   });
 
+  // ── Rotating loader messages ───────────────────────────────────────────────
+  var loaderMessages = [
+    "Running real PageSpeed tests — not estimates.",
+    "Interrogating your Core Web Vitals...",
+    "Counting the links that are leaking your traffic...",
+    "Checking if your H1 is pulling its weight...",
+    "Calculating what this page costs per click...",
+    "Evaluating your CTA's personality (or lack of)...",
+    "Teaching the AI about Quality Score...",
+    "Human verification required: please pat your head.",
+    "Good. Now rub your tummy at the same time.",
+    "Just kidding. Still waiting on Google's servers.",
+    "Arguing with the algorithm on your behalf...",
+    "Your developer said it was fine, right?",
+    "Bribing PageSpeed Insights for faster results...",
+    "Comparing your page to a converting one (awkward)...",
+    "Finding everything worth fixing...",
+    "Checking if your form is too long. (It probably is.)",
+    "Almost done — slow pages always have the most issues...",
+    "Still running. We promise we haven't forgotten you.",
+    "Asking Claude nicely to be specific...",
+    "Compiling your action plan..."
+  ];
+  var loaderMsgIndex = 0;
+  var loaderMsgInterval = null;
+
+  function startLoaderMessages() {
+    var sub = document.getElementById('loading-sub');
+    loaderMsgIndex = 0;
+    if (sub) sub.textContent = loaderMessages[0];
+    loaderMsgInterval = setInterval(function() {
+      loaderMsgIndex = (loaderMsgIndex + 1) % loaderMessages.length;
+      if (sub) {
+        sub.style.opacity = '0';
+        setTimeout(function() {
+          sub.textContent = loaderMessages[loaderMsgIndex];
+          sub.style.opacity = '1';
+        }, 300);
+      }
+    }, 4000);
+  }
+
+  function stopLoaderMessages() {
+    if (loaderMsgInterval) { clearInterval(loaderMsgInterval); loaderMsgInterval = null; }
+  }
+
   function startAudit() {
     var raw = document.getElementById('url-input').value.trim();
     if (!raw) { alert('Please enter a URL.'); return; }
@@ -862,6 +908,7 @@
 
     document.getElementById('input-section').style.display   = 'none';
     document.getElementById('loading-section').style.display = 'block';
+    startLoaderMessages();
 
     // GTM event
     window.dataLayer = window.dataLayer || [];
@@ -906,12 +953,6 @@
       showError('The audit is taking longer than expected. Please try again.');
       return;
     }
-    // After 90s show a "still running" reassurance without stopping
-    if (pollCount === 45) {
-      var sub = document.querySelector('.loading-sub');
-      if (sub) sub.textContent = 'Still running — PageSpeed tests on slow pages can take up to 2 minutes.';
-    }
-
     fetch('/.netlify/functions/landing-audit-status?id=' + currentJobId)
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -928,12 +969,14 @@
   }
 
   function showError(msg) {
+    stopLoaderMessages();
     document.getElementById('loading-section').style.display = 'none';
     document.getElementById('input-section').style.display   = 'block';
     alert('Error: ' + msg);
   }
 
   function showReport(report) {
+    stopLoaderMessages();
     currentReport = report;
     document.getElementById('loading-section').style.display  = 'none';
     document.getElementById('report-section').style.display   = 'block';
