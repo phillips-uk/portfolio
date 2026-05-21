@@ -1139,10 +1139,17 @@
 
     // JS-rendered warning
     if (r.page_meta && r.page_meta.is_blocked) {
+      var hasPsi = r.page_meta.content_from_psi;
       html += '<div class="blocked-warning">'
-        + '<strong>Page blocked our content scanner (bot protection detected).</strong>'
-        + ' Performance scores are real — they come from Google\'s PageSpeed Insights API, which uses Googlebot and is unaffected by bot protection.'
-        + '<div class="bw-note">Keyword inference, trust signals, CTA analysis, and tracking checks are unavailable. Performance findings are still shown below.</div>'
+        + '<strong>Page uses bot protection (Cloudflare / WAF) — direct content scan blocked.</strong>'
+        + (hasPsi
+            ? ' Performance, tracking, and keyword data were extracted from <strong>Google\'s own PageSpeed Insights rendering engine</strong>, which uses Googlebot and bypasses bot protection. This is exactly what Google sees when it assesses your page.'
+            : ' Performance data from Google\'s PageSpeed Insights is shown where available.')
+        + '<div class="bw-note">'
+        + (hasPsi
+            ? 'Trust signals, CTA, and body copy analysis require a direct fetch and are unavailable for this page.'
+            : 'Tracking, keyword, trust, and CTA checks are unavailable.')
+        + '</div>'
         + '</div>';
     } else if (r.page_meta && r.page_meta.is_timeout) {
       html += '<div class="blocked-warning">'

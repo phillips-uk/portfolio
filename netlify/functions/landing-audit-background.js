@@ -134,6 +134,21 @@ exports.handler = async function (event) {
 
     console.log('[audit] psi done, mobile score:', psiMobile?.score ?? 'null', 'desktop:', psiDesktop?.score ?? 'null');
 
+    // PSI content fallback — when direct fetch is blocked, use Lighthouse's Chrome render.
+    // Googlebot bypasses Cloudflare/WAF, so this gives us what Google actually sees.
+    // Populates: title, meta, tracking signals. Body text / H1 / trust signals remain unavailable.
+    if (parsed.fetchFailed && psiMobile?.contentSignals) {
+      const cs = psiMobile.contentSignals;
+      if (cs.title)           parsed.title           = cs.title;
+      if (cs.metaDescription) parsed.metaDescription = cs.metaDescription;
+      parsed.hasGtm             = cs.hasGtm;
+      parsed.hasGa4             = cs.hasGa4;
+      parsed.hasAdsConversion   = cs.hasAdsConversion;
+      parsed.hasRemarketingOnly = !cs.hasAdsConversion && cs.hasRemarketingTag;
+      parsed.contentFromPsi     = true;
+      console.log('[audit] psi content fallback applied — title:', cs.title || 'none', 'gtm:', cs.hasGtm, 'ga4:', cs.hasGa4);
+    }
+
     // 4. Claude content analysis
     const claudeResult = await analyzeWithClaude(parsed);
 
@@ -424,16 +439,31 @@ async function fetchPsi (url, strategy, key) {
     const data    = await res.json();
     const audits  = data.lighthouseResult?.audits || {};
     const cats    = data.lighthouseResult?.categories || {};
+    // Scan all network request URLs — same signals as HTML source scanning
+    // but from Lighthouse's full Chrome render (bypasses bot protection)
+    const networkUrls = (audits['network-requests']?.details?.items || [])
+      .map(i => i.url || '').join('\n');
+
     return {
       score:      Math.round((cats.performance?.score || 0) * 100),
       lcp:        audits['largest-contentful-paint']?.numericValue ?? null,
       cls:        audits['cumulative-layout-shift']?.numericValue  ?? null,
-      // INP: prefer Lighthouse lab value; fall back to CrUX 75th-percentile field data
       inp:        audits['interaction-to-next-paint']?.numericValue
                     ?? data.loadingExperience?.metrics?.INTERACTION_TO_NEXT_PAINT?.percentile
                     ?? null,
       ttfb:       audits['server-response-time']?.numericValue      ?? null,
-      tapTargets: audits['tap-targets']?.score                      ?? null
+      tapTargets: audits['tap-targets']?.score                      ?? null,
+      // Content signals extracted from Google's rendering engine
+      // Used as fallback when direct page fetch is blocked
+      contentSignals: {
+        title:            audits['document-title']?.displayValue   || null,
+        metaDescription:  audits['meta-description']?.displayValue || null,
+        hasGtm:           /googletagmanager\.com\/gtm\.js|GTM-[A-Z0-9]{4,}/i.test(networkUrls),
+        hasGa4:           /gtag\/js\?id=G-|google-analytics\.com\/g\/collect|analytics\.js/i.test(networkUrls),
+        hasAdsConversion: /googleads\.g\.doubleclick|googleadservices\.com\/pagead\/conversion|AW-\d{7,}/i.test(networkUrls),
+        hasRemarketingTag:/googlesyndication\.com|doubleclick\.net\/activity|allow_ad_personalization/i.test(networkUrls),
+        hasHttps:         /^https:/i.test(url)
+      }
     };
   } catch {
     clearTimeout(timeout);
@@ -463,7 +493,7 @@ Video content present: ${parsed.hasVideoContent ? 'Yes' : 'No'}
 Trust badge / accreditation text: ${parsed.hasTrustBadges ? 'Detected' : 'Not detected'}
 Authority signals: ${parsed.authoritySignals || 'None detected'}
 Contact signals (phone/email/address): ${parsed.contactSignals || 'None detected'}
-${parsed.fetchFailed ? 'NOTE: Page fetch failed. Content analysis is limited — flag this in findings.' : ''}
+${parsed.contentFromPsi ? 'NOTE: Direct page fetch was blocked (bot protection). Title and meta description were extracted from Google\'s PageSpeed Insights rendering engine instead — this is what Google itself sees. Body text, H1, and trust signals are unavailable. Infer keyword from title, meta description, and URL only. Do not flag content-related findings.' : parsed.fetchFailed ? 'NOTE: Page fetch failed entirely. Content analysis unavailable — do not generate content findings.' : ''}
 
 Return ONLY valid JSON (no markdown fences, no explanation) matching this schema exactly:
 {
@@ -613,14 +643,11 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       findings.push({ category: 'mobile', severity: 'low', title: 'Some tap targets may be too small for mobile', detail: 'PageSpeed data shows some interactive elements may be below the recommended 48x48px touch target size. Small tap targets cause misclicks on mobile, which can redirect users away from your CTA.', fix: 'Ensure all buttons and links are at least 48x48 CSS pixels with 8px of space between them.' });
   }
 
-  // ── Content-dependent findings (skip entirely if page was blocked) ──────────
-  if (!parsed.fetchFailed) {
+  // ── Tracking — runs even for blocked pages when PSI content signals available ─
+  // (PSI scans all loaded network requests, so tracking detection is accurate
+  //  even when Cloudflare blocks our direct fetch)
+  if (!parsed.fetchFailed || parsed.contentFromPsi) {
 
-  // ── Mobile structure ───────────────────────────────────────────────────────
-  if (!parsed.hasViewport)
-    findings.push({ category: 'mobile', severity: 'high', title: 'No viewport meta tag — page may be broken on mobile', detail: 'Without a viewport meta tag, mobile browsers render the page at full desktop width and scale it down. This makes the page nearly unusable on a phone. Given that most paid search traffic is on mobile, this is likely causing high immediate bounce.', fix: 'Add <meta name="viewport" content="width=device-width, initial-scale=1"> to the <head> tag.' });
-
-  // ── Tracking ───────────────────────────────────────────────────────────────
   if (!isHttps)
     findings.push({ category: 'tracking', severity: 'critical', title: 'Page served over HTTP — ads may be disapproved', detail: "Chrome shows this page as insecure. Google's advertising policy requires HTTPS landing pages — ads pointing to HTTP destinations are at risk of disapproval or limited delivery. Switching to HTTPS also improves trust signals for paid traffic visitors.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS. Most hosting platforms include this free.' });
 
@@ -644,6 +671,11 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: "The data shows no Google Ads conversion tag in the page source and no GTM container to fire one dynamically. Without a conversion tag, Smart Bidding strategies have no goal to optimise toward — Google's own data shows properly configured Smart Bidding delivers 35% more conversions than running without conversion data. This is the most important tracking fix for any active paid search campaign.", fix: 'Install GTM, then add a Google Ads conversion tag that fires on your primary conversion event (form submission, booking, enquiry).' });
     }
   }
+
+  } // end tracking block
+
+  // ── HTML-only findings — require direct page content (skip for blocked pages) ─
+  if (!parsed.fetchFailed) {
 
   // ── Landing page experience ────────────────────────────────────────────────
   if (!parsed.h1)
@@ -806,12 +838,13 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       title:          parsed.title,
       h1:             parsed.h1,
       meta_description: parsed.metaDescription,
-      fetch_failed:   parsed.fetchFailed || false,
-      fetch_error:    parsed.fetchError  || null,
-      is_blocked:     isBlocked,
-      is_timeout:     isTimeout,
-      is_unreachable: isUnreachable,
-      is_js_rendered: claude.is_js_rendered_likely || false
+      fetch_failed:     parsed.fetchFailed    || false,
+      fetch_error:      parsed.fetchError     || null,
+      content_from_psi: parsed.contentFromPsi || false,
+      is_blocked:       isBlocked,
+      is_timeout:       isTimeout,
+      is_unreachable:   isUnreachable,
+      is_js_rendered:   claude.is_js_rendered_likely || false
     }
   };
 }
