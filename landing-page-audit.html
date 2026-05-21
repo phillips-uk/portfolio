@@ -497,6 +497,30 @@
     .faq-a { display: none; padding: 0 0 20px; font-size: 14px; color: var(--mid); line-height: 1.75; }
     .faq-item.open .faq-a { display: block; }
 
+    /* Action plan */
+    .action-plan-banner {
+      background: var(--cream); border: 1px solid var(--border); border-radius: 8px;
+      padding: 14px 18px; font-size: 13px; color: var(--mid); line-height: 1.5; margin-bottom: 16px;
+    }
+    .action-plan-banner strong { color: var(--ink); }
+    .action-item {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 12px 16px;
+      align-items: start; padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .action-item:last-child { border-bottom: none; }
+    .action-item-left { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 80px; }
+    .action-num { font-size: 11px; font-weight: 700; color: var(--mid); letter-spacing: 0.04em; }
+    .action-body { min-width: 0; }
+    .action-title-text { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 6px; }
+    .action-fix-text  { font-size: 13px; color: var(--mid); line-height: 1.55; }
+    .action-impact    { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--amber); background: rgba(152,88,48,0.1); padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+
+    /* PSI failure notice */
+    .psi-notice {
+      background: var(--light); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; font-size: 12px; color: var(--mid); margin-bottom: 12px; line-height: 1.5;
+    }
+
     /* Methodology */
     .methodology { background: var(--light); border-radius: 12px; padding: 32px 40px; margin-top: 48px; }
     .methodology h3 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 12px; }
@@ -1083,6 +1107,65 @@
     return html;
   }
 
+  function buildActionPlan(r) {
+    var impactMap = {
+      tracking:                'Smart Bidding signal',
+      performance:             'Paid traffic retention',
+      landing_page_experience: 'Quality Score & CPCs',
+      conversion_architecture: 'Conversion rate & CPA',
+      trust_signals:           'Visitor confidence',
+      mobile:                  'Mobile paid clicks',
+      keyword_clarity:         'Keyword relevance'
+    };
+
+    var allFindings = (r.findings || []).filter(function(f) { return f.severity !== 'info'; });
+    if (!allFindings.length) return '';
+
+    var order = { critical: 0, high: 1, medium: 2, low: 3 };
+    var sorted = allFindings.slice().sort(function(a, b) {
+      return (order[a.severity] ?? 3) - (order[b.severity] ?? 3);
+    });
+
+    var critHigh = sorted.filter(function(f) { return f.severity === 'critical' || f.severity === 'high'; });
+    var potentialGain = sorted.reduce(function(acc, f) {
+      return acc + (f.severity === 'critical' ? 20 : f.severity === 'high' ? 10 : f.severity === 'medium' ? 5 : 2);
+    }, 0);
+    var potentialScore = Math.min(100, r.health_score + potentialGain);
+
+    var html = '<div class="section-hero" style="margin-top:40px">'
+      + '<div class="section-hero-eyebrow">Action plan</div>'
+      + '<div class="section-hero-title">Everything to fix, <em>in order</em></div>'
+      + '<div class="section-hero-meta"><span class="sh-issue">' + sorted.length + ' action' + (sorted.length !== 1 ? 's' : '') + '</span></div>'
+      + '</div>'
+      + '<div class="findings-block">';
+
+    if (critHigh.length) {
+      html += '<div class="action-plan-banner">'
+        + 'Fixing the <strong>' + critHigh.length + ' critical and high-priority issue' + (critHigh.length > 1 ? 's' : '') + '</strong>'
+        + ' could lift your score from <strong>' + r.health_score + ' → ' + potentialScore + '</strong>.'
+        + ' Address them in the order shown — each one compounds the next.'
+        + '</div>';
+    }
+
+    sorted.forEach(function(f, i) {
+      var impact = impactMap[f.category] || 'Page quality';
+      html += '<div class="action-item">'
+        + '<div class="action-item-left">'
+        + '<span class="action-num">' + (i + 1) + '.</span>'
+        + '<span class="sev-badge sev-' + esc(f.severity) + '">' + esc(f.severity) + '</span>'
+        + '</div>'
+        + '<div class="action-body">'
+        + '<div class="action-title-text">' + esc(f.title) + '</div>'
+        + '<div class="action-fix-text">' + esc(f.fix) + '</div>'
+        + '</div>'
+        + '<div><span class="action-impact">' + impact + '</span></div>'
+        + '</div>';
+    });
+
+    html += '</div>';
+    return html;
+  }
+
   function buildReportHTML(r) {
     var html = '';
 
@@ -1147,6 +1230,16 @@
       + metricCell('Mobile score',  perf.mobile_score != null ? perf.mobile_score : null, scoreClass(perf.mobile_score), scoreTier(perf.mobile_score), '90+ = good')
       + metricCell('Desktop score', perf.desktop_score != null ? perf.desktop_score : null, scoreClass(perf.desktop_score), scoreTier(perf.desktop_score), '90+ = good')
       + '</div>';
+
+    // PSI failure notice — shown when PSI returned null for both strategies
+    var psiMissing = (perf.mobile_score == null && perf.lcp == null && perf.cls == null);
+    if (psiMissing) {
+      html += '<div class="psi-notice">'
+        + '<strong>Site speed data unavailable for this audit.</strong> '
+        + 'Google\'s PageSpeed Insights API did not return results for this URL — this can happen intermittently on heavily JS-rendered or CDN-protected pages. '
+        + 'Re-running the audit usually resolves it. Performance findings in this report are based on available data only.'
+        + '</div>';
+    }
 
     // Metrics explainer
     html += '<div class="metrics-explainer">'
@@ -1334,6 +1427,9 @@
 
       html += '</div>';
     });
+
+    // Action plan
+    html += buildActionPlan(r);
 
     // Lead CTA
     html += '<div class="lead-cta">'

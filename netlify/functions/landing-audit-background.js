@@ -132,7 +132,8 @@ exports.handler = async function (event) {
       psiDesktop = dRes.status === 'fulfilled' ? dRes.value : null;
     }
 
-    console.log('[audit] psi done, mobile score:', psiMobile?.score ?? 'null', 'desktop:', psiDesktop?.score ?? 'null');
+    const psiStatus = psiMobile ? 'ok' : 'failed';
+    console.log('[audit] psi done — mobile:', psiMobile ? `score ${psiMobile.score}, src: ${psiMobile.dataSource}` : 'NULL', '| desktop:', psiDesktop ? `score ${psiDesktop.score}` : 'NULL');
 
     // PSI content fallback — when direct fetch is blocked, use Lighthouse's Chrome render.
     // Googlebot bypasses Cloudflare/WAF, so this gives us what Google actually sees.
@@ -175,7 +176,7 @@ exports.handler = async function (event) {
     console.log('[audit] claude done, keyword:', claudeResult.inferred_keyword || 'none', 'findings:', (claudeResult.findings || []).length);
 
     // 5. Build final report
-    const report = buildReport(url, parsed, psiMobile, psiDesktop, claudeResult, isHttps, fetchError);
+    const report = buildReport(url, parsed, psiMobile, psiDesktop, claudeResult, isHttps, fetchError, psiStatus);
 
     console.log('[audit] report built, score:', report.health_score);
     await store.set(jobId, JSON.stringify({ status: 'complete', data: report }));
@@ -467,17 +468,21 @@ function parseHtml (html, url, isHttps, fetchError) {
   const urlSlug = extractUrlKeyword(url) || '';
   let ngramBodyText = bodyText;
   if (pageTypeInfo.type === 'ecommerce') {
-    // Common product card heading selectors across Shopify, WooCommerce, BigCommerce, generic themes
+    // Strip entire product card containers — not just headings.
+    // Product cards contain titles, material variants, prices and colour swatches
+    // that all pollute N-gram frequency counts with noise unrelated to the page keyword.
+    // Page description copy, above-fold text and SEO content sit outside these containers
+    // and are preserved.
     $(
-      '[class*="product-card"] h2, [class*="product-card"] h3, [class*="product-card"] h4,' +
-      '[class*="product-item"] h2, [class*="product-item"] h3, [class*="product-item"] h4,' +
-      '[class*="card-wrapper"] h2, [class*="card-wrapper"] h3, [class*="card-wrapper"] h4,' +
-      '[class*="card__heading"],' +
-      '[class*="grid__item"] h2, [class*="grid__item"] h3,' +
-      'li.product h2, li.product h3,' +
-      '[class*="product-tile"] h2, [class*="product-tile"] h3,' +
-      '[class*="productItem"] h2, [class*="productItem"] h3,' +
-      '[class*="product-loop"] h2, [class*="product-loop"] h3'
+      '[class*="product-card"],' +
+      '[class*="card-wrapper"],' +
+      '[class*="product-item"]:not(main):not(article):not(section),' +
+      '[class*="product-tile"],' +
+      '[class*="product-loop"],' +
+      '[class*="grid__item"],' +
+      'li.product,' +
+      '[class*="productItem"],' +
+      '[class*="collection-item"]'
     ).remove();
     ngramBodyText = $('body').text().replace(/\s+/g, ' ').trim();
   }
@@ -526,16 +531,26 @@ async function fetchPsi (url, strategy, key, attempt = 1) {
     const networkUrls = (audits['network-requests']?.details?.items || [])
       .map(i => i.url || '').join('\n');
 
-    console.log(`[psi] ${strategy} ok — score: ${Math.round((cats.performance?.score || 0) * 100)}`);
+    // CrUX (real-user field data) is returned alongside Lighthouse lab data.
+    // When Lighthouse fails to run on a page, use CrUX as fallback for core metrics.
+    const crux = data.loadingExperience?.metrics || {};
+    const lcpLab  = audits['largest-contentful-paint']?.numericValue ?? null;
+    const clsLab  = audits['cumulative-layout-shift']?.numericValue  ?? null;
+    const inpLab  = audits['interaction-to-next-paint']?.numericValue ?? null;
+    const lcpCrux = crux.LARGEST_CONTENTFUL_PAINT_MS?.percentile     ?? null;
+    const clsCrux = crux.CUMULATIVE_LAYOUT_SHIFT_SCORE?.percentile != null
+                      ? crux.CUMULATIVE_LAYOUT_SHIFT_SCORE.percentile / 100 : null;
+    const inpCrux = crux.INTERACTION_TO_NEXT_PAINT?.percentile        ?? null;
+    const labScore = Math.round((cats.performance?.score || 0) * 100);
+    console.log(`[psi] ${strategy} ok — lab score: ${labScore}, lcp: ${lcpLab ?? 'lab-null, crux: ' + lcpCrux}`);
     return {
-      score:      Math.round((cats.performance?.score || 0) * 100),
-      lcp:        audits['largest-contentful-paint']?.numericValue ?? null,
-      cls:        audits['cumulative-layout-shift']?.numericValue  ?? null,
-      inp:        audits['interaction-to-next-paint']?.numericValue
-                    ?? data.loadingExperience?.metrics?.INTERACTION_TO_NEXT_PAINT?.percentile
-                    ?? null,
+      score:      labScore,
+      lcp:        lcpLab  ?? lcpCrux,
+      cls:        clsLab  ?? clsCrux,
+      inp:        inpLab  ?? inpCrux,
       ttfb:       audits['server-response-time']?.numericValue      ?? null,
       tapTargets: audits['tap-targets']?.score                      ?? null,
+      dataSource: lcpLab != null ? 'lighthouse' : lcpCrux != null ? 'crux' : 'none',
       // Content signals extracted from Google's rendering engine
       // Used as fallback when direct page fetch is blocked
       contentSignals: {
@@ -659,7 +674,7 @@ Only include a finding when there is a genuine issue. Do not manufacture finding
 
 // ─── Report builder ───────────────────────────────────────────────────────────
 
-function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetchError) {
+function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetchError, psiStatus) {
   const findings = [];
   const fetchErr  = parsed.fetchError || null;
   const isBlocked = parsed.fetchFailed && (fetchErr === 'blocked');
@@ -972,7 +987,8 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       is_js_rendered:   claude.is_js_rendered_likely || false,
       page_type:          pageTypeInfo.type    || 'lead_gen',
       ecommerce_platform: pageTypeInfo.platform || null,
-      page_subtype:       pageTypeInfo.subtype  || null
+      page_subtype:       pageTypeInfo.subtype  || null,
+      psi_status:         psiStatus            || 'unknown'
     }
   };
 }
