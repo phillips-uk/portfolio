@@ -262,40 +262,11 @@ const STOPWORDS = new Set([
   'thing','think','those','three','until','using','while','world','would','years'
 ]);
 
-function computeTopNgrams (bodyText, urlSlug, h1, title, isEcommerce) {
+function computeTopNgrams (bodyText, urlSlug, h1, title) {
   const urlLower   = (urlSlug  || '').toLowerCase();
   const h1Lower    = (h1       || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
   const titleLower = (title    || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
 
-  if (isEcommerce) {
-    // For eCommerce pages, body text is polluted by product names in grids.
-    // Derive target phrases from URL slug + H1 + title only — these are what
-    // the site owner explicitly chose as the page's keyword signals.
-    const signalText = [urlSlug, h1, title].filter(Boolean).join(' ')
-      .toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
-    const words = signalText.split(/\s+/).filter(w => w.length > 2 && !STOPWORDS.has(w));
-    const seen = new Set();
-    const phrases = [];
-    for (let n = 2; n <= 3; n++) {
-      for (let i = 0; i <= words.length - n; i++) {
-        const phrase = words.slice(i, i + n).join(' ');
-        if (!seen.has(phrase)) {
-          seen.add(phrase);
-          const pw = phrase.split(' ');
-          phrases.push({
-            phrase,
-            count: null,  // no body frequency — product names excluded
-            inUrl:   pw.every(w => urlLower.includes(w)),
-            inH1:    pw.every(w => h1Lower.includes(w)),
-            inTitle: pw.every(w => titleLower.includes(w))
-          });
-        }
-      }
-    }
-    return phrases.slice(0, 5);
-  }
-
-  // Lead gen: original body-text frequency analysis
   const words = bodyText.toLowerCase()
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
@@ -489,9 +460,28 @@ function parseHtml (html, url, isHttps, fetchError) {
   // Detect page type (eCommerce vs lead gen) — used to suppress irrelevant findings
   const pageTypeInfo = detectPageType(html, url);
 
-  // N-gram keyword analysis — for eCommerce, skip body text to avoid product name noise
+  // N-gram keyword analysis
+  // For eCommerce: strip product card headings from the source text before counting phrases.
+  // Page descriptions, above-fold copy and SEO content are kept — only the grid product
+  // titles (which pollute frequency counts) are removed.
   const urlSlug = extractUrlKeyword(url) || '';
-  const topNgrams = computeTopNgrams(bodyText, urlSlug, h1, title, pageTypeInfo.type === 'ecommerce');
+  let ngramBodyText = bodyText;
+  if (pageTypeInfo.type === 'ecommerce') {
+    // Common product card heading selectors across Shopify, WooCommerce, BigCommerce, generic themes
+    $(
+      '[class*="product-card"] h2, [class*="product-card"] h3, [class*="product-card"] h4,' +
+      '[class*="product-item"] h2, [class*="product-item"] h3, [class*="product-item"] h4,' +
+      '[class*="card-wrapper"] h2, [class*="card-wrapper"] h3, [class*="card-wrapper"] h4,' +
+      '[class*="card__heading"],' +
+      '[class*="grid__item"] h2, [class*="grid__item"] h3,' +
+      'li.product h2, li.product h3,' +
+      '[class*="product-tile"] h2, [class*="product-tile"] h3,' +
+      '[class*="productItem"] h2, [class*="productItem"] h3,' +
+      '[class*="product-loop"] h2, [class*="product-loop"] h3'
+    ).remove();
+    ngramBodyText = $('body').text().replace(/\s+/g, ' ').trim();
+  }
+  const topNgrams = computeTopNgrams(ngramBodyText, urlSlug, h1, title);
 
   return {
     fetchFailed: false, isHttps,

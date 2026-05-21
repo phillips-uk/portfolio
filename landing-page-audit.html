@@ -1220,14 +1220,14 @@
           ngramHtml = '<div class="ngram-section">'
             + '<div class="ngram-label">'
             + (isEcomPage
-                ? 'Target keyword signals — URL, H1 &amp; title<span class="ngram-note">Body text excluded — product names filtered out</span>'
+                ? 'Top keyword phrases on this page<span class="ngram-note">Product titles filtered out</span>'
                 : 'Top keyword phrases on this page')
             + '</div>'
             + '<table class="ngram-table">';
           kc.top_ngrams.forEach(function(ng) {
             ngramHtml += '<tr>'
               + '<td class="ngram-phrase">' + esc(ng.phrase) + '</td>'
-              + (isEcomPage ? '' : '<td class="ngram-count">&times;' + ng.count + '</td>')
+              + '<td class="ngram-count">' + (ng.count != null ? '&times;' + ng.count : '') + '</td>'
               + '<td class="ngram-badges">'
               + (ng.inUrl   ? '<span class="ngram-badge badge-url">URL</span>'   : '')
               + (ng.inH1    ? '<span class="ngram-badge badge-h1">H1</span>'     : '')
