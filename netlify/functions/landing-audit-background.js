@@ -120,17 +120,27 @@ exports.handler = async function (event) {
 
     console.log('[audit] html parsed, h1:', parsed.h1 || 'none');
 
-    // 3. PSI parallel (mobile + desktop)
+    // 3 + 4. PSI and Claude run in parallel — PSI only needs the URL, Claude only needs
+    //        the parsed HTML. Running them sequentially was the main speed bottleneck.
+    //        PSI content fallback (bot-blocked pages) is applied after both settle;
+    //        it enriches hardcoded findings only — Claude already handles fetchFailed gracefully.
     const psiKey = process.env.PSI_API_KEY;
+    const [psiSettled, claudeSettled] = await Promise.allSettled([
+      psiKey
+        ? Promise.allSettled([fetchPsi(url, 'mobile', psiKey), fetchPsi(url, 'desktop', psiKey)])
+        : Promise.resolve([{ status: 'fulfilled', value: null }, { status: 'fulfilled', value: null }]),
+      analyzeWithClaude(parsed)
+    ]);
+
     let psiMobile = null, psiDesktop = null;
-    if (psiKey) {
-      const [mRes, dRes] = await Promise.allSettled([
-        fetchPsi(url, 'mobile', psiKey),
-        fetchPsi(url, 'desktop', psiKey)
-      ]);
+    if (psiSettled.status === 'fulfilled') {
+      const [mRes, dRes] = psiSettled.value;
       psiMobile  = mRes.status === 'fulfilled' ? mRes.value : null;
       psiDesktop = dRes.status === 'fulfilled' ? dRes.value : null;
     }
+    const claudeResult = claudeSettled.status === 'fulfilled'
+      ? claudeSettled.value
+      : { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Analysis failed.', findings: [] };
 
     const psiStatus = psiMobile ? 'ok' : 'failed';
     console.log('[audit] psi done — mobile:', psiMobile ? `score ${psiMobile.score}, src: ${psiMobile.dataSource}` : 'NULL', '| desktop:', psiDesktop ? `score ${psiDesktop.score}` : 'NULL');
@@ -149,9 +159,6 @@ exports.handler = async function (event) {
       parsed.contentFromPsi     = true;
       console.log('[audit] psi content fallback applied — title:', cs.title || 'none', 'gtm:', cs.hasGtm, 'ga4:', cs.hasGa4);
     }
-
-    // 4. Claude content analysis
-    const claudeResult = await analyzeWithClaude(parsed);
 
     // Keyword fallback chain: URL slug → H1 → title (in descending confidence)
     if (!claudeResult.inferred_keyword) {
