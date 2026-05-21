@@ -610,6 +610,18 @@
     .issue-card.sev-info { border-color: #BBDEFB; background: #F8FBFF; }
     .issue-card.sev-info .issue-fix-label { color: #1565C0; }
 
+    /* Pass severity — what's working */
+    .issue-card.sev-pass { border-left-color: var(--green); border-color: rgba(46,125,50,0.25); background: #F1F8F1; }
+    .issue-card.sev-pass .issue-sev { color: var(--green); }
+    .issue-card.sev-pass .issue-fix-label { color: var(--green); }
+    .issue-card.sev-pass .issue-fix-block { background: rgba(46,125,50,0.06); }
+    /* What's working section header */
+    .working-section-hdr {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--green); margin: 24px 0 0; display: flex; align-items: center; gap: 6px;
+    }
+    .working-section-hdr::before { content: '✓'; font-size: 13px; }
+
     /* Page type badge */
     .page-type-badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 3px 9px; border-radius: 4px; margin-top: 10px; }
     .page-type-ecommerce { background: rgba(152,88,48,0.15); color: var(--amber); }
@@ -1118,7 +1130,8 @@
       keyword_clarity:         'Keyword relevance'
     };
 
-    var allFindings = (r.findings || []).filter(function(f) { return f.severity !== 'info'; });
+    // Action plan shows only actionable issues (not pass or info findings)
+    var allFindings = (r.findings || []).filter(function(f) { return f.severity !== 'info' && f.severity !== 'pass'; });
     if (!allFindings.length) return '';
 
     var order = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -1152,7 +1165,7 @@
       html += '<div class="action-item">'
         + '<div class="action-item-left">'
         + '<span class="action-num">' + (i + 1) + '.</span>'
-        + '<span class="sev-badge sev-' + esc(f.severity) + '">' + esc(f.severity) + '</span>'
+        + '<span class="sev-badge sev-' + esc(f.severity) + '">' + esc(f.severity.toUpperCase()) + '</span>'
         + '</div>'
         + '<div class="action-body">'
         + '<div class="action-title-text">' + esc(f.title) + '</div>'
@@ -1380,11 +1393,15 @@
 
       var sectionFindings = allFindings.filter(function(f) { return catKeys.indexOf(f.category) !== -1; });
 
-      // 'info' findings are contextual notes — excluded from verdict and issue count
-      var issues     = sectionFindings.filter(function(f) { return f.severity !== 'info'; });
-      var infoNotes  = sectionFindings.filter(function(f) { return f.severity === 'info'; });
-      var hasCritical = issues.some(function(f) { return f.severity === 'critical'; });
-      var hasHigh     = issues.some(function(f) { return f.severity === 'high'; });
+      // Separate findings by type:
+      // pass  = positive findings (green, no score impact)
+      // info  = contextual notes (blue, no score impact)
+      // issues = actual problems (affect score, verdict, count)
+      var passFindings = sectionFindings.filter(function(f) { return f.severity === 'pass'; });
+      var infoNotes    = sectionFindings.filter(function(f) { return f.severity === 'info'; });
+      var issues       = sectionFindings.filter(function(f) { return f.severity !== 'info' && f.severity !== 'pass'; });
+      var hasCritical  = issues.some(function(f) { return f.severity === 'critical'; });
+      var hasHigh      = issues.some(function(f) { return f.severity === 'high'; });
 
       var verdict = issues.length === 0 ? 'pass' : (hasCritical || hasHigh) ? 'fail' : 'review';
 
@@ -1393,6 +1410,7 @@
         + '<div class="section-hero-title">' + sectionTitle(sec.key, cats) + '</div>'
         + '<div class="section-hero-meta">'
         + (issues.length ? '<span class="sh-issue">' + issues.length + ' issue' + (issues.length > 1 ? 's' : '') + '</span>' : '<span class="sh-pass">No issues</span>')
+        + (passFindings.length ? '<span class="sh-sep">·</span><span class="sh-pass">' + passFindings.length + ' working well</span>' : '')
         + '</div>'
         + '</div>';
 
@@ -1407,7 +1425,7 @@
       } else {
         issues.forEach(function(f) {
           html += '<div class="issue-card sev-' + esc(f.severity) + '">'
-            + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(f.severity) + '</div>'
+            + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(f.severity.toUpperCase()) + '</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
             + '<div class="issue-detail">' + esc(f.detail) + '</div>'
             + '<div class="issue-fix-block"><div class="issue-fix-label">Fix</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>'
@@ -1415,10 +1433,23 @@
         });
       }
 
+      // What's working — pass findings render after issues (or after pass summary) in green
+      if (passFindings.length > 0) {
+        html += '<div class="working-section-hdr">What\'s working</div>';
+        passFindings.forEach(function(f) {
+          html += '<div class="issue-card sev-pass">'
+            + '<div class="issue-sev sev-pass">✓ WORKING</div>'
+            + '<div class="issue-title">' + esc(f.title) + '</div>'
+            + '<div class="issue-detail">' + esc(f.detail) + '</div>'
+            + (f.fix ? '<div class="issue-fix-block"><div class="issue-fix-label">Why it matters</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>' : '')
+            + '</div>';
+        });
+      }
+
       // Info notes render below issues (or below pass summary) with neutral blue styling
       infoNotes.forEach(function(f) {
         html += '<div class="issue-card sev-info">'
-          + '<div class="issue-sev sev-info">ℹ Info</div>'
+          + '<div class="issue-sev sev-info">ℹ INFO</div>'
           + '<div class="issue-title">' + esc(f.title) + '</div>'
           + '<div class="issue-detail">' + esc(f.detail) + '</div>'
           + '<div class="issue-fix-block"><div class="issue-fix-label" style="color:#1565C0">Note</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>'

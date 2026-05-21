@@ -372,12 +372,16 @@ function parseHtml (html, url, isHttps, fetchError) {
     return {
       fetchFailed: true, fetchError: fetchError || null, isHttps,
       pageTypeInfo: detectPageType('', url),
-      title: '', metaDescription: '', h1: '', h2s: [],
-      aboveFoldText: '', bodyText: '', linkCount: 0,
-      formFieldCount: 0, hasAboveFoldCta: false, ctaText: '',
+      title: '', metaDescription: '', h1: '', h2s: [], h3s: [],
+      aboveFoldText: '', bodyText: '', linkCount: 0, navLinkCount: 0,
+      formFieldCount: 0, hasAboveFoldCta: false, ctaText: '', ctaTexts: [],
       hasGtm: false, hasGa4: false, hasAdsConversion: false, hasRemarketingOnly: false,
       hasViewport: false, hasPrivacyLink: false,
       socialProofText: '', authoritySignals: '', contactSignals: '',
+      hasPricing: false, pricingText: '', aboveFoldPhonePresent: false,
+      imageCount: 0, hasSocialLinks: false,
+      testimonialBlockCount: 0, hasVideoContent: false, hasTrustBadges: false,
+      starRatingPresent: false, namedTestimonialPresent: false,
       topNgrams: []
     };
   }
@@ -387,7 +391,8 @@ function parseHtml (html, url, isHttps, fetchError) {
   const title           = $('title').first().text().trim();
   const metaDescription = $('meta[name="description"]').attr('content') || '';
   const h1              = $('h1').first().text().trim();
-  const h2s             = $('h2').slice(0, 3).map((_, el) => $(el).text().trim()).get();
+  const h2s             = $('h2').map((_, el) => $(el).text().trim()).get().filter(t => t).slice(0, 8);
+  const h3s             = $('h3').map((_, el) => $(el).text().trim()).get().filter(t => t).slice(0, 5);
   const hasViewport     = $('meta[name="viewport"]').length > 0;
 
   // Privacy link — must be checked BEFORE stripping footer/nav
@@ -409,6 +414,9 @@ function parseHtml (html, url, isHttps, fetchError) {
   const trustBadgeRx = /as seen in|featured in|swim england|ofsted|insured|certified|accredited|member of|regulated|fca approved|iso[ -]?\d+/i;
   const hasTrustBadges = trustBadgeRx.test(html);
 
+  // Nav link count — must be checked BEFORE stripping nav
+  const navLinkCount = $('nav a').length;
+
   // Strip noise then get body text
   $('script, style, nav, footer, header, noscript').remove();
   const bodyText     = $('body').text().replace(/\s+/g, ' ').trim();
@@ -423,6 +431,7 @@ function parseHtml (html, url, isHttps, fetchError) {
     && /[A-Z][a-z]+\s+[A-Z][a-z]+|[A-Z][a-z]+,\s*(parent|customer|client|mum|dad|swimmer|member)/i.test(bodyText);
 
   const linkCount      = $('a[href]').length;
+  const imageCount     = $('img').length;
   const formFieldCount = $(
     'input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input:not([type]), textarea'
   ).length;
@@ -432,13 +441,25 @@ function parseHtml (html, url, isHttps, fetchError) {
   const ctaKeywordsRx  = /\b(get started|book|call|contact|buy|order|sign up|request a quote|free|apply|subscribe|download|register|claim|start|try now)\b/i;
   const hasAboveFoldCta = /(<button|<input[^>]*type=["']submit["'])/i.test(bodyHtmlSnip) || ctaKeywordsRx.test(bodyHtmlSnip.substring(0, 1000));
 
-  let ctaText = '';
-  $('button, input[type="submit"], .btn, .cta, [class*="button"]').each((_, el) => {
-    if (!ctaText) {
-      const t = $(el).text().trim() || $(el).attr('value') || '';
-      if (t && t.length < 60) ctaText = t;
-    }
+  // All CTA button texts (deduplicated, for Claude)
+  const ctaTexts = [];
+  $('button, input[type="submit"], .btn, .cta, [class*="button"], a[class*="btn"], a[class*="cta"]').each((_, el) => {
+    const t = $(el).text().trim() || $(el).attr('value') || '';
+    if (t && t.length < 80 && !ctaTexts.includes(t)) ctaTexts.push(t);
   });
+  const ctaText = ctaTexts[0] || '';
+
+  // Pricing detection
+  const pricingRx   = /£[\d,]+(?:\.\d{2})?|\$[\d,]+(?:\.\d{2})?|€[\d,]+(?:\.\d{2})?|\d+\s*(?:per month|\/month|\/mo|p\/m|per year|\/year)|from\s+£\d+/i;
+  const hasPricing  = pricingRx.test(bodyText);
+  const pricingText = hasPricing ? (bodyText.match(pricingRx)?.[0] || '') : '';
+
+  // Above-fold phone
+  const phoneRx             = /(?:\+44\s?|0)[0-9][\d\s\-\(\)]{8,}/;
+  const aboveFoldPhonePresent = phoneRx.test(aboveFoldText);
+
+  // Social media links in body HTML
+  const hasSocialLinks = /facebook\.com|twitter\.com|(?:^|\/)x\.com|instagram\.com|linkedin\.com|tiktok\.com|youtube\.com/i.test($('body').html() || '');
 
   // Tracking detection (raw HTML scan)
   const hasGtm           = /googletagmanager\.com\/gtm\.js|GTM-[A-Z0-9]+/i.test(html);
@@ -490,15 +511,17 @@ function parseHtml (html, url, isHttps, fetchError) {
 
   return {
     fetchFailed: false, isHttps,
-    title, metaDescription, h1, h2s,
-    aboveFoldText, bodyText: bodyText.substring(0, 3000),
-    linkCount, formFieldCount, hasAboveFoldCta, ctaText,
+    title, metaDescription, h1, h2s, h3s,
+    aboveFoldText, bodyText: bodyText.substring(0, 5000),
+    linkCount, navLinkCount, formFieldCount, hasAboveFoldCta, ctaText, ctaTexts,
     hasGtm, hasGa4, hasAdsConversion, hasRemarketingOnly,
     hasViewport, hasPrivacyLink,
     socialProofText, authoritySignals, contactSignals,
     // Richer trust signals
     testimonialBlockCount, hasVideoContent, hasTrustBadges,
     starRatingPresent, namedTestimonialPresent,
+    // New content signals
+    hasPricing, pricingText, aboveFoldPhonePresent, imageCount, hasSocialLinks,
     // Page type
     pageTypeInfo,
     // Keyword analysis
@@ -582,31 +605,79 @@ async function analyzeWithClaude (parsed) {
     ? `eCommerce${pageType.platform ? ' (' + pageType.platform + ')' : ''}${pageType.subtype ? ' — ' + pageType.subtype + ' page' : ''}`
     : 'Lead generation / service page';
 
-  const prompt = `URL content to analyze for Google Ads Landing Page Experience quality.
+  const isEcommercePrompt = pageType.type === 'ecommerce';
+  const h2List   = (parsed.h2s  || []).join(' | ') || '(none)';
+  const h3List   = (parsed.h3s  || []).join(' | ') || '(none)';
+  const ctaList  = (parsed.ctaTexts || [parsed.ctaText]).filter(Boolean).join(' | ') || '(none)';
+  const bodyLen  = (parsed.bodyText || '').length;
 
-Page type: ${pageTypeLabel}${pageType.type === 'ecommerce' ? `
-IMPORTANT — eCommerce context: Frame findings for paid Shopping/Search/PMAX campaigns. Do NOT flag: missing contact forms, missing phone numbers, high link counts, or absence of lead-gen CTAs. DO assess: product/category keyword relevance to the search query, CTA clarity (Add to Cart / Buy Now / Shop), product trust signals (reviews, ratings, returns policies), and whether the landing page keyword aligns with what the ad is targeting. Conversion architecture findings should focus on purchase friction, not lead capture.` : ''}
+  const fetchWarning = parsed.contentFromPsi
+    ? '\n⚠️ IMPORTANT: Direct page fetch was blocked (bot protection). Title and meta description came from Google\'s PageSpeed Insights engine. Body text, H1, trust signals, and CTA copy are unavailable. Limit findings to what you can infer from title, meta, and URL. Do NOT flag content-related issues you cannot verify.'
+    : parsed.fetchFailed
+      ? '\n⚠️ IMPORTANT: Page fetch failed entirely. Content analysis is unavailable. Return empty findings array and set all content fields to null.'
+      : '';
 
-URL slug keyword signal: ${parsed.urlKeyword || '(homepage or non-descriptive URL)'}
-Title tag: ${parsed.title || '(none)'}
-H1: ${parsed.h1 || '(none)'}
-Meta description: ${parsed.metaDescription || '(none)'}
-H2 headings: ${parsed.h2s.join(' | ') || '(none)'}
-Above-fold copy (first 500 chars): ${parsed.aboveFoldText || '(none)'}
-Primary CTA text: ${parsed.ctaText || '(none)'}
-Total links on page: ${parsed.linkCount}
-Visible form fields: ${parsed.formFieldCount}
-Social proof in copy: ${parsed.socialProofText ? 'Present' : 'None detected'}
-Testimonial block elements found: ${parsed.testimonialBlockCount}
-Star ratings / review counts in copy: ${parsed.starRatingPresent ? 'Yes' : 'No'}
-Named testimonials (real names near quotes): ${parsed.namedTestimonialPresent ? 'Detected' : 'Not detected'}
-Video content present: ${parsed.hasVideoContent ? 'Yes' : 'No'}
-Trust badge / accreditation text: ${parsed.hasTrustBadges ? 'Detected' : 'Not detected'}
-Authority signals: ${parsed.authoritySignals || 'None detected'}
-Contact signals (phone/email/address): ${parsed.contactSignals || 'None detected'}
-${parsed.contentFromPsi ? 'NOTE: Direct page fetch was blocked (bot protection). Title and meta description were extracted from Google\'s PageSpeed Insights rendering engine instead — this is what Google itself sees. Body text, H1, and trust signals are unavailable. Infer keyword from title, meta description, and URL only. Do not flag content-related findings.' : parsed.fetchFailed ? 'NOTE: Page fetch failed entirely. Content analysis unavailable — do not generate content findings.' : ''}
+  const ecommerceContext = isEcommercePrompt
+    ? `\n\nECOMMERCE CONTEXT — frame everything for paid Shopping/Search/PMAX campaigns:
+- Do NOT flag: missing contact forms, missing phone numbers, high link counts, or absence of lead-gen CTAs
+- DO assess: product/category keyword relevance, CTA clarity (Add to Cart / Buy Now / Shop), product trust signals (reviews, ratings, returns policy), and ad-to-page message match
+- Conversion friction = purchase friction, not lead capture friction`
+    : '';
 
-Return ONLY valid JSON (no markdown fences, no explanation) matching this schema exactly:
+  const prompt = `You are a senior PPC conversion specialist auditing a landing page that receives paid Google Ads traffic. Your job is to identify specifically what is and is not working on THIS page — not to give generic CRO advice.
+
+PAGE TYPE: ${pageTypeLabel}${ecommerceContext}${fetchWarning}
+
+━━━ PAGE CONTENT ━━━
+Title tag:         ${parsed.title || '(none)'}
+H1:                ${parsed.h1 || '(none)'}
+Meta description:  ${parsed.metaDescription || '(none)'}
+URL keyword:       ${parsed.urlKeyword || '(none)'}
+
+H2 headings:  ${h2List}
+H3 headings:  ${h3List}
+
+CTA / button text: ${ctaList}
+
+Above-fold copy (first 500 chars):
+${parsed.aboveFoldText || '(none)'}
+
+Full page body (${bodyLen} chars):
+${parsed.bodyText || '(none)'}
+
+━━━ CONTENT SIGNALS ━━━
+Pricing visible:          ${parsed.hasPricing ? 'YES — ' + (parsed.pricingText || '') : 'No'}
+Phone above fold:         ${parsed.aboveFoldPhonePresent ? 'Yes' : 'No'}
+Images on page:           ${parsed.imageCount != null ? parsed.imageCount : 'Unknown'}
+Navigation links:         ${parsed.navLinkCount != null ? parsed.navLinkCount + (parsed.navLinkCount > 5 ? ' (full navigation present)' : ' (minimal)') : 'Unknown'}
+Social media links:       ${parsed.hasSocialLinks ? 'Yes' : 'No'}
+Testimonial blocks:       ${parsed.testimonialBlockCount}
+Star ratings in copy:     ${parsed.starRatingPresent ? 'Yes' : 'No'}
+Named testimonials:       ${parsed.namedTestimonialPresent ? 'Detected' : 'No'}
+Video content:            ${parsed.hasVideoContent ? 'Yes' : 'No'}
+Trust badges / accreditations: ${parsed.hasTrustBadges ? 'Detected' : 'No'}
+Form fields:              ${parsed.formFieldCount}
+Total page links:         ${parsed.linkCount}
+
+━━━ YOUR THREE-PART ANALYSIS ━━━
+
+PART 1 — WHAT IS WORKING (severity: "pass")
+What on this page works well for paid ad conversion? Look for: clear keyword alignment, good message match, strong social proof, specific CTA, risk reducers, pricing transparency, relevant trust signals. Only credit things you can actually see — do not give generic compliments.
+
+PART 2 — WHAT IS HURTING (severity: critical/high/medium/low)
+What is actively damaging conversion rate or Quality Score? Be specific — if a CTA button says "SEND", name it. If the headline is generic, quote it. If the form is above the value prop, say so. Reference actual content.
+
+PART 3 — WHAT IS MISSING (severity: critical/high/medium/low)
+What would you expect on a high-converting page of this type that is clearly absent here? Only flag genuine gaps that would materially affect paid traffic performance — not every element suits every page.
+
+RULES:
+- Maximum 12 findings total (pass + issues combined)
+- Every finding must be specific to THIS page — no template advice
+- If you see something specific (a CTA text, a headline, a section), quote or reference it
+- Do NOT flag things you cannot verify from the content above
+- Prioritise findings by impact on Google Ads Quality Score and conversion rate
+
+Return ONLY valid JSON (no markdown, no fences):
 {
   "inferred_keyword": "string or null",
   "keyword_confidence": "high|medium|low|none",
@@ -618,11 +689,11 @@ Return ONLY valid JSON (no markdown fences, no explanation) matching this schema
   "title_h1_aligned": true|false|null,
   "above_fold_keyword_signal": "strong|moderate|weak|none",
   "page_relevance_to_query": "strong|moderate|weak",
-  "relevance_reason": "one sentence",
+  "relevance_reason": "one sentence — reference actual page content",
   "value_proposition_clarity": "clear|weak|missing",
-  "value_proposition_reason": "one sentence — what makes it clear or what is missing",
+  "value_proposition_reason": "one sentence — reference actual copy or its absence",
   "cta_quality": "specific|generic|missing",
-  "cta_reason": "one sentence",
+  "cta_reason": "one sentence — reference actual CTA text if visible",
   "cta_specificity": "specific|generic|missing",
   "conversion_goal_clarity": "single|multiple|unclear",
   "message_match_strength": "strong|moderate|weak",
@@ -640,15 +711,13 @@ Return ONLY valid JSON (no markdown fences, no explanation) matching this schema
   "findings": [
     {
       "category": "keyword_clarity|landing_page_experience|conversion_architecture|trust_signals",
-      "severity": "critical|high|medium|low",
-      "title": "short issue title",
-      "detail": "1-2 sentences framed as opportunity or data insight — what does fixing this unlock? Cite conversion research where relevant.",
-      "fix": "one sentence fix"
+      "severity": "pass|critical|high|medium|low",
+      "title": "short, specific title — reference page content where possible",
+      "detail": "2-3 sentences. For issues: what is happening on this page, why it hurts conversion, what fixing it unlocks — cite conversion data where relevant. For pass findings: what is working and why it matters for paid traffic.",
+      "fix": "one sentence — specific action, not a generic recommendation"
     }
   ]
-}
-
-Only include a finding when there is a genuine issue. Do not manufacture findings for things that are passing. Focus on issues that affect Quality Score, Landing Page Experience, and conversion rate for paid traffic. Frame all findings as opportunity-led, not problem-led.`;
+}`;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -657,11 +726,11 @@ Only include a finding when there is a genuine issue. Do not manufacture finding
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey, timeout: 30000 }); // 30s hard timeout
+    const anthropic = new Anthropic({ apiKey, timeout: 45000 }); // 45s — Sonnet needs more room
     const msg  = await anthropic.messages.create({
-      model:      'claude-3-5-haiku-20241022',
-      max_tokens: 3000,
-      system:     'You are a PPC specialist auditing landing pages used as Google Ads destinations. Frame every finding in paid search terms — Quality Score, Landing Page Experience, CPCs, conversion rate. Be direct. No generic CRO advice. Return only valid JSON with no markdown fences.',
+      model:      'claude-3-5-sonnet-20241022',
+      max_tokens: 5000,
+      system:     'You are a PPC conversion specialist. You audit landing pages used as Google Ads destinations. Every finding must be grounded in the actual page content provided — specific, not generic. Frame all analysis in paid search terms: Quality Score, Landing Page Experience, conversion rate, CPA. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
     });
     const text = msg.content[0]?.text || '{}';
@@ -877,7 +946,8 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     else if (f.severity === 'high')     score -= 10;
     else if (f.severity === 'medium')   score -= 5;
     else if (f.severity === 'low')      score -= 2;
-    // 'info' — contextual note only, no score deduction
+    // 'pass' = positive finding, green display, no score change
+    // 'info' = contextual note, blue display, no score change
   }
 
   if      (criticalCount >= 2)   score = Math.min(score, 45);
@@ -887,9 +957,10 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
 
   const scoreBand = score >= 80 ? 'Strong' : score >= 60 ? 'Average' : score >= 40 ? 'Needs work' : 'Critical';
 
-  // ── Priority actions ───────────────────────────────────────────────────────
+  // ── Priority actions — exclude pass/info contextual findings ──────────────
   const order = { critical: 0, high: 1, medium: 2, low: 3 };
   const priorityActions = [...findings]
+    .filter(f => f.severity !== 'pass' && f.severity !== 'info')
     .sort((a, b) => (order[a.severity] ?? 3) - (order[b.severity] ?? 3))
     .slice(0, 3)
     .map(f => ({ severity: f.severity, category: f.category, title: f.title, fix: f.fix }));
