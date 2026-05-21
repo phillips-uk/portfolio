@@ -1188,6 +1188,41 @@
     /* Findings */
     .findings-block { margin-bottom: 48px; }
 
+    /* Fix Summary */
+    .fix-summary { margin: 0 0 48px; }
+    .fix-summary-hed { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #1A1A1A; margin: 6px 0 20px; }
+    .fix-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .fix-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .fix-table thead th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6B6B6B;
+      padding: 10px 14px;
+      border-bottom: 2px solid #E8E8E8;
+    }
+    .ft-col-issue  { width: 28%; }
+    .ft-col-fix    { width: 42%; }
+    .ft-col-impact { width: 30%; }
+    .fix-table tbody tr { border-bottom: 1px solid #F0F0F0; }
+    .fix-table tbody tr:last-child { border-bottom: none; }
+    .ft-td-issue, .ft-td-fix, .ft-td-impact {
+      padding: 13px 14px;
+      vertical-align: top;
+      line-height: 1.55;
+      color: #1A1A1A;
+    }
+    .ft-issue-inner { display: flex; align-items: flex-start; gap: 8px; }
+    .ft-sev-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; display: inline-block; }
+    .ft-sev-dot.sev-critical { background: #C0392B; }
+    .ft-sev-dot.sev-high     { background: #DD6B20; }
+    .ft-sev-dot.sev-medium   { background: #D4A017; }
+    .ft-issue-title { font-weight: 600; color: #1A1A1A; font-size: 13px; }
+    .ft-td-fix   { color: #444; font-size: 13px; }
+    .ft-td-impact { color: #666; font-size: 13px; font-style: italic; }
+
     .category-section {
       padding: 32px 0;
       border-bottom: 1px solid var(--border);
@@ -3604,6 +3639,86 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="priority-text">${escHtml(a)}</span>
       </div>`).join("");
 
+    // ── Fix summary table ─────────────────────────────────────────────────────
+    const IMPACT_MAP = {
+      ga4_primary_import:   "Smart Bidding optimising toward double-counted conversions",
+      missing_gact:         "Zero direct conversion tracking — all conversion data is estimated",
+      tROAS_corrupted:      "Bid targets set on corrupted data — underbidding on profitable queries",
+      view_through:         "Inflated conversion counts — Smart Bidding miscalibrated",
+      conversion_window:    "Short attribution window — some conversions go unrecorded",
+      budget_waste:         "Impression share lost to rank — budget not converting to visibility",
+      shared_budget:        "Budget competition between campaigns — performance data unreliable",
+      budget_distribution:  "Budget allocation not aligned with where conversions come from",
+      low_quality_score:    "Higher CPCs across all campaigns — paying more for each click",
+      broad_waste:          "Budget consumed on off-topic queries with no conversion return",
+      negative_list:        "Irrelevant queries consuming budget — wasted CPCs",
+      search_terms:         "Budget flowing to unqualified traffic",
+      campaign_naming:      "Reporting clarity lost — harder to surface issues quickly",
+      single_ad_group:      "No creative testing data — best-performing message unknown",
+      ad_variations:        "No ad rotation data — Quality Scores and CTR stagnate",
+      rsa_strength:         "Low ad relevance — higher CPCs and lower impression share",
+      destination_match:    "Ad–landing page mismatch — lower Quality Scores and conversion rate",
+      missing_assets:       "Lower CTR and Quality Scores from missing ad extensions",
+      audience_observation: "No bid adjustments by audience — overpaying on low-value users",
+      no_customer_match:    "Smart Bidding without first-party signal — lower audience match quality",
+      remarketing_gaps:     "High-intent audiences untargeted — missed re-engagement opportunity",
+      landing_page_speed:   "High post-click bounce rate — CPC spend lost after the click",
+      mobile_experience:    "Mobile conversions lost — significant share of total traffic affected",
+      feed_errors:          "Products disapproved — not showing in Shopping or Performance Max",
+      feed_wasted_spend:    "Spend on zero-conversion products — budget not driving sales",
+      gtin:                 "Products excluded from Shopping auction — reduced reach and impression share",
+      pmax_assets:          "PMax running with limited creative — lower reach and weaker quality signals",
+      pmax_exclusions:      "PMax cannibalising brand terms — inflated CPCs on own brand",
+      final_url_expansion:  "PMax overriding landing pages — traffic sent to unintended pages",
+    };
+    const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
+    const allIssues = [];
+    Object.values(categories).forEach(cat => {
+      (cat.issues || []).forEach(issue => {
+        if (["critical","high","medium"].includes((issue.severity||"").toLowerCase())) {
+          allIssues.push(issue);
+        }
+      });
+    });
+    allIssues.sort((a, b) => (SEV_ORDER[a.severity] ?? 99) - (SEV_ORDER[b.severity] ?? 99));
+
+    const fixSummaryHTML = allIssues.length ? `
+      <div class="fix-summary">
+        <p class="section-eyebrow">Fix List</p>
+        <p class="fix-summary-hed">What to fix, and why it matters</p>
+        <div class="fix-table-wrap">
+          <table class="fix-table">
+            <thead>
+              <tr>
+                <th class="ft-col-issue">Issue</th>
+                <th class="ft-col-fix">What to fix</th>
+                <th class="ft-col-impact">Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${allIssues.map(f => {
+                const sev = (f.severity || "medium").toLowerCase();
+                const impact = IMPACT_MAP[f.check] || (
+                  sev === "critical" ? "Direct revenue or tracking loss" :
+                  sev === "high"     ? "Significant wasted spend or structural gap" :
+                                       "Best-practice gap — optimisation opportunity"
+                );
+                return `<tr>
+                  <td class="ft-td-issue">
+                    <div class="ft-issue-inner">
+                      <span class="ft-sev-dot sev-${escAttr(sev)}"></span>
+                      <span class="ft-issue-title">${escHtml(f.title)}</span>
+                    </div>
+                  </td>
+                  <td class="ft-td-fix">${escHtml(f.recommendation || "—")}</td>
+                  <td class="ft-td-impact">${escHtml(impact)}</td>
+                </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>` : "";
+
     const reportDate   = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
     const cidFormatted = formatCid(d.customer_id || "");
 
@@ -3662,6 +3777,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="findings-block">
         ${categorySectionsHTML}
       </div>
+
+      ${fixSummaryHTML}
 
       <div class="lead-cta">
         <div class="lead-cta-copy">
