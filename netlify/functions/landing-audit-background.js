@@ -350,7 +350,10 @@ function detectPageType (html, url) {
   const hasOgProduct    = /<meta[^>]+property=["']og:type["'][^>]+content=["']product/i.test(htmlSafe);
 
   let ecomScore = 0;
-  if (platform)                              ecomScore += 5;
+  // Platform alone is insufficient evidence — a Shopify/WooCommerce site can host
+  // service pages, booking pages, and lead-gen pages alongside product pages.
+  // Platform contributes 2 points; a second signal is required to cross the threshold.
+  if (platform)                              ecomScore += 2;
   if (subtype)                               ecomScore += 3;
   if (hasProductSchema || hasOfferSchema)    ecomScore += 3;
   if (hasItemListSchema)                     ecomScore += 2;
@@ -835,20 +838,28 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   if (!isHttps)
     findings.push({ category: 'tracking', severity: 'critical', title: 'Page served over HTTP — ads may be disapproved', detail: "Chrome shows this page as insecure. Google's advertising policy requires HTTPS landing pages — ads pointing to HTTP destinations are at risk of disapproval or limited delivery. Switching to HTTPS also improves trust signals for paid traffic visitors.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS. Most hosting platforms include this free.' });
 
-  if (isEcommerce && knownPlatform) {
-    // Known eCommerce platforms (Shopify, WooCommerce, etc.) commonly use server-side GTM,
-    // platform pixels, or Customer Events APIs that aren't visible in the page HTML.
-    // Flagging absent tags here produces false positives — tracking is handled by the Google Ads Audit.
+  // ── Platform info note — shown whenever a known platform is detected ──────
+  // Shopify/WooCommerce/etc. can inject tracking via server-side GTM, Customer Events API,
+  // or platform pixels that are not visible in the static page HTML.
+  // We flag this regardless of whether the page is eCommerce or lead-gen, because
+  // it affects how the tracking findings below should be interpreted.
+  if (knownPlatform) {
     const platformName = knownPlatform.charAt(0).toUpperCase() + knownPlatform.slice(1);
     findings.push({
       category: 'tracking',
       severity: 'info',
       title: `Tracking scan limited — ${platformName} store detected`,
-      detail: `${platformName} stores commonly use server-side GTM, platform pixels, or Customer Events APIs that are not visible in the page HTML. GTM, GA4, and Google Ads conversion events may all be active without appearing in the static source. This scanner cannot verify them from the outside.`,
-      fix: `Verify your conversion tracking is firing correctly in Google Tag Assistant. For a full tracking health check against your Google Ads account, use the Google Ads Audit tool at phillips-uk.com/google-ads-audit.`
+      detail: `${platformName} stores commonly use server-side GTM, platform pixels, or Customer Events APIs that are not visible in the page HTML. GTM, GA4, and Google Ads conversion events may all be active without appearing in the static source. The findings below reflect what this scanner can detect — verify in Google Tag Assistant for the full picture.`,
+      fix: `Verify your conversion tracking is firing correctly in Google Tag Assistant. For a full tracking health check against your Google Ads account, use the Google Ads Audit tool at https://www.phillips-uk.com/google-ads-audit.`
     });
-  } else {
-    // Lead gen or generic eCommerce — run standard tracking checks
+  }
+
+  // ── Standard tracking checks ───────────────────────────────────────────────
+  // Run for all lead-gen pages. Skip for eCommerce pages on known platforms —
+  // their conversion events fire at the platform level (e.g. Shopify checkout),
+  // not on individual product/collection pages, so static scan findings would
+  // be misleading.
+  if (!isEcommerce || !knownPlatform) {
 
     if (!parsed.hasGtm)
       findings.push({ category: 'tracking', severity: 'high', title: 'No tag manager detected', detail: 'Without a tag management system, adding or updating any tracking requires a code deployment. This creates gaps in conversion data when campaigns change. Installing GTM gives you full control over all tracking without developer involvement — future changes take minutes, not days.', fix: 'Install Google Tag Manager. Add the container snippet to every page, then migrate existing tracking tags into GTM.' });
@@ -871,7 +882,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       }
     }
 
-  } // end tracking checks
+  } // end standard tracking checks
 
   } // end tracking block
 
@@ -951,7 +962,10 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   // Score cap for missing conversion tag only applies when page was actually analysed
   // (when fetch failed, hasAdsConversion/hasGtm are false by default — cap would be misleading)
   // eCommerce pages with known platforms use server-side tracking — cap would be a false penalty
-  const noConversionAndNoGtm = !parsed.fetchFailed && !isEcommerce && !knownPlatform && !parsed.hasAdsConversion && !parsed.hasGtm;
+  // Cap score when tracking is genuinely absent on a non-eCommerce page
+  // (eCommerce pages on known platforms are excluded — their conversion events
+  //  fire at the platform/checkout level and aren't visible in static HTML)
+  const noConversionAndNoGtm = !parsed.fetchFailed && !(isEcommerce && knownPlatform) && !parsed.hasAdsConversion && !parsed.hasGtm;
 
   for (const f of findings) {
     if      (f.severity === 'critical') { score -= 20; criticalCount++; }

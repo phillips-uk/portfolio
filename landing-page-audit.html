@@ -1171,7 +1171,7 @@
         + '</div>'
         + '<div class="action-body">'
         + '<div class="action-title-text">' + esc(f.title) + '</div>'
-        + '<div class="action-fix-text">' + esc(f.fix) + '</div>'
+        + '<div class="action-fix-text">' + escWithLinks(f.fix) + '</div>'
         + '</div>'
         + '<div><span class="action-impact">' + impact + '</span></div>'
         + '</div>';
@@ -1430,7 +1430,7 @@
             + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(f.severity.toUpperCase()) + '</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
             + '<div class="issue-detail">' + esc(f.detail) + '</div>'
-            + '<div class="issue-fix-block"><div class="issue-fix-label">Fix</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>'
+            + '<div class="issue-fix-block"><div class="issue-fix-label">Fix</div><div class="issue-fix-text">' + escWithLinks(f.fix) + '</div></div>'
             + '</div>';
         });
       }
@@ -1443,7 +1443,7 @@
             + '<div class="issue-sev sev-pass">✓ WORKING</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
             + '<div class="issue-detail">' + esc(f.detail) + '</div>'
-            + (f.fix ? '<div class="issue-fix-block"><div class="issue-fix-label">Why it matters</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>' : '')
+            + (f.fix ? '<div class="issue-fix-block"><div class="issue-fix-label">Why it matters</div><div class="issue-fix-text">' + escWithLinks(f.fix) + '</div></div>' : '')
             + '</div>';
         });
       }
@@ -1454,7 +1454,7 @@
           + '<div class="issue-sev sev-info">ℹ INFO</div>'
           + '<div class="issue-title">' + esc(f.title) + '</div>'
           + '<div class="issue-detail">' + esc(f.detail) + '</div>'
-          + '<div class="issue-fix-block"><div class="issue-fix-label" style="color:#1565C0">Note</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>'
+          + '<div class="issue-fix-block"><div class="issue-fix-label" style="color:#1565C0">Note</div><div class="issue-fix-text">' + escWithLinks(f.fix) + '</div></div>'
           + '</div>';
       });
 
@@ -1504,6 +1504,14 @@
   function esc(s) {
     if (s == null) return '';
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Like esc() but auto-links https:// URLs — used for fix/note text
+  function escWithLinks(s) {
+    if (s == null) return '';
+    return esc(s).replace(/https?:\/\/[^\s<&]+/g, function(url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:underline">' + url + '</a>';
+    });
   }
 
   function metricCell(label, value, cls, tier, bench) {
