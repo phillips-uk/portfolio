@@ -747,7 +747,7 @@ Return ONLY valid JSON (no markdown, no fences):
   try {
     const anthropic = new Anthropic({ apiKey, timeout: 45000 }); // 45s — Sonnet needs more room
     const msg  = await anthropic.messages.create({
-      model:      'claude-3-5-sonnet-20241022',
+      model:      'claude-sonnet-4-5-20250929',
       max_tokens: 5000,
       system:     'You are a PPC conversion specialist. You audit landing pages used as Google Ads destinations. Every finding must be grounded in the actual page content provided — specific, not generic. Frame all analysis in paid search terms: Quality Score, Landing Page Experience, conversion rate, CPA. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
