@@ -753,19 +753,27 @@ Return ONLY valid JSON (no markdown, no fences):
       messages:   [{ role: 'user', content: prompt }]
     });
     const raw = msg.content[0]?.text || '{}';
+    console.log('[claude] raw response first 300 chars:', raw.substring(0, 300));
     // Strip markdown fences Claude sometimes adds despite instructions
     const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
     try {
-      return JSON.parse(text);
+      const parsed = JSON.parse(text);
+      console.log('[claude] parsed ok, findings:', (parsed.findings || []).length, 'value_prop:', parsed.value_proposition_clarity, 'message_match:', parsed.message_match_strength);
+      return parsed;
     } catch (parseErr) {
+      console.error('[claude] JSON.parse failed:', parseErr.message, '— attempting fallback extraction');
       // Second attempt: extract first {...} block in case of extra prose
       const match = text.match(/\{[\s\S]*\}/);
-      if (match) return JSON.parse(match[0]);
+      if (match) {
+        const result = JSON.parse(match[0]);
+        console.log('[claude] fallback extraction succeeded');
+        return result;
+      }
       throw parseErr;
     }
   } catch (e) {
-    console.error('Claude error:', e.message);
-    return { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Content analysis failed.', findings: [] };
+    console.error('[claude] error:', e.message);
+    return { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Content analysis failed.', findings: [], _debug_error: e.message };
   }
 }
 
@@ -961,6 +969,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     audited_at: new Date().toISOString(),
     health_score: score,
     score_band: scoreBand,
+    _debug_claude_error: claude._debug_error || null,
     inferred_keyword:         claude.inferred_keyword || null,
     keyword_confidence:       claude.keyword_confidence || 'none',
     keyword_confidence_reason: claude.keyword_confidence_reason || '',
