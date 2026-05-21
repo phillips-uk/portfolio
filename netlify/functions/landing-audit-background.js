@@ -55,6 +55,8 @@ exports.handler = async function (event) {
 
     const isHttps = parsedUrl.protocol === 'https:';
 
+    console.log('[audit] start', url);
+
     // 1. Fetch HTML
     let html = '';
     let fetchError = null;
@@ -73,11 +75,15 @@ exports.handler = async function (event) {
       fetchError = e.message;
     }
 
+    console.log('[audit] html fetched, length:', html.length, 'error:', fetchError || 'none');
+
     // 2. Parse HTML
     const parsed = parseHtml(html, url, isHttps, fetchError);
 
     // Extract keyword from URL slug (strongest signal — set explicitly by site owner)
     parsed.urlKeyword = extractUrlKeyword(url);
+
+    console.log('[audit] html parsed, h1:', parsed.h1 || 'none');
 
     // 3. PSI parallel (mobile + desktop)
     const psiKey = process.env.PSI_API_KEY;
@@ -90,6 +96,8 @@ exports.handler = async function (event) {
       psiMobile  = mRes.status === 'fulfilled' ? mRes.value : null;
       psiDesktop = dRes.status === 'fulfilled' ? dRes.value : null;
     }
+
+    console.log('[audit] psi done, mobile score:', psiMobile?.score ?? 'null', 'desktop:', psiDesktop?.score ?? 'null');
 
     // 4. Claude content analysis
     const claudeResult = await analyzeWithClaude(parsed);
@@ -114,10 +122,14 @@ exports.handler = async function (event) {
       }
     }
 
+    console.log('[audit] claude done, keyword:', claudeResult.inferred_keyword || 'none', 'findings:', (claudeResult.findings || []).length);
+
     // 5. Build final report
     const report = buildReport(url, parsed, psiMobile, psiDesktop, claudeResult, isHttps, fetchError);
 
+    console.log('[audit] report built, score:', report.health_score);
     await store.set(jobId, JSON.stringify({ status: 'complete', data: report }));
+    console.log('[audit] complete');
 
   } catch (e) {
     console.error('Landing audit error:', e.message, e.stack);
@@ -357,10 +369,10 @@ Only include a finding when there is a genuine issue. Do not manufacture finding
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey });
+    const anthropic = new Anthropic({ apiKey, timeout: 30000 }); // 30s hard timeout
     const msg  = await anthropic.messages.create({
       model:      'claude-3-5-haiku-20241022',
-      max_tokens: 2000,
+      max_tokens: 3000,
       system:     'You are a PPC specialist auditing landing pages used as Google Ads destinations. Frame every finding in paid search terms — Quality Score, Landing Page Experience, CPCs, conversion rate. Be direct. No generic CRO advice. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
     });
