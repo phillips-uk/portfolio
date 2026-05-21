@@ -24,7 +24,11 @@ exports.handler = async function (event) {
   }
 
   try {
-    const store = getStore('landing-audits');
+    const store = getStore({
+      name:   'landing-audits',
+      siteID: process.env.NETLIFY_SITE_ID,
+      token:  process.env.NETLIFY_PERSONAL_TOKEN
+    });
     const data  = await store.get(id, { type: 'json' });
 
     if (!data) return json({ status: 'pending' });

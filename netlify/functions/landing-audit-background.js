@@ -6,14 +6,20 @@
  * Returns 202 immediately. Result stored in Netlify Blobs under jobId.
  * Frontend polls /.netlify/functions/landing-audit-status?id={jobId}
  *
- * Env vars: PSI_API_KEY, ANTHROPIC_API_KEY
+ * Env vars: PSI_API_KEY, ANTHROPIC_API_KEY, NETLIFY_SITE_ID, NETLIFY_PERSONAL_TOKEN
  */
 
 const { getStore } = require('@netlify/blobs');
 const cheerio = require('cheerio');
 const Anthropic = require('@anthropic-ai/sdk');
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+function getBlobsStore () {
+  return getStore({
+    name:   'landing-audits',
+    siteID: process.env.NETLIFY_SITE_ID,
+    token:  process.env.NETLIFY_PERSONAL_TOKEN
+  });
+}
 
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return;
@@ -24,10 +30,14 @@ exports.handler = async function (event) {
   const { url, jobId } = body;
   if (!url || !jobId) return;
 
-  const store = getStore('landing-audits');
-
-  // Mark in progress
-  await store.set(jobId, JSON.stringify({ status: 'pending' }), { ttl: 3600 });
+  let store;
+  try {
+    store = getBlobsStore();
+    await store.set(jobId, JSON.stringify({ status: 'pending' }));
+  } catch (e) {
+    console.error('Blobs init error:', e.message);
+    return; // Nothing we can do without storage
+  }
 
   try {
     // Validate URL
@@ -84,14 +94,18 @@ exports.handler = async function (event) {
     // 5. Build final report
     const report = buildReport(url, parsed, psiMobile, psiDesktop, claudeResult, isHttps, fetchError);
 
-    await store.set(jobId, JSON.stringify({ status: 'complete', data: report }), { ttl: 86400 });
+    await store.set(jobId, JSON.stringify({ status: 'complete', data: report }));
 
   } catch (e) {
-    console.error('Landing audit error:', e);
-    await store.set(jobId, JSON.stringify({
-      status: 'error',
-      message: 'Audit failed unexpectedly. Please try again.'
-    }), { ttl: 3600 });
+    console.error('Landing audit error:', e.message, e.stack);
+    try {
+      await store.set(jobId, JSON.stringify({
+        status: 'error',
+        message: 'Audit failed unexpectedly. Please try again.'
+      }));
+    } catch (writeErr) {
+      console.error('Failed to write error to blobs:', writeErr.message);
+    }
   }
 };
 
@@ -254,7 +268,14 @@ Return ONLY valid JSON (no markdown fences, no explanation) matching this schema
 
 Only include a finding when there is a genuine issue. Do not manufacture findings for things that are passing. Focus on issues that affect Quality Score, Landing Page Experience, and conversion rate for paid traffic.`;
 
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.warn('ANTHROPIC_API_KEY not set — skipping content analysis');
+    return { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Content analysis unavailable.', findings: [] };
+  }
+
   try {
+    const anthropic = new Anthropic({ apiKey });
     const msg  = await anthropic.messages.create({
       model:      'claude-3-5-haiku-20241022',
       max_tokens: 2000,
@@ -265,7 +286,7 @@ Only include a finding when there is a genuine issue. Do not manufacture finding
     return JSON.parse(text);
   } catch (e) {
     console.error('Claude error:', e.message);
-    return { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: '', findings: [] };
+    return { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Content analysis failed.', findings: [] };
   }
 }
 
