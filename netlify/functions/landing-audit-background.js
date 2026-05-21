@@ -360,10 +360,20 @@ function detectPageType (html, url) {
   const hasOgProduct = /<meta[^>]+property=["']og:type["'][^>]+content=["']product["']/i.test(htmlSafe)
                     || /<meta[^>]+content=["']product["'][^>]+property=["']og:type["']/i.test(htmlSafe);
 
-  // ── Classification — requires at least one definitive signal ──────────────
-  // Platform alone is never sufficient. The page must have a URL pattern, verified
-  // schema markup, a real add-to-cart button, or og:type=product to be eCommerce.
-  const isEcommerce = subtype || hasProductSchema || hasOfferSchema || hasItemListSchema || hasAddToCart || hasOgProduct;
+  // ── Classification ────────────────────────────────────────────────────────
+  // KNOWN PLATFORMS (Shopify, WooCommerce, etc.): use URL only.
+  // Theme JS bundles are loaded on every page regardless of its purpose —
+  // /pages/, /blogs/, /policies/ all contain add-to-cart strings, price
+  // classes, and product schema fragments from the global theme. Only the
+  // URL path is unambiguously set by the site owner for the page's purpose.
+  //
+  // UNKNOWN PLATFORMS: use schema + content signals (no theme JS noise).
+  let isEcommerce;
+  if (platform) {
+    isEcommerce = !!subtype; // /products/, /collections/, /cart, /checkout only
+  } else {
+    isEcommerce = !!(subtype || hasProductSchema || hasOfferSchema || hasItemListSchema || hasAddToCart || hasOgProduct);
+  }
 
   return {
     type:     isEcommerce ? 'ecommerce' : 'lead_gen',
