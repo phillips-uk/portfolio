@@ -1911,6 +1911,16 @@
 
     .methodology-box strong { color: var(--ink); }
 
+    /* ── Cross-link bar ───────────────────────────────────────────── */
+    .crosslink-bar {
+      margin-top: 48px; padding: 20px 24px;
+      background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    .crosslink-text { font-size: 14px; color: var(--mid); }
+    .crosslink-link { font-size: 14px; font-weight: 600; color: var(--amber); text-decoration: none; white-space: nowrap; }
+    .crosslink-link:hover { text-decoration: underline; }
+
     /* ── Closing CTA ──────────────────────────────────────────────── */
     .audit-cta {
       background: var(--ink);
@@ -2230,6 +2240,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <p>If the audit surfaces something significant and you want help fixing it, you can reach me at <a href="https://www.phillips-uk.com" style="color:var(--amber);">phillips-uk.com</a>.</p>
         </div>
       </section>
+
+      <div class="crosslink-bar">
+        <span class="crosslink-text">Your ads aren't the only thing affecting performance.</span>
+        <a href="/landing-page-audit" class="crosslink-link">Audit your landing page →</a>
+      </div>
 
     </div><!-- /landing-hero -->
 
@@ -3668,6 +3683,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="report-restart">
         <button onclick="resetToStart()">← Audit another account</button>
+      </div>
+
+      <div class="crosslink-bar">
+        <span class="crosslink-text">Your ads aren't the only thing affecting performance.</span>
+        <a href="/landing-page-audit" class="crosslink-link">Audit your landing page →</a>
       </div>
     `;
   }
