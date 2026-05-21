@@ -120,35 +120,16 @@ exports.handler = async function (event) {
 
     console.log('[audit] html parsed, h1:', parsed.h1 || 'none');
 
-    // 3 + 4. PSI and Claude run in parallel.
-    //   • Claude only needs parsed HTML — starts immediately after page fetch.
-    //   • When Claude finishes (~10s), store a partial result so the frontend
-    //     can render findings right away instead of waiting for PSI (~30-40s).
-    //   • When PSI finishes, update to a full result with performance data.
+    // 3 + 4. PSI kicks off immediately. Claude is awaited directly.
+    //   PSI runs concurrently in the background during Claude's execution.
+    //   After Claude resolves, check the psiDone flag (set by PSI's .then()).
+    //   If PSI is still running, store a partial result immediately so the
+    //   frontend can show findings now — then wait for PSI and store the final.
     const psiKey = process.env.PSI_API_KEY;
     let psiMobile = null, psiDesktop = null;
-    let psiDone   = false;
+    let psiDone = false;
 
-    // Helper — keyword fallback chain used in both partial and final result
-    function applyKeywordFallback (cr) {
-      if (!cr.inferred_keyword) {
-        if (parsed.urlKeyword) {
-          cr.inferred_keyword           = parsed.urlKeyword;
-          cr.keyword_confidence         = 'high';
-          cr.keyword_confidence_reason  = 'Inferred from the URL slug — the most explicit keyword signal on the page.';
-        } else if (parsed.h1) {
-          cr.inferred_keyword = parsed.h1.trim();
-          const h1Words   = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-          const titleLow  = (parsed.title || '').toLowerCase();
-          const ratio     = h1Words.length ? h1Words.filter(w => titleLow.includes(w)).length / h1Words.length : 0;
-          cr.keyword_confidence        = ratio >= 0.5 ? 'high' : 'medium';
-          cr.keyword_confidence_reason = ratio >= 0.5
-            ? 'H1 and title tag share the same core keyword — strong alignment.'
-            : 'Inferred from H1 heading. Title tag alignment is partial.';
-        }
-      }
-    }
-
+    // Fire PSI — .then() sets flag + captures results when it resolves
     const psiPromise = (psiKey
       ? Promise.allSettled([fetchPsi(url, 'mobile', psiKey), fetchPsi(url, 'desktop', psiKey)])
       : Promise.resolve([{ status: 'fulfilled', value: null }, { status: 'fulfilled', value: null }])
@@ -159,23 +140,44 @@ exports.handler = async function (event) {
       console.log('[audit] psi done — mobile:', psiMobile ? `score ${psiMobile.score}, src: ${psiMobile.dataSource}` : 'NULL', '| desktop:', psiDesktop ? `score ${psiDesktop.score}` : 'NULL');
     });
 
-    let claudeResult = { inferred_keyword: null, keyword_confidence: 'none', keyword_confidence_reason: 'Analysis failed.', findings: [] };
-    const claudePromise = analyzeWithClaude(parsed).then(async res => {
-      claudeResult = res;
-      applyKeywordFallback(claudeResult);
-      console.log('[audit] claude done, keyword:', claudeResult.inferred_keyword || 'none', 'findings:', (claudeResult.findings || []).length);
-      // PSI still running — save partial result now so frontend can show findings immediately
-      if (!psiDone) {
-        try {
-          const partial = buildReport(url, parsed, null, null, claudeResult, isHttps, fetchError, 'pending');
-          partial.psi_pending = true;
-          await store.set(jobId, JSON.stringify({ status: 'partial', data: partial }));
-          console.log('[audit] partial result stored — awaiting PSI');
-        } catch (e) { console.error('[audit] partial store error:', e.message); }
-      }
-    });
+    // Await Claude — PSI is running concurrently during this await
+    const claudeResult = await analyzeWithClaude(parsed);
+    // After this await resolves, all microtasks queued during Claude's execution
+    // (including PSI's .then() if it finished) will have run — so psiDone is accurate
 
-    await Promise.allSettled([psiPromise, claudePromise]);
+    // Keyword fallback chain
+    if (!claudeResult.inferred_keyword) {
+      if (parsed.urlKeyword) {
+        claudeResult.inferred_keyword          = parsed.urlKeyword;
+        claudeResult.keyword_confidence        = 'high';
+        claudeResult.keyword_confidence_reason = 'Inferred from the URL slug — the most explicit keyword signal on the page.';
+      } else if (parsed.h1) {
+        claudeResult.inferred_keyword = parsed.h1.trim();
+        const h1Words = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+        const titleLow = (parsed.title || '').toLowerCase();
+        const ratio = h1Words.length ? h1Words.filter(w => titleLow.includes(w)).length / h1Words.length : 0;
+        claudeResult.keyword_confidence        = ratio >= 0.5 ? 'high' : 'medium';
+        claudeResult.keyword_confidence_reason = ratio >= 0.5
+          ? 'H1 and title tag share the same core keyword — strong alignment.'
+          : 'Inferred from H1 heading. Title tag alignment is partial.';
+      }
+    }
+
+    console.log('[audit] claude done, keyword:', claudeResult.inferred_keyword || 'none', 'findings:', (claudeResult.findings || []).length, '| psi already done:', psiDone);
+
+    if (!psiDone) {
+      // PSI still running — store partial result so frontend can show findings now
+      try {
+        const partial = buildReport(url, parsed, null, null, claudeResult, isHttps, fetchError, 'pending');
+        partial.psi_pending = true;
+        await store.set(jobId, JSON.stringify({ status: 'partial', data: partial }));
+        console.log('[audit] partial result stored — awaiting PSI');
+      } catch (e) {
+        console.error('[audit] partial store error:', e.message);
+      }
+      // Wait for PSI to finish
+      await psiPromise;
+    }
 
     const psiStatus = psiMobile ? 'ok' : 'failed';
 
