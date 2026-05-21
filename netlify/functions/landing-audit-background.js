@@ -548,30 +548,33 @@ function parseHtml (html, url, isHttps, fetchError) {
   const pageTypeInfo = detectPageType(html, url);
 
   // N-gram keyword analysis
-  // For eCommerce: strip product card headings from the source text before counting phrases.
-  // Page descriptions, above-fold copy and SEO content are kept — only the grid product
-  // titles (which pollute frequency counts) are removed.
+  // Strip noise elements before computing phrase frequency — nav, footer, social links,
+  // and (for eCommerce) product card grids all pollute counts with off-topic text.
   const urlSlug = extractUrlKeyword(url) || '';
-  let ngramBodyText = bodyText;
+
+  // Always strip: navigation, footer, social icons, cookie banners, script/style content
+  $(
+    'nav, header nav, footer, [role="navigation"], [role="contentinfo"],' +
+    '[class*="footer"], [id*="footer"],' +
+    '[class*="nav-"], [class*="-nav"], [id*="nav"],' +
+    '[class*="cookie"], [class*="gdpr"], [class*="banner"],' +
+    '[class*="social"], [class*="share-"], [class*="-share"],' +
+    '[aria-label*="social" i], [aria-label*="navigation" i],' +
+    'script, style, noscript'
+  ).remove();
+
+  // eCommerce: also strip product card grids (product titles / prices / swatches)
   if (pageTypeInfo.type === 'ecommerce') {
-    // Strip entire product card containers — not just headings.
-    // Product cards contain titles, material variants, prices and colour swatches
-    // that all pollute N-gram frequency counts with noise unrelated to the page keyword.
-    // Page description copy, above-fold text and SEO content sit outside these containers
-    // and are preserved.
     $(
-      '[class*="product-card"],' +
-      '[class*="card-wrapper"],' +
+      '[class*="product-card"], [class*="card-wrapper"],' +
       '[class*="product-item"]:not(main):not(article):not(section),' +
-      '[class*="product-tile"],' +
-      '[class*="product-loop"],' +
-      '[class*="grid__item"],' +
-      'li.product,' +
-      '[class*="productItem"],' +
-      '[class*="collection-item"]'
+      '[class*="product-tile"], [class*="product-loop"],' +
+      '[class*="grid__item"], li.product,' +
+      '[class*="productItem"], [class*="collection-item"]'
     ).remove();
-    ngramBodyText = $('body').text().replace(/\s+/g, ' ').trim();
   }
+
+  let ngramBodyText = $('body').text().replace(/\s+/g, ' ').trim();
   const topNgrams = computeTopNgrams(ngramBodyText, urlSlug, h1, title);
 
   return {
