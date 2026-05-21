@@ -690,7 +690,7 @@
   <div class="hero">
     <div class="hero-tag">Free Tool</div>
     <h1>Free <span>Landing Page Audit</span><br>for Google Ads</h1>
-    <p>Paste a URL. Get a full technical and content audit in under 60 seconds. No account connection. No forms. Just a URL.</p>
+    <p>Paste a URL. Get a paid search diagnosis — real Core Web Vitals from Google's own engine, AI-powered findings on keyword clarity and conversion architecture, and every issue framed as Problem → Fix → Impact. Free. No account connection.</p>
   </div>
 
   <!-- ── Input ── -->
@@ -723,31 +723,30 @@
 
   <!-- ── Below-fold content (SEO + value) ── -->
   <div class="content-section" id="below-fold-1">
-    <h2>Every check framed in paid search terms</h2>
-    <p>Most landing page tools give you generic CRO advice. This one tells you what each finding means for your Quality Score, your CPCs, and your Landing Page Experience rating.</p>
+    <h2>Every finding framed in Google Ads terms</h2>
+    <p>Most landing page tools give you generic CRO advice. This one tells you what each issue means for your Quality Score, your CPCs, and your cost per conversion — and what fixing it will unlock.</p>
 
     <div class="two-col">
       <div>
         <div class="col-label">What gets checked</div>
         <ul class="check-list">
-          <li>Core Web Vitals (LCP, CLS, INP where field data is available) from Google's PageSpeed API</li>
-          <li>Keyword signals — top N-grams inferred from URL, H1, title tag, and page frequency</li>
-          <li>Landing Page Experience signals (H1, title tag, above-fold relevance)</li>
-          <li>Conversion architecture (CTA presence, form length, conversion goal clarity)</li>
-          <li>Trust signals (social proof, contact information, security)</li>
-          <li>Tracking health (GTM, GA4, Google Ads conversion tag)</li>
-          <li>Mobile experience (performance score, viewport, tap targets where available)</li>
+          <li>Core Web Vitals — LCP, CLS, and INP from Google's real PageSpeed Insights engine, mobile and desktop in parallel</li>
+          <li>Keyword clarity — AI infers your primary keyword from H1, title tag, URL, and opening copy. If it can't tell, Google can't either</li>
+          <li>Landing Page Experience signals — H1 quality, title alignment, above-fold relevance, message match</li>
+          <li>Conversion architecture — CTA presence and specificity, form friction, single-goal clarity</li>
+          <li>Trust signals — social proof, risk reducers, contact information, privacy policy</li>
+          <li>Mobile experience — performance score, viewport, tap target sizing</li>
         </ul>
       </div>
       <div>
         <div class="col-label">What you receive</div>
         <ul class="check-list">
-          <li>Real CWV scores for mobile and desktop — not estimates</li>
-          <li>The top keyword phrases your page is built around, with URL, H1 and title tag signals flagged</li>
-          <li>An assessment of how Google's quality system sees your page</li>
-          <li>A diagnosis of what's stopping users from converting</li>
-          <li>Which credibility signals are present or missing</li>
-          <li>A mobile-specific assessment — most paid clicks come from mobile</li>
+          <li>A health score from 0–100 with specific deductions per issue — so you know exactly what's costing you</li>
+          <li>Every finding in Problem → Fix → Impact format — what's wrong, one concrete action, and the specific Google Ads metric it moves</li>
+          <li>A priority actions list — the top three fixes ranked by severity</li>
+          <li>Your top keyword phrases ranked by page signals, with H1, title tag, and URL matches called out</li>
+          <li>An estimated Landing Page Experience rating based on the same signals Google uses</li>
+          <li>Real CWV data for mobile and desktop — not estimates, not simulations</li>
         </ul>
       </div>
     </div>
@@ -809,17 +808,11 @@
 
     <div class="methodology">
       <h3>How the audit works</h3>
-      <p>The tool fetches the page HTML and runs two parallel requests to the Google PageSpeed Insights API — one for mobile, one for desktop. Core Web Vitals come from Google's real Lighthouse rendering engine, not estimates. Content analysis (keyword inference, H1 quality, CTA assessment, trust signals) is run by an AI model trained to evaluate pages from a paid search perspective.</p>
+      <p>The tool fetches the page HTML and runs two parallel requests to the Google PageSpeed Insights API — one for mobile, one for desktop. Core Web Vitals are sourced from Google's real Lighthouse rendering engine, not estimates. Content analysis — keyword inference, H1 quality, CTA assessment, value proposition clarity, trust signals — is handled by an AI model with a specific brief: evaluate the page from a paid search perspective and return findings in Problem → Fix → Impact format, tied to Quality Score and conversion rate outcomes.</p>
       <p>Use it alongside the <a href="/google-ads-audit" style="color:var(--amber)">Google Ads Audit Tool</a> for a full account and landing page diagnosis.</p>
     </div>
   </div>
 
-  <!-- ── CTA section ── -->
-  <div class="cta-section" id="below-fold-3">
-    <div class="cta-eyebrow">Work with me.</div>
-    <h2 class="cta-heading">The audit finds it.<br><em>I can fix it.</em></h2>
-    <a href="https://www.phillips-uk.com/#contact" class="btn-cta">Contact Phillips. →</a>
-  </div>
 
 </div><!-- /.container -->
 </main>
@@ -1523,15 +1516,6 @@
 
     // Action plan
     html += buildActionPlan(r);
-
-    // Lead CTA
-    html += '<div class="lead-cta">'
-      + '<div class="lead-cta-copy">'
-      + '<h3>The audit checks it. <em>I can fix it.</em></h3>'
-      + '<p>I work directly with businesses on exactly these issues — slow pages, weak conversion architecture, broken tracking. No agency overhead. Direct access to someone who does this every day.</p>'
-      + '</div>'
-      + '<a href="https://www.phillips-uk.com/#contact" class="lead-cta-btn">Get in touch →</a>'
-      + '</div>';
 
     // Restart + crosslink
     html += '<div class="report-restart"><button onclick="resetToStart()">← Audit another page</button></div>';
