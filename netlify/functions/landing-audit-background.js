@@ -284,7 +284,10 @@ async function fetchPsi (url, strategy, key) {
       score:      Math.round((cats.performance?.score || 0) * 100),
       lcp:        audits['largest-contentful-paint']?.numericValue ?? null,
       cls:        audits['cumulative-layout-shift']?.numericValue  ?? null,
-      inp:        audits['interaction-to-next-paint']?.numericValue ?? null,
+      // INP: prefer Lighthouse lab value; fall back to CrUX 75th-percentile field data
+      inp:        audits['interaction-to-next-paint']?.numericValue
+                    ?? data.loadingExperience?.metrics?.INTERACTION_TO_NEXT_PAINT?.percentile
+                    ?? null,
       ttfb:       audits['server-response-time']?.numericValue      ?? null,
       tapTargets: audits['tap-targets']?.score                      ?? null
     };
