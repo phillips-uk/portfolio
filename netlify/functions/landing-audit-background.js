@@ -91,6 +91,13 @@ exports.handler = async function (event) {
     // 4. Claude content analysis
     const claudeResult = await analyzeWithClaude(parsed);
 
+    // H1 keyword fallback — if Claude returned nothing but H1 is present, use it
+    if (!claudeResult.inferred_keyword && parsed.h1) {
+      claudeResult.inferred_keyword      = parsed.h1.trim();
+      claudeResult.keyword_confidence    = 'low';
+      claudeResult.keyword_confidence_reason = 'Inferred from H1 heading — AI content analysis was unavailable or ambiguous.';
+    }
+
     // 5. Build final report
     const report = buildReport(url, parsed, psiMobile, psiDesktop, claudeResult, isHttps, fetchError);
 
@@ -132,6 +139,13 @@ function parseHtml (html, url, isHttps, fetchError) {
   const h2s             = $('h2').slice(0, 3).map((_, el) => $(el).text().trim()).get();
   const hasViewport     = $('meta[name="viewport"]').length > 0;
 
+  // Privacy link — must be checked BEFORE stripping footer/nav
+  const hasPrivacyLink = $('a').toArray().some(el => {
+    const href = ($(el).attr('href') || '').toLowerCase();
+    const text = $(el).text().toLowerCase();
+    return href.includes('privacy') || text.includes('privacy');
+  });
+
   // Strip noise then get body text
   $('script, style, nav, footer, header, noscript').remove();
   const bodyText     = $('body').text().replace(/\s+/g, ' ').trim();
@@ -163,12 +177,6 @@ function parseHtml (html, url, isHttps, fetchError) {
                         || /['"](AW-\d+)['"]/i.test(html);
   const hasRemarketingTag = /remarketing|allow_ad_personalization/i.test(html);
   const hasRemarketingOnly = !hasAdsConversion && hasRemarketingTag;
-
-  const hasPrivacyLink = $('a').toArray().some(el => {
-    const href = ($(el).attr('href') || '').toLowerCase();
-    const text = $(el).text().toLowerCase();
-    return href.includes('privacy') || text.includes('privacy');
-  });
 
   const socialProofRx  = /testimonial|review|star rating|\d+\s*(reviews?|stars?)|said about|our clients|customers say|recommend/i;
   const socialProofText = socialProofRx.test(bodyText) ? bodyText.substring(0, 2000) : '';
@@ -300,85 +308,89 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     const lcpS = psiMobile.lcp != null ? psiMobile.lcp / 1000 : null;
     if (lcpS !== null) {
       if (lcpS > 4)
-        findings.push({ category: 'performance', severity: 'high', title: 'Slow page load — LCP over 4s', detail: `Google's Landing Page Experience score includes page speed. A ${lcpS.toFixed(1)}-second load on mobile means users who click your ads bounce before they see your offer. You're paying for those clicks.`, fix: 'Optimise images, reduce server response time, and eliminate render-blocking resources.' });
+        findings.push({ category: 'performance', severity: 'high', title: `Slow mobile load — LCP ${lcpS.toFixed(1)}s`, detail: `Google's own research shows that as load time increases from 1s to 5s, the probability of bounce rises by 90%. At ${lcpS.toFixed(1)}s LCP on mobile, a significant share of your paid traffic is leaving before your offer loads — and you're paying for every one of those clicks. Fixing this could materially reduce wasted ad spend.`, fix: 'Optimise images to WebP, reduce server response time, and eliminate render-blocking JavaScript and CSS.' });
       else if (lcpS > 2.5)
-        findings.push({ category: 'performance', severity: 'medium', title: `LCP ${lcpS.toFixed(1)}s — in the warning zone`, detail: `LCP of ${lcpS.toFixed(1)}s is approaching Google's threshold. Users on mobile notice the delay.`, fix: 'Optimise your largest above-fold element — typically a hero image or heading font.' });
+        findings.push({ category: 'performance', severity: 'medium', title: `LCP ${lcpS.toFixed(1)}s — approaching the warning threshold`, detail: `LCP of ${lcpS.toFixed(1)}s is in Google's "Needs improvement" range. It isn't a critical problem yet, but improving it to under 2.5s would strengthen your Landing Page Experience signal and reduce mobile bounce.`, fix: 'Optimise your largest above-fold element — typically the hero image or heading font.' });
     }
 
     const cls = psiMobile.cls;
     if (cls != null) {
       if (cls > 0.25)
-        findings.push({ category: 'performance', severity: 'high', title: 'High layout shift (CLS)', detail: `CLS of ${cls.toFixed(3)} means elements shift after load, causing accidental taps on mobile. On a landing page with a CTA button this directly kills conversion rate.`, fix: 'Add explicit size attributes to images and reserve space for dynamic content (ads, embeds).' });
+        findings.push({ category: 'performance', severity: 'high', title: `High layout shift (CLS ${cls.toFixed(3)})`, detail: `A CLS of ${cls.toFixed(3)} means the page moves after it loads. On mobile, this causes accidental taps on the wrong elements. Google links high CLS to lower engagement and worse Landing Page Experience scores — fixing it is a direct Quality Score improvement lever.`, fix: 'Add explicit width and height to images and reserve space for dynamic elements (banners, embeds, fonts).' });
       else if (cls > 0.1)
-        findings.push({ category: 'performance', severity: 'medium', title: `Layout shift detected (CLS ${cls.toFixed(3)})`, detail: `CLS of ${cls.toFixed(3)} is in the warning zone. Target below 0.1 for a good Landing Page Experience signal.`, fix: 'Identify shifting elements with Chrome DevTools Layout Shift Regions and add fixed dimensions.' });
+        findings.push({ category: 'performance', severity: 'medium', title: `Layout shift in warning zone (CLS ${cls.toFixed(3)})`, detail: `CLS of ${cls.toFixed(3)} is above the 0.1 threshold Google considers good. Getting below 0.1 would move this into a passing Landing Page Experience signal.`, fix: 'Identify shifting elements using Chrome DevTools Layout Shift Regions, then add fixed dimensions.' });
     }
 
     const inp = psiMobile.inp;
     if (inp != null) {
       if (inp > 500)
-        findings.push({ category: 'performance', severity: 'high', title: `Poor interaction responsiveness (INP ${Math.round(inp)}ms)`, detail: `INP of ${Math.round(inp)}ms means the page feels unresponsive to taps. This is a Landing Page Experience signal Google uses in Quality Score.`, fix: 'Reduce JavaScript execution time and minimise main thread work on page load.' });
+        findings.push({ category: 'performance', severity: 'high', title: `Page feels unresponsive on mobile (INP ${Math.round(inp)}ms)`, detail: `INP measures how quickly the page responds to a tap or click. At ${Math.round(inp)}ms, users experience a noticeable delay before anything happens. Google includes this in Landing Page Experience assessment — improving responsiveness can reduce frustration-driven exits from paid traffic.`, fix: 'Reduce JavaScript execution on page load. Defer or async non-essential scripts.' });
       else if (inp > 200)
-        findings.push({ category: 'performance', severity: 'medium', title: `Slow page interaction (INP ${Math.round(inp)}ms)`, detail: `INP of ${Math.round(inp)}ms is above the 200ms threshold Google considers good.`, fix: 'Profile JavaScript performance in Chrome DevTools and defer non-essential scripts.' });
+        findings.push({ category: 'performance', severity: 'medium', title: `Interaction responsiveness needs improvement (INP ${Math.round(inp)}ms)`, detail: `INP of ${Math.round(inp)}ms is above Google's 200ms threshold. Bringing this into the "Good" range would improve the mobile experience for paid traffic and strengthen the Landing Page Experience signal.`, fix: 'Profile JavaScript performance in Chrome DevTools and defer non-essential interaction handlers.' });
     }
 
     const ttfb = psiMobile.ttfb;
     if (ttfb != null) {
       if (ttfb > 1800)
-        findings.push({ category: 'performance', severity: 'high', title: `Slow server response (TTFB ${Math.round(ttfb)}ms)`, detail: `TTFB of ${Math.round(ttfb)}ms means Google's crawler sees a slow page too. Slow server response feeds into Landing Page Experience and can suppress ad delivery.`, fix: 'Upgrade hosting tier, enable CDN caching, or investigate slow database queries.' });
+        findings.push({ category: 'performance', severity: 'high', title: `Slow server response (TTFB ${Math.round(ttfb)}ms)`, detail: `TTFB of ${Math.round(ttfb)}ms is the time before the browser receives its first byte from your server. Google's crawler experiences this delay too — and it feeds into Landing Page Experience scoring. A faster server means faster everything else on the page.`, fix: 'Upgrade hosting, enable server-side caching, or move to a CDN-backed infrastructure.' });
       else if (ttfb > 800)
-        findings.push({ category: 'performance', severity: 'medium', title: `Server response time above threshold (${Math.round(ttfb)}ms)`, detail: `TTFB of ${Math.round(ttfb)}ms is above Google's 800ms threshold.`, fix: 'Enable server-side caching and review hosting configuration.' });
+        findings.push({ category: 'performance', severity: 'medium', title: `Server response time above target (${Math.round(ttfb)}ms)`, detail: `TTFB of ${Math.round(ttfb)}ms is above Google's 800ms good threshold. Getting below 800ms would remove this as a drag on your overall performance score.`, fix: 'Enable server-side caching and check for slow database queries or unoptimised hosting.' });
     }
 
     const ms = psiMobile.score;
     if (ms < 30)
-      findings.push({ category: 'mobile', severity: 'critical', title: `Critical mobile performance score (${ms})`, detail: `Mobile performance score of ${ms} is critically low. Over 60% of paid search clicks are on mobile. This score is directly damaging Landing Page Experience and raising your CPCs.`, fix: 'Run a full Core Web Vitals audit. Address LCP and CLS first — they carry the most weight.' });
+      findings.push({ category: 'mobile', severity: 'critical', title: `Critical mobile score — ${ms}/100`, detail: `A mobile score of ${ms} places this page in Google's lowest performance band. Over 60% of paid search clicks come from mobile — this score is actively degrading your Landing Page Experience, which feeds directly into Quality Score and CPCs. Improving it to 50+ could reduce CPCs and increase the volume of clicks you receive at the same budget.`, fix: 'Address LCP and CLS first — they carry the most weight in the performance score. Use PageSpeed Insights for the full optimisation list.' });
     else if (ms < 50)
-      findings.push({ category: 'mobile', severity: 'high', title: `Poor mobile performance (${ms}/100)`, detail: `Mobile performance score of ${ms} is well below the threshold where it stops hurting your CPC. Most of your paid traffic is on mobile.`, fix: 'Address the LCP and CLS findings above first. Then run PageSpeed Insights for a full optimisation plan.' });
+      findings.push({ category: 'mobile', severity: 'high', title: `Poor mobile score — ${ms}/100`, detail: `Mobile score of ${ms} is in the "Poor" band. With over 60% of paid search clicks on mobile, this is hurting the majority of your ad traffic. Moving from "Poor" to "Needs improvement" (50+) will reduce bounce from mobile clicks and strengthen your Landing Page Experience signal.`, fix: 'Work through the LCP and CLS findings in this report first. Then run PageSpeed Insights for additional quick wins.' });
     else if (ms < 90)
-      findings.push({ category: 'mobile', severity: 'medium', title: `Mobile performance score ${ms} — room to improve`, detail: `Mobile score of ${ms}. Over 60% of paid search clicks are on mobile. A sub-90 score means slower load times for your majority audience.`, fix: "Use the PageSpeed Insights report for this page to find the highest-impact quick wins." });
+      findings.push({ category: 'mobile', severity: 'medium', title: `Mobile score ${ms}/100 — room to improve`, detail: `Mobile score of ${ms} is in the "Needs improvement" band. Over 60% of paid search clicks are on mobile — getting above 90 would move this into Google's "Good" range and remove it as a drag on Landing Page Experience.`, fix: 'Run PageSpeed Insights for this page and action the highest-opportunity items in the Diagnostics section.' });
 
     if (psiMobile.tapTargets != null && psiMobile.tapTargets < 0.9)
-      findings.push({ category: 'mobile', severity: 'low', title: 'Some tap targets may be too small', detail: 'Buttons or links below 48px in tap area are harder to hit accurately on mobile, reducing CTA engagement.', fix: 'Ensure all interactive elements are at least 48x48 CSS pixels with 8px spacing between them.' });
+      findings.push({ category: 'mobile', severity: 'low', title: 'Some tap targets may be too small for mobile', detail: 'PageSpeed data shows some interactive elements may be below the recommended 48x48px touch target size. Small tap targets cause misclicks on mobile, which can redirect users away from your CTA.', fix: 'Ensure all buttons and links are at least 48x48 CSS pixels with 8px of space between them.' });
   }
 
   // ── Mobile structure ───────────────────────────────────────────────────────
   if (!parsed.hasViewport)
-    findings.push({ category: 'mobile', severity: 'high', title: 'No viewport meta tag', detail: 'No viewport meta tag detected. Mobile browsers render the page at desktop width and scale it down — the page is likely broken on mobile.', fix: 'Add <meta name="viewport" content="width=device-width, initial-scale=1"> to the <head>.' });
+    findings.push({ category: 'mobile', severity: 'high', title: 'No viewport meta tag — page may be broken on mobile', detail: 'Without a viewport meta tag, mobile browsers render the page at full desktop width and scale it down. This makes the page nearly unusable on a phone. Given that most paid search traffic is on mobile, this is likely causing high immediate bounce.', fix: 'Add <meta name="viewport" content="width=device-width, initial-scale=1"> to the <head> tag.' });
 
   // ── Tracking ───────────────────────────────────────────────────────────────
   if (!isHttps)
-    findings.push({ category: 'tracking', severity: 'critical', title: 'Page served over HTTP', detail: "Google Chrome flags this page as insecure. Google's ad policy requires HTTPS landing pages — your ads may be disapproved or delivery limited.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS.' });
+    findings.push({ category: 'tracking', severity: 'critical', title: 'Page served over HTTP — ads may be disapproved', detail: "Chrome shows this page as insecure. Google's advertising policy requires HTTPS landing pages — ads pointing to HTTP destinations are at risk of disapproval or limited delivery. Switching to HTTPS also improves trust signals for paid traffic visitors.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS. Most hosting platforms include this free.' });
 
   if (!parsed.hasGtm)
-    findings.push({ category: 'tracking', severity: 'high', title: 'GTM not detected', detail: 'Without GTM, deploying or updating tracking tags requires a developer code change. This creates delays and gaps in conversion data.', fix: 'Install Google Tag Manager. Configuration takes 30 minutes and gives you control over all tracking without developer involvement.' });
+    findings.push({ category: 'tracking', severity: 'high', title: 'No tag manager detected', detail: 'Without a tag management system, adding or updating any tracking requires a code deployment. This creates gaps in conversion data when campaigns change. Installing GTM gives you full control over all tracking without developer involvement — future changes take minutes, not days.', fix: 'Install Google Tag Manager. Add the container snippet to every page, then migrate existing tracking tags into GTM.' });
 
   if (!parsed.hasGa4)
-    findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into what users do after clicking your ad — no session data, no engagement signals, no audience building.', fix: 'Add GA4 via GTM. At minimum, configure page view, scroll depth, and form submission events.' });
+    findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into post-click behaviour — what users do after your ad sends them here. GA4 also feeds audience data back into Google Ads for Smart Bidding signals. Adding it gives you session data, engagement metrics, and the ability to build retargeting audiences from this traffic.', fix: 'Add the GA4 tag via GTM. At minimum configure page view, scroll depth, and form submission events.' });
 
   if (!parsed.hasAdsConversion) {
-    if (parsed.hasRemarketingOnly)
-      findings.push({ category: 'tracking', severity: 'medium', title: 'Remarketing tag found but no conversion event', detail: 'You can build remarketing audiences but cannot measure which ads are driving conversions. Smart Bidding cannot optimise toward a goal.', fix: 'Add a Google Ads conversion tag for your primary goal (form submission, phone call, or purchase) via GTM.' });
-    else
-      findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: 'You are spending money on ads with zero ability to measure whether they work. Smart Bidding is also optimising blind — it has no conversion signal to learn from.', fix: 'Install a Google Ads conversion tag via GTM for your primary conversion goal. This is the single highest-priority fix on this page.' });
+    if (parsed.hasRemarketingOnly) {
+      findings.push({ category: 'tracking', severity: 'medium', title: 'Remarketing tag present — no conversion event', detail: 'The data shows you can build remarketing audiences from this page, but there is no conversion event firing. Smart Bidding strategies (Target CPA, Maximise Conversions) require conversion data to optimise toward. Without it, they are effectively guessing at which clicks to bid up.', fix: 'Add a Google Ads conversion tag for your primary conversion goal via GTM and fire it on the confirmation page or success event.' });
+    } else if (parsed.hasGtm) {
+      findings.push({ category: 'tracking', severity: 'high', title: 'No Google Ads conversion tag detected in page source', detail: 'GTM is installed, so a conversion tag may already be firing through the container — we cannot inspect GTM from outside. If it is not configured, Smart Bidding has no signal to optimise from, and you have no way to attribute bookings to specific campaigns. Verify in Google Tag Assistant that a conversion tag fires on your key conversion event.', fix: 'Open Tag Assistant, navigate to this page, and confirm a Google Ads conversion tag fires on form submission or booking confirmation. If it does not, add one via GTM.' });
+    } else {
+      findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: "The data shows no Google Ads conversion tag in the page source and no GTM container to fire one dynamically. Without a conversion tag, Smart Bidding strategies have no goal to optimise toward — Google's own data shows properly configured Smart Bidding delivers 35% more conversions than running without conversion data. This is the most important tracking fix for any active paid search campaign.", fix: 'Install GTM, then add a Google Ads conversion tag that fires on your primary conversion event (form submission, booking, enquiry).' });
+    }
   }
 
   // ── Landing page experience ────────────────────────────────────────────────
   if (!parsed.h1)
-    findings.push({ category: 'landing_page_experience', severity: 'critical', title: 'No H1 tag', detail: "Google's crawler gives weight to H1 text for relevance scoring. No H1 means no primary relevance signal — this is a direct Quality Score input missing.", fix: "Add a clear H1 that contains your primary target keyword. It should be the first prominent heading a visitor sees." });
+    findings.push({ category: 'landing_page_experience', severity: 'critical', title: 'No H1 tag found', detail: "The H1 is one of the primary on-page signals Google uses to assess page relevance. Without it, the page has no explicit keyword anchor for Google's quality assessment — this directly affects Landing Page Experience, which is one of the three inputs to Quality Score. Adding a keyword-rich H1 is one of the fastest ways to improve relevance signals for this URL.", fix: 'Add a clear H1 that includes your primary target keyword. It should be the first prominent heading a visitor sees on the page.' });
 
   if (!parsed.hasPrivacyLink)
-    findings.push({ category: 'trust_signals', severity: 'medium', title: 'No privacy policy link found', detail: 'No privacy policy link detected. Beyond GDPR compliance, its absence reduces trust for paid traffic — users who click ads are evaluating credibility before converting.', fix: 'Add a privacy policy page and link to it from the footer. One line is enough.' });
+    findings.push({ category: 'trust_signals', severity: 'medium', title: 'No privacy policy link detected', detail: 'No privacy policy link was found in the accessible content of this page. If it exists in a JavaScript-rendered footer our tool may have missed it — verify in your browser. If it is genuinely missing: beyond GDPR compliance, users arriving from paid ads are actively evaluating your credibility. A visible privacy policy reduces friction for first-time visitors making a booking enquiry.', fix: 'Add a link to your privacy policy in the page footer. If one already exists via dynamic loading, no action needed — verify it renders in your browser.' });
 
   // ── Conversion architecture ────────────────────────────────────────────────
-  if (parsed.linkCount > 20)
-    findings.push({ category: 'conversion_architecture', severity: 'high', title: `High attention ratio — ${parsed.linkCount} links compete with CTA`, detail: `${parsed.linkCount} clickable links dilute focus from the primary CTA. On a paid traffic landing page, every link that isn't the CTA is a potential exit.`, fix: 'Remove navigation and non-essential internal links. A dedicated landing page should have one exit: the conversion action.' });
-  else if (parsed.linkCount > 10)
-    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.linkCount} links competing with primary CTA`, detail: `${parsed.linkCount} links on this page create distraction. Aim for a 5:1 or better link-to-CTA ratio for paid traffic landing pages.`, fix: 'Remove top navigation and reduce internal links to only those that support the conversion goal.' });
+  if (parsed.linkCount > 20) {
+    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.linkCount} links suggest a full website page — consider a dedicated landing page`, detail: `This page has ${parsed.linkCount} links, which is typical of a full website page rather than a purpose-built landing page. Unbounce's conversion research shows dedicated landing pages — with navigation removed and a single conversion goal — outperform website pages by 25–40% for paid traffic. The opportunity here is not that something is broken, but that a dedicated landing page for this campaign could significantly improve your cost per lead.`, fix: 'Consider building a dedicated landing page for this ad campaign — same offer, same copy, but with navigation stripped and a single CTA. Your main website page remains untouched.' });
+  } else if (parsed.linkCount > 10) {
+    findings.push({ category: 'conversion_architecture', severity: 'low', title: `${parsed.linkCount} links competing with primary CTA`, detail: `With ${parsed.linkCount} links on the page, there are multiple exits competing with your CTA for attention. Research from WordStream shows that reducing the number of links on a landing page to a single CTA can improve conversion rate by up to 371%. Even removing the top navigation can produce measurable improvements.`, fix: 'Remove or hide the top navigation bar for paid traffic. Even a simple change like this can increase the share of visitors who reach your CTA.' });
+  }
 
   if (parsed.formFieldCount >= 7)
-    findings.push({ category: 'conversion_architecture', severity: 'high', title: `${parsed.formFieldCount}-field form is a significant barrier`, detail: `A ${parsed.formFieldCount}-field form has a high abandonment rate for paid traffic. Each additional field reduces completion rate.`, fix: 'Cut to 3 fields maximum. Collect additional information after the first conversion event.' });
+    findings.push({ category: 'conversion_architecture', severity: 'high', title: `${parsed.formFieldCount}-field form — high abandonment risk`, detail: `A ${parsed.formFieldCount}-field form is a significant barrier for users who clicked an ad in a moment of intent. EConsultancy research found that reducing form fields from 11 to 4 increased conversions by 160%. For paid traffic especially, every field is a reason to leave.`, fix: 'Reduce to 3 fields maximum for the initial enquiry. You can collect additional details in the follow-up process after the first conversion event.' });
   else if (parsed.formFieldCount >= 4)
-    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.formFieldCount}-field form has friction`, detail: `A ${parsed.formFieldCount}-field form is above optimal for paid traffic conversion. Is every field essential at this stage?`, fix: 'Review each field. If it can be collected later in the process, remove it from this form.' });
+    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.formFieldCount}-field form — reducing length could lift completions`, detail: `A ${parsed.formFieldCount}-field form is above the optimal length for paid traffic. Research shows reducing from 5 to 3 fields can improve form completion rates by 20–30%. Is every field genuinely needed before you can respond to an enquiry?`, fix: 'Review each field. If any information can be collected after first contact, remove it from this form.' });
 
   // ── Merge Claude content findings ──────────────────────────────────────────
   const claudeFindings = (claude.findings || []).filter(f => f.severity && f.title && f.detail && f.fix);

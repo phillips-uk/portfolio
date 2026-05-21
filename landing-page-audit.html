@@ -416,6 +416,23 @@
     }
     .btn-cta:hover { background: var(--amber-light); }
 
+    /* Share & export */
+    .share-bar {
+      margin-top: 40px; padding: 24px;
+      background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .share-bar-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); margin-bottom: 14px; }
+    .share-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+    .share-btn {
+      padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); background: #fff; color: var(--ink);
+      text-decoration: none; display: inline-block; transition: border-color 0.15s, color 0.15s;
+    }
+    .share-btn:hover { border-color: var(--amber); color: var(--amber); }
+    .share-btn-primary { background: var(--amber); border-color: var(--amber); color: #fff; }
+    .share-btn-primary:hover { background: var(--amber-light); border-color: var(--amber-light); color: #fff; }
+    .share-confirm { font-size: 12px; color: var(--amber); margin-top: 10px; display: none; }
+
     /* Cross-link */
     .crosslink-bar {
       margin-top: 48px; padding: 20px 24px;
@@ -428,7 +445,7 @@
 
     /* PDF print */
     @media print {
-      nav, #input-section, #loading-section, .content-section, .cta-section, .crosslink-bar { display: none !important; }
+      nav, #input-section, #loading-section, .content-section, .cta-section, .crosslink-bar, .share-bar { display: none !important; }
       #report-section { display: block !important; }
       .report-header { margin: 0; border-radius: 8px; }
       .metrics-grid { margin: 0 0 32px; border-radius: 8px; }
@@ -612,9 +629,23 @@
 </main>
 
 <script>
-  var currentJobId = null;
-  var pollInterval = null;
-  var pollCount    = 0;
+  var currentJobId  = null;
+  var currentReport = null;
+  var pollInterval  = null;
+  var pollCount     = 0;
+
+  // ── Auto-load report from URL if ?id= is present ──────────────────────────
+  window.addEventListener('DOMContentLoaded', function () {
+    var urlId = new URLSearchParams(window.location.search).get('id');
+    if (urlId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(urlId)) {
+      currentJobId = urlId;
+      document.getElementById('input-section').style.display   = 'none';
+      document.getElementById('loading-section').style.display = 'block';
+      activateStep(4);
+      pollCount = 0;
+      pollInterval = setInterval(pollStatus, 2000);
+    }
+  });
 
   function startAudit() {
     var raw = document.getElementById('url-input').value.trim();
@@ -629,11 +660,16 @@
       return;
     }
 
-    // Generate job ID
+    // Generate job ID and push to URL for sharing/bookmarking
     currentJobId = crypto.randomUUID();
+    window.history.pushState({}, '', '/landing-page-audit?id=' + currentJobId);
 
     document.getElementById('input-section').style.display   = 'none';
     document.getElementById('loading-section').style.display = 'block';
+
+    // GTM event
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ event: 'lp_audit_started', audited_url: url });
 
     // Trigger background function (returns 202)
     fetch('/.netlify/functions/landing-audit-background', {
@@ -697,10 +733,31 @@
   }
 
   function showReport(report) {
+    currentReport = report;
     document.getElementById('loading-section').style.display  = 'none';
     document.getElementById('report-section').style.display   = 'block';
     document.getElementById('report-html').innerHTML = buildReportHTML(report);
     document.getElementById('report-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // GTM event
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      event:           'lp_audit_completed',
+      audited_url:     report.url,
+      audit_score:     report.health_score,
+      audit_band:      report.score_band,
+      inferred_keyword: report.inferred_keyword || ''
+    });
+  }
+
+  function resetToStart() {
+    window.history.pushState({}, '', '/landing-page-audit');
+    currentJobId  = null;
+    currentReport = null;
+    clearInterval(pollInterval);
+    document.getElementById('report-section').style.display = 'none';
+    document.getElementById('input-section').style.display  = 'block';
+    document.getElementById('url-input').value = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ── Report HTML builder ────────────────────────────────────────────────────
@@ -848,9 +905,22 @@
       html += '</div>';
     });
 
-    // PDF button
-    html += '<div style="margin-top:40px;text-align:center;padding-top:32px;border-top:1px solid var(--border)">'
-      + '<button onclick="window.print()" style="background:none;border:1.5px solid var(--border);color:var(--mid);padding:10px 22px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.03em;">Download PDF</button>'
+    // Restart button
+    html += '<div style="margin-top:32px;padding-top:28px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center;">'
+      + '<button onclick="resetToStart()" style="background:none;border:1.5px solid var(--border);color:var(--mid);padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">← Audit another page</button>'
+      + '<button onclick="window.print()" style="background:none;border:1.5px solid var(--border);color:var(--mid);padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">Download PDF</button>'
+      + '</div>';
+
+    // Share & export bar
+    html += '<div class="share-bar">'
+      + '<div class="share-bar-label">Share this report</div>'
+      + '<div class="share-buttons">'
+      + '<button class="share-btn share-btn-primary" id="copy-link-btn" onclick="copyReportLink()">Copy report link</button>'
+      + '<a href="#" class="share-btn" onclick="shareOnTwitter();return false;">Share on X</a>'
+      + '<a href="#" class="share-btn" onclick="shareOnLinkedIn();return false;">Share on LinkedIn</a>'
+      + '<button class="share-btn" onclick="exportMarkdown()" title="Download as .md file for Obsidian or Notion">Export to Obsidian</button>'
+      + '</div>'
+      + '<div class="share-confirm" id="share-confirm">Link copied to clipboard.</div>'
       + '</div>';
 
     return html;
@@ -912,6 +982,134 @@
   function toggleFaq(btn) {
     var item = btn.parentElement;
     item.classList.toggle('open');
+  }
+
+  // ── Share & export ─────────────────────────────────────────────────────────
+
+  function copyReportLink() {
+    var reportUrl = window.location.origin + '/landing-page-audit?id=' + currentJobId;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(reportUrl).then(function () {
+        var btn = document.getElementById('copy-link-btn');
+        var msg = document.getElementById('share-confirm');
+        if (btn) { btn.textContent = '✓ Copied'; setTimeout(function () { btn.textContent = 'Copy report link'; }, 2500); }
+        if (msg) { msg.style.display = 'block'; setTimeout(function () { msg.style.display = 'none'; }, 3000); }
+      }).catch(function () { prompt('Copy your report link:', reportUrl); });
+    } else {
+      prompt('Copy your report link:', reportUrl);
+    }
+    dataLayer.push({ event: 'report_shared', share_channel: 'copy_link', audited_url: currentReport ? currentReport.url : '' });
+  }
+
+  function shareOnTwitter() {
+    if (!currentReport) return;
+    var reportUrl  = encodeURIComponent(window.location.origin + '/landing-page-audit?id=' + currentJobId);
+    var kw         = currentReport.inferred_keyword ? ' — targeting "' + currentReport.inferred_keyword + '"' : '';
+    var score      = currentReport.health_score;
+    var text       = encodeURIComponent('Just ran a free landing page audit for Google Ads' + kw + '. Score: ' + score + '/100. Full report:');
+    window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + reportUrl, '_blank');
+    dataLayer.push({ event: 'report_shared', share_channel: 'twitter', audited_url: currentReport.url });
+  }
+
+  function shareOnLinkedIn() {
+    if (!currentReport) return;
+    var reportUrl = encodeURIComponent(window.location.origin + '/landing-page-audit?id=' + currentJobId);
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + reportUrl, '_blank');
+    dataLayer.push({ event: 'report_shared', share_channel: 'linkedin', audited_url: currentReport.url });
+  }
+
+  function exportMarkdown() {
+    if (!currentReport) return;
+    var r    = currentReport;
+    var cats = r.categories || {};
+    var perf = cats.performance || {};
+    var date = new Date(r.audited_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    var slug = (r.url || '').replace(/https?:\/\//,'').replace(/[^a-z0-9]/gi,'-').toLowerCase().substring(0, 60);
+
+    var lines = [
+      '---',
+      'tags: [landing-page-audit, google-ads]',
+      'url: "' + (r.url || '') + '"',
+      'audited: ' + (r.audited_at || '').slice(0, 10),
+      'score: ' + r.health_score,
+      'band: ' + r.score_band,
+      'keyword: "' + (r.inferred_keyword || 'unknown') + '"',
+      '---',
+      '',
+      '# Landing Page Audit — ' + (r.inferred_keyword || r.url),
+      '',
+      '| | |',
+      '|---|---|',
+      '| **URL** | ' + (r.url || '') + ' |',
+      '| **Audited** | ' + date + ' |',
+      '| **Score** | ' + r.health_score + '/100 — ' + r.score_band + ' |',
+      '| **Inferred keyword** | ' + (r.inferred_keyword || 'Not identified') + ' (' + (r.keyword_confidence || 'none') + ' confidence) |',
+      '',
+      '## Core Web Vitals (mobile)',
+      '',
+      '| Metric | Value |',
+      '|--------|-------|',
+      '| LCP | ' + (perf.lcp || 'N/A') + ' |',
+      '| CLS | ' + (perf.cls || 'N/A') + ' |',
+      '| INP | ' + (perf.inp || 'N/A') + ' |',
+      '| TTFB | ' + (perf.ttfb || 'N/A') + ' |',
+      '| Mobile score | ' + (perf.mobile_score != null ? perf.mobile_score + '/100' : 'N/A') + ' |',
+      '| Desktop score | ' + (perf.desktop_score != null ? perf.desktop_score + '/100' : 'N/A') + ' |',
+      ''
+    ];
+
+    if (r.priority_actions && r.priority_actions.length) {
+      lines.push('## Priority Actions', '');
+      r.priority_actions.forEach(function (a, i) {
+        lines.push((i + 1) + '. **[' + (a.severity || '').toUpperCase() + '] ' + (a.title || '') + '**');
+        lines.push('   ' + (a.fix || ''));
+        lines.push('');
+      });
+    }
+
+    var sections = [
+      { key: 'performance',             label: 'Technical Performance' },
+      { key: 'keyword_clarity',         label: 'Keyword & Intent' },
+      { key: 'landing_page_experience', label: 'Landing Page Experience' },
+      { key: 'conversion_architecture', label: 'Conversion Architecture' },
+      { key: 'trust_signals',           label: 'Trust Signals' },
+      { key: 'tracking',                label: 'Tracking Health' },
+      { key: 'mobile',                  label: 'Mobile Experience' }
+    ];
+
+    sections.forEach(function (sec) {
+      var catMap = { mobile: ['mobile'], performance: ['performance'] };
+      var catKeys = catMap[sec.key] || [sec.key];
+      var sFindings = (r.findings || []).filter(function (f) { return catKeys.indexOf(f.category) !== -1; });
+      lines.push('## ' + sec.label, '');
+      if (sFindings.length === 0) {
+        lines.push('No issues found.', '');
+      } else {
+        sFindings.forEach(function (f) {
+          lines.push('### ' + (f.severity || '').charAt(0).toUpperCase() + (f.severity || '').slice(1) + ' — ' + (f.title || ''));
+          lines.push('');
+          lines.push(f.detail || '');
+          lines.push('');
+          lines.push('**Fix:** ' + (f.fix || ''));
+          lines.push('');
+        });
+      }
+    });
+
+    lines.push('---');
+    lines.push('*Generated by [Phillips. Landing Page Audit Tool](https://www.phillips-uk.com/landing-page-audit)*');
+
+    var md   = lines.join('\n');
+    var blob = new Blob([md], { type: 'text/markdown; charset=utf-8' });
+    var link = document.createElement('a');
+    link.href     = URL.createObjectURL(blob);
+    link.download = 'lp-audit-' + new Date().toISOString().slice(0, 10) + '-' + slug + '.md';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+
+    dataLayer.push({ event: 'report_exported', export_format: 'markdown', audited_url: r.url });
   }
 </script>
 
