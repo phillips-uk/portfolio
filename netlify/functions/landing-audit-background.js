@@ -688,7 +688,8 @@ async function analyzeWithClaude (parsed) {
   const ecommerceContext = isEcommercePrompt
     ? `\n\nECOMMERCE CONTEXT — frame everything for paid Shopping/Search/PMAX campaigns:
 - Do NOT flag: missing contact forms, missing phone numbers, high link counts, or absence of lead-gen CTAs
-- DO assess: product/category keyword relevance, CTA clarity (Add to Cart / Buy Now / Shop), product trust signals (reviews, ratings, returns policy), and ad-to-page message match
+- Do NOT flag: missing 'Add to Cart', 'Quick View', or 'Quick Shop' buttons on collection/category pages — clicking through to a product detail page is standard ecommerce behaviour, not a CTA problem
+- DO assess: product/category keyword relevance, page-to-ad message match, product trust signals (reviews, ratings, returns policy), and whether the collection page clearly communicates the range and value of products
 - Conversion friction = purchase friction, not lead capture friction`
     : '';
 
