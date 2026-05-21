@@ -843,62 +843,11 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       findings.push({ category: 'mobile', severity: 'low', title: 'Some tap targets may be too small for mobile', detail: 'PageSpeed data shows some interactive elements may be below the recommended 48x48px touch target size. Small tap targets cause misclicks on mobile, which can redirect users away from your CTA.', fix: 'Ensure all buttons and links are at least 48x48 CSS pixels with 8px of space between them.' });
   }
 
-  // ── Tracking — runs even for blocked pages when PSI content signals available ─
-  // (PSI scans all loaded network requests, so tracking detection is accurate
-  //  even when Cloudflare blocks our direct fetch)
+  // ── HTTPS — always check, regardless of page type ─────────────────────────
   if (!parsed.fetchFailed || parsed.contentFromPsi) {
-
-  // HTTPS — always check, regardless of page type
-  if (!isHttps)
-    findings.push({ category: 'tracking', severity: 'critical', title: 'Page served over HTTP — ads may be disapproved', detail: "Chrome shows this page as insecure. Google's advertising policy requires HTTPS landing pages — ads pointing to HTTP destinations are at risk of disapproval or limited delivery. Switching to HTTPS also improves trust signals for paid traffic visitors.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS. Most hosting platforms include this free.' });
-
-  // ── Platform info note — shown whenever a known platform is detected ──────
-  // Shopify/WooCommerce/etc. can inject tracking via server-side GTM, Customer Events API,
-  // or platform pixels that are not visible in the static page HTML.
-  // We flag this regardless of whether the page is eCommerce or lead-gen, because
-  // it affects how the tracking findings below should be interpreted.
-  if (knownPlatform) {
-    const platformName = knownPlatform.charAt(0).toUpperCase() + knownPlatform.slice(1);
-    findings.push({
-      category: 'tracking',
-      severity: 'info',
-      title: `Tracking scan limited — ${platformName} store detected`,
-      detail: `${platformName} stores commonly use server-side GTM, platform pixels, or Customer Events APIs that are not visible in the page HTML. GTM, GA4, and Google Ads conversion events may all be active without appearing in the static source. The findings below reflect what this scanner can detect — verify in Google Tag Assistant for the full picture.`,
-      fix: `Verify your conversion tracking is firing correctly in Google Tag Assistant. For a full tracking health check against your Google Ads account, use the Google Ads Audit tool at https://www.phillips-uk.com/google-ads-audit.`
-    });
+    if (!isHttps)
+      findings.push({ category: 'landing_page_experience', severity: 'critical', title: 'Page served over HTTP — ads may be disapproved', detail: "Chrome shows this page as insecure. Google's advertising policy requires HTTPS landing pages — ads pointing to HTTP destinations are at risk of disapproval or limited delivery. Switching to HTTPS also improves trust signals for paid traffic visitors.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS. Most hosting platforms include this free.' });
   }
-
-  // ── Standard tracking checks ───────────────────────────────────────────────
-  // Run for all lead-gen pages. Skip for eCommerce pages on known platforms —
-  // their conversion events fire at the platform level (e.g. Shopify checkout),
-  // not on individual product/collection pages, so static scan findings would
-  // be misleading.
-  if (!isEcommerce || !knownPlatform) {
-
-    if (!parsed.hasGtm)
-      findings.push({ category: 'tracking', severity: 'high', title: 'No tag manager detected', detail: 'Without a tag management system, adding or updating any tracking requires a code deployment. This creates gaps in conversion data when campaigns change. Installing GTM gives you full control over all tracking without developer involvement — future changes take minutes, not days.', fix: 'Install Google Tag Manager. Add the container snippet to every page, then migrate existing tracking tags into GTM.' });
-
-    if (!parsed.hasGa4) {
-      if (parsed.hasGtm) {
-        findings.push({ category: 'tracking', severity: 'medium', title: 'GA4 not detected in page source — verify it is firing via GTM', detail: 'GTM is installed, so GA4 may already be active inside the container — this tool cannot inspect GTM tags from outside the page. If GA4 is genuinely missing, you lose all post-click behavioural data and the audience signals that feed Smart Bidding. A quick check in Google Tag Assistant will confirm whether the GA4 tag is firing.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a GA4 Configuration tag fires on page load. If it is not there, add it inside GTM.' });
-      } else {
-        findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into post-click behaviour — what users do after your ad sends them here. GA4 also feeds audience data back into Google Ads for Smart Bidding signals. Adding it gives you session data, engagement metrics, and the ability to build retargeting audiences from this traffic.', fix: 'Add the GA4 tag via GTM. At minimum configure page view, scroll depth, and form submission events.' });
-      }
-    }
-
-    if (!parsed.hasAdsConversion) {
-      if (parsed.hasRemarketingOnly) {
-        findings.push({ category: 'tracking', severity: 'medium', title: 'Remarketing tag present — no conversion event', detail: 'The data shows you can build remarketing audiences from this page, but there is no conversion event firing. Smart Bidding strategies (Target CPA, Maximise Conversions) require conversion data to optimise toward. Without it, they are effectively guessing at which clicks to bid up.', fix: 'Add a Google Ads conversion tag for your primary conversion goal via GTM and fire it on the confirmation page or success event.' });
-      } else if (parsed.hasGtm) {
-        findings.push({ category: 'tracking', severity: 'medium', title: 'Verify Google Ads conversion tag is firing via GTM', detail: 'GTM is installed, so a conversion tag may already be active through the container — this tool cannot inspect GTM tags from outside. If a conversion tag is not configured, Smart Bidding has no signal to optimise toward and you cannot attribute leads to specific campaigns. A quick check in Google Tag Assistant takes two minutes and rules this out.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a Google Ads conversion tag fires on your key conversion event (form submission, booking confirmation, etc.).' });
-      } else {
-        findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: "The data shows no Google Ads conversion tag in the page source and no GTM container to fire one dynamically. Without a conversion tag, Smart Bidding strategies have no goal to optimise toward — Google's own data shows properly configured Smart Bidding delivers 35% more conversions than running without conversion data. This is the most important tracking fix for any active paid search campaign.", fix: 'Install GTM, then add a Google Ads conversion tag that fires on your primary conversion event (form submission, booking, enquiry).' });
-      }
-    }
-
-  } // end standard tracking checks
-
-  } // end tracking block
 
   // ── HTML-only findings — require direct page content (skip for blocked pages) ─
   if (!parsed.fetchFailed) {
@@ -973,14 +922,6 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   // ── Score ──────────────────────────────────────────────────────────────────
   let score = 100;
   let criticalCount = 0;
-  // Score cap for missing conversion tag only applies when page was actually analysed
-  // (when fetch failed, hasAdsConversion/hasGtm are false by default — cap would be misleading)
-  // eCommerce pages with known platforms use server-side tracking — cap would be a false penalty
-  // Cap score when tracking is genuinely absent on a non-eCommerce page
-  // (eCommerce pages on known platforms are excluded — their conversion events
-  //  fire at the platform/checkout level and aren't visible in static HTML)
-  const noConversionAndNoGtm = !parsed.fetchFailed && !(isEcommerce && knownPlatform) && !parsed.hasAdsConversion && !parsed.hasGtm;
-
   for (const f of findings) {
     if      (f.severity === 'critical') { score -= 20; criticalCount++; }
     else if (f.severity === 'high')     score -= 10;
@@ -990,9 +931,8 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     // 'info' = contextual note, blue display, no score change
   }
 
-  if      (criticalCount >= 2)   score = Math.min(score, 45);
-  else if (criticalCount >= 1)   score = Math.min(score, 65);
-  if      (noConversionAndNoGtm) score = Math.min(score, 65);
+  if      (criticalCount >= 2) score = Math.min(score, 45);
+  else if (criticalCount >= 1) score = Math.min(score, 65);
   score = Math.max(5, score);
 
   const scoreBand = score >= 80 ? 'Strong' : score >= 60 ? 'Average' : score >= 40 ? 'Needs work' : 'Critical';

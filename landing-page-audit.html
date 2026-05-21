@@ -733,7 +733,6 @@
           <li>An assessment of how Google's quality system sees your page</li>
           <li>A diagnosis of what's stopping users from converting</li>
           <li>Which credibility signals are present or missing</li>
-          <li>Whether your tracking can actually measure ad performance</li>
           <li>A mobile-specific assessment — most paid clicks come from mobile</li>
         </ul>
       </div>
@@ -1123,7 +1122,6 @@
 
   function buildActionPlan(r) {
     var impactMap = {
-      tracking:                'Smart Bidding signal',
       performance:             'Paid traffic retention',
       landing_page_experience: 'Quality Score & CPCs',
       conversion_architecture: 'Conversion rate & CPA',
@@ -1207,9 +1205,9 @@
       + '</div>'
       + '<div class="score-info-panel" id="score-info-panel">'
       + '<strong>How this score is calculated</strong><br>'
-      + 'The audit runs checks across 7 categories. The score starts at 100 and deducts points for each issue found, weighted by severity:'
+      + 'The audit runs checks across 6 categories. The score starts at 100 and deducts points for each issue found, weighted by severity:'
       + '<table>'
-      + '<tr><td><span class="sev-dot" style="background:#C0392B;"></span>Critical</td><td>&minus;20 points</td><td>Missing tracking, HTTP, no H1</td></tr>'
+      + '<tr><td><span class="sev-dot" style="background:#C0392B;"></span>Critical</td><td>&minus;20 points</td><td>HTTP, no H1, major conversion blockers</td></tr>'
       + '<tr><td><span class="sev-dot" style="background:#D4691B;"></span>High</td><td>&minus;10 points</td><td>Poor performance, broken mobile, weak relevance</td></tr>'
       + '<tr><td><span class="sev-dot" style="background:#D4A017;"></span>Medium</td><td>&minus;5 points</td><td>Optimisation opportunities with measurable impact</td></tr>'
       + '<tr><td><span class="sev-dot" style="background:#6B6B6B;"></span>Low</td><td>&minus;2 points</td><td>Minor improvements, best practice gaps</td></tr>'
@@ -1317,7 +1315,6 @@
       { key: 'landing_page_experience',label: 'Landing Page Experience', cats: ['landing_page_experience'] },
       { key: 'conversion_architecture',label: 'Conversion Architecture', cats: ['conversion_architecture'] },
       { key: 'trust_signals',          label: 'Trust Signals',           cats: ['trust_signals'] },
-      { key: 'tracking',               label: 'Tracking Health',         cats: ['tracking'] },
       { key: 'mobile',                 label: 'Mobile Experience',       cats: ['mobile', 'performance'] }
     ];
 
@@ -1372,17 +1369,6 @@
       }
     }
 
-    // Tracking section special
-    var trackingRows = '';
-    if (cats.tracking) {
-      var tr = cats.tracking;
-      trackingRows = '<div style="margin-top:20px;border:1px solid var(--border);border-radius:10px;padding:4px 20px;">'
-        + trackRow('Google Tag Manager', tr.gtm)
-        + trackRow('GA4',                tr.ga4)
-        + trackRow('Google Ads conversion tag', tr.ads_conversion, tr.remarketing_only ? 'Remarketing only' : null)
-        + '</div>';
-    }
-
     var allFindings = r.findings || [];
 
     sections.forEach(function(sec) {
@@ -1419,8 +1405,7 @@
       html += '<div class="findings-block">';
 
       // Special cards per section
-      if (sec.key === 'keyword_clarity')        html += kwCard;
-      if (sec.key === 'tracking' && trackingRows) html += trackingRows;
+      if (sec.key === 'keyword_clarity') html += kwCard;
 
       if (issues.length === 0) {
         html += sectionPassSummary(sec.key, cats, r);
@@ -1554,7 +1539,6 @@
       landing_page_experience: 'Landing Page <em>Experience</em>',
       conversion_architecture: 'Conversion <em>Architecture</em>',
       trust_signals:           'Trust <em>Signals</em>',
-      tracking:                'Tracking <em>Health</em>',
       mobile:                  'Mobile <em>Experience</em>'
     };
     return m[key] || key;
@@ -1566,7 +1550,6 @@
     var lpe  = cats.landing_page_experience || {};
     var ca   = cats.conversion_architecture || {};
     var ts   = cats.trust_signals || {};
-    var tr   = cats.tracking || {};
     var mob  = cats.mobile || {};
     var items = [];
 
@@ -1613,12 +1596,6 @@
       if (ts.risk_reducer_present) items.push('Risk reducer present' + (ts.risk_reducer_type && ts.risk_reducer_type !== 'null' ? ' (' + esc(ts.risk_reducer_type) + ')' : '') + ' — reduces conversion hesitation');
       if (ts.authority_signals) items.push('Authority signals detected (accreditations, awards or press mentions)');
       if (!items.length) items.push('Trust signals are present and visible to paid traffic visitors.');
-    }
-    if (key === 'tracking') {
-      if (tr.gtm) items.push('Google Tag Manager installed — tracking can be managed without code deploys');
-      if (tr.ga4) items.push('GA4 active — session data and audience building are available');
-      if (tr.ads_conversion) items.push('Google Ads conversion tag confirmed — Smart Bidding has a conversion signal');
-      if (!items.length) items.push('Tracking is configured correctly.');
     }
     if (key === 'mobile') {
       if (mob.score != null && mob.score >= 90) items.push('Mobile performance score ' + mob.score + '/100 — Good');
@@ -1743,7 +1720,6 @@
       { key: 'landing_page_experience', label: 'Landing Page Experience' },
       { key: 'conversion_architecture', label: 'Conversion Architecture' },
       { key: 'trust_signals',           label: 'Trust Signals' },
-      { key: 'tracking',                label: 'Tracking Health' },
       { key: 'mobile',                  label: 'Mobile Experience' }
     ];
 
