@@ -481,8 +481,13 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   if (!parsed.hasGtm)
     findings.push({ category: 'tracking', severity: 'high', title: 'No tag manager detected', detail: 'Without a tag management system, adding or updating any tracking requires a code deployment. This creates gaps in conversion data when campaigns change. Installing GTM gives you full control over all tracking without developer involvement — future changes take minutes, not days.', fix: 'Install Google Tag Manager. Add the container snippet to every page, then migrate existing tracking tags into GTM.' });
 
-  if (!parsed.hasGa4)
-    findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into post-click behaviour — what users do after your ad sends them here. GA4 also feeds audience data back into Google Ads for Smart Bidding signals. Adding it gives you session data, engagement metrics, and the ability to build retargeting audiences from this traffic.', fix: 'Add the GA4 tag via GTM. At minimum configure page view, scroll depth, and form submission events.' });
+  if (!parsed.hasGa4) {
+    if (parsed.hasGtm) {
+      findings.push({ category: 'tracking', severity: 'medium', title: 'GA4 not detected in page source — verify it is firing via GTM', detail: 'GTM is installed, so GA4 may already be active inside the container — this tool cannot inspect GTM tags from outside the page. If GA4 is genuinely missing, you lose all post-click behavioural data and the audience signals that feed Smart Bidding. A quick check in Google Tag Assistant will confirm whether the GA4 tag is firing.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a GA4 Configuration tag fires on page load. If it is not there, add it inside GTM.' });
+    } else {
+      findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into post-click behaviour — what users do after your ad sends them here. GA4 also feeds audience data back into Google Ads for Smart Bidding signals. Adding it gives you session data, engagement metrics, and the ability to build retargeting audiences from this traffic.', fix: 'Add the GA4 tag via GTM. At minimum configure page view, scroll depth, and form submission events.' });
+    }
+  }
 
   if (!parsed.hasAdsConversion) {
     if (parsed.hasRemarketingOnly) {
