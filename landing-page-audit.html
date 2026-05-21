@@ -1010,19 +1010,29 @@
       if (lpe.title) items.push('Title tag present: "' + esc(lpe.title.substring(0, 70) + (lpe.title.length > 70 ? '…' : '')) + '"');
       if (lpe.meta_description) items.push('Meta description present');
       if (lpe.page_relevance === 'strong') items.push('Page relevance to target keyword: strong');
+      if (lpe.value_proposition_clarity === 'clear') items.push('Value proposition is clear above the fold');
+      if (lpe.message_match_strength === 'strong') items.push('Strong message match — page language aligns with likely ad intent');
+      else if (lpe.message_match_strength === 'moderate') items.push('Reasonable message match detected between page and intent');
       if (!items.length) items.push('Landing page experience signals are in good shape.');
     }
     if (key === 'conversion_architecture') {
       if (ca.has_cta) items.push('Above-fold CTA detected' + (ca.cta_text ? ': "' + esc(ca.cta_text) + '"' : ''));
+      if (ca.cta_specificity === 'specific') items.push('CTA is action-specific — clear outcome communicated to the visitor');
       if (ca.conversion_goal_clarity === 'single') items.push('Single, clear conversion goal — no conflicting offers');
       if (ca.form_fields != null && ca.form_fields > 0 && ca.form_fields <= 3) items.push(ca.form_fields + '-field form — optimal length for paid traffic');
+      if (ca.urgency_present) items.push('Urgency signals present — creates a reason to act now');
       if (!items.length) items.push('Conversion architecture is well structured for paid traffic.');
     }
     if (key === 'trust_signals') {
       if (ts.https) items.push('Served over HTTPS — secure connection established');
       if (ts.has_privacy_link) items.push('Privacy policy linked in page content');
       if (ts.contact_signals) items.push('Contact information present (phone, email or address detected)');
-      if (ts.social_proof_quality && ts.social_proof_quality !== 'none') items.push('Social proof present — ' + esc(ts.social_proof_quality) + ' quality signals detected');
+      if (ts.star_rating_present) items.push('Star ratings or review counts visible on page');
+      if (ts.testimonial_blocks > 0) items.push(ts.testimonial_blocks + ' testimonial block' + (ts.testimonial_blocks > 1 ? 's' : '') + ' detected');
+      if (ts.named_testimonials) items.push('Named testimonials present — stronger credibility than anonymous quotes');
+      if (ts.has_video_content) items.push('Video content present — increases engagement and dwell time');
+      if (ts.has_trust_badges) items.push('Trust badge or accreditation text detected');
+      if (ts.risk_reducer_present) items.push('Risk reducer present' + (ts.risk_reducer_type && ts.risk_reducer_type !== 'null' ? ' (' + esc(ts.risk_reducer_type) + ')' : '') + ' — reduces conversion hesitation');
       if (ts.authority_signals) items.push('Authority signals detected (accreditations, awards or press mentions)');
       if (!items.length) items.push('Trust signals are present and visible to paid traffic visitors.');
     }

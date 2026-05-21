@@ -76,6 +76,9 @@ exports.handler = async function (event) {
     // 2. Parse HTML
     const parsed = parseHtml(html, url, isHttps, fetchError);
 
+    // Extract keyword from URL slug (strongest signal — set explicitly by site owner)
+    parsed.urlKeyword = extractUrlKeyword(url);
+
     // 3. PSI parallel (mobile + desktop)
     const psiKey = process.env.PSI_API_KEY;
     let psiMobile = null, psiDesktop = null;
@@ -91,20 +94,23 @@ exports.handler = async function (event) {
     // 4. Claude content analysis
     const claudeResult = await analyzeWithClaude(parsed);
 
-    // H1 keyword fallback — if Claude returned nothing but H1 is present, use it
-    if (!claudeResult.inferred_keyword && parsed.h1) {
-      claudeResult.inferred_keyword = parsed.h1.trim();
-      // Check how well H1 aligns with title — if they share significant terms, confidence is high
-      const h1Words    = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-      const titleLower = (parsed.title || '').toLowerCase();
-      const matchCount = h1Words.filter(w => titleLower.includes(w)).length;
-      const matchRatio = h1Words.length > 0 ? matchCount / h1Words.length : 0;
-      if (matchRatio >= 0.5) {
-        claudeResult.keyword_confidence        = 'high';
-        claudeResult.keyword_confidence_reason = 'H1 and title tag share the same core keyword — strong alignment across the page.';
-      } else {
-        claudeResult.keyword_confidence        = 'medium';
-        claudeResult.keyword_confidence_reason = 'Inferred from H1 heading. Title tag alignment is partial.';
+    // Keyword fallback chain: URL slug → H1 → title (in descending confidence)
+    if (!claudeResult.inferred_keyword) {
+      if (parsed.urlKeyword) {
+        // URL slug is the strongest signal — chosen explicitly by the site owner
+        claudeResult.inferred_keyword        = parsed.urlKeyword;
+        claudeResult.keyword_confidence      = 'high';
+        claudeResult.keyword_confidence_reason = 'Inferred from the URL slug — the most explicit keyword signal on the page.';
+      } else if (parsed.h1) {
+        claudeResult.inferred_keyword = parsed.h1.trim();
+        const h1Words    = parsed.h1.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+        const titleLower = (parsed.title || '').toLowerCase();
+        const matchCount = h1Words.filter(w => titleLower.includes(w)).length;
+        const matchRatio = h1Words.length > 0 ? matchCount / h1Words.length : 0;
+        claudeResult.keyword_confidence        = matchRatio >= 0.5 ? 'high' : 'medium';
+        claudeResult.keyword_confidence_reason = matchRatio >= 0.5
+          ? 'H1 and title tag share the same core keyword — strong alignment.'
+          : 'Inferred from H1 heading. Title tag alignment is partial.';
       }
     }
 
@@ -125,6 +131,24 @@ exports.handler = async function (event) {
     }
   }
 };
+
+// ─── URL keyword extraction ───────────────────────────────────────────────────
+
+function extractUrlKeyword (url) {
+  try {
+    const path     = new URL(url).pathname;
+    const segments = path.split('/').filter(s => s && !/\.(html?|php|asp|jsp)$/i.test(s));
+    if (!segments.length) return null;
+    // Last segment is most specific (e.g. /swimming-lessons/childrens-swimming-lessons → childrens-swimming-lessons)
+    const slug    = segments[segments.length - 1];
+    const keyword = slug.replace(/[-_]+/g, ' ').trim();
+    // Must be a meaningful phrase (2+ words or 6+ chars), not just an ID
+    if ((keyword.split(' ').length >= 2 || keyword.length >= 6) && !/^\d+$/.test(keyword)) {
+      return keyword;
+    }
+    return null;
+  } catch { return null; }
+}
 
 // ─── HTML parsing ────────────────────────────────────────────────────────────
 
@@ -156,10 +180,30 @@ function parseHtml (html, url, isHttps, fetchError) {
     return href.includes('privacy') || text.includes('privacy');
   });
 
+  // Structural trust signals — check BEFORE stripping (testimonial divs survive, but be safe)
+  const testimonialBlockCount = $(
+    'blockquote, [class*="testimonial"], [class*="review"], [class*="feedback"], [class*="quote"]'
+  ).length;
+
+  const hasVideoContent = $('video').length > 0
+    || $('iframe[src*="youtube.com"], iframe[src*="youtu.be"], iframe[src*="vimeo.com"]').length > 0;
+
+  // Trust badges — scan raw HTML (catches alt text, hidden labels, schema markup)
+  const trustBadgeRx = /as seen in|featured in|swim england|ofsted|insured|certified|accredited|member of|regulated|fca approved|iso[ -]?\d+/i;
+  const hasTrustBadges = trustBadgeRx.test(html);
+
   // Strip noise then get body text
   $('script, style, nav, footer, header, noscript').remove();
   const bodyText     = $('body').text().replace(/\s+/g, ' ').trim();
   const aboveFoldText = bodyText.substring(0, 500);
+
+  // Star rating detection (post-strip body text)
+  const starRatingRx = /★{3,}|☆{3,}|\d+\.?\d*\s*(stars?|out of 5|\/5)|rated\s+\d+|\d+\s*reviews?/i;
+  const starRatingPresent = starRatingRx.test(bodyText);
+
+  // Named testimonial — a real name pattern adjacent to testimonial blocks
+  const namedTestimonialPresent = testimonialBlockCount > 0
+    && /[A-Z][a-z]+\s+[A-Z][a-z]+|[A-Z][a-z]+,\s*(parent|customer|client|mum|dad|swimmer|member)/i.test(bodyText);
 
   const linkCount      = $('a[href]').length;
   const formFieldCount = $(
@@ -203,7 +247,11 @@ function parseHtml (html, url, isHttps, fetchError) {
     aboveFoldText, bodyText: bodyText.substring(0, 3000),
     linkCount, formFieldCount, hasAboveFoldCta, ctaText,
     hasGtm, hasGa4, hasAdsConversion, hasRemarketingOnly,
-    hasViewport, hasPrivacyLink, socialProofText, authoritySignals, contactSignals
+    hasViewport, hasPrivacyLink,
+    socialProofText, authoritySignals, contactSignals,
+    // Richer trust signals
+    testimonialBlockCount, hasVideoContent, hasTrustBadges,
+    starRatingPresent, namedTestimonialPresent
   };
 }
 
@@ -239,6 +287,7 @@ async function fetchPsi (url, strategy, key) {
 async function analyzeWithClaude (parsed) {
   const prompt = `URL content to analyze for Google Ads Landing Page Experience quality.
 
+URL slug keyword signal: ${parsed.urlKeyword || '(homepage or non-descriptive URL)'}
 Title tag: ${parsed.title || '(none)'}
 H1: ${parsed.h1 || '(none)'}
 Meta description: ${parsed.metaDescription || '(none)'}
@@ -247,7 +296,12 @@ Above-fold copy (first 500 chars): ${parsed.aboveFoldText || '(none)'}
 Primary CTA text: ${parsed.ctaText || '(none)'}
 Total links on page: ${parsed.linkCount}
 Visible form fields: ${parsed.formFieldCount}
-Social proof signals in copy: ${parsed.socialProofText ? 'Present' : 'None detected'}
+Social proof in copy: ${parsed.socialProofText ? 'Present' : 'None detected'}
+Testimonial block elements found: ${parsed.testimonialBlockCount}
+Star ratings / review counts in copy: ${parsed.starRatingPresent ? 'Yes' : 'No'}
+Named testimonials (real names near quotes): ${parsed.namedTestimonialPresent ? 'Detected' : 'Not detected'}
+Video content present: ${parsed.hasVideoContent ? 'Yes' : 'No'}
+Trust badge / accreditation text: ${parsed.hasTrustBadges ? 'Detected' : 'Not detected'}
 Authority signals: ${parsed.authoritySignals || 'None detected'}
 Contact signals (phone/email/address): ${parsed.contactSignals || 'None detected'}
 ${parsed.fetchFailed ? 'NOTE: Page fetch failed. Content analysis is limited — flag this in findings.' : ''}
@@ -255,7 +309,7 @@ ${parsed.fetchFailed ? 'NOTE: Page fetch failed. Content analysis is limited —
 Return ONLY valid JSON (no markdown fences, no explanation) matching this schema exactly:
 {
   "inferred_keyword": "string or null",
-  "keyword_confidence": "high|low|none",
+  "keyword_confidence": "high|medium|low|none",
   "keyword_confidence_reason": "one sentence",
   "intent_type": "transactional|commercial|informational|navigational",
   "keyword_specificity": "specific|generic|unknown",
@@ -265,11 +319,21 @@ Return ONLY valid JSON (no markdown fences, no explanation) matching this schema
   "above_fold_keyword_signal": "strong|moderate|weak|none",
   "page_relevance_to_query": "strong|moderate|weak",
   "relevance_reason": "one sentence",
+  "value_proposition_clarity": "clear|weak|missing",
+  "value_proposition_reason": "one sentence — what makes it clear or what is missing",
   "cta_quality": "specific|generic|missing",
   "cta_reason": "one sentence",
+  "cta_specificity": "specific|generic|missing",
   "conversion_goal_clarity": "single|multiple|unclear",
+  "message_match_strength": "strong|moderate|weak",
+  "message_match_reason": "one sentence",
+  "risk_reducer_present": true|false,
+  "risk_reducer_type": "guarantee|free trial|no commitment|social proof|certification|null",
+  "urgency_present": true|false,
+  "social_proof_type": "star_ratings|testimonials|case_studies|logos|stats|none",
   "social_proof_count": 0,
   "social_proof_quality": "strong|weak|none",
+  "named_testimonials": true|false,
   "authority_signals_present": false,
   "contact_signals_present": false,
   "is_js_rendered_likely": false,
@@ -278,13 +342,13 @@ Return ONLY valid JSON (no markdown fences, no explanation) matching this schema
       "category": "keyword_clarity|landing_page_experience|conversion_architecture|trust_signals",
       "severity": "critical|high|medium|low",
       "title": "short issue title",
-      "detail": "1-2 sentences of PPC-framed diagnosis. Frame in Quality Score and Landing Page Experience terms.",
+      "detail": "1-2 sentences framed as opportunity or data insight — what does fixing this unlock? Cite conversion research where relevant.",
       "fix": "one sentence fix"
     }
   ]
 }
 
-Only include a finding when there is a genuine issue. Do not manufacture findings for things that are passing. Focus on issues that affect Quality Score, Landing Page Experience, and conversion rate for paid traffic.`;
+Only include a finding when there is a genuine issue. Do not manufacture findings for things that are passing. Focus on issues that affect Quality Score, Landing Page Experience, and conversion rate for paid traffic. Frame all findings as opportunity-led, not problem-led.`;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -377,7 +441,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     if (parsed.hasRemarketingOnly) {
       findings.push({ category: 'tracking', severity: 'medium', title: 'Remarketing tag present — no conversion event', detail: 'The data shows you can build remarketing audiences from this page, but there is no conversion event firing. Smart Bidding strategies (Target CPA, Maximise Conversions) require conversion data to optimise toward. Without it, they are effectively guessing at which clicks to bid up.', fix: 'Add a Google Ads conversion tag for your primary conversion goal via GTM and fire it on the confirmation page or success event.' });
     } else if (parsed.hasGtm) {
-      findings.push({ category: 'tracking', severity: 'high', title: 'No Google Ads conversion tag detected in page source', detail: 'GTM is installed, so a conversion tag may already be firing through the container — we cannot inspect GTM from outside. If it is not configured, Smart Bidding has no signal to optimise from, and you have no way to attribute bookings to specific campaigns. Verify in Google Tag Assistant that a conversion tag fires on your key conversion event.', fix: 'Open Tag Assistant, navigate to this page, and confirm a Google Ads conversion tag fires on form submission or booking confirmation. If it does not, add one via GTM.' });
+      findings.push({ category: 'tracking', severity: 'medium', title: 'Verify Google Ads conversion tag is firing via GTM', detail: 'GTM is installed, so a conversion tag may already be active through the container — this tool cannot inspect GTM tags from outside. If a conversion tag is not configured, Smart Bidding has no signal to optimise toward and you cannot attribute leads to specific campaigns. A quick check in Google Tag Assistant takes two minutes and rules this out.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a Google Ads conversion tag fires on your key conversion event (form submission, booking confirmation, etc.).' });
     } else {
       findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: "The data shows no Google Ads conversion tag in the page source and no GTM container to fire one dynamically. Without a conversion tag, Smart Bidding strategies have no goal to optimise toward — Google's own data shows properly configured Smart Bidding delivers 35% more conversions than running without conversion data. This is the most important tracking fix for any active paid search campaign.", fix: 'Install GTM, then add a Google Ads conversion tag that fires on your primary conversion event (form submission, booking, enquiry).' });
     }
@@ -406,10 +470,36 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   const claudeFindings = (claude.findings || []).filter(f => f.severity && f.title && f.detail && f.fix);
   findings.push(...claudeFindings);
 
+  // ── Value proposition ──────────────────────────────────────────────────────
+  if (claude.value_proposition_clarity === 'weak')
+    findings.push({ category: 'landing_page_experience', severity: 'medium', title: 'Value proposition is unclear above the fold', detail: `The first thing a paid traffic visitor should be able to answer is "why here, why now?" If that answer is not obvious within 5 seconds, conversion research (Nielsen Norman Group) shows most users leave. A clear above-fold statement of what you offer, who it is for, and why you are the right choice is one of the highest-leverage copy changes on any landing page.`, fix: 'Rewrite your hero headline and subtitle to answer three questions: what you offer, who it is for, and what makes you the right choice. Make it scannable in under 5 seconds.' });
+  else if (claude.value_proposition_clarity === 'missing')
+    findings.push({ category: 'landing_page_experience', severity: 'high', title: 'No clear value proposition detected', detail: `Paid traffic arrives with specific intent — if the page does not immediately confirm "you are in the right place," the click is wasted. Research shows pages with a clear, differentiated value proposition above the fold convert up to 4x better than generic introductions. This is especially important for Quality Score, which assesses expected relevance from the user's perspective.`, fix: 'Add a headline that states specifically what you offer and the primary benefit. Follow it with a 1–2 sentence supporting statement that addresses the visitor's main concern.' });
+
+  // ── Message match ──────────────────────────────────────────────────────────
+  if (claude.message_match_strength === 'weak')
+    findings.push({ category: 'landing_page_experience', severity: 'high', title: 'Weak message match between page and likely ad copy', detail: `Message match is one of the most predictable conversion levers in paid search. When the language on the landing page echoes the ad that drove the click, Google research shows post-click engagement and conversion rate both improve significantly. Weak alignment between the page headline and the ad intent also reduces Quality Score.`, fix: 'Mirror your primary ad headline in the page H1, and use the same language (keyword, offer framing, call to action) in your above-fold copy. Visitors should feel they landed exactly where they expected.' });
+
+  // ── CTA specificity ────────────────────────────────────────────────────────
+  if (claude.cta_specificity === 'generic' && parsed.hasAboveFoldCta)
+    findings.push({ category: 'conversion_architecture', severity: 'low', title: 'CTA could be more specific', detail: `Generic CTAs like "Submit" or "Click here" underperform specific action-oriented language. WordStream research found that personalised or outcome-focused CTAs outperform generic button text by up to 202%. A CTA that tells the visitor exactly what happens next reduces hesitation.`, fix: `Replace generic CTA text with a specific outcome: "Book Your Free Trial", "Get Your Quote in 2 Minutes", or similar language tied to your conversion goal.` });
+
+  // ── Risk reducer ───────────────────────────────────────────────────────────
+  if (claude.risk_reducer_present === false && !parsed.hasRemarketingOnly)
+    findings.push({ category: 'trust_signals', severity: 'low', title: 'No risk reducer present', detail: `First-time visitors from paid ads are evaluating risk alongside opportunity. A risk reducer (satisfaction guarantee, no-commitment trial, clear cancellation policy, or money-back promise) directly addresses the hesitation that prevents conversion. EConsultancy research shows risk reducers increase enquiry conversion by 10–15% in service-category landing pages.`, fix: 'Add a brief risk statement near your CTA: a guarantee, a free first session, a "no obligation" commitment, or similar. Even a single sentence reduces the friction of saying yes.' });
+
+  // ── Social proof quality ───────────────────────────────────────────────────
+  if (claude.social_proof_quality === 'none' && parsed.testimonialBlockCount === 0 && !parsed.starRatingPresent)
+    findings.push({ category: 'trust_signals', severity: 'medium', title: 'No social proof detected', detail: `Visitors from paid ads have not heard of you before. Social proof (reviews, star ratings, testimonials with names) is the fastest way to reduce scepticism. BrightLocal research shows 91% of consumers read online reviews before contacting a local service business. Pages with visible social proof convert significantly better than pages relying on copy alone.`, fix: 'Add at least 3 testimonials with names (and photos if possible) above or near your CTA. If you have Google reviews, embed the rating and review count on the page.' });
+  else if (claude.social_proof_quality === 'weak' || (parsed.testimonialBlockCount > 0 && !parsed.namedTestimonialPresent))
+    findings.push({ category: 'trust_signals', severity: 'low', title: 'Social proof present but could be stronger', detail: `Anonymous testimonials or generic review statements carry less weight than named, specific social proof. Research shows testimonials with a name, role, and specific outcome are 3x more credible than generic quotes. For local service businesses, a named parent or customer removes a significant trust barrier.`, fix: 'Upgrade anonymous testimonials to include the reviewer\'s name and specific outcome ("My son went from nervous to confident in 4 weeks — Jane P., parent"). Photos increase trust further.' });
+
   // ── Score ──────────────────────────────────────────────────────────────────
   let score = 100;
   let criticalCount = 0;
-  const hasNoConversionTag = !parsed.hasAdsConversion;
+  // Score cap for missing conversion tag only applies when there is definitely no GTM container
+  // (GTM may be firing a conversion tag we cannot see from outside)
+  const noConversionAndNoGtm = !parsed.hasAdsConversion && !parsed.hasGtm;
 
   for (const f of findings) {
     if      (f.severity === 'critical') { score -= 20; criticalCount++; }
@@ -418,9 +508,9 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     else if (f.severity === 'low')      score -= 2;
   }
 
-  if      (criticalCount >= 2)  score = Math.min(score, 45);
-  else if (criticalCount >= 1)  score = Math.min(score, 65);
-  if      (hasNoConversionTag)  score = Math.min(score, 65);
+  if      (criticalCount >= 2)   score = Math.min(score, 45);
+  else if (criticalCount >= 1)   score = Math.min(score, 65);
+  if      (noConversionAndNoGtm) score = Math.min(score, 65);
   score = Math.max(5, score);
 
   const scoreBand = score >= 80 ? 'Strong' : score >= 60 ? 'Average' : score >= 40 ? 'Needs work' : 'Critical';
@@ -459,26 +549,40 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
         specificity:      claude.keyword_specificity
       },
       landing_page_experience: {
-        h1:                   parsed.h1 || null,
-        title:                parsed.title || null,
-        meta_description:     parsed.metaDescription || null,
-        h1_contains_keyword:  claude.h1_contains_keyword ?? null,
-        title_h1_aligned:     claude.title_h1_aligned ?? null,
-        above_fold_signal:    claude.above_fold_keyword_signal || null,
-        page_relevance:       claude.page_relevance_to_query || null,
-        relevance_reason:     claude.relevance_reason || null
+        h1:                        parsed.h1 || null,
+        title:                     parsed.title || null,
+        meta_description:          parsed.metaDescription || null,
+        h1_contains_keyword:       claude.h1_contains_keyword ?? null,
+        title_h1_aligned:          claude.title_h1_aligned ?? null,
+        above_fold_signal:         claude.above_fold_keyword_signal || null,
+        page_relevance:            claude.page_relevance_to_query || null,
+        relevance_reason:          claude.relevance_reason || null,
+        value_proposition_clarity: claude.value_proposition_clarity || null,
+        value_proposition_reason:  claude.value_proposition_reason || null,
+        message_match_strength:    claude.message_match_strength || null,
+        message_match_reason:      claude.message_match_reason || null
       },
       conversion_architecture: {
-        has_cta:               parsed.hasAboveFoldCta,
-        cta_text:              parsed.ctaText || null,
-        cta_quality:           claude.cta_quality || null,
-        cta_reason:            claude.cta_reason || null,
-        link_count:            parsed.linkCount,
-        form_fields:           parsed.formFieldCount,
-        conversion_goal_clarity: claude.conversion_goal_clarity || null
+        has_cta:                 parsed.hasAboveFoldCta,
+        cta_text:                parsed.ctaText || null,
+        cta_quality:             claude.cta_quality || null,
+        cta_specificity:         claude.cta_specificity || null,
+        cta_reason:              claude.cta_reason || null,
+        link_count:              parsed.linkCount,
+        form_fields:             parsed.formFieldCount,
+        conversion_goal_clarity: claude.conversion_goal_clarity || null,
+        urgency_present:         claude.urgency_present ?? false
       },
       trust_signals: {
         social_proof_quality:    claude.social_proof_quality || 'none',
+        social_proof_type:       claude.social_proof_type || 'none',
+        named_testimonials:      claude.named_testimonials ?? parsed.namedTestimonialPresent,
+        testimonial_blocks:      parsed.testimonialBlockCount,
+        star_rating_present:     parsed.starRatingPresent,
+        has_video_content:       parsed.hasVideoContent,
+        has_trust_badges:        parsed.hasTrustBadges,
+        risk_reducer_present:    claude.risk_reducer_present ?? false,
+        risk_reducer_type:       claude.risk_reducer_type || null,
         authority_signals:       claude.authority_signals_present ?? false,
         has_privacy_link:        parsed.hasPrivacyLink,
         contact_signals:         claude.contact_signals_present ?? false,
