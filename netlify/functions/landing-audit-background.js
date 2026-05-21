@@ -579,7 +579,7 @@ function parseHtml (html, url, isHttps, fetchError) {
 async function fetchPsi (url, strategy, key, attempt = 1) {
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${strategy}&key=${key}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000); // 45s — some sites are slow to Lighthouse; background fn has 15min so we can afford it
+  const timeout = setTimeout(() => controller.abort(), 40000); // 40s — more than enough for most sites; keeps total under 5min frontend limit
   try {
     const res  = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
