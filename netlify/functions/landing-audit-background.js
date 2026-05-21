@@ -721,6 +721,8 @@ RULES:
 - If you see something specific (a CTA text, a headline, a section), quote or reference it
 - Do NOT flag things you cannot verify from the content above
 - Prioritise findings by impact on Google Ads Quality Score and conversion rate
+- Do NOT generate findings about: H1 presence or absence (covered by structural checks), total link count or navigation menu presence (covered separately), or form field count (covered separately)
+- Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum
 
 Return ONLY valid JSON (no markdown, no fences):
 {
@@ -939,7 +941,25 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   }
 
   // ── Merge Claude content findings ──────────────────────────────────────────
-  const claudeFindings = (claude.findings || []).filter(f => f.severity && f.title && f.detail && f.fix);
+  // Topics already covered by hardcoded structural rules — filter Claude duplicates
+  const hardcodedTopicsCovered = new Set();
+  if (!parsed.h1) hardcodedTopicsCovered.add('h1');
+  if (!isEcommerce && parsed.linkCount > 10) hardcodedTopicsCovered.add('link_count');
+  if (!isEcommerce && parsed.formFieldCount >= 4) hardcodedTopicsCovered.add('form_fields');
+
+  const claudeFindings = (claude.findings || []).filter(f => {
+    if (!f.severity || !f.title || !f.detail || !f.fix) return false;
+    const text = (f.title + ' ' + (f.detail || '') + ' ' + (f.fix || '')).toLowerCase();
+    if (hardcodedTopicsCovered.has('h1') && /\bh[- ]?1\b/.test(text)) return false;
+    if (hardcodedTopicsCovered.has('link_count') && /(\d+\s+links?|navigation.*links?|links?.*navigation|above.fold.*nav|nav.*above.fold|too many links?|link.*competing|competing.*link)/.test(text)) return false;
+    if (hardcodedTopicsCovered.has('form_fields') && /(\d+[\s-]field|\bform\s+fields?\b|\bform\s+length\b|\btoo many fields?\b)/.test(text)) return false;
+    // Navigation/header findings must not be critical or high — cap at medium
+    const isNavFinding = /(navigation|header|nav menu|nav bar|above.fold.*nav|nav.*above.fold)/.test(text);
+    if (isNavFinding && (f.severity === 'critical' || f.severity === 'high')) {
+      f.severity = 'medium';
+    }
+    return true;
+  });
   findings.push(...claudeFindings);
 
   // Helper — true if Claude already generated a finding about this topic
