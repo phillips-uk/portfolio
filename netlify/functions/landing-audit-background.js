@@ -262,7 +262,40 @@ const STOPWORDS = new Set([
   'thing','think','those','three','until','using','while','world','would','years'
 ]);
 
-function computeTopNgrams (bodyText, urlSlug, h1, title) {
+function computeTopNgrams (bodyText, urlSlug, h1, title, isEcommerce) {
+  const urlLower   = (urlSlug  || '').toLowerCase();
+  const h1Lower    = (h1       || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+  const titleLower = (title    || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+
+  if (isEcommerce) {
+    // For eCommerce pages, body text is polluted by product names in grids.
+    // Derive target phrases from URL slug + H1 + title only — these are what
+    // the site owner explicitly chose as the page's keyword signals.
+    const signalText = [urlSlug, h1, title].filter(Boolean).join(' ')
+      .toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+    const words = signalText.split(/\s+/).filter(w => w.length > 2 && !STOPWORDS.has(w));
+    const seen = new Set();
+    const phrases = [];
+    for (let n = 2; n <= 3; n++) {
+      for (let i = 0; i <= words.length - n; i++) {
+        const phrase = words.slice(i, i + n).join(' ');
+        if (!seen.has(phrase)) {
+          seen.add(phrase);
+          const pw = phrase.split(' ');
+          phrases.push({
+            phrase,
+            count: null,  // no body frequency — product names excluded
+            inUrl:   pw.every(w => urlLower.includes(w)),
+            inH1:    pw.every(w => h1Lower.includes(w)),
+            inTitle: pw.every(w => titleLower.includes(w))
+          });
+        }
+      }
+    }
+    return phrases.slice(0, 5);
+  }
+
+  // Lead gen: original body-text frequency analysis
   const words = bodyText.toLowerCase()
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
@@ -275,10 +308,6 @@ function computeTopNgrams (bodyText, urlSlug, h1, title) {
       counts[gram] = (counts[gram] || 0) + 1;
     }
   }
-
-  const urlLower   = (urlSlug  || '').toLowerCase();
-  const h1Lower    = (h1       || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
-  const titleLower = (title    || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
 
   return Object.entries(counts)
     .filter(([, count]) => count >= 2)
@@ -314,12 +343,63 @@ function detectBotBlock (html) {
   return false;
 }
 
+// ─── Page type detection ─────────────────────────────────────────────────────
+
+function detectPageType (html, url) {
+  const htmlSafe  = html  || '';
+  const urlLower  = (url  || '').toLowerCase();
+
+  // Platform detection from HTML signals
+  let platform = null;
+  if (/cdn\.shopify\.com|myshopify\.com|Shopify\.theme|Shopify\.config|\/cdn\/shop\//i.test(htmlSafe))
+    platform = 'shopify';
+  else if (/class=["'][^"']*woocommerce|wp-content\/plugins\/woo/i.test(htmlSafe))
+    platform = 'woocommerce';
+  else if (/bigcommerce\.com|bc-sf-filter/i.test(htmlSafe))
+    platform = 'bigcommerce';
+  else if (/\bmagento\b|Mage\.Cookies|mage\//i.test(htmlSafe))
+    platform = 'magento';
+
+  // URL-based page subtype
+  let subtype = null;
+  if (/\/collections\/[^/?#]+/i.test(urlLower))                     subtype = 'collection';
+  else if (/\/products\/[^/?#]+/i.test(urlLower))                   subtype = 'product';
+  else if (/\/category\/|\/categories\/|\/cat\//i.test(urlLower))   subtype = 'collection';
+  else if (/\/p\/[^/?#]+|\/item\/[^/?#]+/i.test(urlLower))         subtype = 'product';
+
+  // Structured data — strong eCommerce signals
+  const hasProductSchema   = /"@type"\s*:\s*"Product"/i.test(htmlSafe);
+  const hasOfferSchema     = /"@type"\s*:\s*"Offer"/i.test(htmlSafe);
+  const hasItemListSchema  = /"@type"\s*:\s*"ItemList"/i.test(htmlSafe);
+
+  // Content signals
+  const hasAddToCart    = /add.to.cart|addtocart|add_to_cart/i.test(htmlSafe);
+  const hasPriceEl      = /itemprop=["']price["']|data-product-price|class=["'][^"']*price/i.test(htmlSafe);
+  const hasOgProduct    = /<meta[^>]+property=["']og:type["'][^>]+content=["']product/i.test(htmlSafe);
+
+  let ecomScore = 0;
+  if (platform)                              ecomScore += 5;
+  if (subtype)                               ecomScore += 3;
+  if (hasProductSchema || hasOfferSchema)    ecomScore += 3;
+  if (hasItemListSchema)                     ecomScore += 2;
+  if (hasAddToCart)                          ecomScore += 2;
+  if (hasPriceEl)                            ecomScore += 1;
+  if (hasOgProduct)                          ecomScore += 2;
+
+  return {
+    type:     ecomScore >= 3 ? 'ecommerce' : 'lead_gen',
+    platform: platform,
+    subtype:  subtype || (ecomScore >= 3 ? 'generic' : null)
+  };
+}
+
 // ─── HTML parsing ────────────────────────────────────────────────────────────
 
 function parseHtml (html, url, isHttps, fetchError) {
   if (!html || fetchError) {
     return {
       fetchFailed: true, fetchError: fetchError || null, isHttps,
+      pageTypeInfo: detectPageType('', url),
       title: '', metaDescription: '', h1: '', h2s: [],
       aboveFoldText: '', bodyText: '', linkCount: 0,
       formFieldCount: 0, hasAboveFoldCta: false, ctaText: '',
@@ -406,9 +486,12 @@ function parseHtml (html, url, isHttps, fetchError) {
   const contactRx      = /\+?[\d\s\-\(\)]{7,}|[\w.]+@[\w.]+\.\w+|call us|contact us|phone|email us/i;
   const contactSignals  = contactRx.test(bodyText) ? 'present' : '';
 
-  // N-gram keyword analysis (full body text before substring trim)
+  // Detect page type (eCommerce vs lead gen) — used to suppress irrelevant findings
+  const pageTypeInfo = detectPageType(html, url);
+
+  // N-gram keyword analysis — for eCommerce, skip body text to avoid product name noise
   const urlSlug = extractUrlKeyword(url) || '';
-  const topNgrams = computeTopNgrams(bodyText, urlSlug, h1, title);
+  const topNgrams = computeTopNgrams(bodyText, urlSlug, h1, title, pageTypeInfo.type === 'ecommerce');
 
   return {
     fetchFailed: false, isHttps,
@@ -421,6 +504,8 @@ function parseHtml (html, url, isHttps, fetchError) {
     // Richer trust signals
     testimonialBlockCount, hasVideoContent, hasTrustBadges,
     starRatingPresent, namedTestimonialPresent,
+    // Page type
+    pageTypeInfo,
     // Keyword analysis
     topNgrams
   };
@@ -474,7 +559,15 @@ async function fetchPsi (url, strategy, key) {
 // ─── Claude analysis ─────────────────────────────────────────────────────────
 
 async function analyzeWithClaude (parsed) {
+  const pageType = parsed.pageTypeInfo || {};
+  const pageTypeLabel = pageType.type === 'ecommerce'
+    ? `eCommerce${pageType.platform ? ' (' + pageType.platform + ')' : ''}${pageType.subtype ? ' — ' + pageType.subtype + ' page' : ''}`
+    : 'Lead generation / service page';
+
   const prompt = `URL content to analyze for Google Ads Landing Page Experience quality.
+
+Page type: ${pageTypeLabel}${pageType.type === 'ecommerce' ? `
+IMPORTANT — eCommerce context: Frame findings for paid Shopping/Search/PMAX campaigns. Do NOT flag: missing contact forms, missing phone numbers, high link counts, or absence of lead-gen CTAs. DO assess: product/category keyword relevance to the search query, CTA clarity (Add to Cart / Buy Now / Shop), product trust signals (reviews, ratings, returns policies), and whether the landing page keyword aligns with what the ad is targeting. Conversion architecture findings should focus on purchase friction, not lead capture.` : ''}
 
 URL slug keyword signal: ${parsed.urlKeyword || '(homepage or non-descriptive URL)'}
 Title tag: ${parsed.title || '(none)'}
@@ -569,6 +662,9 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   const isBlocked = parsed.fetchFailed && (fetchErr === 'blocked');
   const isTimeout = parsed.fetchFailed && (fetchErr === 'timeout');
   const isUnreachable = parsed.fetchFailed && (fetchErr === 'network_error' || fetchErr === 'http_server_error' || fetchErr === 'http_client_error');
+  const pageTypeInfo  = parsed.pageTypeInfo || { type: 'lead_gen', platform: null, subtype: null };
+  const isEcommerce   = pageTypeInfo.type === 'ecommerce';
+  const knownPlatform = pageTypeInfo.platform; // null for generic eCommerce
 
   // ── Fetch-failure notices (shown first so they anchor the rest of the report) ─
   if (isBlocked) {
@@ -648,29 +744,47 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   //  even when Cloudflare blocks our direct fetch)
   if (!parsed.fetchFailed || parsed.contentFromPsi) {
 
+  // HTTPS — always check, regardless of page type
   if (!isHttps)
     findings.push({ category: 'tracking', severity: 'critical', title: 'Page served over HTTP — ads may be disapproved', detail: "Chrome shows this page as insecure. Google's advertising policy requires HTTPS landing pages — ads pointing to HTTP destinations are at risk of disapproval or limited delivery. Switching to HTTPS also improves trust signals for paid traffic visitors.", fix: 'Install an SSL certificate and redirect all HTTP traffic to HTTPS. Most hosting platforms include this free.' });
 
-  if (!parsed.hasGtm)
-    findings.push({ category: 'tracking', severity: 'high', title: 'No tag manager detected', detail: 'Without a tag management system, adding or updating any tracking requires a code deployment. This creates gaps in conversion data when campaigns change. Installing GTM gives you full control over all tracking without developer involvement — future changes take minutes, not days.', fix: 'Install Google Tag Manager. Add the container snippet to every page, then migrate existing tracking tags into GTM.' });
+  if (isEcommerce && knownPlatform) {
+    // Known eCommerce platforms (Shopify, WooCommerce, etc.) commonly use server-side GTM,
+    // platform pixels, or Customer Events APIs that aren't visible in the page HTML.
+    // Flagging absent tags here produces false positives — tracking is handled by the Google Ads Audit.
+    const platformName = knownPlatform.charAt(0).toUpperCase() + knownPlatform.slice(1);
+    findings.push({
+      category: 'tracking',
+      severity: 'info',
+      title: `Tracking scan limited — ${platformName} store detected`,
+      detail: `${platformName} stores commonly use server-side GTM, platform pixels, or Customer Events APIs that are not visible in the page HTML. GTM, GA4, and Google Ads conversion events may all be active without appearing in the static source. This scanner cannot verify them from the outside.`,
+      fix: `Verify your conversion tracking is firing correctly in Google Tag Assistant. For a full tracking health check against your Google Ads account, use the Google Ads Audit tool at phillips-uk.com/google-ads-audit.`
+    });
+  } else {
+    // Lead gen or generic eCommerce — run standard tracking checks
 
-  if (!parsed.hasGa4) {
-    if (parsed.hasGtm) {
-      findings.push({ category: 'tracking', severity: 'medium', title: 'GA4 not detected in page source — verify it is firing via GTM', detail: 'GTM is installed, so GA4 may already be active inside the container — this tool cannot inspect GTM tags from outside the page. If GA4 is genuinely missing, you lose all post-click behavioural data and the audience signals that feed Smart Bidding. A quick check in Google Tag Assistant will confirm whether the GA4 tag is firing.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a GA4 Configuration tag fires on page load. If it is not there, add it inside GTM.' });
-    } else {
-      findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into post-click behaviour — what users do after your ad sends them here. GA4 also feeds audience data back into Google Ads for Smart Bidding signals. Adding it gives you session data, engagement metrics, and the ability to build retargeting audiences from this traffic.', fix: 'Add the GA4 tag via GTM. At minimum configure page view, scroll depth, and form submission events.' });
-    }
-  }
+    if (!parsed.hasGtm)
+      findings.push({ category: 'tracking', severity: 'high', title: 'No tag manager detected', detail: 'Without a tag management system, adding or updating any tracking requires a code deployment. This creates gaps in conversion data when campaigns change. Installing GTM gives you full control over all tracking without developer involvement — future changes take minutes, not days.', fix: 'Install Google Tag Manager. Add the container snippet to every page, then migrate existing tracking tags into GTM.' });
 
-  if (!parsed.hasAdsConversion) {
-    if (parsed.hasRemarketingOnly) {
-      findings.push({ category: 'tracking', severity: 'medium', title: 'Remarketing tag present — no conversion event', detail: 'The data shows you can build remarketing audiences from this page, but there is no conversion event firing. Smart Bidding strategies (Target CPA, Maximise Conversions) require conversion data to optimise toward. Without it, they are effectively guessing at which clicks to bid up.', fix: 'Add a Google Ads conversion tag for your primary conversion goal via GTM and fire it on the confirmation page or success event.' });
-    } else if (parsed.hasGtm) {
-      findings.push({ category: 'tracking', severity: 'medium', title: 'Verify Google Ads conversion tag is firing via GTM', detail: 'GTM is installed, so a conversion tag may already be active through the container — this tool cannot inspect GTM tags from outside. If a conversion tag is not configured, Smart Bidding has no signal to optimise toward and you cannot attribute leads to specific campaigns. A quick check in Google Tag Assistant takes two minutes and rules this out.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a Google Ads conversion tag fires on your key conversion event (form submission, booking confirmation, etc.).' });
-    } else {
-      findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: "The data shows no Google Ads conversion tag in the page source and no GTM container to fire one dynamically. Without a conversion tag, Smart Bidding strategies have no goal to optimise toward — Google's own data shows properly configured Smart Bidding delivers 35% more conversions than running without conversion data. This is the most important tracking fix for any active paid search campaign.", fix: 'Install GTM, then add a Google Ads conversion tag that fires on your primary conversion event (form submission, booking, enquiry).' });
+    if (!parsed.hasGa4) {
+      if (parsed.hasGtm) {
+        findings.push({ category: 'tracking', severity: 'medium', title: 'GA4 not detected in page source — verify it is firing via GTM', detail: 'GTM is installed, so GA4 may already be active inside the container — this tool cannot inspect GTM tags from outside the page. If GA4 is genuinely missing, you lose all post-click behavioural data and the audience signals that feed Smart Bidding. A quick check in Google Tag Assistant will confirm whether the GA4 tag is firing.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a GA4 Configuration tag fires on page load. If it is not there, add it inside GTM.' });
+      } else {
+        findings.push({ category: 'tracking', severity: 'high', title: 'GA4 not detected', detail: 'Without GA4, you have no visibility into post-click behaviour — what users do after your ad sends them here. GA4 also feeds audience data back into Google Ads for Smart Bidding signals. Adding it gives you session data, engagement metrics, and the ability to build retargeting audiences from this traffic.', fix: 'Add the GA4 tag via GTM. At minimum configure page view, scroll depth, and form submission events.' });
+      }
     }
-  }
+
+    if (!parsed.hasAdsConversion) {
+      if (parsed.hasRemarketingOnly) {
+        findings.push({ category: 'tracking', severity: 'medium', title: 'Remarketing tag present — no conversion event', detail: 'The data shows you can build remarketing audiences from this page, but there is no conversion event firing. Smart Bidding strategies (Target CPA, Maximise Conversions) require conversion data to optimise toward. Without it, they are effectively guessing at which clicks to bid up.', fix: 'Add a Google Ads conversion tag for your primary conversion goal via GTM and fire it on the confirmation page or success event.' });
+      } else if (parsed.hasGtm) {
+        findings.push({ category: 'tracking', severity: 'medium', title: 'Verify Google Ads conversion tag is firing via GTM', detail: 'GTM is installed, so a conversion tag may already be active through the container — this tool cannot inspect GTM tags from outside. If a conversion tag is not configured, Smart Bidding has no signal to optimise toward and you cannot attribute leads to specific campaigns. A quick check in Google Tag Assistant takes two minutes and rules this out.', fix: 'Open Google Tag Assistant, navigate to this page, and confirm a Google Ads conversion tag fires on your key conversion event (form submission, booking confirmation, etc.).' });
+      } else {
+        findings.push({ category: 'tracking', severity: 'critical', title: 'No Google Ads conversion tag found', detail: "The data shows no Google Ads conversion tag in the page source and no GTM container to fire one dynamically. Without a conversion tag, Smart Bidding strategies have no goal to optimise toward — Google's own data shows properly configured Smart Bidding delivers 35% more conversions than running without conversion data. This is the most important tracking fix for any active paid search campaign.", fix: 'Install GTM, then add a Google Ads conversion tag that fires on your primary conversion event (form submission, booking, enquiry).' });
+      }
+    }
+
+  } // end tracking checks
 
   } // end tracking block
 
@@ -685,16 +799,22 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     findings.push({ category: 'trust_signals', severity: 'medium', title: 'No privacy policy link detected', detail: 'No privacy policy link was found in the accessible content of this page. If it exists in a JavaScript-rendered footer our tool may have missed it — verify in your browser. If it is genuinely missing: beyond GDPR compliance, users arriving from paid ads are actively evaluating your credibility. A visible privacy policy reduces friction for first-time visitors making a booking enquiry.', fix: 'Add a link to your privacy policy in the page footer. If one already exists via dynamic loading, no action needed — verify it renders in your browser.' });
 
   // ── Conversion architecture ────────────────────────────────────────────────
-  if (parsed.linkCount > 20) {
-    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.linkCount} links suggest a full website page — consider a dedicated landing page`, detail: `This page has ${parsed.linkCount} links, which is typical of a full website page rather than a purpose-built landing page. Unbounce's conversion research shows dedicated landing pages — with navigation removed and a single conversion goal — outperform website pages by 25–40% for paid traffic. The opportunity here is not that something is broken, but that a dedicated landing page for this campaign could significantly improve your cost per lead.`, fix: 'Consider building a dedicated landing page for this ad campaign — same offer, same copy, but with navigation stripped and a single CTA. Your main website page remains untouched.' });
-  } else if (parsed.linkCount > 10) {
-    findings.push({ category: 'conversion_architecture', severity: 'low', title: `${parsed.linkCount} links competing with primary CTA`, detail: `With ${parsed.linkCount} links on the page, there are multiple exits competing with your CTA for attention. Research from WordStream shows that reducing the number of links on a landing page to a single CTA can improve conversion rate by up to 371%. Even removing the top navigation can produce measurable improvements.`, fix: 'Remove or hide the top navigation bar for paid traffic. Even a simple change like this can increase the share of visitors who reach your CTA.' });
+  // Link count — eCommerce pages (collection/product grids) have many links by design
+  if (!isEcommerce) {
+    if (parsed.linkCount > 20) {
+      findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.linkCount} links suggest a full website page — consider a dedicated landing page`, detail: `This page has ${parsed.linkCount} links, which is typical of a full website page rather than a purpose-built landing page. Unbounce's conversion research shows dedicated landing pages — with navigation removed and a single conversion goal — outperform website pages by 25–40% for paid traffic. The opportunity here is not that something is broken, but that a dedicated landing page for this campaign could significantly improve your cost per lead.`, fix: 'Consider building a dedicated landing page for this ad campaign — same offer, same copy, but with navigation stripped and a single CTA. Your main website page remains untouched.' });
+    } else if (parsed.linkCount > 10) {
+      findings.push({ category: 'conversion_architecture', severity: 'low', title: `${parsed.linkCount} links competing with primary CTA`, detail: `With ${parsed.linkCount} links on the page, there are multiple exits competing with your CTA for attention. Research from WordStream shows that reducing the number of links on a landing page to a single CTA can improve conversion rate by up to 371%. Even removing the top navigation can produce measurable improvements.`, fix: 'Remove or hide the top navigation bar for paid traffic. Even a simple change like this can increase the share of visitors who reach your CTA.' });
+    }
   }
 
-  if (parsed.formFieldCount >= 7)
-    findings.push({ category: 'conversion_architecture', severity: 'high', title: `${parsed.formFieldCount}-field form — high abandonment risk`, detail: `A ${parsed.formFieldCount}-field form is a significant barrier for users who clicked an ad in a moment of intent. EConsultancy research found that reducing form fields from 11 to 4 increased conversions by 160%. For paid traffic especially, every field is a reason to leave.`, fix: 'Reduce to 3 fields maximum for the initial enquiry. You can collect additional details in the follow-up process after the first conversion event.' });
-  else if (parsed.formFieldCount >= 4)
-    findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.formFieldCount}-field form — adds friction for paid traffic`, detail: `Paid search visitors are less patient than organic ones — they clicked an ad in a moment of intent and expect a fast path to what they want. A ${parsed.formFieldCount}-field form introduces friction at exactly that moment. Each extra field reduces your conversion rate and raises your effective CPA, weakening the case for increasing bids. Every field that can be deferred should be.`, fix: 'Reduce to the minimum fields needed for first contact. Collect any additional information after the initial enquiry, not before.' });
+  // Form length — not applicable to eCommerce pages (no lead capture form expected)
+  if (!isEcommerce) {
+    if (parsed.formFieldCount >= 7)
+      findings.push({ category: 'conversion_architecture', severity: 'high', title: `${parsed.formFieldCount}-field form — high abandonment risk`, detail: `A ${parsed.formFieldCount}-field form is a significant barrier for users who clicked an ad in a moment of intent. EConsultancy research found that reducing form fields from 11 to 4 increased conversions by 160%. For paid traffic especially, every field is a reason to leave.`, fix: 'Reduce to 3 fields maximum for the initial enquiry. You can collect additional details in the follow-up process after the first conversion event.' });
+    else if (parsed.formFieldCount >= 4)
+      findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.formFieldCount}-field form — adds friction for paid traffic`, detail: `Paid search visitors are less patient than organic ones — they clicked an ad in a moment of intent and expect a fast path to what they want. A ${parsed.formFieldCount}-field form introduces friction at exactly that moment. Each extra field reduces your conversion rate and raises your effective CPA, weakening the case for increasing bids. Every field that can be deferred should be.`, fix: 'Reduce to the minimum fields needed for first contact. Collect any additional information after the initial enquiry, not before.' });
+  }
 
   // ── Merge Claude content findings ──────────────────────────────────────────
   const claudeFindings = (claude.findings || []).filter(f => f.severity && f.title && f.detail && f.fix);
@@ -731,13 +851,15 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   let criticalCount = 0;
   // Score cap for missing conversion tag only applies when page was actually analysed
   // (when fetch failed, hasAdsConversion/hasGtm are false by default — cap would be misleading)
-  const noConversionAndNoGtm = !parsed.fetchFailed && !parsed.hasAdsConversion && !parsed.hasGtm;
+  // eCommerce pages with known platforms use server-side tracking — cap would be a false penalty
+  const noConversionAndNoGtm = !parsed.fetchFailed && !isEcommerce && !knownPlatform && !parsed.hasAdsConversion && !parsed.hasGtm;
 
   for (const f of findings) {
     if      (f.severity === 'critical') { score -= 20; criticalCount++; }
     else if (f.severity === 'high')     score -= 10;
     else if (f.severity === 'medium')   score -= 5;
     else if (f.severity === 'low')      score -= 2;
+    // 'info' — contextual note only, no score deduction
   }
 
   if      (criticalCount >= 2)   score = Math.min(score, 45);
@@ -844,7 +966,10 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       is_blocked:       isBlocked,
       is_timeout:       isTimeout,
       is_unreachable:   isUnreachable,
-      is_js_rendered:   claude.is_js_rendered_likely || false
+      is_js_rendered:   claude.is_js_rendered_likely || false,
+      page_type:          pageTypeInfo.type    || 'lead_gen',
+      ecommerce_platform: pageTypeInfo.platform || null,
+      page_subtype:       pageTypeInfo.subtype  || null
     }
   };
 }

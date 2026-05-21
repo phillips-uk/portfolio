@@ -581,6 +581,19 @@
     .crosslink-link { font-size: 14px; font-weight: 600; color: var(--amber); text-decoration: none; white-space: nowrap; }
     .crosslink-link:hover { text-decoration: underline; }
 
+    /* Info severity (eCommerce tracking notes etc.) */
+    .sev-info { background: #E3F2FD; color: #1565C0; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; padding: 2px 7px; text-transform: uppercase; display: inline-block; }
+    .issue-card.sev-info { border-color: #BBDEFB; background: #F8FBFF; }
+    .issue-card.sev-info .issue-fix-label { color: #1565C0; }
+
+    /* Page type badge */
+    .page-type-badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 3px 9px; border-radius: 4px; margin-top: 10px; }
+    .page-type-ecommerce { background: rgba(152,88,48,0.15); color: var(--amber); }
+    .page-type-lead-gen  { background: rgba(26,26,26,0.08);  color: var(--mid); }
+
+    /* N-gram note for eCommerce */
+    .ngram-note { font-size: 11px; color: var(--mid); margin-left: 8px; font-weight: 400; font-style: italic; }
+
     /* PDF print */
     @media print {
       nav, #input-section, #loading-section, .content-section, .cta-section, .crosslink-bar, .lead-cta, .report-restart, .report-header-actions, .share-confirm { display: none !important; }
@@ -1090,8 +1103,13 @@
       + '<div class="share-confirm" id="share-confirm">Link copied to clipboard.</div>'
       + '<div class="report-eyebrow">Landing Page Audit</div>'
       + '<div class="score-display"><span class="score-num">' + r.health_score + '</span><span class="score-denom">/100</span></div>'
-      + '<div><span class="score-tag ' + bandClass + '">' + esc(r.score_band) + '</span>'
-      + '<button class="score-info-btn" onclick="toggleScoreInfo()" title="How is this score calculated?">i</button></div>'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      + '<span class="score-tag ' + bandClass + '">' + esc(r.score_band) + '</span>'
+      + (r.page_meta && r.page_meta.page_type === 'ecommerce'
+          ? '<span class="page-type-badge page-type-ecommerce">eCommerce' + (r.page_meta.ecommerce_platform ? ' · ' + esc(r.page_meta.ecommerce_platform) : '') + '</span>'
+          : '')
+      + '<button class="score-info-btn" onclick="toggleScoreInfo()" title="How is this score calculated?">i</button>'
+      + '</div>'
       + '<div class="score-info-panel" id="score-info-panel">'
       + '<strong>How this score is calculated</strong><br>'
       + 'The audit runs checks across 7 categories. The score starts at 100 and deducts points for each issue found, weighted by severity:'
@@ -1198,13 +1216,18 @@
       if (kc.inferred_keyword) {
         var ngramHtml = '';
         if (kc.top_ngrams && kc.top_ngrams.length) {
+          var isEcomPage = r.page_meta && r.page_meta.page_type === 'ecommerce';
           ngramHtml = '<div class="ngram-section">'
-            + '<div class="ngram-label">Top keyword phrases on this page</div>'
+            + '<div class="ngram-label">'
+            + (isEcomPage
+                ? 'Target keyword signals — URL, H1 &amp; title<span class="ngram-note">Body text excluded — product names filtered out</span>'
+                : 'Top keyword phrases on this page')
+            + '</div>'
             + '<table class="ngram-table">';
           kc.top_ngrams.forEach(function(ng) {
             ngramHtml += '<tr>'
               + '<td class="ngram-phrase">' + esc(ng.phrase) + '</td>'
-              + '<td class="ngram-count">&times;' + ng.count + '</td>'
+              + (isEcomPage ? '' : '<td class="ngram-count">&times;' + ng.count + '</td>')
               + '<td class="ngram-badges">'
               + (ng.inUrl   ? '<span class="ngram-badge badge-url">URL</span>'   : '')
               + (ng.inH1    ? '<span class="ngram-badge badge-h1">H1</span>'     : '')
@@ -1260,13 +1283,13 @@
 
       var sectionFindings = allFindings.filter(function(f) { return catKeys.indexOf(f.category) !== -1; });
 
-      var issues = sectionFindings.filter(function(f) { return f.severity !== 'low' || true; });
+      // 'info' findings are contextual notes — excluded from verdict and issue count
+      var issues     = sectionFindings.filter(function(f) { return f.severity !== 'info'; });
+      var infoNotes  = sectionFindings.filter(function(f) { return f.severity === 'info'; });
       var hasCritical = issues.some(function(f) { return f.severity === 'critical'; });
       var hasHigh     = issues.some(function(f) { return f.severity === 'high'; });
 
       var verdict = issues.length === 0 ? 'pass' : (hasCritical || hasHigh) ? 'fail' : 'review';
-      var verdictLabel = { pass: '✓ Pass', fail: '✗ Issues found', review: '⚠ Review' }[verdict];
-      var verdictClass = { pass: 'verdict-pass', fail: 'verdict-fail', review: 'verdict-review' }[verdict];
 
       html += '<div class="section-hero">'
         + '<div class="section-hero-eyebrow">' + sec.label + '</div>'
@@ -1294,6 +1317,16 @@
             + '</div>';
         });
       }
+
+      // Info notes render below issues (or below pass summary) with neutral blue styling
+      infoNotes.forEach(function(f) {
+        html += '<div class="issue-card sev-info">'
+          + '<div class="issue-sev sev-info">ℹ Info</div>'
+          + '<div class="issue-title">' + esc(f.title) + '</div>'
+          + '<div class="issue-detail">' + esc(f.detail) + '</div>'
+          + '<div class="issue-fix-block"><div class="issue-fix-label" style="color:#1565C0">Note</div><div class="issue-fix-text">' + esc(f.fix) + '</div></div>'
+          + '</div>';
+      });
 
       html += '</div>';
     });
