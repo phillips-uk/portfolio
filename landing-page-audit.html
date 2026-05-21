@@ -421,6 +421,29 @@
     .badge-h1     { background: var(--ink); color: #fff; }
     .badge-title  { background: var(--border); color: var(--ink); }
 
+    /* LPE estimate panel */
+    .lpe-panel { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .lpe-panel-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 4px; }
+    .lpe-panel-note  { font-size: 11px; color: var(--mid); margin-bottom: 10px; line-height: 1.5; }
+    .lpe-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .lpe-table th { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+                    color: var(--mid); padding: 0 6px 6px 0; text-align: left; border-bottom: 1px solid var(--border); }
+    .lpe-table th.lpe-col-now, .lpe-table th.lpe-col-pot { text-align: center; }
+    .lpe-table td { padding: 7px 6px 7px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .lpe-table tr:last-child td { border-bottom: none; }
+    .lpe-kw-cell { font-weight: 600; color: var(--ink); max-width: 120px; }
+    .lpe-dots { white-space: nowrap; }
+    .dot-on  { color: var(--amber); }
+    .dot-off { color: var(--border); }
+    .lpe-band { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 7px;
+                border-radius: 4px; white-space: nowrap; }
+    .lpe-above   { background: #E8F5E9; color: #2E7D32; }
+    .lpe-average { background: #FDF6EE; color: var(--amber); border: 1px solid var(--border); }
+    .lpe-below   { background: #FDECEA; color: #C0392B; }
+    .lpe-arrow   { font-size: 11px; color: var(--mid); padding: 0 4px; }
+    .lpe-improve-note { margin-top: 10px; font-size: 11px; color: var(--mid); padding: 8px 10px;
+                        background: var(--light); border-radius: 6px; line-height: 1.5; }
+
     /* Tracking status row */
     .tracking-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     .tracking-row:last-child { border-bottom: none; }
@@ -871,6 +894,174 @@
 
   // ── Report HTML builder ────────────────────────────────────────────────────
 
+  // ── LPE estimation ─────────────────────────────────────────────────────────
+  // Estimates Landing Page Experience (Above average / Average / Below average)
+  // across three documented Google signals: relevance, performance, trust.
+  // Shown per keyword because LPE is assessed per keyword, not per page.
+
+  function parseLcpMs(s) {
+    if (!s) return null;
+    var m = String(s).match(/([\d.]+)/);
+    if (!m) return null;
+    // Always stored as seconds ("2.55s") from backend
+    return Math.round(parseFloat(m[1]) * 1000);
+  }
+
+  function tierDots(tier) {
+    var on = '<span class="dot-on">&#9679;</span>';
+    var off = '<span class="dot-off">&#9679;</span>';
+    return tier === 'strong'   ? on + on + on
+         : tier === 'moderate' ? on + on + off
+         :                       on + off + off;
+  }
+
+  function lpeBandHtml(label) {
+    var cls = label === 'Above average' ? 'lpe-above'
+            : label === 'Average'       ? 'lpe-average'
+            :                             'lpe-below';
+    return '<span class="lpe-band ' + cls + '">' + label + '</span>';
+  }
+
+  function estimateLpe(keyword, r) {
+    var kLow  = keyword.toLowerCase();
+    var kWords = kLow.split(' ');
+    var lpe   = ((r.categories || {}).landing_page_experience) || {};
+    var perf  = ((r.categories || {}).performance)             || {};
+    var trust = ((r.categories || {}).trust_signals)           || {};
+    var mob   = ((r.categories || {}).mobile)                  || {};
+
+    var h1L    = (lpe.h1               || '').toLowerCase();
+    var titleL = (lpe.title            || '').toLowerCase();
+    var metaL  = (lpe.meta_description || '').toLowerCase();
+    var urlL   = (r.url || '').toLowerCase().replace(/[-_\/]/g, ' ');
+
+    function wordCoverage(str) {
+      return kWords.filter(function(w) { return str.includes(w); }).length / kWords.length;
+    }
+
+    // Relevance
+    var relScore = 0;
+    if (h1L.includes(kLow))    relScore += 35; else if (wordCoverage(h1L)    >= 0.5) relScore += 18;
+    if (titleL.includes(kLow)) relScore += 30; else if (wordCoverage(titleL) >= 0.5) relScore += 15;
+    if (metaL.includes(kLow))  relScore += 15;
+    if (urlL.includes(kLow))   relScore += 20;
+    relScore = Math.min(relScore, 100);
+    var relTier = relScore >= 65 ? 'strong' : relScore >= 30 ? 'moderate' : 'weak';
+
+    // Performance
+    var lcpMs  = parseLcpMs(perf.lcp);
+    var mobScr = mob.score != null ? mob.score : perf.mobile_score;
+    var cls    = perf.cls != null ? parseFloat(perf.cls) : null;
+    var perfScore = 0;
+    if (lcpMs != null)  perfScore += lcpMs <= 2500 ? 40 : lcpMs <= 4000 ? 20 : 0;
+    else                perfScore += 20; // unknown: assume moderate
+    if (mobScr != null) perfScore += mobScr >= 90 ? 35 : mobScr >= 50 ? 18 : 0;
+    else                perfScore += 18;
+    if (cls != null)    perfScore += cls <= 0.1 ? 25 : cls <= 0.25 ? 12 : 0;
+    else                perfScore += 12;
+    perfScore = Math.min(perfScore, 100);
+    var perfTier = perfScore >= 70 ? 'strong' : perfScore >= 38 ? 'moderate' : 'weak';
+
+    // Trust & transparency
+    var trustScore = 0;
+    if (trust.https)              trustScore += 20;
+    if (trust.has_privacy_link)   trustScore += 25;
+    if (trust.contact_signals)    trustScore += 20;
+    var sp = trust.social_proof_quality || '';
+    if (sp === 'strong' || trust.named_testimonials) trustScore += 20;
+    else if (sp === 'weak' || trust.star_rating_present) trustScore += 10;
+    if (trust.has_trust_badges || trust.authority_signals) trustScore += 15;
+    var trustTier = trustScore >= 60 ? 'strong' : trustScore >= 28 ? 'moderate' : 'weak';
+
+    // Overall
+    function ts(t) { return t === 'strong' ? 2 : t === 'moderate' ? 1 : 0; }
+    var total = ts(relTier) + ts(perfTier) + ts(trustTier);
+    var lpeLabel = total >= 5 ? 'Above average' : total >= 3 ? 'Average' : 'Below average';
+
+    // Potential (if fixable findings addressed)
+    var findings = r.findings || [];
+    var potPerf  = perfTier;
+    var potTrust = trustTier;
+    var hasLcpFix   = findings.some(function(f) { return f.category === 'performance' && /lcp|load|speed/i.test(f.title); });
+    var hasClsFix   = findings.some(function(f) { return f.category === 'performance' && /cls|layout/i.test(f.title); });
+    var hasPrivFix  = findings.some(function(f) { return /privacy/i.test(f.title); });
+    var hasTrustFix = findings.some(function(f) { return f.category === 'trust_signals'; });
+
+    if ((hasLcpFix || hasClsFix) && perfTier !== 'strong')
+      potPerf = perfTier === 'weak' ? 'moderate' : 'strong';
+    if ((hasPrivFix || hasTrustFix) && trustTier !== 'strong')
+      potTrust = trustTier === 'weak' ? 'moderate' : 'strong';
+
+    var potTotal = ts(relTier) + ts(potPerf) + ts(potTrust);
+    var potLabel = potTotal >= 5 ? 'Above average' : potTotal >= 3 ? 'Average' : 'Below average';
+
+    return {
+      relTier: relTier, perfTier: perfTier, trustTier: trustTier,
+      lpeLabel: lpeLabel, potLabel: potLabel, improved: potLabel !== lpeLabel,
+      potPerf: potPerf, potTrust: potTrust
+    };
+  }
+
+  function buildLpePanel(r, ngrams) {
+    if (!ngrams || !ngrams.length) return '';
+    var rows = ngrams.slice(0, 3);
+    var anyImproved = false;
+    var fixHints = [];
+
+    var html = '<div class="lpe-panel">'
+      + '<div class="lpe-panel-label">Estimated Landing Page Experience — per keyword</div>'
+      + '<div class="lpe-panel-note">Based on Google\'s three documented LPE signals: relevance, performance, and trust. LPE is assessed per keyword — the same page can score differently for each. This is an estimate from detectable signals, not Google\'s actual rating.</div>'
+      + '<table class="lpe-table">'
+      + '<thead><tr>'
+      + '<th>Keyword</th>'
+      + '<th>Relevance</th>'
+      + '<th>Performance</th>'
+      + '<th>Trust</th>'
+      + '<th class="lpe-col-now">Now</th>'
+      + '<th class="lpe-col-pot">Potential</th>'
+      + '</tr></thead><tbody>';
+
+    rows.forEach(function(ng) {
+      var est = estimateLpe(ng.phrase, r);
+      if (est.improved) anyImproved = true;
+      html += '<tr>'
+        + '<td class="lpe-kw-cell">' + ng.phrase + '</td>'
+        + '<td class="lpe-dots">' + tierDots(est.relTier)  + '</td>'
+        + '<td class="lpe-dots">' + tierDots(est.perfTier) + '</td>'
+        + '<td class="lpe-dots">' + tierDots(est.trustTier) + '</td>'
+        + '<td style="text-align:center">' + lpeBandHtml(est.lpeLabel) + '</td>'
+        + '<td style="text-align:center">';
+      if (est.improved) {
+        html += lpeBandHtml(est.potLabel);
+      } else {
+        html += '<span style="font-size:11px;color:var(--mid)">Same</span>';
+      }
+      html += '</td></tr>';
+    });
+
+    html += '</tbody></table>';
+
+    // Improvement note
+    if (anyImproved) {
+      var fixes = [];
+      var findings = r.findings || [];
+      findings.forEach(function(f) {
+        if (f.category === 'performance' && /lcp|load/i.test(f.title)) fixes.push('LCP optimisation');
+        if (f.category === 'performance' && /cls/i.test(f.title))      fixes.push('layout shift fix');
+        if (/privacy/i.test(f.title))                                    fixes.push('privacy policy');
+        if (f.category === 'trust_signals' && /social|testimonial|review/i.test(f.title)) fixes.push('social proof');
+      });
+      var uniqueFixes = fixes.filter(function(v, i, a) { return a.indexOf(v) === i; });
+      if (uniqueFixes.length) {
+        html += '<div class="lpe-improve-note">&#9650; Fixing ' + uniqueFixes.join(', ')
+          + ' could lift the estimated LPE to <strong>Above average</strong> for these keywords.</div>';
+      }
+    }
+
+    html += '</div>';
+    return html;
+  }
+
   function buildReportHTML(r) {
     var html = '';
 
@@ -989,6 +1180,7 @@
           });
           ngramHtml += '</table></div>';
         }
+        var lpePanel = (kc.top_ngrams && kc.top_ngrams.length) ? buildLpePanel(r, kc.top_ngrams) : '';
         kwCard = '<div class="keyword-card">'
           + '<div class="keyword-card-label">Inferred target keyword</div>'
           + '<div class="keyword-card-kw">' + esc(kc.inferred_keyword) + '</div>'
@@ -999,6 +1191,7 @@
           + (kc.specificity ? ' &middot; Specificity: <strong>' + esc(kc.specificity) + '</strong>' : '')
           + '</div>'
           + ngramHtml
+          + lpePanel
           + '</div>';
       } else {
         kwCard = '<div class="issue-card sev-critical" style="margin-top:20px">'
