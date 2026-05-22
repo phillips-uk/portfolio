@@ -535,7 +535,26 @@ function parseHtml (html, url, isHttps, fetchError) {
     const type = tag === 'input' ? ($(el).attr('type') || 'text').toLowerCase() : tag;
     formFieldTypeSet.add(type);
   });
-  const formFieldTypes = formFieldTypeSet.size > 0 ? [...formFieldTypeSet].join(', ') : 'none detected';
+  // Detect JavaScript-rendered forms that Cheerio can't parse from static HTML.
+  // Squarespace, HubSpot, Typeform etc. inject form markup at runtime — static parse
+  // sees 0 fields and falsely concludes there's no form.
+  let jsFormPlatform = null;
+  if (formFieldCount === 0) {
+    if (/sqs-block-form|sqs-form|data-block-type=["']form/i.test(html))                   jsFormPlatform = 'Squarespace';
+    else if (/hbspt\.forms|hbspt-form|hs-form-iframe|data-form-id/i.test(html))           jsFormPlatform = 'HubSpot';
+    else if (/data-tf-widget|typeform\.com\/to\//i.test(html))                             jsFormPlatform = 'Typeform';
+    else if (/gform_wrapper|gform_[0-9]/i.test(html))                                     jsFormPlatform = 'Gravity Forms';
+    else if (/wpcf7-form\b/i.test(html))                                                   jsFormPlatform = 'Contact Form 7';
+    else if (/data-netlify=["']true["']/i.test(html))                                      jsFormPlatform = 'Netlify Forms';
+    else if (/jotform\.com|static\.jotform\.com/i.test(html))                             jsFormPlatform = 'JotForm';
+    else if (/class=["'][^"']*form-block[^"']*["']|data-form-guid|forminator-form/i.test(html)) jsFormPlatform = 'embedded form block';
+    if (jsFormPlatform) {
+      formFieldCount = 3; // representative — prevents false "no form" finding
+    }
+  }
+  const formFieldTypes = jsFormPlatform
+    ? `js-rendered ${jsFormPlatform} (not parseable from static HTML — form confirmed from page structure)`
+    : formFieldTypeSet.size > 0 ? [...formFieldTypeSet].join(', ') : 'none detected';
 
   // CTA detection (first 2000 chars of body HTML)
   const bodyHtmlSnip   = ($('body').html() || '').substring(0, 2000);
@@ -729,7 +748,9 @@ async function analyzeWithClaude (parsed) {
 - Do NOT flag: missing 'Add to Cart', 'Quick View', or 'Quick Shop' buttons on collection/category pages — clicking through to a product detail page is standard ecommerce behaviour, not a CTA problem
 - DO assess: product/category keyword relevance, page-to-ad message match, product trust signals (reviews, ratings, returns policy), and whether the collection page clearly communicates the range and value of products
 - Conversion friction = purchase friction, not lead capture friction`
-    : '';
+    : `\n\nLEAD GEN / SERVICE PAGE CONTEXT:
+- Do NOT flag multiple location-specific CTAs (e.g. "Book East Molesey", "Book Cobham") as decision paralysis or CTA fragmentation — for multi-location local service businesses, location selection IS the product choice and presenting locations side-by-side is standard, expected UX. Only flag CTA issues if the primary conversion action is genuinely unclear or absent.
+- Form detection note: if formFieldTypes contains "js-rendered", a real form exists on the page but was loaded via JavaScript and is not parseable from static HTML. Do NOT flag a missing form in this case.`;
 
   const prompt = `You are a senior PPC conversion specialist auditing a landing page that receives paid Google Ads traffic. Your job is to identify specifically what is and is not working on THIS page — not to give generic CRO advice.
 
