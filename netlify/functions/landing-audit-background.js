@@ -454,6 +454,23 @@ function parseHtml (html, url, isHttps, fetchError) {
   // Nav link count — must be checked BEFORE stripping nav
   const navLinkCount = $('nav a').length;
 
+  // Above-fold text — extract from <main> before stripping nav, so Shopify/ecommerce
+  // mobile menu drawers (menu-drawer, details[data-disclosure], etc.) are excluded.
+  // These custom elements sit before <main> in the DOM and pollute a raw body slice.
+  const $mainEl = $('main, [role="main"], #MainContent, #main-content, #content, .main-content').first();
+  let aboveFoldText;
+  if ($mainEl.length) {
+    // Clone main, strip any nested nav-like elements, then take first 500 chars
+    const $mainClone = $mainEl.clone();
+    $mainClone.find(
+      'nav, header, [class*="nav-"], [class*="-nav"], [id*="nav"], [id*="menu"],' +
+      'menu-drawer, details[data-disclosure], [class*="drawer"], [class*="mobile-menu"],' +
+      'script, style, noscript'
+    ).remove();
+    const mainText = $mainClone.text().replace(/\s+/g, ' ').trim();
+    aboveFoldText = mainText.length > 80 ? mainText.substring(0, 500) : null;
+  }
+
   // Strip noise then get body text
   $('script, style, nav, footer, header, noscript').remove();
   let bodyText = $('body').text().replace(/\s+/g, ' ').trim();
@@ -463,7 +480,8 @@ function parseHtml (html, url, isHttps, fetchError) {
     .replace(/Custom Event Setup\s*[×x]\s*Click on the elements[\s\S]{0,400}?Finish Setup/gi, '')
     .replace(/Track New Element\s*Selected Elements \(\d+\)/gi, '')
     .replace(/\s+/g, ' ').trim();
-  const aboveFoldText = bodyText.substring(0, 500);
+  // Fall back to body text if main element wasn't found or was empty
+  if (!aboveFoldText) aboveFoldText = bodyText.substring(0, 500);
 
   // Star rating detection (post-strip body text)
   const starRatingRx = /★{3,}|☆{3,}|\d+\.?\d*\s*(stars?|out of 5|\/5)|rated\s+\d+|\d+\s*reviews?/i;
@@ -602,7 +620,7 @@ function parseHtml (html, url, isHttps, fetchError) {
 async function fetchPsi (url, strategy, key, attempt = 1) {
   const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=${strategy}&key=${key}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 40000); // 40s — more than enough for most sites; keeps total under 5min frontend limit
+  const timeout = setTimeout(() => controller.abort(), 55000); // 55s — mobile Lighthouse needs longer; two-phase rendering absorbs the wait
   try {
     const res  = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
@@ -709,8 +727,9 @@ H3 headings:  ${h3List}
 CTA / button text: ${ctaList}
 ⚠️ NOTE: CTA text is extracted as raw DOM text — dropdown options and lists appear concatenated without spaces (e.g. 'FeaturedBest sellingPrice low to high' is a correctly rendered sort dropdown, not broken UI). Do NOT flag spacing or formatting issues in sort/filter/dropdown text — the actual rendered UI has proper spacing. Only flag CTA issues you can verify are real problems, not extraction artifacts.
 
-Above-fold copy (first 500 chars):
+Above-fold copy (first 500 chars of main content area):
 ${parsed.aboveFoldText || '(none)'}
+⚠️ NOTE: Above-fold text is extracted from the page's <main> content element, not the raw body — navigation menus, mobile drawers, and header elements are excluded before this slice is taken. If you still see navigation-style text (e.g. menu item lists, "Skip to content"), treat it as a DOM extraction edge-case and do NOT flag it as a critical or high finding about above-fold content.
 
 Full page body (${bodyLen} chars):
 ${parsed.bodyText || '(none)'}
