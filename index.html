@@ -50,7 +50,8 @@
       --white:  #FFFFFF;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { overflow-x: hidden; }
 
     body {
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -59,6 +60,7 @@
       font-size: 16px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* ── NAV ── */
@@ -109,6 +111,136 @@
 
     .nav-ctas { display: flex; align-items: center; gap: 10px; }
     @media (max-width: 600px) { .nav-tool { display: none; } }
+
+    /* ── BURGER BUTTON (hidden on desktop) ── */
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .nav-burger__line {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      transform-origin: center;
+    }
+    .nav-burger.is-open .nav-burger__line:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .nav-burger.is-open .nav-burger__line:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    .nav-burger.is-open .nav-burger__line:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* ── MOBILE NAV OVERLAY ── */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--white);
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      overflow-y: auto;
+    }
+    .mobile-nav.is-open {
+      opacity: 1;
+    }
+    .mobile-nav__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .mobile-nav__close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .mobile-nav__links {
+      list-style: none;
+      flex: 1;
+    }
+    .mobile-nav__links li a {
+      display: flex;
+      align-items: center;
+      min-height: 56px;
+      padding: 0 24px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .mobile-nav__links li a:hover,
+    .mobile-nav__links li a:active { background: var(--cream); }
+    .mobile-nav__tools {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-nav__tool-link {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--amber);
+      text-decoration: none;
+      border: 1.5px solid var(--amber);
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mobile-nav__tool-link:hover { background: var(--amber); color: var(--white); }
+    .mobile-nav__footer {
+      padding: 24px;
+    }
+    .mobile-nav__cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 52px;
+      background: var(--amber);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .mobile-nav__cta:hover { background: #7a4525; }
 
     /* ── LAYOUT ── */
     .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
@@ -895,28 +1027,44 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 760px) {
       nav { padding: 16px 24px; }
+      .nav-ctas { display: none; }
+      .nav-burger { display: flex; }
+      .mobile-nav { display: flex; }
       .container { padding: 0 24px; }
       .section-wrap { padding: 44px 0; }
       #hero { padding: 90px 24px 48px; min-height: auto; }
       .two-col { grid-template-columns: 1fr; gap: 24px; }
       .two-col .section-label { margin-bottom: 0; }
-      .hero-stats { gap: 28px; }
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 40px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid var(--border);
+      }
+      .work-metric-val { font-size: 22px; }
       .work-grid, .service-grid { grid-template-columns: 1fr; }
       .client-grid { grid-template-columns: repeat(3, 1fr); }
       .client-cell { padding: 14px 8px; min-height: 56px; }
       .client-cell img { max-width: 72px; max-height: 26px; }
+      .cert-grid { grid-template-columns: repeat(2, 1fr); }
       .testimonial-card { grid-template-columns: 1fr; gap: 20px; }
       .testimonial-attribution { flex-direction: row; text-align: left; padding-right: 0; border-right: none; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
       .testimonial-avatar { width: 44px; height: 44px; }
       .agentic-top { grid-template-columns: 1fr; gap: 16px; }
+      .agentic-headline { font-size: clamp(26px, 5vw, 52px); }
       .agentic-grid { grid-template-columns: 1fr; }
       #agentic .container { padding: 0 24px; }
       #agentic { padding: 44px 0; }
       .brain-block { grid-template-columns: 1fr; gap: 40px; }
+      .brain-visual { margin-left: 0; margin-right: 0; }
       .tool-list li { grid-template-columns: 1fr; gap: 6px; }
       .analysis-item { grid-template-columns: 1fr; gap: 12px; }
       #contact { padding: 72px 24px; }
       footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+      .section-label { margin-bottom: 24px; }
+      nav a.cta, nav button { min-height: 44px; }
 
       /* work-card accordion — mobile only */
       .work-card__body {
@@ -1000,6 +1148,13 @@
       .is-mobile-open .mobile-accordion__body { grid-template-rows: 1fr; }
       .mobile-accordion__body > div > *:first-child { padding-top: 10px; }
     }
+
+    /* ── VERY SMALL SCREENS ── */
+    @media (max-width: 400px) {
+      h1 { font-size: 44px; letter-spacing: -2px; }
+      .hero-stat-val { font-size: 28px; }
+      .hero-sub { font-size: 15px; }
+    }
   </style>
 </head>
 <body>
@@ -1015,7 +1170,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="/landing-page-audit" class="cta nav-tool"><span class="nav-tool-label">Landing Page Audit</span></a>
       <a href="#contact" class="cta cta--filled">Get in touch</a>
     </div>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false" id="nav-burger">
+      <span class="nav-burger__line"></span>
+      <span class="nav-burger__line"></span>
+      <span class="nav-burger__line"></span>
+    </button>
   </nav>
+
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="mobile-nav__header">
+      <a href="#" class="mark">Phillips<span class="dot">.</span></a>
+      <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&#x2715;</button>
+    </div>
+    <ul class="mobile-nav__links">
+      <li><a href="#work">Selected Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#agentic">AI Workflows</a></li>
+      <li><a href="#certifications">Certifications</a></li>
+      <li><a href="#contact">Get in touch</a></li>
+    </ul>
+    <div class="mobile-nav__tools">
+      <a href="/landing-page-audit" class="mobile-nav__tool-link">Free Landing Page Audit &rarr;</a>
+      <a href="/google-ads-audit" class="mobile-nav__tool-link">Free Google Ads Audit &rarr;</a>
+    </div>
+    <div class="mobile-nav__footer">
+      <a href="mailto:lewis@phillips-uk.com" class="mobile-nav__cta">Get in touch</a>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section id="hero">
@@ -1126,7 +1308,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <hr class="rule">
 
   <!-- SELECTED WORK -->
-  <div class="section-wrap">
+  <div class="section-wrap" id="work">
     <div class="container">
       <p class="section-label">Selected Work</p>
       <div class="work-grid">
@@ -1629,7 +1811,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <hr class="rule">
 
   <!-- CERTIFICATIONS -->
-  <div class="section-wrap">
+  <div class="section-wrap" id="certifications">
     <div class="container">
       <div class="two-col">
         <span class="section-label">Certifications</span>
@@ -1783,6 +1965,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btn.querySelector('span').textContent = isOpen ? 'Hide' : 'Expand';
       });
     });
+
+    /* ── BURGER MENU ── */
+    (function () {
+      var burger = document.getElementById('nav-burger');
+      var mobileNav = document.getElementById('mobile-nav');
+      var closeBtn = document.getElementById('mobile-nav-close');
+
+      function openMenu() {
+        burger.classList.add('is-open');
+        burger.setAttribute('aria-expanded', 'true');
+        mobileNav.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        mobileNav.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+
+      burger.addEventListener('click', function () {
+        if (mobileNav.classList.contains('is-open')) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      closeBtn.addEventListener('click', closeMenu);
+
+      // Close when any nav link is tapped
+      mobileNav.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      // Close on overlay background click (outside the content area)
+      mobileNav.addEventListener('click', function (e) {
+        if (e.target === mobileNav) {
+          closeMenu();
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) {
+          closeMenu();
+        }
+      });
+    }());
   </script>
 
 </body>
