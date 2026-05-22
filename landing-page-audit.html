@@ -451,8 +451,13 @@
     .lpe-table th.lpe-col-now, .lpe-table th.lpe-col-pot { text-align: center; }
     .lpe-table td { padding: 7px 6px 7px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .lpe-table tr:last-child td { border-bottom: none; }
-    .lpe-kw-cell { font-weight: 600; color: var(--ink); max-width: 120px; }
+    .lpe-kw-cell { font-weight: 600; color: var(--ink); max-width: 120px; word-break: break-word; }
     .lpe-dots { white-space: nowrap; }
+    @media (max-width: 540px) {
+      .lpe-col-signal { display: none; }
+      .lpe-table th.lpe-col-now, .lpe-table th.lpe-col-pot { text-align: left; }
+      .lpe-band { font-size: 9px; padding: 2px 5px; }
+    }
     .dot-on  { color: var(--amber); }
     .dot-off { color: var(--border); }
     .lpe-band { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 7px;
@@ -1135,9 +1140,9 @@
       + '<table class="lpe-table">'
       + '<thead><tr>'
       + '<th>Keyword</th>'
-      + '<th>Relevance</th>'
-      + '<th>Performance</th>'
-      + '<th>Trust</th>'
+      + '<th class="lpe-col-signal">Relevance</th>'
+      + '<th class="lpe-col-signal">Performance</th>'
+      + '<th class="lpe-col-signal">Trust</th>'
       + '<th class="lpe-col-now">Now</th>'
       + '<th class="lpe-col-pot">Potential</th>'
       + '</tr></thead><tbody>';
@@ -1147,11 +1152,11 @@
       if (est.improved) anyImproved = true;
       html += '<tr>'
         + '<td class="lpe-kw-cell">' + ng.phrase + '</td>'
-        + '<td class="lpe-dots">' + tierDots(est.relTier)  + '</td>'
-        + '<td class="lpe-dots">' + tierDots(est.perfTier) + '</td>'
-        + '<td class="lpe-dots">' + tierDots(est.trustTier) + '</td>'
-        + '<td style="text-align:center">' + lpeBandHtml(est.lpeLabel) + '</td>'
-        + '<td style="text-align:center">';
+        + '<td class="lpe-dots lpe-col-signal">' + tierDots(est.relTier)  + '</td>'
+        + '<td class="lpe-dots lpe-col-signal">' + tierDots(est.perfTier) + '</td>'
+        + '<td class="lpe-dots lpe-col-signal">' + tierDots(est.trustTier) + '</td>'
+        + '<td style="text-align:left">' + lpeBandHtml(est.lpeLabel) + '</td>'
+        + '<td style="text-align:left">';
       if (est.improved) {
         html += lpeBandHtml(est.potLabel);
       } else {
