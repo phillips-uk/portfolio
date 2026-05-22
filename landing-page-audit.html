@@ -660,15 +660,94 @@
     /* N-gram note for eCommerce */
     .ngram-note { font-size: 11px; color: var(--mid); margin-left: 8px; font-weight: 400; font-style: italic; }
 
-    /* PDF print */
+    /* PDF / print */
     @media print {
-      nav, #input-section, #loading-section, .content-section, .cta-section, .crosslink-bar, .lead-cta, .report-restart, .report-header-actions, .share-confirm { display: none !important; }
+      /* Hide everything except the report */
+      nav, #input-section, #loading-section, .content-section, .cta-section,
+      .crosslink-bar, .lead-cta, .report-restart, .report-header-actions,
+      .share-confirm, .score-info-btn, .score-info-panel,
+      .ads-audit-note { display: none !important; }
+
       #report-section { display: block !important; }
-      .report-header { margin: 0; border-radius: 8px; }
-      .metrics-grid { margin: 0 0 32px; border-radius: 8px; }
-      .section-hero { margin: 40px 0 0; }
-      .card { border: none; padding: 0; }
-      body { font-size: 13px; }
+
+      /* Page setup */
+      @page { margin: 18mm 16mm; size: A4; }
+      html, body { background: #fff !important; color: #1A1A1A !important; font-size: 11px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      /* Card wrapper */
+      .card { box-shadow: none !important; border: 1px solid #E8D8C4 !important; padding: 0 !important; }
+
+      /* Report header — dark → clean bordered box */
+      .report-header {
+        background: #fff !important; border: 1.5px solid #1A1A1A !important;
+        border-radius: 8px !important; margin: 0 0 20px !important; padding: 24px 28px !important;
+      }
+      .report-header-top { margin-bottom: 16px !important; }
+      .report-brand { color: #1A1A1A !important; }
+      .report-brand span { color: #985830 !important; }
+      .report-eyebrow { color: #985830 !important; }
+      .score-num { color: #1A1A1A !important; font-size: 64px !important; }
+      .score-denom { color: #6B6B6B !important; }
+      .score-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .keyword-line { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; }
+      .kw-label { color: #985830 !important; }
+      .keyword-conf { color: #6B6B6B !important; }
+      .page-type-badge { color: #1A1A1A !important; background: #F7F7F7 !important; border: 1px solid #ccc !important; }
+
+      /* Metrics grid */
+      .metrics-grid { margin: 0 0 20px !important; border-radius: 8px !important; background: #E8D8C4 !important; }
+      .metric-item { background: #fff !important; }
+      .metric-val { color: #1A1A1A !important; }
+      .metric-val.good  { color: #2E7D32 !important; }
+      .metric-val.warn  { color: #B45309 !important; }
+      .metric-val.poor  { color: #C0392B !important; }
+      .metric-label, .metric-threshold { color: #6B6B6B !important; }
+
+      /* Section headers */
+      .section-hero {
+        background: #1A1A1A !important; margin: 20px 0 0 !important;
+        border-radius: 6px !important; padding: 20px 24px !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      .section-hero-eyebrow { color: #985830 !important; }
+      .section-hero-title   { color: #fff !important; }
+      .section-hero-title em { color: #985830 !important; }
+      .section-hero-meta    { color: rgba(255,255,255,0.7) !important; }
+      .section-count        { color: rgba(255,255,255,0.5) !important; }
+
+      /* Finding cards */
+      .issue-card { page-break-inside: avoid; break-inside: avoid; background: #fff !important; margin-bottom: 8px !important; }
+      .issue-card.sev-suggest { background: #FAFFFE !important; }
+      .issue-card.sev-pass    { background: #F1F8F1 !important; }
+      .issue-card.sev-info    { background: #F8FBFF !important; }
+      .issue-sev { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .effort-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .pfi-label  { color: #6B6B6B !important; }
+      .pfi-fix    { color: #985830 !important; }
+      .pfi-impact { color: #2E7D32 !important; }
+      .pfi-impact-text { color: #2E7D32 !important; }
+      .issue-title { color: #1A1A1A !important; }
+      .pfi-text    { color: #1A1A1A !important; }
+
+      /* Category headers */
+      .category-hdr-name { color: #1A1A1A !important; }
+      .category-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      /* LPE table */
+      .lpe-panel { page-break-inside: avoid; break-inside: avoid; }
+      .lpe-band  { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .dot-on  { color: #985830 !important; }
+
+      /* Action plan */
+      .action-plan-banner { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; page-break-inside: avoid; break-inside: avoid; }
+      .priority-item { page-break-inside: avoid; break-inside: avoid; background: #fff !important; }
+      .priority-num  { color: #985830 !important; }
+
+      /* Working section */
+      .working-section-hdr { color: #2E7D32 !important; }
+
+      /* Page breaks */
+      .section-wrap-print { page-break-before: auto; }
     }
 
     @media (max-width: 640px) {
