@@ -378,11 +378,13 @@
     .issue-card.sev-high     { border-left-color: var(--orange); }
     .issue-card.sev-medium   { border-left-color: #D97706; }
     .issue-card.sev-low      { border-left-color: #ccc; }
+    .issue-card.sev-suggest  { border-left-color: #C8E6C9; background: #FAFFFE; }
     .issue-sev { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; padding: 3px 10px; border-radius: 20px; line-height: 1.4; }
     .issue-sev.sev-critical { color: #B71C1C; background: rgba(183,28,28,0.1); }
     .issue-sev.sev-high     { color: #C85A00; background: rgba(200,90,0,0.1); }
     .issue-sev.sev-medium   { color: #B45309; background: rgba(180,83,9,0.1); }
     .issue-sev.sev-low      { color: #6B6B6B; background: rgba(107,107,107,0.1); }
+    .issue-sev.sev-suggest  { color: #2E7D32; background: rgba(46,125,50,0.08); }
     .issue-title  { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 8px; line-height: 1.35; }
     .issue-detail { font-size: 14px; color: var(--mid); line-height: 1.7; margin-bottom: 16px; }
     .issue-fix-block { background: var(--cream); border-radius: 8px; padding: 14px 18px; }
@@ -1483,11 +1485,13 @@
         html += sectionPassSummary(sec.key, cats, r);
       } else {
         issues.forEach(function(f) {
+          var sevLabel = f.severity === 'suggest' ? 'Suggestion' : f.severity.toUpperCase();
+          var problemLabel = f.severity === 'suggest' ? 'Opportunity' : 'Problem';
           html += '<div class="issue-card sev-' + esc(f.severity) + '">'
-            + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(f.severity.toUpperCase()) + '</div>'
+            + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(sevLabel) + '</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
             + '<div class="issue-pfi">'
-            + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Problem</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+            + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">' + problemLabel + '</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
             + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
             + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
             + '</div>'

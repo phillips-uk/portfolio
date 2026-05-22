@@ -749,6 +749,7 @@ RULES:
 - Do NOT generate findings about: H1 presence or absence (covered by structural checks), total link count or navigation menu presence (covered separately), or form field count (covered separately)
 - Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum
 - Be honest and calibrated — do not overstate. LOW findings must use measured language: "may reduce", "can affect", "tends to lower". Reserve "directly harms" and "significantly damages" for critical/high findings only
+- Use severity "suggest" (not "low") for best-practice recommendations — improvements that would help but are not genuine problems. Use "low" only for minor but real issues that actually hurt performance. "suggest" findings do not affect the score.
 - In 'detail': lead with what you actually observed on THIS page (quote specific text, name specific elements, cite specific counts). Then explain the impact. Do not open with a generic claim.
 - In 'impact': be realistic. Say "typically improves", "can reduce", "tends to lift". Avoid absolute guarantees. Name the specific metric (conversion rate, CPA, Quality Score, bounce rate) but keep the claim proportionate to the severity level
 
@@ -786,7 +787,7 @@ Return ONLY valid JSON (no markdown, no fences):
   "findings": [
     {
       "category": "keyword_clarity|landing_page_experience|conversion_architecture|trust_signals",
-      "severity": "pass|critical|high|medium|low",
+      "severity": "pass|critical|high|medium|low|suggest",
       "title": "short, specific title — reference page content where possible",
       "detail": "2-3 sentences. Lead with what you actually observed on this page (quote the specific text, name the specific element, cite the specific count). Then explain why it matters for conversion or Quality Score. Keep language proportionate to severity.",
       "fix": "one sentence — specific action referencing the actual element, not a generic recommendation",
@@ -956,7 +957,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     if (parsed.linkCount > 20) {
       findings.push({ category: 'conversion_architecture', severity: 'medium', title: `${parsed.linkCount} links suggest a full website page — consider a dedicated landing page`, detail: `This page has ${parsed.linkCount} links, which is typical of a full website page rather than a purpose-built landing page. Unbounce's conversion research shows dedicated landing pages — with navigation removed and a single conversion goal — outperform website pages by 25–40% for paid traffic. The opportunity here is not that something is broken, but that a dedicated landing page for this campaign could significantly improve your cost per lead.`, fix: 'Consider building a dedicated landing page for this ad campaign — same offer, same copy, but with navigation stripped and a single CTA. Your main website page remains untouched.', impact: "Dedicated landing pages outperform full website pages by 25-40% for paid traffic — a stripped page for this campaign is the highest-leverage structural improvement available." });
     } else if (parsed.linkCount > 10) {
-      findings.push({ category: 'conversion_architecture', severity: 'low', title: `${parsed.linkCount} links competing with primary CTA`, detail: `With ${parsed.linkCount} links on the page, there are multiple exits competing with your CTA for attention. Research from WordStream shows that reducing the number of links on a landing page to a single CTA can improve conversion rate by up to 371%. Even removing the top navigation can produce measurable improvements.`, fix: 'Remove or hide the top navigation bar for paid traffic. Even a simple change like this can increase the share of visitors who reach your CTA.', impact: "Removing or hiding navigation for paid traffic typically increases conversion rate by 10-25% — even a single CSS change produces measurable results." });
+      findings.push({ category: 'conversion_architecture', severity: 'suggest', title: `Consider reducing navigation for paid traffic`, detail: `With ${parsed.linkCount} links on the page, there are multiple exits competing with your CTA for attention. Hiding the top navigation for paid traffic is a common A/B test that can produce measurable conversion rate improvements.`, fix: 'Test a version of this page with navigation hidden — same content, just fewer exit routes. It does not need to be permanent.', impact: "Reducing navigation for paid traffic is worth testing — even a modest improvement in conversion rate compounds across ad spend." });
     }
   }
 
@@ -1008,17 +1009,17 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
 
   // ── CTA specificity ────────────────────────────────────────────────────────
   if (claude.cta_specificity === 'generic' && parsed.hasAboveFoldCta && !claudeCovers('conversion_architecture', ['cta', 'call to action', 'button']))
-    findings.push({ category: 'conversion_architecture', severity: 'low', title: 'CTA could be more specific', detail: `Generic CTAs like "Submit" or "Click here" underperform specific action-oriented language. WordStream research found that personalised or outcome-focused CTAs outperform generic button text by up to 202%. A CTA that tells the visitor exactly what happens next reduces hesitation.`, fix: `Replace generic CTA text with a specific outcome: "Book Your Free Trial", "Get Your Quote in 2 Minutes", or similar language tied to your conversion goal.`, impact: "Specific CTAs outperform generic ones by up to 202% — this is a one-line copy change with measurable conversion rate impact." });
+    findings.push({ category: 'conversion_architecture', severity: 'suggest', title: 'CTA could be more specific', detail: `Generic CTAs like "Submit" or "Click here" underperform specific action-oriented language. WordStream research found that personalised or outcome-focused CTAs outperform generic button text by up to 202%. A CTA that tells the visitor exactly what happens next reduces hesitation.`, fix: `Replace generic CTA text with a specific outcome: "Book Your Free Trial", "Get Your Quote in 2 Minutes", or similar language tied to your conversion goal.`, impact: "Specific CTAs outperform generic ones by up to 202% — this is a one-line copy change with measurable conversion rate impact." });
 
   // ── Risk reducer ───────────────────────────────────────────────────────────
   if (claude.risk_reducer_present === false && !parsed.hasRemarketingOnly && !claudeCovers('trust_signals', ['risk', 'guarantee', 'no commitment', 'no obligation']))
-    findings.push({ category: 'trust_signals', severity: 'low', title: 'No risk reducer present', detail: `First-time visitors from paid ads are evaluating risk alongside opportunity. A risk reducer (satisfaction guarantee, no-commitment trial, clear cancellation policy, or money-back promise) directly addresses the hesitation that prevents conversion. EConsultancy research shows risk reducers increase enquiry conversion by 10–15% in service-category landing pages.`, fix: 'Add a brief risk statement near your CTA: a guarantee, a free first session, a "no obligation" commitment, or similar. Even a single sentence reduces the friction of saying yes.', impact: "Risk reducers increase conversion rate by 10-15% for service pages — a one-sentence addition near the CTA requires no design work." });
+    findings.push({ category: 'trust_signals', severity: 'suggest', title: 'Consider adding a risk reducer near the CTA', detail: `First-time visitors from paid ads are evaluating risk alongside opportunity. A risk reducer (satisfaction guarantee, no-commitment trial, clear cancellation policy, or money-back promise) directly addresses the hesitation that prevents conversion.`, fix: 'Add a brief risk statement near your CTA: a guarantee, a free first session, a "no obligation" commitment, or similar. Even a single sentence reduces the friction of saying yes.', impact: "Risk reducers typically increase enquiry conversion by 10-15% for service pages — a one-sentence addition near the CTA requires no design work." });
 
   // ── Social proof quality ───────────────────────────────────────────────────
   if (claude.social_proof_quality === 'none' && parsed.testimonialBlockCount === 0 && !parsed.starRatingPresent && !claudeCovers('trust_signals', ['social proof', 'testimonial', 'review', 'rating']))
     findings.push({ category: 'trust_signals', severity: 'medium', title: 'No social proof detected', detail: `Visitors from paid ads have not heard of you before. Social proof (reviews, star ratings, testimonials with names) is the fastest way to reduce scepticism. BrightLocal research shows 91% of consumers read online reviews before contacting a local service business. Pages with visible social proof convert significantly better than pages relying on copy alone.`, fix: 'Add at least 3 testimonials with names (and photos if possible) above or near your CTA. If you have Google reviews, embed the rating and review count on the page.', impact: "Social proof is consistently the highest-ROI trust addition for paid landing pages — testimonials directly reduce scepticism from visitors who have never heard of you." });
   else if ((claude.social_proof_quality === 'weak' || (parsed.testimonialBlockCount > 0 && !parsed.namedTestimonialPresent)) && !claudeCovers('trust_signals', ['social proof', 'testimonial', 'review', 'rating']))
-    findings.push({ category: 'trust_signals', severity: 'low', title: 'Social proof present but could be stronger', detail: `Anonymous testimonials or generic review statements carry less weight than named, specific social proof. Research shows testimonials with a name, role, and specific outcome are 3x more credible than generic quotes. For local service businesses, a named parent or customer removes a significant trust barrier.`, fix: 'Upgrade anonymous testimonials to include the reviewer\'s name and specific outcome ("My son went from nervous to confident in 4 weeks — Jane P., parent"). Photos increase trust further.', impact: "Named, specific testimonials are 3x more credible than anonymous ones — upgrading them directly improves conversion rate without changing page structure." });
+    findings.push({ category: 'trust_signals', severity: 'suggest', title: 'Social proof could be stronger', detail: `Anonymous testimonials or generic review statements carry less weight than named, specific social proof. Research shows testimonials with a name, role, and specific outcome are 3x more credible than generic quotes.`, fix: 'Upgrade anonymous testimonials to include the reviewer\'s name and specific outcome ("My son went from nervous to confident in 4 weeks — Jane P., parent"). Photos increase trust further.', impact: "Named, specific testimonials are 3x more credible than anonymous ones — worth upgrading without needing to change page structure." });
 
   } // end !parsed.fetchFailed content block
 
@@ -1030,8 +1031,9 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
     else if (f.severity === 'high')     score -= 10;
     else if (f.severity === 'medium')   score -= 5;
     else if (f.severity === 'low')      score -= 2;
-    // 'pass' = positive finding, green display, no score change
-    // 'info' = contextual note, blue display, no score change
+    // 'suggest' = best-practice recommendation, no score deduction
+    // 'pass'    = positive finding, green display, no score change
+    // 'info'    = contextual note, blue display, no score change
   }
 
   if      (criticalCount >= 2) score = Math.min(score, 45);
@@ -1043,7 +1045,7 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   // ── Priority actions — exclude pass/info contextual findings ──────────────
   const order = { critical: 0, high: 1, medium: 2, low: 3 };
   const priorityActions = [...findings]
-    .filter(f => f.severity !== 'pass' && f.severity !== 'info')
+    .filter(f => f.severity !== 'pass' && f.severity !== 'info' && f.severity !== 'suggest')
     .sort((a, b) => (order[a.severity] ?? 3) - (order[b.severity] ?? 3))
     .slice(0, 3)
     .map(f => ({ severity: f.severity, category: f.category, title: f.title, fix: f.fix }));
