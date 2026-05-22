@@ -995,10 +995,18 @@ RULES:
 - Do NOT flag things you cannot verify from the content above
 - Prioritise findings by impact on paid traffic conversion rate and CPA — Quality Score is the primary Google Ads signal, but conversion architecture, trust, and speed findings carry weight across all paid channels including Meta
 - Do NOT generate findings about: H1 presence or absence (covered by structural checks), total link count or navigation menu presence (covered separately), or form field count (covered separately)
+- Do NOT generate a mobile performance score finding (e.g. "Mobile score X/100 — room to improve") — mobile LCP and CLS are already captured by dedicated hardcoded checks. Only flag mobile findings if you identify a specific content, UX, or design issue not covered by speed metrics.
 - If is_js_rendered_likely is true: for any finding that relies on content signals (copy, CTAs, trust signals, phone numbers, forms), end the detail sentence with " — note: this page renders via JavaScript, so manual visual confirmation is recommended before acting on this finding." Do not add this note to performance or tracking findings.
-- Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum
+- Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum. If flagging high link count as a landing page opportunity, use severity "suggest" not "medium" — it is an improvement opportunity, not a real conversion problem.
 - Be honest and calibrated — do not overstate. LOW findings must use measured language: "may reduce", "can affect", "tends to lower". Reserve "directly harms" and "significantly damages" for critical/high findings only
 - Use severity "suggest" (not "low") for best-practice recommendations — improvements that would help but are not genuine problems. Use "low" only for minor but real issues that actually hurt performance. "suggest" findings do not affect the score.
+- SEVERITY CAPS — the following finding types must NEVER exceed the stated severity cap:
+  · URL structure / slug issues → maximum "medium" (affects Ad Relevance marginally; not a direct conversion barrier)
+  · Missing phone number → "suggest" only (multi-channel contact is best practice, not a critical gap unless the primary CTA IS phone)
+  · Missing urgency / scarcity signals → "suggest" only (a nice-to-have, not a genuine conversion barrier)
+  · Social proof placement / styling improvements → "suggest" only (moving a stat or adding icons is an enhancement, not a fix)
+  · Form not parseable from static HTML → "suggest" only (informational; do NOT generate a medium finding when you simply can't read the form — recommend the advertiser manually audits it)
+  · Link count / navigation depth → "suggest" only (already handled; never medium or above)
 - In 'detail': lead with what you actually observed on THIS page (quote specific text, name specific elements, cite specific counts). Then explain the impact. Do not open with a generic claim.
 - In 'impact': be realistic. Say "typically improves", "can reduce", "tends to lift". Avoid absolute guarantees. Name the specific metric (conversion rate, CPA, Quality Score, bounce rate) but keep the claim proportionate to the severity level
 - If citing conversion uplift percentages, frame them as benchmark estimates, not guarantees — e.g. "benchmark data suggests X" or "research indicates X range", not "X% improvement". Do not present ranges as precise outcomes.
