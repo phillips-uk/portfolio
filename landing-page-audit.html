@@ -1519,7 +1519,7 @@
           var sevLabel = f.severity === 'suggest' ? 'Suggestion' : f.severity.toUpperCase();
           var problemLabel = f.severity === 'suggest' ? 'Opportunity' : 'Problem';
           var effortHtml = '';
-          if (f.effort && f.effort !== 'pass') {
+          if (f.effort === 'low' || f.effort === 'medium' || f.effort === 'high') {
             var effortLabel = f.effort.charAt(0).toUpperCase() + f.effort.slice(1) + ' effort';
             effortHtml = '<span class="effort-badge effort-' + esc(f.effort) + '">' + effortLabel + '</span>';
           }
