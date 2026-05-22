@@ -1067,30 +1067,32 @@
     relScore = Math.min(relScore, 100);
     var relTier = relScore >= 65 ? 'strong' : relScore >= 30 ? 'moderate' : 'weak';
 
-    // Performance
+    // Performance — unknown signals default to 0 (no data = no credit)
     var lcpMs  = parseLcpMs(perf.lcp);
     var mobScr = mob.score != null ? mob.score : perf.mobile_score;
     var cls    = perf.cls != null ? parseFloat(perf.cls) : null;
     var perfScore = 0;
     if (lcpMs != null)  perfScore += lcpMs <= 2500 ? 40 : lcpMs <= 4000 ? 20 : 0;
-    else                perfScore += 20; // unknown: assume moderate
     if (mobScr != null) perfScore += mobScr >= 90 ? 35 : mobScr >= 50 ? 18 : 0;
-    else                perfScore += 18;
     if (cls != null)    perfScore += cls <= 0.1 ? 25 : cls <= 0.25 ? 12 : 0;
-    else                perfScore += 12;
+    // If all three signals are null, use a minimal baseline (site was reachable but speed unknown)
+    var perfDataAvail = (lcpMs != null || mobScr != null || cls != null);
+    if (!perfDataAvail) perfScore = 15; // unknown: below moderate threshold, avoids false strong
     perfScore = Math.min(perfScore, 100);
     var perfTier = perfScore >= 70 ? 'strong' : perfScore >= 38 ? 'moderate' : 'weak';
 
-    // Trust & transparency
+    // Trust — HTTPS and privacy policy are baseline requirements, not differentiators.
+    // Social proof and authority signals are the real trust drivers for paid search LPE.
     var trustScore = 0;
-    if (trust.https)              trustScore += 20;
-    if (trust.has_privacy_link)   trustScore += 25;
-    if (trust.contact_signals)    trustScore += 20;
+    if (trust.https)              trustScore += 12; // baseline — expected on any legitimate site
+    if (trust.has_privacy_link)   trustScore += 8;  // legal requirement, not a competitive signal
+    if (trust.contact_signals)    trustScore += 25; // meaningful: phone/email/address visible
     var sp = trust.social_proof_quality || '';
-    if (sp === 'strong' || trust.named_testimonials) trustScore += 20;
-    else if (sp === 'weak' || trust.star_rating_present) trustScore += 10;
-    if (trust.has_trust_badges || trust.authority_signals) trustScore += 15;
-    var trustTier = trustScore >= 60 ? 'strong' : trustScore >= 28 ? 'moderate' : 'weak';
+    if (sp === 'strong' || trust.named_testimonials) trustScore += 30; // key differentiator
+    else if (sp === 'weak' || trust.star_rating_present) trustScore += 12;
+    if (trust.has_trust_badges || trust.authority_signals) trustScore += 25; // accreditations, awards
+    // strong requires real proof signals (contact + social or badges), not just infrastructure
+    var trustTier = trustScore >= 65 ? 'strong' : trustScore >= 28 ? 'moderate' : 'weak';
 
     // Overall
     function ts(t) { return t === 'strong' ? 2 : t === 'moderate' ? 1 : 0; }
@@ -1315,13 +1317,24 @@
       + metricCell('Desktop score', perf.desktop_score != null ? perf.desktop_score : null, scoreClass(perf.desktop_score), scoreTier(perf.desktop_score), '90+ = good')
       + '</div>';
 
-    // PSI failure notice — shown when PSI returned null for both strategies
-    var psiMissing = (perf.mobile_score == null && perf.lcp == null && perf.cls == null);
+    // PSI failure notices
+    var psiMissing  = (perf.mobile_score == null && perf.desktop_score == null);
+    var mobileOnly  = (perf.mobile_score == null && perf.desktop_score != null);
+    var desktopOnly = (perf.desktop_score == null && perf.mobile_score != null);
     if (psiMissing) {
       html += '<div class="psi-notice">'
         + '<strong>Site speed data unavailable for this audit.</strong> '
         + 'Google\'s PageSpeed Insights API did not return results for this URL — this can happen intermittently on heavily JS-rendered or CDN-protected pages. '
-        + 'Re-running the audit usually resolves it. Performance findings in this report are based on available data only.'
+        + 'Re-running the audit usually resolves it.'
+        + '</div>';
+    } else if (mobileOnly) {
+      html += '<div class="psi-notice">'
+        + '<strong>Mobile speed data timed out — desktop data shown.</strong> '
+        + 'Google\'s mobile Lighthouse test runs a throttled simulation and can take longer on some sites. Core Web Vitals below are sourced from desktop where available. Re-running the audit usually returns the full mobile data.'
+        + '</div>';
+    } else if (desktopOnly) {
+      html += '<div class="psi-notice">'
+        + '<strong>Desktop speed data unavailable — mobile data shown.</strong> Re-running the audit usually resolves it.'
         + '</div>';
     }
 
