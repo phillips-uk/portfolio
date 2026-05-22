@@ -1265,8 +1265,8 @@
       });
       var uniqueFixes = fixes.filter(function(v, i, a) { return a.indexOf(v) === i; });
       if (uniqueFixes.length) {
-        html += '<div class="lpe-improve-note">&#9650; Fixing ' + uniqueFixes.join(', ')
-          + ' could lift the estimated LPE to <strong>Above average</strong> for these keywords.</div>';
+        html += '<div class="lpe-improve-note">&#9650; Addressing ' + uniqueFixes.join(', ')
+          + ' may improve the estimated LPE signal for these keywords.</div>';
       }
     }
 
@@ -1277,7 +1277,7 @@
   function buildActionPlan(r) {
     var impactMap = {
       performance:             'Paid traffic retention',
-      landing_page_experience: 'Quality Score & CPCs',
+      landing_page_experience: 'Landing page experience',
       conversion_architecture: 'Conversion rate & CPA',
       trust_signals:           'Visitor confidence',
       mobile:                  'Mobile paid clicks',
@@ -1308,9 +1308,8 @@
 
     if (critHigh.length) {
       html += '<div class="action-plan-banner">'
-        + 'Fixing the <strong>' + critHigh.length + ' critical and high-priority issue' + (critHigh.length > 1 ? 's' : '') + '</strong>'
-        + ' could lift your score from <strong>' + r.health_score + ' → ' + potentialScore + '</strong>.'
-        + ' Address them in the order shown — each one compounds the next.'
+        + 'The <strong>' + critHigh.length + ' critical and high-priority finding' + (critHigh.length > 1 ? 's' : '') + '</strong>'
+        + ' below represent the main detected conversion barriers — address them first for the highest-confidence improvements.'
         + '</div>';
     }
 
@@ -1474,7 +1473,7 @@
         + '</div>';
     }
     if (r.page_meta && r.page_meta.is_js_rendered) {
-      html += '<div class="js-warning"><strong>JavaScript-rendered page detected.</strong> Performance data comes from Google\'s real rendering engine and is accurate. Content analysis (keyword inference, H1 detection) may be limited because the page renders its content via JavaScript.</div>';
+      html += '<div class="js-warning"><strong>JavaScript-rendered page — content findings have medium confidence.</strong> Performance and tracking data comes from Google\'s real rendering engine and is accurate. Content-based findings (copy, CTAs, trust signals, phone numbers) are based on what was detectable in the static HTML — some elements may be present in the rendered page that weren\'t visible to the scanner. <strong>Visually confirm any content findings before acting on them.</strong></div>';
     }
 
     // Priority actions
