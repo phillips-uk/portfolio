@@ -752,7 +752,7 @@ async function analyzeWithClaude (parsed) {
 - Do NOT flag multiple location-specific CTAs (e.g. "Book East Molesey", "Book Cobham") as decision paralysis or CTA fragmentation — for multi-location local service businesses, location selection IS the product choice and presenting locations side-by-side is standard, expected UX. Only flag CTA issues if the primary conversion action is genuinely unclear or absent.
 - Form detection note: if formFieldTypes contains "js-rendered", a real form exists on the page but was loaded via JavaScript and is not parseable from static HTML. Do NOT flag a missing form in this case.`;
 
-  const prompt = `You are a senior PPC conversion specialist auditing a landing page that receives paid Google Ads traffic. Your job is to identify specifically what is and is not working on THIS page — not to give generic CRO advice.
+  const prompt = `You are a senior paid media conversion specialist auditing a landing page that receives paid traffic. You evaluate it primarily through a Google Ads lens — Quality Score, Landing Page Experience, message match, keyword clarity — but your conversion architecture, trust, mobile, and page experience findings apply across channels including Meta Ads, TikTok, and LinkedIn. Your job is to identify specifically what is and is not working on THIS page — not to give generic CRO advice.
 
 PAGE TYPE: ${pageTypeLabel}${ecommerceContext}${fetchWarning}
 
@@ -805,7 +805,7 @@ RULES:
 - Every finding must be specific to THIS page — no template advice
 - If you see something specific (a CTA text, a headline, a section), quote or reference it
 - Do NOT flag things you cannot verify from the content above
-- Prioritise findings by impact on Google Ads Quality Score and conversion rate
+- Prioritise findings by impact on paid traffic conversion rate and CPA — Quality Score is the primary Google Ads signal, but conversion architecture, trust, and speed findings carry weight across all paid channels including Meta
 - Do NOT generate findings about: H1 presence or absence (covered by structural checks), total link count or navigation menu presence (covered separately), or form field count (covered separately)
 - If is_js_rendered_likely is true: for any finding that relies on content signals (copy, CTAs, trust signals, phone numbers, forms), end the detail sentence with " — note: this page renders via JavaScript, so manual visual confirmation is recommended before acting on this finding." Do not add this note to performance or tracking findings.
 - Do NOT flag a standard website header or navigation menu as critical or high severity — navigation is expected on full website pages. If above-fold content is predominantly navigation with little else, flag at medium severity maximum
@@ -871,7 +871,7 @@ Return ONLY valid JSON (no markdown, no fences):
     const msg  = await anthropic.messages.create({
       model:      'claude-sonnet-4-5-20250929',
       max_tokens: 5000,
-      system:     'You are a PPC conversion specialist. You audit landing pages used as Google Ads destinations. Every finding must be grounded in the actual page content provided — specific, not generic. Frame all analysis in paid search terms: Quality Score, Landing Page Experience, conversion rate, CPA. Return only valid JSON with no markdown fences.',
+      system:     'You are a paid media conversion specialist. You audit landing pages used as paid ad destinations — primarily evaluated through a Google Ads lens (Quality Score, Landing Page Experience, message match, keyword clarity), but your conversion architecture, trust, mobile, and page speed findings apply equally to Meta Ads and other paid channels. Every finding must be grounded in the actual page content provided — specific, not generic. Return only valid JSON with no markdown fences.',
       messages:   [{ role: 'user', content: prompt }]
     });
     const raw = msg.content[0]?.text || '{}';
