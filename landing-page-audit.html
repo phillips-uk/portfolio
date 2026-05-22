@@ -380,6 +380,13 @@
     .issue-card.sev-low      { border-left-color: #ccc; }
     .issue-card.sev-suggest  { border-left-color: #C8E6C9; background: #FAFFFE; }
     .issue-sev { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; padding: 3px 10px; border-radius: 20px; line-height: 1.4; }
+    .effort-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+    .effort-low    { color: #2E7D32; background: #E8F5E9; }
+    .effort-medium { color: #7B4F00; background: #FFF3CD; }
+    .effort-high   { color: #7B1C1C; background: #FDECEA; }
+    /* Google Ads audit framing note */
+    .ads-audit-note { display: flex; align-items: flex-start; gap: 10px; background: #FDF6EE; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 10px 14px; margin-bottom: 24px; font-size: 12px; color: var(--mid); line-height: 1.55; }
+    .ads-audit-note strong { color: var(--ink); }
     .issue-sev.sev-critical { color: #B71C1C; background: rgba(183,28,28,0.1); }
     .issue-sev.sev-high     { color: #C85A00; background: rgba(200,90,0,0.1); }
     .issue-sev.sev-medium   { color: #B45309; background: rgba(180,83,9,0.1); }
@@ -1250,6 +1257,12 @@
   function buildReportHTML(r, psiPending) {
     var html = '';
 
+    // Google Ads audit framing note — shown on every report
+    html += '<div class="ads-audit-note">'
+      + '<span>&#9432;</span>'
+      + '<span><strong>This is a Google Ads landing page audit, not an SEO audit.</strong> Findings are scored for paid search conversion performance — Quality Score signals, message match, above-fold clarity, and conversion architecture. A page can rank well organically and still score low here. Both matter; they measure different things.</span>'
+      + '</div>';
+
     // PSI pending banner — performance data still arriving
     if (psiPending) {
       html += '<div style="background:rgba(152,88,48,0.08);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:13px;color:var(--mid);display:flex;align-items:center;gap:8px;">'
@@ -1505,8 +1518,16 @@
         issues.forEach(function(f) {
           var sevLabel = f.severity === 'suggest' ? 'Suggestion' : f.severity.toUpperCase();
           var problemLabel = f.severity === 'suggest' ? 'Opportunity' : 'Problem';
+          var effortHtml = '';
+          if (f.effort && f.effort !== 'pass') {
+            var effortLabel = f.effort.charAt(0).toUpperCase() + f.effort.slice(1) + ' effort';
+            effortHtml = '<span class="effort-badge effort-' + esc(f.effort) + '">' + effortLabel + '</span>';
+          }
           html += '<div class="issue-card sev-' + esc(f.severity) + '">'
-            + '<div class="issue-sev sev-' + esc(f.severity) + '">' + esc(sevLabel) + '</div>'
+            + '<div>'
+            + '<div class="issue-sev sev-' + esc(f.severity) + '" style="display:inline-block">' + esc(sevLabel) + '</div>'
+            + effortHtml
+            + '</div>'
             + '<div class="issue-title">' + esc(f.title) + '</div>'
             + '<div class="issue-pfi">'
             + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">' + problemLabel + '</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
@@ -1551,8 +1572,19 @@
     // Action plan
     html += buildActionPlan(r);
 
-    // Restart + crosslink
+    // Restart button
     html += '<div class="report-restart"><button onclick="resetToStart()">← Audit another page</button></div>';
+
+    // Report CTA — shown on report only, not on tool homepage
+    html += '<div class="lead-cta">'
+      + '<div class="lead-cta-copy">'
+      + '<h3>Need expert eyes on the account too?</h3>'
+      + '<p>Lewis Phillips — senior performance marketer, 11 years, £50M+ managed across Google, Meta, Microsoft and Apple. Available for senior roles and selected consulting projects.</p>'
+      + '</div>'
+      + '<a href="https://www.phillips-uk.com#contact" class="lead-cta-btn">Get in touch →</a>'
+      + '</div>';
+
+    // Crosslink to Google Ads Audit Tool
     html += '<div class="crosslink-bar">'
       + '<span class="crosslink-text">Want to check the account side too?</span>'
       + '<a href="/google-ads-audit" class="crosslink-link">Free Google Ads Audit Tool →</a>'

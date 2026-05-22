@@ -283,6 +283,16 @@ const STOPWORDS = new Set([
   'thing','think','those','three','until','using','while','world','would','years'
 ]);
 
+// Marketing-quality adjectives that appear in page copy but are never the
+// first word of a real search query (e.g. "quality children" is not a query).
+// Filter these out as first-word of 2-grams unless the phrase is in the URL.
+const QUERY_NOISE_MODIFIERS = new Set([
+  'quality', 'excellent', 'exceptional', 'outstanding', 'superb', 'amazing',
+  'fantastic', 'wonderful', 'perfect', 'premium', 'trusted', 'award',
+  'leading', 'dedicated', 'expert', 'experienced', 'friendly', 'affordable',
+  'professional', 'accredited', 'certified', 'qualified', 'reliable'
+]);
+
 function computeTopNgrams (bodyText, urlSlug, h1, title) {
   const urlLower   = (urlSlug  || '').toLowerCase();
   const h1Lower    = (h1       || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
@@ -302,7 +312,17 @@ function computeTopNgrams (bodyText, urlSlug, h1, title) {
   }
 
   return Object.entries(counts)
-    .filter(([, count]) => count >= 2)
+    .filter(([phrase, count]) => {
+      if (count < 2) return false;
+      // Strip 2-grams where first word is a pure marketing-quality adjective
+      // that never forms a meaningful search query (e.g. "quality children").
+      // Exception: keep if the phrase appears in the URL (intentionally targeted).
+      const pw = phrase.split(' ');
+      if (pw.length === 2 && QUERY_NOISE_MODIFIERS.has(pw[0])) {
+        if (!urlLower.includes(pw[0])) return false;
+      }
+      return true;
+    })
     .map(([phrase, count]) => {
       const pw     = phrase.split(' ');
       const inUrl  = pw.every(w => urlLower.includes(w));
@@ -810,7 +830,8 @@ Return ONLY valid JSON (no markdown, no fences):
       "title": "short, specific title — reference page content where possible",
       "detail": "2-3 sentences. Lead with what you actually observed on this page (quote the specific text, name the specific element, cite the specific count). Then explain why it matters for conversion or Quality Score. Keep language proportionate to severity.",
       "fix": "one sentence — specific action referencing the actual element, not a generic recommendation",
-      "impact": "one sentence — name the specific metric (conversion rate, CPA, Quality Score, bounce rate) and use proportionate language: 'can improve', 'tends to reduce', 'may lift'. For pass findings: what this element contributes. Reserve 'directly harms' for critical findings only."
+      "impact": "one sentence — name the specific metric (conversion rate, CPA, Quality Score, bounce rate) and use proportionate language: 'can improve', 'tends to reduce', 'may lift'. For pass findings: what this element contributes. Reserve 'directly harms' for critical findings only.",
+      "effort": "low|medium|high — estimated implementation effort: 'low' = copy/content change, no developer needed (rewrite a headline, add a testimonial, change button text); 'medium' = design or simple dev work (add a form, create a new page section, optimise images); 'high' = significant technical work (Core Web Vitals, tracking implementation, server changes, major restructure)"
     }
   ]
 }`;
