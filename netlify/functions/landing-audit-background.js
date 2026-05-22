@@ -57,38 +57,74 @@ exports.handler = async function (event) {
 
     console.log('[audit] start', url);
 
-    // 1. Fetch HTML
+    // 1. Fetch HTML — multi-UA retry strategy
+    // Many WAFs block specific User-Agent patterns. We try three different browser
+    // signatures before declaring blocked: Chrome desktop → Chrome mobile → Firefox.
+    // This handles UA-based blocking (common on Cloudflare and similar CDN WAFs).
     let html = '';
     let fetchError = null;
     let fetchStatus = 200;
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000);
-      const res = await fetch(url, {
-        signal: controller.signal,
-        redirect: 'follow',
-        headers: {
-          'User-Agent':                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          'Accept':                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-          'Accept-Language':           'en-GB,en;q=0.9',
-          'Accept-Encoding':           'gzip, deflate, br',
-          'Cache-Control':             'no-cache',
-          'Pragma':                    'no-cache',
-          'Sec-Fetch-Dest':            'document',
-          'Sec-Fetch-Mode':            'navigate',
-          'Sec-Fetch-Site':            'none',
-          'Upgrade-Insecure-Requests': '1'
-        }
-      });
-      clearTimeout(timeout);
-      fetchStatus = res.status;
-      if (!res.ok) {
-        fetchError = `HTTP ${res.status}`;
-      } else {
-        html = await res.text();
+
+    const fetchStrategies = [
+      {
+        desc: 'chrome-desktop',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Sec-Fetch-Dest': 'document', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-Site': 'none'
+      },
+      {
+        desc: 'chrome-mobile',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.82 Mobile Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Sec-Fetch-Dest': 'document', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-Site': 'none'
+      },
+      {
+        desc: 'firefox-desktop',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:125.0) Gecko/20100101 Firefox/125.0',
+        'Accept': 'text/html,application/xhtml+xml,application/xhtml;q=0.9,*/*;q=0.8',
+        'Sec-Fetch-Dest': 'document', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-Site': 'none'
       }
-    } catch (e) {
-      fetchError = e.message;
+    ];
+
+    for (const strategy of fetchStrategies) {
+      if (html) break; // already got content
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        const { desc, ...headers } = strategy;
+        const res = await fetch(url, {
+          signal: controller.signal,
+          redirect: 'follow',
+          headers: {
+            ...headers,
+            'Accept-Language':           'en-GB,en;q=0.9',
+            'Accept-Encoding':           'gzip, deflate, br',
+            'Cache-Control':             'no-cache',
+            'Pragma':                    'no-cache',
+            'Upgrade-Insecure-Requests': '1'
+          }
+        });
+        clearTimeout(timeout);
+        fetchStatus = res.status;
+        if (!res.ok) {
+          fetchError = `HTTP ${res.status}`;
+          console.log(`[audit] fetch ${desc} — HTTP ${res.status}, trying next strategy`);
+          continue;
+        }
+        const candidate = await res.text();
+        const blockType = detectBotBlock(candidate);
+        if (blockType) {
+          console.log(`[audit] fetch ${desc} — bot-blocked (${blockType}), trying next strategy`);
+          fetchError = 'blocked';
+          continue;
+        }
+        html = candidate;
+        fetchError = null;
+        console.log(`[audit] fetch ${desc} — success, ${html.length} chars`);
+      } catch (e) {
+        fetchError = e.message;
+        console.log(`[audit] fetch ${strategy.desc} — exception: ${e.message}, trying next strategy`);
+      }
     }
 
     // Classify HTTP error codes into readable keys
@@ -103,10 +139,6 @@ exports.handler = async function (event) {
     else if (fetchError)
       fetchError = 'network_error';
 
-    // Detect bot-block pages (Cloudflare, WAFs) even when response was 200
-    if (!fetchError && !!detectBotBlock(html)) {
-      fetchError = 'blocked';
-    }
 
     console.log('[audit] fetch result:', fetchError || 'ok', 'html length:', html.length);
 
@@ -182,7 +214,7 @@ exports.handler = async function (event) {
     const psiStatus = psiMobile ? 'ok' : 'failed';
 
     // PSI content fallback — when direct fetch is blocked, Googlebot bypasses WAF.
-    // Populates: title, meta, tracking signals (body / H1 / trust remain unavailable).
+    // Populates tracking signals + rich third-party detections from network log.
     if (parsed.fetchFailed && psiMobile?.contentSignals) {
       const cs = psiMobile.contentSignals;
       if (cs.title)           parsed.title           = cs.title;
@@ -192,7 +224,17 @@ exports.handler = async function (event) {
       parsed.hasAdsConversion   = cs.hasAdsConversion;
       parsed.hasRemarketingOnly = !cs.hasAdsConversion && cs.hasRemarketingTag;
       parsed.contentFromPsi     = true;
-      console.log('[audit] psi content fallback applied — title:', cs.title || 'none');
+      // Enrich with PSI network-detected signals
+      parsed.psiFormPlatform    = cs.formPlatform    || null;
+      parsed.psiBookingPlatform = cs.bookingPlatform || null;
+      parsed.psiReviewPlatform  = cs.reviewPlatform  || null;
+      parsed.psiPaymentPlatform = cs.paymentPlatform || null;
+      parsed.psiChatPlatform    = cs.chatPlatform    || null;
+      parsed.psiFacebookPixel   = cs.hasFacebookPixel || false;
+      parsed.psiEntities        = cs.detectedEntities || [];
+      console.log('[audit] psi content fallback applied — title:', cs.title || 'none',
+        '| form:', cs.formPlatform, '| booking:', cs.bookingPlatform,
+        '| review:', cs.reviewPlatform, '| entities:', (cs.detectedEntities || []).join(', '));
     }
 
     // 5. Build final report (with PSI data now available)
@@ -777,7 +819,68 @@ async function fetchPsi (url, strategy, key, attempt = 1) {
         hasGa4:           /gtag\/js\?id=G-|google-analytics\.com\/g\/collect|analytics\.js/i.test(networkUrls),
         hasAdsConversion: /googleads\.g\.doubleclick|googleadservices\.com\/pagead\/conversion|AW-\d{7,}/i.test(networkUrls),
         hasRemarketingTag:/googlesyndication\.com|doubleclick\.net\/activity|allow_ad_personalization/i.test(networkUrls),
-        hasHttps:         /^https:/i.test(url)
+        hasHttps:         /^https:/i.test(url),
+        // Form platforms — detected from network requests made during full Lighthouse render
+        formPlatform: (
+          /js\.hsforms\.net|hbspt\.forms|hubspot\.com\/forms/i.test(networkUrls) ? 'HubSpot' :
+          /typeform\.com/i.test(networkUrls)                                       ? 'Typeform' :
+          /jotform\.com/i.test(networkUrls)                                        ? 'JotForm' :
+          /gravity.*forms|gravityforms/i.test(networkUrls)                         ? 'Gravity Forms' :
+          /cognito.*forms|cognitoforms/i.test(networkUrls)                         ? 'Cognito Forms' :
+          /formstack\.com/i.test(networkUrls)                                      ? 'Formstack' :
+          /wufoo\.com/i.test(networkUrls)                                          ? 'Wufoo' :
+          /paperform\.co/i.test(networkUrls)                                       ? 'Paperform' :
+          null
+        ),
+        // Booking / scheduling widgets
+        bookingPlatform: (
+          /calendly\.com/i.test(networkUrls)           ? 'Calendly' :
+          /acuityscheduling\.com/i.test(networkUrls)   ? 'Acuity Scheduling' :
+          /bookwhen\.com/i.test(networkUrls)           ? 'Bookwhen' :
+          /simplybook\.me/i.test(networkUrls)          ? 'SimplyBook' :
+          /mindbodyonline\.com/i.test(networkUrls)     ? 'Mindbody' :
+          /timely\.com/i.test(networkUrls)             ? 'Timely' :
+          /squareup\.com\/appointments/i.test(networkUrls) ? 'Square Appointments' :
+          /doctoralia|zocdoc|healthengine/i.test(networkUrls) ? 'booking platform' :
+          null
+        ),
+        // Review / trust platforms
+        reviewPlatform: (
+          /trustpilot\.com/i.test(networkUrls)         ? 'Trustpilot' :
+          /reviews\.co\.uk|reviews\.io/i.test(networkUrls) ? 'Reviews.co.uk' :
+          /feefo\.com/i.test(networkUrls)              ? 'Feefo' :
+          /judge\.me/i.test(networkUrls)               ? 'Judge.me' :
+          /yotpo\.com/i.test(networkUrls)              ? 'Yotpo' :
+          /stamped\.io/i.test(networkUrls)             ? 'Stamped' :
+          null
+        ),
+        // Payment processors (trust signal on ecommerce/service pages)
+        paymentPlatform: (
+          /js\.stripe\.com/i.test(networkUrls)         ? 'Stripe' :
+          /paypal\.com/i.test(networkUrls)             ? 'PayPal' :
+          /pay\.google\.com/i.test(networkUrls)        ? 'Google Pay' :
+          /apple.*pay|applepay/i.test(networkUrls)     ? 'Apple Pay' :
+          /checkout\.com/i.test(networkUrls)           ? 'Checkout.com' :
+          /klarna\.com/i.test(networkUrls)             ? 'Klarna' :
+          null
+        ),
+        // Chat / support widgets (trust + engagement signal)
+        chatPlatform: (
+          /intercom\.io|intercomcdn/i.test(networkUrls) ? 'Intercom' :
+          /tawk\.to/i.test(networkUrls)                ? 'Tawk.to' :
+          /livechat\.com/i.test(networkUrls)           ? 'LiveChat' :
+          /drift\.com/i.test(networkUrls)              ? 'Drift' :
+          /crisp\.chat/i.test(networkUrls)             ? 'Crisp' :
+          /freshchat|freshdesk/i.test(networkUrls)     ? 'Freshchat' :
+          null
+        ),
+        // Facebook Pixel
+        hasFacebookPixel: /connect\.facebook\.net.*fbevents|facebook\.com\/tr\?id=/i.test(networkUrls),
+        // Entities — third-party service names detected by Lighthouse
+        detectedEntities: (data.lighthouseResult?.entities || [])
+          .filter(e => e.name && !e.isFirstParty)
+          .map(e => e.name)
+          .slice(0, 12)
       }
     };
   } catch (e) {
@@ -805,8 +908,20 @@ async function analyzeWithClaude (parsed) {
   const ctaList  = (parsed.ctaTexts || [parsed.ctaText]).filter(Boolean).join(' | ') || '(none)';
   const bodyLen  = (parsed.bodyText || '').length;
 
+  const psiSignalSummary = parsed.contentFromPsi ? (() => {
+    const signals = [];
+    if (parsed.psiFormPlatform)    signals.push(`form platform: ${parsed.psiFormPlatform}`);
+    if (parsed.psiBookingPlatform) signals.push(`booking widget: ${parsed.psiBookingPlatform}`);
+    if (parsed.psiReviewPlatform)  signals.push(`review platform: ${parsed.psiReviewPlatform}`);
+    if (parsed.psiPaymentPlatform) signals.push(`payment processor: ${parsed.psiPaymentPlatform}`);
+    if (parsed.psiChatPlatform)    signals.push(`live chat: ${parsed.psiChatPlatform}`);
+    if (parsed.psiFacebookPixel)   signals.push('Facebook Pixel detected');
+    if (parsed.psiEntities?.length) signals.push(`third-party services: ${parsed.psiEntities.join(', ')}`);
+    return signals.length ? '\nNetwork-detected signals (from Google\'s full page render): ' + signals.join(' | ') : '';
+  })() : '';
+
   const fetchWarning = parsed.contentFromPsi
-    ? '\n⚠️ IMPORTANT: Direct page fetch was blocked (bot protection). Title and meta description came from Google\'s PageSpeed Insights engine. Body text, H1, trust signals, and CTA copy are unavailable. Limit findings to what you can infer from title, meta, and URL. Do NOT flag content-related issues you cannot verify.'
+    ? `\n⚠️ IMPORTANT: Direct page fetch was blocked (bot protection). Title and meta description came from Google's PageSpeed Insights engine. Body text, H1, trust signals, and CTA copy are unavailable. However, network signals detected during Google's full page render are available — use these to make reasonable inferences about the page's conversion architecture and trust signals, but do NOT flag issues you cannot verify from available data.${psiSignalSummary}`
     : parsed.fetchFailed
       ? '\n⚠️ IMPORTANT: Page fetch failed entirely. Content analysis is unavailable. Return empty findings array and set all content fields to null.'
       : '';
