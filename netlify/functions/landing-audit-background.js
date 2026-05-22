@@ -1161,23 +1161,31 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   } // end !parsed.fetchFailed content block
 
   // ── Score ──────────────────────────────────────────────────────────────────
+  // Deductions are calibrated against real-world paid landing pages, not perfect
+  // dedicated campaign pages. A solid homepage with some gaps should land ~60-70
+  // (Average). A purpose-built, optimised campaign page should reach 80+ (Strong).
   let score = 100;
   let criticalCount = 0;
   for (const f of findings) {
-    if      (f.severity === 'critical') { score -= 20; criticalCount++; }
-    else if (f.severity === 'high')     score -= 10;
-    else if (f.severity === 'medium')   score -= 5;
+    if      (f.severity === 'critical') { score -= 15; criticalCount++; }
+    else if (f.severity === 'high')     score -= 8;
+    else if (f.severity === 'medium')   score -= 4;
     else if (f.severity === 'low')      score -= 2;
     // 'suggest' = best-practice recommendation, no score deduction
     // 'pass'    = positive finding, green display, no score change
     // 'info'    = contextual note, blue display, no score change
   }
 
-  if      (criticalCount >= 2) score = Math.min(score, 45);
-  else if (criticalCount >= 1) score = Math.min(score, 65);
+  // Caps prevent a page with critical issues scoring deceptively high,
+  // but are generous enough that strong trust/conversion signals still register.
+  if      (criticalCount >= 2) score = Math.min(score, 55);
+  else if (criticalCount >= 1) score = Math.min(score, 75);
   score = Math.max(5, score);
 
-  const scoreBand = score >= 80 ? 'Strong' : score >= 60 ? 'Average' : score >= 40 ? 'Needs work' : 'Critical';
+  // Bands: Strong = well-optimised, minimal gaps. Average = functional with real
+  // improvement headroom. Needs work = meaningful conversion barriers present.
+  // Critical = fundamental problems blocking paid traffic performance.
+  const scoreBand = score >= 75 ? 'Strong' : score >= 55 ? 'Average' : score >= 35 ? 'Needs work' : 'Critical';
 
   // ── Priority actions — exclude pass/info contextual findings ──────────────
   const order = { critical: 0, high: 1, medium: 2, low: 3 };
