@@ -156,11 +156,15 @@
       background: var(--white);
       flex-direction: column;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
       overflow-y: auto;
     }
     .mobile-nav.is-open {
       opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
     .mobile-nav__header {
       display: flex;
