@@ -344,9 +344,10 @@
     .section-hero-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; color: #fff; margin: 0; }
     .section-hero-title em { color: var(--amber); font-style: normal; }
     .section-hero-meta { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-    .sh-pass   { font-size: 12px; font-weight: 700; color: #a5d6a7; }
-    .sh-issue  { font-size: 12px; font-weight: 700; color: #ff8a80; }
-    .sh-sep    { font-size: 12px; color: rgba(255,255,255,0.25); }
+    .sh-pass    { font-size: 12px; font-weight: 700; color: #a5d6a7; }
+    .sh-issue   { font-size: 12px; font-weight: 700; color: #ff8a80; }
+    .sh-suggest { font-size: 12px; font-weight: 700; color: #80cbc4; }
+    .sh-sep     { font-size: 12px; color: rgba(255,255,255,0.25); }
 
     /* Issue cards */
     .findings-block { margin-bottom: 0; }
@@ -658,6 +659,15 @@
       color: var(--green); margin: 24px 0 0; display: flex; align-items: center; gap: 6px;
     }
     .working-section-hdr::before { content: '✓'; font-size: 13px; }
+
+    /* Suggestions sub-banner — appears before suggest-severity findings within a section */
+    .suggestions-section-hdr {
+      background: #E8F5E9; border: 1px solid #C8E6C9; border-left: 3px solid #66BB6A;
+      border-radius: 6px; padding: 10px 16px; margin: 20px 0 12px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #2E7D32; display: flex; align-items: center; gap: 8px;
+    }
+    .suggestions-section-hdr::before { content: '↗'; font-size: 14px; }
 
     /* Page type badge */
     .page-type-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-top: 10px; }
@@ -1588,17 +1598,20 @@
       // issues = actual problems (affect score, verdict, count)
       var passFindings = sectionFindings.filter(function(f) { return f.severity === 'pass'; });
       var infoNotes    = sectionFindings.filter(function(f) { return f.severity === 'info'; });
-      var issues       = sectionFindings.filter(function(f) { return f.severity !== 'info' && f.severity !== 'pass'; });
-      var hasCritical  = issues.some(function(f) { return f.severity === 'critical'; });
-      var hasHigh      = issues.some(function(f) { return f.severity === 'high'; });
+      var allIssues    = sectionFindings.filter(function(f) { return f.severity !== 'info' && f.severity !== 'pass'; });
+      var realIssues   = allIssues.filter(function(f) { return f.severity !== 'suggest'; });
+      var suggestions  = allIssues.filter(function(f) { return f.severity === 'suggest'; });
+      var hasCritical  = realIssues.some(function(f) { return f.severity === 'critical'; });
+      var hasHigh      = realIssues.some(function(f) { return f.severity === 'high'; });
 
-      var verdict = issues.length === 0 ? 'pass' : (hasCritical || hasHigh) ? 'fail' : 'review';
+      var verdict = realIssues.length === 0 ? 'pass' : (hasCritical || hasHigh) ? 'fail' : 'review';
 
       html += '<div class="section-hero">'
         + '<div class="section-hero-eyebrow">' + sec.label + '</div>'
         + '<div class="section-hero-title">' + sectionTitle(sec.key, cats) + '</div>'
         + '<div class="section-hero-meta">'
-        + (issues.length ? '<span class="sh-issue">' + issues.length + ' issue' + (issues.length > 1 ? 's' : '') + '</span>' : '<span class="sh-pass">No issues</span>')
+        + (realIssues.length ? '<span class="sh-issue">' + realIssues.length + ' issue' + (realIssues.length > 1 ? 's' : '') + '</span>' : '<span class="sh-pass">No issues</span>')
+        + (suggestions.length ? '<span class="sh-sep">·</span><span class="sh-suggest">' + suggestions.length + ' opportunit' + (suggestions.length > 1 ? 'ies' : 'y') + '</span>' : '')
         + (passFindings.length ? '<span class="sh-sep">·</span><span class="sh-pass">' + passFindings.length + ' working well</span>' : '')
         + '</div>'
         + '</div>';
@@ -1608,30 +1621,39 @@
       // Special cards per section
       if (sec.key === 'keyword_clarity') html += kwCard;
 
-      if (issues.length === 0) {
+      // Helper to render a single finding card
+      function renderFindingCard(f) {
+        var sevLabel = f.severity === 'suggest' ? 'Suggestion' : f.severity.toUpperCase();
+        var problemLabel = f.severity === 'suggest' ? 'Opportunity' : 'Problem';
+        var effortHtml = '';
+        if (f.effort === 'low' || f.effort === 'medium' || f.effort === 'high') {
+          var effortLabel = f.effort.charAt(0).toUpperCase() + f.effort.slice(1) + ' effort';
+          effortHtml = '<span class="effort-badge effort-' + esc(f.effort) + '">' + effortLabel + '</span>';
+        }
+        html += '<div class="issue-card sev-' + esc(f.severity) + '">'
+          + '<div>'
+          + '<div class="issue-sev sev-' + esc(f.severity) + '" style="display:inline-block">' + esc(sevLabel) + '</div>'
+          + effortHtml
+          + '</div>'
+          + '<div class="issue-title">' + esc(f.title) + '</div>'
+          + '<div class="issue-pfi">'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">' + problemLabel + '</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
+          + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
+          + '</div>'
+          + '</div>';
+      }
+
+      if (realIssues.length === 0 && suggestions.length === 0) {
         html += sectionPassSummary(sec.key, cats, r);
       } else {
-        issues.forEach(function(f) {
-          var sevLabel = f.severity === 'suggest' ? 'Suggestion' : f.severity.toUpperCase();
-          var problemLabel = f.severity === 'suggest' ? 'Opportunity' : 'Problem';
-          var effortHtml = '';
-          if (f.effort === 'low' || f.effort === 'medium' || f.effort === 'high') {
-            var effortLabel = f.effort.charAt(0).toUpperCase() + f.effort.slice(1) + ' effort';
-            effortHtml = '<span class="effort-badge effort-' + esc(f.effort) + '">' + effortLabel + '</span>';
-          }
-          html += '<div class="issue-card sev-' + esc(f.severity) + '">'
-            + '<div>'
-            + '<div class="issue-sev sev-' + esc(f.severity) + '" style="display:inline-block">' + esc(sevLabel) + '</div>'
-            + effortHtml
-            + '</div>'
-            + '<div class="issue-title">' + esc(f.title) + '</div>'
-            + '<div class="issue-pfi">'
-            + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">' + problemLabel + '</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
-            + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
-            + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
-            + '</div>'
-            + '</div>';
-        });
+        // Real issues first
+        realIssues.forEach(renderFindingCard);
+        // Suggestions — with their own coloured banner
+        if (suggestions.length > 0) {
+          html += '<div class="suggestions-section-hdr">Opportunities to explore</div>';
+          suggestions.forEach(renderFindingCard);
+        }
       }
 
       // What's working — pass findings render after issues (or after pass summary) in green
