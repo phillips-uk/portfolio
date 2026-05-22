@@ -415,6 +415,13 @@
     }
     .js-warning strong { color: #5D4037; }
 
+    /* Cookie banner notice */
+    .cookie-banner-notice {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #F1F8E9; border: 1px solid #C5E1A5; border-radius: 20px;
+      padding: 4px 12px; margin-bottom: 20px; font-size: 12px; color: #558B2F;
+    }
+
     /* Blocked-page warning */
     .blocked-warning {
       background: #FDECEA; border: 1px solid #F5C6C2; border-radius: 8px;
@@ -1481,6 +1488,10 @@
     }
     if (r.page_meta && r.page_meta.is_js_rendered) {
       html += '<div class="js-warning"><strong>JavaScript-rendered page — content findings have medium confidence.</strong> Performance and tracking data comes from Google\'s real rendering engine and is accurate. Content-based findings (copy, CTAs, trust signals, phone numbers) are based on what was detectable in the static HTML — some elements may be present in the rendered page that weren\'t visible to the scanner. <strong>Visually confirm any content findings before acting on them.</strong></div>';
+    }
+    if (r.page_meta && r.page_meta.cookie_banner_detected) {
+      var cbPlatform = r.page_meta.cookie_banner_platform || 'Cookie banner';
+      html += '<div class="cookie-banner-notice">&#10003; ' + esc(cbPlatform) + ' detected and excluded from content analysis</div>';
     }
 
     // Priority actions

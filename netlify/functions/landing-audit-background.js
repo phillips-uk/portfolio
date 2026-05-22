@@ -474,6 +474,73 @@ function parseHtml (html, url, isHttps, fetchError) {
   // Nav link count — must be checked BEFORE stripping nav
   const navLinkCount = $('nav a').length;
 
+  // ── Cookie / consent banner detection and strip ────────────────────────────
+  // MUST happen before above-fold extraction — banners are typically injected at
+  // the top of <body> or <main> and their "Accept / Decline / Manage preferences"
+  // text poisons the first-500-char above-fold slice, causing false findings about
+  // missing value propositions and unclear CTAs. Common on all GDPR-compliant sites.
+  const cookieBannerSelectors = [
+    // Generic class / id patterns (covers most bespoke implementations)
+    '[class*="cookie-banner"]', '[id*="cookie-banner"]',
+    '[class*="cookie-notice"]', '[id*="cookie-notice"]',
+    '[class*="cookie-bar"]',    '[id*="cookie-bar"]',
+    '[class*="cookie-popup"]',  '[id*="cookie-popup"]',
+    '[class*="cookie-consent"]','[id*="cookie-consent"]',
+    '[class*="cookiebanner"]',  '[id*="cookiebanner"]',
+    '[class*="consent-banner"]','[id*="consent-banner"]',
+    '[class*="consent-popup"]', '[id*="consent-popup"]',
+    '[class*="gdpr-banner"]',   '[id*="gdpr-banner"]',
+    '[class*="gdpr-notice"]',   '[id*="gdpr-notice"]',
+    '[class*="gdpr-popup"]',    '[id*="gdpr-popup"]',
+    '[class*="privacy-banner"]','[id*="privacy-banner"]',
+    // CookieYes
+    '[class*="cky-"]', '[id*="cky-"]', '#cky-consent-container',
+    // OneTrust / CookiePro / Optanon
+    '[id*="onetrust"]', '[class*="onetrust"]',
+    '[id*="optanon"]',  '[class*="optanon"]',
+    // Cookiebot (Cybot)
+    '[id*="CybotCookiebot"]', '[class*="CybotCookiebot"]',
+    '#cookiebotDialogBody',
+    // Borlabs Cookie
+    '#BorlabsCookieBox', '[id*="borlabs-cookie"]',
+    // GDPR Cookie Consent (WordPress plugin by WebToffee)
+    '[id*="moove_gdpr"]', '[class*="moove_gdpr"]',
+    // Cookie Script
+    '#cookie-script-html', '[class*="cookiescript_"]',
+    // Complianz (WP)
+    '#cmplz-cookiebanner-container', '[class*="cmplz-"]',
+    // Termly
+    '#termly-code-snippet-support', '[id*="termly"]',
+    // Usercentrics
+    '[id*="usercentrics"]',
+    // Cookie dialogs with aria labels
+    'div[role="dialog"][aria-label*="cookie" i]',
+    'div[role="dialog"][aria-label*="consent" i]',
+    'div[role="dialog"][aria-label*="privacy" i]',
+    'section[aria-label*="cookie" i]',
+    // GDPR cookie law (generic WP plugin)
+    '#cookie-law-info-bar', '.cli-bar-container',
+    // Civic Cookie Control
+    '#ccc', '#ccc-overlay',
+  ].join(', ');
+
+  // Detect presence before stripping (for Claude context)
+  let cookieBannerPlatform = null;
+  if ($('[id*="CybotCookiebot"], [class*="CybotCookiebot"]').length)    cookieBannerPlatform = 'Cookiebot';
+  else if ($('[id*="onetrust"], [class*="onetrust"]').length)           cookieBannerPlatform = 'OneTrust';
+  else if ($('[class*="cky-"], [id*="cky-"]').length)                   cookieBannerPlatform = 'CookieYes';
+  else if ($('[id*="BorlabsCookieBox"], [id*="borlabs-cookie"]').length) cookieBannerPlatform = 'Borlabs';
+  else if ($('[class*="cmplz-"]').length)                               cookieBannerPlatform = 'Complianz';
+  else if ($('[id*="termly"]').length)                                  cookieBannerPlatform = 'Termly';
+  else if ($('[id*="moove_gdpr"]').length)                              cookieBannerPlatform = 'GDPR Cookie Consent';
+  else if ($('[id*="cookie-law-info-bar"], .cli-bar-container').length)  cookieBannerPlatform = 'Cookie Law Info';
+  else if ($('#ccc, #ccc-overlay').length)                              cookieBannerPlatform = 'Civic Cookie Control';
+  else if ($(cookieBannerSelectors).length)                             cookieBannerPlatform = 'cookie consent banner';
+  const cookieBannerDetected = !!cookieBannerPlatform;
+
+  // Strip from the live DOM — affects all subsequent extractions
+  $(cookieBannerSelectors).remove();
+
   // Above-fold text — extract from <main> before stripping nav, so Shopify/ecommerce
   // mobile menu drawers (menu-drawer, details[data-disclosure], etc.) are excluded.
   // These custom elements sit before <main> in the DOM and pollute a raw body slice.
@@ -650,7 +717,9 @@ function parseHtml (html, url, isHttps, fetchError) {
     // Page type
     pageTypeInfo,
     // Keyword analysis
-    topNgrams
+    topNgrams,
+    // Cookie / consent banner
+    cookieBannerDetected, cookieBannerPlatform
   };
 }
 
@@ -742,6 +811,10 @@ async function analyzeWithClaude (parsed) {
       ? '\n⚠️ IMPORTANT: Page fetch failed entirely. Content analysis is unavailable. Return empty findings array and set all content fields to null.'
       : '';
 
+  const cookieBannerNote = parsed.cookieBannerDetected
+    ? `\n\n⚠️ COOKIE BANNER DETECTED (${parsed.cookieBannerPlatform}): A cookie/consent banner was detected and stripped from the content before analysis. This is normal on all GDPR-compliant sites — do NOT flag the presence of a consent banner as a conversion issue, a trust problem, or a CTA problem. The above-fold content shown below reflects the page content AFTER the banner has been removed. Do NOT flag missing above-fold value propositions, unclear CTAs, or poor above-fold relevance as if the banner was never there — the actual page content is what matters. If above-fold content still looks sparse after stripping, that IS a real finding.`
+    : '';
+
   const ecommerceContext = isEcommercePrompt
     ? `\n\nECOMMERCE CONTEXT — frame everything for paid Shopping/Search/PMAX campaigns:
 - Do NOT flag: missing contact forms, missing phone numbers, high link counts, or absence of lead-gen CTAs
@@ -754,7 +827,7 @@ async function analyzeWithClaude (parsed) {
 
   const prompt = `You are a senior paid media conversion specialist auditing a landing page that receives paid traffic. You evaluate it primarily through a Google Ads lens — Quality Score, Landing Page Experience, message match, keyword clarity — but your conversion architecture, trust, mobile, and page experience findings apply across channels including Meta Ads, TikTok, and LinkedIn. Your job is to identify specifically what is and is not working on THIS page — not to give generic CRO advice.
 
-PAGE TYPE: ${pageTypeLabel}${ecommerceContext}${fetchWarning}
+PAGE TYPE: ${pageTypeLabel}${ecommerceContext}${fetchWarning}${cookieBannerNote}
 
 ━━━ PAGE CONTENT ━━━
 Title tag:         ${parsed.title || '(none)'}
@@ -1209,7 +1282,9 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       page_type:          pageTypeInfo.type    || 'lead_gen',
       ecommerce_platform: pageTypeInfo.platform || null,
       page_subtype:       pageTypeInfo.subtype  || null,
-      psi_status:         psiStatus            || 'unknown'
+      psi_status:         psiStatus            || 'unknown',
+      cookie_banner_detected: parsed.cookieBannerDetected || false,
+      cookie_banner_platform: parsed.cookieBannerPlatform || null
     }
   };
 }
