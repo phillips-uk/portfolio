@@ -973,9 +973,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </li>
       </ol>
 
-      <!-- Diagram 1: 7-step fix flow -->
+      <!-- ── 7 common causes ── -->
+      <h2>The 7 most common conversion tracking issues</h2>
+
+      <!-- Diagram: quick-reference map of all 7 issues -->
       <div class="diag">
-        <div class="diag-label">Diagnostic sequence</div>
+        <div class="diag-label">At a glance — jump to the issue that applies</div>
         <div class="diag-flow">
           <div class="diag-step">
             <div class="diag-step-left">
@@ -983,8 +986,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Check conversion action status</div>
-              <div class="diag-step-desc">Goals › Conversions › Summary — look for Inactive or Needs attention</div>
+              <div class="diag-step-title">Inactive or "Needs attention" status</div>
+              <div class="diag-step-desc">Tag not firing, or configuration issue — Enhanced Conversions error, consent conflict, ID mismatch</div>
             </div>
           </div>
           <div class="diag-step">
@@ -993,8 +996,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Verify the tag is firing</div>
-              <div class="diag-step-desc">Google Tag Assistant — confirm Conversion ID and Label match</div>
+              <div class="diag-step-title">Duplicate conversion counting</div>
+              <div class="diag-step-desc">GTM tag and GA4 import both set as primary — Smart Bidding sees every lead twice</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1003,8 +1006,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Remove duplicate conversion counting</div>
-              <div class="diag-step-desc">Only one primary source per conversion type — GA4 imports must be secondary</div>
+              <div class="diag-step-title">GA4 conversions imported as primary</div>
+              <div class="diag-step-desc">GA4 imports must always be secondary — they introduce modelled data into your bidding signal</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1013,8 +1016,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Confirm the trigger fires on the conversion, not page load</div>
-              <div class="diag-step-desc">GTM Preview Mode — walk the funnel and check the trigger fires exactly once on submit</div>
+              <div class="diag-step-title">Tag firing on page load, not conversion</div>
+              <div class="diag-step-desc">Page View trigger on a thank-you URL — every visit registers as a conversion, not just form submits</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1023,8 +1026,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Enable Enhanced Conversions and verify data is passing</div>
-              <div class="diag-step-desc">Push user_data to dataLayer at conversion — check match rate in Diagnostics (target: &gt;30%)</div>
+              <div class="diag-step-title">Enhanced Conversions not enabled or misconfigured</div>
+              <div class="diag-step-desc">Automatic data collection misses conversions — use Code mode with a structured user_data dataLayer push</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1033,8 +1036,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Check Consent Mode v2 is not silently blocking conversions</div>
-              <div class="diag-step-desc">Consent Initialization tag fires first — Tag Assistant confirms granted state before conversion tag fires</div>
+              <div class="diag-step-title">Consent Mode v2 silently blocking conversions</div>
+              <div class="diag-step-desc">Default state tag fires late or is missing — Google tags see a permanently denied consent state</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1043,15 +1046,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="diag-step-line"></div>
             </div>
             <div class="diag-step-body">
-              <div class="diag-step-title">Confirm auto-tagging is enabled</div>
-              <div class="diag-step-desc">Admin › Account settings › Auto-tagging — GCLID must append to landing page URLs</div>
+              <div class="diag-step-title">Auto-tagging disabled</div>
+              <div class="diag-step-desc">No GCLID on landing page URLs — click-based attribution fails completely</div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- ── 7 common causes ── -->
-      <h2>The 7 most common conversion tracking issues</h2>
 
       <p>Each issue below has a different root cause and a different fix. Identify which applies before making changes — working through them randomly wastes time and makes it harder to know what actually resolved the problem.</p>
 
