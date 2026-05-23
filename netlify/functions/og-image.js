@@ -3,7 +3,7 @@
  * Netlify Function — generates branded SVG images on demand.
  *
  * Types:
- *   ?type=og       1200×630  dark bg — for <meta og:image> social sharing
+ *   ?type=og       1200×630  amber bg — for <meta og:image> social sharing
  *   ?type=section  720×200   cream bg — for in-guide section header images
  *   ?type=stat     720×380   cream bg — for large stat callout images
  *
@@ -38,62 +38,66 @@ exports.handler = async function (event) {
   };
 };
 
-/* ─── OG image: 1200×630, dark background ─────────────────────────── */
+/* ─── OG image: 1200×630, amber background ────────────────────────── */
 function ogSVG (title, label, desc) {
-  const AMBER  = '#985830';
-  const INK    = '#1A1A1A';
-  const WHITE  = '#FFFFFF';
-  const DIMMED = 'rgba(255,255,255,0.55)';
-  const MUTED  = 'rgba(255,255,255,0.28)';
-  const FONT   = "'Helvetica Neue', Helvetica, Arial, sans-serif";
+  const AMBER       = '#985830';
+  const AMBER_DARK  = '#7a4525';  // deeper amber for depth
+  const AMBER_LIGHT = 'rgba(255,255,255,0.12)'; // subtle white overlay
+  const WHITE       = '#FFFFFF';
+  const WHITE_DIM   = 'rgba(255,255,255,0.70)';
+  const WHITE_MUTED = 'rgba(255,255,255,0.40)';
+  const FONT        = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 
-  const lines      = wrapText(title, 36);
-  const lineH      = 68;
+  const lines      = wrapText(title, 34);
+  const lineH      = 70;
   const labelH     = 34;
-  const labelGap   = 18;
-  const descH      = desc ? 34 : 0;
-  const descGap    = desc ? 16 : 0;
+  const labelGap   = 20;
+  const descH      = desc ? 32 : 0;
+  const descGap    = desc ? 18 : 0;
   const blockH     = labelH + labelGap + lines.length * lineH + descH + descGap;
-  const blockStart = Math.round((630 - blockH) / 2) + 8; // slightly above centre
+  const blockStart = Math.round((630 - blockH) / 2) + 4;
 
-  const labelW    = label.toUpperCase().length * 8.4 + 28;
-  const labelY    = blockStart;
-  const titleY    = blockStart + labelH + labelGap;
-  const descY     = titleY + lines.length * lineH + descGap;
+  const labelW = label.toUpperCase().length * 8.4 + 28;
+  const labelY = blockStart;
+  const titleY = blockStart + labelH + labelGap;
+  const descY  = titleY + lines.length * lineH + descGap;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <style>text { font-family: ${FONT}; }</style>
-  </defs>
-  <!-- Background -->
-  <rect width="1200" height="630" fill="${INK}"/>
-  <!-- Amber left bar -->
-  <rect x="0" y="0" width="10" height="630" fill="${AMBER}"/>
-  <!-- Subtle top gradient -->
-  <defs>
-    <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${AMBER}" stop-opacity="0.07"/>
-      <stop offset="1" stop-color="${AMBER}" stop-opacity="0"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"   stop-color="${AMBER_DARK}"/>
+      <stop offset="100%" stop-color="${AMBER}"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="${WHITE}" stop-opacity="0.08"/>
+      <stop offset="0.5" stop-color="${WHITE}" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <rect x="10" y="0" width="1190" height="200" fill="url(#tg)"/>
 
-  <!-- Phillips. wordmark -->
-  <text x="52" y="66" font-size="24" font-weight="700" letter-spacing="-0.3" fill="${WHITE}">Phillips<tspan fill="${AMBER}">.</tspan></text>
+  <!-- Amber background with subtle diagonal gradient -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle top shine -->
+  <rect width="1200" height="320" fill="url(#shine)"/>
+  <!-- White left bar — thin, clean anchor -->
+  <rect x="0" y="0" width="6" height="630" fill="${WHITE}" opacity="0.5"/>
 
-  <!-- Label chip -->
-  <rect x="52" y="${labelY}" width="${labelW}" height="${labelH}" rx="4" fill="${AMBER}"/>
-  <text x="${52 + labelW / 2}" y="${labelY + 22}" font-size="12" font-weight="700" letter-spacing="1.8" text-anchor="middle" fill="${WHITE}">${x(label.toUpperCase())}</text>
+  <!-- Phillips. wordmark — white -->
+  <text x="48" y="66" font-size="24" font-weight="700" letter-spacing="-0.3" fill="${WHITE}">Phillips<tspan opacity="0.6">.</tspan></text>
 
-  <!-- Title -->
-  ${lines.map((line, i) => `<text x="52" y="${titleY + i * lineH + 50}" font-size="56" font-weight="700" letter-spacing="-1.2" fill="${WHITE}">${x(line)}</text>`).join('\n  ')}
+  <!-- Label chip — white bg, amber text (inverted for contrast) -->
+  <rect x="48" y="${labelY}" width="${labelW}" height="${labelH}" rx="4" fill="${WHITE}"/>
+  <text x="${48 + labelW / 2}" y="${labelY + 22}" font-size="12" font-weight="700" letter-spacing="1.8" text-anchor="middle" fill="${AMBER}">${x(label.toUpperCase())}</text>
+
+  <!-- Title — white, large -->
+  ${lines.map((line, i) => `<text x="48" y="${titleY + i * lineH + 52}" font-size="58" font-weight="700" letter-spacing="-1.4" fill="${WHITE}">${x(line)}</text>`).join('\n  ')}
 
   <!-- Description -->
-  ${desc ? `<text x="52" y="${descY + 50}" font-size="22" fill="${DIMMED}">${x(clip(desc, 90))}</text>` : ''}
+  ${desc ? `<text x="48" y="${descY + 50}" font-size="22" fill="${WHITE_DIM}">${x(clip(desc, 88))}</text>` : ''}
 
-  <!-- Bottom bar -->
-  <text x="52" y="604" font-size="16" letter-spacing="0.3" fill="${MUTED}">phillips-uk.com</text>
-  <text x="1148" y="604" font-size="22" font-weight="700" text-anchor="end" fill="${AMBER}">P.</text>
+  <!-- Bottom -->
+  <text x="48" y="602" font-size="16" letter-spacing="0.4" fill="${WHITE_MUTED}">phillips-uk.com</text>
+  <text x="1152" y="602" font-size="26" font-weight="700" text-anchor="end" fill="${WHITE}" opacity="0.5">P.</text>
 </svg>`;
 }
 
