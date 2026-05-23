@@ -248,7 +248,12 @@
     .article-header {
       margin-bottom: 48px;
       padding-bottom: 32px;
-      border-bottom: 1px solid var(--border);
+    }
+
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 56px 0;
     }
 
     .article-tag {
@@ -1172,6 +1177,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p>Fix conversion tracking first. Every other optimisation sits on top of it.</p>
 
       <!-- ── Quick fix ── -->
+      <hr class="section-rule">
       <h2>How to fix Google Ads conversion tracking</h2>
 
       <p>Work through this sequence before investigating specific issues. Most problems surface at one of these seven checkpoints.</p>
@@ -1461,6 +1467,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <!-- ── Architecture table ── -->
+      <hr class="section-rule">
       <h2>What correct conversion setup looks like in 2026</h2>
 
       <p>A clean account has one primary conversion action per conversion type — fired directly by a GTM-deployed Google Ads Conversion Tag. Any GA4-imported equivalents sit alongside it as secondary (observed) actions. Here is what that looks like for a typical lead generation account:</p>
@@ -1573,6 +1580,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         The April 2026 GA4 update changed the validation rules for several key events. Two changes directly affect Google Ads conversion tracking.
       </div>
 
+      <hr class="section-rule">
       <h2>The April 2026 GA4 update: what changed</h2>
 
       <p>Google's April 2026 GA4 update was one of the most disruptive since the Universal Analytics sunset. For Google Ads advertisers, two changes are immediately relevant.</p>
@@ -1610,6 +1618,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p>The April 2026 update also modified the expected structure for Enhanced Conversions data passed via the dataLayer. Older implementations using the original <code>user_data</code> object structure may still fire without error but fail to pass hashed data correctly — match rates drop silently. Google's Diagnostics tool will flag a low or zero match rate if this has affected your account. Re-test your implementation using Google's Enhanced Conversions testing tool and compare against the current field structure in the documentation.</p>
 
       <!-- ── FAQ ── -->
+      <hr class="section-rule">
       <h2>Common questions</h2>
 
       <div class="faq-list">
