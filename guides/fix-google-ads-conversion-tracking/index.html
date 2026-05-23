@@ -616,6 +616,215 @@
       text-decoration: none;
     }
 
+    /* ── Code blocks ── */
+    .code-block {
+      background: #1E1E1E;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 16px 0;
+      overflow-x: auto;
+      border-left: 3px solid var(--amber);
+    }
+    .code-block pre {
+      margin: 0;
+      font-family: 'SF Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.75;
+      color: #D4C4B0;
+      white-space: pre;
+    }
+    .code-block-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 10px;
+      font-family: "Helvetica Neue", sans-serif;
+    }
+    .tok-key  { color: #CE9178; }
+    .tok-str  { color: #98C379; }
+    .tok-num  { color: #D19A66; }
+    .tok-cmt  { color: #608B4E; font-style: italic; }
+    .tok-pun  { color: #ABB2BF; }
+    .tok-var  { color: #E5C07B; }
+    .tok-ok   { color: #98C379; }
+    .tok-err  { color: #E06C75; }
+
+    /* ── Before / after code panels ── */
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .before-after-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 5px 5px 0 0;
+      display: inline-block;
+      margin-bottom: -1px;
+    }
+    .before-label { background: #FFCDD2; color: #C62828; }
+    .after-label  { background: #C8E6C9; color: #1B5E20; }
+    .before-after .code-block { border-radius: 0 8px 8px 8px; margin-top: 0; }
+
+    /* ── Consent firing order timeline ── */
+    .consent-timeline {
+      display: flex;
+      align-items: flex-start;
+      margin: 24px 0;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      gap: 0;
+    }
+    .cs-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 90px;
+      position: relative;
+    }
+    .cs-stage::after {
+      content: '→';
+      position: absolute;
+      top: 11px;
+      right: -10px;
+      font-size: 14px;
+      color: var(--mid);
+      z-index: 2;
+    }
+    .cs-stage:last-child::after { display: none; }
+    .cs-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      z-index: 1;
+      position: relative;
+    }
+    .cs-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 8px;
+      color: var(--ink);
+      line-height: 1.3;
+      padding: 0 4px;
+    }
+    .cs-sub {
+      font-size: 10px;
+      text-align: center;
+      color: var(--mid);
+      margin-top: 3px;
+      line-height: 1.3;
+      padding: 0 6px;
+    }
+    .cs-1 { background: var(--amber); color: #fff; }
+    .cs-2 { background: #E8D8C4; color: var(--ink); border: 1.5px solid var(--border); }
+    .cs-3 { background: #5C6BC0; color: #fff; }
+    .cs-4 { background: #2E7D32; color: #fff; }
+    .cs-5 { background: var(--ink); color: #fff; }
+
+    /* ── Verification tool cards ── */
+    .tool-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .tool-card {
+      background: var(--cream);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 16px;
+    }
+    .tool-card-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+      display: block;
+      line-height: 1;
+    }
+    .tool-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .tool-card-row {
+      font-size: 12px;
+      color: var(--mid);
+      line-height: 1.5;
+      margin-bottom: 5px;
+      display: flex;
+      gap: 5px;
+    }
+    .tool-card-row strong {
+      color: var(--ink);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tool-card-row:last-child { margin-bottom: 0; }
+
+    /* ── Priority grid ── */
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 20px 0 28px;
+    }
+    .priority-col {
+      border-radius: 8px;
+      padding: 16px;
+      border: 1.5px solid;
+    }
+    .priority-col-1 { background: #FFF5F5; border-color: #FFCDD2; }
+    .priority-col-2 { background: #FFF8E1; border-color: #FFE082; }
+    .priority-col-3 { background: var(--cream); border-color: var(--border); }
+    .priority-col-head {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1.5px solid;
+    }
+    .priority-col-1 .priority-col-head { color: #C62828; border-color: #FFCDD2; }
+    .priority-col-2 .priority-col-head { color: #BF6000; border-color: #FFE082; }
+    .priority-col-3 .priority-col-head { color: var(--mid); border-color: var(--border); }
+    .priority-item {
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--ink);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+    .priority-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .priority-num {
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(0,0,0,0.07);
+      border-radius: 3px;
+      padding: 1px 5px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--mid);
+    }
+
     /* ── Diagrams ── */
     .diag {
       margin: 36px 0;
@@ -869,6 +1078,13 @@
       .diag-arch { padding: 16px; }
       .diag-arch-row { gap: 6px; }
       .diag-arch-node { font-size: 11px; padding: 7px 10px; }
+      .tool-cards { grid-template-columns: 1fr; }
+      .priority-grid { grid-template-columns: 1fr; }
+      .before-after { grid-template-columns: 1fr; }
+      .consent-timeline { gap: 0; }
+      .cs-stage { min-width: 70px; }
+      .cs-title { font-size: 10px; }
+      .cs-sub { display: none; }
     }
   </style>
 </head>
@@ -975,6 +1191,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- ── 7 common causes ── -->
       <h2>The 7 most common conversion tracking issues</h2>
+
+      <!-- Visual: priority grid -->
+      <div class="diag-label" style="margin-bottom:10px;">Where to start — priority by impact</div>
+      <div class="priority-grid">
+        <div class="priority-col priority-col-1">
+          <div class="priority-col-head">Fix immediately</div>
+          <div class="priority-item"><span class="priority-num">#2</span>Duplicate conversion counting</div>
+          <div class="priority-item"><span class="priority-num">#3</span>GA4 imported as primary</div>
+          <div class="priority-item"><span class="priority-num">#7</span>Auto-tagging disabled</div>
+        </div>
+        <div class="priority-col priority-col-2">
+          <div class="priority-col-head">Fix this week</div>
+          <div class="priority-item"><span class="priority-num">#4</span>Tag firing on page load</div>
+          <div class="priority-item"><span class="priority-num">#5</span>Enhanced Conversions misconfigured</div>
+          <div class="priority-item"><span class="priority-num">#6</span>Consent Mode v2 blocking data</div>
+        </div>
+        <div class="priority-col priority-col-3">
+          <div class="priority-col-head">Diagnose first</div>
+          <div class="priority-item"><span class="priority-num">#1</span>Inactive or "Needs attention" — run Tag Assistant to find root cause before actioning</div>
+        </div>
+      </div>
 
       <!-- Diagram: quick-reference map of all 7 issues -->
       <div class="diag">
@@ -1122,7 +1359,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>Standard browser-side conversion tracking misses a growing share of conversions due to ad blockers, iOS Intelligent Tracking Prevention, and cookie consent restrictions. Enhanced Conversions recovers a portion of these by sending hashed customer data (email, phone) alongside the conversion signal, which Google uses to match to signed-in Google accounts.</p>
         <p>The most common misconfiguration: the Google Ads Conversion Tag in GTM is set to use Automatic user data collection, which tries to scrape email addresses from the page DOM. This is unreliable — it misses users who type slowly, fails on single-page apps, and does not capture phone numbers. The correct approach is Code mode: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and point the tag at a Data Layer Variable that reads it.</p>
         <span class="fix-label">Fix</span>
-        <p>Capture the email and phone from the form at submission time. Push them to the dataLayer as <code>{ user_data: { email: "...", phone_number: "+44xxxxxxxxxx" } }</code>. Phone numbers must be in E.164 format — a leading <code>+</code>, country code, then the number with no spaces or dashes. UK numbers starting with 07 become +447. In your GTM GACT tag, switch to Code mode and read the user_data via a Data Layer Variable. Check the match rate in Google Ads Diagnostics after 7 days.</p>
+        <p>Capture the email and phone from the form at submission time and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be in E.164 format — UK numbers starting with 07 become +447. In your GTM GACT tag, switch to Code mode and read the <code>user_data</code> via a Data Layer Variable. Check the match rate in Google Ads Diagnostics after 7 days (target: above 30%).</p>
+        <div class="code-block">
+          <div class="code-block-label">GTM dataLayer push — Enhanced Conversions (Code mode)</div>
+          <pre><span class="tok-var">dataLayer</span><span class="tok-pun">.</span><span class="tok-var">push</span><span class="tok-pun">({</span>
+  <span class="tok-key">'event'</span><span class="tok-pun">:</span>     <span class="tok-str">'conversion_form_submit'</span><span class="tok-pun">,</span>
+  <span class="tok-key">'user_data'</span><span class="tok-pun">: {</span>
+    <span class="tok-key">'email'</span><span class="tok-pun">:</span>        <span class="tok-var">formEmail</span><span class="tok-pun">,</span>        <span class="tok-cmt">// raw — Google hashes it</span>
+    <span class="tok-key">'phone_number'</span><span class="tok-pun">:</span> <span class="tok-var">formPhone</span>         <span class="tok-cmt">// E.164: +447911123456</span>
+  <span class="tok-pun">}</span>
+<span class="tok-pun">});</span></pre>
+        </div>
       </div>
 
       <div class="issue-block">
@@ -1131,6 +1378,44 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>The failure mode: the Consent Mode default state tag is missing, fires too late, or sets the wrong consent types. Tags that require <code>ad_storage</code> fire before consent is granted on page load, then the consent signal never updates to granted even after the user accepts. Google tags interpret this as a permanently denied state and suppress the conversion.</p>
         <span class="fix-label">Fix</span>
         <p>Your Consent Mode default state tag must fire before any other Google tag on every page — set it to fire on Consent Initialization. Set <code>ad_storage</code> and <code>ad_user_data</code> to denied by default. Your CMP (cookie banner) must push a consent update to the dataLayer when the user accepts. Verify in Tag Assistant that the consent state shows as granted for consenting users before the conversion tag fires. The GTM "2 tags not configured for consent" warning for Conversion Linker and CMP gallery templates is a false positive — these tag types do not expose the consent settings UI but respect consent natively.</p>
+
+        <!-- Consent Mode firing order -->
+        <div class="diag" style="margin-top:20px;">
+          <div class="diag-label">Correct Consent Mode v2 firing order</div>
+          <div class="consent-timeline">
+            <div class="cs-stage">
+              <div class="cs-dot cs-1">1</div>
+              <div class="cs-title">Consent Init tag</div>
+              <div class="cs-sub">Fires first — before all other tags</div>
+            </div>
+            <div class="cs-stage">
+              <div class="cs-dot cs-2">2</div>
+              <div class="cs-title">Default state set</div>
+              <div class="cs-sub">ad_storage = denied<br>ad_user_data = denied</div>
+            </div>
+            <div class="cs-stage">
+              <div class="cs-dot cs-2">3</div>
+              <div class="cs-title">Banner appears</div>
+              <div class="cs-sub">User sees cookie consent prompt</div>
+            </div>
+            <div class="cs-stage">
+              <div class="cs-dot cs-3">4</div>
+              <div class="cs-title">User accepts</div>
+              <div class="cs-sub">CMP pushes consent update to dataLayer</div>
+            </div>
+            <div class="cs-stage">
+              <div class="cs-dot cs-4">5</div>
+              <div class="cs-title">State updated</div>
+              <div class="cs-sub">ad_storage = granted<br>ad_user_data = granted</div>
+            </div>
+            <div class="cs-stage">
+              <div class="cs-dot cs-5">6</div>
+              <div class="cs-title">Conversion tag fires</div>
+              <div class="cs-sub">Data flows to Google Ads ✓</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--mid);margin-top:4px;">If steps 1–2 happen <em>after</em> step 3, the consent signal is permanently denied for that page load — even if the user accepts.</p>
+        </div>
       </div>
 
       <div class="issue-block">
@@ -1219,14 +1504,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <p>Making a change and waiting for data is slow and unreliable. Use these three methods to confirm tracking is working immediately after any fix.</p>
 
-      <h3>Google Tag Assistant</h3>
-      <p>Tag Assistant is a free Chrome extension that shows every Google tag firing on a page in real time. Connect Tag Assistant, navigate to your conversion page or trigger your conversion event, and check the output. You are looking for the Google Ads Global Site Tag plus your Conversion Tag firing in sequence. If the Conversion Tag does not appear, the tag is not installed or the trigger condition is not being met. If it fires but the conversion does not register in Google Ads, check the Conversion ID and Label.</p>
-
-      <h3>GTM Preview Mode</h3>
-      <p>For GTM-managed tags, Preview Mode gives you a full event-by-event log of what fired during a user journey. Open GTM, click Preview, and walk through your conversion funnel. The Tags Fired panel shows exactly which tags fired at each interaction and which triggers caused them. This is the best way to confirm a form submission trigger fires on submit rather than on the subsequent page load.</p>
-
-      <h3>Google Ads Conversion Diagnostics</h3>
-      <p>Go to Goals &gt; Conversions &gt; Summary and click the Diagnostics tab. Google runs automated checks on each conversion action and flags specific issues — missing Global Site Tag, disabled auto-tagging, Enhanced Conversions match rate, and consent mode status. This is the most direct way to understand what Google can and cannot see from your account, and it updates within 24 hours of any change.</p>
+      <div class="tool-cards">
+        <div class="tool-card">
+          <span class="tool-card-icon">🏷️</span>
+          <div class="tool-card-name">Google Tag Assistant</div>
+          <div class="tool-card-row"><strong>Use when</strong> installing or changing a tag</div>
+          <div class="tool-card-row"><strong>Shows</strong> every Google tag firing in real time, in sequence</div>
+          <div class="tool-card-row"><strong>Look for</strong> Conversion Tag present + Conversion ID and Label match your Google Ads action exactly</div>
+        </div>
+        <div class="tool-card">
+          <span class="tool-card-icon">🔍</span>
+          <div class="tool-card-name">GTM Preview Mode</div>
+          <div class="tool-card-row"><strong>Use when</strong> diagnosing trigger timing issues</div>
+          <div class="tool-card-row"><strong>Shows</strong> every tag and trigger fired at each step of the user journey</div>
+          <div class="tool-card-row"><strong>Look for</strong> conversion tag fires once on form submit — not on the subsequent page load</div>
+        </div>
+        <div class="tool-card">
+          <span class="tool-card-icon">📊</span>
+          <div class="tool-card-name">Conversion Diagnostics</div>
+          <div class="tool-card-row"><strong>Use when</strong> checking account-level health after a fix</div>
+          <div class="tool-card-row"><strong>Shows</strong> automated Google checks: tag presence, auto-tagging, EC match rate, consent status</div>
+          <div class="tool-card-row"><strong>Look for</strong> no flags — updates within 24 hours of any change</div>
+        </div>
+      </div>
 
       <!-- ── April 2026 update ── -->
       <div class="update-callout">
@@ -1240,9 +1540,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p>Google's April 2026 GA4 update was one of the most disruptive since the Universal Analytics sunset. For Google Ads advertisers, two changes are immediately relevant.</p>
 
       <h3>generate_lead now requires currency and value parameters</h3>
-      <p>Prior to April 2026, a <code>generate_lead</code> event fired from GA4 would count as a conversion in Google Ads regardless of whether it carried value data. After the update, GA4 requires the <code>currency</code> and <code>value</code> parameters to be present for the event to qualify as a key event eligible for Google Ads import. Accounts that had been importing <code>generate_lead</code> without these parameters found their imported conversion counts dropping to zero. The event still fires in GA4 — it just no longer transfers to Google Ads as a counted conversion.</p>
+      <p>Prior to April 2026, a <code>generate_lead</code> event fired from GA4 would count as a conversion in Google Ads regardless of whether it carried value data. After the update, GA4 requires <code>currency</code> and <code>value</code> to be present for the event to qualify for Google Ads import. Accounts importing <code>generate_lead</code> without these parameters found imported conversion counts drop to zero — the event still fires in GA4, it just no longer transfers across.</p>
 
-      <p>If you import lead form conversions from GA4, add <code>currency</code> and <code>value</code> to the event. For lead generation, set a fixed estimated lead value — even a conservative number like your average lead qualification value is better than leaving the parameter out. If you use a GTM-deployed GACT tag as your primary conversion action, this change does not affect you directly — though it does affect any GA4-imported secondary actions you might reference in reports.</p>
+      <div class="before-after">
+        <div>
+          <span class="before-after-label before-label">✕ Before April 2026</span>
+          <div class="code-block">
+            <pre><span class="tok-var">gtag</span><span class="tok-pun">(</span><span class="tok-str">'event'</span><span class="tok-pun">,</span> <span class="tok-str">'generate_lead'</span><span class="tok-pun">, {</span>
+  <span class="tok-key">'form_name'</span><span class="tok-pun">:</span> <span class="tok-str">'contact'</span>
+  <span class="tok-cmt">// No currency or value</span>
+  <span class="tok-cmt">// ✕ No longer imports to Ads</span>
+<span class="tok-pun">});</span></pre>
+          </div>
+        </div>
+        <div>
+          <span class="before-after-label after-label">✓ Required after April 2026</span>
+          <div class="code-block">
+            <pre><span class="tok-var">gtag</span><span class="tok-pun">(</span><span class="tok-str">'event'</span><span class="tok-pun">,</span> <span class="tok-str">'generate_lead'</span><span class="tok-pun">, {</span>
+  <span class="tok-key">'currency'</span><span class="tok-pun">:</span>  <span class="tok-str">'GBP'</span><span class="tok-pun">,</span>
+  <span class="tok-key">'value'</span><span class="tok-pun">:</span>     <span class="tok-num">150</span><span class="tok-pun">,</span>     <span class="tok-cmt">// est. lead value</span>
+  <span class="tok-key">'form_name'</span><span class="tok-pun">:</span> <span class="tok-str">'contact'</span>
+  <span class="tok-cmt">// ✓ Qualifies for GA4 import</span>
+<span class="tok-pun">});</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <p>If you use a GTM-deployed GACT tag as your primary conversion action this change does not affect you directly — though it does affect any GA4-imported secondary actions you reference in reports. For lead generation, set a fixed estimated lead value even if it is approximate — any value is better than omitting the parameter entirely.</p>
 
       <h3>Enhanced Conversions field names changed</h3>
       <p>The April 2026 update also modified the expected structure for Enhanced Conversions data passed via the dataLayer. Older implementations using the original <code>user_data</code> object structure may still fire without error but fail to pass hashed data correctly — match rates drop silently. Google's Diagnostics tool will flag a low or zero match rate if this has affected your account. Re-test your implementation using Google's Enhanced Conversions testing tool and compare against the current field structure in the documentation.</p>
