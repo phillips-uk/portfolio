@@ -113,7 +113,14 @@ function bandColour(band) {
 }
 
 function sevColour(sev) {
-  return sev === 'critical' ? '#C0392B' : sev === 'high' ? '#D4691B' : sev === 'medium' ? '#D97706' : '#6B6B6B';
+  const map = {
+    critical: '#C0392B',
+    high:     '#D4691B',
+    medium:   '#D97706',
+    low:      '#2563EB',
+    suggest:  '#0891B2',
+  };
+  return map[(sev || '').toLowerCase()] || '#6B6B6B';
 }
 
 // ── Pending page ──────────────────────────────────────────────────────────────
