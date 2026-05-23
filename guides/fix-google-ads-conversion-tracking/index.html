@@ -205,6 +205,15 @@
       letter-spacing: -0.01em;
     }
     .nav-logo .dot { color: var(--amber); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--ink); }
     .nav-cta {
       font-size: 13px;
       font-weight: 500;
@@ -217,6 +226,7 @@
       transition: background 0.15s, color 0.15s;
     }
     .nav-cta:hover { background: var(--amber); color: var(--white); }
+    @media (max-width: 640px) { .nav-links { display: none; } }
 
     /* ── Layout ── */
     main {
@@ -628,7 +638,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <nav>
   <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
-  <a href="/google-ads-audit" class="nav-cta">Free Audit Tool</a>
+  <div class="nav-links">
+    <a href="/guides/" class="nav-link">Guides</a>
+    <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
+    <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+  </div>
+  <a href="/#contact" class="nav-cta">Get in touch</a>
 </nav>
 
 <main>

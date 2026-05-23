@@ -179,6 +179,15 @@
     }
     .nav-logo .dot { color: var(--amber); }
 
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--ink); }
     .nav-back {
       font-size: 13px;
       font-weight: 500;
@@ -190,8 +199,8 @@
       border-radius: 4px;
       transition: background 0.15s, color 0.15s;
     }
-
     .nav-back:hover { background: var(--amber); color: var(--white); }
+    @media (max-width: 640px) { .nav-links { display: none; } }
 
     /* ── Page wrapper ─────────────────────────────────────────────── */
     main {
@@ -2113,7 +2122,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ── Nav ────────────────────────────────────────────────────────────── -->
 <nav>
   <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
-  <a href="/" class="nav-back">← Back to site</a>
+  <div class="nav-links">
+    <a href="/guides/" class="nav-link">Guides</a>
+    <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+  </div>
+  <a href="/#contact" class="nav-back">Get in touch</a>
 </nav>
 
 <!-- ── Approval notice ───────────────────────────────────────────────────── -->
@@ -3582,6 +3595,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           ${feedPassSummaryHTML}
         </div>` : "";
 
+      const convTrackingGuideHTML = (!allPass && catKey === "conversion_foundation") ? `
+        <div style="margin:12px 0 4px;padding:14px 18px;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:#6B6B6B;">Step-by-step fixes for every conversion tracking issue in this audit.</span>
+          <a href="/guides/fix-google-ads-conversion-tracking/" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:#985830;text-decoration:none;white-space:nowrap;">How to Fix Conversion Tracking &rarr;</a>
+        </div>` : "";
+
       return `
         <div class="category-section">
           <div class="category-hdr">
@@ -3591,6 +3610,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="verdict-badge verdict-${verdict}">${verdictLabel}</span>
           </div>
           ${catIssues.map(buildIssueCard).join("")}
+          ${convTrackingGuideHTML}
           ${passesHTML}
         </div>`;
     }

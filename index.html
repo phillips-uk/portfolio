@@ -109,8 +109,16 @@
     }
     nav a.cta--filled:hover { background: #7a4525; }
 
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--ink); }
     .nav-ctas { display: flex; align-items: center; gap: 10px; }
-    @media (max-width: 600px) { .nav-tool { display: none; } }
 
     /* ── BURGER BUTTON (hidden on desktop) ── */
     .nav-burger {
@@ -593,6 +601,66 @@
       background: var(--cream);
     }
 
+    /* ── GUIDES SECTION ── */
+    .guides-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .guide-card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .guide-card:hover {
+      border-color: var(--amber);
+      box-shadow: 0 4px 20px rgba(152,88,48,0.08);
+    }
+    .guide-card__tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 12px;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+    .guide-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .guide-card p {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.6;
+      flex: 1;
+      margin-bottom: 16px;
+    }
+    .guide-card__meta {
+      font-size: 12px;
+      color: var(--mid);
+      margin-bottom: 12px;
+    }
+    .guide-card__read {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--amber);
+    }
+
     /* ── AGENTIC ── */
     #agentic {
       background: var(--ink);
@@ -1032,6 +1100,7 @@
     @media (max-width: 760px) {
       nav { padding: 16px 24px; }
       .nav-ctas { display: none; }
+      .nav-links { display: none; }
       .nav-burger { display: flex; }
       .mobile-nav { display: flex; }
       .container { padding: 0 24px; }
@@ -1169,9 +1238,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- NAV -->
   <nav>
-    <a href="#" class="mark">Phillips<span class="dot">.</span></a>
+    <a href="/" class="mark">Phillips<span class="dot">.</span></a>
+    <div class="nav-links">
+      <a href="/guides/" class="nav-link">Guides</a>
+      <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
+      <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+    </div>
     <div class="nav-ctas">
-      <a href="/landing-page-audit" class="cta nav-tool"><span class="nav-tool-label">Landing Page Audit</span></a>
       <a href="#contact" class="cta cta--filled">Get in touch</a>
     </div>
     <button class="nav-burger" aria-label="Open menu" aria-expanded="false" id="nav-burger">
@@ -1188,6 +1261,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&#x2715;</button>
     </div>
     <ul class="mobile-nav__links">
+      <li><a href="/guides/">Guides</a></li>
       <li><a href="#work">Selected Work</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#agentic">AI Workflows</a></li>
@@ -1195,8 +1269,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <li><a href="#contact">Get in touch</a></li>
     </ul>
     <div class="mobile-nav__tools">
-      <a href="/landing-page-audit" class="mobile-nav__tool-link">Free Landing Page Audit &rarr;</a>
       <a href="/google-ads-audit" class="mobile-nav__tool-link">Free Google Ads Audit &rarr;</a>
+      <a href="/landing-page-audit" class="mobile-nav__tool-link">Free Landing Page Audit &rarr;</a>
     </div>
     <div class="mobile-nav__footer">
       <a href="mailto:lewis@phillips-uk.com" class="mobile-nav__cta">Get in touch</a>
@@ -1807,6 +1881,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="tool-desc">Analyses ranking movement each week, highlighting quick wins, CTR gaps, declining queries and new top-20 entries so SEO work is based on movement and opportunity, not guesswork.</span>
             </li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- GUIDES -->
+  <div class="section-wrap" id="guides">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="section-label">Guides</span>
+          <a href="/guides/" style="display:block;font-size:13px;font-weight:500;color:var(--amber);text-decoration:none;margin-top:8px;">View all &rarr;</a>
+        </div>
+        <div>
+          <div class="guides-row">
+            <a href="/guides/fix-google-ads-conversion-tracking/" class="guide-card">
+              <span class="guide-card__tag">Google Ads</span>
+              <h3>How to Fix Google Ads Conversion Tracking</h3>
+              <p>The seven most common causes — inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures, Consent Mode v2 and the April 2026 GA4 changes.</p>
+              <div class="guide-card__meta">21 May 2026 &middot; 12 min read</div>
+              <span class="guide-card__read">Read guide &rarr;</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
