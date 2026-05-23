@@ -31,7 +31,7 @@ exports.handler = async function (event) {
     statusCode: 200,
     headers: {
       'Content-Type':  'image/svg+xml',
-      'Cache-Control': 'public, max-age=86400, s-maxage=604800',
+      'Cache-Control': 'public, max-age=86400, s-maxage=3600',
       'X-Content-Type-Options': 'nosniff',
     },
     body: svg,
