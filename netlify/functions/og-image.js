@@ -95,9 +95,6 @@ function ogSVG (title, label, desc) {
   <!-- Description -->
   ${desc ? `<text x="48" y="${descY + 50}" font-size="22" fill="${WHITE_DIM}">${x(clip(desc, 88))}</text>` : ''}
 
-  <!-- Bottom -->
-  <text x="48" y="602" font-size="16" letter-spacing="0.4" fill="${WHITE_MUTED}">phillips-uk.com</text>
-  <text x="1152" y="602" font-size="26" font-weight="700" text-anchor="end" fill="${WHITE}" opacity="0.5">P.</text>
 </svg>`;
 }
 
