@@ -15,15 +15,15 @@
   })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
   <!-- End Google Tag Manager -->
 
-  <title>How to Fix Google Ads Conversion Tracking (2026 Guide) | Phillips.</title>
-  <meta name="description" content="Google Ads conversion tracking not working? This guide covers every common cause — duplicate counting, wrong primary/secondary setup, consent mode failures, and enhanced conversions — with step-by-step fixes.">
+  <title>Google Ads Conversion Tracking Not Working? How to Fix It (2026) | Phillips.</title>
+  <meta name="description" content="Google Ads conversions not showing, double-counting or stuck inactive? This guide covers every common cause: duplicate counting, GA4 import setup, Consent Mode, Enhanced Conversions and auto-tagging, with step-by-step fixes.">
   <link rel="canonical" href="https://www.phillips-uk.com/guides/fix-google-ads-conversion-tracking">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://www.phillips-uk.com/guides/fix-google-ads-conversion-tracking">
-  <meta property="og:title" content="How to Fix Google Ads Conversion Tracking (2026 Guide)">
-  <meta property="og:description" content="Google Ads conversion tracking not working? Every common cause covered — duplicate counting, wrong primary/secondary setup, consent mode failures, enhanced conversions — with step-by-step fixes.">
+  <meta property="og:title" content="Google Ads Conversion Tracking Not Working? How to Fix It (2026)">
+  <meta property="og:description" content="Google Ads conversions not showing, double-counting or stuck inactive? Every common cause covered with step-by-step fixes.">
   <meta property="og:image" content="https://www.phillips-uk.com/.netlify/functions/og-image?type=og&label=Google%20Ads%20Guide&title=How%20to%20Fix%20Google%20Ads%20Conversion%20Tracking&desc=Every%20common%20cause%20covered%20%E2%80%94%20with%20step-by-step%20fixes">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -35,10 +35,10 @@
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "How to Fix Google Ads Conversion Tracking (2026 Guide)",
-    "description": "A practitioner guide to diagnosing and fixing Google Ads conversion tracking issues. Covers duplicate counting, primary/secondary architecture, enhanced conversions, consent mode failures, and the April 2026 GA4 update.",
+    "headline": "Google Ads Conversion Tracking Not Working? How to Fix It (2026)",
+    "description": "A practitioner guide to diagnosing and fixing Google Ads conversion tracking issues. Covers duplicate counting, primary/secondary architecture, enhanced conversions, consent mode failures, and 2026 Enhanced Conversions changes.",
     "datePublished": "2026-05-21",
-    "dateModified": "2026-05-21",
+    "dateModified": "2026-05-23",
     "author": {
       "@type": "Person",
       "name": "Lewis Phillips",
@@ -70,19 +70,19 @@
         "@type": "HowToStep",
         "position": 1,
         "name": "Check conversion action status",
-        "text": "In Google Ads, go to Goals > Conversions > Summary. Look for any action showing Inactive or Needs attention. Inactive means the tag has not fired in the conversion window. Needs attention usually means a configuration issue — missing auto-tagging, consent mode conflict, or enhanced conversions error."
+        "text": "In Google Ads, go to Goals > Conversions > Summary. Look for any action showing Inactive or Needs attention. Inactive means the tag has not fired in the conversion window. Needs attention usually means a configuration issue: missing auto-tagging, consent mode conflict, or enhanced conversions error."
       },
       {
         "@type": "HowToStep",
         "position": 2,
         "name": "Verify the conversion tag is firing",
-        "text": "Install Google Tag Assistant and run a live test. Navigate to the page or complete the action that should trigger a conversion — a form thank-you page or a checkout confirmation. Tag Assistant shows which Google tags fired and whether the conversion tag sent data. Check the Conversion ID and Label match what is in your Google Ads conversion action."
+        "text": "Install Google Tag Assistant and run a live test. Navigate to the page or complete the action that should trigger a conversion (a form thank-you page or a checkout confirmation). Tag Assistant shows which Google tags fired and whether the conversion tag sent data. Check the Conversion ID and Label match what is in your Google Ads conversion action."
       },
       {
         "@type": "HowToStep",
         "position": 3,
         "name": "Remove duplicate conversion counting",
-        "text": "Open each conversion action in Goals > Conversions > Summary. Check whether both a GTM-deployed Google Ads Conversion Tag and a GA4-imported conversion action are set to Include in Conversions = On for the same event. That is double counting. Set the GA4-imported version to secondary — Include in Conversions = Off — so only the GTM tag acts as the primary Smart Bidding signal."
+        "text": "Open each conversion action in Goals > Conversions > Summary. Check whether both a GTM-deployed Google Ads Conversion Tag and a GA4-imported conversion action are set to Include in Conversions = On for the same event. That is double counting. Set the GA4-imported version to secondary (Include in Conversions = Off) so only the GTM tag acts as the primary Smart Bidding signal."
       },
       {
         "@type": "HowToStep",
@@ -100,7 +100,7 @@
         "@type": "HowToStep",
         "position": 6,
         "name": "Check Consent Mode v2 is not silently blocking conversions",
-        "text": "In GTM, go to Tags and check the consent settings for your Google Ads Conversion Tag. It should require ad_storage and ad_user_data. Then verify your Consent Mode default state tag is publishing a denied state on page load before the consent banner fires — and that accepting the banner updates the state to granted. Use Tag Assistant to confirm the consent state at each stage."
+        "text": "In GTM, go to Tags and check the consent settings for your Google Ads Conversion Tag. It should require ad_storage and ad_user_data. Then verify your Consent Mode default state tag is publishing a denied state on page load before the consent banner fires, and that accepting the banner updates the state to granted. Use Tag Assistant to confirm the consent state at each stage."
       },
       {
         "@type": "HowToStep",
@@ -131,7 +131,7 @@
         "name": "What does Inactive mean in Google Ads conversions?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days for clicks). This usually means the tag is not installed, the trigger is not set up correctly, or the conversion window has been set too short. It does not necessarily mean conversions are not happening — it means Google cannot see them."
+          "text": "Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days for clicks). This usually means the tag is not installed, the trigger is not set up correctly, or the conversion window has been set too short. It does not necessarily mean conversions are not happening. It means Google cannot see them."
         }
       },
       {
@@ -1159,7 +1159,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <header class="article-header">
       <span class="article-tag">Google Ads Guide</span>
-      <h1>How to Fix Google Ads Conversion Tracking (2026 Guide)</h1>
+      <h1>Google Ads Conversion Tracking Not Working? How to Fix It (2026)</h1>
       <div class="article-meta">
         <span>By <strong>Lewis Phillips</strong></span>
         <span class="dot-sep"></span>
@@ -1168,7 +1168,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>12 min read</span>
       </div>
       <p class="article-intro">
-        Broken conversion tracking is not just a reporting problem. Smart Bidding uses your conversion data as its primary signal — if the data is wrong, your bids are wrong. This guide covers every common cause of conversion tracking failure, from basic installation issues to the architecture mistakes that silently degrade bidding performance, including what changed in the April 2026 GA4 update.
+        Broken conversion tracking is not just a reporting problem. Smart Bidding uses your conversion data as its primary signal. If the data is wrong, your bids are wrong. This guide covers every common cause of conversion tracking failure, from basic installation issues to the architecture mistakes that silently degrade bidding performance, including 2026 Enhanced Conversions changes that affect how data reaches Google Ads.
       </p>
     </header>
 
@@ -1181,11 +1181,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h2>Why conversion tracking is the most important setting in your account</h2>
       </div>
 
-      <p>When Smart Bidding decides how much to bid for an auction, it draws on your historical conversion data. Every strategy — Target CPA, Target ROAS, Maximise Conversions — is working from that same signal. If the data feeding it is incomplete, duplicated, or miscategorised, the algorithm optimises toward the wrong thing. You can have excellent ad copy, tight keyword lists, and a competitive budget, and still get bad results because the conversion data is broken.</p>
+      <p>When Smart Bidding decides how much to bid for an auction, it draws on your historical conversion data. Every strategy (Target CPA, Target ROAS, Maximise Conversions) is working from that same signal. If the data feeding it is incomplete, duplicated, or miscategorised, the algorithm optimises toward the wrong thing. You can have excellent ad copy, tight keyword lists, and a competitive budget, and still get bad results because the conversion data is broken.</p>
 
-      <p>The problem is that most tracking failures are invisible. The account looks like it is working. Conversions are being recorded. But the signal going into Smart Bidding is off — duplicate counting inflates reported performance, imported GA4 conversions compete with GTM-fired tags, or enhanced conversions are silently failing to pass user data. No warning fires. You just get worse bidding.</p>
+      <p>The problem is that most tracking failures are invisible. The account looks like it is working. Conversions are being recorded. But the signal going into Smart Bidding is off. Duplicate counting inflates reported performance, imported GA4 conversions compete with GTM-fired tags, or enhanced conversions are silently failing to pass user data. No warning fires. You just get worse bidding.</p>
 
       <p>Fix conversion tracking first. Every other optimisation sits on top of it.</p>
+
+      <div class="diag-label" style="margin: 32px 0 10px;">Symptoms: find your issue fast</div>
+      <div class="arch-table-wrap"><table class="arch-table">
+        <thead>
+          <tr>
+            <th>Symptom</th>
+            <th>Likely cause</th>
+            <th>First check</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Conversions show zero or status is inactive</td>
+            <td>Tag not firing, wrong Conversion ID or Label</td>
+            <td>Tag Assistant on the conversion page</td>
+          </tr>
+          <tr>
+            <td>Conversions doubled or inflated</td>
+            <td>GA4 import and Google Ads tag both set as primary</td>
+            <td>Goals &gt; Conversions &gt; Summary: check for duplicate pairs</td>
+          </tr>
+          <tr>
+            <td>Conversion rate is 20% or higher</td>
+            <td>Tag firing on page load, not on form submission</td>
+            <td>GTM Preview Mode: check trigger timing</td>
+          </tr>
+          <tr>
+            <td>Leads in CRM but not in Google Ads</td>
+            <td>Consent blocking, GCLID missing, or Enhanced Conversions mismatch</td>
+            <td>Tag Assistant and Conversion Diagnostics</td>
+          </tr>
+          <tr>
+            <td>Sudden drop after a site update</td>
+            <td>GTM container not republished or trigger broken</td>
+            <td>GTM Versions: check whether the container was republished</td>
+          </tr>
+          <tr>
+            <td>Status shows "Needs attention"</td>
+            <td>Enhanced Conversions error or consent conflict</td>
+            <td>Goals &gt; Conversions &gt; Diagnostics</td>
+          </tr>
+        </tbody>
+      </table></div>
 
       <!-- ── Quick fix ── -->
       <hr class="section-rule">
@@ -1195,6 +1238,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <p>Work through this sequence before investigating specific issues. Most problems surface at one of these seven checkpoints.</p>
+
+      <div class="update-callout" style="margin-bottom: 20px;">
+        <span class="update-label">Before you start</span>
+        Do not make multiple tracking changes at once. Test one conversion action, one journey, one tag, one trigger at a time. Otherwise you will not know which change fixed the problem or broke something else.
+      </div>
 
       <ol class="fix-steps">
         <li>
@@ -1206,7 +1254,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li>
           <div class="step-text">
             <strong>Verify the tag is firing</strong>
-            Install Google Tag Assistant (free Chrome extension) and trigger a live test conversion — visit the thank-you page, submit the form, or complete the checkout. Tag Assistant shows which Google tags fired and whether data was sent to Google Ads. Check that the Conversion ID and Label in the tag match the values in your conversion action.
+            Install Google Tag Assistant (free Chrome extension) and trigger a live test conversion by visiting the thank-you page, submitting the form, or completing the checkout. Tag Assistant shows which Google tags fired and whether data was sent to Google Ads. Check that the Conversion ID and Label in the tag match the values in your conversion action. Also confirm a Conversion Linker tag is present and firing on all pages. Without it, GCLID data does not carry across to the conversion page.
           </div>
         </li>
         <li>
@@ -1218,19 +1266,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li>
           <div class="step-text">
             <strong>Confirm the trigger fires on the conversion event, not on page load</strong>
-            In GTM, open the trigger attached to your conversion tag. If it is a Page View trigger on a thank-you URL, every visit to that page registers as a conversion — including direct navigation and refreshes. Use GTM Preview Mode to walk through the user journey and confirm the trigger fires only on the actual conversion.
+            In GTM, open the trigger attached to your conversion tag. If it is a Page View trigger on a thank-you URL, every visit to that page registers as a conversion, including direct navigation and refreshes. Use GTM Preview Mode to walk through the user journey and confirm the trigger fires only on the actual conversion.
           </div>
         </li>
         <li>
           <div class="step-text">
             <strong>Enable Enhanced Conversions and verify data is passing</strong>
-            In Goals &gt; Conversions &gt; Settings, enable Enhanced Conversions for web. In your GTM conversion tag, set user-provided data to Code mode and point it at a Data Layer Variable holding the <code>user_data</code> object (email and phone). Use the Enhanced Conversions Diagnostics in Google Ads to confirm the match rate is above 30%.
+            In Goals &gt; Conversions &gt; Settings, enable Enhanced Conversions for web. In your GTM conversion tag, set user-provided data to Code mode and point it at a Data Layer Variable holding the <code>user_data</code> object (email and phone). Use the Enhanced Conversions Diagnostics in Google Ads to confirm user-provided data is being received and that match quality is healthy.
           </div>
         </li>
         <li>
           <div class="step-text">
             <strong>Check Consent Mode v2 is not silently blocking conversions</strong>
-            In GTM, check the consent settings on your Google Ads Conversion Tag — it should require <code>ad_storage</code> and <code>ad_user_data</code>. Confirm your Consent Mode default state tag fires before the consent banner, and that accepting the banner correctly updates the consent state to granted. Use Tag Assistant to verify consent state at each stage of the journey.
+            In GTM, check the consent settings on your Google Ads Conversion Tag. It should require <code>ad_storage</code> and <code>ad_user_data</code>. Confirm your Consent Mode default state tag fires before the consent banner, and that accepting the banner correctly updates the consent state to granted. Use Tag Assistant to verify consent state at each stage of the journey.
           </div>
         </li>
         <li>
@@ -1249,7 +1297,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <!-- Visual: priority grid -->
-      <div class="diag-label" style="margin-bottom:10px;">Where to start — priority by impact</div>
+      <div class="diag-label" style="margin-bottom:10px;">Where to start: priority by impact</div>
       <div class="priority-grid">
         <div class="priority-col priority-col-1">
           <div class="priority-col-head">Fix immediately</div>
@@ -1265,13 +1313,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <div class="priority-col priority-col-3">
           <div class="priority-col-head">Diagnose first</div>
-          <div class="priority-item"><span class="priority-num">#1</span>Inactive or "Needs attention" — run Tag Assistant to find root cause before actioning</div>
+          <div class="priority-item"><span class="priority-num">#1</span>Inactive or "Needs attention": run Tag Assistant to find root cause before actioning</div>
         </div>
       </div>
 
       <!-- Diagram: quick-reference map of all 7 issues -->
       <div class="diag">
-        <div class="diag-label">At a glance — jump to the issue that applies</div>
+        <div class="diag-label">At a glance: jump to the issue that applies</div>
         <div class="diag-flow">
           <div class="diag-step">
             <div class="diag-step-left">
@@ -1280,7 +1328,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Inactive or "Needs attention" status</div>
-              <div class="diag-step-desc">Tag not firing, or configuration issue — Enhanced Conversions error, consent conflict, ID mismatch</div>
+              <div class="diag-step-desc">Tag not firing, or configuration issue: Enhanced Conversions error, consent conflict, ID mismatch</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1290,7 +1338,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Duplicate conversion counting</div>
-              <div class="diag-step-desc">GTM tag and GA4 import both set as primary — Smart Bidding sees every lead twice</div>
+              <div class="diag-step-desc">GTM tag and GA4 import both set as primary. Smart Bidding sees every lead twice</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1300,7 +1348,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">GA4 conversions imported as primary</div>
-              <div class="diag-step-desc">GA4 imports must always be secondary — they introduce modelled data into your bidding signal</div>
+              <div class="diag-step-desc">In most accounts, GA4 imports should be secondary. Running two primary sources for the same event degrades the bidding signal</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1310,7 +1358,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Tag firing on page load, not conversion</div>
-              <div class="diag-step-desc">Page View trigger on a thank-you URL — every visit registers as a conversion, not just form submits</div>
+              <div class="diag-step-desc">Page View trigger on a thank-you URL. Every visit registers as a conversion, not just form submits</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1320,7 +1368,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Enhanced Conversions not enabled or misconfigured</div>
-              <div class="diag-step-desc">Automatic data collection misses conversions — use Code mode with a structured user_data dataLayer push</div>
+              <div class="diag-step-desc">Automatic data collection misses conversions. Use Code mode with a structured user_data dataLayer push</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1330,7 +1378,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Consent Mode v2 silently blocking conversions</div>
-              <div class="diag-step-desc">Default state tag fires late or is missing — Google tags see a permanently denied consent state</div>
+              <div class="diag-step-desc">Default state tag fires late or is missing. Google tags see a permanently denied consent state</div>
             </div>
           </div>
           <div class="diag-step">
@@ -1340,49 +1388,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Auto-tagging disabled</div>
-              <div class="diag-step-desc">No GCLID on landing page URLs — click-based attribution fails completely</div>
+              <div class="diag-step-desc">No GCLID on landing page URLs. Click-based attribution fails completely</div>
             </div>
           </div>
         </div>
       </div>
 
-      <p>Each issue below has a different root cause and a different fix. Identify which applies before making changes — working through them randomly wastes time and makes it harder to know what actually resolved the problem.</p>
+      <p>Each issue below has a different root cause and a different fix. Identify which applies before making changes. Working through them randomly wastes time and makes it harder to know what actually resolved the problem.</p>
 
       <div class="issue-block">
         <h3><span class="issue-num">1</span> Conversion action is inactive or shows "Needs attention"</h3>
-        <p>This is usually the first warning you see. Inactive means the conversion tag has not fired within the conversion window — typically 30 days. Needs attention flags a configuration issue, often Enhanced Conversions failing or a consent mode conflict.</p>
+        <p>This is usually the first warning you see. Inactive means the conversion tag has not fired within the conversion window (typically 30 days). Needs attention flags a configuration issue, often Enhanced Conversions failing or a consent mode conflict.</p>
         <span class="fix-label">Fix</span>
         <p>Run Tag Assistant on the conversion page to confirm whether the tag fires at all. If the tag fires but the status remains inactive, check that the Conversion ID and Label in the tag exactly match the values shown in your Google Ads conversion action. A single character difference causes a silent mismatch.</p>
-        <p>If Needs attention is caused by an Enhanced Conversions error, go to Goals &gt; Conversions &gt; Diagnostics. Google will flag the specific field causing the issue — commonly a phone number not in E.164 format (+44xxxxxxxxxx), or user_data being passed before the consent tag fires.</p>
+        <p>If Needs attention is caused by an Enhanced Conversions error, go to Goals &gt; Conversions &gt; Diagnostics. Google will flag the specific field causing the issue. Common causes: a phone number not in E.164 format (+44xxxxxxxxxx), or user_data being passed before the consent tag fires.</p>
       </div>
 
       <div class="issue-block">
         <h3><span class="issue-num">2</span> Duplicate conversion counting</h3>
         <p>This is the most widespread misconfiguration in Google Ads accounts. It happens when two sources are both tracking the same conversion and both are set as primary signals. The most common version: a GTM-deployed Google Ads Conversion Tag <em>and</em> a GA4-imported conversion action both set to Include in Conversions = On for the same event. Every conversion gets counted twice.</p>
-        <p>The impact goes beyond inflated reporting. Smart Bidding receives a corrupted signal — it thinks conversions are happening more frequently than they are, and at a lower CPA than is real. Campaign performance looks better than it is until you compare against actual revenue or CRM data.</p>
+        <p>The impact goes beyond inflated reporting. Smart Bidding receives a corrupted signal. It thinks conversions are happening more frequently than they are, and at a lower CPA than is real. Campaign performance looks better than it is until you compare against actual revenue or CRM data.</p>
         <span class="fix-label">Fix</span>
         <p>Open every conversion action and identify any pairs tracking the same event from different sources. Set the GA4-imported version to secondary (Include in Conversions = Off). The GTM-deployed Google Ads Conversion Tag stays as the primary signal. Run this check every time you add a new conversion source.</p>
       </div>
 
       <div class="issue-block">
-        <h3><span class="issue-num">3</span> GA4 conversions imported as primary (should always be secondary)</h3>
-        <p>This is a subtle issue that most guides do not cover. Importing GA4 conversions into Google Ads is useful — it gives you GA4's attribution model as a reference point and makes cross-referencing easier. But GA4-imported conversions should never be your primary Smart Bidding signal.</p>
-        <p>There are two reasons. First, GA4 uses session-based attribution by default, which attributes conversions differently than Google Ads click-based attribution. Using GA4 imports as the primary signal means Smart Bidding is bidding against a metric that does not match how Google Ads actually works. Second, GA4 import latency means conversions can appear in reports with a delay — the Smart Bidding algorithm then operates on incomplete recent data.</p>
-        <p>A GTM-deployed Google Ads Conversion Tag (GACT) fires directly into Google Ads with no intermediary and no attribution translation. That is the correct primary signal.</p>
+        <h3><span class="issue-num">3</span> GA4 conversions imported as primary</h3>
+        <p>This is a subtle issue that most guides do not cover. Importing GA4 conversions into Google Ads is useful: it gives you GA4's attribution model as a reference point and makes cross-referencing easier. For most lead-generation accounts, though, I prefer a native Google Ads conversion tag as the primary bidding signal, with GA4 imports kept secondary for reporting and validation.</p>
+        <p>There are two reasons. First, GA4 uses session-based attribution by default, which attributes conversions differently to Google Ads click-based attribution. Bidding against that metric means Smart Bidding is working from data that does not match how Google Ads actually measures performance. Second, GA4 import latency means conversions can appear in reports with a delay, so the algorithm operates on incomplete recent data.</p>
+        <p>A GTM-deployed Google Ads Conversion Tag (GACT) fires directly into Google Ads with no intermediary and no attribution translation. That is the correct primary signal for most accounts.</p>
         <span class="fix-label">Fix</span>
-        <p>In Google Ads: Goals &gt; Conversions &gt; Summary. For every conversion action that was imported from GA4, click into it and set Include in Conversions to Off. Keep the import for reference and reporting, but let your GTM-deployed GACT tags carry the bidding weight.</p>
+        <p>In Google Ads: Goals &gt; Conversions &gt; Summary. For every conversion action imported from GA4, click into it and set Include in Conversions to Off. Keep the import for reference and reporting, but let your GTM-deployed GACT tags carry the bidding weight. The important rule is not to let two sources track the same event as primary conversions.</p>
       </div>
 
       <div class="issue-block">
         <h3><span class="issue-num">4</span> Conversion tag firing on page load instead of the actual conversion</h3>
-        <p>This happens most often when an account is set up quickly. A conversion tag gets attached to a Page View trigger on the thank-you URL, which sounds correct — but Page View triggers fire on every visit to that page, not only on post-conversion visits. Direct navigation, link previews, and page refreshes all trigger it. Conversion rates of 20–40% in Search campaigns are usually the symptom.</p>
+        <p>This happens most often when an account is set up quickly. A conversion tag gets attached to a Page View trigger on the thank-you URL, which sounds correct, but Page View triggers fire on every visit to that page, not only on post-conversion visits. Direct navigation, link previews, and page refreshes all trigger it. Conversion rates of 20–40% in Search campaigns are usually the symptom.</p>
         <span class="fix-label">Fix</span>
         <p>In GTM, use a Form Submission trigger set to fire only on the specific form, or use a Custom Event trigger that fires on a dataLayer event pushed by your form confirmation logic. For Shopify checkouts (available on Grow plan and above), use the Customer Events system rather than GTM, as GTM cannot access the checkout pages.</p>
         <p>Test in GTM Preview Mode: submit a test form and confirm the trigger fires exactly once, on submission, and not on the page load that follows.</p>
 
         <!-- Diagram 2: Wrong vs Right trigger -->
         <div class="diag" style="margin-top: 24px;">
-          <div class="diag-label">Trigger timing — wrong vs right</div>
+          <div class="diag-label">Trigger timing: wrong vs right</div>
           <div class="diag-compare">
             <div class="diag-panel diag-panel-wrong">
               <div class="diag-panel-head">✕ Page View trigger</div>
@@ -1413,11 +1461,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="issue-block">
         <h3><span class="issue-num">5</span> Enhanced Conversions not enabled or misconfigured</h3>
         <p>Standard browser-side conversion tracking misses a growing share of conversions due to ad blockers, iOS Intelligent Tracking Prevention, and cookie consent restrictions. Enhanced Conversions recovers a portion of these by sending hashed customer data (email, phone) alongside the conversion signal, which Google uses to match to signed-in Google accounts.</p>
-        <p>The most common misconfiguration: the Google Ads Conversion Tag in GTM is set to use Automatic user data collection, which tries to scrape email addresses from the page DOM. This is unreliable — it misses users who type slowly, fails on single-page apps, and does not capture phone numbers. The correct approach is Code mode: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and point the tag at a Data Layer Variable that reads it.</p>
+        <p>The most common misconfiguration: the Google Ads Conversion Tag in GTM is set to use Automatic user data collection, which tries to scrape email addresses from the page DOM. This is unreliable. It misses users who type slowly, fails on single-page apps, and does not capture phone numbers. The correct approach is Code mode: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and point the tag at a Data Layer Variable that reads it.</p>
         <span class="fix-label">Fix</span>
-        <p>Capture the email and phone from the form at submission time and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be in E.164 format — UK numbers starting with 07 become +447. In your GTM GACT tag, switch to Code mode and read the <code>user_data</code> via a Data Layer Variable. Check the match rate in Google Ads Diagnostics after 7 days (target: above 30%).</p>
+        <p>Capture the email and phone from the form at submission time and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be in E.164 format (UK numbers starting with 07 become +447). In your GTM GACT tag, switch to Code mode and read the <code>user_data</code> via a Data Layer Variable. After 7 days, check the Enhanced Conversions Diagnostics in Google Ads to confirm user-provided data is being received and that match quality is healthy.</p>
         <div class="code-block">
-          <div class="code-block-label">GTM dataLayer push — Enhanced Conversions (Code mode)</div>
+          <div class="code-block-label">GTM dataLayer push: Enhanced Conversions (Code mode)</div>
           <pre><span class="tok-var">dataLayer</span><span class="tok-pun">.</span><span class="tok-var">push</span><span class="tok-pun">({</span>
   <span class="tok-key">'event'</span><span class="tok-pun">:</span>     <span class="tok-str">'conversion_form_submit'</span><span class="tok-pun">,</span>
   <span class="tok-key">'user_data'</span><span class="tok-pun">: {</span>
@@ -1430,10 +1478,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="issue-block">
         <h3><span class="issue-num">6</span> Consent Mode v2 silently blocking conversions</h3>
-        <p>This is the hardest issue to diagnose because there is no error. Consent Mode v2 is required across the EEA and UK for GA4 data to flow correctly into Google Ads. When correctly configured, it signals consent state to Google tags so they can behave appropriately for each user. When incorrectly configured, it blocks conversion data for users who do not consent — and it does so silently.</p>
+        <p>This is the hardest issue to diagnose because there is no error. For advertisers targeting users in the EEA or UK, Consent Mode v2 is now a core part of Google Ads measurement. When correctly configured, it signals consent state to Google tags so they can behave appropriately for each user. When incorrectly configured, remarketing and attribution signals can be restricted, conversion modelling can be degraded, and data can be blocked silently for users who have not consented.</p>
         <p>The failure mode: the Consent Mode default state tag is missing, fires too late, or sets the wrong consent types. Tags that require <code>ad_storage</code> fire before consent is granted on page load, then the consent signal never updates to granted even after the user accepts. Google tags interpret this as a permanently denied state and suppress the conversion.</p>
         <span class="fix-label">Fix</span>
-        <p>Your Consent Mode default state tag must fire before any other Google tag on every page — set it to fire on Consent Initialization. Set <code>ad_storage</code> and <code>ad_user_data</code> to denied by default. Your CMP (cookie banner) must push a consent update to the dataLayer when the user accepts. Verify in Tag Assistant that the consent state shows as granted for consenting users before the conversion tag fires. The GTM "2 tags not configured for consent" warning for Conversion Linker and CMP gallery templates is a false positive — these tag types do not expose the consent settings UI but respect consent natively.</p>
+        <p>Your Consent Mode default state tag must fire before any other Google tag on every page. Set it to fire on Consent Initialization, and set <code>ad_storage</code> and <code>ad_user_data</code> to denied by default. Your CMP (cookie banner) must push a consent update to the dataLayer when the user accepts. Verify in Tag Assistant that the consent state shows as granted for consenting users before the conversion tag fires. The GTM "2 tags not configured for consent" warning for Conversion Linker and CMP gallery templates is a false positive. These tag types do not expose the consent settings UI but respect consent natively.</p>
 
         <!-- Consent Mode firing order -->
         <div class="diag" style="margin-top:20px;">
@@ -1442,7 +1490,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="cs-stage">
               <div class="cs-dot cs-1">1</div>
               <div class="cs-title">Consent Init tag</div>
-              <div class="cs-sub">Fires first — before all other tags</div>
+              <div class="cs-sub">Fires first, before all other tags</div>
             </div>
             <div class="cs-stage">
               <div class="cs-dot cs-2">2</div>
@@ -1470,7 +1518,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="cs-sub">Data flows to Google Ads ✓</div>
             </div>
           </div>
-          <p style="font-size:12px;color:var(--mid);margin-top:4px;">If steps 1–2 happen <em>after</em> step 3, the consent signal is permanently denied for that page load — even if the user accepts.</p>
+          <p style="font-size:12px;color:var(--mid);margin-top:4px;">If steps 1–2 happen <em>after</em> step 3, the consent signal is permanently denied for that page load, even if the user accepts.</p>
         </div>
       </div>
 
@@ -1488,7 +1536,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h2>What correct conversion setup looks like in 2026</h2>
       </div>
 
-      <p>A clean account has one primary conversion action per conversion type — fired directly by a GTM-deployed Google Ads Conversion Tag. Any GA4-imported equivalents sit alongside it as secondary (observed) actions. Here is what that looks like for a typical lead generation account:</p>
+      <p>A clean account has one primary conversion action per conversion type, fired directly by a GTM-deployed Google Ads Conversion Tag. Any GA4-imported equivalents sit alongside it as secondary (observed) actions. Here is what that looks like for a typical lead generation account:</p>
 
       <div class="arch-table-wrap"><table class="arch-table">
         <thead>
@@ -1508,7 +1556,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </tr>
           <tr>
             <td>Lead form submission (GA4)</td>
-            <td>GA4 import — generate_lead event</td>
+            <td>GA4 import (generate_lead event)</td>
             <td><span class="badge badge-secondary">Off (Secondary)</span></td>
             <td>Reporting only</td>
           </tr>
@@ -1516,14 +1564,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>Purchase</td>
             <td>Shopify / server-side app (e.g. Google &amp; YouTube app)</td>
             <td><span class="badge badge-secondary">Off (Secondary)</span></td>
-            <td>Observed — lead campaigns optimise toward leads</td>
+            <td>Observed. Lead campaigns optimise toward leads</td>
           </tr>
         </tbody>
       </table></div>
 
       <!-- Diagram 3: Architecture flow -->
       <div class="diag">
-        <div class="diag-label">Correct tracking architecture — data flow</div>
+        <div class="diag-label">Correct tracking architecture: data flow</div>
         <div class="diag-arch">
           <!-- Primary path -->
           <div class="diag-arch-row">
@@ -1547,17 +1595,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="diag-arch-legend">
             <div class="diag-arch-legend-item">
               <div class="diag-arch-legend-dot" style="background:var(--amber)"></div>
-              Primary — Include in Conversions: On — feeds Smart Bidding
+              Primary: Include in Conversions On, feeds Smart Bidding
             </div>
             <div class="diag-arch-legend-item">
               <div class="diag-arch-legend-dot" style="background:var(--mid)"></div>
-              Secondary — Include in Conversions: Off — reporting only
+              Secondary: Include in Conversions Off, reporting only
             </div>
           </div>
         </div>
       </div>
 
-      <p>For e-commerce accounts, the logic is the same — the primary conversion action is the purchase event, fired directly. GA4 purchase imports stay secondary. If you run both lead generation and e-commerce campaigns in one account, each campaign type should have its own primary conversion action appropriate to its goal.</p>
+      <p>For e-commerce accounts, the logic is the same. The primary conversion action is the purchase event, fired directly. GA4 purchase imports stay secondary. If you run both lead generation and e-commerce campaigns in one account, each campaign type should have its own primary conversion action appropriate to its goal.</p>
 
       <!-- ── Testing ── -->
       <hr class="section-rule">
@@ -1581,63 +1629,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="tool-card-name">GTM Preview Mode</div>
           <div class="tool-card-row"><strong>Use when</strong> diagnosing trigger timing issues</div>
           <div class="tool-card-row"><strong>Shows</strong> every tag and trigger fired at each step of the user journey</div>
-          <div class="tool-card-row"><strong>Look for</strong> conversion tag fires once on form submit — not on the subsequent page load</div>
+          <div class="tool-card-row"><strong>Look for</strong> conversion tag fires once on form submit, not on the subsequent page load</div>
         </div>
         <div class="tool-card">
           <span class="tool-card-icon">📊</span>
           <div class="tool-card-name">Conversion Diagnostics</div>
           <div class="tool-card-row"><strong>Use when</strong> checking account-level health after a fix</div>
           <div class="tool-card-row"><strong>Shows</strong> automated Google checks: tag presence, auto-tagging, EC match rate, consent status</div>
-          <div class="tool-card-row"><strong>Look for</strong> no flags — updates within 24 hours of any change</div>
+          <div class="tool-card-row"><strong>Look for</strong> no flags. Updates within 24 hours of any change</div>
         </div>
       </div>
 
-      <!-- ── April 2026 update ── -->
-      <div class="update-callout">
-        <span class="update-label">April 2026 Update</span>
-        <strong style="display:block;margin-bottom:6px;color:#1A1A1A;">GA4 update changed what counts as a conversion in Google Ads</strong>
-        The April 2026 GA4 update changed the validation rules for several key events. Two changes directly affect Google Ads conversion tracking.
-      </div>
-
+      <!-- ── 2026 EC changes ── -->
       <hr class="section-rule">
       <div class="section-header">
-        <span class="sh-label">April 2026</span>
-        <h2>The April 2026 GA4 update: what changed</h2>
+        <span class="sh-label">2026 Update</span>
+        <h2>2026 Enhanced Conversions changes to check</h2>
       </div>
 
-      <p>Google's April 2026 GA4 update was one of the most disruptive since the Universal Analytics sunset. For Google Ads advertisers, two changes are immediately relevant.</p>
+      <p>Google is consolidating how Enhanced Conversions works across web and leads. The key confirmed change: Enhanced Conversions for web and Enhanced Conversions for leads are being merged into a single on/off setting. At the same time, Google Ads now accepts user-provided data simultaneously from website tags, Data Manager, and API connections. Previously these operated more separately.</p>
 
-      <h3>generate_lead now requires currency and value parameters</h3>
-      <p>Prior to April 2026, a <code>generate_lead</code> event fired from GA4 would count as a conversion in Google Ads regardless of whether it carried value data. After the update, GA4 requires <code>currency</code> and <code>value</code> to be present for the event to qualify for Google Ads import. Accounts importing <code>generate_lead</code> without these parameters found imported conversion counts drop to zero — the event still fires in GA4, it just no longer transfers across.</p>
+      <p>What this means in practice: if you have Enhanced Conversions enabled for web and are also sending data through Data Manager or an API integration, Google will now combine those signals. Check your Diagnostics report to confirm data is arriving correctly from each source and that match quality is healthy. If you set up Enhanced Conversions some time ago and have not reviewed the setup recently, now is a good time to re-test with Tag Assistant and check the Diagnostics panel for any flags.</p>
 
-      <div class="before-after">
-        <div>
-          <span class="before-after-label before-label">✕ Before April 2026</span>
-          <div class="code-block">
-            <pre><span class="tok-var">gtag</span><span class="tok-pun">(</span><span class="tok-str">'event'</span><span class="tok-pun">,</span> <span class="tok-str">'generate_lead'</span><span class="tok-pun">, {</span>
-  <span class="tok-key">'form_name'</span><span class="tok-pun">:</span> <span class="tok-str">'contact'</span>
-  <span class="tok-cmt">// No currency or value</span>
-  <span class="tok-cmt">// ✕ No longer imports to Ads</span>
-<span class="tok-pun">});</span></pre>
-          </div>
-        </div>
-        <div>
-          <span class="before-after-label after-label">✓ Required after April 2026</span>
-          <div class="code-block">
-            <pre><span class="tok-var">gtag</span><span class="tok-pun">(</span><span class="tok-str">'event'</span><span class="tok-pun">,</span> <span class="tok-str">'generate_lead'</span><span class="tok-pun">, {</span>
-  <span class="tok-key">'currency'</span><span class="tok-pun">:</span>  <span class="tok-str">'GBP'</span><span class="tok-pun">,</span>
-  <span class="tok-key">'value'</span><span class="tok-pun">:</span>     <span class="tok-num">150</span><span class="tok-pun">,</span>     <span class="tok-cmt">// est. lead value</span>
-  <span class="tok-key">'form_name'</span><span class="tok-pun">:</span> <span class="tok-str">'contact'</span>
-  <span class="tok-cmt">// ✓ Qualifies for GA4 import</span>
-<span class="tok-pun">});</span></pre>
-          </div>
-        </div>
-      </div>
-
-      <p>If you use a GTM-deployed GACT tag as your primary conversion action this change does not affect you directly — though it does affect any GA4-imported secondary actions you reference in reports. For lead generation, set a fixed estimated lead value even if it is approximate — any value is better than omitting the parameter entirely.</p>
-
-      <h3>Enhanced Conversions field names changed</h3>
-      <p>The April 2026 update also modified the expected structure for Enhanced Conversions data passed via the dataLayer. Older implementations using the original <code>user_data</code> object structure may still fire without error but fail to pass hashed data correctly — match rates drop silently. Google's Diagnostics tool will flag a low or zero match rate if this has affected your account. Re-test your implementation using Google's Enhanced Conversions testing tool and compare against the current field structure in the documentation.</p>
+      <p>The dataLayer structure used in the code example above (<code>user_data</code> with <code>email</code> and <code>phone_number</code>) aligns with Google's current documentation. If your implementation is older, cross-reference against the current field requirements in Google's Help Centre before assuming the existing setup is still correct.</p>
 
       <!-- ── FAQ ── -->
       <hr class="section-rule">
@@ -1655,22 +1669,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <div class="faq-item">
           <h3>What does "Inactive" mean in Google Ads conversions?</h3>
-          <p>Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label in the tag may not match the action. It does not necessarily mean conversions are not happening — it means Google cannot see them.</p>
+          <p>Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label in the tag may not match the action. It does not necessarily mean conversions are not happening. It means Google cannot see them.</p>
         </div>
 
         <div class="faq-item">
           <h3>Should I import GA4 conversions into Google Ads?</h3>
-          <p>Yes, but always as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag. GA4-imported conversions are useful for cross-referencing and reporting but should never compete with the GACT tag as the primary bidding signal. Two primary signals for the same event confuses Smart Bidding and degrades performance.</p>
+          <p>Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag. GA4 imports are useful for cross-referencing and reporting, but the important rule is not to let two sources track the same event as primary conversions. Two primary signals for the same event confuse Smart Bidding and degrade performance.</p>
         </div>
 
         <div class="faq-item">
           <h3>How do I check if my Google Ads conversion tag is firing?</h3>
-          <p>Install Google Tag Assistant (free Chrome extension) and navigate to or trigger the conversion event. Tag Assistant shows every Google tag that fires in real time. For GTM-deployed tags, use GTM Preview Mode to walk through the full user journey and confirm the trigger fires at the right point — not on page load, but on the actual conversion event.</p>
+          <p>Install Google Tag Assistant (free Chrome extension) and navigate to or trigger the conversion event. Tag Assistant shows every Google tag that fires in real time. For GTM-deployed tags, use GTM Preview Mode to walk through the full user journey and confirm the trigger fires at the right point: on the actual conversion event, not on page load.</p>
         </div>
 
         <div class="faq-item">
           <h3>What is the difference between primary and secondary conversions in Google Ads?</h3>
-          <p>Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but do not influence bid decisions. Smart Bidding uses only primary conversions to decide how much to bid in each auction. If primary conversions are duplicated, miscategorised, or include low-quality signals, Smart Bidding optimises toward the wrong thing. Choose your primary actions carefully — they define what the algorithm is trying to achieve.</p>
+          <p>Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but do not influence bid decisions. Smart Bidding uses only primary conversions to decide how much to bid in each auction. If primary conversions are duplicated, miscategorised, or include low-quality signals, Smart Bidding optimises toward the wrong thing. Choose your primary actions carefully: they define what the algorithm is trying to achieve.</p>
         </div>
 
       </div>
@@ -1678,7 +1692,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- ── CTA ── -->
       <div class="cta-box">
         <span class="cta-heading">Not sure if conversion tracking is the problem?</span>
-        <p>Run a free diagnostic on your Google Ads account. It checks conversion setup, bidding architecture, account structure, and six other areas in under 60 seconds — with severity-ranked issues and specific fixes.</p>
+        <p>Run a free diagnostic on your Google Ads account. It checks conversion setup, bidding architecture, account structure, and six other areas in under 60 seconds, with severity-ranked issues and specific fixes.</p>
         <a href="/google-ads-audit">Run a free Google Ads audit</a>
       </div>
 
@@ -1687,7 +1701,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <img src="/images/profile.jpg" alt="Lewis Phillips">
         <div class="author-info">
           <p class="author-name">Lewis Phillips</p>
-          <p>Performance marketer with 11 years running Google Ads across international markets. I've built conversion tracking architectures for Shopify and custom-stack accounts — GTM pipelines, Enhanced Conversions, Consent Mode v2, server-side implementations. This guide draws on that real-world experience, not generic documentation summaries.</p>
+          <p>Performance marketer with 11 years running Google Ads across international markets. I've built conversion tracking architectures for Shopify and custom-stack accounts: GTM pipelines, Enhanced Conversions, Consent Mode v2, server-side implementations. This guide draws on that real-world experience, not generic documentation summaries.</p>
           <a href="https://www.linkedin.com/in/lewis-phillips-uk/" target="_blank" rel="noopener">LinkedIn &rarr;</a>
         </div>
       </div>
