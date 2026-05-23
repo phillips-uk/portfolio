@@ -25,6 +25,7 @@ exports.handler = async function (event) {
   }
 
   const { token, customer_id } = body;
+  const clientIp = ((event.headers || {})['x-forwarded-for'] || (event.headers || {})['client-ip'] || 'unknown').split(',')[0].trim();
 
   if (!token || !customer_id) {
     return json({ error: "token and customer_id required" }, 400);
@@ -87,16 +88,26 @@ exports.handler = async function (event) {
   }
 
   // Fire-and-forget notification email
-  await sendNotificationEmail(
-    `Google Ads audit — Account ${customer_id}`,
-    `<p style="font-family:sans-serif;font-size:14px;color:#1A1A1A;">
-      <strong>Account ID:</strong> ${customer_id}<br>
-      <strong>User:</strong> ${payload.userName || '(unknown)'} (${payload.userEmail || ''})<br>
-      <strong>Score:</strong> ${auditResult.score != null ? auditResult.score : 'N/A'}<br>
-      <strong>Issues:</strong> ${Array.isArray(auditResult.issues) ? auditResult.issues.length : 'N/A'}<br>
-      <strong>Time:</strong> ${new Date().toISOString()}
-    </p>`
-  );
+  if (!isBlockedIp(clientIp)) {
+    await sendNotificationEmail(
+      `Google Ads audit — Account ${customer_id}`,
+      `<div style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A1A1A">
+        <div style="background:#985830;padding:20px 24px;border-radius:6px 6px 0 0">
+          <span style="color:#fff;font-size:18px;font-weight:700">Phillips. Audit Alert</span>
+        </div>
+        <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-top:none;padding:24px;border-radius:0 0 6px 6px">
+          <table style="width:100%;border-collapse:collapse">
+            <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B;width:120px">Account ID</td><td style="padding:4px 0;font-size:13px;font-weight:700">${customer_id}</td></tr>
+            <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">User</td><td style="padding:4px 0;font-size:13px">${payload.userName || '(unknown)'} (${payload.userEmail || ''})</td></tr>
+            <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">Score</td><td style="padding:4px 0;font-size:13px;font-weight:700">${auditResult.score != null ? auditResult.score : 'N/A'}</td></tr>
+            <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">Issues</td><td style="padding:4px 0;font-size:13px">${Array.isArray(auditResult.issues) ? auditResult.issues.length : 'N/A'}</td></tr>
+            <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">IP</td><td style="padding:4px 0;font-size:13px;font-family:monospace">${clientIp}</td></tr>
+            <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">Time</td><td style="padding:4px 0;font-size:13px">${new Date().toISOString()}</td></tr>
+          </table>
+        </div>
+      </div>`
+    );
+  }
 
   return json(auditResult, 200);
 };
@@ -118,6 +129,11 @@ function decrypt(encoded) {
   const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
   decipher.setAuthTag(authTag);
   return decipher.update(ciphertext) + decipher.final("utf8");
+}
+
+function isBlockedIp(ip) {
+  const blocked = (process.env.EMAIL_SKIP_IPS || "").split(",").map(s => s.trim()).filter(Boolean);
+  return blocked.some(b => ip && ip.startsWith(b));
 }
 
 async function sendNotificationEmail(subject, html) {
