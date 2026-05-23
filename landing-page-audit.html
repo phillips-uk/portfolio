@@ -953,7 +953,8 @@
 
   // ── Auto-load report from URL if ?id= is present ──────────────────────────
   window.addEventListener('DOMContentLoaded', function () {
-    var urlId = new URLSearchParams(window.location.search).get('id');
+    var urlId = new URLSearchParams(window.location.search).get('id')
+      || (window.location.pathname.match(/^\/r\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/) || [])[1];
     if (urlId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(urlId)) {
       currentJobId = urlId;
       document.getElementById('input-section').style.display   = 'none';
@@ -1024,7 +1025,7 @@
 
     // Generate job ID and push to URL for sharing/bookmarking
     currentJobId = crypto.randomUUID();
-    window.history.pushState({}, '', '/landing-page-audit?id=' + currentJobId);
+    window.history.pushState({}, '', '/r/' + currentJobId);
 
     document.getElementById('input-section').style.display   = 'none';
     document.getElementById('loading-section').style.display = 'block';
@@ -1880,7 +1881,7 @@
   // ── Share & export ─────────────────────────────────────────────────────────
 
   function copyReportLink() {
-    var reportUrl = window.location.origin + '/landing-page-audit?id=' + currentJobId;
+    var reportUrl = window.location.origin + '/r/' + currentJobId;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(reportUrl).then(function () {
         var btn = document.getElementById('copy-link-btn');
@@ -1896,7 +1897,7 @@
 
   function shareOnTwitter() {
     if (!currentReport) return;
-    var reportUrl  = encodeURIComponent(window.location.origin + '/landing-page-audit?id=' + currentJobId);
+    var reportUrl  = encodeURIComponent(window.location.origin + '/r/' + currentJobId);
     var kw         = currentReport.inferred_keyword ? ' — targeting "' + currentReport.inferred_keyword + '"' : '';
     var score      = currentReport.health_score;
     var text       = encodeURIComponent('Just ran a free landing page audit for Google Ads' + kw + '. Score: ' + score + '/100. Full report:');
@@ -1906,7 +1907,7 @@
 
   function shareOnLinkedIn() {
     if (!currentReport) return;
-    var reportUrl = encodeURIComponent(window.location.origin + '/landing-page-audit?id=' + currentJobId);
+    var reportUrl = encodeURIComponent(window.location.origin + '/r/' + currentJobId);
     window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + reportUrl, '_blank');
     dataLayer.push({ event: 'report_shared', share_channel: 'linkedin', audited_url: currentReport.url, client_name: extractClientName(currentReport.url), client_domain: extractClientDomain(currentReport.url) });
   }

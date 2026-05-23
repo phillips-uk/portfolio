@@ -17,3 +17,9 @@
   to   = "https://www.phillips-uk.com/:splat"
   status = 301
   force  = true
+
+# Shareable audit result page
+[[redirects]]
+  from = "/r/:id"
+  to   = "/.netlify/functions/audit-share?id=:id"
+  status = 200
