@@ -94,7 +94,7 @@
         "@type": "HowToStep",
         "position": 5,
         "name": "Enable Enhanced Conversions and verify hashed data is passing",
-        "text": "In Goals > Conversions > Settings, enable Enhanced Conversions for web. In your GTM GACT tag, switch the user-provided data setting from Automatic to Code mode and point it at a Data Layer Variable that holds the user_data object (email and phone). Test using Google's Enhanced Conversions Diagnostics to confirm match rate is above 30%."
+        "text": "In Goals > Conversions > Settings, enable Enhanced Conversions for web. In your GTM GACT tag, switch the user-provided data setting from Automatic to Code mode and point it at a Data Layer Variable that holds the user_data object (email and phone). Use the Enhanced Conversions Diagnostics to confirm user-provided data is being received and that match quality is healthy."
       },
       {
         "@type": "HowToStep",
@@ -139,7 +139,7 @@
         "name": "Should I import GA4 conversions into Google Ads?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, but with one critical rule: GA4-imported conversions must always be set to secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag (GACT). If you set a GA4-imported conversion to primary alongside a GTM tag, Smart Bidding receives two overlapping signals and the bidding quality degrades. Import GA4 conversions for visibility and cross-referencing, not as your primary optimisation signal."
+          "text": "Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag (GACT). The key rule is not to let two sources track the same event as primary conversions. If a GA4 import and a native Google Ads tag are both set to primary for the same event, Smart Bidding receives two overlapping signals and bidding quality degrades. Import GA4 conversions for visibility and cross-referencing, not as your primary optimisation signal."
         }
       },
       {
