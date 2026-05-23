@@ -104,10 +104,22 @@ function sectionSVG (title, label) {
   const INK    = '#1A1A1A';
   const CREAM  = '#FDF6EE';
   const BORDER = '#E8D8C4';
-  const MID    = '#6B6B6B';
   const FONT   = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 
   const labelW = label.toUpperCase().length * 8 + 24;
+
+  // Try single line at 36px (fits ~30 chars). If longer, wrap at 28px.
+  let lines    = wrapText(title, 30);
+  let fontSize = 36;
+  let lineH    = 46;
+  let titleY   = 140;   // baseline of first (and only) line
+
+  if (lines.length > 1) {
+    lines    = wrapText(title, 40);
+    fontSize = 28;
+    lineH    = 38;
+    titleY   = 118;     // first line baseline — two lines fit before 200px edge
+  }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="200" viewBox="0 0 720 200">
   <defs>
@@ -124,11 +136,8 @@ function sectionSVG (title, label) {
   <rect x="32" y="44" width="${labelW}" height="26" rx="3" fill="${AMBER}"/>
   <text x="${32 + labelW / 2}" y="61" font-size="11" font-weight="700" letter-spacing="1.5" text-anchor="middle" fill="#FFFFFF">${x(label.toUpperCase())}</text>
 
-  <!-- Title -->
-  <text x="32" y="140" font-size="38" font-weight="700" letter-spacing="-0.8" fill="${INK}">${x(clip(title, 52))}</text>
-
-  <!-- Phillips. watermark -->
-  <text x="688" y="180" font-size="15" font-weight="700" text-anchor="end" fill="${BORDER}">Phillips<tspan fill="${AMBER}">.</tspan></text>
+  <!-- Title (wrapped) -->
+  ${lines.map((line, i) => `<text x="32" y="${titleY + i * lineH}" font-size="${fontSize}" font-weight="700" letter-spacing="-0.5" fill="${INK}">${x(line)}</text>`).join('\n  ')}
 </svg>`;
 }
 
@@ -154,16 +163,13 @@ function statSVG (stat, label, desc) {
   <rect x="0" y="379" width="720" height="1" fill="${BORDER}"/>
 
   <!-- Stat number -->
-  <text x="360" y="${desc ? 200 : 220}" font-size="${statFs}" font-weight="700" letter-spacing="-3" text-anchor="middle" fill="${AMBER}">${x(stat)}</text>
+  <text x="360" y="${desc ? 210 : 230}" font-size="${statFs}" font-weight="700" letter-spacing="-1" text-anchor="middle" fill="${AMBER}">${x(stat)}</text>
 
   <!-- Label -->
-  <text x="360" y="${desc ? 260 : 280}" font-size="22" text-anchor="middle" fill="${MID}">${x(label)}</text>
+  <text x="360" y="${desc ? 275 : 295}" font-size="22" text-anchor="middle" fill="${MID}">${x(label)}</text>
 
   <!-- Description -->
-  ${desc ? `<text x="360" y="310" font-size="16" text-anchor="middle" fill="${MID}">${x(clip(desc, 70))}</text>` : ''}
-
-  <!-- Phillips. -->
-  <text x="360" y="358" font-size="15" font-weight="700" text-anchor="middle" fill="${BORDER}">Phillips<tspan fill="${AMBER}">.</tspan></text>
+  ${desc ? `<text x="360" y="320" font-size="16" text-anchor="middle" fill="${MID}">${x(clip(desc, 70))}</text>` : ''}
 </svg>`;
 }
 
