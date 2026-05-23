@@ -453,14 +453,17 @@
     }
 
     /* ── Architecture table ── */
-    .arch-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 24px 0;
-      font-size: 14px;
+    .arch-table-wrap {
       border: 1px solid var(--border);
       border-radius: 6px;
       overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .arch-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
     }
 
     .arch-table th {
@@ -1487,7 +1490,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <p>A clean account has one primary conversion action per conversion type — fired directly by a GTM-deployed Google Ads Conversion Tag. Any GA4-imported equivalents sit alongside it as secondary (observed) actions. Here is what that looks like for a typical lead generation account:</p>
 
-      <table class="arch-table">
+      <div class="arch-table-wrap"><table class="arch-table">
         <thead>
           <tr>
             <th>Conversion event</th>
@@ -1516,7 +1519,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <td>Observed — lead campaigns optimise toward leads</td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
 
       <!-- Diagram 3: Architecture flow -->
       <div class="diag">
