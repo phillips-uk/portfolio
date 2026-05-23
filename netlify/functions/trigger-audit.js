@@ -132,7 +132,7 @@ async function sendNotificationEmail(subject, html) {
       },
       body: JSON.stringify({
         from: "audits@phillips-uk.com",
-        to: "lewisdp87@gmail.com",
+        to: "lewis@phillips-uk.com",
         subject,
         html,
       }),
