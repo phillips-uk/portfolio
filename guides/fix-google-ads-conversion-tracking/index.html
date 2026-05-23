@@ -94,7 +94,7 @@
         "@type": "HowToStep",
         "position": 5,
         "name": "Enable Enhanced Conversions and verify hashed data is passing",
-        "text": "In Goals > Conversions > Settings, enable Enhanced Conversions for web. In your GTM GACT tag, switch the user-provided data setting from Automatic to Code mode and point it at a Data Layer Variable that holds the user_data object (email and phone). Use the Enhanced Conversions Diagnostics to confirm user-provided data is being received and that match quality is healthy."
+        "text": "In Goals > Conversions > Settings, enable Enhanced Conversions for web. In your Google Ads Conversion Tag in GTM, switch the user-provided data setting from Automatic to Code mode and point it at a Data Layer Variable that holds the user_data object (email and phone). Use the Enhanced Conversions Diagnostics to confirm user-provided data is being received and that match quality is healthy."
       },
       {
         "@type": "HowToStep",
@@ -1284,7 +1284,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li>
           <div class="step-text">
             <strong>Confirm auto-tagging is enabled</strong>
-            In Google Ads: Admin &gt; Account settings &gt; Auto-tagging. Auto-tagging appends a GCLID parameter to landing page URLs that lets Google Ads connect ad clicks to conversions. Without it, attribution fails completely for click-based conversions.
+            In Google Ads: Admin &gt; Account settings &gt; Auto-tagging. Auto-tagging appends a GCLID parameter to landing page URLs that lets Google Ads connect ad clicks to conversions. Without it, Google Ads loses the cleanest click identifier for matching ads to later conversions, which can severely degrade attribution and offline or enhanced conversion matching.
           </div>
         </li>
       </ol>
@@ -1388,7 +1388,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="diag-step-body">
               <div class="diag-step-title">Auto-tagging disabled</div>
-              <div class="diag-step-desc">No GCLID on landing page URLs. Click-based attribution fails completely</div>
+              <div class="diag-step-desc">No GCLID on landing page URLs. Attribution and enhanced conversion matching can degrade significantly</div>
             </div>
           </div>
         </div>
@@ -1415,17 +1415,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="issue-block">
         <h3><span class="issue-num">3</span> GA4 conversions imported as primary</h3>
         <p>This is a subtle issue that most guides do not cover. Importing GA4 conversions into Google Ads is useful: it gives you GA4's attribution model as a reference point and makes cross-referencing easier. For most lead-generation accounts, though, I prefer a native Google Ads conversion tag as the primary bidding signal, with GA4 imports kept secondary for reporting and validation.</p>
-        <p>There are two reasons. First, GA4 uses session-based attribution by default, which attributes conversions differently to Google Ads click-based attribution. Bidding against that metric means Smart Bidding is working from data that does not match how Google Ads actually measures performance. Second, GA4 import latency means conversions can appear in reports with a delay, so the algorithm operates on incomplete recent data.</p>
+        <p>There are two reasons. First, GA4 and Google Ads can attribute the same conversion differently because they use different reporting models, lookback settings and event processing paths. Bidding against a GA4-attributed metric means Smart Bidding is working from data that does not always match how Google Ads measures performance. Second, GA4 import latency means conversions can appear in reports with a delay, so the algorithm operates on incomplete recent data.</p>
         <p>A GTM-deployed Google Ads Conversion Tag (GACT) fires directly into Google Ads with no intermediary and no attribution translation. That is the correct primary signal for most accounts.</p>
         <span class="fix-label">Fix</span>
-        <p>In Google Ads: Goals &gt; Conversions &gt; Summary. For every conversion action imported from GA4, click into it and set Include in Conversions to Off. Keep the import for reference and reporting, but let your GTM-deployed GACT tags carry the bidding weight. The important rule is not to let two sources track the same event as primary conversions.</p>
+        <p>In Google Ads: Goals &gt; Conversions &gt; Summary. For every conversion action imported from GA4, click into it and set Include in Conversions to Off. Keep the import for reference and reporting, but let your GTM-deployed Google Ads Conversion Tag carry the bidding weight. The important rule is not to let two sources track the same event as primary conversions.</p>
+        <p>There are cases where a GA4 import may be the practical primary source, particularly in simpler setups or where no native Google Ads tag exists. The issue is not GA4 itself. The issue is duplication, latency, and bidding against a signal that does not match the account's optimisation model.</p>
       </div>
 
       <div class="issue-block">
         <h3><span class="issue-num">4</span> Conversion tag firing on page load instead of the actual conversion</h3>
         <p>This happens most often when an account is set up quickly. A conversion tag gets attached to a Page View trigger on the thank-you URL, which sounds correct, but Page View triggers fire on every visit to that page, not only on post-conversion visits. Direct navigation, link previews, and page refreshes all trigger it. Conversion rates of 20–40% in Search campaigns are usually the symptom.</p>
         <span class="fix-label">Fix</span>
-        <p>In GTM, use a Form Submission trigger set to fire only on the specific form, or use a Custom Event trigger that fires on a dataLayer event pushed by your form confirmation logic. For Shopify checkouts (available on Grow plan and above), use the Customer Events system rather than GTM, as GTM cannot access the checkout pages.</p>
+        <p>In GTM, use a Form Submission trigger set to fire only on the specific form, or use a Custom Event trigger that fires on a dataLayer event pushed by your form confirmation logic. For Shopify, check the current checkout and thank-you page setup before relying on GTM. In many modern Shopify configurations, the Google and YouTube app or Customer Events approach is safer and more reliable than legacy GTM snippets on checkout pages.</p>
         <p>Test in GTM Preview Mode: submit a test form and confirm the trigger fires exactly once, on submission, and not on the page load that follows.</p>
 
         <!-- Diagram 2: Wrong vs Right trigger -->
@@ -1463,7 +1464,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>Standard browser-side conversion tracking misses a growing share of conversions due to ad blockers, iOS Intelligent Tracking Prevention, and cookie consent restrictions. Enhanced Conversions recovers a portion of these by sending hashed customer data (email, phone) alongside the conversion signal, which Google uses to match to signed-in Google accounts.</p>
         <p>The most common misconfiguration: the Google Ads Conversion Tag in GTM is set to use Automatic user data collection, which tries to scrape email addresses from the page DOM. This is unreliable. It misses users who type slowly, fails on single-page apps, and does not capture phone numbers. The correct approach is Code mode: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and point the tag at a Data Layer Variable that reads it.</p>
         <span class="fix-label">Fix</span>
-        <p>Capture the email and phone from the form at submission time and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be in E.164 format (UK numbers starting with 07 become +447). In your GTM GACT tag, switch to Code mode and read the <code>user_data</code> via a Data Layer Variable. After 7 days, check the Enhanced Conversions Diagnostics in Google Ads to confirm user-provided data is being received and that match quality is healthy.</p>
+        <p>Capture the email and phone from the form at submission time and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be in E.164 format (UK numbers starting with 07 become +447). In your Google Ads Conversion Tag in GTM, switch to Code mode and read the <code>user_data</code> via a Data Layer Variable. After 7 days, check the Enhanced Conversions Diagnostics in Google Ads to confirm user-provided data is being received and that match quality is healthy.</p>
         <div class="code-block">
           <div class="code-block-label">GTM dataLayer push: Enhanced Conversions (Code mode)</div>
           <pre><span class="tok-var">dataLayer</span><span class="tok-pun">.</span><span class="tok-var">push</span><span class="tok-pun">({</span>
