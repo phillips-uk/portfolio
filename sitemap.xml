@@ -11,12 +11,17 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.phillips-uk.com/landing-page-audit</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://www.phillips-uk.com/guides/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.phillips-uk.com/guides/fix-google-ads-conversion-tracking</loc>
+    <loc>https://www.phillips-uk.com/guides/fix-google-ads-conversion-tracking/</loc>
     <changefreq>monthly</changefreq>
     <lastmod>2026-05-21</lastmod>
     <priority>0.9</priority>
