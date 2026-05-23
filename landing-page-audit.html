@@ -120,6 +120,12 @@
       letter-spacing: -0.01em; line-height: 1;
     }
     .nav-logo .dot { color: var(--amber); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-link {
+      font-size: 14px; font-weight: 500; color: var(--mid);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--ink); }
     .nav-back {
       font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
       color: var(--amber); text-decoration: none;
@@ -127,6 +133,7 @@
       transition: background 0.15s, color 0.15s;
     }
     .nav-back:hover { background: var(--amber); color: var(--white); }
+    @media (max-width: 640px) { .nav-links { display: none; } }
 
     main {
       min-height: 100vh; padding-top: 64px;
@@ -790,7 +797,11 @@
 
 <nav>
   <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
-  <a href="/" class="nav-back">← Back to home</a>
+  <div class="nav-links">
+    <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
+    <a href="/guides/" class="nav-link">Guides</a>
+  </div>
+  <a href="/#contact" class="nav-back">Get in touch</a>
 </nav>
 
 <main>
