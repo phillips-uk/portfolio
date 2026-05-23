@@ -86,6 +86,18 @@ exports.handler = async function (event) {
     return json({ error: "Could not reach audit worker", detail: e.message }, 503);
   }
 
+  // Fire-and-forget notification email
+  await sendNotificationEmail(
+    `Google Ads audit — Account ${customer_id}`,
+    `<p style="font-family:sans-serif;font-size:14px;color:#1A1A1A;">
+      <strong>Account ID:</strong> ${customer_id}<br>
+      <strong>User:</strong> ${payload.userName || '(unknown)'} (${payload.userEmail || ''})<br>
+      <strong>Score:</strong> ${auditResult.score != null ? auditResult.score : 'N/A'}<br>
+      <strong>Issues:</strong> ${Array.isArray(auditResult.issues) ? auditResult.issues.length : 'N/A'}<br>
+      <strong>Time:</strong> ${new Date().toISOString()}
+    </p>`
+  );
+
   return json(auditResult, 200);
 };
 
@@ -106,6 +118,28 @@ function decrypt(encoded) {
   const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
   decipher.setAuthTag(authTag);
   return decipher.update(ciphertext) + decipher.final("utf8");
+}
+
+async function sendNotificationEmail(subject, html) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return;
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "audits@phillips-uk.com",
+        to: "lewisdp87@gmail.com",
+        subject,
+        html,
+      }),
+    });
+  } catch (e) {
+    console.error("Email notification failed:", e.message);
+  }
 }
 
 function json(data, status = 200) {

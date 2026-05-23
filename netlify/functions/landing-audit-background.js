@@ -274,6 +274,21 @@ exports.handler = async function (event) {
       console.error('[audit] lead store error:', leadErr.message);
     }
 
+    // Fire-and-forget notification email
+    const _hostname = (() => {
+      try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
+    })();
+    await sendNotificationEmail(
+      `Landing page audit — ${_hostname} (${report.health_score}/100)`,
+      `<p style="font-family:sans-serif;font-size:14px;color:#1A1A1A;">
+        <strong>URL:</strong> ${url}<br>
+        <strong>Score:</strong> ${report.health_score}/100 — ${report.score_band}<br>
+        <strong>Keyword:</strong> ${report.inferred_keyword || 'unknown'}<br>
+        <strong>View report:</strong> <a href="https://www.phillips-uk.com/r/${jobId}">phillips-uk.com/r/${jobId}</a><br>
+        <strong>Time:</strong> ${report.audited_at}
+      </p>`
+    );
+
     console.log('[audit] complete');
 
   } catch (e) {
@@ -1419,4 +1434,26 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
       cookie_banner_platform: parsed.cookieBannerPlatform || null
     }
   };
+}
+
+async function sendNotificationEmail(subject, html) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return;
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'audits@phillips-uk.com',
+        to: 'lewisdp87@gmail.com',
+        subject,
+        html,
+      }),
+    });
+  } catch (e) {
+    console.error('Email notification failed:', e.message);
+  }
 }
