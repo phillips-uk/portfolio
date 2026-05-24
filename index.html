@@ -944,14 +944,21 @@
     .testimonial-name a {
       color: inherit;
       text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.15s, color 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s;
     }
 
-    .testimonial-name a:hover {
-      color: var(--amber);
-      border-bottom-color: var(--amber);
+    .testimonial-name a:hover { color: var(--amber); }
+
+    .testimonial-name a svg {
+      flex-shrink: 0;
+      opacity: 0.45;
+      transition: opacity 0.15s;
     }
+
+    .testimonial-name a:hover svg { opacity: 1; }
 
     .testimonial-role {
       font-size: 12px;
@@ -1796,7 +1803,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="testimonial-attribution">
               <img src="images/testimonial-vladimir.jpg" alt="Vladimir Musaev" class="testimonial-avatar">
               <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/vlad-musaev/" target="_blank" rel="noopener">Vladimir Musaev</a></span>
+                <span class="testimonial-name"><a href="https://www.linkedin.com/in/vlad-musaev/" target="_blank" rel="noopener">Vladimir Musaev<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
                 <span class="testimonial-role">Director of Performance Marketing, Instapro Group - managed Lewis directly</span>
               </div>
             </div>
@@ -1807,7 +1814,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="testimonial-attribution">
               <img src="images/testimonial-lewie.jpg" alt="Lewie Winters" class="testimonial-avatar">
               <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/lewie-winters-59a67a48/" target="_blank" rel="noopener">Lewie Winters</a></span>
+                <span class="testimonial-name"><a href="https://www.linkedin.com/in/lewie-winters-59a67a48/" target="_blank" rel="noopener">Lewie Winters<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
                 <span class="testimonial-role">Digital Strategy and Transformation Manager · client</span>
               </div>
             </div>
@@ -1818,7 +1825,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="testimonial-attribution">
               <img src="images/testimonial-lee.jpg" alt="Lee Preston" class="testimonial-avatar">
               <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/lee-renee-2a026270/" target="_blank" rel="noopener">Lee Preston</a></span>
+                <span class="testimonial-name"><a href="https://www.linkedin.com/in/lee-renee-2a026270/" target="_blank" rel="noopener">Lee Preston<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
                 <span class="testimonial-role">Founder &amp; CEO, Lee Renee Jewellery - client</span>
               </div>
             </div>
@@ -1829,7 +1836,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="testimonial-attribution">
               <img src="images/testimonial-jonas.jpg" alt="Jonas Theurich" class="testimonial-avatar">
               <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/jonas-theurich-9a6957206/" target="_blank" rel="noopener">Jonas Theurich</a></span>
+                <span class="testimonial-name"><a href="https://www.linkedin.com/in/jonas-theurich-9a6957206/" target="_blank" rel="noopener">Jonas Theurich<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
                 <span class="testimonial-role">Performance Marketing Manager, MyHammer - peer</span>
               </div>
             </div>
@@ -1840,7 +1847,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="testimonial-attribution">
               <img src="images/testimonial-aiden.jpg" alt="Aiden Pryor" class="testimonial-avatar">
               <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/aiden-pryor-624225184/" target="_blank" rel="noopener">Aiden Pryor</a></span>
+                <span class="testimonial-name"><a href="https://www.linkedin.com/in/aiden-pryor-624225184/" target="_blank" rel="noopener">Aiden Pryor<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
                 <span class="testimonial-role">Senior Marketing Content Producer, Angi - peer</span>
               </div>
             </div>
