@@ -80,6 +80,7 @@
   </script>
 
   <link rel="stylesheet" href="/brand.css">
+  <link rel="stylesheet" href="/report.css">
   <style>
     :root {
       --amber:       #985830;
@@ -179,28 +180,6 @@
     /* ── Report ── */
     #report-section { display: none; }
 
-    /* Score header */
-    .report-header {
-      background: var(--ink); margin: 0 -28px 0; padding: 40px 28px 36px;
-      border-radius: 12px 12px 0 0; text-align: center;
-    }
-    .report-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--amber); margin-bottom: 20px;
-    }
-    .score-display { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 12px; justify-content: center; }
-    .score-num { font-size: 88px; font-weight: 700; letter-spacing: -5px; line-height: 1; color: #fff; }
-    .score-denom { font-size: 24px; font-weight: 400; color: rgba(255,255,255,0.4); letter-spacing: -1px; padding-bottom: 14px; }
-    .score-tag {
-      display: inline-flex; align-items: center; font-size: 11px;
-      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 5px 12px; border-radius: 3px; color: var(--white); margin-bottom: 16px;
-    }
-    .score-tag.strong     { background: var(--green); }
-    .score-tag.average    { background: var(--orange); }
-    .score-tag.needs-work { background: #BF360C; }
-    .score-tag.critical   { background: var(--red); }
-
     /* Score info toggle */
     .score-info-btn {
       display: inline-flex; align-items: center; justify-content: center;
@@ -251,15 +230,6 @@
       .btn-share, .btn-download { padding: 7px 12px; font-size: 12px; }
     }
 
-    .report-url-line { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 8px; word-break: break-all; }
-    .keyword-line {
-      font-size: 13px; color: rgba(255,255,255,0.85);
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 6px; padding: 8px 16px; display: inline-block; margin-top: 8px;
-    }
-    .keyword-line .kw-label { color: var(--amber); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 3px; }
-    .keyword-conf { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 4px; }
-
     /* Executive summary */
     .exec-summary {
       background: #FAFAFA; border: 1px solid var(--border);
@@ -268,86 +238,6 @@
       line-height: 1.5; margin-bottom: 20px; font-weight: 500;
     }
 
-    /* Sub-scores */
-    .sub-scores {
-      display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0 20px;
-    }
-    .sub-score-pill {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 10px 16px; border-radius: 8px; min-width: 80px;
-      flex: 1; border: 1px solid var(--border); text-align: center;
-    }
-    .sub-score-pill.sub-score-good { background: #F0FAF0; border-color: #7DC87D; }
-    .sub-score-pill.sub-score-fair { background: #FFFBF0; border-color: #D4A017; }
-    .sub-score-pill.sub-score-poor { background: #FFF5F5; border-color: #E08080; }
-    .sub-score-name {
-      font-size: 10px; color: #6B6B6B; font-weight: 600;
-      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px;
-    }
-    .sub-score-val { font-size: 14px; font-weight: 700; }
-    .sub-score-good .sub-score-val { color: #2D7D2D; }
-    .sub-score-fair .sub-score-val { color: #7A5800; }
-    .sub-score-poor .sub-score-val { color: #C0392B; }
-
-    /* Metrics grid */
-    .metrics-grid {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      border: 1px solid var(--border); border-radius: 0 0 12px 12px;
-      overflow: hidden; margin: 0 -28px 40px; border-top: none;
-    }
-    .metric-item {
-      padding: 20px 22px; border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border); display: flex; flex-direction: column;
-    }
-    .metric-item:nth-child(3n) { border-right: none; }
-    .metric-item:nth-last-child(-n+3) { border-bottom: none; }
-    .metric-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
-    .metric-value {
-      font-size: 28px; font-weight: 700; letter-spacing: -1.5px; line-height: 1;
-      color: var(--ink); border-bottom: 2.5px solid var(--amber);
-      display: inline-block; padding-bottom: 4px; margin-bottom: 8px;
-    }
-    .metric-value.m-good { color: var(--green); border-color: var(--green); }
-    .metric-value.m-ok   { color: var(--orange); border-color: var(--orange); }
-    .metric-value.m-poor { color: var(--red); border-color: var(--red); }
-    .metric-value.m-na   { color: #ccc; border-color: #eee; font-size: 20px; }
-    .metric-tier { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
-    .metric-tier.m-good { color: var(--green); }
-    .metric-tier.m-ok   { color: var(--orange); }
-    .metric-tier.m-poor { color: var(--red); }
-    .metric-tier.m-na   { color: #ccc; }
-    .metric-bench { font-size: 11px; color: var(--mid); line-height: 1.4; }
-
-    /* Priority actions */
-    .priority-block { margin-bottom: 56px; border-top: 1px solid var(--border); padding-top: 48px; }
-    .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin-bottom: 24px; }
-    .priority-row { display: flex; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-    .priority-row:last-child { border-bottom: none; }
-    .priority-n { font-size: 11px; font-weight: 700; color: var(--amber); padding-top: 3px; width: 16px; flex-shrink: 0; }
-    .priority-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-    .priority-fix { font-size: 13px; color: var(--mid); line-height: 1.6; }
-    .sev-badge {
-      display: inline-flex; align-items: center; font-size: 9px;
-      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 2px 7px; border-radius: 3px; margin-bottom: 5px;
-    }
-    .sev-critical { background: rgba(192,57,43,0.1);  color: var(--red);    border: 1px solid rgba(192,57,43,0.25); }
-    .sev-high     { background: rgba(212,105,27,0.1); color: var(--orange); border: 1px solid rgba(212,105,27,0.25); }
-    .sev-medium   { background: rgba(212,105,27,0.08); color: #D97706;     border: 1px solid rgba(212,105,27,0.2); }
-    .sev-low      { background: rgba(107,107,107,0.08); color: var(--mid); border: 1px solid rgba(107,107,107,0.2); }
-
-    /* Section heroes */
-    .section-hero {
-      background: var(--ink); margin: 48px -28px 0; padding: 36px 28px 30px;
-    }
-    .section-hero-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
-    .section-hero-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; color: #fff; margin: 0; }
-    .section-hero-title em { color: var(--amber); font-style: normal; }
-    .section-hero-meta { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-    .sh-pass    { font-size: 12px; font-weight: 700; color: #a5d6a7; }
-    .sh-issue   { font-size: 12px; font-weight: 700; color: #ff8a80; }
-    .sh-suggest { font-size: 12px; font-weight: 700; color: #80cbc4; }
-    .sh-sep     { font-size: 12px; color: rgba(255,255,255,0.25); }
 
     /* Issue cards */
     .findings-block { margin-bottom: 0; }
@@ -355,32 +245,10 @@
     .category-section:last-child { border-bottom: none; }
     .category-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 0; }
     .category-hdr-name { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
-    .verdict-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 3px 9px; border-radius: 4px; margin-left: auto;
-    }
-    .verdict-pass   { background: rgba(46,125,50,0.10);  color: #2E7D32; border: 1px solid rgba(46,125,50,0.25); }
-    .verdict-review { background: rgba(212,105,27,0.10); color: #D4691B; border: 1px solid rgba(212,105,27,0.25); }
-    .verdict-fail   { background: rgba(192,57,43,0.10);  color: var(--red); border: 1px solid rgba(192,57,43,0.25); }
 
     .pass-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--green); margin-top: 16px; }
     .pass-icon { font-size: 15px; }
-    .pass-summary { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
-    .pass-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--ink); padding: 8px 12px; background: #f3faf3; border-radius: 6px; border-left: 3px solid var(--green); }
-    .pass-item-icon { color: var(--green); font-weight: 700; flex-shrink: 0; line-height: 1.4; }
 
-    .issue-card {
-      margin-top: 20px; padding: 22px 24px;
-      border: 1px solid var(--border); border-left-width: 3px;
-      border-radius: 10px; background: var(--white);
-    }
-    .issue-card.sev-critical { border-left-color: var(--red); }
-    .issue-card.sev-high     { border-left-color: var(--orange); }
-    .issue-card.sev-medium   { border-left-color: #D97706; }
-    .issue-card.sev-low      { border-left-color: #ccc; }
-    .issue-card.sev-suggest  { border-left-color: #C8E6C9; background: #FAFFFE; }
-    .issue-sev { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; padding: 3px 10px; border-radius: 20px; line-height: 1.4; }
     .effort-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
     .effort-low    { color: #2E7D32; background: #E8F5E9; }
     .effort-medium { color: #7B4F00; background: #FFF3CD; }
@@ -388,26 +256,6 @@
     /* Google Ads audit framing note */
     .ads-audit-note { display: flex; align-items: flex-start; gap: 10px; background: #FDF6EE; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 10px 14px; margin-bottom: 24px; font-size: 12px; color: var(--mid); line-height: 1.55; }
     .ads-audit-note strong { color: var(--ink); }
-    .issue-sev.sev-critical { color: #B71C1C; background: rgba(183,28,28,0.1); }
-    .issue-sev.sev-high     { color: #C85A00; background: rgba(200,90,0,0.1); }
-    .issue-sev.sev-medium   { color: #B45309; background: rgba(180,83,9,0.1); }
-    .issue-sev.sev-low      { color: #6B6B6B; background: rgba(107,107,107,0.1); }
-    .issue-sev.sev-suggest  { color: #2E7D32; background: #E8F5E9; }
-    .issue-title  { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 8px; line-height: 1.35; }
-    .issue-detail { font-size: 14px; color: var(--mid); line-height: 1.7; margin-bottom: 16px; }
-    .issue-fix-block { background: var(--cream); border-radius: 8px; padding: 14px 18px; }
-    .issue-fix-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; }
-    .issue-fix-text  { font-size: 13px; color: var(--ink); line-height: 1.65; }
-    /* Problem / Fix / Impact three-part card structure */
-    .issue-pfi { margin-top: 12px; border-top: 1px solid var(--border); }
-    .issue-pfi-row { display: flex; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-    .issue-pfi-row:last-child { border-bottom: none; }
-    .pfi-label { flex-shrink: 0; width: 82px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
-    .pfi-problem { color: var(--mid); }
-    .pfi-fix     { color: var(--amber); }
-    .pfi-impact  { color: #2E7D32; }
-    .pfi-text { font-size: 13px; color: var(--ink); line-height: 1.6; flex: 1; }
-    .pfi-impact-text { color: #2E7D32; font-weight: 500; }
 
     /* JS-rendered warning */
     .js-warning {
@@ -529,24 +377,8 @@
     .faq-a { display: none; padding: 0 0 20px; font-size: 14px; color: var(--mid); line-height: 1.75; }
     .faq-item.open .faq-a { display: block; }
 
-    /* Action plan */
-    .action-plan-banner {
-      background: var(--cream); border: 1px solid var(--border); border-radius: 8px;
-      padding: 14px 18px; font-size: 13px; color: var(--mid); line-height: 1.5;
-      margin-top: 24px; margin-bottom: 16px;
-    }
-    .action-plan-banner strong { color: var(--ink); }
-    .action-item {
-      display: grid; grid-template-columns: auto 1fr auto; gap: 12px 16px;
-      align-items: start; padding: 16px 0; border-bottom: 1px solid var(--border);
-    }
-    .action-item:last-child { border-bottom: none; }
     .action-item-left { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 80px; }
-    .action-num { font-size: 11px; font-weight: 700; color: var(--mid); letter-spacing: 0.04em; }
     .action-body { min-width: 0; }
-    .action-title-text { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 6px; }
-    .action-fix-text  { font-size: 13px; color: var(--mid); line-height: 1.55; }
-    .action-impact    { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--amber); background: rgba(152,88,48,0.1); padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
 
     /* PSI failure notice */
     .psi-notice {
@@ -559,11 +391,7 @@
     .methodology h3 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 12px; }
     .methodology p  { font-size: 14px; color: var(--mid); line-height: 1.7; }
 
-    /* CTA section */
-    .cta-section {
-      background: var(--ink); margin: 80px -28px -80px;
-      padding: 56px 28px; border-radius: 0 0 16px 16px; text-align: center;
-    }
+    /* CTA section — LP-specific text elements (layout from report.css) */
     .cta-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; }
     .cta-heading { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: #fff; margin-bottom: 24px; }
     .cta-heading em { color: var(--amber); font-style: normal; }
@@ -577,97 +405,11 @@
     .btn-cta:hover { background: var(--amber-light); }
 
     /* Share & export */
-    /* Report header top bar (brand + actions) */
-    .report-header-top {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px;
-    }
-    .report-brand { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
-    .report-brand span { color: var(--amber); }
-    .report-header-actions { display: flex; align-items: center; gap: 8px; }
-    .btn-download {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--amber); color: var(--white);
-      border: 1.5px solid var(--amber); border-radius: 6px;
-      padding: 8px 16px; font-size: 13px; font-weight: 600;
-      font-family: inherit; cursor: pointer; transition: opacity 0.15s; text-decoration: none;
-    }
-    .btn-download:hover { opacity: 0.85; }
-    .btn-share {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: transparent; color: rgba(255,255,255,0.85);
-      border: 1.5px solid rgba(255,255,255,0.35); border-radius: 6px;
-      padding: 8px 16px; font-size: 13px; font-weight: 600;
-      font-family: inherit; cursor: pointer; white-space: nowrap;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-    }
-    .btn-share:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); color: #fff; }
     .share-confirm { font-size: 12px; color: var(--amber); margin-top: 6px; display: none; text-align: right; }
 
-    /* Lead CTA */
-    .lead-cta {
-      background: var(--ink); border-radius: 14px;
-      padding: 32px 36px; margin: 40px 0 32px;
-      display: flex; align-items: center; justify-content: space-between; gap: 24px;
-    }
-    .lead-cta-copy h3 { font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: -0.02em; margin-bottom: 6px; }
-    .lead-cta-copy p { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.55; max-width: 400px; }
-    .lead-cta-btn {
-      display: inline-flex; align-items: center; background: var(--amber);
-      color: var(--white); border: none; border-radius: 8px;
-      padding: 12px 22px; font-size: 14px; font-weight: 600;
-      font-family: inherit; text-decoration: none; white-space: nowrap;
-      cursor: pointer; transition: background 0.15s; flex-shrink: 0;
-    }
-    .lead-cta-btn:hover { background: var(--amber-light); }
-
-    /* Report restart */
-    .report-restart { text-align: center; margin-top: 8px; }
-    .report-restart button {
-      background: none; border: none; font-size: 13px;
-      color: var(--mid); cursor: pointer; font-family: inherit; padding: 4px 8px;
-    }
-    .report-restart button:hover { color: var(--amber); }
-
-    /* Cross-link */
-    .crosslink-bar {
-      margin-top: 24px; padding: 20px 24px;
-      background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-    }
-    .crosslink-text { font-size: 14px; color: var(--mid); }
-    .crosslink-link { font-size: 14px; font-weight: 600; color: var(--amber); text-decoration: none; white-space: nowrap; }
-    .crosslink-link:hover { text-decoration: underline; }
-
-    /* Info severity (eCommerce tracking notes etc.) */
-    .sev-info { background: #E3F2FD; color: #1565C0; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; padding: 2px 7px; text-transform: uppercase; display: inline-block; }
-    /* Reset inherited text-transform on the card wrapper — only the badge should be uppercase */
-    .issue-card.sev-info { border-color: #BBDEFB; background: #F8FBFF; text-transform: none; letter-spacing: normal; }
+    /* Info severity (eCommerce tracking notes etc.) — LP-specific overrides */
     .issue-card.sev-info .issue-fix-label { color: #1565C0; }
     .issue-card.sev-info .pfi-fix { color: #1565C0; }
-    .issue-card.sev-pass .pfi-impact { color: var(--green); }
-    .issue-card.sev-pass .pfi-impact-text { color: var(--green); }
-
-    /* Pass severity — what's working */
-    .issue-card.sev-pass { border-left-color: var(--green); border-color: rgba(46,125,50,0.25); background: #F1F8F1; }
-    .issue-card.sev-pass .issue-sev { color: #2E7D32; background: rgba(46,125,50,0.12); }
-    .issue-card.sev-pass .issue-fix-label { color: var(--green); }
-    .issue-card.sev-pass .issue-fix-block { background: rgba(46,125,50,0.06); }
-    .issue-card.sev-info .issue-sev { color: #1565C0; background: rgba(21,101,192,0.1); }
-    /* What's working section header */
-    .working-section-hdr {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--green); margin: 24px 0 0; display: flex; align-items: center; gap: 6px;
-    }
-    .working-section-hdr::before { content: '✓'; font-size: 13px; }
-
-    /* Suggestions sub-banner — appears before suggest-severity findings within a section */
-    .suggestions-section-hdr {
-      background: #E8F5E9; border: 1px solid #C8E6C9; border-left: 3px solid #66BB6A;
-      border-radius: 6px; padding: 10px 16px; margin: 20px 0 12px;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      color: #2E7D32; display: flex; align-items: center; gap: 8px;
-    }
-    .suggestions-section-hdr::before { content: '↗'; font-size: 14px; }
 
     /* Page type badge */
     .page-type-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-top: 10px; }
@@ -677,109 +419,36 @@
     /* N-gram note for eCommerce */
     .ngram-note { font-size: 11px; color: var(--mid); margin-left: 8px; font-weight: 400; font-style: italic; }
 
-    /* PDF / print */
+    /* PDF / print — LP-specific additions (general report print styles in report.css) */
     @media print {
-      /* Hide everything except the report */
-      nav, #input-section, #loading-section, .content-section, .cta-section,
-      .crosslink-bar, .lead-cta, .report-restart, .report-header-actions,
-      .share-confirm, .score-info-btn, .score-info-panel,
-      .ads-audit-note { display: none !important; }
+      /* LP-specific hidden elements */
+      .score-info-btn, .score-info-panel, .ads-audit-note { display: none !important; }
 
-      #report-section { display: block !important; }
-
-      /* Page setup */
-      @page { margin: 18mm 16mm; size: A4; }
-      html, body { background: #fff !important; color: #1A1A1A !important; font-size: 11px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-      /* Card wrapper */
-      .card { box-shadow: none !important; border: 1px solid #E8D8C4 !important; padding: 0 !important; }
-
-      /* Report header — dark → clean bordered box */
-      .report-header {
-        background: #fff !important; border: 1.5px solid #1A1A1A !important;
-        border-radius: 8px !important; margin: 0 0 20px !important; padding: 24px 28px !important;
-      }
-      .report-header-top { margin-bottom: 16px !important; }
-      .report-brand { color: #1A1A1A !important; }
-      .report-brand span { color: #985830 !important; }
-      .report-eyebrow { color: #985830 !important; }
-      .score-num { color: #1A1A1A !important; font-size: 64px !important; }
-      .score-denom { color: #6B6B6B !important; }
-      .score-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      /* LP-specific header elements */
       .keyword-line { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; }
       .kw-label { color: #985830 !important; }
       .keyword-conf { color: #6B6B6B !important; }
       .page-type-badge { color: #1A1A1A !important; background: #F7F7F7 !important; border: 1px solid #ccc !important; }
 
-      /* Metrics grid */
-      .metrics-grid { margin: 0 0 20px !important; border-radius: 8px !important; background: #E8D8C4 !important; }
-      .metric-item { background: #fff !important; }
-      .metric-val { color: #1A1A1A !important; }
-      .metric-val.good  { color: #2E7D32 !important; }
-      .metric-val.warn  { color: #B45309 !important; }
-      .metric-val.poor  { color: #C0392B !important; }
-      .metric-label, .metric-threshold { color: #6B6B6B !important; }
-
-      /* Section headers */
-      .section-hero {
-        background: #1A1A1A !important; margin: 20px 0 0 !important;
-        border-radius: 6px !important; padding: 20px 24px !important;
-        -webkit-print-color-adjust: exact; print-color-adjust: exact;
-      }
-      .section-hero-eyebrow { color: #985830 !important; }
-      .section-hero-title   { color: #fff !important; }
-      .section-hero-title em { color: #985830 !important; }
-      .section-hero-meta    { color: rgba(255,255,255,0.7) !important; }
-      .section-count        { color: rgba(255,255,255,0.5) !important; }
-
-      /* Finding cards */
-      .issue-card { page-break-inside: avoid; break-inside: avoid; background: #fff !important; margin-bottom: 8px !important; }
-      .issue-card.sev-suggest { background: #FAFFFE !important; }
-      .issue-card.sev-pass    { background: #F1F8F1 !important; }
-      .issue-card.sev-info    { background: #F8FBFF !important; }
-      .issue-sev { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .effort-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .pfi-label  { color: #6B6B6B !important; }
-      .pfi-fix    { color: #985830 !important; }
-      .pfi-impact { color: #2E7D32 !important; }
-      .pfi-impact-text { color: #2E7D32 !important; }
-      .issue-title { color: #1A1A1A !important; }
-      .pfi-text    { color: #1A1A1A !important; }
-
       /* Category headers */
       .category-hdr-name { color: #1A1A1A !important; }
       .category-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-      /* LPE table */
+      /* Effort badges */
+      .effort-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      /* LPE table (LP-specific component) */
       .lpe-panel { page-break-inside: avoid; break-inside: avoid; }
       .lpe-band  { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .dot-on  { color: #985830 !important; }
-
-      /* Action plan */
-      .action-plan-banner { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; page-break-inside: avoid; break-inside: avoid; }
-      .priority-item { page-break-inside: avoid; break-inside: avoid; background: #fff !important; }
-      .priority-num  { color: #985830 !important; }
-
-      /* Working section */
-      .working-section-hdr { color: #2E7D32 !important; }
 
       /* Page breaks */
       .section-wrap-print { page-break-before: auto; }
     }
 
     @media (max-width: 640px) {
-      nav { padding: 0 20px; }
       .container { padding: 40px 16px 60px; }
       .card { padding: 28px 20px; }
-      .report-header { margin: 0 -20px 0; padding: 32px 20px 28px; }
-      .metrics-grid { margin: 0 -20px 32px; }
-      .section-hero { margin: 40px -20px 0; padding: 28px 20px 24px; }
-      .cta-section { margin: 60px -20px -60px; padding: 40px 20px; }
-      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-      .metrics-grid .metric-item:nth-child(2n) { border-right: none; }
-      .metrics-grid .metric-item:nth-child(3n) { border-right: 1px solid var(--border); }
-      .metrics-grid .metric-item:nth-last-child(-n+2) { border-bottom: none; }
-      .metrics-grid .metric-item:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
     }
   </style>
 </head>
@@ -955,7 +624,164 @@
   var pollCount     = 0;
 
   // ── Auto-load report from URL if ?id= is present ──────────────────────────
+  // ── Preview / demo mode ───────────────────────────────────────────────────
+  var MOCK_LP_REPORT = {
+    url: 'https://www.capitalboilers.co.uk/boiler-servicing-london',
+    audited_at: new Date().toISOString(),
+    health_score: 58,
+    score_band: 'Average',
+    inferred_keyword: 'boiler service London',
+    keyword_confidence: 'High',
+    keyword_confidence_reason: 'URL slug, H1, and title tag all directly reference boiler servicing in London as the primary service offering.',
+    page_meta: {
+      page_type: 'lead_gen',
+      is_blocked: false, is_timeout: false, is_unreachable: false,
+      is_js_rendered: false, cookie_banner_detected: false
+    },
+    categories: {
+      performance: {
+        mobile_score: 47, desktop_score: 72,
+        lcp: '5.20s', cls: '0.041', inp: '180ms', ttfb: '320ms'
+      },
+      keyword_clarity: {
+        inferred_keyword: 'boiler service London',
+        confidence: 'High',
+        confidence_reason: 'URL, H1, and title tag all directly reference the service and location.',
+        intent_type: 'transactional', specificity: 'targeted',
+        top_ngrams: [
+          { phrase: 'boiler service london', count: 4, inUrl: true,  inH1: true,  inTitle: true  },
+          { phrase: 'gas safe registered',   count: 3, inUrl: false, inH1: false, inTitle: false },
+          { phrase: 'annual boiler service', count: 2, inUrl: false, inH1: false, inTitle: false }
+        ]
+      },
+      landing_page_experience: {
+        h1: 'Professional Boiler Servicing in London',
+        title: 'Boiler Service London | Gas Safe Engineers | Capital Boilers',
+        meta_description: null,
+        h1_contains_keyword: true, title_h1_aligned: true,
+        above_fold_signal: 'strong', page_relevance: 'strong match',
+        value_proposition_clarity: 'clear', message_match_strength: 'strong'
+      },
+      conversion_architecture: {
+        has_cta: false, cta_text: null, cta_quality: null, cta_specificity: null,
+        link_count: 24, form_fields: 5, conversion_goal_clarity: 'single', urgency_present: false
+      },
+      trust_signals: {
+        social_proof_quality: 'none', social_proof_type: 'none',
+        named_testimonials: false, testimonial_blocks: 0, star_rating_present: false,
+        has_video_content: false, has_trust_badges: true, risk_reducer_present: false,
+        authority_signals: true, has_privacy_link: true, contact_signals: false, https: true
+      },
+      tracking: { gtm: true, ga4: true, ads_conversion: false, remarketing_only: false },
+      mobile: { score: 47, has_viewport: true, tap_targets_ok: false }
+    },
+    findings: [
+      { category: 'performance', severity: 'high',
+        title: 'Slow mobile load — LCP 5.2s',
+        detail: 'At 5.2s LCP on mobile, a significant share of paid traffic is leaving before the offer loads. Google\'s own research links load time directly to bounce probability — every second above 2.5s loses a measurable portion of your paid clicks.',
+        fix: 'Optimise images to WebP, reduce server response time, and eliminate render-blocking JavaScript and CSS. Run PageSpeed Insights for the full opportunity list.',
+        impact: 'Every second over 2.5s LCP costs paid clicks — directly inflating your effective CPA.' },
+      { category: 'performance', severity: 'pass',
+        title: 'Fast server response — TTFB 320ms',
+        detail: 'Server responds in 320ms, well within the 800ms threshold. A fast TTFB means the page starts loading quickly — the delay is in rendering, not the server response.' },
+      { category: 'performance', severity: 'pass',
+        title: 'No layout shift — CLS 0.041',
+        detail: 'CLS of 0.041 is in Google\'s "Good" band. Elements are not moving after load — buttons and links stay where they appear, preventing accidental taps on mobile.' },
+      { category: 'keyword_clarity', severity: 'pass',
+        title: 'Clear keyword signal — boiler service London',
+        detail: 'URL, H1, and title tag all directly reference the target keyword. Google\'s relevance assessment for this URL is unambiguous.' },
+      { category: 'keyword_clarity', severity: 'pass',
+        title: 'Transactional intent confirmed',
+        detail: 'Page signals commercial intent: a defined service, location, and conversion goal. Appropriate for paid search traffic.' },
+      { category: 'landing_page_experience', severity: 'medium',
+        title: 'Meta description missing',
+        detail: 'No meta description is set. While this does not directly affect Quality Score, it controls what searchers see in the organic SERP snippet — a missing meta description means Google writes its own, often pulling generic body text.',
+        fix: 'Write a 150–160 character meta description that mirrors your primary ad message — include the target keyword, a core benefit, and a call to action.',
+        impact: 'A well-written meta description improves organic CTR — a low-effort addition with no downside.' },
+      { category: 'landing_page_experience', severity: 'pass',
+        title: 'H1 contains target keyword',
+        detail: '"Professional Boiler Servicing in London" directly references the target keyword. This is the primary relevance signal for Landing Page Experience and Quality Score.' },
+      { category: 'landing_page_experience', severity: 'pass',
+        title: 'Title tag aligned with H1',
+        detail: 'Title tag and H1 describe the same service. Consistent framing across both elements strengthens the relevance signal Google applies to this URL.' },
+      { category: 'conversion_architecture', severity: 'high',
+        title: 'No above-fold CTA detected',
+        detail: 'The primary call to action is below the fold. Users who click the ad and don\'t scroll — the majority on mobile — see no next step. For paid traffic, an above-fold CTA is the single most important conversion element.',
+        fix: 'Move your primary CTA above the fold. On mobile it should be visible without scrolling. "Get a Free Quote" or "Book a Service" works well for this type of page.',
+        impact: 'An above-fold CTA is the highest-priority structural fix on this page — paid traffic that cannot immediately see a next step bounces.' },
+      { category: 'conversion_architecture', severity: 'medium',
+        title: '24 links — consider a dedicated landing page',
+        detail: 'This page has 24 outbound links, typical of a full website page rather than a purpose-built paid landing page. Every link that isn\'t the CTA is a potential exit.',
+        fix: 'Consider a stripped-back version of this page for paid campaigns — same content, same offer, with navigation removed and a single CTA.',
+        impact: 'Dedicated landing pages with fewer exit routes typically outperform full website pages for paid traffic.' },
+      { category: 'conversion_architecture', severity: 'medium',
+        title: '5-field form — adds friction for paid traffic',
+        detail: 'A 5-field form creates friction at the exact moment of intent. Paid search visitors clicked an ad expecting a quick path to the service — each extra field is a reason to leave.',
+        fix: 'Reduce to 3 fields for the initial enquiry: name, phone or email, and a brief message. Collect further details in the follow-up.',
+        impact: 'Fewer form fields reduces effective CPA — even removing one optional field moves conversion rate at scale.' },
+      { category: 'conversion_architecture', severity: 'suggest',
+        title: 'CTA could be more specific',
+        detail: 'Generic CTAs consistently underperform specific action-oriented language. A CTA that tells the visitor exactly what happens next reduces hesitation at the conversion point.',
+        fix: 'Replace generic CTA text with a specific outcome: "Book Your Annual Service", "Get a Fixed-Price Quote", or similar language tied to your conversion goal.',
+        impact: 'Specific CTAs consistently outperform generic button text — a one-line copy change with measurable impact.' },
+      { category: 'trust_signals', severity: 'medium',
+        title: 'No social proof detected',
+        detail: 'Visitors from paid ads have not heard of you before. Social proof — reviews, star ratings, named testimonials — is the fastest way to reduce scepticism on a first visit.',
+        fix: 'Add at least 3 named testimonials near the CTA. If you have Google reviews, embed the rating and review count prominently on the page.',
+        impact: 'Social proof is the highest-ROI trust addition for paid landing pages — it directly reduces scepticism from first-time visitors.' },
+      { category: 'trust_signals', severity: 'low',
+        title: 'No visible phone number above the fold',
+        detail: 'For a local service business, a visible phone number is a strong trust and conversion signal. Paid visitors want to know they can reach a real person before committing to a form.',
+        fix: 'Add your phone number prominently above the fold — make it a clickable tel: link for mobile visitors.',
+        impact: 'A visible phone number provides a secondary conversion path for visitors not ready to submit a form.' },
+      { category: 'trust_signals', severity: 'pass',
+        title: 'Gas Safe accreditation badge detected',
+        detail: 'Authority badge confirmed on the page. For a gas engineer, Gas Safe registration is a legal requirement — displaying it prominently is a first-class trust signal for this audience.' },
+      { category: 'trust_signals', severity: 'pass',
+        title: 'HTTPS — secure connection',
+        detail: 'Page is served over HTTPS. Google\'s ad policy requires this, and it removes the "Not Secure" browser warning that can deter paid visitors.' },
+      { category: 'trust_signals', severity: 'pass',
+        title: 'Privacy policy link detected',
+        detail: 'Privacy policy link found. Required for GDPR compliance and reduces friction for visitors evaluating trust.' },
+      { category: 'trust_signals', severity: 'suggest',
+        title: 'Consider adding a risk reducer near the CTA',
+        detail: 'First-time paid visitors are evaluating risk alongside relevance. A risk reducer — "no call-out charge", "fixed price", "no obligation quote" — directly addresses the hesitation that prevents conversion.',
+        fix: 'Add a brief statement near your CTA: "No call-out charge" or "Fixed price — no hidden fees". Even one line changes the conversion dynamic.',
+        impact: 'Risk reducers typically improve enquiry conversion for service pages — a one-sentence addition near the CTA that requires no design work.' },
+      { category: 'mobile', severity: 'high',
+        title: 'Poor mobile score — 47/100',
+        detail: 'Mobile score of 47 is in Google\'s "Poor" band. Over 60% of paid search clicks come from mobile. This score is actively degrading Landing Page Experience and contributing to higher CPCs.',
+        fix: 'Address LCP first — it is the primary driver of the low mobile score. Then run PageSpeed Insights for the full optimisation list.',
+        impact: 'Over 60% of paid clicks are on mobile — a poor score is the primary driver of wasted ad spend and inflated CPAs.' },
+      { category: 'mobile', severity: 'low',
+        title: 'Some tap targets may be too small for mobile',
+        detail: 'PageSpeed data shows some interactive elements may be below the recommended 48×48px touch target size. Small tap targets cause misclicks on mobile.',
+        fix: 'Ensure all buttons and links are at least 48×48 CSS pixels with 8px of space between them.',
+        impact: 'Misclicks on small targets redirect mobile paid visitors away from your CTA.' },
+      { category: 'mobile', severity: 'pass',
+        title: 'Viewport meta tag present',
+        detail: 'Mobile viewport is correctly configured. The page renders at device width rather than desktop width.' }
+    ],
+    priority_actions: [
+      { severity: 'high', category: 'performance',             title: 'Slow mobile load — LCP 5.2s',      fix: 'Optimise images to WebP, reduce server response time, and eliminate render-blocking JavaScript and CSS.' },
+      { severity: 'high', category: 'mobile',                  title: 'Poor mobile score — 47/100',        fix: 'Address LCP first, then run PageSpeed Insights for the full optimisation list.' },
+      { severity: 'high', category: 'conversion_architecture', title: 'No above-fold CTA detected',        fix: 'Move your primary CTA above the fold, visible without scrolling on mobile.' }
+    ]
+  };
+
   window.addEventListener('DOMContentLoaded', function () {
+    // Preview mode — no audit token required
+    var previewParam = new URLSearchParams(window.location.search).get('preview');
+    if (previewParam === 'report') {
+      try {
+        showReport(MOCK_LP_REPORT, false);
+      } catch(e) {
+        document.body.style.cssText = 'margin:0;padding:20px;font-family:monospace;';
+        document.body.innerHTML = '<h2 style="color:red;">Preview error</h2><pre style="white-space:pre-wrap;background:#f5f5f5;padding:16px;border-radius:6px;">' + (e && e.stack ? e.stack : String(e)) + '</pre>';
+      }
+      return;
+    }
+
     var urlId = new URLSearchParams(window.location.search).get('id')
       || (window.location.pathname.match(/^\/r\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/) || [])[1];
     if (urlId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(urlId)) {
@@ -1432,10 +1258,12 @@
       var tier  = score >= 70 ? 'good' : score >= 40 ? 'fair' : 'poor';
       var label = score >= 70 ? 'Good'  : score >= 40 ? 'Fair'  : 'Poor';
 
-      // Speed: LCP is the dominant signal for paid traffic — override findings-based result with PSI data
+      // Speed: LCP is the dominant signal for paid traffic — override findings-based result with PSI data.
+      // perf.lcp is stored as a string ("5.20s") — use parseLcpMs to get milliseconds for comparison.
       if (dim.key === 'speed' && perf.lcp != null) {
-        if      (perf.lcp > 4000) { tier = 'poor'; label = 'Poor'; }
-        else if (perf.lcp > 2500) { tier = 'fair'; label = 'Fair'; }
+        var lcpMs = parseLcpMs(perf.lcp);
+        if      (lcpMs != null && lcpMs > 4000) { tier = 'poor'; label = 'Poor'; }
+        else if (lcpMs != null && lcpMs > 2500) { tier = 'fair'; label = 'Fair'; }
         // lcp ≤ 2500 → keep findings-based result
       }
       // Mobile: mobile Lighthouse score is the clearest single signal

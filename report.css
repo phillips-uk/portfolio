@@ -1,0 +1,1421 @@
+/*
+ * report.css — Phillips. Report Design System
+ * Shared component layer for all tool report pages.
+ *
+ * Load order (every tool page that generates a report):
+ *   <link rel="stylesheet" href="/brand.css">
+ *   <link rel="stylesheet" href="/report.css">
+ *   <style>  /* page-specific overrides only */
+ *
+ * Requires: brand.css tokens (--amber, --amber-dark, --amber-light,
+ *   --ink, --cream, --border, --mid, --white, --shadow-card)
+ *
+ * Adds status colour tokens:
+ *   --r-green, --r-orange, --r-red
+ *
+ * Sections:
+ *  1.  Status colour tokens
+ *  2.  Score header
+ *  3.  Score info toggle
+ *  4.  Report header bar (brand wordmark + action buttons)
+ *  5.  Sub-score pills
+ *  6.  Metrics grid
+ *  7.  Severity badges
+ *  8.  Section hero (dark category header)
+ *  9.  Issue cards & PFI structure
+ * 10.  Pass / working items
+ * 11.  Verdict badges
+ * 12.  Priority actions
+ * 13.  Action plan
+ * 14.  Executive summary
+ * 15.  CTA section (report variant)
+ * 16.  Lead CTA
+ * 17.  Cross-link bar
+ * 18.  Report restart
+ * 19.  Print styles
+ * 20.  Mobile (≤ 640px)
+ *
+ * Updated: 2026-05-24
+ */
+
+
+/* ── 1. Status colour tokens ────────────────────────────────── */
+
+:root {
+  --r-green:  #2E7D32;
+  --r-orange: #D4691B;
+  --r-red:    #C0392B;
+  /* Aliases used by some pages */
+  --green:    #2E7D32;
+  --orange:   #D4691B;
+  --red:      #C0392B;
+}
+
+
+/* ── 2. Score header ────────────────────────────────────────── */
+/*
+ * Dark ink card that sits at the top of every report.
+ * Bleed to card edges via negative margins.
+ *
+ * HTML:
+ *   <div class="report-header">
+ *     <div class="report-header-top"> … </div>
+ *     <div class="report-eyebrow">ACCOUNT HEALTH SCORE</div>
+ *     <div class="score-display">
+ *       <span class="score-num">47</span>
+ *       <span class="score-denom">/100</span>
+ *     </div>
+ *     <span class="score-tag needs-attention">Needs Attention</span>
+ *   </div>
+ */
+
+.report-header {
+  background: var(--ink);
+  margin: 0 -28px 0;
+  padding: 40px 28px 36px;
+  border-radius: 12px 12px 0 0;
+  text-align: center;
+}
+
+.report-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 20px;
+}
+
+/* Score number row */
+.score-display {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+
+.score-num {
+  font-size: 88px;
+  font-weight: 700;
+  letter-spacing: -5px;
+  line-height: 1;
+  color: #fff;
+}
+
+.score-denom {
+  font-size: 24px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: -1px;
+  padding-bottom: 14px;
+}
+
+/* Health label beneath score */
+.score-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 3px;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.score-tag.strong        { background: var(--r-green); }
+.score-tag.average       { background: var(--r-orange); }
+.score-tag.needs-work,
+.score-tag.needs-attention { background: #BF360C; }
+.score-tag.critical      { background: var(--r-red); }
+
+/* Eyebrow alias used by some pages */
+.score-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 20px;
+}
+
+/* Report URL / meta line */
+.report-url-line {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+/* Keyword chip inside score header */
+.keyword-line {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 8px 16px;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.keyword-line .kw-label {
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.keyword-conf {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4px;
+}
+
+/* Top meta line (Customer ID · date etc.) */
+.report-top-meta {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 24px;
+}
+
+/* Glance stats row (account-level context metrics) */
+.glance-stats {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+}
+
+.glance-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 90px;
+}
+
+.glance-stat:last-child { border-right: none; }
+
+.glance-value {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.glance-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4px;
+  text-align: center;
+}
+
+.glance-tier {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.glance-tier.m-good { color: #a5d6a7; }
+.glance-tier.m-ok   { color: #ffcc80; }
+.glance-tier.m-poor { color: #ef9a9a; }
+
+
+/* ── 3. Score info toggle ────────────────────────────────────── */
+
+.score-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-weight: 700;
+  font-style: italic;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  margin-left: 8px;
+  vertical-align: middle;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s;
+  padding: 0;
+}
+
+.score-info-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.score-info-panel {
+  display: none;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin: 12px auto 0;
+  max-width: 400px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.65;
+}
+
+.score-info-panel.open { display: block; }
+
+.score-info-panel strong { color: rgba(255, 255, 255, 0.85); }
+
+.score-info-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 11.5px;
+}
+
+.score-info-panel td {
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.score-info-panel tr:last-child td { border-bottom: none; }
+
+.score-info-panel td:first-child {
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
+
+.score-info-panel .sev-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+
+/* ── 4. Report header bar ────────────────────────────────────── */
+/*
+ * Top bar inside .report-header: brand wordmark left, action buttons right.
+ *
+ * HTML:
+ *   <div class="report-header-top">
+ *     <span class="report-brand">Phillips<span>.</span></span>
+ *     <div class="report-header-actions">
+ *       <button class="btn-share">⇧ Share</button>
+ *       <button class="btn-download">↓ Download PDF</button>
+ *     </div>
+ *   </div>
+ */
+
+.report-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.report-brand {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #fff;
+}
+
+.report-brand span { color: var(--amber); }
+
+.report-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--amber);
+  color: var(--white);
+  border: 1.5px solid var(--amber);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  text-decoration: none;
+}
+
+.btn-download:hover { opacity: 0.85; }
+
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btn-share:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+.share-confirm {
+  font-size: 12px;
+  color: var(--amber);
+  margin-top: 6px;
+  display: none;
+  text-align: right;
+}
+
+
+/* ── 5. Sub-score pills ─────────────────────────────────────── */
+/*
+ * Row of category-level score pills below the main score.
+ * HTML:
+ *   <div class="sub-scores">
+ *     <div class="sub-score-pill sub-score-good">
+ *       <span class="sub-score-name">Relevance</span>
+ *       <span class="sub-score-val">Good</span>
+ *     </div>
+ *     …
+ *   </div>
+ */
+
+.sub-scores {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.sub-score-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  min-width: 80px;
+  flex: 1;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.sub-score-pill.sub-score-good { background: #F0FAF0; border-color: #7DC87D; }
+.sub-score-pill.sub-score-fair { background: #FFFBF0; border-color: #D4A017; }
+.sub-score-pill.sub-score-poor { background: #FFF5F5; border-color: #E08080; }
+
+.sub-score-name {
+  font-size: 10px;
+  color: var(--mid);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.sub-score-val { font-size: 14px; font-weight: 700; }
+.sub-score-good .sub-score-val { color: #2D7D2D; }
+.sub-score-fair .sub-score-val { color: #7A5800; }
+.sub-score-poor .sub-score-val { color: var(--r-red); }
+
+
+/* ── 6. Metrics grid ────────────────────────────────────────── */
+/*
+ * Full-bleed grid of key metrics below the report header.
+ * No top border — connects flush to .report-header's bottom edge.
+ *
+ * HTML:
+ *   <div class="metrics-grid">
+ *     <div class="metric-item">
+ *       <span class="metric-label">SEARCH CTR</span>
+ *       <span class="metric-value m-ok">2.4%</span>
+ *       <span class="metric-tier m-ok">AVERAGE</span>
+ *       <span class="metric-bench">Target ≥ 5%</span>
+ *     </div>
+ *     …
+ *   </div>
+ */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border);
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  margin: 0 -28px 40px;
+  border-top: none;
+}
+
+.metric-item {
+  padding: 20px 22px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-item:nth-child(3n)           { border-right: none; }
+.metric-item:nth-last-child(-n + 3)  { border-bottom: none; }
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 12px;
+}
+
+.metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  color: var(--ink);
+  border-bottom: 2.5px solid var(--amber);
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.metric-value.m-good { color: var(--r-green);  border-color: var(--r-green); }
+.metric-value.m-ok   { color: var(--r-orange); border-color: var(--r-orange); }
+.metric-value.m-poor { color: var(--r-red);    border-color: var(--r-red); }
+.metric-value.m-na   { color: #ccc; border-color: #eee; font-size: 20px; }
+
+.metric-tier {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.metric-tier.m-good { color: var(--r-green); }
+.metric-tier.m-ok   { color: var(--r-orange); }
+.metric-tier.m-poor { color: var(--r-red); }
+.metric-tier.m-na   { color: #ccc; }
+
+.metric-bench {
+  font-size: 11px;
+  color: var(--mid);
+  line-height: 1.4;
+}
+
+
+/* ── 7. Severity badges ─────────────────────────────────────── */
+/*
+ * Inline badges for priority action rows and issue card headers.
+ */
+
+.sev-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+
+.sev-critical { background: rgba(192, 57, 43, 0.10);  color: var(--r-red);    border: 1px solid rgba(192, 57, 43, 0.25); }
+.sev-high     { background: rgba(212, 105, 27, 0.10); color: var(--r-orange); border: 1px solid rgba(212, 105, 27, 0.25); }
+.sev-medium   { background: rgba(212, 105, 27, 0.08); color: #D97706;         border: 1px solid rgba(212, 105, 27, 0.20); }
+.sev-low      { background: rgba(107, 107, 107, 0.08); color: var(--mid);     border: 1px solid rgba(107, 107, 107, 0.20); }
+.sev-suggest  { background: #E8F5E9; color: var(--r-green);                   border: 1px solid #C8E6C9; }
+.sev-info     { background: #E3F2FD; color: #1565C0;                          border: 1px solid #BBDEFB; }
+
+
+/* ── 8. Section hero ────────────────────────────────────────── */
+/*
+ * Dark header that separates report sections (categories).
+ * Full bleed — negative margins flush to card edges.
+ *
+ * HTML:
+ *   <div class="section-hero">
+ *     <div class="section-hero-eyebrow">Foundation</div>
+ *     <div class="section-hero-title">Conversion Tracking <em>2 issues found</em></div>
+ *     <div class="section-hero-meta">
+ *       <span class="sh-issue">2 issues</span>
+ *       <span class="sh-sep">·</span>
+ *       <span class="sh-pass">12 passing</span>
+ *     </div>
+ *   </div>
+ */
+
+.section-hero {
+  background: var(--ink);
+  margin: 48px -28px 0;
+  padding: 36px 28px 30px;
+}
+
+.section-hero-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+.section-hero-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  color: #fff;
+  margin: 0;
+}
+
+.section-hero-title em {
+  color: var(--amber);
+  font-style: normal;
+}
+
+.section-hero-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.sh-pass    { font-size: 12px; font-weight: 700; color: #a5d6a7; }
+.sh-issue   { font-size: 12px; font-weight: 700; color: #ff8a80; }
+.sh-suggest { font-size: 12px; font-weight: 700; color: #80cbc4; }
+.sh-sep     { font-size: 12px; color: rgba(255, 255, 255, 0.25); }
+
+
+/* ── 9. Issue cards & PFI structure ────────────────────────── */
+/*
+ * Each found issue renders as a card with an amber or red left border.
+ * The PROBLEM / FIX / IMPACT structure is the canonical format.
+ *
+ * HTML:
+ *   <div class="issue-card sev-high">
+ *     <span class="issue-sev sev-high">HIGH</span>
+ *     <div class="issue-title">No above-fold CTA detected</div>
+ *     <div class="issue-pfi">
+ *       <div class="issue-pfi-row">
+ *         <span class="pfi-label pfi-problem">Problem</span>
+ *         <span class="pfi-text">…</span>
+ *       </div>
+ *       <div class="issue-pfi-row">
+ *         <span class="pfi-label pfi-fix">Fix</span>
+ *         <span class="pfi-text">…</span>
+ *       </div>
+ *       <div class="issue-pfi-row">
+ *         <span class="pfi-label pfi-impact">Impact</span>
+ *         <span class="pfi-text pfi-impact-text">…</span>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * Fallback (simpler fix-block pattern, used by Google Ads Audit):
+ *   <div class="issue-card sev-high">
+ *     <span class="issue-sev sev-high">HIGH</span>
+ *     <div class="issue-title">…</div>
+ *     <div class="issue-detail">…</div>
+ *     <div class="issue-fix-block">
+ *       <div class="issue-fix-label">Fix</div>
+ *       <div class="issue-fix-text">…</div>
+ *     </div>
+ *   </div>
+ */
+
+.findings-block { margin-bottom: 0; }
+
+.category-section {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.category-section:last-child { border-bottom: none; }
+
+.category-hdr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+.category-hdr-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* Issue card container */
+.issue-card {
+  margin-top: 20px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 10px;
+  background: var(--white);
+}
+
+.issue-card.sev-critical { border-left-color: var(--r-red); }
+.issue-card.sev-high     { border-left-color: var(--r-orange); }
+.issue-card.sev-medium   { border-left-color: #D97706; }
+.issue-card.sev-low      { border-left-color: #ccc; }
+.issue-card.sev-suggest  { border-left-color: #C8E6C9; background: #FAFFFE; }
+.issue-card.sev-info     { border-left-color: #BBDEFB; background: #F8FBFF; text-transform: none; letter-spacing: normal; }
+.issue-card.sev-pass     { border-left-color: var(--r-green); border-color: rgba(46, 125, 50, 0.25); background: #F1F8F1; }
+
+/* Severity pill inside card */
+.issue-sev {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  line-height: 1.4;
+}
+
+.issue-sev.sev-critical { color: #B71C1C; background: rgba(183, 28, 28, 0.10); }
+.issue-sev.sev-high     { color: #C85A00; background: rgba(200, 90, 0, 0.10); }
+.issue-sev.sev-medium   { color: #B45309; background: rgba(180, 83, 9, 0.10); }
+.issue-sev.sev-low      { color: var(--mid); background: rgba(107, 107, 107, 0.10); }
+.issue-sev.sev-suggest  { color: var(--r-green); background: #E8F5E9; }
+.issue-sev.sev-pass     { color: var(--r-green); background: rgba(46, 125, 50, 0.12); }
+.issue-sev.sev-info     { color: #1565C0; background: rgba(21, 101, 192, 0.10); }
+
+.issue-card.sev-pass .issue-sev  { color: var(--r-green); background: rgba(46, 125, 50, 0.12); }
+.issue-card.sev-info .issue-sev  { color: #1565C0; background: rgba(21, 101, 192, 0.10); }
+
+/* Effort badge (optional, appears beside .issue-sev) */
+.effort-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.effort-low    { color: var(--r-green); background: #E8F5E9; }
+.effort-medium { color: #7B4F00;        background: #FFF3CD; }
+.effort-high   { color: #7B1C1C;        background: #FDECEA; }
+
+/* Issue title and body */
+.issue-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.issue-detail {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+/* Fix block (simple pattern — GA Audit) */
+.issue-fix-block {
+  background: var(--cream);
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+
+.issue-fix-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.issue-card.sev-pass .issue-fix-label  { color: var(--r-green); }
+.issue-card.sev-pass .issue-fix-block  { background: rgba(46, 125, 50, 0.06); }
+.issue-card.sev-info .issue-fix-label  { color: #1565C0; }
+
+.issue-fix-text {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+/* PROBLEM / FIX / IMPACT structure (canonical — LP Audit) */
+.issue-pfi {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.issue-pfi-row {
+  display: flex;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.issue-pfi-row:last-child { border-bottom: none; }
+
+.pfi-label {
+  flex-shrink: 0;
+  width: 82px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+
+.pfi-problem { color: var(--mid); }
+.pfi-fix     { color: var(--amber); }
+.pfi-impact  { color: var(--r-green); }
+
+.pfi-text {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.pfi-impact-text {
+  color: var(--r-green);
+  font-weight: 500;
+}
+
+/* Issue footer (add-to-fix-list, hours — GA Audit) */
+.issue-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.issue-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.issue-hours {
+  font-size: 12px;
+  color: var(--mid);
+}
+
+
+/* ── 10. Pass / working items ────────────────────────────────── */
+
+/* "What's working" section header */
+.working-section-hdr {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--r-green);
+  margin: 24px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.working-section-hdr::before {
+  content: '✓';
+  font-size: 13px;
+}
+
+/* Green pass items (simple tick list) */
+.pass-summary {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pass-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink);
+  padding: 8px 12px;
+  background: #f3faf3;
+  border-radius: 6px;
+  border-left: 3px solid var(--r-green);
+}
+
+.pass-item-icon {
+  color: var(--r-green);
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+/* Inline pass items (GA Audit simple tick lines) */
+.cat-passes {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cat-pass-item {
+  font-size: 13px;
+  color: var(--r-green);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* Suggestions sub-banner */
+.suggestions-section-hdr {
+  background: #E8F5E9;
+  border: 1px solid #C8E6C9;
+  border-left: 3px solid #66BB6A;
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin: 20px 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--r-green);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suggestions-section-hdr::before {
+  content: '↗';
+  font-size: 14px;
+}
+
+
+/* ── 11. Verdict badges ─────────────────────────────────────── */
+
+.verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.verdict-pass   { background: rgba(46, 125, 50, 0.10);  color: var(--r-green);  border: 1px solid rgba(46, 125, 50, 0.25); }
+.verdict-review { background: rgba(212, 105, 27, 0.10); color: var(--r-orange); border: 1px solid rgba(212, 105, 27, 0.25); }
+.verdict-fail   { background: rgba(192, 57, 43, 0.10);  color: var(--r-red);    border: 1px solid rgba(192, 57, 43, 0.25); }
+
+
+/* ── 12. Priority actions ────────────────────────────────────── */
+/*
+ * Numbered list of top actions at the top of the report.
+ *
+ * HTML:
+ *   <div class="priority-block">
+ *     <div class="section-eyebrow">Priority Actions</div>
+ *     <div class="priority-row">
+ *       <span class="priority-n">1</span>
+ *       <div>
+ *         <div class="sev-badge sev-high">HIGH</div>
+ *         <div class="priority-title">Fix the GA4 import…</div>
+ *         <div class="priority-fix">Go to Tools > Conversions…</div>
+ *       </div>
+ *     </div>
+ *     …
+ *   </div>
+ */
+
+.priority-block {
+  margin-bottom: 56px;
+  border-top: 1px solid var(--border);
+  padding-top: 48px;
+}
+
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 24px;
+}
+
+.priority-row {
+  display: flex;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.priority-row:last-child { border-bottom: none; }
+
+.priority-n {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--amber);
+  padding-top: 3px;
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.priority-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.priority-fix {
+  font-size: 13px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+
+/* Alias — GA Audit uses .priority-text for the action line */
+.priority-text {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+
+/* ── 13. Action plan ────────────────────────────────────────── */
+/*
+ * Full ranked action plan at the bottom of the report.
+ */
+
+.action-plan-banner {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--mid);
+  line-height: 1.5;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.action-plan-banner strong { color: var(--ink); }
+
+.action-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px 16px;
+  align-items: start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.action-item:last-child { border-bottom: none; }
+
+.action-item-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 80px;
+}
+
+.action-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mid);
+  letter-spacing: 0.04em;
+}
+
+.action-body { min-width: 0; }
+
+.action-title-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.action-fix-text {
+  font-size: 13px;
+  color: var(--mid);
+  line-height: 1.55;
+}
+
+.action-impact {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+  background: rgba(152, 88, 48, 0.10);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+
+/* ── 14. Executive summary ──────────────────────────────────── */
+
+.exec-summary {
+  background: #FAFAFA;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+
+/* ── 15. CTA section (report variant) ───────────────────────── */
+/*
+ * Closing dark section at the bottom of the report card.
+ * Uses negative margins to bleed to card edges and negative bottom
+ * margin to cancel card padding.
+ */
+
+.cta-section {
+  background: var(--ink);
+  margin: 80px -28px -40px;
+  padding: 56px 28px;
+  border-radius: 0 0 16px 16px;
+  text-align: center;
+}
+
+.cta-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 16px;
+}
+
+.cta-heading {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+.cta-heading em {
+  color: var(--amber);
+  font-style: normal;
+}
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--amber);
+  color: var(--white);
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.btn-cta:hover { background: var(--amber-light); }
+
+
+/* ── 16. Lead CTA ───────────────────────────────────────────── */
+/*
+ * Inline dark CTA block that appears mid-report.
+ *
+ * HTML:
+ *   <div class="lead-cta">
+ *     <div class="lead-cta-copy">
+ *       <h3>I can fix what the audit found.</h3>
+ *       <p>…</p>
+ *     </div>
+ *     <a href="/#contact" class="lead-cta-btn">Get in touch</a>
+ *   </div>
+ */
+
+.lead-cta {
+  background: var(--ink);
+  border-radius: 14px;
+  padding: 32px 36px;
+  margin: 40px 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.lead-cta-copy h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.lead-cta-copy p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.55;
+  max-width: 400px;
+}
+
+.lead-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--amber);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.lead-cta-btn:hover { background: var(--amber-light); }
+
+
+/* ── 17. Cross-link bar ─────────────────────────────────────── */
+/*
+ * Cream bar linking to the sibling tool (LP Audit → GA Audit etc.)
+ *
+ * HTML:
+ *   <div class="crosslink-bar">
+ *     <span class="crosslink-text">Your ads aren't the only thing…</span>
+ *     <a href="/google-ads-audit" class="crosslink-link">Audit your account →</a>
+ *   </div>
+ */
+
+.crosslink-bar {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.crosslink-text {
+  font-size: 14px;
+  color: var(--mid);
+}
+
+.crosslink-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--amber);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.crosslink-link:hover { text-decoration: underline; }
+
+
+/* ── 18. Report restart ─────────────────────────────────────── */
+
+.report-restart {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.report-restart button {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--mid);
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 8px;
+}
+
+.report-restart button:hover { color: var(--amber); }
+
+
+/* ── 19. Print styles ───────────────────────────────────────── */
+
+@media print {
+  /* Hide chrome — show only report output */
+  nav,
+  #input-section,
+  #loading-section,
+  .content-section,
+  .crosslink-bar,
+  .lead-cta,
+  .report-restart,
+  .report-header-actions,
+  .share-confirm,
+  .score-info-btn,
+  .score-info-panel { display: none !important; }
+
+  #report-section { display: block !important; }
+
+  @page { margin: 18mm 16mm; size: A4; }
+
+  html, body {
+    background: #fff !important;
+    color: #1A1A1A !important;
+    font-size: 11px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #E8D8C4 !important;
+    padding: 0 !important;
+  }
+
+  /* Score header: dark → clean bordered box */
+  .report-header {
+    background: #fff !important;
+    border: 1.5px solid #1A1A1A !important;
+    border-radius: 8px !important;
+    margin: 0 0 20px !important;
+    padding: 24px 28px !important;
+  }
+
+  .report-header-top  { margin-bottom: 16px !important; }
+  .report-brand       { color: #1A1A1A !important; }
+  .report-brand span  { color: #985830 !important; }
+  .report-eyebrow,
+  .score-eyebrow      { color: #985830 !important; }
+  .score-num          { color: #1A1A1A !important; font-size: 64px !important; }
+  .score-denom        { color: #6B6B6B !important; }
+  .score-tag          { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .keyword-line       { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; }
+  .kw-label           { color: #985830 !important; }
+  .keyword-conf       { color: #6B6B6B !important; }
+
+  /* Metrics grid */
+  .metrics-grid {
+    margin: 0 0 20px !important;
+    border-radius: 8px !important;
+    background: #E8D8C4 !important;
+  }
+  .metric-item  { background: #fff !important; }
+  .metric-value { color: #1A1A1A !important; }
+  .metric-value.m-good { color: #2E7D32 !important; }
+  .metric-value.m-ok   { color: #B45309 !important; }
+  .metric-value.m-poor { color: #C0392B !important; }
+  .metric-label, .metric-bench { color: #6B6B6B !important; }
+
+  /* Section heroes */
+  .section-hero {
+    background: #1A1A1A !important;
+    margin: 20px 0 0 !important;
+    border-radius: 6px !important;
+    padding: 20px 24px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .section-hero-eyebrow { color: #985830 !important; }
+  .section-hero-title   { color: #fff !important; }
+  .section-hero-title em { color: #985830 !important; }
+  .section-hero-meta    { color: rgba(255,255,255,0.7) !important; }
+
+  /* Issue cards */
+  .issue-card           { page-break-inside: avoid; break-inside: avoid; background: #fff !important; margin-bottom: 8px !important; }
+  .issue-card.sev-suggest { background: #FAFFFE !important; }
+  .issue-card.sev-pass    { background: #F1F8F1 !important; }
+  .issue-card.sev-info    { background: #F8FBFF !important; }
+  .issue-sev, .effort-badge, .sev-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pfi-label  { color: #6B6B6B !important; }
+  .pfi-fix    { color: #985830 !important; }
+  .pfi-impact { color: #2E7D32 !important; }
+  .pfi-impact-text { color: #2E7D32 !important; }
+  .issue-title { color: #1A1A1A !important; }
+  .pfi-text    { color: #1A1A1A !important; }
+  .category-hdr-name { color: #1A1A1A !important; }
+
+  /* LPE / action plan */
+  .action-plan-banner { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; page-break-inside: avoid; }
+  .action-item   { page-break-inside: avoid; }
+  .action-num    { color: #985830 !important; }
+  .lpe-band      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .dot-on        { color: #985830 !important; }
+  .working-section-hdr { color: #2E7D32 !important; }
+}
+
+
+/* ── 20. Mobile (≤ 640px) ────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .report-header      { margin: 0 -20px 0; padding: 32px 20px 28px; }
+  .score-num          { font-size: 64px; letter-spacing: -3px; }
+  .metrics-grid       { margin: 0 -20px 32px; grid-template-columns: repeat(2, 1fr); }
+  .metrics-grid .metric-item:nth-child(2n)      { border-right: none; }
+  .metrics-grid .metric-item:nth-child(3n)      { border-right: 1px solid var(--border); }
+  .metrics-grid .metric-item:nth-last-child(-n + 2) { border-bottom: none; }
+  .metrics-grid .metric-item:nth-last-child(-n + 3) { border-bottom: 1px solid var(--border); }
+  .section-hero       { margin: 40px -20px 0; padding: 28px 20px 24px; }
+  .cta-section        { margin: 60px -20px -60px; padding: 40px 20px; }
+  .lead-cta           { flex-direction: column; padding: 24px; }
+  .lead-cta-btn       { width: 100%; justify-content: center; }
+  .btn-share,
+  .btn-download       { padding: 7px 12px; font-size: 12px; }
+  .report-header-top  { margin-bottom: 24px; }
+  .cat-passes         { gap: 12px; }
+}
