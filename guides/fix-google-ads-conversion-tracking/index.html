@@ -1685,12 +1685,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
 
 <script>
-// Mobile nav toggle
+// Mobile nav toggle — top offset measured at click time so banners don't overlap
 (function() {
   var burger = document.getElementById('p-nav-burger');
   var mobile = document.getElementById('p-nav-mobile');
+  var nav    = document.querySelector('.p-nav');
   if (burger && mobile) {
     burger.addEventListener('click', function() {
+      if (nav) mobile.style.top = nav.getBoundingClientRect().bottom + 'px';
       var open = mobile.classList.toggle('is-open');
       burger.setAttribute('aria-expanded', open);
     });
