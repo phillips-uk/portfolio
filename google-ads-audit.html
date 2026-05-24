@@ -122,6 +122,7 @@
   }
   </script>
 
+  <link rel="stylesheet" href="/brand.css">
   <style>
     /* ── Design tokens (matches brand) ───────────────────────────── */
     :root {
@@ -172,19 +173,7 @@
       margin-bottom: 48px;
     }
 
-    .hero-tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--amber);
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 14px;
-      margin-bottom: 20px;
-    }
+    /* .hero-tag replaced by brand.css .hero-pill */
 
     .hero h1 {
       font-size: clamp(28px, 5vw, 42px);
@@ -2058,7 +2047,6 @@
     }
 
   </style>
-  <link rel="stylesheet" href="/brand.css">
 </head>
 <body>
 <!-- Netlify Form — detected at build time, submitted via AJAX from report -->
@@ -2107,9 +2095,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="landing-hero">
 
       <div class="hero">
-        <div class="hero-tag" id="hero-tag">Free · Read-only · Results in ~60 seconds</div>
-        <h1 id="hero-h1">Free Google Ads Audit Tool</h1>
-        <p id="hero-sub" style="font-size:15px; color:var(--amber); font-weight:600; margin-bottom:8px; margin-top:-4px;">Your account, honestly assessed in under 60 seconds.</p>
+        <div class="hero-pill" id="hero-tag">Free · Read-only · Results in ~60 seconds</div>
+        <h1 id="hero-h1">Free <span>Google Ads Audit</span> Tool</h1>
         <p id="hero-body">Connect your Google Ads account and get a full diagnostic in under 60 seconds. Every issue is severity-rated with a specific fix, a direct "Fix in Ads" link, and a time estimate. You also get a search term waste analysis, a day-and-hour performance heatmap, and a PDF you can share or take to a meeting.</p>
         <button class="btn btn-primary landing-cta" onclick="scrollToForm()">
           Run my audit
@@ -2587,8 +2574,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       // Hero copy
       const h1 = document.getElementById("hero-h1");
       if (h1) h1.textContent = "Free Google Ads Audit for Shopify Stores";
-      const sub = document.getElementById("hero-sub");
-      if (sub) sub.textContent = "Built specifically for Shopify — checks the issues that kill Shopping and PMax performance.";
       const body = document.getElementById("hero-body");
       if (body) body.textContent = "Connect your Google Ads account and get a Shopify-specific diagnostic: purchase tracking architecture, PMax feed quality, product-level spend waste, and Shopping campaign structure. Full report in under 60 seconds.";
       const tag = document.getElementById("hero-tag");
