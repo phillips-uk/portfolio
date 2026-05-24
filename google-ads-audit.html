@@ -1130,6 +1130,7 @@
     .glance-num.g-high     { color: var(--orange); }
     .glance-num.g-medium   { color: #D97706; }
     .glance-num.g-passing  { color: var(--green); }
+    .glance-num.g-waste    { color: #985830; font-weight: 700; }
 
     .glance-label {
       font-size: 12px;
@@ -1212,9 +1213,13 @@
       padding: 10px 14px;
       border-bottom: 2px solid #E8E8E8;
     }
-    .ft-col-issue  { width: 28%; }
-    .ft-col-fix    { width: 42%; }
-    .ft-col-impact { width: 30%; }
+    .ft-col-issue  { width: 25%; }
+    .ft-col-fix    { width: 38%; }
+    .ft-col-impact { width: 24%; }
+    .ft-col-waste  { width: 13%; }
+    .ft-td-waste   { padding: 12px 10px; vertical-align: top; font-size: 13px; white-space: nowrap; }
+    .ft-waste-confirmed { color: #985830; font-weight: 600; }
+    .ft-waste-estimated { color: #999; font-weight: 400; }
     .fix-table tbody tr { border-bottom: 1px solid #F0F0F0; }
     .fix-table tbody tr:last-child { border-bottom: none; }
     .ft-td-issue, .ft-td-fix, .ft-td-impact {
@@ -2532,7 +2537,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         label: "Keyword & Quality Score",
         issues: [
           { check:"low_quality_score", severity:"high", title:"Average Quality Score of 5.8 is below the 7+ target", detail:"41% of keyword impressions are on keywords with a QS of 4 or below. Low Quality Scores raise CPCs across the entire campaign, not just the affected keywords.", recommendation:"Identify the 10–15 keywords with the highest spend and lowest QS. Check landing page relevance and ad copy alignment. Tighten ad groups so that each group covers a tighter keyword theme.", hours_estimate:3, data: {} },
-          { check:"broad_waste", severity:"medium", title:"3 broad match keywords with £800+ spend and zero conversions", detail:"These keywords are consuming budget without contributing any conversion signal. Their search term reports show significant off-topic query matching.", recommendation:"Pause these three keywords. If the theme is important, recreate them as phrase match with tighter ad groups and dedicated landing pages.", hours_estimate:0.5, data:{ waste_confidence:"confirmed" } }
+          { check:"broad_waste", severity:"medium", title:"3 broad match keywords with £800+ spend and zero conversions", detail:"These keywords are consuming budget without contributing any conversion signal. Their search term reports show significant off-topic query matching.", recommendation:"Pause these three keywords. If the theme is important, recreate them as phrase match with tighter ad groups and dedicated landing pages.", hours_estimate:0.5, data:{ waste_gbp:200.00, waste_confidence:"confirmed" } },
+          { check:"ngram_waste", severity:"low", title:"Recurring waste patterns — 10 n-grams with spend and zero conversions", detail:"£149 in waste clusters across 87 terms analysed. Top patterns: free (£48), cheap (£32), free delivery (£29), diy (£23), how make (£18). Each pattern recurs across multiple search terms — one negative keyword blocks the whole class.", recommendation:"Add the top wasted patterns as broad match negatives at account level. Use [exact] for single high-confidence words, [phrase] for multi-word patterns.", hours_estimate:0.25, data:{ waste_gbp:149.20, waste_confidence:"confirmed", neg_list:["free","cheap","free delivery","diy","how make","template","free template","tutorial","cheap near me","example"], wasted_ngrams:[{ngram:"free",n:1,cost:48.20,clicks:94,conversions:0,impressions:3200},{ngram:"cheap",n:1,cost:31.50,clicks:67,conversions:0,impressions:2100},{ngram:"free delivery",n:2,cost:29.10,clicks:58,conversions:0,impressions:1800}] } }
         ],
         passes: [
           { check:"negative_list", title:"Account-level negative keyword list is in place" },
@@ -2562,7 +2568,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         label: "Product Feed",
         issues: [
           { check:"feed_wasted_spend", severity:"medium", title:"22% of product spend going to items with zero conversions in 90 days", detail:"37 products have received meaningful spend over the last 90 days without recording a single conversion. These are not necessarily poor products — they may have attribution or landing page issues.", recommendation:"Review the 37 zero-conversion products. Check their landing pages load correctly and that conversion tracking fires on their specific thank-you URLs. Suppress products with persistent zero-conversion spend using custom labels.", hours_estimate:2,
-            data: { feed_summary: { products_active: 168, products_converting: 94, total_spend: 3420.50, top_products: [
+            data: { waste_gbp:93.40, waste_confidence:"confirmed", feed_summary: { products_active: 168, products_converting: 94, total_spend: 3420.50, top_products: [
               { title:"Classic Leather Tote — Tan", spend: 412.30, conversions: 8.0, ctr: 3.2 },
               { title:"Canvas Backpack — Navy", spend: 287.10, conversions: 5.0, ctr: 2.8 },
               { title:"Suede Crossbody — Black", spend: 198.40, conversions: 0, ctr: 1.1 },
@@ -3134,9 +3140,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="ngram-tables">
           ${ngramWasted.length ? `
           <div class="ngram-table-wrap">
-            <div class="ngram-table-head">
-              <span class="ngram-table-head-label">⚠ Wasted Patterns</span>
-              <span class="ngram-table-head-sub">Spend, zero conversions</span>
+            <div class="ngram-table-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+              <div>
+                <span class="ngram-table-head-label">⚠ Wasted Patterns</span>
+                <span class="ngram-table-head-sub">Spend, zero conversions</span>
+              </div>
+              <button class="btn-copy-negatives" onclick="(function(btn){
+                const negs = ${JSON.stringify(ngramWasted.slice(0,10).map(x=>x.ngram))};
+                const lines = negs.map(n => n.includes(' ') ? '[phrase] ' + n : '[exact] ' + n);
+                navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+                  btn.textContent='✓ Copied';
+                  setTimeout(()=>btn.textContent='Copy as negatives',1800);
+                }).catch(()=>{
+                  const ta=document.createElement('textarea');
+                  ta.value=lines.join('\n');
+                  document.body.appendChild(ta);
+                  ta.select();
+                  document.execCommand('copy');
+                  document.body.removeChild(ta);
+                  btn.textContent='✓ Copied';
+                  setTimeout(()=>btn.textContent='Copy as negatives',1800);
+                });
+              })(this)" style="font-size:12px;padding:4px 10px;background:#fff;border:1px solid #E8D8C4;border-radius:4px;cursor:pointer;color:#985830;font-weight:600;white-space:nowrap;">Copy as negatives</button>
             </div>
             ${ngramColHeads("Convs")}
             ${ngramWasted.slice(0, 10).map(x => `
@@ -3366,6 +3391,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </scr` + `ipt>`;
     }
 
+    // Compute confirmed recoverable waste across all issues
+    const totalConfirmedWaste = Object.values(categories).reduce((sum, cat) => {
+      return sum + (cat.issues || []).reduce((s, f) => {
+        const d = f.data || {};
+        return s + (d.waste_confidence === "confirmed" && d.waste_gbp > 0 ? d.waste_gbp : 0);
+      }, 0);
+    }, 0);
+
     const glanceHTML = `
       <div class="glance-stats">
         ${summary.critical ? `<div class="glance-stat">
@@ -3383,6 +3416,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ${summary.passing ? `<div class="glance-stat">
           <div class="glance-num g-passing">${summary.passing}</div>
           <div class="glance-label">Passing</div>
+        </div>` : ""}
+        ${totalConfirmedWaste >= 1 ? `<div class="glance-stat">
+          <div class="glance-num g-waste">${currency}${Math.round(totalConfirmedWaste)}</div>
+          <div class="glance-label">Recoverable waste</div>
         </div>` : ""}
       </div>`;
 
@@ -3695,12 +3732,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       pmax_assets:          "PMax running with limited creative — lower reach and weaker quality signals",
       pmax_exclusions:      "PMax cannibalising brand terms — inflated CPCs on own brand",
       final_url_expansion:  "PMax overriding landing pages — traffic sent to unintended pages",
+      spend_no_conversions: "Every pound here is unattributable — immediate budget recovery on fixing",
+      search_term_waste:    "Confirmed off-target spend — adding negatives recovers budget immediately",
+      low_quality_score:    "QS penalty raises effective CPC — paying more per click than competitors",
+      broad_match_manual_cpc: "Broad match without Smart Bidding guarantees off-topic query matching",
+      ngram_waste:          "Pattern-level negatives block entire classes of irrelevant queries",
     };
     const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
     const allIssues = [];
     Object.values(categories).forEach(cat => {
       (cat.issues || []).forEach(issue => {
-        if (["critical","high","medium"].includes((issue.severity||"").toLowerCase())) {
+        if (["critical","high","medium","low"].includes((issue.severity||"").toLowerCase())) {
           allIssues.push(issue);
         }
       });
@@ -3718,6 +3760,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <th class="ft-col-issue">Issue</th>
                 <th class="ft-col-fix">What to fix</th>
                 <th class="ft-col-impact">Why it matters</th>
+                <th class="ft-col-waste">Est. waste</th>
               </tr>
             </thead>
             <tbody>
@@ -3728,6 +3771,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                   sev === "high"     ? "Significant wasted spend or structural gap" :
                                        "Best-practice gap — optimisation opportunity"
                 );
+                const wData = f.data || {};
+                const wasteGbp = wData.waste_gbp;
+                const wasteConf = wData.waste_confidence || "";
+                const wasteHTML = wasteGbp != null && wasteGbp > 0
+                  ? (wasteConf === "confirmed"
+                      ? `<span class="ft-waste-confirmed">${currency}${wasteGbp.toFixed(0)}</span>`
+                      : `<span class="ft-waste-estimated">~${currency}${wasteGbp.toFixed(0)}</span>`)
+                  : `<span class="ft-waste-estimated">—</span>`;
                 return `<tr>
                   <td class="ft-td-issue">
                     <div class="ft-issue-inner">
@@ -3737,6 +3788,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                   </td>
                   <td class="ft-td-fix">${escHtml(f.recommendation || "—")}</td>
                   <td class="ft-td-impact">${escHtml(impact)}</td>
+                  <td class="ft-td-waste">${wasteHTML}</td>
                 </tr>`;
               }).join("")}
             </tbody>
