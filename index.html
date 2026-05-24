@@ -20,6 +20,7 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+  <link rel="stylesheet" href="/brand.css">
 
   <!-- Open Graph (LinkedIn, Facebook, iMessage, Slack etc.) -->
   <meta property="og:type" content="website">
@@ -61,98 +62,6 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-    }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 48px;
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .mark {
-      display: inline-flex;
-      align-items: center;
-      text-decoration: none;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--ink);
-      letter-spacing: -0.01em;
-      line-height: 1;
-    }
-    .mark .dot { color: var(--amber); }
-
-    nav a.cta {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--amber);
-      text-decoration: none;
-      border: 1.5px solid var(--amber);
-      padding: 8px 18px;
-      border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
-    }
-    nav a.cta:hover { background: var(--amber); color: var(--white); }
-
-    nav a.cta--filled {
-      background: var(--amber);
-      color: var(--white);
-    }
-    nav a.cta--filled:hover { background: #7a4525; }
-
-    .nav-links { display: flex; align-items: center; gap: 28px; }
-    .nav-link {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--mid);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-    .nav-link:hover { color: var(--ink); }
-    .nav-ctas { display: flex; align-items: center; gap: 10px; }
-
-    /* ── BURGER BUTTON (hidden on desktop) ── */
-    .nav-burger {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 44px;
-      height: 44px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      gap: 5px;
-      flex-shrink: 0;
-    }
-    .nav-burger__line {
-      display: block;
-      width: 22px;
-      height: 2px;
-      background: var(--ink);
-      border-radius: 2px;
-      transition: transform 0.25s ease, opacity 0.25s ease;
-      transform-origin: center;
-    }
-    .nav-burger.is-open .nav-burger__line:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
-    }
-    .nav-burger.is-open .nav-burger__line:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0);
-    }
-    .nav-burger.is-open .nav-burger__line:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
     }
 
     /* ── MOBILE NAV OVERLAY ── */
@@ -1091,10 +1000,6 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 760px) {
-      nav { padding: 16px 24px; }
-      .nav-ctas { display: none; }
-      .nav-links { display: none; }
-      .nav-burger { display: flex; }
       .mobile-nav { display: flex; }
       .container { padding: 0 24px; }
       .section-wrap { padding: 44px 0; }
@@ -1130,7 +1035,6 @@
       #contact { padding: 72px 24px; }
       footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
       .section-label { margin-bottom: 24px; }
-      nav a.cta, nav button { min-height: 44px; }
 
       /* work-card accordion — mobile only */
       .work-card__body {
@@ -1230,20 +1134,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
   <!-- NAV -->
-  <nav>
-    <a href="/" class="mark">Phillips<span class="dot">.</span></a>
-    <div class="nav-links">
-      <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
-      <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
-      <a href="/guides/" class="nav-link">Guides</a>
+  <nav class="p-nav">
+    <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
+    <div class="p-nav__links">
+      <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
+      <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
+      <a href="/guides/" class="p-nav__link">Guides</a>
     </div>
-    <div class="nav-ctas">
-      <a href="#contact" class="cta cta--filled">Get in touch</a>
-    </div>
-    <button class="nav-burger" aria-label="Open menu" aria-expanded="false" id="nav-burger">
-      <span class="nav-burger__line"></span>
-      <span class="nav-burger__line"></span>
-      <span class="nav-burger__line"></span>
+    <a href="#contact" class="p-nav__cta">Get in touch</a>
+    <button class="p-nav__burger" aria-label="Open menu" aria-expanded="false" id="p-nav-burger">
+      <span class="p-nav__burger-line"></span>
+      <span class="p-nav__burger-line"></span>
+      <span class="p-nav__burger-line"></span>
     </button>
   </nav>
 
@@ -2056,7 +1958,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     /* ── BURGER MENU ── */
     (function () {
-      var burger = document.getElementById('nav-burger');
+      var burger = document.getElementById('p-nav-burger');
       var mobileNav = document.getElementById('mobile-nav');
       var closeBtn = document.getElementById('mobile-nav-close');
 

@@ -79,6 +79,7 @@
   }
   </script>
 
+  <link rel="stylesheet" href="/brand.css">
   <style>
     :root {
       --amber:       #985830;
@@ -105,36 +106,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Nav ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-      z-index: 100; padding: 0 40px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo {
-      display: inline-flex; align-items: center; text-decoration: none;
-      font-weight: 700; font-size: 18px; color: var(--ink);
-      letter-spacing: -0.01em; line-height: 1;
-    }
-    .nav-logo .dot { color: var(--amber); }
-    .nav-links { display: flex; align-items: center; gap: 28px; }
-    .nav-link {
-      font-size: 14px; font-weight: 500; color: var(--mid);
-      text-decoration: none; transition: color 0.15s;
-    }
-    .nav-link:hover { color: var(--ink); }
-    .nav-back {
-      font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
-      color: var(--amber); text-decoration: none;
-      border: 1.5px solid var(--amber); padding: 8px 18px; border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
-    }
-    .nav-back:hover { background: var(--amber); color: var(--white); }
-    @media (max-width: 640px) { .nav-links { display: none; } }
-
     main {
       min-height: 100vh; padding-top: 64px;
       display: flex; align-items: flex-start; justify-content: center;
@@ -143,13 +114,6 @@
 
     /* ── Hero ── */
     .hero { text-align: center; margin-bottom: 48px; }
-    .hero-tag {
-      display: inline-block; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--amber); background: var(--cream);
-      border: 1px solid var(--border); border-radius: 20px;
-      padding: 4px 14px; margin-bottom: 20px;
-    }
     .hero h1 {
       font-size: clamp(28px, 5vw, 42px); font-weight: 700;
       letter-spacing: -0.03em; line-height: 1.15;
@@ -295,6 +259,35 @@
     }
     .keyword-line .kw-label { color: var(--amber); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 3px; }
     .keyword-conf { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+    /* Executive summary */
+    .exec-summary {
+      background: #FAFAFA; border: 1px solid var(--border);
+      border-left: 3px solid var(--amber); border-radius: 6px;
+      padding: 12px 16px; font-size: 14px; color: var(--dark);
+      line-height: 1.5; margin-bottom: 20px; font-weight: 500;
+    }
+
+    /* Sub-scores */
+    .sub-scores {
+      display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0 20px;
+    }
+    .sub-score-pill {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 10px 16px; border-radius: 8px; min-width: 80px;
+      flex: 1; border: 1px solid var(--border); text-align: center;
+    }
+    .sub-score-pill.sub-score-good { background: #F0FAF0; border-color: #7DC87D; }
+    .sub-score-pill.sub-score-fair { background: #FFFBF0; border-color: #D4A017; }
+    .sub-score-pill.sub-score-poor { background: #FFF5F5; border-color: #E08080; }
+    .sub-score-name {
+      font-size: 10px; color: #6B6B6B; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .sub-score-val { font-size: 14px; font-weight: 700; }
+    .sub-score-good .sub-score-val { color: #2D7D2D; }
+    .sub-score-fair .sub-score-val { color: #7A5800; }
+    .sub-score-poor .sub-score-val { color: #C0392B; }
 
     /* Metrics grid */
     .metrics-grid {
@@ -795,23 +788,33 @@
 <!-- GTM noscript -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<nav>
-  <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
-  <div class="nav-links">
-    <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
-    <a href="/guides/" class="nav-link">Guides</a>
+<nav class="p-nav">
+  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
+  <div class="p-nav__links">
+    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
+    <a href="/guides/" class="p-nav__link">Guides</a>
   </div>
-  <a href="/#contact" class="nav-back">Get in touch</a>
+  <a href="/#contact" class="p-nav__cta">Get in touch</a>
+  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+  </button>
 </nav>
+<div class="p-nav__mobile" id="p-nav-mobile">
+  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
+  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
+  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
+</div>
 
 <main>
 <div class="container">
 
   <!-- ── Hero ── -->
   <div class="hero">
-    <div class="hero-tag">Free Tool</div>
+    <div class="hero-pill">Free · No account needed · Results in ~60 seconds</div>
     <h1>Free <span>Landing Page Audit</span><br>for Paid Media</h1>
-    <p>Paste a URL. Get a paid media diagnosis — real Core Web Vitals from Google's own engine, AI-powered findings on keyword clarity, conversion architecture, and trust signals, every issue framed as Problem → Fix → Impact. Built around Google Ads signals. Equally useful for Meta. Free. No account connection.</p>
+    <p>Paste a URL. Get a paid media diagnosis: real Core Web Vitals from Google's own engine, AI-powered findings on keyword clarity, conversion architecture, and trust signals. Every issue framed as Problem → Fix → Impact. Built around Google Ads signals. Equally useful for Meta. Free. No account connection.</p>
   </div>
 
   <!-- ── Input ── -->
@@ -845,18 +848,18 @@
   <!-- ── Below-fold content (SEO + value) ── -->
   <div class="content-section" id="below-fold-1">
     <h2>Every finding framed in paid media terms</h2>
-    <p>Most landing page tools give you generic CRO advice. This one uses Google Ads signals as its primary lens — Quality Score, Landing Page Experience, message match — and frames every finding as a paid traffic problem, not a web design problem. The conversion architecture, trust, mobile, and page speed findings apply equally to Meta Ads and any other paid channel.</p>
+    <p>Most landing page tools give you generic CRO advice. This one uses Google Ads signals as its primary lens: Quality Score, Landing Page Experience, message match. Every finding is framed as a paid traffic problem, not a web design problem. The conversion architecture, trust, mobile, and page speed findings apply equally to Meta Ads and any other paid channel.</p>
 
     <div class="two-col">
       <div>
         <div class="col-label">What gets checked</div>
         <ul class="check-list">
-          <li>Core Web Vitals — LCP, CLS, and INP from Google's real PageSpeed Insights engine, mobile and desktop in parallel</li>
-          <li>Keyword clarity — AI infers your primary keyword from H1, title tag, URL, and opening copy. If it can't tell, Google can't either</li>
-          <li>Landing Page Experience signals — H1 quality, title alignment, above-fold relevance, message match</li>
-          <li>Conversion architecture — CTA presence and specificity, form friction, single-goal clarity</li>
-          <li>Trust signals — social proof, risk reducers, contact information, privacy policy</li>
-          <li>Mobile experience — performance score, viewport, tap target sizing</li>
+          <li>Core Web Vitals: LCP, CLS, and INP from Google's real PageSpeed Insights engine, mobile and desktop in parallel</li>
+          <li>Keyword clarity: AI infers your primary keyword from H1, title tag, URL, and opening copy. If it can't tell, Google can't either</li>
+          <li>Landing Page Experience signals: H1 quality, title alignment, above-fold relevance, message match</li>
+          <li>Conversion architecture: CTA presence and specificity, form friction, single-goal clarity</li>
+          <li>Trust signals: social proof, risk reducers, contact information, privacy policy</li>
+          <li>Mobile experience: performance score, viewport, tap target sizing</li>
         </ul>
       </div>
       <div>
@@ -1257,8 +1260,8 @@
     var fixHints = [];
 
     var html = '<div class="lpe-panel">'
-      + '<div class="lpe-panel-label">Estimated Landing Page Experience — per keyword</div>'
-      + '<div class="lpe-panel-note">Based on Google\'s three documented LPE signals: relevance, performance, and trust. LPE is assessed per keyword — the same page can score differently for each. This is an estimate from detectable signals, not Google\'s actual rating.</div>'
+      + '<div class="lpe-panel-label">Estimated paid-media fit — detected intent signals</div>'
+      + '<div class="lpe-panel-note">Based on Google\'s three documented LPE signals: relevance, performance, and trust. Phrases below are detected from page content — not all will be target keywords. The primary keyword is shown first; others are supporting themes or detected product concepts. This is an estimate from detectable signals, not Google\'s actual rating.</div>'
       + '<table class="lpe-table">'
       + '<thead><tr>'
       + '<th>Keyword</th>'
@@ -1325,8 +1328,13 @@
     if (!allFindings.length) return '';
 
     var order = { critical: 0, high: 1, medium: 2, low: 3 };
+    // Secondary sort by paid-media impact: performance and mobile first,
+    // then conversion architecture, keyword clarity, trust, then LPE hygiene items.
+    var catOrder = { performance: 0, mobile: 1, conversion_architecture: 2, keyword_clarity: 3, trust_signals: 4, landing_page_experience: 5 };
     var sorted = allFindings.slice().sort(function(a, b) {
-      return (order[a.severity] ?? 3) - (order[b.severity] ?? 3);
+      var sevDiff = (order[a.severity] ?? 3) - (order[b.severity] ?? 3);
+      if (sevDiff !== 0) return sevDiff;
+      return (catOrder[a.category] ?? 6) - (catOrder[b.category] ?? 6);
     });
 
     var critHigh = sorted.filter(function(f) { return f.severity === 'critical' || f.severity === 'high'; });
@@ -1364,6 +1372,84 @@
         + '</div>';
     });
 
+    html += '</div>';
+    return html;
+  }
+
+  function buildExecSummary(r) {
+    var findings = r.findings || [];
+    var critCount = findings.filter(function(f) { return f.severity === 'critical'; }).length;
+    var highCount = findings.filter(function(f) { return f.severity === 'high'; }).length;
+    var band      = r.score_band;
+    var sevWeight = { critical: 15, high: 8, medium: 4, low: 2 };
+    var catDeduction = {};
+    findings.forEach(function(f) {
+      if (f.severity === 'pass' || f.severity === 'info') return;
+      catDeduction[f.category] = (catDeduction[f.category] || 0) + (sevWeight[f.severity] || 0);
+    });
+    var worstCat = Object.keys(catDeduction).sort(function(a, b) { return catDeduction[b] - catDeduction[a]; })[0];
+    var catLabel = { performance: 'page speed', mobile: 'mobile experience', conversion_architecture: 'conversion clarity',
+      trust_signals: 'trust signals', keyword_clarity: 'keyword relevance', landing_page_experience: 'landing page relevance'
+    }[worstCat] || 'overall page quality';
+    var summary;
+    if (band === 'Strong') {
+      summary = 'Well-optimised for paid traffic — a few refinements could push conversion performance further.';
+    } else if (critCount > 0) {
+      summary = critCount === 1
+        ? '1 critical issue detected — address it before scaling spend.'
+        : critCount + ' critical issues detected — resolve these before scaling spend.';
+    } else if (highCount >= 3) {
+      summary = highCount + ' high-priority issues are limiting conversion efficiency — ' + catLabel + ' is the biggest drag.';
+    } else if (highCount > 0) {
+      summary = 'Functional page with ' + (highCount === 1 ? 'one high-priority barrier' : highCount + ' high-priority barriers') + ' — ' + catLabel + ' is the main area to address.';
+    } else {
+      summary = 'No critical or high-priority issues — the gaps here are optimisation opportunities, not blockers.';
+    }
+    return '<div class="exec-summary">' + summary + '</div>';
+  }
+
+  function buildSubScores(r) {
+    var findings  = r.findings || [];
+    var sevWeight = { critical: 15, high: 8, medium: 4, low: 2 };
+    var cats      = r.categories || {};
+    var perf      = cats.performance || {};
+    var dims = [
+      { label: 'Relevance',  cats: ['keyword_clarity', 'landing_page_experience'] },
+      { label: 'Speed',      cats: ['performance'],             key: 'speed' },
+      { label: 'Trust',      cats: ['trust_signals'] },
+      { label: 'Conversion', cats: ['conversion_architecture'] },
+      { label: 'Mobile',     cats: ['mobile'],                  key: 'mobile' }
+    ];
+    var html = '<div class="sub-scores">';
+    dims.forEach(function(dim) {
+      var deduction = 0;
+      findings.forEach(function(f) {
+        if (dim.cats.indexOf(f.category) > -1 && f.severity !== 'info' && f.severity !== 'pass') {
+          deduction += sevWeight[f.severity] || 0;
+        }
+      });
+      var score = Math.max(0, 100 - deduction);
+      var tier  = score >= 70 ? 'good' : score >= 40 ? 'fair' : 'poor';
+      var label = score >= 70 ? 'Good'  : score >= 40 ? 'Fair'  : 'Poor';
+
+      // Speed: LCP is the dominant signal for paid traffic — override findings-based result with PSI data
+      if (dim.key === 'speed' && perf.lcp != null) {
+        if      (perf.lcp > 4000) { tier = 'poor'; label = 'Poor'; }
+        else if (perf.lcp > 2500) { tier = 'fair'; label = 'Fair'; }
+        // lcp ≤ 2500 → keep findings-based result
+      }
+      // Mobile: mobile Lighthouse score is the clearest single signal
+      if (dim.key === 'mobile' && perf.mobile_score != null) {
+        if      (perf.mobile_score < 50) { tier = 'poor'; label = 'Poor'; }
+        else if (perf.mobile_score < 80) { tier = 'fair'; label = 'Fair'; }
+        // ≥ 80 → keep findings-based result
+      }
+
+      html += '<div class="sub-score-pill sub-score-' + tier + '">'
+        + '<span class="sub-score-name">' + dim.label + '</span>'
+        + '<span class="sub-score-val">' + label + '</span>'
+        + '</div>';
+    });
     html += '</div>';
     return html;
   }
@@ -1436,6 +1522,12 @@
             + '</div>'
           : '')
       + '</div>';
+
+    // Sub-scores — 5-dimension breakdown below the header
+    html += buildSubScores(r);
+
+    // Executive summary — one-line verdict
+    html += buildExecSummary(r);
 
     // Metrics grid
     var cats = r.categories || {};
@@ -2018,6 +2110,20 @@
 
     dataLayer.push({ event: 'report_exported', export_format: 'markdown', audited_url: r.url });
   }
+</script>
+
+<script>
+// Mobile nav toggle
+(function() {
+  var burger = document.getElementById('p-nav-burger');
+  var mobile = document.getElementById('p-nav-mobile');
+  if (burger && mobile) {
+    burger.addEventListener('click', function() {
+      var open = mobile.classList.toggle('is-open');
+      burger.setAttribute('aria-expanded', open);
+    });
+  }
+})();
 </script>
 
 </body>

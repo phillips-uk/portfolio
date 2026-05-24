@@ -162,6 +162,7 @@
   }
   </script>
 
+  <link rel="stylesheet" href="../brand.css">
   <style>
     :root {
       --amber:  #985830;
@@ -185,53 +186,6 @@
       background: var(--white);
       -webkit-font-smoothing: antialiased;
     }
-
-    /* ── Nav ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-      z-index: 100;
-      padding: 0 40px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-logo {
-      display: inline-flex;
-      align-items: center;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--ink);
-      letter-spacing: -0.01em;
-    }
-    .nav-logo .dot { color: var(--amber); }
-    .nav-links { display: flex; align-items: center; gap: 28px; }
-    .nav-link {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--mid);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-    .nav-link:hover { color: var(--ink); }
-    .nav-cta {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--amber);
-      text-decoration: none;
-      border: 1.5px solid var(--amber);
-      padding: 8px 18px;
-      border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
-    }
-    .nav-cta:hover { background: var(--amber); color: var(--white); }
-    @media (max-width: 640px) { .nav-links { display: none; } }
 
     /* ── Layout ── */
     main {
@@ -1147,15 +1101,26 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-<nav>
-  <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
-  <div class="nav-links">
-    <a href="/guides/" class="nav-link">Guides</a>
-    <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
-    <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+<nav class="p-nav">
+  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
+  <div class="p-nav__links">
+    <a href="/guides/" class="p-nav__link">Guides</a>
+    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
+    <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
   </div>
-  <a href="/#contact" class="nav-cta">Get in touch</a>
+  <a href="/#contact" class="p-nav__cta">Get in touch</a>
+  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+  </button>
 </nav>
+<div class="p-nav__mobile" id="p-nav-mobile">
+  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
+  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
+  <a href="/landing-page-audit" class="p-nav__mobile-link">Landing Page Audit</a>
+  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
+</div>
 
 <main>
   <article class="article-wrap">
@@ -1719,5 +1684,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <a href="/">phillips-uk.com</a>
 </footer>
 
+<script>
+// Mobile nav toggle
+(function() {
+  var burger = document.getElementById('p-nav-burger');
+  var mobile = document.getElementById('p-nav-mobile');
+  if (burger && mobile) {
+    burger.addEventListener('click', function() {
+      var open = mobile.classList.toggle('is-open');
+      burger.setAttribute('aria-expanded', open);
+    });
+  }
+})();
+</script>
 </body>
 </html>
