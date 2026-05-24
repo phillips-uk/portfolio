@@ -123,6 +123,7 @@
   </script>
 
   <link rel="stylesheet" href="/brand.css">
+  <link rel="stylesheet" href="/report.css">
   <style>
     /* ── Design tokens (matches brand) ───────────────────────────── */
     :root {
@@ -836,45 +837,8 @@
       border-radius: 2px;
     }
 
-    /* ── Section hero banners ─────────────────────────────────── */
-    .section-hero {
-      background: var(--ink);
-      margin: 48px -28px 0;
-      padding: 36px 28px 30px;
-    }
-    @media (max-width: 600px) {
-      .section-hero { margin: 40px -24px 0; padding: 30px 24px 24px; }
-    }
-    .section-hero-eyebrow {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 14px;
-    }
-    .section-hero-title {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      color: #fff;
-      margin: 0;
-    }
-    .section-hero-title em {
-      color: var(--amber);
-      font-style: normal;
-    }
-    .section-hero-meta {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-top: 12px;
-    }
-    .sh-issue    { font-size: 12px; font-weight: 700; color: #ff8a80; }
-    .sh-pass     { font-size: 12px; font-weight: 700; color: #a5d6a7; }
+    /* Section hero: GA-specific overrides (layout from report.css) */
     .sh-inactive { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.35); }
-    .sh-sep      { font-size: 12px; color: rgba(255,255,255,0.25); }
     .no-active-banner {
       padding: 24px 0 8px;
       font-size: 13px;
@@ -1085,17 +1049,7 @@
       margin-bottom: 28px;
     }
 
-    /* Section eyebrow */
-    .section-eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 24px;
-    }
-
-    /* Section title (feedback) */
+    /* Section title (feedback — GA-specific) */
     .section-title {
       font-size: 13px;
       font-weight: 700;
@@ -1103,34 +1057,6 @@
       text-transform: uppercase;
       color: var(--mid);
       margin-bottom: 16px;
-    }
-
-    /* Priority actions */
-    .priority-block { margin-bottom: 56px; border-top: 1px solid var(--border); padding-top: 48px; }
-
-    .priority-row {
-      display: flex;
-      gap: 20px;
-      padding: 18px 0;
-      border-bottom: 1px solid var(--border);
-      align-items: flex-start;
-    }
-
-    .priority-row:last-child { border-bottom: none; }
-
-    .priority-n {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--amber);
-      padding-top: 3px;
-      width: 16px;
-      flex-shrink: 0;
-    }
-
-    .priority-text {
-      font-size: 15px;
-      color: var(--ink);
-      line-height: 1.65;
     }
 
     /* Findings */
@@ -1200,88 +1126,7 @@
       font-weight: 600;
     }
 
-    /* Three-tier verdict badge */
-    .verdict-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 3px 9px;
-      border-radius: 4px;
-      margin-left: auto;
-    }
-
-    .verdict-pass   { background: rgba(46,125,50,0.10);  color: #2E7D32; border: 1px solid rgba(46,125,50,0.25); }
-    .verdict-review { background: rgba(212,105,27,0.10); color: #D4691B; border: 1px solid rgba(212,105,27,0.25); }
-    .verdict-fail   { background: rgba(192,57,43,0.10);  color: var(--red); border: 1px solid rgba(192,57,43,0.25); }
-
-    /* Issue card */
-    .issue-card {
-      margin-top: 20px;
-      padding: 22px 24px;
-      border: 1px solid var(--border);
-      border-left-width: 3px;
-      border-radius: 10px;
-      background: var(--white);
-    }
-
-    .issue-card.sev-critical { border-left-color: var(--red); }
-    .issue-card.sev-high     { border-left-color: var(--orange); }
-    .issue-card.sev-medium   { border-left-color: #D97706; }
-
-    .issue-sev {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .issue-sev.sev-critical { color: var(--red); }
-    .issue-sev.sev-high     { color: var(--orange); }
-    .issue-sev.sev-medium   { color: #D97706; }
-
-    .issue-title {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-      margin-bottom: 8px;
-      line-height: 1.35;
-    }
-
-    .issue-detail {
-      font-size: 14px;
-      color: var(--mid);
-      line-height: 1.7;
-      margin-bottom: 16px;
-    }
-
-    .issue-fix-block {
-      background: var(--cream);
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin-bottom: 12px;
-    }
-
-    .issue-fix-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 6px;
-    }
-
-    .issue-fix-text {
-      font-size: 13px;
-      color: var(--ink);
-      line-height: 1.65;
-    }
-
+    /* Issue card — GA-specific additions */
     .issue-hours { font-size: 12px; color: var(--mid); }
 
     /* Waste confidence badge */
@@ -1456,70 +1301,6 @@
       color: var(--green);
     }
 
-    /* ── Lead CTA ────────────────────────────────────────────────── */
-    .lead-cta {
-      background: var(--ink);
-      border-radius: 14px;
-      padding: 32px 36px;
-      margin-bottom: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .lead-cta-copy h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-
-    .lead-cta-copy p {
-      font-size: 14px;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.55;
-      max-width: 400px;
-    }
-
-    .lead-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: var(--amber);
-      color: var(--white);
-      border: none;
-      border-radius: 8px;
-      padding: 12px 22px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: inherit;
-      text-decoration: none;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: background 0.15s;
-      flex-shrink: 0;
-    }
-
-    .lead-cta-btn:hover { background: var(--amber-light); }
-
-    .report-restart {
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    .report-restart button {
-      background: none;
-      border: none;
-      font-size: 13px;
-      color: var(--mid);
-      cursor: pointer;
-      font-family: inherit;
-      padding: 4px 8px;
-    }
-
-    .report-restart button:hover { color: var(--amber); }
 
     /* ── Feedback ─────────────────────────────────────────────────── */
     .feedback-section {
@@ -1595,28 +1376,14 @@
 
     .trust-icon { color: var(--green); }
 
-    /* ── Download button ──────────────────────────────────────────── */
-    /* ── Report header (dark hero) ───────────────────────────────── */
+    /* ── Report header — GA overrides (base from report.css) ─────── */
+    /* GA card has 40px padding so header bleeds with -40px margins  */
     .report-header {
-      background: var(--ink);
       margin: -40px -40px 0;
       padding: 40px 40px 44px;
-      text-align: center;
       border-radius: 16px 16px 0 0;
     }
-    .report-header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 44px;
-    }
-    .report-brand {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      color: #fff;
-    }
-    .report-brand span { color: var(--amber); }
+    .report-header-top { margin-bottom: 44px; }
     .report-header .report-top-meta {
       color: rgba(255,255,255,0.3);
       margin-bottom: 32px;
@@ -1630,51 +1397,6 @@
       margin-bottom: 0;
     }
     .report-header .glance-label { color: rgba(255,255,255,0.4); }
-
-    .report-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-download {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: var(--amber);
-      color: var(--white);
-      border: 1.5px solid var(--amber);
-      border-radius: 6px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.15s, opacity 0.15s;
-    }
-    .btn-download:hover { opacity: 0.85; }
-
-    .btn-share {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: transparent;
-      color: rgba(255,255,255,0.85);
-      border: 1.5px solid rgba(255,255,255,0.35);
-      border-radius: 6px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      white-space: nowrap;
-    }
-    .btn-share:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.6);
-      color: #fff;
-    }
 
     /* ── Print-only header ────────────────────────────────────────── */
     .print-header {
@@ -1902,15 +1624,8 @@
 
     .methodology-box strong { color: var(--ink); }
 
-    /* ── Cross-link bar ───────────────────────────────────────────── */
-    .crosslink-bar {
-      margin-top: 48px; padding: 20px 24px;
-      background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-    }
-    .crosslink-text { font-size: 14px; color: var(--mid); }
-    .crosslink-link { font-size: 14px; font-weight: 600; color: var(--amber); text-decoration: none; white-space: nowrap; }
-    .crosslink-link:hover { text-decoration: underline; }
+    /* cross-link bar: layout from report.css, GA-specific margin-top override */
+    .crosslink-bar { margin-top: 48px; }
 
     /* ── Closing CTA ──────────────────────────────────────────────── */
     .audit-cta {
