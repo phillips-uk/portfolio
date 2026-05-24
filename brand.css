@@ -1,0 +1,482 @@
+/*
+ * brand.css — Phillips. Design System
+ * Canonical CSS for phillips-uk.com
+ *
+ * Import this on every page:
+ *   <link rel="stylesheet" href="/brand.css">
+ *   (or "../brand.css" from a /guides/* subdirectory)
+ *
+ * Defines: tokens, resets, nav, buttons, section-header,
+ *          hero pill, tags, cards, surface rhythm, dark CTA,
+ *          and mobile nav.
+ *
+ * Updated: 2026-05-24
+ */
+
+/* ── 1. Tokens ──────────────────────────────────────────────── */
+
+:root {
+  /* Amber family */
+  --amber:         #985830;
+  --amber-dark:    #7A3F1F;
+  --amber-light:   #B87040;
+  --amber-surface: #F5EBD9;
+
+  /* Neutrals */
+  --ink:    #1A1A1A;
+  --mid:    #6B6B6B;
+  --white:  #FFFFFF;
+
+  /* Surfaces */
+  --cream:  #FDF6EE;
+  --border: #E8D8C4;
+
+  /* Shadows — amber-tinted */
+  --shadow-card:   0 1px 4px rgba(152, 88, 48, 0.08);
+  --shadow-raised: 0 4px 16px rgba(152, 88, 48, 0.10);
+
+  /* Hero gradient (white → cream) */
+  --hero-bg: linear-gradient(to bottom, #ffffff 0%, #FDF6EE 100%);
+
+  /* Dark section (ink → warm near-black) */
+  --dark-bg: linear-gradient(135deg, #1A1A1A 0%, #241408 100%);
+
+  /* Typography */
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+/* ── 2. Reset & base ────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--white);
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+
+/* ── 3. Nav ─────────────────────────────────────────────────── */
+
+.p-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 48px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.p-nav__logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.p-nav__logo .dot {
+  color: var(--amber);
+}
+
+.p-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.p-nav__link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mid);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.p-nav__link:hover { color: var(--ink); }
+
+/* Primary nav CTA — always filled amber, every page */
+.p-nav__cta {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--white);
+  background: var(--amber);
+  text-decoration: none;
+  padding: 9px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.p-nav__cta:hover { background: var(--amber-dark); }
+
+/* Mobile burger */
+.p-nav__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.p-nav__burger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+/* Mobile nav drawer */
+.p-nav__mobile {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  position: fixed;
+  top: 57px;  /* nav height */
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-raised);
+  z-index: 99;
+}
+
+.p-nav__mobile.is-open { display: flex; }
+
+.p-nav__mobile-link {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+}
+
+.p-nav__mobile-link:last-child { border-bottom: none; }
+
+.p-nav__mobile-cta {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--amber);
+  padding: 16px 24px;
+  text-decoration: none;
+  display: block;
+}
+
+@media (max-width: 760px) {
+  .p-nav { padding: 14px 24px; }
+  .p-nav__links { display: none; }
+  .p-nav__cta   { display: none; }
+  .p-nav__burger { display: flex; }
+}
+
+
+/* ── 4. Buttons ─────────────────────────────────────────────── */
+
+/* Filled — primary action. One per viewport. */
+.btn-filled {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  background: var(--amber);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn-filled:hover { background: var(--amber-dark); }
+.btn-filled:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Filled — full-width variant for tool input forms */
+.btn-filled--block { width: 100%; justify-content: center; }
+
+/* Outline — secondary action */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--amber);
+  background: transparent;
+  border: 1.5px solid var(--amber);
+  padding: 11px 26px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-outline:hover {
+  background: var(--amber);
+  color: var(--white);
+}
+
+/* Ghost — tertiary/inline */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--amber);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.btn-ghost:hover { color: var(--amber-dark); }
+
+
+/* ── 5. Hero pill / tag ─────────────────────────────────────── */
+
+.hero-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 14px;
+  margin-bottom: 20px;
+}
+
+
+/* ── 6. Tags / badges ───────────────────────────────────────── */
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+
+/* ── 7. Section header ──────────────────────────────────────── */
+/*
+ * Use this for every major below-fold section on tool and guide pages.
+ * Cream background, amber left border, uppercase label chip above the H2.
+ *
+ * HTML:
+ *   <div class="section-header">
+ *     <span class="section-header__label">Label text</span>
+ *     <h2 class="section-header__title">Section heading</h2>
+ *   </div>
+ */
+
+.section-header {
+  background: var(--cream);
+  border-left: 3px solid var(--amber);
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  border-radius: 0 4px 4px 0;
+}
+
+.section-header__label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--amber);
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.section-header__title {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0;
+}
+
+.section-header__title em {
+  color: var(--amber);
+  font-style: normal;
+}
+
+
+/* ── 8. Cards ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+}
+
+
+/* ── 9. Surface rhythm ──────────────────────────────────────── */
+/*
+ * Use these classes on <section> or wrapper divs to create vertical
+ * depth across the page. Sequence: hero → cream → white → dark-cta.
+ */
+
+/* Hero gradient (white → cream) */
+.surface-hero {
+  background: var(--hero-bg);
+}
+
+/* Cream section — feature lists, value props */
+.surface-cream {
+  background: var(--cream);
+}
+
+/* Dark closing CTA — warm near-black gradient */
+.surface-dark {
+  background: var(--dark-bg);
+  color: var(--white);
+}
+
+.surface-dark h2,
+.surface-dark h3 { color: var(--white); }
+
+.surface-dark p { color: rgba(255, 255, 255, 0.72); }
+
+
+/* ── 10. Dark CTA section ───────────────────────────────────── */
+/*
+ * Standard closing section used on tool and guide pages.
+ *
+ * HTML:
+ *   <section class="cta-section surface-dark">
+ *     <span class="cta-section__label">Work with me</span>
+ *     <h2 class="cta-section__heading">The audit checks it. <em>I can fix it.</em></h2>
+ *     <a href="/#contact" class="btn-filled">Get in touch</a>
+ *   </section>
+ */
+
+.cta-section {
+  text-align: center;
+  padding: 80px 48px;
+}
+
+.cta-section__label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 16px;
+}
+
+.cta-section__heading {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 32px;
+}
+
+.cta-section__heading em {
+  color: var(--amber);
+  font-style: normal;
+}
+
+@media (max-width: 640px) {
+  .cta-section { padding: 60px 24px; }
+}
+
+
+/* ── 11. Layout utilities ───────────────────────────────────── */
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+@media (max-width: 760px) {
+  .container { padding: 0 24px; }
+}
+
+.section { padding: 64px 0; }
+.section--sm { padding: 40px 0; }
+
+@media (max-width: 760px) {
+  .section { padding: 44px 0; }
+  .section--sm { padding: 28px 0; }
+}
+
+
+/* ── 12. Typography utilities ───────────────────────────────── */
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.text-mid   { color: var(--mid); }
+.text-amber { color: var(--amber); }
+
+
+/* ── 13. Focus / accessibility ──────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
