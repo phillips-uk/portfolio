@@ -5,7 +5,7 @@
  * Load order (every tool page that generates a report):
  *   <link rel="stylesheet" href="/brand.css">
  *   <link rel="stylesheet" href="/report.css">
- *   <style>  /* page-specific overrides only */
+ *   <style>  (page-specific overrides only)
  *
  * Requires: brand.css tokens (--amber, --amber-dark, --amber-light,
  *   --ink, --cream, --border, --mid, --white, --shadow-card)
