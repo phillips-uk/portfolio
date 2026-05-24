@@ -168,7 +168,7 @@ img { display: block; max-width: 100%; }
   background: var(--white);
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-raised);
-  z-index: 99;
+  z-index: 101;
 }
 
 .p-nav__mobile.is-open { display: flex; }
