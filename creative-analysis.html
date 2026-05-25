@@ -3,9 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ad Creative Scoring Tool — Phillips.</title>
-  <meta name="description" content="Upload paid ad creatives. Claude scores each one across five dimensions and returns a ranked report with specific weak signals. Images and video.">
+  <title>AI Ad Creative Scoring Tool — Analyse Paid Ad Creatives | Phillips.</title>
+  <meta name="description" content="Upload paid ad creatives and get a scored, ranked report. AI analysis across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+  <link rel="canonical" href="https://www.phillips-uk.com/creative-analysis">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
   <link rel="stylesheet" href="/brand.css">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.phillips-uk.com/creative-analysis">
+  <meta property="og:title" content="AI Ad Creative Scoring Tool — Analyse Paid Ad Creatives | Phillips.">
+  <meta property="og:description" content="Upload paid ad creatives and get a scored, ranked report. AI analysis across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Phillips Ad Creative Scoring Tool",
+    "url": "https://www.phillips-uk.com/creative-analysis",
+    "description": "Upload paid ad creatives and receive a scored, ranked report with dimension-level breakdowns and weak signal flags across hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "GBP"
+    },
+    "creator": {
+      "@type": "Person",
+      "name": "Lewis Phillips"
+    }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What does this tool score ad creatives on?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Each creative is scored across five dimensions: Hook Quality (does it stop the scroll?), Visual Hierarchy (is there a clear focal point and obvious reading order?), Copy Clarity (is the message understood in under two seconds?), Brand Consistency (coherent colours, fonts, and tone), and Fatigue Signals (absence of overused formats and low-engagement patterns). Each dimension is scored 1 to 10. The composite score is an equal-weighted average across all five."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is ad creative fatigue and how does this tool detect it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Creative fatigue describes the point at which an audience has seen a format, style, or message often enough that engagement drops — not because the product is less appealing, but because the creative has lost its ability to interrupt. The Fatigue Signals dimension scores the absence of these patterns: talking-head UGC with no hook, plain white product shots, generic CTAs, logo-first layouts, low contrast, and text-heavy compositions. A high Fatigue Signals score means low fatigue risk."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this tool work for Meta, TikTok, and Google ad creatives?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The scoring rubric is format-agnostic and applies the same logic to Meta, Google, and TikTok creatives. Platform-specific attention patterns are not currently scored separately — the rubric evaluates the creative itself rather than platform context."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What file types and formats does the tool accept?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The tool accepts JPEG, PNG, GIF, and WebP image files, and MP4, MOV, and WebM video files. For video files, three frames are extracted per video — opening, midpoint, and closing — and each frame is scored independently. The composite reflects all three frames."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the composite score calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The composite score is an equal-weighted average of the five dimension scores: Hook Quality, Visual Hierarchy, Copy Clarity, Brand Consistency, and Fatigue Signals. Each dimension is scored on a scale of 1 to 10. Any dimension scoring 6 or below is flagged with a weak signal badge in the detailed report."
+        }
+      }
+    ]
+  }
+  </script>
 
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
@@ -39,19 +119,6 @@
       padding: 72px 24px 64px;
     }
 
-    .hero-pill {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: var(--amber);
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 16px;
-      margin-bottom: 24px;
-    }
-
     .hero h1 {
       font-size: clamp(32px, 5vw, 52px);
       font-weight: 700;
@@ -76,56 +143,11 @@
       flex-wrap: wrap;
     }
 
-    .hero-signin {
-      display: block;
-      font-size: 11px;
-      color: var(--mid);
-      margin-top: 20px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: var(--font);
-      text-decoration: underline;
-      text-decoration-color: transparent;
-      transition: color 0.15s, text-decoration-color 0.15s;
-    }
+    /* hero sign-in — uses btn-outline, just needs top margin */
+    .hero-signin { margin-top: 12px; }
 
-    .hero-signin:hover {
-      color: var(--ink);
-      text-decoration-color: var(--mid);
-    }
-
-    /* ── Buttons ── */
-    .btn {
-      display: inline-block;
-      font-family: var(--font);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 4px;
-      padding: 11px 24px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      border: 1.5px solid transparent;
-      text-decoration: none;
-      line-height: 1;
-    }
-
-    .btn-primary {
-      background: var(--amber);
-      color: var(--white);
-      border-color: var(--amber);
-    }
-
-    .btn-primary:hover { background: var(--amber-dark); border-color: var(--amber-dark); }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--amber);
-      border-color: var(--amber);
-    }
-
-    .btn-ghost:hover { background: var(--cream); }
+    /* btn-filled:disabled handled by brand.css */
+    #submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     /* ── Upload section ── */
     .upload-section {
@@ -571,6 +593,61 @@
       margin-bottom: 6px;
     }
 
+    /* ── SEO content section ── */
+    .seo-section {
+      padding: 72px 0;
+      background: var(--cream);
+    }
+
+    .seo-section-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .seo-section-inner h2 {
+      font-size: clamp(24px, 3.5vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      margin-top: 16px;
+    }
+
+    .seo-lead {
+      font-size: 16px;
+      color: var(--ink);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .seo-section-inner p {
+      font-size: 15px;
+      color: var(--ink);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .seo-callout {
+      border-left: 3px solid var(--amber);
+      background: var(--white);
+      padding: 18px 20px;
+      border-radius: 0 6px 6px 0;
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.65;
+      margin-top: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .seo-callout strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+
     /* ── How it works ── */
     .how-section {
       padding: 72px 0;
@@ -680,29 +757,6 @@
       box-shadow: var(--shadow-card);
     }
 
-    /* ── Dark CTA ── */
-    .dark-cta {
-      background: var(--dark-bg);
-      padding: 80px 24px;
-      text-align: center;
-    }
-
-    .dark-cta h2 {
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.02em;
-      margin-bottom: 14px;
-    }
-
-    .dark-cta p {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 32px;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-    }
 
     /* ── Auth modal ── */
     .modal-overlay {
@@ -786,6 +840,42 @@
       min-height: 18px;
     }
 
+    /* ── Crosslinks ── */
+    .crosslinks {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 56px;
+    }
+
+    .crosslink-item {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .crosslink-item span {
+      font-size: 14px;
+      color: var(--mid);
+    }
+
+    .crosslink-item a {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--amber);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+
+    .crosslink-item a:hover { color: var(--amber-dark); }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
       .hero { padding: 52px 16px 44px; }
@@ -810,6 +900,7 @@
 <nav class="p-nav">
   <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
   <div class="p-nav__links">
+    <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
     <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
     <a href="/guides/" class="p-nav__link">Guides</a>
   </div>
@@ -821,6 +912,7 @@
   </button>
 </nav>
 <div class="p-nav__mobile" id="p-nav-mobile">
+  <a href="/landing-page-audit" class="p-nav__mobile-link">Landing Page Audit</a>
   <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
   <a href="/guides/" class="p-nav__mobile-link">Guides</a>
   <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
@@ -832,10 +924,12 @@
   <h1>Ad Creative <span style="color:var(--amber)">Scoring</span> Tool</h1>
   <p class="hero-sub">Upload paid ad creatives. Claude scores each one across five dimensions and returns a ranked report with specific weak signals. Images and video. No account connection.</p>
   <div class="hero-actions">
-    <button class="btn btn-ghost" id="see-demo-btn">See example report</button>
-    <button class="btn btn-primary" id="upload-btn" style="display:none">Upload creatives</button>
+    <a href="/creative-analysis-demo" class="btn-outline">See example report</a>
+    <button class="btn-filled" id="upload-btn" style="display:none">Upload creatives</button>
   </div>
-  <button class="hero-signin" id="auth-trigger-btn">Sign in to upload</button>
+  <div style="text-align:center">
+    <button class="btn-outline hero-signin" id="auth-trigger-btn">Sign in to upload</button>
+  </div>
 </section>
 
 <!-- ── Upload section ── -->
@@ -857,7 +951,7 @@
       <div class="file-list" id="file-list"></div>
 
       <div class="upload-submit-row">
-        <button class="btn btn-primary" id="submit-btn" disabled>Score these creatives</button>
+        <button class="btn-filled" id="submit-btn" disabled>Score these creatives</button>
       </div>
 
       <div class="progress-card" id="progress-card" style="display:none">
@@ -874,127 +968,9 @@
       <div class="results-card" id="results-card" style="display:none">
         <div class="results-card-header">
           <div class="results-card-title">Scored report</div>
-          <button class="btn btn-ghost" id="download-md-btn" style="font-size:13px;padding:7px 16px">Download .md</button>
+          <button class="btn-outline" id="download-md-btn" style="font-size:13px;padding:7px 16px">Download .md</button>
         </div>
         <div class="results-body" id="results-body"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Demo section ── -->
-<section id="demo-section" class="demo-section">
-  <div class="demo-section-inner">
-    <div class="demo-header">
-      <div class="section-label">EXAMPLE REPORT</div>
-      <h2>What a scored report looks like</h2>
-      <p>Four sample creatives scored across five dimensions. Composite scores ranked highest to lowest.</p>
-    </div>
-
-    <div class="ranked-table-wrap">
-      <table class="ranked-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Creative</th>
-            <th>Score</th>
-            <th>Hook</th>
-            <th>Hierarchy</th>
-            <th>Copy</th>
-            <th>Brand</th>
-            <th>Fatigue</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td><div class="creative-name">summer_prospecting_ugc-hero.mp4 <span style="color:var(--mid);font-weight:400">[opening]</span></div></td>
-            <td><span class="score-badge green">7.2</span></td>
-            <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td><div class="creative-name">summer_prospecting_static-offer.jpg</div></td>
-            <td><span class="score-badge amber">6.6</span></td>
-            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td><div class="creative-name">retargeting_abandoned-cart_v2.jpg</div></td>
-            <td><span class="score-badge amber">5.6</span></td>
-            <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td><div class="creative-name">retargeting_generic-cta.jpg</div></td>
-            <td><span class="score-badge red">3.8</span></td>
-            <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
-            <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Detail card for #1 -->
-    <div class="detail-card">
-      <div class="detail-card-header">
-        <span class="detail-card-filename">summer_prospecting_ugc-hero.mp4 [opening frame]</span>
-        <span class="detail-card-badge">7.2 / 10</span>
-      </div>
-      <table class="detail-dim-table">
-        <thead>
-          <tr>
-            <th>Dimension</th>
-            <th>Score</th>
-            <th>Rationale</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="detail-dim-name">Hook quality</td>
-            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
-            <td class="detail-dim-rationale">Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Visual hierarchy</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive. Minor distraction from a competing background element in the bottom-right corner.<br><span class="weak-badge">Weak signal: Background element in bottom-right competes with the subject for attention.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Copy clarity</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">The headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text is present in this frame, which is acceptable for an opening hook.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Brand consistency</td>
-            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
-            <td class="detail-dim-rationale">Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.<br><span class="weak-badge">Weak signal: No logo or brand lockup present. This creative could belong to any brand.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Fatigue signals</td>
-            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
-            <td class="detail-dim-rationale">Format avoids common fatigued treatments. No plain white background, no static talking head with no hook variant. The motion-first approach is less saturated than most UGC in this category.</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="overall-notes">
-        <strong>Overall notes</strong>
-        The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring: a logo lock-up or consistent colour treatment would tie this back to the brand without hurting the hook. Priority fix: add a subtle branded element to the bottom-left corner.
       </div>
     </div>
   </div>
@@ -1004,34 +980,32 @@
 <section class="how-section">
   <div class="how-section-inner">
     <div class="how-header">
-      <div class="section-label">HOW IT WORKS</div>
+      <div class="section-label">THE SCORING RUBRIC</div>
       <h2>Five dimensions. One composite score.</h2>
     </div>
-
     <div class="dimension-list">
       <div class="dimension-row">
-        <div class="dimension-name">Hook quality</div>
-        <div class="dimension-desc">Does the first frame stop the scroll? Assessed on pattern interrupt, emotional trigger, and immediate visual impact.</div>
+        <div class="dimension-name">Hook Quality</div>
+        <div class="dimension-desc">Does it stop the scroll? Pattern interrupt, emotional trigger, or strong curiosity signal in the first frame or above-fold.</div>
       </div>
       <div class="dimension-row">
-        <div class="dimension-name">Visual hierarchy</div>
-        <div class="dimension-desc">Is there a clear focal point? The reading order should be obvious without effort.</div>
+        <div class="dimension-name">Visual Hierarchy</div>
+        <div class="dimension-desc">Is there a clear focal point? Is the reading order obvious without effort?</div>
       </div>
       <div class="dimension-row">
-        <div class="dimension-name">Copy clarity</div>
-        <div class="dimension-desc">Can the message be understood in under two seconds? Penalises ambiguous headlines and missing CTAs.</div>
+        <div class="dimension-name">Copy Clarity</div>
+        <div class="dimension-desc">Is the core message understood in under two seconds? No decoding required.</div>
       </div>
       <div class="dimension-row">
-        <div class="dimension-name">Brand consistency</div>
-        <div class="dimension-desc">Coherent colours, fonts, and tone. A creative that could belong to any brand scores low.</div>
+        <div class="dimension-name">Brand Consistency</div>
+        <div class="dimension-desc">Coherent colours, fonts, and tone. Does it read as a brand or as noise?</div>
       </div>
       <div class="dimension-row">
-        <div class="dimension-name">Fatigue signals</div>
-        <div class="dimension-desc">Absence of overused formats: plain white background product shots, talking-head UGC with no hook variant, generic CTA text. High score means low fatigue risk.</div>
+        <div class="dimension-name">Fatigue Signals</div>
+        <div class="dimension-desc">Absence of overused formats: talking-head UGC with no hook, plain white product shots, generic CTAs, logo-first layouts, low contrast, text-heavy compositions. A high score means low fatigue risk.</div>
       </div>
     </div>
-
-    <p class="how-footnote">Each dimension scored 1&ndash;10. Composite is the equal-weighted average. Weak signals flagged on any dimension scoring 6 or below.</p>
+    <p class="how-footnote">Weak signal flagged for any dimension scoring 6 or below. Composite = equal-weighted average across all five. Score from 1 to 10.</p>
   </div>
 </section>
 
@@ -1039,374 +1013,87 @@
 <section class="notes-section">
   <div class="notes-section-inner">
     <div class="notes-header">
-      <div class="section-label">GOOD TO KNOW</div>
-      <h2>Practical details</h2>
+      <div class="section-label">WHAT TO KNOW</div>
+      <h2>A few things worth knowing before you run it.</h2>
     </div>
     <div class="notes-body">
-      <div class="note-item">Each creative costs roughly &pound;0.03&ndash;0.06 to score (claude-opus-4-7 pricing). A batch of ten images runs to about &pound;0.50.</div>
-      <div class="note-item">Videos are supported. The tool extracts three frames &mdash; opening, mid, and close &mdash; and scores each one separately. Requires a local install.</div>
-      <div class="note-item">This tool is for analysing existing creatives, not generating new ones. It tells you what is weak and why. What to do about it is a separate conversation.</div>
+      <div class="note-item">
+        <strong style="display:block;font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px;letter-spacing:0.04em;">VIDEO SUPPORT</strong>
+        Video files are supported. Three frames are extracted per video — opening, midpoint, and closing — and each is scored independently. The composite reflects all three.
+      </div>
+      <div class="note-item">
+        <strong style="display:block;font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px;letter-spacing:0.04em;">JUDGMENT CONTEXT</strong>
+        Scores are AI-generated using a consistent rubric. They are reproducible and documented, which is the point — but they should be used alongside campaign performance data, not as a replacement for it.
+      </div>
+      <div class="note-item">
+        <strong style="display:block;font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px;letter-spacing:0.04em;">FORMAT AGNOSTIC</strong>
+        The rubric applies the same logic to Meta, Google, and TikTok creatives. Platform-specific attention patterns are not currently scored separately — that is a future scope item.
+      </div>
+      <div class="note-item">
+        <strong style="display:block;font-size:12px;font-weight:700;color:var(--amber);margin-bottom:6px;letter-spacing:0.04em;">WHAT IT IS NOT</strong>
+        This is not a real-time audience measurement tool. It scores creative signals, not ad performance. A creative can score well here and still underperform if targeting or audience quality is the problem.
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- ── SEO content section — copy pending, see Website Brand Roadmap ── -->
+<section class="seo-section">
+  <div class="seo-section-inner">
+    <div class="section-label">AD CREATIVE ANALYSIS</div>
+    <h2>Score your paid ad creatives before they go live</h2>
+    <p class="seo-lead">Most creative review processes are subjective. A senior marketer looks at a set of ads and gives a verdict based on experience and instinct. That works — until you are running 30 variants across four campaigns and need a consistent framework for prioritising which creatives to pause, which to iterate on, and which to scale.</p>
+    <p>This tool applies a consistent five-dimension rubric to every creative you upload. Each image or video frame is scored on hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals. The composite score gives you a ranked view across a batch. The weak signal flags tell you exactly what to fix.</p>
+    <div class="seo-callout">
+      <strong>What makes a paid creative fail?</strong>
+      The most common failure modes are not about production quality. They are about stopping the scroll, communicating the offer in under two seconds, and avoiding the formats that audiences have learned to ignore. This tool is built around those three problems.
+    </div>
+
+    <h3 style="font-size:20px;font-weight:700;color:var(--ink);margin-top:40px;margin-bottom:12px;letter-spacing:-0.01em;">What is ad creative fatigue?</h3>
+    <p>Creative fatigue describes the point at which an audience has seen a format, style, or message often enough that engagement drops — not because the product is less appealing, but because the creative has lost its ability to interrupt. Common signals include generic UGC formats with no hook, logo-first compositions, plain white product shots without context, and overused CTA phrases like "Shop now" or "Learn more".</p>
+
+    <h3 style="font-size:20px;font-weight:700;color:var(--ink);margin-top:40px;margin-bottom:12px;letter-spacing:-0.01em;">How does AI scoring differ from a manual creative review?</h3>
+    <p>A manual review depends on the reviewer's frame of reference and changes between sessions. An AI-scored rubric applies the same criteria every time, returns a documented rationale for each score, and flags specific weak signals rather than general impressions. The output is the same whether you score 5 creatives or 50.</p>
+
+    <h3 style="font-size:20px;font-weight:700;color:var(--ink);margin-top:40px;margin-bottom:12px;letter-spacing:-0.01em;">Can I use this to brief new creatives?</h3>
+    <p>The weak signal flags are designed to feed directly into briefs. If Hook Quality scores 4 with a note about "no pattern interrupt in the first frame", that is a specific instruction for the next creative — not a general note about "making it more engaging".</p>
+
+    <h3 style="font-size:20px;font-weight:700;color:var(--ink);margin-top:40px;margin-bottom:12px;letter-spacing:-0.01em;">What do I do with a low-scoring creative?</h3>
+    <p>Check which dimension is pulling the composite score down. A low Hook Quality score points to the opening frame. A low Copy Clarity score points to the headline or body copy. A low Fatigue Signals score means the format itself may need to change, not just the copy or image.</p>
   </div>
 </section>
 
 <!-- ── Dark CTA ── -->
-<section class="dark-cta">
-  <h2>Need a creative review?</h2>
-  <p>Creative performance analysis as part of campaign setup or a standalone audit. Get in touch.</p>
-  <a href="/#contact" class="btn btn-primary">Get in touch</a>
+<section class="cta-section surface-dark">
+  <span class="cta-section__label">Work with me</span>
+  <h2 class="cta-section__heading">Want to review creatives for a <em>client campaign?</em></h2>
+  <p>Get in touch. I work with a small number of clients on paid media strategy, creative direction, and performance audits.</p>
+  <a href="/#contact" class="btn-filled" style="margin-top:8px">Get in touch &rarr;</a>
 </section>
 
-<!-- ── Auth modal ── -->
-<div class="modal-overlay" id="auth-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-  <div class="modal-box">
-    <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
-    <div class="modal-title" id="auth-modal-title">Upload access</div>
-    <div class="modal-sub">Enter your PIN to unlock the upload tool.</div>
-    <label class="modal-label" for="pin-input">Access PIN</label>
-    <input class="modal-input" type="password" id="pin-input" placeholder="Enter PIN" autocomplete="current-password">
-    <div class="modal-error" id="modal-error" aria-live="polite"></div>
-    <button class="btn btn-primary" id="pin-submit-btn" style="width:100%">Unlock</button>
+<!-- ── Crosslinks ── -->
+<div class="crosslinks">
+  <div class="crosslink-item">
+    <span>Audit the account behind the creatives</span>
+    <a href="/google-ads-audit">Free Google Ads Audit &rarr;</a>
+  </div>
+  <div class="crosslink-item">
+    <span>Check where the clicks land</span>
+    <a href="/landing-page-audit">Free Landing Page Audit &rarr;</a>
   </div>
 </div>
 
+
 <script>
-(function () {
-  'use strict';
-
-  // ── Mobile nav ────────────────────────────────────────────────
+  /* Mobile nav burger */
   var burger = document.getElementById('p-nav-burger');
-  var mobileNav = document.getElementById('p-nav-mobile');
-  if (burger && mobileNav) {
-    burger.addEventListener('click', function () {
-      var open = burger.getAttribute('aria-expanded') === 'true';
-      burger.setAttribute('aria-expanded', String(!open));
-      var nav = document.querySelector('.p-nav');
-      var offset = nav ? nav.getBoundingClientRect().bottom + window.scrollY : 64;
-      mobileNav.style.top = offset + 'px';
-      mobileNav.style.display = open ? 'none' : 'block';
+  var mobile = document.getElementById('p-nav-mobile');
+  if (burger && mobile) {
+    burger.addEventListener('click', function() {
+      var open = mobile.classList.toggle('is-open');
+      burger.setAttribute('aria-expanded', open);
     });
   }
-
-  // ── Token helpers ─────────────────────────────────────────────
-  var TOKEN_KEY   = 'creative_token';
-  var EXPIRY_KEY  = 'creative_token_expires';
-  var TTL_MS      = 24 * 60 * 60 * 1000;
-
-  function isTokenValid() {
-    var token  = localStorage.getItem(TOKEN_KEY);
-    var expiry = parseInt(localStorage.getItem(EXPIRY_KEY) || '0', 10);
-    return !!(token && Date.now() < expiry);
-  }
-
-  function storeToken(token) {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(EXPIRY_KEY, String(Date.now() + TTL_MS));
-  }
-
-  function getToken() {
-    return localStorage.getItem(TOKEN_KEY) || '';
-  }
-
-  function showUploadArea() {
-    document.getElementById('upload-section').style.display = 'block';
-    document.getElementById('upload-btn').style.display = 'inline-block';
-    document.getElementById('auth-trigger-btn').style.display = 'none';
-  }
-
-  // On load: check token
-  if (isTokenValid()) {
-    showUploadArea();
-  }
-
-  // ── Hero buttons ──────────────────────────────────────────────
-  document.getElementById('see-demo-btn').addEventListener('click', function () {
-    document.getElementById('demo-section').scrollIntoView({ behavior: 'smooth' });
-  });
-
-  document.getElementById('upload-btn').addEventListener('click', function () {
-    document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
-  });
-
-  // ── Auth modal ────────────────────────────────────────────────
-  function openModal() {
-    document.getElementById('auth-modal').style.display = 'flex';
-    document.getElementById('pin-input').focus();
-    document.getElementById('modal-error').textContent = '';
-  }
-
-  function closeModal() {
-    document.getElementById('auth-modal').style.display = 'none';
-    document.getElementById('pin-input').value = '';
-    document.getElementById('modal-error').textContent = '';
-  }
-
-  document.getElementById('auth-trigger-btn').addEventListener('click', openModal);
-  document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-  document.getElementById('auth-modal').addEventListener('click', function (e) {
-    if (e.target === this) closeModal();
-  });
-
-  document.getElementById('pin-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') document.getElementById('pin-submit-btn').click();
-  });
-
-  document.getElementById('pin-submit-btn').addEventListener('click', function () {
-    var pin = document.getElementById('pin-input').value.trim();
-    if (!pin) { document.getElementById('modal-error').textContent = 'Please enter a PIN.'; return; }
-
-    var btn = this;
-    btn.disabled = true;
-    btn.textContent = 'Checking...';
-    document.getElementById('modal-error').textContent = '';
-
-    fetch('/.netlify/functions/creative-auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin: pin })
-    })
-    .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
-    .then(function (r) {
-      btn.disabled = false;
-      btn.textContent = 'Unlock';
-      if (!r.ok || !r.data.token) {
-        document.getElementById('modal-error').textContent = r.data.error || 'Invalid PIN. Please try again.';
-        return;
-      }
-      storeToken(r.data.token);
-      closeModal();
-      showUploadArea();
-      document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
-    })
-    .catch(function () {
-      btn.disabled = false;
-      btn.textContent = 'Unlock';
-      document.getElementById('modal-error').textContent = 'Network error. Please try again.';
-    });
-  });
-
-  // ── File management ───────────────────────────────────────────
-  var selectedFiles = [];
-
-  function formatBytes(bytes) {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-  }
-
-  function renderFileList() {
-    var list = document.getElementById('file-list');
-    list.innerHTML = '';
-    selectedFiles.forEach(function (file, idx) {
-      var item = document.createElement('div');
-      item.className = 'file-item';
-      item.innerHTML =
-        '<span class="file-item-name">' + escHtml(file.name) + '</span>' +
-        '<span class="file-item-meta">' + escHtml(formatBytes(file.size)) + '</span>' +
-        '<button class="file-item-remove" data-idx="' + idx + '" aria-label="Remove ' + escHtml(file.name) + '">&times;</button>';
-      list.appendChild(item);
-    });
-
-    list.querySelectorAll('.file-item-remove').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var i = parseInt(this.getAttribute('data-idx'), 10);
-        selectedFiles.splice(i, 1);
-        renderFileList();
-        updateSubmitBtn();
-      });
-    });
-  }
-
-  function updateSubmitBtn() {
-    document.getElementById('submit-btn').disabled = selectedFiles.length === 0;
-  }
-
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function addFiles(newFiles) {
-    Array.from(newFiles).forEach(function (f) {
-      if (!selectedFiles.some(function (x) { return x.name === f.name && x.size === f.size; })) {
-        selectedFiles.push(f);
-      }
-    });
-    renderFileList();
-    updateSubmitBtn();
-  }
-
-  var dropZone = document.getElementById('drop-zone');
-  var fileInput = document.getElementById('file-input');
-
-  fileInput.addEventListener('change', function () {
-    addFiles(this.files);
-    this.value = '';
-  });
-
-  dropZone.addEventListener('dragover', function (e) {
-    e.preventDefault();
-    this.classList.add('drag-over');
-  });
-
-  dropZone.addEventListener('dragleave', function () {
-    this.classList.remove('drag-over');
-  });
-
-  dropZone.addEventListener('drop', function (e) {
-    e.preventDefault();
-    this.classList.remove('drag-over');
-    addFiles(e.dataTransfer.files);
-  });
-
-  // ── Submit ────────────────────────────────────────────────────
-  var currentJobId = null;
-  var pollTimer    = null;
-
-  function logLine(msg) {
-    var log = document.getElementById('progress-log');
-    log.textContent += msg + '\n';
-    log.scrollTop = log.scrollHeight;
-  }
-
-  function setProgress(pct) {
-    document.getElementById('progress-bar').style.width = pct + '%';
-  }
-
-  function generateJobId() {
-    var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    var id = '';
-    for (var i = 0; i < 16; i++) id += chars[Math.floor(Math.random() * chars.length)];
-    return id;
-  }
-
-  document.getElementById('submit-btn').addEventListener('click', function () {
-    if (!isTokenValid()) { openModal(); return; }
-    if (selectedFiles.length === 0) return;
-    startJob();
-  });
-
-  function startJob() {
-    var token = getToken();
-    var files = selectedFiles.slice();
-    currentJobId = generateJobId();
-
-    document.getElementById('submit-btn').disabled = true;
-    document.getElementById('progress-card').style.display = 'block';
-    document.getElementById('results-card').style.display = 'none';
-    document.getElementById('progress-log').textContent = '';
-    document.getElementById('progress-title').textContent = 'Reading files...';
-    setProgress(5);
-
-    logLine('Preparing ' + files.length + ' creative' + (files.length !== 1 ? 's' : '') + '...');
-
-    Promise.all(files.map(function (file) {
-      return new Promise(function (resolve, reject) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var dataUrl = e.target.result;
-          var commaIdx = dataUrl.indexOf(',');
-          var meta = dataUrl.substring(5, commaIdx);
-          var parts = meta.split(';');
-          var mediaType = parts[0];
-          var data = dataUrl.substring(commaIdx + 1);
-          resolve({ name: file.name, mediaType: mediaType, data: data });
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }))
-    .then(function (encoded) {
-      logLine('Sending to scoring engine...');
-      setProgress(15);
-      document.getElementById('progress-title').textContent = 'Scoring in progress...';
-
-      return fetch('/.netlify/functions/creative-analyse-background', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jobId: currentJobId, token: token, files: encoded })
-      });
-    })
-    .then(function (res) {
-      if (res.status !== 202 && !res.ok) {
-        return res.json().then(function (d) { throw new Error(d.error || 'Submission failed'); });
-      }
-      logLine('Job started. Polling for results...');
-      setProgress(20);
-      startPolling();
-    })
-    .catch(function (err) {
-      logLine('Error: ' + err.message);
-      document.getElementById('progress-title').textContent = 'Something went wrong';
-      document.getElementById('submit-btn').disabled = false;
-    });
-  }
-
-  function startPolling() {
-    if (pollTimer) clearInterval(pollTimer);
-    var attempts = 0;
-    var maxAttempts = 150; // 5 minutes at 2s
-
-    pollTimer = setInterval(function () {
-      attempts++;
-      if (attempts > maxAttempts) {
-        clearInterval(pollTimer);
-        logLine('Timed out waiting for results.');
-        document.getElementById('progress-title').textContent = 'Timed out';
-        document.getElementById('submit-btn').disabled = false;
-        return;
-      }
-
-      fetch('/.netlify/functions/creative-status?id=' + currentJobId)
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data.status === 'pending') {
-            var pct = Math.min(20 + attempts * 0.5, 85);
-            setProgress(pct);
-            return;
-          }
-
-          if (data.status === 'progress') {
-            if (data.message) logLine(data.message);
-            setProgress(data.percent || 50);
-            return;
-          }
-
-          clearInterval(pollTimer);
-
-          if (data.status === 'error') {
-            logLine('Error: ' + (data.message || 'Scoring failed.'));
-            document.getElementById('progress-title').textContent = 'Scoring failed';
-            document.getElementById('submit-btn').disabled = false;
-            return;
-          }
-
-          if (data.status === 'done') {
-            setProgress(100);
-            logLine('Complete.');
-            document.getElementById('progress-title').textContent = 'Done';
-
-            document.getElementById('results-card').style.display = 'block';
-            document.getElementById('results-body').innerHTML = data.report_html || '<p>No report generated.</p>';
-
-            document.getElementById('download-md-btn').onclick = function () {
-              window.location.href = '/.netlify/functions/creative-status?id=' + currentJobId + '&download=md';
-            };
-
-            document.getElementById('submit-btn').disabled = false;
-            document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
-          }
-        })
-        .catch(function () {
-          // Network blip — keep polling
-        });
-    }, 2000);
-  }
-
-})();
 </script>
 
 </body>
