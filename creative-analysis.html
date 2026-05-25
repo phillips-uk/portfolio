@@ -115,7 +115,6 @@
       background: var(--white);
       text-align: center;
       padding: 72px 24px 64px;
-      border-bottom: 1px solid var(--border);
     }
 
     .hero h1 {
@@ -858,17 +857,22 @@
       min-height: 18px;
     }
 
-    /* ── Crosslinks ── */
+    /* ── Crosslinks — cream fading into the dark CTA below ── */
     .crosslinks {
+      max-width: 100%;
+      padding: 48px 0 80px;
+      background: linear-gradient(to bottom, var(--cream) 0%, #1A1A1A 100%);
+    }
+
+    .crosslinks-inner {
       max-width: 720px;
       margin: 0 auto;
-      padding: 48px 24px 48px;
-      background: var(--cream);
+      padding: 0 24px;
     }
 
     .crosslink-item {
-      background: var(--cream);
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 8px;
       padding: 16px 20px;
       margin-bottom: 12px;
@@ -881,7 +885,7 @@
 
     .crosslink-item span {
       font-size: 14px;
-      color: var(--mid);
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .crosslink-item a {
@@ -893,7 +897,7 @@
       transition: color 0.15s;
     }
 
-    .crosslink-item a:hover { color: var(--amber-dark); }
+    .crosslink-item a:hover { color: var(--amber-light); }
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
@@ -1091,13 +1095,15 @@
 
 <!-- ── Crosslinks ── -->
 <div class="crosslinks">
-  <div class="crosslink-item">
-    <span>Audit the account behind the creatives</span>
-    <a href="/google-ads-audit">Free Google Ads Audit &rarr;</a>
-  </div>
-  <div class="crosslink-item">
-    <span>Check where the clicks land</span>
-    <a href="/landing-page-audit">Free Landing Page Audit &rarr;</a>
+  <div class="crosslinks-inner">
+    <div class="crosslink-item">
+      <span>Audit the account behind the creatives</span>
+      <a href="/google-ads-audit">Free Google Ads Audit &rarr;</a>
+    </div>
+    <div class="crosslink-item">
+      <span>Check where the clicks land</span>
+      <a href="/landing-page-audit">Free Landing Page Audit &rarr;</a>
+    </div>
   </div>
 </div>
 
