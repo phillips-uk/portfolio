@@ -857,11 +857,10 @@
       min-height: 18px;
     }
 
-    /* ── Crosslinks — cream fading into the dark CTA below ── */
+    /* ── Crosslinks ── */
     .crosslinks {
-      max-width: 100%;
-      padding: 200px 0 80px;
-      background: linear-gradient(to bottom, var(--cream) 0%, var(--cream) 30%, #1A1A1A 100%);
+      background: var(--cream);
+      padding: 48px 0 56px;
     }
 
     .crosslinks-inner {
@@ -871,8 +870,8 @@
     }
 
     .crosslink-item {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: var(--white);
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 16px 20px;
       margin-bottom: 12px;
@@ -885,7 +884,7 @@
 
     .crosslink-item span {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--mid);
     }
 
     .crosslink-item a {
@@ -897,7 +896,7 @@
       transition: color 0.15s;
     }
 
-    .crosslink-item a:hover { color: var(--amber-light); }
+    .crosslink-item a:hover { color: var(--amber-dark); }
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
