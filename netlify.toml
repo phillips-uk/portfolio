@@ -23,3 +23,9 @@
   from = "/r/:id"
   to   = "/.netlify/functions/audit-share?id=:id"
   status = 200
+
+# Creative analysis tool
+[[redirects]]
+  from = "/creative-analysis"
+  to   = "/creative-analysis.html"
+  status = 200

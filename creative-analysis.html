@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad Creative Scoring Tool — Phillips.</title>
+  <meta name="description" content="Upload paid ad creatives. Claude scores each one across five dimensions and returns a ranked report with specific weak signals. Images and video.">
+  <link rel="stylesheet" href="/brand.css">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+  <!-- End Google Tag Manager -->
+
+  <style>
+    /* ── Page-level layout ── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Section label chip ── */
+    .section-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--hero-bg);
+      text-align: center;
+      padding: 72px 24px 64px;
+    }
+
+    .hero-pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 16px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--mid);
+      max-width: 560px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-signin {
+      display: block;
+      font-size: 11px;
+      color: var(--mid);
+      margin-top: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font);
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      transition: color 0.15s, text-decoration-color 0.15s;
+    }
+
+    .hero-signin:hover {
+      color: var(--ink);
+      text-decoration-color: var(--mid);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 4px;
+      padding: 11px 24px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      border: 1.5px solid transparent;
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: var(--white);
+      border-color: var(--amber);
+    }
+
+    .btn-primary:hover { background: var(--amber-dark); border-color: var(--amber-dark); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+
+    .btn-ghost:hover { background: var(--cream); }
+
+    /* ── Upload section ── */
+    .upload-section {
+      padding: 64px 0;
+      background: var(--white);
+    }
+
+    .upload-section-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .upload-section-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .upload-section-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    /* Drag-drop zone */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 40px 24px;
+      text-align: center;
+      background: var(--cream);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--amber);
+      background: #FDF0E0;
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-zone-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      display: block;
+      line-height: 1;
+    }
+
+    .drop-zone-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .drop-zone-sub {
+      font-size: 13px;
+      color: var(--mid);
+    }
+
+    /* File list */
+    .file-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      font-size: 13px;
+    }
+
+    .file-item-name {
+      color: var(--ink);
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 340px;
+    }
+
+    .file-item-meta {
+      color: var(--mid);
+      font-size: 12px;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+
+    .file-item-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--mid);
+      font-size: 16px;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: color 0.15s;
+      font-family: var(--font);
+    }
+
+    .file-item-remove:hover { color: #c0392b; }
+
+    .upload-submit-row {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Progress card */
+    .progress-card {
+      margin-top: 24px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .progress-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .progress-bar-track {
+      height: 4px;
+      background: var(--border);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--amber);
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .progress-log {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 12px;
+      color: var(--mid);
+      background: var(--cream);
+      padding: 14px 18px;
+      max-height: 180px;
+      overflow-y: auto;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    /* Results card */
+    .results-card {
+      margin-top: 24px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .results-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .results-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .results-body {
+      padding: 24px 18px;
+    }
+
+    /* ── Demo section ── */
+    .demo-section {
+      padding: 72px 0;
+      background: var(--cream);
+    }
+
+    .demo-section-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .demo-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .demo-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .demo-header p {
+      font-size: 15px;
+      color: var(--mid);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* Ranked summary table */
+    .ranked-table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 32px;
+    }
+
+    .ranked-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .ranked-table th {
+      background: var(--amber);
+      color: var(--white);
+      font-weight: 600;
+      padding: 11px 14px;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .ranked-table th:first-child { border-radius: 0; }
+
+    .ranked-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .ranked-table tr:last-child td { border-bottom: none; }
+
+    .ranked-table tr:nth-child(even) td { background: var(--cream); }
+    .ranked-table tr:nth-child(odd) td  { background: var(--white); }
+
+    .creative-name {
+      font-weight: 500;
+      color: var(--ink);
+      font-size: 12px;
+      max-width: 200px;
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .score-badge.green  { background: #E8F5E9; color: #2E7D32; }
+    .score-badge.amber  { background: #FFF3E0; color: #E65100; }
+    .score-badge.red    { background: #FFEBEE; color: #C62828; }
+
+    .dim-cell {
+      text-align: center;
+      min-width: 68px;
+    }
+
+    .dim-num {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .dim-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      width: 40px;
+      margin: 0 auto;
+    }
+
+    .dim-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .dim-bar-fill.green { background: #4CAF50; }
+    .dim-bar-fill.amber { background: #FF9800; }
+    .dim-bar-fill.red   { background: #F44336; }
+
+    /* Detail card */
+    .detail-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .detail-card-header {
+      background: var(--amber);
+      color: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .detail-card-filename {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .detail-card-badge {
+      background: rgba(255,255,255,0.2);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .detail-dim-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .detail-dim-table th {
+      background: var(--cream);
+      color: var(--mid);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-dim-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .detail-dim-table tr:last-child td { border-bottom: none; }
+
+    .detail-dim-name {
+      font-weight: 600;
+      color: var(--amber);
+      font-size: 12px;
+      white-space: nowrap;
+      width: 140px;
+    }
+
+    .detail-dim-score {
+      width: 54px;
+      text-align: center;
+    }
+
+    .detail-dim-rationale {
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .weak-badge {
+      display: inline-block;
+      background: #FFF3E0;
+      border: 1px solid #FF9800;
+      color: #E65100;
+      border-radius: 3px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .overall-notes {
+      background: var(--cream);
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .overall-notes strong {
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ── How it works ── */
+    .how-section {
+      padding: 72px 0;
+      background: var(--white);
+    }
+
+    .how-section-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .how-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .how-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .dimension-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .dimension-row {
+      display: flex;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .dimension-row:last-child { border-bottom: none; }
+    .dimension-row:nth-child(even) { background: var(--cream); }
+
+    .dimension-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--amber);
+      white-space: nowrap;
+      min-width: 140px;
+      padding-top: 1px;
+    }
+
+    .dimension-desc {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    .how-footnote {
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--mid);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── Good to know ── */
+    .notes-section {
+      padding: 64px 0;
+      background: var(--cream);
+    }
+
+    .notes-section-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .notes-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .notes-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .notes-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .note-item {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.65;
+      padding: 18px 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: var(--shadow-card);
+    }
+
+    /* ── Dark CTA ── */
+    .dark-cta {
+      background: var(--dark-bg);
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .dark-cta h2 {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .dark-cta p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 32px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Auth modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 26, 0.55);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-box {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 32px 28px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: var(--shadow-raised);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--mid);
+      line-height: 1;
+      font-family: var(--font);
+      padding: 4px;
+    }
+
+    .modal-close:hover { color: var(--ink); }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--mid);
+      margin-bottom: 24px;
+    }
+
+    .modal-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 12px;
+    }
+
+    .modal-input:focus { border-color: var(--amber); }
+
+    .modal-error {
+      font-size: 13px;
+      color: #C62828;
+      margin-bottom: 12px;
+      min-height: 18px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero { padding: 52px 16px 44px; }
+      .hero h1 { font-size: 30px; }
+      .hero-sub { font-size: 15px; }
+      .dimension-row { flex-direction: column; gap: 4px; }
+      .dimension-name { min-width: unset; }
+      .detail-card-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .ranked-table { font-size: 12px; }
+      .ranked-table th, .ranked-table td { padding: 9px 10px; }
+      .dark-cta h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- ── Nav ── -->
+<nav class="p-nav">
+  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
+  <div class="p-nav__links">
+    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
+    <a href="/guides/" class="p-nav__link">Guides</a>
+  </div>
+  <a href="/#contact" class="p-nav__cta">Get in touch</a>
+  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+  </button>
+</nav>
+<div class="p-nav__mobile" id="p-nav-mobile">
+  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
+  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
+  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
+</div>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-pill">AI Creative Scoring &middot; Images &amp; Video &middot; Ranked Report</div>
+  <h1>Ad Creative <span style="color:var(--amber)">Scoring</span> Tool</h1>
+  <p class="hero-sub">Upload paid ad creatives. Claude scores each one across five dimensions and returns a ranked report with specific weak signals. Images and video. No account connection.</p>
+  <div class="hero-actions">
+    <button class="btn btn-ghost" id="see-demo-btn">See example report</button>
+    <button class="btn btn-primary" id="upload-btn" style="display:none">Upload creatives</button>
+  </div>
+  <button class="hero-signin" id="auth-trigger-btn">Sign in to upload</button>
+</section>
+
+<!-- ── Upload section ── -->
+<section id="upload-section" style="display:none">
+  <div class="upload-section">
+    <div class="upload-section-inner">
+      <div class="upload-section-header">
+        <div class="section-label">UPLOAD &amp; SCORE</div>
+        <h2>Score your creatives</h2>
+      </div>
+
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm">
+        <span class="drop-zone-icon">&#8679;</span>
+        <div class="drop-zone-title">Drop files here or click to browse</div>
+        <div class="drop-zone-sub">JPEG, PNG, GIF, WebP, MP4, MOV, WebM &mdash; up to 20 MB each</div>
+      </div>
+
+      <div class="file-list" id="file-list"></div>
+
+      <div class="upload-submit-row">
+        <button class="btn btn-primary" id="submit-btn" disabled>Score these creatives</button>
+      </div>
+
+      <div class="progress-card" id="progress-card" style="display:none">
+        <div class="progress-card-header">
+          <div class="spinner"></div>
+          <div class="progress-card-title" id="progress-title">Uploading and scoring...</div>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+        <div class="progress-log" id="progress-log"></div>
+      </div>
+
+      <div class="results-card" id="results-card" style="display:none">
+        <div class="results-card-header">
+          <div class="results-card-title">Scored report</div>
+          <button class="btn btn-ghost" id="download-md-btn" style="font-size:13px;padding:7px 16px">Download .md</button>
+        </div>
+        <div class="results-body" id="results-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Demo section ── -->
+<section id="demo-section" class="demo-section">
+  <div class="demo-section-inner">
+    <div class="demo-header">
+      <div class="section-label">EXAMPLE REPORT</div>
+      <h2>What a scored report looks like</h2>
+      <p>Four sample creatives scored across five dimensions. Composite scores ranked highest to lowest.</p>
+    </div>
+
+    <div class="ranked-table-wrap">
+      <table class="ranked-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Creative</th>
+            <th>Score</th>
+            <th>Hook</th>
+            <th>Hierarchy</th>
+            <th>Copy</th>
+            <th>Brand</th>
+            <th>Fatigue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><div class="creative-name">summer_prospecting_ugc-hero.mp4 <span style="color:var(--mid);font-weight:400">[opening]</span></div></td>
+            <td><span class="score-badge green">7.2</span></td>
+            <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><div class="creative-name">summer_prospecting_static-offer.jpg</div></td>
+            <td><span class="score-badge amber">6.6</span></td>
+            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><div class="creative-name">retargeting_abandoned-cart_v2.jpg</div></td>
+            <td><span class="score-badge amber">5.6</span></td>
+            <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><div class="creative-name">retargeting_generic-cta.jpg</div></td>
+            <td><span class="score-badge red">3.8</span></td>
+            <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
+            <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Detail card for #1 -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <span class="detail-card-filename">summer_prospecting_ugc-hero.mp4 [opening frame]</span>
+        <span class="detail-card-badge">7.2 / 10</span>
+      </div>
+      <table class="detail-dim-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Score</th>
+            <th>Rationale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="detail-dim-name">Hook quality</td>
+            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
+            <td class="detail-dim-rationale">Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Visual hierarchy</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive. Minor distraction from a competing background element in the bottom-right corner.<br><span class="weak-badge">Weak signal: Background element in bottom-right competes with the subject for attention.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Copy clarity</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">The headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text is present in this frame, which is acceptable for an opening hook.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Brand consistency</td>
+            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
+            <td class="detail-dim-rationale">Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.<br><span class="weak-badge">Weak signal: No logo or brand lockup present. This creative could belong to any brand.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Fatigue signals</td>
+            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
+            <td class="detail-dim-rationale">Format avoids common fatigued treatments. No plain white background, no static talking head with no hook variant. The motion-first approach is less saturated than most UGC in this category.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="overall-notes">
+        <strong>Overall notes</strong>
+        The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring: a logo lock-up or consistent colour treatment would tie this back to the brand without hurting the hook. Priority fix: add a subtle branded element to the bottom-left corner.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ── -->
+<section class="how-section">
+  <div class="how-section-inner">
+    <div class="how-header">
+      <div class="section-label">HOW IT WORKS</div>
+      <h2>Five dimensions. One composite score.</h2>
+    </div>
+
+    <div class="dimension-list">
+      <div class="dimension-row">
+        <div class="dimension-name">Hook quality</div>
+        <div class="dimension-desc">Does the first frame stop the scroll? Assessed on pattern interrupt, emotional trigger, and immediate visual impact.</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-name">Visual hierarchy</div>
+        <div class="dimension-desc">Is there a clear focal point? The reading order should be obvious without effort.</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-name">Copy clarity</div>
+        <div class="dimension-desc">Can the message be understood in under two seconds? Penalises ambiguous headlines and missing CTAs.</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-name">Brand consistency</div>
+        <div class="dimension-desc">Coherent colours, fonts, and tone. A creative that could belong to any brand scores low.</div>
+      </div>
+      <div class="dimension-row">
+        <div class="dimension-name">Fatigue signals</div>
+        <div class="dimension-desc">Absence of overused formats: plain white background product shots, talking-head UGC with no hook variant, generic CTA text. High score means low fatigue risk.</div>
+      </div>
+    </div>
+
+    <p class="how-footnote">Each dimension scored 1&ndash;10. Composite is the equal-weighted average. Weak signals flagged on any dimension scoring 6 or below.</p>
+  </div>
+</section>
+
+<!-- ── Good to know ── -->
+<section class="notes-section">
+  <div class="notes-section-inner">
+    <div class="notes-header">
+      <div class="section-label">GOOD TO KNOW</div>
+      <h2>Practical details</h2>
+    </div>
+    <div class="notes-body">
+      <div class="note-item">Each creative costs roughly &pound;0.03&ndash;0.06 to score (claude-opus-4-7 pricing). A batch of ten images runs to about &pound;0.50.</div>
+      <div class="note-item">Videos are supported. The tool extracts three frames &mdash; opening, mid, and close &mdash; and scores each one separately. Requires a local install.</div>
+      <div class="note-item">This tool is for analysing existing creatives, not generating new ones. It tells you what is weak and why. What to do about it is a separate conversation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Dark CTA ── -->
+<section class="dark-cta">
+  <h2>Need a creative review?</h2>
+  <p>Creative performance analysis as part of campaign setup or a standalone audit. Get in touch.</p>
+  <a href="/#contact" class="btn btn-primary">Get in touch</a>
+</section>
+
+<!-- ── Auth modal ── -->
+<div class="modal-overlay" id="auth-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+    <div class="modal-title" id="auth-modal-title">Upload access</div>
+    <div class="modal-sub">Enter your PIN to unlock the upload tool.</div>
+    <label class="modal-label" for="pin-input">Access PIN</label>
+    <input class="modal-input" type="password" id="pin-input" placeholder="Enter PIN" autocomplete="current-password">
+    <div class="modal-error" id="modal-error" aria-live="polite"></div>
+    <button class="btn btn-primary" id="pin-submit-btn" style="width:100%">Unlock</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Mobile nav ────────────────────────────────────────────────
+  var burger = document.getElementById('p-nav-burger');
+  var mobileNav = document.getElementById('p-nav-mobile');
+  if (burger && mobileNav) {
+    burger.addEventListener('click', function () {
+      var open = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!open));
+      var nav = document.querySelector('.p-nav');
+      var offset = nav ? nav.getBoundingClientRect().bottom + window.scrollY : 64;
+      mobileNav.style.top = offset + 'px';
+      mobileNav.style.display = open ? 'none' : 'block';
+    });
+  }
+
+  // ── Token helpers ─────────────────────────────────────────────
+  var TOKEN_KEY   = 'creative_token';
+  var EXPIRY_KEY  = 'creative_token_expires';
+  var TTL_MS      = 24 * 60 * 60 * 1000;
+
+  function isTokenValid() {
+    var token  = localStorage.getItem(TOKEN_KEY);
+    var expiry = parseInt(localStorage.getItem(EXPIRY_KEY) || '0', 10);
+    return !!(token && Date.now() < expiry);
+  }
+
+  function storeToken(token) {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(EXPIRY_KEY, String(Date.now() + TTL_MS));
+  }
+
+  function getToken() {
+    return localStorage.getItem(TOKEN_KEY) || '';
+  }
+
+  function showUploadArea() {
+    document.getElementById('upload-section').style.display = 'block';
+    document.getElementById('upload-btn').style.display = 'inline-block';
+    document.getElementById('auth-trigger-btn').style.display = 'none';
+  }
+
+  // On load: check token
+  if (isTokenValid()) {
+    showUploadArea();
+  }
+
+  // ── Hero buttons ──────────────────────────────────────────────
+  document.getElementById('see-demo-btn').addEventListener('click', function () {
+    document.getElementById('demo-section').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('upload-btn').addEventListener('click', function () {
+    document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // ── Auth modal ────────────────────────────────────────────────
+  function openModal() {
+    document.getElementById('auth-modal').style.display = 'flex';
+    document.getElementById('pin-input').focus();
+    document.getElementById('modal-error').textContent = '';
+  }
+
+  function closeModal() {
+    document.getElementById('auth-modal').style.display = 'none';
+    document.getElementById('pin-input').value = '';
+    document.getElementById('modal-error').textContent = '';
+  }
+
+  document.getElementById('auth-trigger-btn').addEventListener('click', openModal);
+  document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+  document.getElementById('auth-modal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.getElementById('pin-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('pin-submit-btn').click();
+  });
+
+  document.getElementById('pin-submit-btn').addEventListener('click', function () {
+    var pin = document.getElementById('pin-input').value.trim();
+    if (!pin) { document.getElementById('modal-error').textContent = 'Please enter a PIN.'; return; }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    document.getElementById('modal-error').textContent = '';
+
+    fetch('/.netlify/functions/creative-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: pin })
+    })
+    .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+    .then(function (r) {
+      btn.disabled = false;
+      btn.textContent = 'Unlock';
+      if (!r.ok || !r.data.token) {
+        document.getElementById('modal-error').textContent = r.data.error || 'Invalid PIN. Please try again.';
+        return;
+      }
+      storeToken(r.data.token);
+      closeModal();
+      showUploadArea();
+      document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(function () {
+      btn.disabled = false;
+      btn.textContent = 'Unlock';
+      document.getElementById('modal-error').textContent = 'Network error. Please try again.';
+    });
+  });
+
+  // ── File management ───────────────────────────────────────────
+  var selectedFiles = [];
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function renderFileList() {
+    var list = document.getElementById('file-list');
+    list.innerHTML = '';
+    selectedFiles.forEach(function (file, idx) {
+      var item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML =
+        '<span class="file-item-name">' + escHtml(file.name) + '</span>' +
+        '<span class="file-item-meta">' + escHtml(formatBytes(file.size)) + '</span>' +
+        '<button class="file-item-remove" data-idx="' + idx + '" aria-label="Remove ' + escHtml(file.name) + '">&times;</button>';
+      list.appendChild(item);
+    });
+
+    list.querySelectorAll('.file-item-remove').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(this.getAttribute('data-idx'), 10);
+        selectedFiles.splice(i, 1);
+        renderFileList();
+        updateSubmitBtn();
+      });
+    });
+  }
+
+  function updateSubmitBtn() {
+    document.getElementById('submit-btn').disabled = selectedFiles.length === 0;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function addFiles(newFiles) {
+    Array.from(newFiles).forEach(function (f) {
+      if (!selectedFiles.some(function (x) { return x.name === f.name && x.size === f.size; })) {
+        selectedFiles.push(f);
+      }
+    });
+    renderFileList();
+    updateSubmitBtn();
+  }
+
+  var dropZone = document.getElementById('drop-zone');
+  var fileInput = document.getElementById('file-input');
+
+  fileInput.addEventListener('change', function () {
+    addFiles(this.files);
+    this.value = '';
+  });
+
+  dropZone.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    this.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', function () {
+    this.classList.remove('drag-over');
+  });
+
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    addFiles(e.dataTransfer.files);
+  });
+
+  // ── Submit ────────────────────────────────────────────────────
+  var currentJobId = null;
+  var pollTimer    = null;
+
+  function logLine(msg) {
+    var log = document.getElementById('progress-log');
+    log.textContent += msg + '\n';
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function setProgress(pct) {
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  function generateJobId() {
+    var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var id = '';
+    for (var i = 0; i < 16; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    return id;
+  }
+
+  document.getElementById('submit-btn').addEventListener('click', function () {
+    if (!isTokenValid()) { openModal(); return; }
+    if (selectedFiles.length === 0) return;
+    startJob();
+  });
+
+  function startJob() {
+    var token = getToken();
+    var files = selectedFiles.slice();
+    currentJobId = generateJobId();
+
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('progress-card').style.display = 'block';
+    document.getElementById('results-card').style.display = 'none';
+    document.getElementById('progress-log').textContent = '';
+    document.getElementById('progress-title').textContent = 'Reading files...';
+    setProgress(5);
+
+    logLine('Preparing ' + files.length + ' creative' + (files.length !== 1 ? 's' : '') + '...');
+
+    Promise.all(files.map(function (file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var dataUrl = e.target.result;
+          var commaIdx = dataUrl.indexOf(',');
+          var meta = dataUrl.substring(5, commaIdx);
+          var parts = meta.split(';');
+          var mediaType = parts[0];
+          var data = dataUrl.substring(commaIdx + 1);
+          resolve({ name: file.name, mediaType: mediaType, data: data });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }))
+    .then(function (encoded) {
+      logLine('Sending to scoring engine...');
+      setProgress(15);
+      document.getElementById('progress-title').textContent = 'Scoring in progress...';
+
+      return fetch('/.netlify/functions/creative-analyse-background', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobId: currentJobId, token: token, files: encoded })
+      });
+    })
+    .then(function (res) {
+      if (res.status !== 202 && !res.ok) {
+        return res.json().then(function (d) { throw new Error(d.error || 'Submission failed'); });
+      }
+      logLine('Job started. Polling for results...');
+      setProgress(20);
+      startPolling();
+    })
+    .catch(function (err) {
+      logLine('Error: ' + err.message);
+      document.getElementById('progress-title').textContent = 'Something went wrong';
+      document.getElementById('submit-btn').disabled = false;
+    });
+  }
+
+  function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+    var attempts = 0;
+    var maxAttempts = 150; // 5 minutes at 2s
+
+    pollTimer = setInterval(function () {
+      attempts++;
+      if (attempts > maxAttempts) {
+        clearInterval(pollTimer);
+        logLine('Timed out waiting for results.');
+        document.getElementById('progress-title').textContent = 'Timed out';
+        document.getElementById('submit-btn').disabled = false;
+        return;
+      }
+
+      fetch('/.netlify/functions/creative-status?id=' + currentJobId)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.status === 'pending') {
+            var pct = Math.min(20 + attempts * 0.5, 85);
+            setProgress(pct);
+            return;
+          }
+
+          if (data.status === 'progress') {
+            if (data.message) logLine(data.message);
+            setProgress(data.percent || 50);
+            return;
+          }
+
+          clearInterval(pollTimer);
+
+          if (data.status === 'error') {
+            logLine('Error: ' + (data.message || 'Scoring failed.'));
+            document.getElementById('progress-title').textContent = 'Scoring failed';
+            document.getElementById('submit-btn').disabled = false;
+            return;
+          }
+
+          if (data.status === 'done') {
+            setProgress(100);
+            logLine('Complete.');
+            document.getElementById('progress-title').textContent = 'Done';
+
+            document.getElementById('results-card').style.display = 'block';
+            document.getElementById('results-body').innerHTML = data.report_html || '<p>No report generated.</p>';
+
+            document.getElementById('download-md-btn').onclick = function () {
+              window.location.href = '/.netlify/functions/creative-status?id=' + currentJobId + '&download=md';
+            };
+
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
+          }
+        })
+        .catch(function () {
+          // Network blip — keep polling
+        });
+    }, 2000);
+  }
+
+})();
+</script>
+
+</body>
+</html>
