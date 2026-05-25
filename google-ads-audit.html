@@ -1406,10 +1406,26 @@
 
 
     /* ── Landing hero ─────────────────────────────────────────────── */
+    .cta-group {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
     .landing-cta {
       width: auto;
-      margin-top: 28px;
     }
+
+    .demo-link {
+      font-size: 0.9rem;
+      color: var(--amber);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .demo-link:hover { text-decoration: underline; }
 
     .landing-features {
       display: grid;
@@ -1754,6 +1770,7 @@
       .glance-stat { flex: 0 0 40%; }
       .lead-cta { flex-direction: column; padding: 24px; }
       .lead-cta-btn { width: 100%; justify-content: center; }
+      .cta-group { gap: 14px; }
       .landing-cta { width: 100%; justify-content: center; }
       .landing-features { grid-template-columns: 1fr; }
       .feature-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
@@ -1813,10 +1830,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="hero-pill" id="hero-tag">Free · Read-only · Results in ~60 seconds</div>
         <h1 id="hero-h1">Free <span>Google Ads Audit</span> Tool</h1>
         <p id="hero-body">Connect your Google Ads account and get a full diagnostic in under 60 seconds. Every issue is severity-rated with a specific fix, a direct "Fix in Ads" link, and a time estimate. You also get a search term waste analysis, a day-and-hour performance heatmap, and a PDF you can share or take to a meeting.</p>
-        <button class="btn btn-primary landing-cta" onclick="scrollToForm()">
-          Run my audit
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <div class="cta-group">
+          <button class="btn btn-primary landing-cta" onclick="scrollToForm()">
+            Run my audit
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <a href="?preview=report" class="demo-link">or view a demo →</a>
+        </div>
       </div>
 
       <div class="landing-features">
