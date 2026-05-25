@@ -672,7 +672,7 @@
     /* ── How it works ── */
     .how-section {
       padding: 72px 0;
-      background: var(--white);
+      background: linear-gradient(to bottom, var(--white) 0%, var(--cream) 100%);
     }
 
     .how-section-inner {
@@ -862,7 +862,8 @@
     .crosslinks {
       max-width: 720px;
       margin: 0 auto;
-      padding: 0 24px 56px;
+      padding: 48px 24px 48px;
+      background: var(--cream);
     }
 
     .crosslink-item {
@@ -945,9 +946,9 @@
 
   <!-- Auth state: sign in card -->
   <div class="hero-card" id="hero-auth-card">
-    <span class="hero-card-label">Upload your creatives to get started</span>
-    <button class="btn-filled btn-filled--block" id="auth-trigger-btn">Sign in to upload</button>
-    <p class="hero-card-note">Not ready? <a href="/creative-analysis-demo">View an example report &rarr;</a></p>
+    <span class="hero-card-label">See how it works</span>
+    <a href="/creative-analysis-demo" class="btn-filled btn-filled--block">View an example report &rarr;</a>
+    <p class="hero-card-note">Have access? <button id="auth-trigger-btn" style="background:none;border:none;color:var(--amber);font-weight:600;font-size:13px;font-family:var(--font);cursor:pointer;padding:0;">Sign in to upload &rarr;</button></p>
   </div>
 
   <!-- Auth state: logged in — upload button -->
@@ -1088,14 +1089,6 @@
   </div>
 </section>
 
-<!-- ── Dark CTA ── -->
-<section class="cta-section surface-dark">
-  <span class="cta-section__label">Work with me</span>
-  <h2 class="cta-section__heading">Want to review creatives for a <em>client campaign?</em></h2>
-  <p>Get in touch. I work with a small number of clients on paid media strategy, creative direction, and performance audits.</p>
-  <a href="/#contact" class="btn-filled" style="margin-top:8px">Get in touch &rarr;</a>
-</section>
-
 <!-- ── Crosslinks ── -->
 <div class="crosslinks">
   <div class="crosslink-item">
@@ -1107,6 +1100,14 @@
     <a href="/landing-page-audit">Free Landing Page Audit &rarr;</a>
   </div>
 </div>
+
+<!-- ── Dark CTA ── -->
+<section class="cta-section surface-dark">
+  <span class="cta-section__label">Work with me</span>
+  <h2 class="cta-section__heading">Want to review creatives for a <em>client campaign?</em></h2>
+  <p>Get in touch. I work with a small number of clients on paid media strategy, creative direction, and performance audits.</p>
+  <a href="/#contact" class="btn-filled" style="margin-top:8px">Get in touch &rarr;</a>
+</section>
 
 
 <script>
