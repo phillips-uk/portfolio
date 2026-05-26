@@ -1,12 +1,26 @@
 <!doctype html>
 <html lang="en">
 <head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<!-- End Google Tag Manager -->
+
+
 <meta charset="utf-8">
 <title>Landing Page Audit Report | Phillips.</title>
 <meta name="description" content="Your landing page audit report. Health score, priority actions, findings by category, keyword inference, and Landing Page Experience estimate.">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<link rel="icon" href="/favicon.svg?v=2">
 <style>
-  :root { --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif; --ink: #1A1A1A; --white: #FFFFFF; --cream: #FDF6EE; }
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ink: #1A1A1A;
+  --white: #FFFFFF;
+  --cream: #FDF6EE;
+}
 </style>
 <style>
   html, body { margin: 0; padding: 0; }
@@ -17,23 +31,15 @@
   .sec-cream { background: #FDF6EE; padding: 64px 0; }
   ::selection { background: #985830; color: #fff; }
   *, *::before, *::after { box-sizing: border-box; }
+  @keyframes ph-spin { to { transform: rotate(360deg); } }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
-new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
-"https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,"script","dataLayer","GTM-WS5CP6NW");</script>
-<!-- End Google Tag Manager -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="report-pdf.js"></script>
 </head>
 <body class="ph">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 <div id="root"></div>
 
 <script type="text/babel">
@@ -76,17 +82,20 @@ function BtnFilledSmall({ children, onClick }) {
       }}>{children}</button>
   );
 }
-function BtnOutline({ children, onClick, icon }) {
+function BtnOutline({ children, onClick, icon, disabled }) {
   const [h, setH] = React.useState(false);
   return (
-    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    <button onClick={onClick} disabled={disabled}
+      onMouseEnter={() => !disabled && setH(true)} onMouseLeave={() => setH(false)}
       style={{
-        background: h ? "#985830" : "transparent",
-        color: h ? "#fff" : "#1A1A1A",
-        border: "1.5px solid #985830",
+        background: disabled ? "transparent" : (h ? "#985830" : "transparent"),
+        color: disabled ? "#6B6B6B" : (h ? "#fff" : "#1A1A1A"),
+        border: `1.5px solid ${disabled ? "#E8D8C4" : "#985830"}`,
         padding: "10px 18px",
         fontSize: 13, fontWeight: 600,
-        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        borderRadius: 4,
+        cursor: disabled ? "default" : "pointer",
+        fontFamily: "inherit",
         transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
         display: "inline-flex", alignItems: "center", gap: 8,
       }}>
@@ -96,6 +105,32 @@ function BtnOutline({ children, onClick, icon }) {
   );
 }
 
+function PdfDownloadButton() {
+  const [busy, setBusy] = React.useState(false);
+  return (
+    <BtnOutline
+      icon={busy ? <Spinner/> : <IconDownload/>}
+      disabled={busy}
+      onClick={async () => {
+        if (busy || !window.downloadAuditPDF) return;
+        setBusy(true);
+        try { await window.downloadAuditPDF(); }
+        catch (e) { console.error(e); }
+        finally { setBusy(false); }
+      }}>
+      {busy ? "Generating PDFâ¦" : "Download PDF"}
+    </BtnOutline>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" style={{ animation: "ph-spin 0.8s linear infinite" }}>
+      <circle cx="12" cy="12" r="9" fill="none" stroke="#985830" strokeWidth="2.5" strokeOpacity="0.25"/>
+      <path d="M21 12a9 9 0 0 0-9-9" fill="none" stroke="#985830" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
 /* =============== NAV =============== */
 function Nav({ active }) {
   const linkStyle = (k) => ({
@@ -122,8 +157,7 @@ function Nav({ active }) {
         <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
           <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
           <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
-          <a href="#" style={linkStyle("cs")}>Creative Scoring</a>
-          <a href="#" style={linkStyle("guides")}>Guides</a>
+          <a href="/guides" style={linkStyle("guides")}>Guides</a>
           <BtnFilledSmall>Get in touch</BtnFilledSmall>
         </nav>
       </div>
@@ -191,7 +225,7 @@ function ReportHeader() {
   const band = "Average";
   const url = "https://yourstore.com/products/best-seller";
   const pageType = "Lead Gen";
-  const time = "26 May 2026 · 14:32";
+  const time = "26 May 2026 Â· 14:32";
 
   return (
     <section style={{
@@ -212,7 +246,7 @@ function ReportHeader() {
           </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
             <BtnOutline icon={<IconShare/>}>Share</BtnOutline>
-            <BtnOutline icon={<IconDownload/>}>Download PDF</BtnOutline>
+            <PdfDownloadButton/>
             <BtnFilledSmall>Run another audit</BtnFilledSmall>
           </div>
         </div>
@@ -252,7 +286,7 @@ function ReportHeader() {
             textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
           }}>
             <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830" }}/>
-            Page type · {pageType}
+            Page type Â· {pageType}
           </span>
         </div>
 
@@ -315,9 +349,9 @@ function ScoreCard({ score, band }) {
           display: "flex", justifyContent: "space-between",
           fontSize: 11, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.005em",
         }}>
-          <span>0 · Needs work</span>
-          <span>50 · Mixed</span>
-          <span>100 · Excellent</span>
+          <span>0 Â· Needs work</span>
+          <span>50 Â· Mixed</span>
+          <span>100 Â· Excellent</span>
         </div>
       </div>
     </div>
@@ -345,7 +379,7 @@ function ScoreBreakdown() {
       }}>
         <Eyebrow>Score breakdown</Eyebrow>
         <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-          10 findings · 2 high · 5 medium · 3 low
+          10 findings Â· 2 high Â· 5 medium Â· 3 low
         </span>
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -395,21 +429,21 @@ function PriorityActions() {
       title: "LCP on mobile is 5.20s — well above Google's 2.5s threshold",
       detail: "Largest Contentful Paint clocks 5.20s on mobile. Google treats anything above 2.5s as a Landing Page Experience deduction. CrUX data shows the page sits in the bottom quartile for its category.",
       fix: "Preload the hero image, compress to WebP under 150KB, and defer the chat widget script until after first interaction.",
-      impact: "Quality Score · Landing Page Experience · mobile CPC",
+      impact: "Quality Score Â· Landing Page Experience Â· mobile CPC",
     },
     {
       severity: "high",
       title: "No clear single conversion goal above the fold",
       detail: "The hero contains four competing CTAs: \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture. Eye-tracking research and Google's own LPE guidance both penalise pages without a single primary action.",
       fix: "Promote one CTA — the one tied to the campaign objective — to primary. Demote the rest to secondary outline or move them below the fold.",
-      impact: "Conversion rate · Landing Page Experience · Ad Relevance",
+      impact: "Conversion rate Â· Landing Page Experience Â· Ad Relevance",
     },
     {
       severity: "medium",
       title: "H1 doesn't echo the primary keyword from the URL or title tag",
       detail: "URL slug is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". Google looks for keyword echo across H1, title and URL to confirm message match.",
       fix: "Rewrite the H1 to include the keyword phrase from the ad group it receives traffic from — e.g. \"Premium Wool Throw — the best-seller\".",
-      impact: "Quality Score · Ad Relevance · keyword-level CPC",
+      impact: "Quality Score Â· Ad Relevance Â· keyword-level CPC",
     },
   ];
 
@@ -530,22 +564,22 @@ function FindingsByCategory() {
           severity: "high",
           title: "Mobile LCP: 5.20s",
           detail: "Largest Contentful Paint on mobile is 5.20s. Google's threshold for a \"good\" experience is 2.5s. Real-user data (CrUX) confirms the field result, not just a lab figure.",
-          fix: "Preload the hero image with fetchpriority=\"high\", convert to WebP at 1× device pixel ratio, and defer the chat widget until after onload.",
-          impact: "Quality Score · Landing Page Experience · mobile CPC",
+          fix: "Preload the hero image with fetchpriority=\"high\", convert to WebP at 1Ã device pixel ratio, and defer the chat widget until after onload.",
+          impact: "Quality Score Â· Landing Page Experience Â· mobile CPC",
         },
         {
           severity: "medium",
           title: "Mobile performance score: 47/100",
           detail: "Lighthouse mobile score sits at 47/100 — in Google's \"poor\" band. Desktop is healthier at 72/100, but the majority of paid clicks are mobile, so mobile is what drives Landing Page Experience for most ad groups.",
           fix: "Resolve the LCP and TTFB findings below. Defer non-critical third-party scripts (chat widget, A/B test tooling) until after first interaction.",
-          impact: "Landing Page Experience · mobile bounce rate",
+          impact: "Landing Page Experience Â· mobile bounce rate",
         },
         {
           severity: "low",
           title: "TTFB: 320ms",
           detail: "Time to First Byte is 320ms — above the 200ms target. Server response is an early signal that compounds into LCP and INP downstream.",
           fix: "Move to edge caching on the product templates. Check that the CDN is configured for HTML, not just static assets.",
-          impact: "LCP · INP · server cost",
+          impact: "LCP Â· INP Â· server cost",
         },
         {
           severity: "pass",
@@ -574,7 +608,7 @@ function FindingsByCategory() {
           title: "H1 doesn't echo the URL or title tag keyword",
           detail: "URL is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". The H1 is the strongest single signal Google uses to confirm the page topic.",
           fix: "Rewrite the H1 to include the keyword phrase that ad groups send traffic against, e.g. \"Premium Wool Throw — the best-seller\".",
-          impact: "Quality Score · Ad Relevance",
+          impact: "Quality Score Â· Ad Relevance",
         },
       ],
     },
@@ -589,7 +623,7 @@ function FindingsByCategory() {
           title: "Above-the-fold copy doesn't restate the offer",
           detail: "The first viewport contains a hero image and a lifestyle headline, but no restatement of what's being sold or the offer terms. Users arriving on a mid-funnel ad won't see message match without scrolling.",
           fix: "Add a subhead under the H1 that names the product and the offer in plain language — one line, no marketing copy.",
-          impact: "Ad Relevance · bounce rate",
+          impact: "Ad Relevance Â· bounce rate",
         },
         {
           severity: "medium",
@@ -611,14 +645,14 @@ function FindingsByCategory() {
           title: "Four competing CTAs above the fold",
           detail: "Hero contains \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture — none promoted over the others. Multiple primary actions split user attention and reduce conversion rate on every channel.",
           fix: "Promote one CTA to primary based on the campaign objective. Demote the rest to outline or move them below the fold.",
-          impact: "Conversion rate · Landing Page Experience",
+          impact: "Conversion rate Â· Landing Page Experience",
         },
         {
           severity: "medium",
           title: "Form requests phone number as a required field",
           detail: "The lead form requires phone number — typically a 20–30% drop-off versus making it optional. Most B2C buyers will not give a phone number to receive product information.",
           fix: "Make phone optional or remove the field. If sales needs phone, capture it on the thank-you page instead.",
-          impact: "Lead volume · CPL",
+          impact: "Lead volume Â· CPL",
         },
       ],
     },
@@ -632,7 +666,7 @@ function FindingsByCategory() {
           severity: "low",
           title: "No risk reducer near the primary CTA",
           detail: "Returns policy, delivery terms and any guarantee are buried in the footer. Pages that surface a one-line risk reducer adjacent to the CTA convert measurably better on cold paid traffic.",
-          fix: "Add a single line under the primary CTA: \"Free 30-day returns · Delivered in 2–3 days\".",
+          fix: "Add a single line under the primary CTA: \"Free 30-day returns Â· Delivered in 2–3 days\".",
           impact: "Conversion rate from cold paid traffic",
         },
         {
@@ -653,9 +687,9 @@ function FindingsByCategory() {
         {
           severity: "low",
           title: "Two tap targets under 44px",
-          detail: "The footer social icons and the size-selector chevrons sit at 32px and 36px respectively. Google's mobile guidelines flag anything under 48×48 as a usability issue.",
-          fix: "Increase tap-target size to 44×44 minimum on both the footer icons and the size-selector controls.",
-          impact: "Mobile bounce rate · Landing Page Experience",
+          detail: "The footer social icons and the size-selector chevrons sit at 32px and 36px respectively. Google's mobile guidelines flag anything under 48Ã48 as a usability issue.",
+          fix: "Increase tap-target size to 44Ã44 minimum on both the footer icons and the size-selector controls.",
+          impact: "Mobile bounce rate Â· Landing Page Experience",
         },
         {
           severity: "pass",
@@ -782,7 +816,7 @@ function CwvStrip({ metrics }) {
           {d.value}<span style={{ fontSize: big ? 14 : 12, color: "#6B6B6B", fontWeight: 500, marginLeft: 2 }}>{d.unit}</span>
         </div>
         <div style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-          {d.sub ? <>{d.sub} · </> : null}{d.target ? <>target {d.target}</> : null}
+          {d.sub ? <>{d.sub} Â· </> : null}{d.target ? <>target {d.target}</> : null}
         </div>
       </div>
     );
@@ -793,7 +827,7 @@ function CwvStrip({ metrics }) {
       <div style={{
         fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
         textTransform: "uppercase", color: "#985830", marginBottom: 12,
-      }}>PageSpeed Insights · raw data</div>
+      }}>PageSpeed Insights Â· raw data</div>
 
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
@@ -894,7 +928,7 @@ function InferenceCard() {
           fontSize: 12, color: "#6B6B6B", marginBottom: 8,
         }}>
           <span>Confidence</span>
-          <span style={{ fontWeight: 600, color: "#1A1A1A" }}>Medium · 68%</span>
+          <span style={{ fontWeight: 600, color: "#1A1A1A" }}>Medium Â· 68%</span>
         </div>
         <div style={{
           height: 6, background: "#F5EBD9", borderRadius: 3, overflow: "hidden",
@@ -1210,7 +1244,7 @@ function EndCta() {
           </a>
         </div>
         <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-          Free · No account · Results in ~60 seconds
+          Free Â· No account Â· Results in ~60 seconds
         </div>
       </div>
     </section>
@@ -1233,7 +1267,7 @@ function Footer() {
           <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
             Phillips<span style={{ color: "#985830" }}>.</span>
           </span>
-          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
+          <span>Â© 2026 Lewis Phillips Â· phillips-uk.com</span>
         </div>
       </div>
     </footer>
@@ -1270,6 +1304,773 @@ function IconLink() {
   );
 }
 
+/* =============== PDF LAYOUT (hidden, captured by html2pdf) =============== */
+const PDF_DATA = {
+  url: "https://yourstore.com/products/best-seller",
+  pageType: "Lead Gen",
+  audited: "26 May 2026 Â· 14:32",
+  score: 58,
+  band: "Average",
+  breakdown: [
+    { cat: "Performance",             score: 58, total: 25, severity: "high" },
+    { cat: "Keyword Clarity",         score: 11, total: 15, severity: "medium" },
+    { cat: "Landing Page Experience", score: 13, total: 20, severity: "medium" },
+    { cat: "Conversion Architecture", score: 10, total: 20, severity: "high" },
+    { cat: "Trust Signals",           score: 7,  total: 10, severity: "low" },
+    { cat: "Mobile",                  score: 8,  total: 10, severity: "low" },
+  ],
+  priority: [
+    {
+      severity: "high",
+      title: "LCP on mobile is 5.20s — well above Google's 2.5s threshold",
+      problem: "Largest Contentful Paint clocks 5.20s on mobile. Google treats anything above 2.5s as a Landing Page Experience deduction. CrUX data shows the page sits in the bottom quartile for its category.",
+      fix: "Preload the hero image, compress to WebP under 150KB, and defer the chat widget script until after first interaction.",
+      impact: "Quality Score Â· Landing Page Experience Â· mobile CPC",
+    },
+    {
+      severity: "high",
+      title: "No clear single conversion goal above the fold",
+      problem: "The hero contains four competing CTAs: \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture. Eye-tracking research and Google's own LPE guidance both penalise pages without a single primary action.",
+      fix: "Promote one CTA — the one tied to the campaign objective — to primary. Demote the rest to secondary outline or move them below the fold.",
+      impact: "Conversion rate Â· Landing Page Experience Â· Ad Relevance",
+    },
+    {
+      severity: "medium",
+      title: "H1 doesn't echo the primary keyword from the URL or title tag",
+      problem: "URL slug is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". Google looks for keyword echo across H1, title and URL to confirm message match.",
+      fix: "Rewrite the H1 to include the keyword phrase from the ad group it receives traffic from — e.g. \"Premium Wool Throw — the best-seller\".",
+      impact: "Quality Score Â· Ad Relevance Â· keyword-level CPC",
+    },
+  ],
+  categories: [
+    {
+      name: "Performance",
+      score: "58 / 100",
+      blurb: "Core Web Vitals from Google's PageSpeed Insights — real Lighthouse data, mobile and desktop in parallel.",
+      cwv: [
+        { label: "Mobile score",  value: "47/100", state: "weak" },
+        { label: "Desktop score", value: "72/100", state: "average" },
+        { label: "LCP",  value: "5.20s",  sub: "target < 2.5s",  state: "weak" },
+        { label: "CLS",  value: "0.041",  sub: "target < 0.1",   state: "strong" },
+        { label: "INP",  value: "180ms",  sub: "target < 200ms", state: "strong" },
+        { label: "TTFB", value: "320ms",  sub: "target < 200ms", state: "average" },
+      ],
+      findings: [
+        { severity: "high",   title: "Mobile LCP: 5.20s",
+          problem: "Largest Contentful Paint on mobile is 5.20s. Google's threshold for a \"good\" experience is 2.5s. Real-user data (CrUX) confirms the field result, not just a lab figure.",
+          fix: "Preload the hero image with fetchpriority=\"high\", convert to WebP at 1Ã device pixel ratio, and defer the chat widget until after onload.",
+          impact: "Quality Score Â· Landing Page Experience Â· mobile CPC" },
+        { severity: "medium", title: "Mobile performance score: 47/100",
+          problem: "Lighthouse mobile score sits at 47/100 — in Google's \"poor\" band. Desktop is healthier at 72/100, but the majority of paid clicks are mobile, so mobile is what drives Landing Page Experience for most ad groups.",
+          fix: "Resolve the LCP and TTFB findings below. Defer non-critical third-party scripts (chat widget, A/B test tooling) until after first interaction.",
+          impact: "Landing Page Experience Â· mobile bounce rate" },
+        { severity: "low",    title: "TTFB: 320ms",
+          problem: "Time to First Byte is 320ms — above the 200ms target. Server response is an early signal that compounds into LCP and INP downstream.",
+          fix: "Move to edge caching on the product templates. Check that the CDN is configured for HTML, not just static assets.",
+          impact: "LCP Â· INP Â· server cost" },
+        { severity: "pass",   title: "CLS: 0.041",
+          problem: "Cumulative Layout Shift sits at 0.041 — well under Google's 0.1 threshold. No visible jumpiness on load.",
+          fix: "No action needed.", impact: "—" },
+        { severity: "pass",   title: "INP: 180ms",
+          problem: "Interaction to Next Paint on mobile is 180ms — under Google's 200ms \"good\" threshold. No remedial work needed.",
+          fix: "No action needed.", impact: "—" },
+      ],
+    },
+    {
+      name: "Keyword Clarity",
+      score: "11 / 15",
+      blurb: "Whether a single primary keyword is identifiable from H1, title tag, URL and opening copy. If the tool can't tell, Google can't either.",
+      findings: [
+        { severity: "medium", title: "H1 doesn't echo the URL or title tag keyword",
+          problem: "URL is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". The H1 is the strongest single signal Google uses to confirm the page topic.",
+          fix: "Rewrite the H1 to include the keyword phrase that ad groups send traffic against, e.g. \"Premium Wool Throw — the best-seller\".",
+          impact: "Quality Score Â· Ad Relevance" },
+      ],
+    },
+    {
+      name: "Landing Page Experience",
+      score: "13 / 20",
+      blurb: "The signals Google uses to estimate Landing Page Experience inside Quality Score — message match, above-fold relevance, H1 quality.",
+      findings: [
+        { severity: "medium", title: "Above-the-fold copy doesn't restate the offer",
+          problem: "The first viewport contains a hero image and a lifestyle headline, but no restatement of what's being sold or the offer terms. Users arriving on a mid-funnel ad won't see message match without scrolling.",
+          fix: "Add a subhead under the H1 that names the product and the offer in plain language — one line, no marketing copy.",
+          impact: "Ad Relevance Â· bounce rate" },
+        { severity: "medium", title: "Title tag is 71 characters — risks truncation in SERPs",
+          problem: "Current title tag is 71 characters. Google typically truncates around 60. The keyword sits at character 1 (good) but the brand and offer at the end will be cut.",
+          fix: "Shorten to under 60 characters and keep the keyword in the first 40.",
+          impact: "CTR from ad extensions referencing the title" },
+      ],
+    },
+    {
+      name: "Conversion Architecture",
+      score: "10 / 20",
+      blurb: "CTA presence and specificity, form friction, and single-goal clarity. Channel-agnostic — applies equally to Meta.",
+      findings: [
+        { severity: "high",   title: "Four competing CTAs above the fold",
+          problem: "Hero contains \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture — none promoted over the others. Multiple primary actions split user attention and reduce conversion rate on every channel.",
+          fix: "Promote one CTA to primary based on the campaign objective. Demote the rest to outline or move them below the fold.",
+          impact: "Conversion rate Â· Landing Page Experience" },
+        { severity: "medium", title: "Form requests phone number as a required field",
+          problem: "The lead form requires phone number — typically a 20–30% drop-off versus making it optional. Most B2C buyers will not give a phone number to receive product information.",
+          fix: "Make phone optional or remove the field. If sales needs phone, capture it on the thank-you page instead.",
+          impact: "Lead volume Â· CPL" },
+      ],
+    },
+    {
+      name: "Trust Signals",
+      score: "7 / 10",
+      blurb: "Social proof, risk reducers, contact information, privacy policy — the signals that make a cold ad click convert.",
+      findings: [
+        { severity: "low",  title: "No risk reducer near the primary CTA",
+          problem: "Returns policy, delivery terms and any guarantee are buried in the footer. Pages that surface a one-line risk reducer adjacent to the CTA convert measurably better on cold paid traffic.",
+          fix: "Add a single line under the primary CTA: \"Free 30-day returns Â· Delivered in 2–3 days\".",
+          impact: "Conversion rate from cold paid traffic" },
+        { severity: "pass", title: "Reviews are present, visible, and from a verified provider",
+          problem: "Trustpilot widget rendering above the fold with a 4.6 average. Verified provider, not handpicked testimonials.",
+          fix: "No action needed.", impact: "—" },
+      ],
+    },
+    {
+      name: "Mobile",
+      score: "8 / 10",
+      blurb: "Mobile performance score, viewport configuration, tap-target sizing. Mobile is over 70% of paid clicks for most accounts.",
+      findings: [
+        { severity: "low",  title: "Two tap targets under 44px",
+          problem: "The footer social icons and the size-selector chevrons sit at 32px and 36px respectively. Google's mobile guidelines flag anything under 48x48 as a usability issue.",
+          fix: "Increase tap-target size to 44x44 minimum on both the footer icons and the size-selector controls.",
+          impact: "Mobile bounce rate Â· Landing Page Experience" },
+        { severity: "pass", title: "Viewport meta tag is correctly configured",
+          problem: "The viewport meta tag is present with width set to device-width and initial-scale 1. Page scales correctly on mobile devices.",
+          fix: "No action needed.", impact: "—" },
+      ],
+    },
+  ],
+  keyword: {
+    primary: "premium wool throw",
+    confidence: "Medium Â· 68%",
+    confidencePct: 68,
+    note: "H1 lifestyle copy and title-tag product copy disagree. Confidence sits in medium territory — that ambiguity is itself a Quality Score risk.",
+    ngrams: [
+      { phrase: "wool throw",        freq: 9, h1: false, tt: true,  url: false },
+      { phrase: "premium wool",      freq: 7, h1: false, tt: true,  url: false },
+      { phrase: "best seller",       freq: 6, h1: false, tt: true,  url: true  },
+      { phrase: "slow mornings",     freq: 5, h1: true,  tt: false, url: false },
+      { phrase: "merino wool throw", freq: 4, h1: false, tt: false, url: false },
+    ],
+  },
+  lpe: [
+    { signal: "H1 keyword match",                state: "weak",    note: "H1 doesn't echo URL or title-tag keyword" },
+    { signal: "Title tag clarity",               state: "strong",  note: "Keyword in first 40 characters" },
+    { signal: "Above-fold message match",        state: "average", note: "No restatement of offer in first viewport" },
+    { signal: "Mobile LCP under 2.5s",           state: "weak",    note: "5.20s — Landing Page Experience deduction" },
+    { signal: "Single primary CTA",              state: "weak",    note: "Four competing CTAs above the fold" },
+    { signal: "Returns / risk reducer near CTA", state: "average", note: "Present in footer, not adjacent to CTA" },
+    { signal: "Privacy policy linked",           state: "strong",  note: "Visible in footer" },
+  ],
+  tracking: [
+    { tag: "Google Tag Manager",             status: "ok"      },
+    { tag: "GA4",                            status: "ok"      },
+    { tag: "Google Ads Conversion Tracking", status: "missing" },
+  ],
+};
+
+const PDF_SEV = {
+  high:   { label: "HIGH",   fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
+  medium: { label: "MEDIUM", fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  low:    { label: "LOW",    fg: "#6B6B6B", bg: "#EFECE6", border: "#DCD7CC" },
+  pass:   { label: "PASS",   fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+};
+const PDF_STATE = {
+  weak:    { label: "BELOW AVG",  fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
+  average: { label: "AVERAGE",    fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  strong:  { label: "ABOVE AVG",  fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+};
+
+function PdfPill({ tokens, children }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      background: tokens.bg, color: tokens.fg,
+      border: `1px solid ${tokens.border}`,
+      padding: "2px 9px",
+      borderRadius: 20,
+      fontSize: 9, fontWeight: 700, letterSpacing: "0.10em",
+      textTransform: "uppercase",
+      lineHeight: 1.3, whiteSpace: "nowrap",
+    }}>{children}</span>
+  );
+}
+
+function PdfEyebrow({ children }) {
+  return (
+    <div style={{
+      fontSize: 9, fontWeight: 700, letterSpacing: "0.14em",
+      textTransform: "uppercase", color: "#985830",
+    }}>{children}</div>
+  );
+}
+
+function PdfSectionTitle({ eyebrow, title, sub }) {
+  return (
+    <div style={{ borderLeft: "3px solid #985830", paddingLeft: 16, marginBottom: 18 }}>
+      <PdfEyebrow>{eyebrow}</PdfEyebrow>
+      <h2 style={{
+        margin: "6px 0 0",
+        fontSize: 22, fontWeight: 700, color: "#1A1A1A",
+        letterSpacing: "-0.01em", lineHeight: 1.15,
+      }}>{title}</h2>
+      {sub && (
+        <p style={{
+          margin: "8px 0 0", fontSize: 11, lineHeight: 1.55,
+          color: "#6B6B6B", maxWidth: 600,
+        }}>{sub}</p>
+      )}
+    </div>
+  );
+}
+
+function PdfPFI({ problem, fix, impact }) {
+  const Row = ({ label, body, dim }) => (
+    <div style={{
+      display: "flex",
+      gap: 12,
+      padding: "6px 0",
+      borderTop: "1px solid #F0E5D2",
+    }}>
+      <div style={{
+        flex: "0 0 56px",
+        fontSize: 8, fontWeight: 700, letterSpacing: "0.14em",
+        textTransform: "uppercase", color: "#985830",
+        paddingTop: 2,
+      }}>{label}</div>
+      <div style={{
+        flex: 1,
+        fontSize: 10.5, lineHeight: 1.55,
+        color: dim ? "#6B6B6B" : "#1A1A1A",
+      }}>{body}</div>
+    </div>
+  );
+  return (
+    <div>
+      <Row label="Problem" body={problem}/>
+      <Row label="Fix" body={fix}/>
+      <Row label="Impact" body={impact} dim/>
+    </div>
+  );
+}
+
+function PdfFinding({ severity, title, problem, fix, impact, idx, total }) {
+  return (
+    <div style={{
+      padding: "12px 0",
+      borderTop: idx > 0 ? "1px solid #F0E5D2" : 0,
+      breakInside: "avoid",
+      pageBreakInside: "avoid",
+    }}>
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <div style={{ flex: "0 0 90px", paddingTop: 2 }}>
+          <PdfPill tokens={PDF_SEV[severity]}>{PDF_SEV[severity].label}</PdfPill>
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h4 style={{
+            margin: "0 0 8px", fontSize: 12, fontWeight: 700,
+            color: "#1A1A1A", lineHeight: 1.3, letterSpacing: "-0.005em",
+          }}>{title}</h4>
+          <PdfPFI problem={problem} fix={fix} impact={impact}/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PdfCategory({ cat }) {
+  const counts = cat.findings.reduce((a, f) => { a[f.severity] = (a[f.severity] || 0) + 1; return a; }, {});
+  return (
+    <section style={{
+      marginBottom: 20,
+      border: "1px solid #E8D8C4",
+      borderRadius: 4,
+      overflow: "hidden",
+      breakInside: "avoid",
+      pageBreakInside: "avoid",
+    }}>
+      <div style={{
+        background: "#FDF6EE",
+        padding: "12px 16px",
+        borderBottom: "1px solid #E8D8C4",
+        display: "flex", alignItems: "center", gap: 12,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h3 style={{
+            margin: "0 0 4px",
+            fontSize: 14, fontWeight: 700, letterSpacing: "-0.01em",
+            color: "#1A1A1A",
+          }}>{cat.name}</h3>
+          <div style={{ fontSize: 10, color: "#6B6B6B", lineHeight: 1.45 }}>
+            {cat.blurb}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+          {["high", "medium", "low", "pass"].map(k => counts[k] ? (
+            <PdfPill key={k} tokens={PDF_SEV[k]}>{counts[k]} {PDF_SEV[k].label}</PdfPill>
+          ) : null)}
+        </div>
+        <div style={{
+          fontSize: 14, fontWeight: 700, color: "#1A1A1A",
+          letterSpacing: "-0.01em", marginLeft: 8,
+          flexShrink: 0,
+        }}>{cat.score}</div>
+      </div>
+
+      <div style={{ padding: "4px 16px 12px" }}>
+        {cat.cwv && <PdfCwvStrip cwv={cat.cwv}/>}
+        {cat.findings.map((f, i) => (
+          <PdfFinding key={i} idx={i} total={cat.findings.length} {...f}/>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PdfCwvStrip({ cwv }) {
+  return (
+    <div style={{ padding: "10px 0 4px", borderBottom: "1px solid #F0E5D2", marginBottom: 4 }}>
+      <PdfEyebrow>PageSpeed Insights Â· raw data</PdfEyebrow>
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8,
+        marginTop: 8,
+      }}>
+        {cwv.map((m, i) => {
+          const s = PDF_STATE[m.state];
+          return (
+            <div key={i} style={{
+              background: "#FDF6EE",
+              border: "1px solid #E8D8C4",
+              borderRadius: 4,
+              padding: "8px 10px",
+            }}>
+              <div style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                fontSize: 8, fontWeight: 700, letterSpacing: "0.12em",
+                textTransform: "uppercase", color: "#6B6B6B",
+                marginBottom: 4,
+              }}>
+                <span>{m.label}</span>
+                <span style={{
+                  width: 6, height: 6, borderRadius: 999, background: s.fg, display: "inline-block",
+                }}/>
+              </div>
+              <div style={{
+                fontSize: 16, fontWeight: 700, color: "#1A1A1A",
+                letterSpacing: "-0.01em", lineHeight: 1,
+              }}>{m.value}</div>
+              {m.sub && (
+                <div style={{ fontSize: 8.5, color: "#6B6B6B", marginTop: 3 }}>{m.sub}</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function PdfLayout() {
+  const d = PDF_DATA;
+  return (
+    <div id="pdf-layout" style={{
+      display: "none",
+      width: 720,
+      background: "#fff",
+      color: "#1A1A1A",
+      fontFamily: "Arial, Helvetica, sans-serif",
+      fontSize: 11,
+      lineHeight: 1.5,
+      WebkitFontSmoothing: "antialiased",
+    }}>
+
+      {/* ========= PAGE 1: COVER ========= */}
+      <div style={{ padding: "8px 24px 24px" }}>
+        {/* Brand + meta */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          paddingBottom: 12, borderBottom: "1px solid #E8D8C4",
+        }}>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </div>
+          <div style={{
+            fontSize: 9, color: "#6B6B6B", letterSpacing: "0.10em",
+            textTransform: "uppercase", fontWeight: 600,
+          }}>
+            Landing Page Audit Â· {d.audited}
+          </div>
+        </div>
+
+        {/* Eyebrow + H1 */}
+        <div style={{ marginTop: 28, marginBottom: 22 }}>
+          <PdfEyebrow>Audit complete</PdfEyebrow>
+          <h1 style={{
+            margin: "10px 0 0",
+            fontSize: 32, fontWeight: 700,
+            letterSpacing: "-0.02em", lineHeight: 1.05,
+            color: "#1A1A1A",
+          }}>Landing Page Audit Report</h1>
+        </div>
+
+        {/* URL card */}
+        <div style={{
+          border: "1px solid #E8D8C4", borderRadius: 4,
+          padding: "14px 16px", marginBottom: 16,
+          display: "flex", alignItems: "center", gap: 14,
+        }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: 999,
+            background: "#F5EBD9", flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#985830" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontSize: 8, fontWeight: 700, letterSpacing: "0.14em",
+              textTransform: "uppercase", color: "#6B6B6B", marginBottom: 2,
+            }}>Page audited</div>
+            <div style={{
+              fontSize: 12, fontWeight: 700, color: "#1A1A1A",
+              letterSpacing: "-0.005em",
+            }}>{d.url}</div>
+          </div>
+          <PdfPill tokens={{ fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" }}>Page type Â· {d.pageType}</PdfPill>
+        </div>
+
+        {/* Score card (dark) */}
+        <div style={{
+          background: "#1A1A1A", color: "#fff",
+          borderRadius: 4, padding: "24px 24px 20px",
+          marginBottom: 16,
+        }}>
+          <div style={{
+            fontSize: 9, fontWeight: 700, letterSpacing: "0.14em",
+            textTransform: "uppercase", color: "#B87040",
+          }}>Health score</div>
+
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 14, marginBottom: 6 }}>
+            <span style={{
+              fontSize: 80, fontWeight: 700, color: "#fff",
+              letterSpacing: "-0.04em", lineHeight: 0.9,
+            }}>{d.score}</span>
+            <span style={{
+              fontSize: 18, fontWeight: 500, color: "rgba(255,255,255,0.5)",
+              letterSpacing: "-0.02em",
+            }}>/ 100</span>
+          </div>
+          <div style={{
+            fontSize: 16, fontWeight: 700, color: "#985830",
+            letterSpacing: "-0.015em", marginBottom: 18,
+          }}>{d.band}</div>
+
+          {/* Score scale */}
+          <div style={{ position: "relative", marginTop: 12 }}>
+            <div style={{ display: "flex", height: 4, borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ flex: 1, background: "#B83A1F" }}/>
+              <div style={{ flex: 1, background: "#985830" }}/>
+              <div style={{ flex: 1, background: "#B87040" }}/>
+              <div style={{ flex: 1, background: "#4F7A4A" }}/>
+            </div>
+            <div style={{
+              position: "absolute", top: -3, bottom: -3,
+              left: `${d.score}%`, width: 3, marginLeft: -1.5,
+              background: "#fff",
+            }}/>
+            <div style={{
+              display: "flex", justifyContent: "space-between",
+              fontSize: 8, color: "rgba(255,255,255,0.5)",
+              marginTop: 8, letterSpacing: "-0.005em",
+            }}>
+              <span>0 Â· Poor</span>
+              <span>50 Â· Average</span>
+              <span>100 Â· Excellent</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Score breakdown */}
+        <div style={{
+          border: "1px solid #E8D8C4", borderRadius: 4,
+          padding: "14px 18px",
+        }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            marginBottom: 6,
+          }}>
+            <PdfEyebrow>Score breakdown</PdfEyebrow>
+            <span style={{ fontSize: 9, color: "#6B6B6B" }}>10 findings Â· 2 high Â· 5 medium Â· 3 low</span>
+          </div>
+          {d.breakdown.map((r, i) => (
+            <div key={i} style={{
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "8px 0",
+              borderTop: i === 0 ? 0 : "1px solid #F0E5D2",
+            }}>
+              <div style={{ flex: "0 0 180px", fontSize: 11, fontWeight: 700, color: "#1A1A1A" }}>{r.cat}</div>
+              <div style={{ flex: 1, height: 4, background: "#F5EBD9", borderRadius: 2, position: "relative", overflow: "hidden" }}>
+                <div style={{
+                  width: `${r.score / r.total * 100}%`, height: "100%",
+                  background: r.severity === "high" ? "#B83A1F" : r.severity === "medium" ? "#985830" : "#4F7A4A",
+                }}/>
+              </div>
+              <div style={{ flex: "0 0 50px", fontSize: 11, fontWeight: 700, color: "#1A1A1A", textAlign: "right" }}>
+                {r.score}/{r.total}
+              </div>
+              <div style={{ flex: "0 0 70px", textAlign: "right" }}>
+                <PdfPill tokens={PDF_SEV[r.severity]}>{PDF_SEV[r.severity].label}</PdfPill>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer line */}
+        <div style={{
+          marginTop: 24, paddingTop: 12, borderTop: "1px solid #E8D8C4",
+          display: "flex", justifyContent: "space-between",
+          fontSize: 9, color: "#6B6B6B", letterSpacing: "-0.005em",
+        }}>
+          <span>{d.audited}</span>
+          <span>Free audit by <span style={{ color: "#985830", fontWeight: 700 }}>phillips-uk.com</span></span>
+        </div>
+      </div>
+
+      {/* ========= PAGE 2: PRIORITY ACTIONS ========= */}
+      <div className="pdf-page-break" style={{ padding: "24px 24px", breakBefore: "page", pageBreakBefore: "always" }}>
+        <PdfSectionTitle
+          eyebrow="Priority actions"
+          title="Top three fixes, ranked by severity."
+          sub="Start here. These three findings carry the most weight against the score — fix them and the rest gets easier."
+        />
+        {d.priority.map((p, i) => (
+          <div key={i} style={{
+            border: "1px solid #E8D8C4", borderRadius: 4,
+            padding: "14px 18px", marginBottom: 12,
+            breakInside: "avoid", pageBreakInside: "avoid",
+            display: "flex", gap: 16,
+          }}>
+            <div style={{
+              flex: "0 0 36px",
+              fontSize: 24, fontWeight: 700, color: "#985830",
+              letterSpacing: "-0.02em", lineHeight: 1,
+            }}>{String(i + 1).padStart(2, "0")}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ marginBottom: 8 }}>
+                <PdfPill tokens={PDF_SEV[p.severity]}>{PDF_SEV[p.severity].label}</PdfPill>
+              </div>
+              <h3 style={{
+                margin: "0 0 10px",
+                fontSize: 14, fontWeight: 700, color: "#1A1A1A",
+                letterSpacing: "-0.01em", lineHeight: 1.3,
+              }}>{p.title}</h3>
+              <PdfPFI problem={p.problem} fix={p.fix} impact={p.impact}/>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ========= PAGE 3+: FINDINGS BY CATEGORY ========= */}
+      <div className="pdf-page-break" style={{ padding: "24px 24px", breakBefore: "page", pageBreakBefore: "always" }}>
+        <PdfSectionTitle
+          eyebrow="Findings by category"
+          title="Every issue in Problem → Fix → Impact."
+          sub="Six categories, scored independently. Each finding names the paid media metric it moves."
+        />
+        {d.categories.map((c, i) => <PdfCategory key={i} cat={c}/>)}
+      </div>
+
+      {/* ========= FINAL PAGE: KEYWORD + LPE + TRACKING ========= */}
+      <div className="pdf-page-break" style={{ padding: "24px 24px", breakBefore: "page", pageBreakBefore: "always" }}>
+
+        {/* Keyword inference */}
+        <PdfSectionTitle
+          eyebrow="Keyword inference"
+          title="What this page is telling Google."
+          sub="Frequency-weighted n-grams plus an AI inference from headline, title, meta and opening paragraphs."
+        />
+        <div style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24,
+          breakInside: "avoid", pageBreakInside: "avoid",
+        }}>
+          <div style={{
+            border: "1px solid #E8D8C4", borderRadius: 4,
+            padding: "14px 16px",
+          }}>
+            <PdfEyebrow>AI inference</PdfEyebrow>
+            <div style={{
+              fontSize: 8, fontWeight: 700, letterSpacing: "0.14em",
+              textTransform: "uppercase", color: "#6B6B6B",
+              marginTop: 14, marginBottom: 6,
+            }}>Primary keyword</div>
+            <div style={{
+              fontSize: 20, fontWeight: 700, color: "#1A1A1A",
+              letterSpacing: "-0.01em", marginBottom: 14, lineHeight: 1.15,
+            }}>{d.keyword.primary}</div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#6B6B6B", marginBottom: 4 }}>
+              <span>Confidence</span>
+              <span style={{ fontWeight: 700, color: "#1A1A1A" }}>{d.keyword.confidence}</span>
+            </div>
+            <div style={{ height: 5, background: "#F5EBD9", borderRadius: 3, overflow: "hidden", marginBottom: 12 }}>
+              <div style={{ width: `${d.keyword.confidencePct}%`, height: "100%", background: "#985830" }}/>
+            </div>
+
+            <div style={{
+              fontSize: 10, lineHeight: 1.5, color: "#1A1A1A",
+              background: "#FDF6EE", padding: "10px 12px",
+              borderLeft: "3px solid #985830", borderRadius: 2,
+            }}>{d.keyword.note}</div>
+          </div>
+
+          <div style={{
+            border: "1px solid #E8D8C4", borderRadius: 4,
+            padding: "12px 14px",
+          }}>
+            <PdfEyebrow>Top n-grams</PdfEyebrow>
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr 40px 76px",
+              gap: 8, alignItems: "center",
+              marginTop: 8, paddingBottom: 6,
+              borderBottom: "1px solid #E8D8C4",
+              fontSize: 7.5, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "#6B6B6B",
+            }}>
+              <span>Phrase</span>
+              <span style={{ textAlign: "right" }}>Count</span>
+              <span style={{ textAlign: "right" }}>Signals</span>
+            </div>
+            {d.keyword.ngrams.map((r, i) => {
+              const Chip = ({ on, label }) => (
+                <span style={{
+                  display: "inline-block",
+                  width: 20, padding: "2px 0",
+                  textAlign: "center",
+                  fontSize: 7, fontWeight: 700,
+                  borderRadius: 2,
+                  background: on ? "#985830" : "#F5EBD9",
+                  color: on ? "#fff" : "#985830",
+                  border: `1px solid ${on ? "#985830" : "#E8D8C4"}`,
+                  marginLeft: 2,
+                }}>{label}</span>
+              );
+              return (
+                <div key={i} style={{
+                  display: "grid", gridTemplateColumns: "1fr 40px 76px",
+                  gap: 8, alignItems: "center",
+                  padding: "6px 0",
+                  borderTop: i === 0 ? 0 : "1px solid #F0E5D2",
+                  fontSize: 10,
+                }}>
+                  <span style={{ color: "#1A1A1A", fontWeight: 500 }}>{r.phrase}</span>
+                  <span style={{ textAlign: "right", color: "#6B6B6B" }}>{r.freq}</span>
+                  <span style={{ textAlign: "right" }}>
+                    <Chip on={r.h1}  label="H1"/>
+                    <Chip on={r.tt}  label="TT"/>
+                    <Chip on={r.url} label="URL"/>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* LPE table */}
+        <PdfSectionTitle
+          eyebrow="Landing Page Experience"
+          title="Estimated rating against the signals Google uses."
+        />
+        <div style={{
+          border: "1px solid #E8D8C4", borderRadius: 4, overflow: "hidden", marginBottom: 24,
+          breakInside: "avoid", pageBreakInside: "avoid",
+        }}>
+          <div style={{
+            background: "#FDF6EE", padding: "10px 16px",
+            borderBottom: "1px solid #E8D8C4",
+            display: "grid", gridTemplateColumns: "1.4fr 110px 1fr", gap: 12,
+            fontSize: 8, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#6B6B6B",
+          }}>
+            <span>Signal</span>
+            <span>Assessment</span>
+            <span>Note</span>
+          </div>
+          {d.lpe.map((r, i) => (
+            <div key={i} style={{
+              display: "grid", gridTemplateColumns: "1.4fr 110px 1fr",
+              gap: 12, padding: "10px 16px",
+              borderTop: i === 0 ? 0 : "1px solid #F0E5D2",
+              alignItems: "center",
+            }}>
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: "#1A1A1A" }}>{r.signal}</span>
+              <span><PdfPill tokens={PDF_STATE[r.state]}>{PDF_STATE[r.state].label}</PdfPill></span>
+              <span style={{ fontSize: 10, color: "#6B6B6B", lineHeight: 1.45 }}>{r.note}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Tracking */}
+        <PdfSectionTitle
+          eyebrow="Tracking status"
+          title="What's firing on this page."
+          sub="Detected from page source and rendered page data. Tags loaded dynamically via a tag manager container may not appear even if they are firing correctly."
+        />
+        <div style={{
+          border: "1px solid #E8D8C4", borderRadius: 4, overflow: "hidden",
+          breakInside: "avoid", pageBreakInside: "avoid",
+        }}>
+          <div style={{
+            background: "#FDF6EE", padding: "10px 16px",
+            borderBottom: "1px solid #E8D8C4",
+            display: "grid", gridTemplateColumns: "1fr 180px",
+            fontSize: 8, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#6B6B6B",
+          }}>
+            <span>Tag</span>
+            <span>Status</span>
+          </div>
+          {d.tracking.map((r, i) => {
+            const ok = r.status === "ok";
+            const tokens = ok
+              ? { fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8", label: "FIRING" }
+              : { fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5", label: "NOT DETECTED" };
+            return (
+              <div key={i} style={{
+                display: "grid", gridTemplateColumns: "1fr 180px",
+                padding: "12px 16px",
+                borderTop: i === 0 ? 0 : "1px solid #F0E5D2",
+                alignItems: "center",
+              }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#1A1A1A" }}>{r.tag}</span>
+                <span><PdfPill tokens={tokens}>{ok ? "✓ " : "â "}{tokens.label}</PdfPill></span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* End footer line */}
+        <div style={{
+          marginTop: 32, paddingTop: 12, borderTop: "1px solid #E8D8C4",
+          display: "flex", justifyContent: "space-between",
+          fontSize: 9, color: "#6B6B6B", letterSpacing: "-0.005em",
+        }}>
+          <span>End of report Â· {d.audited}</span>
+          <span>phillips-uk.com</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* =============== APP =============== */
 function App() {
   return (
@@ -1282,6 +2083,7 @@ function App() {
       <LpeAndTracking/>
       <EndCta/>
       <Footer/>
+      <PdfLayout/>
     </div>
   );
 }

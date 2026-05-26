@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<!-- End Google Tag Manager -->
+
+
+<meta charset="utf-8">
+<title>Google Ads Audit Report | Phillips.</title>
+<meta name="description" content="Your Google Ads audit report. Health score, priority actions, and findings across nine categories in Problem → Fix → Impact format.">
+<link rel="icon" href="/favicon.svg?v=2">
+<style>
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ink: #1A1A1A;
+  --white: #FFFFFF;
+  --cream: #FDF6EE;
+}
+</style>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+  .sec-white { background: #fff; padding: 64px 0; }
+  .sec-cream { background: #FDF6EE; padding: 64px 0; }
+  ::selection { background: #985830; color: #fff; }
+  *, *::before, *::after { box-sizing: border-box; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="ph">
+<div id="root"></div>
+
+<script type="text/babel">
+
+/* =============== SEVERITY TOKENS =============== */
+/* Warm-tuned palette. Critical = deepest red; ramps through amber to a muted green pass. */
+const SEV = {
+  critical: { label: "Critical", fg: "#8C1A0A", bg: "#F3D9D2", border: "#E0B0A2", solid: true  },
+  high:     { label: "High",     fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5", solid: false },
+  medium:   { label: "Medium",   fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4", solid: false },
+  low:      { label: "Low",      fg: "#6B6B6B", bg: "#EFECE6", border: "#DCD7CC", solid: false },
+  pass:     { label: "Pass",     fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8", solid: false },
+};
+
+/* Band tokens for category scores: Poor / Average / Good / Excellent */
+const BAND = {
+  poor:      { label: "Poor",      fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
+  average:   { label: "Average",   fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  good:      { label: "Good",      fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+  excellent: { label: "Excellent", fg: "#2E5A2A", bg: "#D9E6D6", border: "#B7CCB1" },
+};
+const bandFor = (s) => s >= 85 ? "excellent" : s >= 70 ? "good" : s >= 50 ? "average" : "poor";
+
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, onClick, large }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+        padding: large ? "16px 32px" : "14px 30px",
+        fontSize: large ? 15 : 14, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+        letterSpacing: "-0.005em",
+      }}>{children}</button>
+  );
+}
+function BtnFilledSmall({ children, onClick }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+        padding: "10px 20px", fontSize: 13, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      }}>{children}</button>
+  );
+}
+function BtnOutline({ children, onClick, icon }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#985830" : "transparent",
+        color: h ? "#fff" : "#1A1A1A",
+        border: "1.5px solid #985830",
+        padding: "10px 18px",
+        fontSize: 13, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
+        display: "inline-flex", alignItems: "center", gap: 8,
+      }}>
+      {icon}
+      <span>{children}</span>
+    </button>
+  );
+}
+
+/* =============== NAV =============== */
+function Nav({ active }) {
+  const linkStyle = (k) => ({
+    fontSize: 14, fontWeight: 500,
+    color: active === k ? "#1A1A1A" : "#6B6B6B",
+    textDecoration: "none",
+    transition: "color 150ms cubic-bezier(0.2,0,0,1)",
+  });
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64,
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px",
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
+          <a href="/guides" style={linkStyle("guides")}>Guides</a>
+          <BtnFilledSmall>Get in touch</BtnFilledSmall>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* =============== SHARED PRIMITIVES =============== */
+function SeverityBadge({ kind, size = "md" }) {
+  const s = SEV[kind];
+  const pad = size === "sm" ? "3px 9px" : "4px 11px";
+  const fs = size === "sm" ? 10 : 11;
+  if (s.solid) {
+    return (
+      <span style={{
+        display: "inline-flex", alignItems: "center", gap: 6,
+        background: s.fg, color: "#fff",
+        border: `1px solid ${s.fg}`,
+        padding: pad, borderRadius: 20,
+        fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
+        textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
+      }}>
+        <span style={{
+          width: 6, height: 6, borderRadius: 999,
+          background: "#fff", display: "inline-block",
+        }}/>
+        {s.label}
+      </span>
+    );
+  }
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: s.bg, color: s.fg,
+      border: `1px solid ${s.border}`,
+      padding: pad, borderRadius: 20,
+      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
+      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
+    }}>
+      <span style={{
+        width: 6, height: 6, borderRadius: 999,
+        background: s.fg, display: "inline-block",
+      }}/>
+      {s.label}
+    </span>
+  );
+}
+
+function BandBadge({ score, size = "md" }) {
+  const b = BAND[bandFor(score)];
+  const pad = size === "sm" ? "3px 9px" : "4px 11px";
+  const fs = size === "sm" ? 10 : 11;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: b.bg, color: b.fg,
+      border: `1px solid ${b.border}`,
+      padding: pad, borderRadius: 20,
+      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
+      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: 999, background: b.fg }}/>
+      {b.label}
+    </span>
+  );
+}
+
+function Eyebrow({ children, color = "#985830" }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+      textTransform: "uppercase", color,
+    }}>{children}</span>
+  );
+}
+
+function SectionHeader({ eyebrow, title, emphasis, sub }) {
+  return (
+    <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 32 }}>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 style={{
+        fontSize: "clamp(28px, 3.2vw, 36px)", fontWeight: 700,
+        letterSpacing: "-0.02em", lineHeight: 1.1,
+        color: "#1A1A1A", margin: "10px 0 0", maxWidth: 800,
+      }}>
+        {title}
+        {emphasis && <> <em style={{ fontStyle: "italic", color: "#985830" }}>{emphasis}</em></>}
+      </h2>
+      {sub && (
+        <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6B6B6B", margin: "12px 0 0", maxWidth: 720 }}>
+          {sub}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ProblemFixImpact({ detail, fix, impact, dense }) {
+  const Row = ({ label, body }) => (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: dense ? "78px 1fr" : "86px 1fr",
+      gap: 16,
+      padding: dense ? "10px 0" : "12px 0",
+      borderTop: "1px solid #F0E5D2",
+    }}>
+      <div style={{
+        fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
+        textTransform: "uppercase", color: "#985830",
+        paddingTop: 3,
+      }}>{label}</div>
+      <div style={{ fontSize: dense ? 13 : 14, lineHeight: 1.6, color: "#1A1A1A" }}>{body}</div>
+    </div>
+  );
+  return (
+    <div>
+      <Row label="Problem" body={detail}/>
+      <Row label="Fix" body={fix}/>
+      <Row label="Impact" body={<span style={{ color: "#6B6B6B" }}>{impact}</span>}/>
+    </div>
+  );
+}
+
+/* =============== ACCOUNT / SCORE DATA =============== */
+const ACCOUNT = {
+  name: "Acme Outdoors Ltd",
+  cid: "287-441-9032",
+  audited: "26 May 2026 Â· 14:32",
+  window: "Last 30 days Â· 26 Apr – 25 May 2026",
+  stats: [
+    { label: "Spend",       value: "Â£48,320", delta: "+12% vs prev. 30d", trend: "up"   },
+    { label: "Impressions", value: "1.42M",   delta: "+8%  vs prev. 30d", trend: "up"   },
+    { label: "Clicks",      value: "31,640",  delta: "+4%  vs prev. 30d", trend: "up"   },
+    { label: "Conversions", value: "612",     delta: "â6%  vs prev. 30d", trend: "down" },
+  ],
+};
+
+const CATEGORIES = [
+  {
+    key: "structure",  n: 1,
+    name: "Account Structure",
+    blurb: "Hierarchy, keyword duplication, ad-group breadth — the invisible problem that makes every other one harder to fix.",
+    score: 62, of: 100,
+    findings: [
+      {
+        severity: "medium",
+        title: "12 keywords duplicated across 4 campaigns",
+        detail: "Twelve exact-match keywords appear in more than one campaign, splitting Quality Score history and forcing the auction to pick a winner internally. Brand and generic campaigns are both bidding on \"acme outdoors\".",
+        fix: "Add the duplicates as negatives in the lower-priority campaign. Keep brand terms only in the brand campaign.",
+        impact: "Quality Score consolidation Â· CPC",
+      },
+      {
+        severity: "low",
+        title: "Three ad groups contain more than 20 keywords",
+        detail: "Three ad groups exceed 20 keywords. Above this threshold, RSAs lose relevance to individual queries and Quality Score drifts down.",
+        fix: "Split the three groups by intent — informational, comparison, transactional — so RSA copy can speak to one cluster of queries.",
+        impact: "Quality Score Â· Ad Relevance",
+      },
+      {
+        severity: "pass",
+        title: "Campaign hierarchy maps cleanly to product lines",
+        detail: "Campaign naming and structure match the four product lines in the catalogue. Easy to read, easy to optimise.",
+        fix: "No action needed.",
+        impact: "—",
+      },
+    ],
+  },
+  {
+    key: "tracking",  n: 2,
+    name: "Conversion Tracking",
+    blurb: "Tags, attribution, Enhanced Conversions. Get this wrong and every campaign is heading in the wrong direction.",
+    score: 35, of: 100,
+    findings: [
+      {
+        severity: "critical",
+        title: "GA4 import set as primary conversion action",
+        detail: "The GA4 \"purchase\" event is imported as a primary conversion action alongside the native Google Ads purchase tag. Smart Bidding is counting some purchases twice and others not at all, depending on cookie state.",
+        fix: "Set the GA4 import to Secondary. Keep the native Google Ads tag as the only Primary purchase action.",
+        impact: "Smart Bidding signal integrity Â· CPA accuracy",
+      },
+      {
+        severity: "high",
+        title: "Enhanced Conversions not configured",
+        detail: "Enhanced Conversions is not detected on the purchase tag. Without it, attribution drops 15–25% on iOS and gaps appear in cross-device journeys.",
+        fix: "Configure Enhanced Conversions for Web via GTM. Hash email at the source and pass through the user_data field.",
+        impact: "Attribution coverage Â· iOS conversion recovery",
+      },
+      {
+        severity: "medium",
+        title: "Consent Mode v2 defaulting to denied",
+        detail: "Consent Mode v2 is implemented but `ad_user_data` and `ad_personalization` default to denied. Without modelled conversions, post-consent measurement underreports.",
+        fix: "Move to advanced Consent Mode with modelled conversions enabled. Verify in the Consent Mode diagnostic report.",
+        impact: "Modelled conversion coverage",
+      },
+    ],
+  },
+  {
+    key: "bidding-budget",  n: 3,
+    name: "Bidding & Budget",
+    blurb: "Strategy fit, learning-phase health, budget caps and allocation. Smart Bidding needs volume and a stable signal; budget needs to follow CPA, not history.",
+    score: 48, of: 100,
+    findings: [
+      {
+        severity: "high",
+        title: "tCPA set on a campaign with 8 conversions in 30 days",
+        detail: "The \"Outerwear Â· Search\" campaign is on tCPA but generated only 8 conversions in the last 30 days. Smart Bidding needs roughly 30 conversions per 30 days before tCPA is reliable.",
+        fix: "Switch to Maximise Conversions until volume builds, or consolidate this campaign with a higher-volume one of the same intent.",
+        impact: "CPA volatility Â· wasted spend in learning phase",
+      },
+      {
+        severity: "high",
+        title: "37% of spend in the bottom quartile of campaigns by CPA",
+        detail: "Over a third of spend lands in campaigns whose CPA sits in the bottom 25% of the account. Two of those campaigns have run at the same budget for over a year.",
+        fix: "Reduce budgets on the two flagged campaigns by 30%. Re-allocate to the top-quartile campaigns capped by impression-share.",
+        impact: "Blended CPA Â· conversion volume",
+      },
+      {
+        severity: "medium",
+        title: "Two campaigns in active learning for 14+ days",
+        detail: "Two campaigns have been in learning for more than two weeks — typically caused by repeated daily changes to bids, budget or assets.",
+        fix: "Freeze edits on both campaigns for seven days. If they stay in learning after that, the issue is conversion volume, not change frequency.",
+        impact: "Smart Bidding stability Â· CPA",
+      },
+      {
+        severity: "medium",
+        title: "Daily budget capping on the top-performing campaign",
+        detail: "The \"Tents Â· Shopping\" campaign is hitting its daily budget cap on 22 of the last 30 days and losing 18% impression share to budget.",
+        fix: "Raise the budget by 25% and monitor CPA over 14 days. If CPA holds, raise again.",
+        impact: "Conversions left on the table",
+      },
+      {
+        severity: "low",
+        title: "No ad scheduling on a campaign with clear dayparting",
+        detail: "The \"Lead Gen Â· Search\" campaign converts at 1.4Ã account-average between 09:00–17:00 weekdays, but runs at flat 24/7 bids.",
+        fix: "Apply an ad schedule with a +20% modifier on weekday business hours. Review after 30 days.",
+        impact: "CPA Â· spend efficiency",
+      },
+    ],
+  },
+  {
+    key: "keyword-qs",  n: 4,
+    name: "Keyword & Quality Score",
+    blurb: "Search-term waste, match-type hygiene, Quality Score distribution and the Expected CTR / Ad Relevance / LPE signals that drive it.",
+    score: 52, of: 100,
+    findings: [
+      {
+        severity: "high",
+        title: "Â£4,820 spent on zero-conversion search terms",
+        detail: "In the last 30 days, Â£4,820 spent across 64 search terms returned zero conversions. The top offenders share clear patterns — \"free\", \"DIY\", \"how to\".",
+        fix: "Add the seven identified intent modifiers as campaign-level negatives. Re-run the audit in 14 days.",
+        impact: "Confirmed waste Â· 10% of spend",
+      },
+      {
+        severity: "medium",
+        title: "Broad Match expanding spend without conversion lift",
+        detail: "Broad Match keywords account for 42% of clicks but only 28% of conversions. The Broad expansion is matching to commercially adjacent queries that don't convert.",
+        fix: "Convert the bottom-quartile Broad keywords to Phrase. Keep Broad where conversion rate is at or above account average.",
+        impact: "Conversion rate Â· CPA",
+      },
+      {
+        severity: "medium",
+        title: "Below-average Landing Page Experience on 22% of keywords",
+        detail: "22% of active keywords show below-average Landing Page Experience. Concentrated in keywords routing to the homepage rather than a category or product page.",
+        fix: "Re-route the affected keywords to a matching category page. Run the Landing Page Audit on the top three destinations.",
+        impact: "CPC Â· Quality Score",
+      },
+      {
+        severity: "medium",
+        title: "Below-average Ad Relevance on the brand-defence campaign",
+        detail: "The brand-defence campaign shows below-average Ad Relevance across all five ad groups. RSAs are generic; none mention the brand explicitly in headlines.",
+        fix: "Rewrite headlines to include the brand name in at least three of ten headline variations.",
+        impact: "Ad Relevance Â· brand CPC",
+      },
+      {
+        severity: "low",
+        title: "11% of keywords have a Quality Score below 5",
+        detail: "11% of active keywords sit at QS 4 or lower — concentrated in three ad groups where ad copy and keyword intent diverge.",
+        fix: "Rewrite RSAs in the three flagged ad groups to echo the keyword themes, or pause the worst-performing keywords entirely.",
+        impact: "CPC Â· Ad Relevance",
+      },
+      {
+        severity: "pass",
+        title: "Expected CTR is at or above average across the account",
+        detail: "Expected CTR is rated average or above for 91% of impressions. No remedial action needed beyond keeping creative fresh.",
+        fix: "Refresh creative quarterly to keep CTR signals current.",
+        impact: "—",
+      },
+    ],
+  },
+  {
+    key: "audiences",  n: 5,
+    name: "Audiences",
+    blurb: "Remarketing lists, Customer Match coverage, observation-mode audiences. Free signals most accounts leave on the table.",
+    score: 42, of: 100,
+    findings: [
+      {
+        severity: "high",
+        title: "No Customer Match lists uploaded",
+        detail: "The account has zero Customer Match lists active. Customer email and phone lists feed Smart Bidding directly — without them, the algorithm is guessing about repeat buyers and known prospects.",
+        fix: "Export the customer file from Shopify, hash and upload via Customer Match. Apply as observation on all Search campaigns.",
+        impact: "Smart Bidding signal Â· attribution accuracy",
+      },
+      {
+        severity: "medium",
+        title: "GA4 remarketing audiences not linked to Google Ads",
+        detail: "Eleven GA4 audiences are defined but only three are imported into Google Ads. The remaining eight (including \"Cart abandoners 7d\" and \"Pricing page viewers\") are unused.",
+        fix: "Import all eligible GA4 audiences into Google Ads and attach as observation to Search and Shopping campaigns.",
+        impact: "Smart Bidding signal Â· audience reporting",
+      },
+    ],
+  },
+  {
+    key: "sb-pmax",  n: 6,
+    name: "Smart Bidding & Performance Max",
+    blurb: "Whether Smart Bidding has the signal it needs, and whether PMax is being tested alongside the existing structure rather than ignored.",
+    score: 38, of: 100,
+    findings: [
+      {
+        severity: "high",
+        title: "No PMax campaigns tested against current campaign structure — missing incremental reach",
+        detail: "Performance Max isn't running in the account. PMax fills inventory the existing Search and Shopping campaigns can't reach — YouTube, Discover, Gmail, Maps. Without it the account is leaving incremental conversions to competitors who do test it.",
+        fix: "Launch one PMax campaign for the top-margin product line with a clear conversion-value floor and audience signals. Hold the existing campaigns flat for 30 days and compare incremental conversions.",
+        impact: "Incremental reach Â· conversion volume",
+      },
+      {
+        severity: "medium",
+        title: "tCPA targets set with fewer than 30 conversions/month — insufficient data for Smart Bidding to optimise",
+        detail: "Four campaigns are running tCPA with sub-30-conversions-per-month volume. Below this threshold, Smart Bidding can't separate signal from noise and CPA drifts wide of target.",
+        fix: "Consolidate low-volume campaigns into shared-budget portfolios where intent allows, or switch the offenders to Maximise Conversions until they clear 30/month.",
+        impact: "Smart Bidding stability Â· CPA accuracy",
+      },
+    ],
+  },
+  {
+    key: "feed",  n: 7,
+    name: "Product Feed",
+    blurb: "Shopping feed health — attribute completeness, title structure, supplemental feed coverage. The feed is the creative.",
+    score: 44, of: 100,
+    findings: [
+      {
+        severity: "high",
+        title: "No supplemental feed — GTIN/MPN attributes absent on 34% of products, reducing Shopping eligibility",
+        detail: "A third of the product catalogue is missing GTIN or MPN attributes. Without them, Google can't validate the listing against the broader product graph, suppressing impression eligibility on high-intent Shopping queries.",
+        fix: "Set up a supplemental feed in Merchant Center to backfill GTIN and MPN values for the affected SKUs. Re-fetch and verify within 48 hours.",
+        impact: "Shopping impression share Â· conversion volume",
+      },
+      {
+        severity: "medium",
+        title: "Product titles don't front-load primary keyword — Ad Relevance and QS suppressed",
+        detail: "Sampled product titles lead with brand and lifestyle descriptors rather than the category keyword. Google matches Shopping titles left-to-right; the buying keyword sitting at character 40+ reduces matching strength.",
+        fix: "Restructure titles to lead with the category keyword: [Category] [Variant] [Brand] [Size]. Test on the top-20 SKUs by impression first.",
+        impact: "Shopping Ad Relevance Â· Quality Score",
+      },
+    ],
+  },
+  {
+    key: "creative",  n: 8,
+    name: "Ad Creative & Assets",
+    blurb: "RSA strength, sitelinks, callouts, asset coverage. Google's system tests what you give it — give it more.",
+    score: 62, of: 100,
+    findings: [
+      {
+        severity: "medium",
+        title: "Four ad groups have ad strength \"Average\" or below",
+        detail: "Four ad groups are running RSAs at \"Average\" or \"Poor\" ad strength. Most are missing pinned headlines and have fewer than 8 active headline variations.",
+        fix: "Bring all RSAs to 10–15 unique headlines and 3–4 descriptions. Pin one keyword-matched headline to position 1.",
+        impact: "Ad Strength Â· Ad Relevance",
+      },
+      {
+        severity: "low",
+        title: "Sitelinks present on only 60% of campaigns",
+        detail: "Sitelinks are configured at the account level but only enabled on 60% of campaigns. Sitelinks improve CTR and surface secondary intents.",
+        fix: "Push the account-level sitelinks to all eligible Search campaigns. Add campaign-specific sitelinks where the offer differs.",
+        impact: "CTR Â· ad real estate",
+      },
+      {
+        severity: "pass",
+        title: "Callout and structured snippet coverage is strong",
+        detail: "Callouts and structured snippets are configured at account, campaign, and ad-group level on the top-spending campaigns.",
+        fix: "No action needed.",
+        impact: "—",
+      },
+    ],
+  },
+  {
+    key: "landing",  n: 9,
+    name: "Landing Pages",
+    blurb: "Where the click lands. Speed, message match, and post-click experience — the signals Google folds into Quality Score from outside the account.",
+    score: 40, of: 100,
+    findings: [
+      {
+        severity: "high",
+        title: "Primary landing page LCP 5.2s — above 2.5s threshold, directly suppressing Quality Score and raising CPC",
+        detail: "The top-spending campaigns route to a landing page with Largest Contentful Paint of 5.2s on mobile. Google treats anything above 2.5s as a Landing Page Experience deduction, which feeds directly into Quality Score and CPC.",
+        fix: "Run the Landing Page Audit on the destination URL. Preload the hero image, defer non-critical third-party scripts, and re-test in 14 days.",
+        impact: "Quality Score Â· CPC Â· conversion rate",
+      },
+      {
+        severity: "medium",
+        title: "No dedicated post-click pages — all campaigns routing to homepage, reducing message match",
+        detail: "Every Search campaign destination is the homepage. Message match between ad copy and landing page is what closes a cold click — a generic homepage signals \"start over\" rather than \"continue the journey\".",
+        fix: "Build one post-click page per ad group cluster that restates the offer above the fold and uses a single primary CTA. Start with the top-three campaigns by spend.",
+        impact: "Conversion rate Â· Landing Page Experience",
+      },
+    ],
+  },
+];
+
+/* Derive priority actions: highest severity first, then by category order */
+const SEV_RANK = { critical: 0, high: 1, medium: 2, low: 3, pass: 4 };
+const PRIORITY = CATEGORIES
+  .flatMap(c => c.findings.map(f => ({ ...f, category: c.name })))
+  .filter(f => f.severity !== "pass")
+  .sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity])
+  .slice(0, 3);
+
+/* Overall score: weighted average of category scores */
+const OVERALL = Math.round(CATEGORIES.reduce((s, c) => s + c.score, 0) / CATEGORIES.length);
+const OVERALL_BAND = BAND[bandFor(OVERALL)];
+
+/* =============== REPORT HEADER =============== */
+function ReportHeader() {
+  return (
+    <section style={{
+      background: "linear-gradient(180deg, #FFFFFF 0%, #FDF6EE 100%)",
+      padding: "56px 0 72px",
+      borderBottom: "1px solid #E8D8C4",
+    }}>
+      <div className="page-w">
+        {/* Meta bar */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: 16, marginBottom: 36,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+            <Eyebrow>Audit complete</Eyebrow>
+            <span style={{ width: 4, height: 4, borderRadius: 999, background: "#E8D8C4" }}/>
+            <span style={{ fontSize: 12, color: "#6B6B6B" }}>{ACCOUNT.audited}</span>
+          </div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <BtnOutline icon={<IconShare/>}>Share</BtnOutline>
+            <BtnOutline icon={<IconDownload/>}>Download PDF</BtnOutline>
+            <BtnFilledSmall>Run another audit</BtnFilledSmall>
+          </div>
+        </div>
+
+        {/* Account bar */}
+        <div style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          padding: "20px 24px",
+          display: "flex", alignItems: "center", gap: 18,
+          marginBottom: 32,
+          boxShadow: "0 2px 8px rgba(152, 88, 48, 0.06)",
+        }}>
+          <span style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 40, height: 40, borderRadius: 6,
+            background: "#F5EBD9", color: "#985830", flexShrink: 0,
+            fontWeight: 700, fontSize: 18, letterSpacing: "-0.01em",
+          }}>
+            {ACCOUNT.name.charAt(0)}
+          </span>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{
+              fontSize: 18, fontWeight: 700, color: "#1A1A1A",
+              letterSpacing: "-0.01em",
+            }}>{ACCOUNT.name}</div>
+            <div style={{ fontSize: 12, color: "#6B6B6B", marginTop: 2, fontVariantNumeric: "tabular-nums" }}>
+              Customer ID {ACCOUNT.cid} Â· {ACCOUNT.window}
+            </div>
+          </div>
+        </div>
+
+        {/* Score + stats */}
+        <div style={{
+          display: "grid", gridTemplateColumns: "minmax(320px, 420px) 1fr",
+          gap: 24, alignItems: "stretch",
+        }}>
+          <ScoreCard/>
+          <StatsAndCategories/>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ScoreCard() {
+  const score = OVERALL;
+  const r = 92;
+  const c = 2 * Math.PI * r;
+  const offset = c * (1 - score / 100);
+
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      borderRadius: 6, padding: "32px 32px 28px",
+      color: "#fff", position: "relative", overflow: "hidden",
+      display: "flex", flexDirection: "column",
+    }}>
+      <Eyebrow color="#B87040">Account health</Eyebrow>
+
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center",
+        marginTop: 18, marginBottom: 22,
+      }}>
+        {/* Dial */}
+        <div style={{ position: "relative", width: 200, height: 200 }}>
+          <svg width="200" height="200" viewBox="0 0 200 200" style={{ transform: "rotate(-90deg)" }}>
+            <circle cx="100" cy="100" r={r}
+              fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="10"/>
+            <circle cx="100" cy="100" r={r}
+              fill="none" stroke="#985830" strokeWidth="10"
+              strokeLinecap="round"
+              strokeDasharray={c}
+              strokeDashoffset={offset}/>
+          </svg>
+          <div style={{
+            position: "absolute", inset: 0,
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+          }}>
+            <span style={{
+              fontSize: 64, fontWeight: 700, letterSpacing: "-0.04em",
+              lineHeight: 1, color: "#fff",
+              fontVariantNumeric: "tabular-nums",
+            }}>{score}</span>
+            <span style={{
+              fontSize: 11, color: "rgba(255,255,255,0.5)",
+              letterSpacing: "0.08em", marginTop: 4,
+            }}>OUT OF 100</span>
+          </div>
+        </div>
+
+        <div style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.5)",
+          marginTop: 18, marginBottom: 6,
+        }}>Band</div>
+        <div style={{
+          fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em",
+          lineHeight: 1.1, color: OVERALL_BAND.fg, marginBottom: 14,
+        }}>{OVERALL_BAND.label}</div>
+
+        <div style={{
+          fontSize: 13, lineHeight: 1.55, color: "rgba(255,255,255,0.7)",
+          textAlign: "center", maxWidth: 320,
+        }}>
+          Conversion tracking and smart bidding are suppressing Smart Bidding signals. Three categories below 50 — fix tracking first, then restructure bidding.
+        </div>
+      </div>
+
+      {/* Band scale */}
+      <div style={{ marginTop: "auto" }}>
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4,
+          marginBottom: 8,
+        }}>
+          {["poor","average","good","excellent"].map(k => {
+            const active = bandFor(score) === k;
+            return (
+              <div key={k} style={{
+                height: 4, borderRadius: 2,
+                background: active ? BAND[k].fg : "rgba(255,255,255,0.15)",
+              }}/>
+            );
+          })}
+        </div>
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4,
+          fontSize: 10, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.005em",
+        }}>
+          <span>Poor Â· 0–49</span>
+          <span>Average Â· 50–69</span>
+          <span>Good Â· 70–84</span>
+          <span style={{ textAlign: "right" }}>Excellent Â· 85+</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatsAndCategories() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <StatsBar/>
+      <CategoryGrid/>
+    </div>
+  );
+}
+
+function StatsBar() {
+  return (
+    <div style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+      padding: "20px 24px",
+      display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 24,
+    }}>
+      {ACCOUNT.stats.map((s, i) => (
+        <div key={i}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#6B6B6B",
+            marginBottom: 8,
+          }}>{s.label}</div>
+          <div style={{
+            fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em",
+            color: "#1A1A1A", fontVariantNumeric: "tabular-nums",
+            lineHeight: 1, marginBottom: 6,
+          }}>{s.value}</div>
+          <div style={{
+            fontSize: 11, color: s.trend === "up" ? "#4F7A4A" : "#B83A1F",
+            fontWeight: 500, letterSpacing: "-0.005em",
+            fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap",
+          }}>{s.delta}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CategoryGrid() {
+  return (
+    <div style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+      padding: "18px 24px 8px",
+      flex: 1,
+    }}>
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        marginBottom: 14,
+      }}>
+        <Eyebrow>Categories</Eyebrow>
+        <a href="#findings" style={{
+          fontSize: 11, fontWeight: 600, color: "#985830",
+          textDecoration: "none", letterSpacing: "-0.005em",
+        }}>Jump to findings →</a>
+      </div>
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0,
+      }}>
+        {CATEGORIES.map((c, i) => {
+          const b = BAND[bandFor(c.score)];
+          const col = i % 3;
+          const row = Math.floor(i / 3);
+          return (
+            <div key={c.key} style={{
+              padding: "12px 14px",
+              borderLeft: col === 0 ? 0 : "1px solid #F0E5D2",
+              borderTop: row === 0 ? 0 : "1px solid #F0E5D2",
+            }}>
+              <div style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+                color: "#985830", marginBottom: 4, fontVariantNumeric: "tabular-nums",
+              }}>{String(c.n).padStart(2, "0")}</div>
+              <div style={{
+                fontSize: 13, fontWeight: 600, color: "#1A1A1A",
+                letterSpacing: "-0.005em", lineHeight: 1.3, marginBottom: 8,
+                minHeight: 34,
+              }}>{c.name}</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                <span style={{
+                  fontSize: 22, fontWeight: 700, color: b.fg,
+                  letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums",
+                  lineHeight: 1,
+                }}>{c.score}</span>
+                <span style={{ fontSize: 11, color: "#6B6B6B" }}>/ {c.of}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* =============== PRIORITY ACTIONS =============== */
+function PriorityActions() {
+  return (
+    <section style={{ background: "#FDF6EE", padding: "72px 0 64px" }}>
+      <div className="page-w">
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "flex-end",
+          gap: 24, flexWrap: "wrap", marginBottom: 28,
+        }}>
+          <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24 }}>
+            <Eyebrow>Priority actions</Eyebrow>
+            <h2 style={{
+              fontSize: "clamp(28px, 3.2vw, 36px)", fontWeight: 700,
+              letterSpacing: "-0.02em", lineHeight: 1.1,
+              color: "#1A1A1A", margin: "10px 0 0",
+            }}>
+              Top three fixes <em style={{ fontStyle: "italic", color: "#985830" }}>across the account</em>.
+            </h2>
+          </div>
+          <p style={{ fontSize: 13, color: "#6B6B6B", margin: 0, maxWidth: 360, lineHeight: 1.55 }}>
+            Ranked by severity. Start here — these three carry the most weight against the score, and the rest gets easier once they're clean.
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gap: 16 }}>
+          {PRIORITY.map((it, i) => <PriorityCard key={i} n={i + 1} {...it}/>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PriorityCard({ n, severity, title, detail, fix, impact, category }) {
+  return (
+    <div style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+      padding: "28px 32px",
+      boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
+      display: "grid", gridTemplateColumns: "56px 1fr", gap: 24,
+    }}>
+      <div style={{
+        fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em",
+        color: "#985830", lineHeight: 1,
+        fontVariantNumeric: "tabular-nums",
+      }}>{String(n).padStart(2, "0")}</div>
+
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+          <SeverityBadge kind={severity}/>
+          <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
+            from <strong style={{ color: "#1A1A1A", fontWeight: 600 }}>{category}</strong>
+          </span>
+        </div>
+        <h3 style={{
+          fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
+          lineHeight: 1.25, color: "#1A1A1A", margin: "0 0 16px",
+          maxWidth: 760,
+        }}>{title}</h3>
+        <ProblemFixImpact detail={detail} fix={fix} impact={impact}/>
+      </div>
+    </div>
+  );
+}
+
+/* =============== FINDINGS BY CATEGORY =============== */
+function FindingsByCategory() {
+  return (
+    <section id="findings" className="sec-white">
+      <div className="page-w">
+        <SectionHeader
+          eyebrow="Findings by category"
+          title="Every issue in"
+          emphasis="Problem → Fix → Impact."
+          sub="Nine categories, scored independently. Each finding names the paid media metric it moves."
+        />
+        <div style={{ display: "grid", gap: 16 }}>
+          {CATEGORIES.map((c, i) => <CategoryBlock key={c.key} {...c} defaultOpen={i < 2}/>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CategoryBlock({ n, name, blurb, score, of, findings, defaultOpen }) {
+  const [open, setOpen] = React.useState(!!defaultOpen);
+  const counts = findings.reduce((acc, f) => { acc[f.severity] = (acc[f.severity] || 0) + 1; return acc; }, {});
+  const b = BAND[bandFor(score)];
+
+  return (
+    <div style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+      overflow: "hidden",
+    }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        style={{
+          width: "100%", background: open ? "#FDF6EE" : "transparent",
+          border: 0, padding: "22px 28px", textAlign: "left", cursor: "pointer",
+          fontFamily: "inherit",
+          display: "grid", gridTemplateColumns: "44px 1fr auto auto auto",
+          gap: 24, alignItems: "center",
+          transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+        }}>
+        <span style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.14em",
+          color: "#985830", fontVariantNumeric: "tabular-nums",
+        }}>{String(n).padStart(2, "0")}</span>
+
+        <div>
+          <div style={{
+            fontSize: 18, fontWeight: 700, letterSpacing: "-0.015em",
+            color: "#1A1A1A", marginBottom: 4,
+            display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap",
+          }}>
+            {name}
+            <BandBadge score={score} size="sm"/>
+          </div>
+          <div style={{ fontSize: 13, color: "#6B6B6B", lineHeight: 1.5, maxWidth: 620 }}>
+            {blurb}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          {["critical", "high", "medium", "low", "pass"].map(k => counts[k] ? (
+            <span key={k} style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.10em",
+              textTransform: "uppercase",
+              color: SEV[k].solid ? "#fff" : SEV[k].fg,
+              background: SEV[k].solid ? SEV[k].fg : SEV[k].bg,
+              padding: "3px 9px", borderRadius: 20,
+              fontVariantNumeric: "tabular-nums",
+              border: `1px solid ${SEV[k].solid ? SEV[k].fg : SEV[k].border}`,
+            }}>{counts[k]} {SEV[k].label}</span>
+          ) : null)}
+        </div>
+
+        <div style={{
+          fontSize: 22, fontWeight: 700, color: b.fg,
+          letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums",
+          minWidth: 80, textAlign: "right", lineHeight: 1,
+        }}>{score}<span style={{ fontSize: 13, color: "#6B6B6B", fontWeight: 500 }}>/{of}</span></div>
+
+        <span style={{
+          fontSize: 20, color: "#985830",
+          width: 24, height: 24, display: "inline-flex",
+          alignItems: "center", justifyContent: "center",
+          transform: open ? "rotate(45deg)" : "rotate(0deg)",
+          transition: "transform 150ms cubic-bezier(0.2,0,0,1)",
+        }}>+</span>
+      </button>
+
+      {open && (
+        <div style={{ borderTop: "1px solid #E8D8C4", padding: "8px 28px 12px" }}>
+          {findings.map((f, i) => <FindingRow key={i} {...f}/>)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FindingRow({ severity, title, detail, fix, impact }) {
+  return (
+    <div style={{ padding: "24px 0", borderTop: "1px solid #F0E5D2" }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "120px 1fr",
+        gap: 24, alignItems: "flex-start",
+      }}>
+        <div style={{ paddingTop: 4 }}>
+          <SeverityBadge kind={severity}/>
+        </div>
+        <div>
+          <h4 style={{
+            fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em",
+            lineHeight: 1.3, color: "#1A1A1A", margin: "0 0 12px",
+          }}>{title}</h4>
+          <ProblemFixImpact detail={detail} fix={fix} impact={impact} dense/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =============== END CTA (DARK) =============== */
+function EndCta() {
+  return (
+    <section style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "96px 32px",
+    }}>
+      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
+        <Eyebrow color="#B87040">Action list ready</Eyebrow>
+        <h2 style={{
+          fontSize: "clamp(36px, 4.6vw, 52px)", fontWeight: 700,
+          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
+          margin: "20px 0 32px",
+        }}>
+          Run it on another account. <em style={{ fontStyle: "italic", color: "#985830" }}>Or audit the landing pages too.</em>
+        </h2>
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <BtnFilled large>Run another audit</BtnFilled>
+          <a href="/landing-page-audit" style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            padding: "16px 32px", fontSize: 15, fontWeight: 600,
+            color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)",
+            borderRadius: 4, textDecoration: "none", letterSpacing: "-0.005em",
+          }}>
+            Run the Landing Page Audit →
+          </a>
+        </div>
+        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+          Free Â· Read-only Â· No card Â· No agency pitch
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =============== FOOTER =============== */
+function Footer() {
+  return (
+    <footer style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "28px 32px",
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 12,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </span>
+          <span>Â© 2026 Lewis Phillips Â· phillips-uk.com</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* =============== ICONS =============== */
+function IconShare() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  );
+}
+function IconDownload() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+  );
+}
+
+/* =============== APP =============== */
+function App() {
+  return (
+    <div data-screen-label="01 Google Ads Audit Report">
+      <Nav active="ga"/>
+      <ReportHeader/>
+      <PriorityActions/>
+      <FindingsByCategory/>
+      <EndCta/>
+      <Footer/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
