@@ -612,7 +612,7 @@ function Work() {
         { n: "2 domains", l: "cross-domain tracking rebuilt" },
       ],
       blurb: "Rebuilt the measurement foundation from scratch. Restructured Ads around cleaner intent groups and tighter keyword control for B2B lead generation.",
-      quote: "He never just 'did the work' - he explained what he was changing, why it mattered and the impact it would have. He treated our business as if it was his own.",
+      quote: "He never just 'did the work' - he explained what he was changing, why it mattered and the impact it would have.",
       attribution: "Lewie Winters - Digital Strategy & Transformation Manager",
     },
   ];
@@ -685,29 +685,86 @@ function Work() {
   );
 }
 
+function LogoItem({ name, src, href }) {
+  const [h, setH] = React.useState(false);
+  const imgEl = (
+    <img
+      src={src}
+      alt={name}
+      style={{
+        height: 36,
+        maxWidth: 130,
+        objectFit: "contain",
+        filter: h ? "grayscale(0) opacity(1)" : "grayscale(1) opacity(0.45)",
+        transition: "filter 200ms ease",
+        display: "block",
+      }}
+    />
+  );
+  const cellStyle = {
+    display: "flex", alignItems: "center", justifyContent: "center",
+    padding: "28px 20px",
+  };
+  return href ? (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{ ...cellStyle, textDecoration: "none" }}
+    >{imgEl}</a>
+  ) : (
+    <div
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={cellStyle}
+    >{imgEl}</div>
+  );
+}
+
 function ClientLogos() {
-  const logos = ["Angi", "MyBuilder", "HomeStars", "Werkspot", "Instapro", "Engine House", "Lee Renée", "The Pommier"];
+  const brands = [
+    { name: "Angi",         src: "/logos/angi.svg",       href: "https://www.angi.com" },
+    { name: "MyBuilder",    src: "/logos/mybuilder.svg",   href: "https://www.mybuilder.com" },
+    { name: "HomeStars",    src: "/logos/homestars.svg",   href: "https://homestars.com" },
+    { name: "Werkspot",     src: "/logos/werkspot.svg",    href: "https://www.werkspot.nl" },
+    { name: "Instapro",     src: "/logos/instapro.svg",    href: "https://www.instapro.it" },
+    { name: "Engine House", src: "/logos/enginehouse.png", href: "https://www.enginehousebexley.co.uk" },
+    { name: "Lee Renée",    src: "/logos/leerenee.png",    href: "https://www.leerenee.co.uk" },
+    { name: "The Pommier",  src: "/logos/pommier.svg",     href: null },
+  ];
   return (
-    <div style={{
-      marginTop: 56, padding: "40px 0",
-      borderTop: "1px solid #E8D8C4",
-    }}>
+    <div style={{ marginTop: 56, borderTop: "1px solid #E8D8C4", paddingTop: 40 }}>
       <div style={{
         fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
         textTransform: "uppercase", color: "#6B6B6B",
         marginBottom: 24, textAlign: "center",
       }}>Clients &amp; brands worked with</div>
+
       <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 24,
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        border: "1px solid #E8D8C4",
+        borderRadius: 6,
+        overflow: "hidden",
       }}>
-        {logos.map((l, i) => (
-          <span key={i} style={{
-            fontSize: 15, fontWeight: 600, color: "#6B6B6B",
-            letterSpacing: "-0.01em", opacity: 0.85,
-          }}>{l}</span>
+        {brands.map((b, i) => (
+          <div key={i} style={{
+            borderRight: (i + 1) % 4 !== 0 ? "1px solid #E8D8C4" : "none",
+            borderBottom: i < 4 ? "1px solid #E8D8C4" : "none",
+          }}>
+            <LogoItem name={b.name} src={b.src} href={b.href} />
+          </div>
         ))}
       </div>
+
+      <p style={{
+        marginTop: 16, textAlign: "center",
+        fontSize: 12, color: "#6B6B6B", lineHeight: 1.5,
+      }}>
+        Direct engagements and ANGI Inc.-era marketplace brands across UK, NL, CA and US.
+      </p>
     </div>
   );
 }
