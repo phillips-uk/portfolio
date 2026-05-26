@@ -123,6 +123,58 @@ function PdfDownloadButton() {
   );
 }
 
+/* =============== AUDIT DATA CONTEXT =============== */
+const AuditCtx = React.createContext(null);
+function useAudit() { return React.useContext(AuditCtx); }
+
+function AuditProvider({ children }) {
+  const [data, setData] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) return;
+
+    // 1. Try sessionStorage (same-session submit)
+    try {
+      const stored = sessionStorage.getItem('lp_audit_' + id);
+      if (stored) { setData(JSON.parse(stored)); return; }
+    } catch(e) {}
+
+    // 2. Fetch from API (direct link or refresh)
+    setLoading(true);
+    fetch('/.netlify/functions/landing-audit-status?id=' + id)
+      .then(r => r.json())
+      .then(resp => {
+        if (resp.status === 'complete' && resp.data) setData(resp.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh", flexDirection: "column", gap: 16 }}>
+        <Spinner/>
+        <p style={{ fontSize: 14, color: "#6B6B6B" }}>Loading your results…</p>
+      </div>
+    );
+  }
+
+  return React.createElement(AuditCtx.Provider, { value: data }, children);
+}
+
+/* Helper: category key → display label */
+const CAT_LABELS = {
+  performance:            "Performance",
+  keyword_clarity:        "Keyword Clarity",
+  landing_page_experience:"Landing Page Experience",
+  conversion_architecture:"Conversion Architecture",
+  trust_signals:          "Trust Signals",
+  tracking:               "Tracking",
+  mobile:                 "Mobile Experience",
+};
+
 function Spinner() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" style={{ animation: "ph-spin 0.8s linear infinite" }}>
@@ -221,11 +273,12 @@ function SectionHeader({ eyebrow, title, emphasis, sub }) {
 
 /* =============== REPORT HEADER (SCORE) =============== */
 function ReportHeader() {
-  const score = 58;
-  const band = "Average";
-  const url = "https://yourstore.com/products/best-seller";
-  const pageType = "Lead Gen";
-  const time = "26 May 2026 Â· 14:32";
+  const audit = useAudit();
+  const score    = audit ? (audit.health_score ?? 58) : 58;
+  const band     = audit ? (audit.score_band   || "Average") : "Average";
+  const url      = audit ? (audit.url          || "") : "https://yourstore.com/products/best-seller";
+  const pageType = audit ? (audit.page_meta?.page_type === "ecommerce" ? "eCommerce" : "Lead Gen") : "Lead Gen";
+  const time     = audit ? new Date(audit.audited_at).toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) : "Demo report";
 
   return (
     <section style={{
@@ -423,29 +476,39 @@ function ScoreBreakdown() {
 
 /* =============== PRIORITY ACTIONS =============== */
 function PriorityActions() {
-  const items = [
+  const audit = useAudit();
+  const MOCK = [
     {
       severity: "high",
       title: "LCP on mobile is 5.20s — well above Google's 2.5s threshold",
       detail: "Largest Contentful Paint clocks 5.20s on mobile. Google treats anything above 2.5s as a Landing Page Experience deduction. CrUX data shows the page sits in the bottom quartile for its category.",
       fix: "Preload the hero image, compress to WebP under 150KB, and defer the chat widget script until after first interaction.",
-      impact: "Quality Score Â· Landing Page Experience Â· mobile CPC",
+      impact: "Quality Score · Landing Page Experience · mobile CPC",
     },
     {
       severity: "high",
       title: "No clear single conversion goal above the fold",
       detail: "The hero contains four competing CTAs: \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture. Eye-tracking research and Google's own LPE guidance both penalise pages without a single primary action.",
       fix: "Promote one CTA — the one tied to the campaign objective — to primary. Demote the rest to secondary outline or move them below the fold.",
-      impact: "Conversion rate Â· Landing Page Experience Â· Ad Relevance",
+      impact: "Conversion rate · Landing Page Experience · Ad Relevance",
     },
     {
       severity: "medium",
       title: "H1 doesn't echo the primary keyword from the URL or title tag",
       detail: "URL slug is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". Google looks for keyword echo across H1, title and URL to confirm message match.",
       fix: "Rewrite the H1 to include the keyword phrase from the ad group it receives traffic from — e.g. \"Premium Wool Throw — the best-seller\".",
-      impact: "Quality Score Â· Ad Relevance Â· keyword-level CPC",
+      impact: "Quality Score · Ad Relevance · keyword-level CPC",
     },
   ];
+  const items = audit
+    ? (audit.priority_actions || []).slice(0, 3).map(a => ({
+        severity: a.severity,
+        title:    a.title,
+        detail:   a.detail || a.fix || "",
+        fix:      a.fix    || "",
+        impact:   a.impact || "",
+      }))
+    : MOCK;
 
   return (
     <section style={{ background: "#FDF6EE", padding: "72px 0 64px" }}>
@@ -702,6 +765,65 @@ function FindingsByCategory() {
     },
   ];
 
+  const audit = useAudit();
+
+  // Real-data categories: group findings by category key
+  const realCategories = React.useMemo(() => {
+    if (!audit) return null;
+    const perf = audit.categories?.performance || {};
+    const findings = audit.findings || [];
+    const grouped = {};
+    findings.forEach(f => {
+      const key = f.category || "other";
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(f);
+    });
+    // Build category objects matching CategoryBlock props
+    const ORDER = ["performance","keyword_clarity","landing_page_experience","conversion_architecture","trust_signals","tracking","mobile"];
+    const built = [];
+    // Performance: always first, uses PSI data
+    built.push({
+      key: "performance",
+      name: "Performance",
+      blurb: "Core Web Vitals from Google's PageSpeed Insights — real Lighthouse data, mobile and desktop in parallel.",
+      score: perf.mobile_score != null ? `${perf.mobile_score} / 100` : "—",
+      metrics: {
+        scores: [
+          { label: "Mobile score",  value: perf.mobile_score  != null ? String(perf.mobile_score)  : "N/A", unit: "/100", state: perf.mobile_score  >= 90 ? "strong" : perf.mobile_score  >= 50 ? "average" : "weak" },
+          { label: "Desktop score", value: perf.desktop_score != null ? String(perf.desktop_score) : "N/A", unit: "/100", state: perf.desktop_score >= 90 ? "strong" : perf.desktop_score >= 50 ? "average" : "weak" },
+        ],
+        cwv: [
+          { label: "LCP",  value: perf.lcp  || "N/A", unit: "", sub: "Mobile", target: "< 2.5s",  state: perf.lcp  ? (parseFloat(perf.lcp) <= 2.5 ? "strong" : parseFloat(perf.lcp) <= 4 ? "average" : "weak") : "average" },
+          { label: "CLS",  value: perf.cls  || "N/A", unit: "", sub: "Mobile", target: "< 0.1",   state: perf.cls  ? (parseFloat(perf.cls) <= 0.1 ? "strong" : parseFloat(perf.cls) <= 0.25 ? "average" : "weak") : "average" },
+          { label: "INP",  value: perf.inp  || "N/A", unit: "", sub: "Mobile", target: "< 200ms", state: perf.inp  ? (parseInt(perf.inp) <= 200 ? "strong" : parseInt(perf.inp) <= 500 ? "average" : "weak") : "average" },
+          { label: "TTFB", value: perf.ttfb || "N/A", unit: "", sub: "Mobile", target: "< 800ms", state: perf.ttfb ? (parseInt(perf.ttfb) <= 800 ? "strong" : parseInt(perf.ttfb) <= 1800 ? "average" : "weak") : "average" },
+        ],
+      },
+      findings: grouped["performance"] || [],
+    });
+    // Content categories
+    ORDER.slice(1).forEach(key => {
+      if (!grouped[key] && !["keyword_clarity","landing_page_experience"].includes(key)) return;
+      built.push({
+        key,
+        name: CAT_LABELS[key] || key,
+        blurb: "",
+        score: null,
+        metrics: null,
+        findings: grouped[key] || [],
+      });
+    });
+    // Any unknown categories
+    Object.keys(grouped).forEach(key => {
+      if (!ORDER.includes(key)) {
+        built.push({ key, name: CAT_LABELS[key] || key, blurb: "", score: null, metrics: null, findings: grouped[key] });
+      }
+    });
+    return built;
+  }, [audit]);
+
+  const displayCategories = realCategories || categories;
+
   return (
     <section className="sec-white">
       <div className="page-w">
@@ -713,7 +835,7 @@ function FindingsByCategory() {
         />
 
         <div style={{ display: "grid", gap: 16 }}>
-          {categories.map((c, i) => <CategoryBlock key={c.key} {...c} defaultOpen={i < 2}/>)}
+          {displayCategories.map((c, i) => <CategoryBlock key={c.key} {...c} defaultOpen={i < 2}/>)}
         </div>
       </div>
     </section>
@@ -874,13 +996,23 @@ function FindingRow({ severity, title, detail, fix, impact }) {
 
 /* =============== KEYWORD INFERENCE =============== */
 function KeywordInference() {
-  const ngrams = [
+  const audit = useAudit();
+  const mockNgrams = [
     { phrase: "wool throw",          freq: 9, inH1: false, inTitle: true,  inUrl: false },
     { phrase: "premium wool",        freq: 7, inH1: false, inTitle: true,  inUrl: false },
     { phrase: "best seller",         freq: 6, inH1: false, inTitle: true,  inUrl: true  },
     { phrase: "slow mornings",       freq: 5, inH1: true,  inTitle: false, inUrl: false },
     { phrase: "merino wool throw",   freq: 4, inH1: false, inTitle: false, inUrl: false },
   ];
+  const ngrams = audit
+    ? (audit.categories?.keyword_clarity?.top_ngrams || []).map(n => ({
+        phrase:  n.phrase || n.ngram || n,
+        freq:    n.freq   || n.count || 0,
+        inH1:    n.inH1   || false,
+        inTitle: n.inTitle || false,
+        inUrl:   n.inUrl  || false,
+      }))
+    : mockNgrams;
 
   return (
     <section className="sec-cream">
@@ -905,6 +1037,13 @@ function KeywordInference() {
 }
 
 function InferenceCard() {
+  const audit = useAudit();
+  const keyword    = audit ? (audit.inferred_keyword || audit.categories?.keyword_clarity?.inferred_keyword || "—") : "premium wool throw";
+  const confidence = audit ? (audit.keyword_confidence || audit.categories?.keyword_clarity?.confidence || "medium") : "medium";
+  const reason     = audit ? (audit.keyword_confidence_reason || audit.categories?.keyword_clarity?.confidence_reason || "") : "H1 lifestyle copy and title-tag product copy disagree. Confidence sits in medium territory — that ambiguity is itself a Quality Score risk.";
+  const confPct    = { high: "90%", medium: "60%", low: "30%", none: "10%" }[confidence] || "60%";
+  const confLabel  = confidence.charAt(0).toUpperCase() + confidence.slice(1);
+
   return (
     <div style={{
       background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
@@ -920,7 +1059,7 @@ function InferenceCard() {
       <div style={{
         fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em",
         lineHeight: 1.15, color: "#1A1A1A", marginBottom: 20,
-      }}>premium wool throw</div>
+      }}>{keyword || <span style={{ color: "#6B6B6B", fontStyle: "italic", fontSize: 18 }}>Could not infer</span>}</div>
 
       <div style={{ marginBottom: 16 }}>
         <div style={{
@@ -928,25 +1067,22 @@ function InferenceCard() {
           fontSize: 12, color: "#6B6B6B", marginBottom: 8,
         }}>
           <span>Confidence</span>
-          <span style={{ fontWeight: 600, color: "#1A1A1A" }}>Medium Â· 68%</span>
+          <span style={{ fontWeight: 600, color: "#1A1A1A" }}>{confLabel}</span>
         </div>
-        <div style={{
-          height: 6, background: "#F5EBD9", borderRadius: 3, overflow: "hidden",
-        }}>
-          <div style={{
-            width: "68%", height: "100%",
-            background: "#985830", borderRadius: 3,
-          }}/>
+        <div style={{ height: 6, background: "#F5EBD9", borderRadius: 3, overflow: "hidden" }}>
+          <div style={{ width: confPct, height: "100%", background: "#985830", borderRadius: 3 }}/>
         </div>
       </div>
 
-      <div style={{
-        fontSize: 13, lineHeight: 1.6, color: "#1A1A1A",
-        background: "#FDF6EE", padding: "14px 16px",
-        borderRadius: 4, borderLeft: "3px solid #985830",
-      }}>
-        H1 lifestyle copy and title-tag product copy disagree. Confidence sits in medium territory — that ambiguity is itself a Quality Score risk.
-      </div>
+      {reason && (
+        <div style={{
+          fontSize: 13, lineHeight: 1.6, color: "#1A1A1A",
+          background: "#FDF6EE", padding: "14px 16px",
+          borderRadius: 4, borderLeft: "3px solid #985830",
+        }}>
+          {reason}
+        </div>
+      )}
     </div>
   );
 }
@@ -1019,7 +1155,9 @@ function NgramTable({ rows }) {
 
 /* =============== LPE ESTIMATE + TRACKING =============== */
 function LpeAndTracking() {
-  const lpe = [
+  const audit = useAudit();
+
+  const mockLpe = [
     { signal: "H1 keyword match",                  state: "weak",    note: "H1 doesn't echo URL or title-tag keyword" },
     { signal: "Title tag clarity",                 state: "strong",  note: "Keyword in first 40 characters" },
     { signal: "Above-fold message match",          state: "average", note: "No restatement of offer in first viewport" },
@@ -1029,11 +1167,38 @@ function LpeAndTracking() {
     { signal: "Privacy policy linked",             state: "strong",  note: "Visible in footer" },
   ];
 
-  const tracking = [
+  const lpe = audit ? (() => {
+    const l = audit.categories?.landing_page_experience || {};
+    const p = audit.categories?.performance || {};
+    const conv = audit.categories?.conversion_architecture || {};
+    const trust = audit.categories?.trust_signals || {};
+    const lcpMs = p.lcp ? parseFloat(p.lcp) : null;
+    function s(v, trueState, falseState) { return v === true ? trueState : v === false ? falseState : "average"; }
+    return [
+      { signal: "H1 keyword match",        state: s(l.h1_contains_keyword, "strong", "weak"),   note: l.h1 ? `H1: "${l.h1}"` : "H1 not detected" },
+      { signal: "Title tag clarity",       state: l.title ? "strong" : "weak",                  note: l.title || "Title tag not detected" },
+      { signal: "Above-fold message match",state: l.above_fold_signal === "strong" ? "strong" : l.above_fold_signal === "moderate" ? "average" : "weak", note: l.above_fold_signal || "—" },
+      { signal: "Mobile LCP under 2.5s",   state: lcpMs == null ? "average" : lcpMs <= 2.5 ? "strong" : "weak", note: p.lcp ? `${p.lcp} mobile` : "No data" },
+      { signal: "Single primary CTA",      state: s(conv.conversion_goal_clarity === "single", "strong", "weak"), note: conv.cta_text ? `"${conv.cta_text}"` : conv.conversion_goal_clarity || "—" },
+      { signal: "Risk reducer near CTA",   state: s(trust.risk_reducer_present, "strong", "weak"), note: trust.risk_reducer_type || (trust.risk_reducer_present ? "Present" : "Not detected") },
+      { signal: "Privacy policy linked",   state: s(trust.has_privacy_link, "strong", "average"), note: trust.has_privacy_link ? "Present" : "Not detected" },
+    ];
+  })() : mockLpe;
+
+  const mockTracking = [
     { tag: "Google Tag Manager",             status: "ok"      },
     { tag: "GA4",                            status: "ok"      },
     { tag: "Google Ads Conversion Tracking", status: "missing" },
   ];
+
+  const tracking = audit ? (() => {
+    const t = audit.categories?.tracking || {};
+    return [
+      { tag: "Google Tag Manager",             status: t.gtm            ? "ok" : "missing" },
+      { tag: "GA4",                            status: t.ga4            ? "ok" : "missing" },
+      { tag: "Google Ads Conversion Tracking", status: t.ads_conversion ? "ok" : t.remarketing_only ? "partial" : "missing" },
+    ];
+  })() : mockTracking;
 
   return (
     <section className="sec-white">
@@ -2074,17 +2239,19 @@ function PdfLayout() {
 /* =============== APP =============== */
 function App() {
   return (
-    <div data-screen-label="01 Landing Page Audit Report">
-      <Nav active="lp"/>
-      <ReportHeader/>
-      <PriorityActions/>
-      <FindingsByCategory/>
-      <KeywordInference/>
-      <LpeAndTracking/>
-      <EndCta/>
-      <Footer/>
-      <PdfLayout/>
-    </div>
+    <AuditProvider>
+      <div data-screen-label="01 Landing Page Audit Report">
+        <Nav active="lp"/>
+        <ReportHeader/>
+        <PriorityActions/>
+        <FindingsByCategory/>
+        <KeywordInference/>
+        <LpeAndTracking/>
+        <EndCta/>
+        <Footer/>
+        <PdfLayout/>
+      </div>
+    </AuditProvider>
   );
 }
 

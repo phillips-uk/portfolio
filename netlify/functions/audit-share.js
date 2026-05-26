@@ -35,7 +35,8 @@ exports.handler = async function (event) {
   if (stored.status === 'pending') return html(pendingPage(id), 200);
   if (stored.status !== 'complete' || !stored.data) return html(pendingPage(id), 200);
 
-  return html(buildPage(id, stored.data), 200);
+  // Redirect to the new report page — it fetches its own data via landing-audit-status
+  return redirect('/landing-page-audit-report?id=' + id);
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

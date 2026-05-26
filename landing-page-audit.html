@@ -1163,7 +1163,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
           clearInterval(pollInterval);
           showReport(data.data, false);
         } else if (data.status === 'partial') {
-          // Claude done, PSI still running — show findings immediately, keep polling for perf data
+          // Claude done, PSI still running — redirect now, report page shows PSI as pending
+          clearInterval(pollInterval);
           showReport(data.data, true);
         } else if (data.status === 'error') {
           clearInterval(pollInterval);
@@ -1184,26 +1185,22 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   function showReport(report, psiPending) {
     stopLoaderMessages();
     currentReport = report;
-    document.getElementById('loading-section').style.display  = 'none';
-    document.getElementById('report-section').style.display   = 'block';
-    document.getElementById('report-html').innerHTML = buildReportHTML(report, psiPending);
-    ['below-fold-1','below-fold-2','below-fold-3'].forEach(function(id) {
-      var el = document.getElementById(id); if (el) el.style.display = 'none';
-    });
-    if (!psiPending) {
-      document.getElementById('report-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+
     // GTM event
     window.dataLayer = window.dataLayer || [];
     dataLayer.push({
-      event:           'lp_audit_completed',
-      audited_url:     report.url,
-      client_name:     extractClientName(report.url),
-      client_domain:   extractClientDomain(report.url),
-      audit_score:     report.health_score,
-      audit_band:      report.score_band,
+      event:            'lp_audit_completed',
+      audited_url:      report.url,
+      client_name:      extractClientName(report.url),
+      client_domain:    extractClientDomain(report.url),
+      audit_score:      report.health_score,
+      audit_band:       report.score_band,
       inferred_keyword: report.inferred_keyword || ''
     });
+
+    // Store for the report page, then redirect
+    try { sessionStorage.setItem('lp_audit_' + currentJobId, JSON.stringify(report)); } catch(e) {}
+    window.location.replace('/landing-page-audit-report?id=' + currentJobId);
   }
 
   function resetToStart() {
