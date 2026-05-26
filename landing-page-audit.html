@@ -189,7 +189,7 @@ function Hero() {
               letterSpacing: "-0.005em", marginBottom: 28,
             }}>
               <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830" }}/>
-              Free Â· No account needed Â· Results in ~60 seconds
+              Free · No account needed · Results in ~60 seconds
             </span>
 
             <h1 style={{
@@ -632,7 +632,7 @@ function Footer() {
           <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
             Phillips<span style={{ color: "#985830" }}>.</span>
           </span>
-          <span>© 2026 Lewis Phillips Â· phillips-uk.com</span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
         </div>
       </div>
     </footer>
@@ -795,5 +795,1327 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
+<script>
+  var currentJobId  = null;
+  var currentReport = null;
+  var pollInterval  = null;
+  var pollCount     = 0;
+
+  // ── Auto-load report from URL if ?id= is present ──────────────────────────
+  // ── Preview / demo mode ───────────────────────────────────────────────────
+  var MOCK_LP_REPORT = {
+    url: 'https://www.capitalboilers.co.uk/boiler-servicing-london',
+    audited_at: new Date().toISOString(),
+    health_score: 58,
+    score_band: 'Average',
+    inferred_keyword: 'boiler service London',
+    keyword_confidence: 'High',
+    keyword_confidence_reason: 'URL slug, H1, and title tag all directly reference boiler servicing in London as the primary service offering.',
+    page_meta: {
+      page_type: 'lead_gen',
+      is_blocked: false, is_timeout: false, is_unreachable: false,
+      is_js_rendered: false, cookie_banner_detected: false
+    },
+    categories: {
+      performance: {
+        mobile_score: 47, desktop_score: 72,
+        lcp: '5.20s', cls: '0.041', inp: '180ms', ttfb: '320ms'
+      },
+      keyword_clarity: {
+        inferred_keyword: 'boiler service London',
+        confidence: 'High',
+        confidence_reason: 'URL, H1, and title tag all directly reference the service and location.',
+        intent_type: 'transactional', specificity: 'targeted',
+        top_ngrams: [
+          { phrase: 'boiler service london', count: 4, inUrl: true,  inH1: true,  inTitle: true  },
+          { phrase: 'gas safe registered',   count: 3, inUrl: false, inH1: false, inTitle: false },
+          { phrase: 'annual boiler service', count: 2, inUrl: false, inH1: false, inTitle: false }
+        ]
+      },
+      landing_page_experience: {
+        h1: 'Professional Boiler Servicing in London',
+        title: 'Boiler Service London | Gas Safe Engineers | Capital Boilers',
+        meta_description: null,
+        h1_contains_keyword: true, title_h1_aligned: true,
+        above_fold_signal: 'strong', page_relevance: 'strong match',
+        value_proposition_clarity: 'clear', message_match_strength: 'strong'
+      },
+      conversion_architecture: {
+        has_cta: false, cta_text: null, cta_quality: null, cta_specificity: null,
+        link_count: 24, form_fields: 5, conversion_goal_clarity: 'single', urgency_present: false
+      },
+      trust_signals: {
+        social_proof_quality: 'none', social_proof_type: 'none',
+        named_testimonials: false, testimonial_blocks: 0, star_rating_present: false,
+        has_video_content: false, has_trust_badges: true, risk_reducer_present: false,
+        authority_signals: true, has_privacy_link: true, contact_signals: false, https: true
+      },
+      tracking: { gtm: true, ga4: true, ads_conversion: false, remarketing_only: false },
+      mobile: { score: 47, has_viewport: true, tap_targets_ok: false }
+    },
+    findings: [
+      { category: 'performance', severity: 'high',
+        title: 'Slow mobile load — LCP 5.2s',
+        detail: 'At 5.2s LCP on mobile, a significant share of paid traffic is leaving before the offer loads. Google\'s own research links load time directly to bounce probability — every second above 2.5s loses a measurable portion of your paid clicks.',
+        fix: 'Optimise images to WebP, reduce server response time, and eliminate render-blocking JavaScript and CSS. Run PageSpeed Insights for the full opportunity list.',
+        impact: 'Every second over 2.5s LCP costs paid clicks — directly inflating your effective CPA.' },
+      { category: 'performance', severity: 'pass',
+        title: 'Fast server response — TTFB 320ms',
+        detail: 'Server responds in 320ms, well within the 800ms threshold. A fast TTFB means the page starts loading quickly — the delay is in rendering, not the server response.' },
+      { category: 'performance', severity: 'pass',
+        title: 'No layout shift — CLS 0.041',
+        detail: 'CLS of 0.041 is in Google\'s "Good" band. Elements are not moving after load — buttons and links stay where they appear, preventing accidental taps on mobile.' },
+      { category: 'keyword_clarity', severity: 'pass',
+        title: 'Clear keyword signal — boiler service London',
+        detail: 'URL, H1, and title tag all directly reference the target keyword. Google\'s relevance assessment for this URL is unambiguous.' },
+      { category: 'keyword_clarity', severity: 'pass',
+        title: 'Transactional intent confirmed',
+        detail: 'Page signals commercial intent: a defined service, location, and conversion goal. Appropriate for paid search traffic.' },
+      { category: 'landing_page_experience', severity: 'medium',
+        title: 'Meta description missing',
+        detail: 'No meta description is set. While this does not directly affect Quality Score, it controls what searchers see in the organic SERP snippet — a missing meta description means Google writes its own, often pulling generic body text.',
+        fix: 'Write a 150–160 character meta description that mirrors your primary ad message — include the target keyword, a core benefit, and a call to action.',
+        impact: 'A well-written meta description improves organic CTR — a low-effort addition with no downside.' },
+      { category: 'landing_page_experience', severity: 'pass',
+        title: 'H1 contains target keyword',
+        detail: '"Professional Boiler Servicing in London" directly references the target keyword. This is the primary relevance signal for Landing Page Experience and Quality Score.' },
+      { category: 'landing_page_experience', severity: 'pass',
+        title: 'Title tag aligned with H1',
+        detail: 'Title tag and H1 describe the same service. Consistent framing across both elements strengthens the relevance signal Google applies to this URL.' },
+      { category: 'conversion_architecture', severity: 'high',
+        title: 'No above-fold CTA detected',
+        detail: 'The primary call to action is below the fold. Users who click the ad and don\'t scroll — the majority on mobile — see no next step. For paid traffic, an above-fold CTA is the single most important conversion element.',
+        fix: 'Move your primary CTA above the fold. On mobile it should be visible without scrolling. "Get a Free Quote" or "Book a Service" works well for this type of page.',
+        impact: 'An above-fold CTA is the highest-priority structural fix on this page — paid traffic that cannot immediately see a next step bounces.' },
+      { category: 'conversion_architecture', severity: 'medium',
+        title: '24 links — consider a dedicated landing page',
+        detail: 'This page has 24 outbound links, typical of a full website page rather than a purpose-built paid landing page. Every link that isn\'t the CTA is a potential exit.',
+        fix: 'Consider a stripped-back version of this page for paid campaigns — same content, same offer, with navigation removed and a single CTA.',
+        impact: 'Dedicated landing pages with fewer exit routes typically outperform full website pages for paid traffic.' },
+      { category: 'conversion_architecture', severity: 'medium',
+        title: '5-field form — adds friction for paid traffic',
+        detail: 'A 5-field form creates friction at the exact moment of intent. Paid search visitors clicked an ad expecting a quick path to the service — each extra field is a reason to leave.',
+        fix: 'Reduce to 3 fields for the initial enquiry: name, phone or email, and a brief message. Collect further details in the follow-up.',
+        impact: 'Fewer form fields reduces effective CPA — even removing one optional field moves conversion rate at scale.' },
+      { category: 'conversion_architecture', severity: 'suggest',
+        title: 'CTA could be more specific',
+        detail: 'Generic CTAs consistently underperform specific action-oriented language. A CTA that tells the visitor exactly what happens next reduces hesitation at the conversion point.',
+        fix: 'Replace generic CTA text with a specific outcome: "Book Your Annual Service", "Get a Fixed-Price Quote", or similar language tied to your conversion goal.',
+        impact: 'Specific CTAs consistently outperform generic button text — a one-line copy change with measurable impact.' },
+      { category: 'trust_signals', severity: 'medium',
+        title: 'No social proof detected',
+        detail: 'Visitors from paid ads have not heard of you before. Social proof — reviews, star ratings, named testimonials — is the fastest way to reduce scepticism on a first visit.',
+        fix: 'Add at least 3 named testimonials near the CTA. If you have Google reviews, embed the rating and review count prominently on the page.',
+        impact: 'Social proof is the highest-ROI trust addition for paid landing pages — it directly reduces scepticism from first-time visitors.' },
+      { category: 'trust_signals', severity: 'low',
+        title: 'No visible phone number above the fold',
+        detail: 'For a local service business, a visible phone number is a strong trust and conversion signal. Paid visitors want to know they can reach a real person before committing to a form.',
+        fix: 'Add your phone number prominently above the fold — make it a clickable tel: link for mobile visitors.',
+        impact: 'A visible phone number provides a secondary conversion path for visitors not ready to submit a form.' },
+      { category: 'trust_signals', severity: 'pass',
+        title: 'Gas Safe accreditation badge detected',
+        detail: 'Authority badge confirmed on the page. For a gas engineer, Gas Safe registration is a legal requirement — displaying it prominently is a first-class trust signal for this audience.' },
+      { category: 'trust_signals', severity: 'pass',
+        title: 'HTTPS — secure connection',
+        detail: 'Page is served over HTTPS. Google\'s ad policy requires this, and it removes the "Not Secure" browser warning that can deter paid visitors.' },
+      { category: 'trust_signals', severity: 'pass',
+        title: 'Privacy policy link detected',
+        detail: 'Privacy policy link found. Required for GDPR compliance and reduces friction for visitors evaluating trust.' },
+      { category: 'trust_signals', severity: 'suggest',
+        title: 'Consider adding a risk reducer near the CTA',
+        detail: 'First-time paid visitors are evaluating risk alongside relevance. A risk reducer — "no call-out charge", "fixed price", "no obligation quote" — directly addresses the hesitation that prevents conversion.',
+        fix: 'Add a brief statement near your CTA: "No call-out charge" or "Fixed price — no hidden fees". Even one line changes the conversion dynamic.',
+        impact: 'Risk reducers typically improve enquiry conversion for service pages — a one-sentence addition near the CTA that requires no design work.' },
+      { category: 'mobile', severity: 'high',
+        title: 'Poor mobile score — 47/100',
+        detail: 'Mobile score of 47 is in Google\'s "Poor" band. Over 60% of paid search clicks come from mobile. This score is actively degrading Landing Page Experience and contributing to higher CPCs.',
+        fix: 'Address LCP first — it is the primary driver of the low mobile score. Then run PageSpeed Insights for the full optimisation list.',
+        impact: 'Over 60% of paid clicks are on mobile — a poor score is the primary driver of wasted ad spend and inflated CPAs.' },
+      { category: 'mobile', severity: 'low',
+        title: 'Some tap targets may be too small for mobile',
+        detail: 'PageSpeed data shows some interactive elements may be below the recommended 48×48px touch target size. Small tap targets cause misclicks on mobile.',
+        fix: 'Ensure all buttons and links are at least 48×48 CSS pixels with 8px of space between them.',
+        impact: 'Misclicks on small targets redirect mobile paid visitors away from your CTA.' },
+      { category: 'mobile', severity: 'pass',
+        title: 'Viewport meta tag present',
+        detail: 'Mobile viewport is correctly configured. The page renders at device width rather than desktop width.' }
+    ],
+    priority_actions: [
+      { severity: 'high', category: 'performance',             title: 'Slow mobile load — LCP 5.2s',      fix: 'Optimise images to WebP, reduce server response time, and eliminate render-blocking JavaScript and CSS.' },
+      { severity: 'high', category: 'mobile',                  title: 'Poor mobile score — 47/100',        fix: 'Address LCP first, then run PageSpeed Insights for the full optimisation list.' },
+      { severity: 'high', category: 'conversion_architecture', title: 'No above-fold CTA detected',        fix: 'Move your primary CTA above the fold, visible without scrolling on mobile.' }
+    ]
+  };
+
+  window.addEventListener('DOMContentLoaded', function () {
+    // Preview mode — no audit token required
+    var previewParam = new URLSearchParams(window.location.search).get('preview');
+    if (previewParam === 'report') {
+      window.location.replace('/landing-page-audit-report');
+      return;
+      try {
+        showReport(MOCK_LP_REPORT, false);
+      } catch(e) {
+        document.body.style.cssText = 'margin:0;padding:20px;font-family:monospace;';
+        document.body.innerHTML = '<h2 style="color:red;">Preview error</h2><pre style="white-space:pre-wrap;background:#f5f5f5;padding:16px;border-radius:6px;">' + (e && e.stack ? e.stack : String(e)) + '</pre>';
+      }
+      return;
+    }
+
+    var urlId = new URLSearchParams(window.location.search).get('id')
+      || (window.location.pathname.match(/^\/r\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/) || [])[1];
+    if (urlId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(urlId)) {
+      currentJobId = urlId;
+      document.getElementById('input-section').style.display   = 'none';
+      document.getElementById('loading-section').style.display = 'block';
+      activateStep(4);
+      pollCount = 0;
+      pollInterval = setInterval(pollStatus, 2000);
+    }
+  });
+
+  // ── Rotating loader messages ───────────────────────────────────────────────
+  var loaderMessages = [
+    "Fetching page...",
+    "Running real PageSpeed tests...",
+    "Interrogating your Core Web Vitals...",
+    "Checking if your H1 is pulling its weight...",
+    "Evaluating your CTA's personality (or lack of)...",
+    "Human verification required: please pat your head.",
+    "Good. Now rub your tummy at the same time.",
+    "Just kidding. Still waiting on Google's servers.",
+    "Counting the links leaking your traffic...",
+    "Your developer said it was fine, right?",
+    "Bribing PageSpeed Insights for faster results...",
+    "Comparing your page to a converting one (awkward)...",
+    "Checking if your form is too long. (It probably is.)",
+    "Almost there — slow pages always have the most to say...",
+    "Still running. We haven't forgotten you.",
+    "Fetching page...",
+    "Well... this is awkward."
+  ];
+  var loaderMsgIndex = 0;
+  var loaderMsgInterval = null;
+
+  function startLoaderMessages() {
+    var title = document.getElementById('loading-title');
+    loaderMsgIndex = 0;
+    if (title) title.textContent = loaderMessages[0];
+    loaderMsgInterval = setInterval(function() {
+      // Stop at the last message — no loop
+      if (loaderMsgIndex >= loaderMessages.length - 1) return;
+      loaderMsgIndex++;
+      if (title) {
+        title.style.opacity = '0';
+        setTimeout(function() {
+          title.textContent = loaderMessages[loaderMsgIndex];
+          title.style.opacity = '1';
+        }, 300);
+      }
+    }, 10000);
+  }
+
+  function stopLoaderMessages() {
+    if (loaderMsgInterval) { clearInterval(loaderMsgInterval); loaderMsgInterval = null; }
+  }
+
+  function startAudit() {
+    var raw = ( document.getElementById('url-card') ? document.getElementById('url-card').value : document.getElementById('url-input').value ).trim();
+    if (!raw) { alert('Please enter a URL.'); return; }
+
+    // Auto-prepend https:// if missing
+    var url = raw;
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+    try { new URL(url); } catch {
+      alert('That URL doesn\'t look right. Please include the full address, e.g. https://example.com/page');
+      return;
+    }
+
+    // Generate job ID and push to URL for sharing/bookmarking
+    currentJobId = crypto.randomUUID();
+    window.history.pushState({}, '', '/r/' + currentJobId);
+
+    document.getElementById('input-section').style.display   = 'none';
+    document.getElementById('loading-section').style.display = 'block';
+    startLoaderMessages();
+
+    // GTM event
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ event: 'lp_audit_started', audited_url: url, client_name: extractClientName(url), client_domain: extractClientDomain(url) });
+
+    // Trigger background function (returns 202)
+    fetch('/.netlify/functions/landing-audit-background', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ url: url, jobId: currentJobId })
+    }).catch(function() {}); // 202 — ignore response
+
+    // Animate progress steps
+    setTimeout(function() { activateStep(2); }, 3000);
+    setTimeout(function() { activateStep(3); }, 10000);
+    setTimeout(function() { activateStep(4); }, 20000);
+
+    // Start polling
+    pollCount = 0;
+    pollInterval = setInterval(pollStatus, 2000);
+  }
+
+  function activateStep(n) {
+    for (var i = 1; i <= 4; i++) {
+      var el = document.getElementById('step-' + i);
+      if (!el) continue;
+      el.classList.remove('active', 'done');
+      if (i < n)  el.classList.add('done');
+      if (i === n) el.classList.add('active');
+      var icon = el.querySelector('.progress-icon');
+      if (icon) icon.textContent = i < n ? '✓' : i === n ? '⏳' : '○';
+    }
+  }
+
+  function pollStatus() {
+    if (!currentJobId) return;
+    pollCount++;
+
+    // Timeout after 5 minutes (300s) — PSI (worst case 80s) + Claude (90s) + headroom
+    if (pollCount > 150) {
+      clearInterval(pollInterval);
+      showError('The audit is taking longer than expected. Please try again.');
+      return;
+    }
+    fetch('/.netlify/functions/landing-audit-status?id=' + currentJobId)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.status === 'complete') {
+          clearInterval(pollInterval);
+          showReport(data.data, false);
+        } else if (data.status === 'partial') {
+          // Claude done, PSI still running — redirect now, report page shows PSI as pending
+          clearInterval(pollInterval);
+          showReport(data.data, true);
+        } else if (data.status === 'error') {
+          clearInterval(pollInterval);
+          showError(data.message || 'Audit failed. Please try again.');
+        }
+        // 'pending' → keep polling
+      })
+      .catch(function() { /* network error — keep polling */ });
+  }
+
+  function showError(msg) {
+    stopLoaderMessages();
+    document.getElementById('loading-section').style.display = 'none';
+    document.getElementById('input-section').style.display   = 'block';
+    alert('Error: ' + msg);
+  }
+
+  function showReport(report, psiPending) {
+    stopLoaderMessages();
+    currentReport = report;
+
+    // GTM event
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      event:            'lp_audit_completed',
+      audited_url:      report.url,
+      client_name:      extractClientName(report.url),
+      client_domain:    extractClientDomain(report.url),
+      audit_score:      report.health_score,
+      audit_band:       report.score_band,
+      inferred_keyword: report.inferred_keyword || ''
+    });
+
+    // Store for the report page, then redirect
+    try { sessionStorage.setItem('lp_audit_' + currentJobId, JSON.stringify(report)); } catch(e) {}
+    window.location.replace('/landing-page-audit-report?id=' + currentJobId);
+  }
+
+  function resetToStart() {
+    window.history.pushState({}, '', '/landing-page-audit');
+    currentJobId  = null;
+    currentReport = null;
+    clearInterval(pollInterval);
+    document.getElementById('report-section').style.display = 'none';
+    document.getElementById('input-section').style.display  = 'block';
+    document.getElementById('url-input').value = ''; var uc = document.getElementById('url-card'); if (uc) uc.value = '';
+    ['below-fold-1','below-fold-2','below-fold-3'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.style.display = '';
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Report HTML builder ────────────────────────────────────────────────────
+
+  // ── LPE estimation ─────────────────────────────────────────────────────────
+  // Estimates Landing Page Experience (Above average / Average / Below average)
+  // across three documented Google signals: relevance, performance, trust.
+  // Shown per keyword because LPE is assessed per keyword, not per page.
+
+  function parseLcpMs(s) {
+    if (!s) return null;
+    var m = String(s).match(/([\d.]+)/);
+    if (!m) return null;
+    // Always stored as seconds ("2.55s") from backend
+    return Math.round(parseFloat(m[1]) * 1000);
+  }
+
+  function tierDots(tier) {
+    var on = '<span class="dot-on">&#9679;</span>';
+    var off = '<span class="dot-off">&#9679;</span>';
+    return tier === 'strong'   ? on + on + on
+         : tier === 'moderate' ? on + on + off
+         :                       on + off + off;
+  }
+
+  function lpeBandHtml(label) {
+    var cls = label === 'Above average' ? 'lpe-above'
+            : label === 'Average'       ? 'lpe-average'
+            :                             'lpe-below';
+    return '<span class="lpe-band ' + cls + '">' + label + '</span>';
+  }
+
+  function estimateLpe(keyword, r) {
+    var kLow  = keyword.toLowerCase();
+    var kWords = kLow.split(' ');
+    var lpe   = ((r.categories || {}).landing_page_experience) || {};
+    var perf  = ((r.categories || {}).performance)             || {};
+    var trust = ((r.categories || {}).trust_signals)           || {};
+    var mob   = ((r.categories || {}).mobile)                  || {};
+
+    var h1L    = (lpe.h1               || '').toLowerCase();
+    var titleL = (lpe.title            || '').toLowerCase();
+    var metaL  = (lpe.meta_description || '').toLowerCase();
+    var urlL   = (r.url || '').toLowerCase().replace(/[-_\/]/g, ' ');
+
+    function wordCoverage(str) {
+      return kWords.filter(function(w) { return str.includes(w); }).length / kWords.length;
+    }
+
+    // Relevance
+    var relScore = 0;
+    if (h1L.includes(kLow))    relScore += 35; else if (wordCoverage(h1L)    >= 0.5) relScore += 18;
+    if (titleL.includes(kLow)) relScore += 30; else if (wordCoverage(titleL) >= 0.5) relScore += 15;
+    if (metaL.includes(kLow))  relScore += 15;
+    if (urlL.includes(kLow))   relScore += 20;
+    relScore = Math.min(relScore, 100);
+    var relTier = relScore >= 65 ? 'strong' : relScore >= 30 ? 'moderate' : 'weak';
+
+    // Performance — unknown signals default to 0 (no data = no credit)
+    var lcpMs  = parseLcpMs(perf.lcp);
+    var mobScr = mob.score != null ? mob.score : perf.mobile_score;
+    var cls    = perf.cls != null ? parseFloat(perf.cls) : null;
+    var perfScore = 0;
+    if (lcpMs != null)  perfScore += lcpMs <= 2500 ? 40 : lcpMs <= 4000 ? 20 : 0;
+    if (mobScr != null) perfScore += mobScr >= 90 ? 35 : mobScr >= 50 ? 18 : 0;
+    if (cls != null)    perfScore += cls <= 0.1 ? 25 : cls <= 0.25 ? 12 : 0;
+    // If all three signals are null, use a minimal baseline (site was reachable but speed unknown)
+    var perfDataAvail = (lcpMs != null || mobScr != null || cls != null);
+    if (!perfDataAvail) perfScore = 15; // unknown: below moderate threshold, avoids false strong
+    perfScore = Math.min(perfScore, 100);
+    var perfTier = perfScore >= 70 ? 'strong' : perfScore >= 38 ? 'moderate' : 'weak';
+
+    // Trust — HTTPS and privacy policy are baseline requirements, not differentiators.
+    // Social proof and authority signals are the real trust drivers for paid search LPE.
+    var trustScore = 0;
+    if (trust.https)              trustScore += 12; // baseline — expected on any legitimate site
+    if (trust.has_privacy_link)   trustScore += 8;  // legal requirement, not a competitive signal
+    if (trust.contact_signals)    trustScore += 25; // meaningful: phone/email/address visible
+    var sp = trust.social_proof_quality || '';
+    if (sp === 'strong' || trust.named_testimonials) trustScore += 30; // key differentiator
+    else if (sp === 'weak' || trust.star_rating_present) trustScore += 12;
+    if (trust.has_trust_badges || trust.authority_signals) trustScore += 25; // accreditations, awards
+    // strong requires real proof signals (contact + social or badges), not just infrastructure
+    var trustTier = trustScore >= 65 ? 'strong' : trustScore >= 28 ? 'moderate' : 'weak';
+
+    // Overall
+    function ts(t) { return t === 'strong' ? 2 : t === 'moderate' ? 1 : 0; }
+    var total = ts(relTier) + ts(perfTier) + ts(trustTier);
+    var lpeLabel = total >= 5 ? 'Above average' : total >= 3 ? 'Average' : 'Below average';
+
+    // Potential (if fixable findings addressed)
+    var findings = r.findings || [];
+    var potPerf  = perfTier;
+    var potTrust = trustTier;
+    var hasLcpFix   = findings.some(function(f) { return f.category === 'performance' && /lcp|load|speed/i.test(f.title); });
+    var hasClsFix   = findings.some(function(f) { return f.category === 'performance' && /cls|layout/i.test(f.title); });
+    var hasPrivFix  = findings.some(function(f) { return /privacy/i.test(f.title); });
+    var hasTrustFix = findings.some(function(f) { return f.category === 'trust_signals'; });
+
+    if ((hasLcpFix || hasClsFix) && perfTier !== 'strong')
+      potPerf = perfTier === 'weak' ? 'moderate' : 'strong';
+    if ((hasPrivFix || hasTrustFix) && trustTier !== 'strong')
+      potTrust = trustTier === 'weak' ? 'moderate' : 'strong';
+
+    var potTotal = ts(relTier) + ts(potPerf) + ts(potTrust);
+    var potLabel = potTotal >= 5 ? 'Above average' : potTotal >= 3 ? 'Average' : 'Below average';
+
+    return {
+      relTier: relTier, perfTier: perfTier, trustTier: trustTier,
+      lpeLabel: lpeLabel, potLabel: potLabel, improved: potLabel !== lpeLabel,
+      potPerf: potPerf, potTrust: potTrust
+    };
+  }
+
+  function buildLpePanel(r, ngrams) {
+    if (!ngrams || !ngrams.length) return '';
+    var rows = ngrams.slice(0, 3);
+    var anyImproved = false;
+    var fixHints = [];
+
+    var html = '<div class="lpe-panel">'
+      + '<div class="lpe-panel-label">Estimated paid-media fit — detected intent signals</div>'
+      + '<div class="lpe-panel-note">Based on Google\'s three documented LPE signals: relevance, performance, and trust. Phrases below are detected from page content — not all will be target keywords. The primary keyword is shown first; others are supporting themes or detected product concepts. This is an estimate from detectable signals, not Google\'s actual rating.</div>'
+      + '<table class="lpe-table">'
+      + '<thead><tr>'
+      + '<th>Keyword</th>'
+      + '<th class="lpe-col-signal">Relevance</th>'
+      + '<th class="lpe-col-signal">Performance</th>'
+      + '<th class="lpe-col-signal">Trust</th>'
+      + '<th class="lpe-col-now">Now</th>'
+      + '<th class="lpe-col-pot">Potential</th>'
+      + '</tr></thead><tbody>';
+
+    rows.forEach(function(ng) {
+      var est = estimateLpe(ng.phrase, r);
+      if (est.improved) anyImproved = true;
+      html += '<tr>'
+        + '<td class="lpe-kw-cell">' + ng.phrase + '</td>'
+        + '<td class="lpe-dots lpe-col-signal">' + tierDots(est.relTier)  + '</td>'
+        + '<td class="lpe-dots lpe-col-signal">' + tierDots(est.perfTier) + '</td>'
+        + '<td class="lpe-dots lpe-col-signal">' + tierDots(est.trustTier) + '</td>'
+        + '<td style="text-align:left">' + lpeBandHtml(est.lpeLabel) + '</td>'
+        + '<td style="text-align:left">';
+      if (est.improved) {
+        html += lpeBandHtml(est.potLabel);
+      } else {
+        html += '<span style="font-size:11px;color:var(--mid)">Same</span>';
+      }
+      html += '</td></tr>';
+    });
+
+    html += '</tbody></table>';
+
+    // Improvement note
+    if (anyImproved) {
+      var fixes = [];
+      var findings = r.findings || [];
+      findings.forEach(function(f) {
+        if (f.category === 'performance' && /lcp|load/i.test(f.title)) fixes.push('LCP optimisation');
+        if (f.category === 'performance' && /cls/i.test(f.title))      fixes.push('layout shift fix');
+        if (/privacy/i.test(f.title))                                    fixes.push('privacy policy');
+        if (f.category === 'trust_signals' && /social|testimonial|review/i.test(f.title)) fixes.push('social proof');
+      });
+      var uniqueFixes = fixes.filter(function(v, i, a) { return a.indexOf(v) === i; });
+      if (uniqueFixes.length) {
+        html += '<div class="lpe-improve-note">&#9650; Addressing ' + uniqueFixes.join(', ')
+          + ' may improve the estimated LPE signal for these keywords.</div>';
+      }
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function buildActionPlan(r) {
+    var impactMap = {
+      performance:             'Paid traffic retention',
+      landing_page_experience: 'Landing page experience',
+      conversion_architecture: 'Conversion rate & CPA',
+      trust_signals:           'Visitor confidence',
+      mobile:                  'Mobile paid clicks',
+      keyword_clarity:         'Keyword relevance'
+    };
+
+    // Action plan shows only actionable issues (not pass or info findings)
+    var allFindings = (r.findings || []).filter(function(f) { return f.severity !== 'info' && f.severity !== 'pass'; });
+    if (!allFindings.length) return '';
+
+    var order = { critical: 0, high: 1, medium: 2, low: 3 };
+    // Secondary sort by paid-media impact: performance and mobile first,
+    // then conversion architecture, keyword clarity, trust, then LPE hygiene items.
+    var catOrder = { performance: 0, mobile: 1, conversion_architecture: 2, keyword_clarity: 3, trust_signals: 4, landing_page_experience: 5 };
+    var sorted = allFindings.slice().sort(function(a, b) {
+      var sevDiff = (order[a.severity] ?? 3) - (order[b.severity] ?? 3);
+      if (sevDiff !== 0) return sevDiff;
+      return (catOrder[a.category] ?? 6) - (catOrder[b.category] ?? 6);
+    });
+
+    var critHigh = sorted.filter(function(f) { return f.severity === 'critical' || f.severity === 'high'; });
+    var potentialGain = sorted.reduce(function(acc, f) {
+      return acc + (f.severity === 'critical' ? 20 : f.severity === 'high' ? 10 : f.severity === 'medium' ? 5 : 2);
+    }, 0);
+    var potentialScore = Math.min(100, r.health_score + potentialGain);
+
+    var html = '<div class="section-hero" style="margin-top:40px">'
+      + '<div class="section-hero-eyebrow">Action plan</div>'
+      + '<div class="section-hero-title">Everything to fix, <em>in order</em></div>'
+      + '<div class="section-hero-meta"><span class="sh-issue">' + sorted.length + ' action' + (sorted.length !== 1 ? 's' : '') + '</span></div>'
+      + '</div>'
+      + '<div class="findings-block">';
+
+    if (critHigh.length) {
+      html += '<div class="action-plan-banner">'
+        + 'The <strong>' + critHigh.length + ' critical and high-priority finding' + (critHigh.length > 1 ? 's' : '') + '</strong>'
+        + ' below represent the main detected conversion barriers — address them first for the highest-confidence improvements.'
+        + '</div>';
+    }
+
+    sorted.forEach(function(f, i) {
+      var impact = impactMap[f.category] || 'Page quality';
+      html += '<div class="action-item">'
+        + '<div class="action-item-left">'
+        + '<span class="action-num">' + (i + 1) + '.</span>'
+        + '<span class="sev-badge sev-' + esc(f.severity) + '">' + esc(f.severity.toUpperCase()) + '</span>'
+        + '</div>'
+        + '<div class="action-body">'
+        + '<div class="action-title-text">' + esc(f.title) + '</div>'
+        + '<div class="action-fix-text">' + escWithLinks(f.fix) + '</div>'
+        + '</div>'
+        + '<div><span class="action-impact">' + impact + '</span></div>'
+        + '</div>';
+    });
+
+    html += '</div>';
+    return html;
+  }
+
+  function buildExecSummary(r) {
+    var findings = r.findings || [];
+    var critCount = findings.filter(function(f) { return f.severity === 'critical'; }).length;
+    var highCount = findings.filter(function(f) { return f.severity === 'high'; }).length;
+    var band      = r.score_band;
+    var sevWeight = { critical: 15, high: 8, medium: 4, low: 2 };
+    var catDeduction = {};
+    findings.forEach(function(f) {
+      if (f.severity === 'pass' || f.severity === 'info') return;
+      catDeduction[f.category] = (catDeduction[f.category] || 0) + (sevWeight[f.severity] || 0);
+    });
+    var worstCat = Object.keys(catDeduction).sort(function(a, b) { return catDeduction[b] - catDeduction[a]; })[0];
+    var catLabel = { performance: 'page speed', mobile: 'mobile experience', conversion_architecture: 'conversion clarity',
+      trust_signals: 'trust signals', keyword_clarity: 'keyword relevance', landing_page_experience: 'landing page relevance'
+    }[worstCat] || 'overall page quality';
+    var summary;
+    if (band === 'Strong') {
+      summary = 'Well-optimised for paid traffic — a few refinements could push conversion performance further.';
+    } else if (critCount > 0) {
+      summary = critCount === 1
+        ? '1 critical issue detected — address it before scaling spend.'
+        : critCount + ' critical issues detected — resolve these before scaling spend.';
+    } else if (highCount >= 3) {
+      summary = highCount + ' high-priority issues are limiting conversion efficiency — ' + catLabel + ' is the biggest drag.';
+    } else if (highCount > 0) {
+      summary = 'Functional page with ' + (highCount === 1 ? 'one high-priority barrier' : highCount + ' high-priority barriers') + ' — ' + catLabel + ' is the main area to address.';
+    } else {
+      summary = 'No critical or high-priority issues — the gaps here are optimisation opportunities, not blockers.';
+    }
+    return '<div class="exec-summary">' + summary + '</div>';
+  }
+
+  function buildSubScores(r) {
+    var findings  = r.findings || [];
+    var sevWeight = { critical: 15, high: 8, medium: 4, low: 2 };
+    var cats      = r.categories || {};
+    var perf      = cats.performance || {};
+    var dims = [
+      { label: 'Relevance',  cats: ['keyword_clarity', 'landing_page_experience'] },
+      { label: 'Speed',      cats: ['performance'],             key: 'speed' },
+      { label: 'Trust',      cats: ['trust_signals'] },
+      { label: 'Conversion', cats: ['conversion_architecture'] },
+      { label: 'Mobile',     cats: ['mobile'],                  key: 'mobile' }
+    ];
+    var html = '<div class="sub-scores">';
+    dims.forEach(function(dim) {
+      var deduction = 0;
+      findings.forEach(function(f) {
+        if (dim.cats.indexOf(f.category) > -1 && f.severity !== 'info' && f.severity !== 'pass') {
+          deduction += sevWeight[f.severity] || 0;
+        }
+      });
+      var score = Math.max(0, 100 - deduction);
+      var tier  = score >= 70 ? 'good' : score >= 40 ? 'fair' : 'poor';
+      var label = score >= 70 ? 'Good'  : score >= 40 ? 'Fair'  : 'Poor';
+
+      // Speed: LCP is the dominant signal for paid traffic — override findings-based result with PSI data.
+      // perf.lcp is stored as a string ("5.20s") — use parseLcpMs to get milliseconds for comparison.
+      if (dim.key === 'speed' && perf.lcp != null) {
+        var lcpMs = parseLcpMs(perf.lcp);
+        if      (lcpMs != null && lcpMs > 4000) { tier = 'poor'; label = 'Poor'; }
+        else if (lcpMs != null && lcpMs > 2500) { tier = 'fair'; label = 'Fair'; }
+        // lcp ≤ 2500 → keep findings-based result
+      }
+      // Mobile: mobile Lighthouse score is the clearest single signal
+      if (dim.key === 'mobile' && perf.mobile_score != null) {
+        if      (perf.mobile_score < 50) { tier = 'poor'; label = 'Poor'; }
+        else if (perf.mobile_score < 80) { tier = 'fair'; label = 'Fair'; }
+        // ≥ 80 → keep findings-based result
+      }
+
+      html += '<div class="sub-score-pill sub-score-' + tier + '">'
+        + '<span class="sub-score-name">' + dim.label + '</span>'
+        + '<span class="sub-score-val">' + label + '</span>'
+        + '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function buildReportHTML(r, psiPending) {
+    var html = '';
+
+    // Google Ads audit framing note — shown on every report
+    html += '<div class="ads-audit-note">'
+      + '<span>&#9432;</span>'
+      + '<span><strong>This is a paid media landing page audit, not an SEO audit.</strong> The scoring uses Google Ads signals as its primary lens — Quality Score factors, message match, above-fold clarity, and conversion architecture. The conversion, trust, speed, and mobile findings apply equally to Meta Ads and other paid channels. A page can rank well organically and still score low here. Both matter; they measure different things.</span>'
+      + '</div>';
+
+    // PSI pending banner — performance data still arriving
+    if (psiPending) {
+      html += '<div style="background:rgba(152,88,48,0.08);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:13px;color:var(--mid);display:flex;align-items:center;gap:8px;">'
+        + '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--amber);border-top-color:transparent;animation:spin 0.8s linear infinite;flex-shrink:0"></span>'
+        + 'Content analysis complete. Page speed data still measuring — this section will update automatically.'
+        + '</div>';
+    }
+
+    // Score header
+    var bandClass = { 'Strong': 'strong', 'Average': 'average', 'Needs work': 'needs-work', 'Critical': 'critical' }[r.score_band] || 'critical';
+    var kwConf    = r.keyword_confidence;
+    var kwText    = r.inferred_keyword
+      ? '<div class="keyword-line"><span class="kw-label">Targeting</span>' + esc(r.inferred_keyword) + '<div class="keyword-conf">' + esc(kwConf) + ' confidence' + (r.keyword_confidence_reason ? ' — ' + esc(r.keyword_confidence_reason) : '') + '</div></div>'
+      : '<div class="keyword-line"><span class="kw-label">Targeting</span><span style="color:#ff8a80">Could not infer a clear keyword from this page.</span></div>';
+
+    html += '<div class="report-header">'
+      + '<div class="report-header-top">'
+      + '<div class="report-brand">Phillips<span>.</span></div>'
+      + '<div class="report-header-actions">'
+      + '<button class="btn-share" id="copy-link-btn" onclick="copyReportLink()">⇧ Share</button>'
+      + '<button class="btn-download" onclick="window.print()">↓ Download PDF</button>'
+      + '</div></div>'
+      + '<div class="share-confirm" id="share-confirm">Link copied to clipboard.</div>'
+      + '<div class="report-eyebrow">Landing Page Audit</div>'
+      + '<div class="score-display"><span class="score-num">' + r.health_score + '</span><span class="score-denom">/100</span></div>'
+      + '<div>'
+      + '<span class="score-tag ' + bandClass + '">' + esc(r.score_band) + '</span>'
+      + '<button class="score-info-btn" onclick="toggleScoreInfo()" title="How is this score calculated?">i</button>'
+      + '</div>'
+      + '<div class="score-info-panel" id="score-info-panel">'
+      + '<strong>How this score is calculated</strong><br>'
+      + 'The audit runs checks across 6 categories. The score starts at 100 and deducts points for each issue found, weighted by severity:'
+      + '<table>'
+      + '<tr><td><span class="sev-dot" style="background:#C0392B;"></span>Critical</td><td>&minus;15 points</td><td>HTTP, no H1, major conversion blockers</td></tr>'
+      + '<tr><td><span class="sev-dot" style="background:#D4691B;"></span>High</td><td>&minus;8 points</td><td>Poor performance, broken mobile, weak relevance</td></tr>'
+      + '<tr><td><span class="sev-dot" style="background:#D4A017;"></span>Medium</td><td>&minus;4 points</td><td>Optimisation opportunities with measurable impact</td></tr>'
+      + '<tr><td><span class="sev-dot" style="background:#6B6B6B;"></span>Low</td><td>&minus;2 points</td><td>Minor improvements, best practice gaps</td></tr>'
+      + '</table>'
+      + '<br><strong>Score bands</strong>'
+      + '<table>'
+      + '<tr><td>75–100</td><td>Strong — well-optimised for paid traffic</td></tr>'
+      + '<tr><td>55–74</td><td>Average — functional with clear headroom</td></tr>'
+      + '<tr><td>35–54</td><td>Needs work — meaningful conversion barriers</td></tr>'
+      + '<tr><td>0–34</td><td>Critical — fundamental problems to fix first</td></tr>'
+      + '</table>'
+      + '<br><strong>Context:</strong> Most homepage and service pages land in the 55–74 range. A purpose-built, optimised campaign landing page should score 75+.'
+      + '</div>'
+      + '<div class="report-url-line">' + esc(r.url) + ' &middot; ' + new Date(r.audited_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) + '</div>'
+      + kwText
+      + (r.page_meta
+          ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">'
+            + (r.page_meta.page_type === 'ecommerce'
+                ? '<span class="page-type-badge page-type-ecommerce">eCommerce'
+                  + (r.page_meta.ecommerce_platform ? ' · ' + esc(r.page_meta.ecommerce_platform) : '')
+                  + '</span>'
+                : '<span class="page-type-badge page-type-lead-gen">Lead Generation</span>')
+            + '</div>'
+          : '')
+      + '</div>';
+
+    // Sub-scores — 5-dimension breakdown below the header
+    html += buildSubScores(r);
+
+    // Executive summary — one-line verdict
+    html += buildExecSummary(r);
+
+    // Metrics grid
+    var cats = r.categories || {};
+    var perf = cats.performance || {};
+    html += '<div class="metrics-grid">'
+      + metricCell('LCP (mobile)',  perf.lcp,          lcpClass(perf.lcp),  lcpTier(perf.lcp),  '< 2.5s = good')
+      + metricCell('CLS',           perf.cls,           clsClass(perf.cls),  clsTier(perf.cls),  '< 0.1 = good')
+      + metricCell('INP',           perf.inp,           inpClass(perf.inp),  inpTier(perf.inp),  '< 200ms = good')
+      + metricCell('TTFB',          perf.ttfb,          ttfbClass(perf.ttfb),ttfbTier(perf.ttfb),'< 800ms = good')
+      + metricCell('Mobile score',  perf.mobile_score != null ? perf.mobile_score : null, scoreClass(perf.mobile_score), scoreTier(perf.mobile_score), '90+ = good')
+      + metricCell('Desktop score', perf.desktop_score != null ? perf.desktop_score : null, scoreClass(perf.desktop_score), scoreTier(perf.desktop_score), '90+ = good')
+      + '</div>';
+
+    // PSI failure notices
+    var psiMissing  = (perf.mobile_score == null && perf.desktop_score == null);
+    var mobileOnly  = (perf.mobile_score == null && perf.desktop_score != null);
+    var desktopOnly = (perf.desktop_score == null && perf.mobile_score != null);
+    if (psiMissing) {
+      html += '<div class="psi-notice">'
+        + '<strong>Site speed data unavailable for this audit.</strong> '
+        + 'Google\'s PageSpeed Insights API did not return results for this URL — this can happen intermittently on heavily JS-rendered or CDN-protected pages. '
+        + 'Re-running the audit usually resolves it.'
+        + '</div>';
+    } else if (mobileOnly) {
+      html += '<div class="psi-notice">'
+        + '<strong>Mobile speed data timed out — desktop data shown.</strong> '
+        + 'Google\'s mobile Lighthouse test runs a throttled simulation and can take longer on some sites. Core Web Vitals below are sourced from desktop where available. Re-running the audit usually returns the full mobile data.'
+        + '</div>';
+    } else if (desktopOnly) {
+      html += '<div class="psi-notice">'
+        + '<strong>Desktop speed data unavailable — mobile data shown.</strong> Re-running the audit usually resolves it.'
+        + '</div>';
+    }
+
+    // Metrics explainer
+    html += '<div class="metrics-explainer">'
+      + '<div class="metrics-explainer-title">What these metrics mean</div>'
+      + '<div class="metrics-explainer-grid">'
+      + '<div class="me-row"><span class="me-label">LCP — Largest Contentful Paint</span><span class="me-desc">How long your main content takes to load. Google\'s threshold is under 2.5s. Slow LCP means paid traffic is bouncing before your offer renders — you pay for the click, they never see the page.</span></div>'
+      + '<div class="me-row"><span class="me-label">CLS — Cumulative Layout Shift</span><span class="me-desc">How much the page jumps around after it loads. A score above 0.1 means buttons and text move — causing misclicks and frustration. Google uses this directly in Landing Page Experience scoring.</span></div>'
+      + '<div class="me-row"><span class="me-label">INP — Interaction to Next Paint</span><span class="me-desc">How quickly the page responds to a tap or click. Under 200ms feels instant. Above 500ms feels broken. Not available for all pages — requires measurable user interactions during the test.</span></div>'
+      + '<div class="me-row"><span class="me-label">TTFB — Time to First Byte</span><span class="me-desc">How fast your server responds. Under 800ms is Google\'s good threshold. High TTFB delays everything else on the page and is often the fastest fix — server caching or a CDN can cut it significantly.</span></div>'
+      + '</div>'
+      + '</div>';
+
+    // JS-rendered warning
+    if (r.page_meta && r.page_meta.is_blocked) {
+      var hasPsi = r.page_meta.content_from_psi;
+      html += '<div class="blocked-warning">'
+        + '<strong>Page uses bot protection (Cloudflare / WAF) — direct content scan blocked.</strong>'
+        + (hasPsi
+            ? ' Performance, tracking, and keyword data were extracted from <strong>Google\'s own PageSpeed Insights rendering engine</strong>, which uses Googlebot and bypasses bot protection. This is exactly what Google sees when it assesses your page.'
+            : ' Performance data from Google\'s PageSpeed Insights is shown where available.')
+        + '<div class="bw-note">'
+        + (hasPsi
+            ? 'Trust signals, CTA, and body copy analysis require a direct fetch and are unavailable for this page.'
+            : 'Tracking, keyword, trust, and CTA checks are unavailable.')
+        + '</div>'
+        + '</div>';
+    } else if (r.page_meta && r.page_meta.is_timeout) {
+      html += '<div class="blocked-warning">'
+        + '<strong>Page timed out — content checks unavailable.</strong>'
+        + ' The page took over 10 seconds to respond. Performance data from PageSpeed Insights is shown where available.'
+        + '<div class="bw-note">A slow server response affects real visitors too — see the performance findings below.</div>'
+        + '</div>';
+    } else if (r.page_meta && r.page_meta.is_unreachable) {
+      html += '<div class="blocked-warning">'
+        + '<strong>Page returned an error — content checks unavailable.</strong>'
+        + ' The server rejected the request. Verify the URL is correct and publicly accessible without login.'
+        + '<div class="bw-note">Performance data from PageSpeed Insights may still be shown below if Google has crawled this page.</div>'
+        + '</div>';
+    }
+    if (r.page_meta && r.page_meta.is_js_rendered) {
+      html += '<div class="js-warning"><strong>JavaScript-rendered page — content findings have medium confidence.</strong> Performance and tracking data comes from Google\'s real rendering engine and is accurate. Content-based findings (copy, CTAs, trust signals, phone numbers) are based on what was detectable in the static HTML — some elements may be present in the rendered page that weren\'t visible to the scanner. <strong>Visually confirm any content findings before acting on them.</strong></div>';
+    }
+    if (r.page_meta && r.page_meta.cookie_banner_detected) {
+      var cbPlatform = r.page_meta.cookie_banner_platform || 'Cookie banner';
+      html += '<div class="cookie-banner-notice">&#10003; ' + esc(cbPlatform) + ' detected and excluded from content analysis</div>';
+    }
+
+    // Priority actions
+    if (r.priority_actions && r.priority_actions.length) {
+      html += '<div class="priority-block"><div class="section-eyebrow">Priority actions</div>';
+      r.priority_actions.forEach(function(a, i) {
+        html += '<div class="priority-row">'
+          + '<div class="priority-n">' + (i + 1) + '.</div>'
+          + '<div><div><span class="sev-badge sev-' + esc(a.severity) + '">' + esc(a.severity) + '</span></div><div class="priority-title">' + esc(a.title) + '</div><div class="priority-fix">' + esc(a.fix) + '</div></div>'
+          + '</div>';
+      });
+      html += '</div>';
+    }
+
+    // Sections
+    var sections = [
+      { key: 'performance',            label: 'Technical Performance',   cats: ['performance'] },
+      { key: 'keyword_clarity',        label: 'Keyword &amp; Intent',    cats: ['keyword_clarity'] },
+      { key: 'landing_page_experience',label: 'Landing Page Experience', cats: ['landing_page_experience'] },
+      { key: 'conversion_architecture',label: 'Conversion Architecture', cats: ['conversion_architecture'] },
+      { key: 'trust_signals',          label: 'Trust Signals',           cats: ['trust_signals'] },
+      { key: 'mobile',                 label: 'Mobile Experience',       cats: ['mobile', 'performance'] }
+    ];
+
+    // Special: keyword card for keyword_clarity section
+    var kwCard = '';
+    if (cats.keyword_clarity) {
+      var kc = cats.keyword_clarity;
+      if (kc.inferred_keyword) {
+        var ngramHtml = '';
+        if (kc.top_ngrams && kc.top_ngrams.length) {
+          var isEcomPage = r.page_meta && r.page_meta.page_type === 'ecommerce';
+          ngramHtml = '<div class="ngram-section">'
+            + '<div class="ngram-label">'
+            + (isEcomPage
+                ? 'Top keyword phrases on this page<span class="ngram-note">Product titles filtered out</span>'
+                : 'Top keyword phrases on this page')
+            + '</div>'
+            + '<table class="ngram-table">';
+          kc.top_ngrams.forEach(function(ng) {
+            ngramHtml += '<tr>'
+              + '<td class="ngram-phrase">' + esc(ng.phrase) + '</td>'
+              + '<td class="ngram-count">' + (ng.count != null ? '&times;' + ng.count : '') + '</td>'
+              + '<td class="ngram-badges">'
+              + (ng.inUrl   ? '<span class="ngram-badge badge-url">URL</span>'   : '')
+              + (ng.inH1    ? '<span class="ngram-badge badge-h1">H1</span>'     : '')
+              + (ng.inTitle ? '<span class="ngram-badge badge-title">Title</span>' : '')
+              + '</td>'
+              + '</tr>';
+          });
+          ngramHtml += '</table></div>';
+        }
+        var lpePanel = (kc.top_ngrams && kc.top_ngrams.length) ? buildLpePanel(r, kc.top_ngrams) : '';
+        kwCard = '<div class="keyword-card">'
+          + '<div class="keyword-card-label">Inferred target keyword</div>'
+          + '<div class="keyword-card-kw">' + esc(kc.inferred_keyword) + '</div>'
+          + '<div class="keyword-card-meta">'
+          + 'Confidence: <strong>' + esc(kc.confidence || '') + '</strong>'
+          + (kc.confidence_reason ? ' — ' + esc(kc.confidence_reason) : '')
+          + (kc.intent_type ? '<br>Intent type: <strong>' + esc(kc.intent_type) + '</strong>' : '')
+          + (kc.specificity ? ' &middot; Specificity: <strong>' + esc(kc.specificity) + '</strong>' : '')
+          + '</div>'
+          + ngramHtml
+          + lpePanel
+          + '</div>';
+      } else {
+        kwCard = '<div class="issue-card sev-critical" style="margin-top:20px">'
+          + '<div class="issue-sev sev-critical">Critical</div>'
+          + '<div class="issue-title">No clear keyword identifiable</div>'
+          + '<div class="issue-pfi">'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Problem</span><span class="pfi-text">The AI could not identify a clear target keyword from this page\'s headline, title tag, or opening copy. If it cannot tell, Google\'s relevance scoring system cannot tell either — this is directly hurting your Quality Score.</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">Rewrite the H1 and title tag to include a specific, targeted keyword that reflects what users are searching for when they see your ad.</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">Keyword clarity is the foundation of Landing Page Experience relevance — fixing this directly improves Quality Score and reduces CPCs.</span></div>'
+          + '</div>'
+          + '</div>';
+      }
+    }
+
+    var allFindings = r.findings || [];
+
+    sections.forEach(function(sec) {
+      // Filter findings for this section
+      var catKeys = sec.key === 'mobile'
+        ? ['mobile']
+        : sec.key === 'performance'
+          ? ['performance']
+          : [sec.key];
+
+      var sectionFindings = allFindings.filter(function(f) { return catKeys.indexOf(f.category) !== -1; });
+
+      // Separate findings by type:
+      // pass  = positive findings (green, no score impact)
+      // info  = contextual notes (blue, no score impact)
+      // issues = actual problems (affect score, verdict, count)
+      var passFindings = sectionFindings.filter(function(f) { return f.severity === 'pass'; });
+      var infoNotes    = sectionFindings.filter(function(f) { return f.severity === 'info'; });
+      var allIssues    = sectionFindings.filter(function(f) { return f.severity !== 'info' && f.severity !== 'pass'; });
+      var realIssues   = allIssues.filter(function(f) { return f.severity !== 'suggest'; });
+      var suggestions  = allIssues.filter(function(f) { return f.severity === 'suggest'; });
+      var hasCritical  = realIssues.some(function(f) { return f.severity === 'critical'; });
+      var hasHigh      = realIssues.some(function(f) { return f.severity === 'high'; });
+
+      var verdict = realIssues.length === 0 ? 'pass' : (hasCritical || hasHigh) ? 'fail' : 'review';
+
+      html += '<div class="section-hero">'
+        + '<div class="section-hero-eyebrow">' + sec.label + '</div>'
+        + '<div class="section-hero-title">' + sectionTitle(sec.key, cats) + '</div>'
+        + '<div class="section-hero-meta">'
+        + (realIssues.length ? '<span class="sh-issue">' + realIssues.length + ' issue' + (realIssues.length > 1 ? 's' : '') + '</span>' : '<span class="sh-pass">No issues</span>')
+        + (suggestions.length ? '<span class="sh-sep">·</span><span class="sh-suggest">' + suggestions.length + ' opportunit' + (suggestions.length > 1 ? 'ies' : 'y') + '</span>' : '')
+        + (passFindings.length ? '<span class="sh-sep">·</span><span class="sh-pass">' + passFindings.length + ' working well</span>' : '')
+        + '</div>'
+        + '</div>';
+
+      html += '<div class="findings-block">';
+
+      // Special cards per section
+      if (sec.key === 'keyword_clarity') html += kwCard;
+
+      // Helper to render a single finding card
+      function renderFindingCard(f) {
+        var sevLabel = f.severity === 'suggest' ? 'Suggestion' : f.severity.toUpperCase();
+        var problemLabel = f.severity === 'suggest' ? 'Opportunity' : 'Problem';
+        var effortHtml = '';
+        if (f.effort === 'low' || f.effort === 'medium' || f.effort === 'high') {
+          var effortLabel = f.effort.charAt(0).toUpperCase() + f.effort.slice(1) + ' effort';
+          effortHtml = '<span class="effort-badge effort-' + esc(f.effort) + '">' + effortLabel + '</span>';
+        }
+        html += '<div class="issue-card sev-' + esc(f.severity) + '">'
+          + '<div>'
+          + '<div class="issue-sev sev-' + esc(f.severity) + '" style="display:inline-block">' + esc(sevLabel) + '</div>'
+          + effortHtml
+          + '</div>'
+          + '<div class="issue-title">' + esc(f.title) + '</div>'
+          + '<div class="issue-pfi">'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">' + problemLabel + '</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Fix</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
+          + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
+          + '</div>'
+          + '</div>';
+      }
+
+      if (realIssues.length === 0 && suggestions.length === 0) {
+        html += sectionPassSummary(sec.key, cats, r);
+      } else {
+        // Real issues first
+        realIssues.forEach(renderFindingCard);
+        // Suggestions — with their own coloured banner
+        if (suggestions.length > 0) {
+          html += '<div class="suggestions-section-hdr">Opportunities to explore</div>';
+          suggestions.forEach(renderFindingCard);
+        }
+      }
+
+      // What's working — pass findings render after issues (or after pass summary) in green
+      if (passFindings.length > 0) {
+        html += '<div class="working-section-hdr">What\'s working</div>';
+        passFindings.forEach(function(f) {
+          html += '<div class="issue-card sev-pass">'
+            + '<div class="issue-sev sev-pass">✓ WORKING</div>'
+            + '<div class="issue-title">' + esc(f.title) + '</div>'
+            + '<div class="issue-pfi">'
+            + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Detail</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+            + (f.fix ? '<div class="issue-pfi-row"><span class="pfi-label pfi-fix">Strengthen</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>' : '')
+            + (f.impact ? '<div class="issue-pfi-row"><span class="pfi-label pfi-impact">Impact</span><span class="pfi-text pfi-impact-text">' + esc(f.impact) + '</span></div>' : '')
+            + '</div>'
+            + '</div>';
+        });
+      }
+
+      // Info notes render below issues (or below pass summary) with neutral blue styling
+      infoNotes.forEach(function(f) {
+        html += '<div class="issue-card sev-info">'
+          + '<div class="issue-sev sev-info">ℹ INFO</div>'
+          + '<div class="issue-title">' + esc(f.title) + '</div>'
+          + '<div class="issue-pfi">'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-problem">Detail</span><span class="pfi-text">' + esc(f.detail) + '</span></div>'
+          + '<div class="issue-pfi-row"><span class="pfi-label pfi-fix" style="color:#1565C0">Note</span><span class="pfi-text">' + escWithLinks(f.fix) + '</span></div>'
+          + '</div>'
+          + '</div>';
+      });
+
+      html += '</div>';
+    });
+
+    // Action plan
+    html += buildActionPlan(r);
+
+    // Restart button
+    html += '<div class="report-restart"><button onclick="resetToStart()">← Audit another page</button></div>';
+
+    // Report CTA — shown on report only, not on tool homepage
+    html += '<div class="lead-cta">'
+      + '<div class="lead-cta-copy">'
+      + '<h3>Need expert eyes on the account too?</h3>'
+      + '<p>Lewis Phillips — senior performance marketer, 11 years, £50M+ managed across Google, Meta, Microsoft and Apple. Available for senior roles and selected consulting projects.</p>'
+      + '</div>'
+      + '<a href="https://www.phillips-uk.com#contact" class="lead-cta-btn">Get in touch →</a>'
+      + '</div>';
+
+    // Crosslink to Google Ads Audit Tool
+    html += '<div class="crosslink-bar">'
+      + '<span class="crosslink-text">Want to check the account side too?</span>'
+      + '<a href="/google-ads-audit" class="crosslink-link">Free Google Ads Audit Tool →</a>'
+      + '</div>';
+
+    // Crosslink to conversion tracking guide
+    html += '<div class="crosslink-bar">'
+      + '<span class="crosslink-text">Conversion tracking not recording correctly?</span>'
+      + '<a href="/guides/fix-google-ads-conversion-tracking/" class="crosslink-link">How to Fix Google Ads Conversion Tracking →</a>'
+      + '</div>';
+
+    return html;
+  }
+
+  // ── Helper functions ───────────────────────────────────────────────────────
+
+  function extractClientName(url) {
+    try {
+      var hostname = new URL(url).hostname.replace(/^www\./, '');
+      // Take the first label (e.g. "gogglesquad" from "gogglesquad.co.uk")
+      var name = hostname.split('.')[0];
+      // Replace hyphens/underscores, title-case each word
+      return name.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    } catch(e) { return ''; }
+  }
+
+  function extractClientDomain(url) {
+    try {
+      return new URL(url).hostname.replace(/^www\./, '');
+    } catch(e) { return ''; }
+  }
+
+  function esc(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Like esc() but auto-links https:// URLs — used for fix/note text
+  function escWithLinks(s) {
+    if (s == null) return '';
+    return esc(s).replace(/https?:\/\/[^\s<&]+/g, function(url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:underline">' + url + '</a>';
+    });
+  }
+
+  function metricCell(label, value, cls, tier, bench) {
+    var display = value != null ? value : 'N/A';
+    var c = value != null ? cls : 'm-na';
+    var t = value != null ? tier : '—';
+    return '<div class="metric-item">'
+      + '<div class="metric-label">' + label + '</div>'
+      + '<div class="metric-value ' + c + '">' + esc(String(display)) + '</div>'
+      + '<div class="metric-tier ' + c + '">' + t + '</div>'
+      + '<div class="metric-bench">' + bench + '</div>'
+      + '</div>';
+  }
+
+  function lcpClass(v)  { if (!v) return 'm-na'; var n=parseFloat(v); return n<2.5?'m-good':n<4?'m-ok':'m-poor'; }
+  function lcpTier(v)   { if (!v) return ''; var n=parseFloat(v); return n<2.5?'Good':n<4?'Needs improvement':'Poor'; }
+  function clsClass(v)  { if (!v && v!==0) return 'm-na'; var n=parseFloat(v); return n<0.1?'m-good':n<0.25?'m-ok':'m-poor'; }
+  function clsTier(v)   { if (!v && v!==0) return ''; var n=parseFloat(v); return n<0.1?'Good':n<0.25?'Needs improvement':'Poor'; }
+  function inpClass(v)  { if (!v) return 'm-na'; var n=parseFloat(v); return n<200?'m-good':n<500?'m-ok':'m-poor'; }
+  function inpTier(v)   { if (!v) return ''; var n=parseFloat(v); return n<200?'Good':n<500?'Needs improvement':'Poor'; }
+  function ttfbClass(v) { if (!v) return 'm-na'; var n=parseFloat(v); return n<800?'m-good':n<1800?'m-ok':'m-poor'; }
+  function ttfbTier(v)  { if (!v) return ''; var n=parseFloat(v); return n<800?'Good':n<1800?'Needs improvement':'Poor'; }
+  function scoreClass(v){ if (v==null) return 'm-na'; return v>=90?'m-good':v>=50?'m-ok':'m-poor'; }
+  function scoreTier(v) { if (v==null) return ''; return v>=90?'Good':v>=50?'Needs improvement':'Poor'; }
+
+  function trackRow(name, detected, note) {
+    var dot = detected ? 't-green' : (note ? 't-orange' : 't-red');
+    var status = detected ? 'Detected' : (note || 'Not detected');
+    return '<div class="tracking-row">'
+      + '<span class="tracking-dot ' + dot + '"></span>'
+      + '<span class="tracking-name">' + name + '</span>'
+      + '<span class="tracking-status-text">' + status + '</span>'
+      + '</div>';
+  }
+
+  function sectionTitle(key, cats) {
+    var m = {
+      performance:             'Technical <em>Performance</em>',
+      keyword_clarity:         'Keyword &amp; <em>Intent Clarity</em>',
+      landing_page_experience: 'Landing Page <em>Experience</em>',
+      conversion_architecture: 'Conversion <em>Architecture</em>',
+      trust_signals:           'Trust <em>Signals</em>',
+      mobile:                  'Mobile <em>Experience</em>'
+    };
+    return m[key] || key;
+  }
+
+  function sectionPassSummary(key, cats, r) {
+    var perf = cats.performance || {};
+    var kc   = cats.keyword_clarity || {};
+    var lpe  = cats.landing_page_experience || {};
+    var ca   = cats.conversion_architecture || {};
+    var ts   = cats.trust_signals || {};
+    var mob  = cats.mobile || {};
+    var items = [];
+
+    if (key === 'performance') {
+      if (perf.lcp)  items.push('LCP ' + perf.lcp + ' — within Google\'s "Good" threshold (&lt; 2.5s)');
+      if (perf.cls !== null && perf.cls !== undefined) items.push('CLS ' + perf.cls + ' — no significant layout shift detected');
+      if (perf.inp)  items.push('INP ' + perf.inp + ' — page responds quickly to user interaction');
+      if (perf.ttfb) items.push('TTFB ' + perf.ttfb + ' — server response time is healthy');
+      if (!items.length) items.push('All Core Web Vitals are within Google\'s thresholds.');
+    }
+    if (key === 'keyword_clarity') {
+      if (kc.inferred_keyword) items.push('Target keyword identified: "' + esc(kc.inferred_keyword) + '" — ' + (kc.confidence || 'unknown') + ' confidence');
+      if (kc.intent_type && kc.intent_type !== 'unknown') items.push('Search intent: ' + esc(kc.intent_type) + (kc.specificity ? ' · specificity: ' + esc(kc.specificity) : ''));
+      if (kc.confidence_reason) items.push(esc(kc.confidence_reason));
+      if (!items.length) items.push('Keyword and intent are clearly identifiable from this page.');
+    }
+    if (key === 'landing_page_experience') {
+      if (lpe.h1) items.push('H1 present: "' + esc(lpe.h1.substring(0, 70) + (lpe.h1.length > 70 ? '…' : '')) + '"');
+      if (lpe.title) items.push('Title tag present: "' + esc(lpe.title.substring(0, 70) + (lpe.title.length > 70 ? '…' : '')) + '"');
+      if (lpe.meta_description) items.push('Meta description present');
+      if (lpe.page_relevance === 'strong') items.push('Page relevance to target keyword: strong');
+      if (lpe.value_proposition_clarity === 'clear') items.push('Value proposition is clear above the fold');
+      if (lpe.message_match_strength === 'strong') items.push('Strong message match — page language aligns with likely ad intent');
+      else if (lpe.message_match_strength === 'moderate') items.push('Reasonable message match detected between page and intent');
+      if (!items.length) items.push('Landing page experience signals are in good shape.');
+    }
+    if (key === 'conversion_architecture') {
+      if (ca.has_cta) items.push('Above-fold CTA detected' + (ca.cta_text ? ': "' + esc(ca.cta_text) + '"' : ''));
+      if (ca.cta_specificity === 'specific') items.push('CTA is action-specific — clear outcome communicated to the visitor');
+      if (ca.conversion_goal_clarity === 'single') items.push('Single, clear conversion goal — no conflicting offers');
+      if (ca.form_fields != null && ca.form_fields > 0 && ca.form_fields <= 3) items.push(ca.form_fields + '-field form — optimal length for paid traffic');
+      if (ca.urgency_present) items.push('Urgency signals present — creates a reason to act now');
+      if (!items.length) items.push('Conversion architecture is well structured for paid traffic.');
+    }
+    if (key === 'trust_signals') {
+      if (ts.https) items.push('Served over HTTPS — secure connection established');
+      if (ts.has_privacy_link) items.push('Privacy policy linked in page content');
+      if (ts.contact_signals) items.push('Contact information present (phone, email or address detected)');
+      if (ts.star_rating_present) items.push('Star ratings or review counts visible on page');
+      if (ts.testimonial_blocks > 0) items.push(ts.testimonial_blocks + ' testimonial block' + (ts.testimonial_blocks > 1 ? 's' : '') + ' detected');
+      if (ts.named_testimonials) items.push('Named testimonials present — stronger credibility than anonymous quotes');
+      if (ts.has_video_content) items.push('Video content present — increases engagement and dwell time');
+      if (ts.has_trust_badges) items.push('Trust badge or accreditation text detected');
+      if (ts.risk_reducer_present) items.push('Risk reducer present' + (ts.risk_reducer_type && ts.risk_reducer_type !== 'null' ? ' (' + esc(ts.risk_reducer_type) + ')' : '') + ' — reduces conversion hesitation');
+      if (ts.authority_signals) items.push('Authority signals detected (accreditations, awards or press mentions)');
+      if (!items.length) items.push('Trust signals are present and visible to paid traffic visitors.');
+    }
+    if (key === 'mobile') {
+      if (mob.score != null && mob.score >= 90) items.push('Mobile performance score ' + mob.score + '/100 — Good');
+      else if (mob.score != null) items.push('Mobile performance score: ' + mob.score + '/100');
+      if (mob.has_viewport) items.push('Viewport meta tag configured — page renders correctly on mobile');
+      if (mob.tap_targets_ok === true) items.push('Tap targets are within Google\'s recommended size');
+      if (!items.length) items.push('Mobile experience checks passed.');
+    }
+
+    if (!items.length) items.push('All checks in this category passed.');
+    return '<div class="pass-summary">'
+      + items.map(function(item) {
+          return '<div class="pass-item"><span class="pass-item-icon">✓</span><span>' + item + '</span></div>';
+        }).join('')
+      + '</div>';
+  }
+
+  function toggleScoreInfo() {
+    var panel = document.getElementById('score-info-panel');
+    if (panel) panel.classList.toggle('open');
+  }
+
+  function toggleFaq(btn) {
+    var item = btn.parentElement;
+    item.classList.toggle('open');
+  }
+
+  // ── Share & export ─────────────────────────────────────────────────────────
+
+  function copyReportLink() {
+    var reportUrl = window.location.origin + '/r/' + currentJobId;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(reportUrl).then(function () {
+        var btn = document.getElementById('copy-link-btn');
+        var msg = document.getElementById('share-confirm');
+        if (btn) { btn.textContent = '✓ Copied'; setTimeout(function () { btn.textContent = '⇧ Share'; }, 2500); }
+        if (msg) { msg.style.display = 'block'; setTimeout(function () { msg.style.display = 'none'; }, 3000); }
+      }).catch(function () { prompt('Copy your report link:', reportUrl); });
+    } else {
+      prompt('Copy your report link:', reportUrl);
+    }
+    dataLayer.push({ event: 'report_shared', share_channel: 'copy_link', audited_url: currentReport ? currentReport.url : '', client_name: currentReport ? extractClientName(currentReport.url) : '', client_domain: currentReport ? extractClientDomain(currentReport.url) : '' });
+  }
+
+  function shareOnTwitter() {
+    if (!currentReport) return;
+    var reportUrl  = encodeURIComponent(window.location.origin + '/r/' + currentJobId);
+    var kw         = currentReport.inferred_keyword ? ' — targeting "' + currentReport.inferred_keyword + '"' : '';
+    var score      = currentReport.health_score;
+    var text       = encodeURIComponent('Just ran a free landing page audit for Google Ads' + kw + '. Score: ' + score + '/100. Full report:');
+    window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + reportUrl, '_blank');
+    dataLayer.push({ event: 'report_shared', share_channel: 'twitter', audited_url: currentReport.url, client_name: extractClientName(currentReport.url), client_domain: extractClientDomain(currentReport.url) });
+  }
+
+  function shareOnLinkedIn() {
+    if (!currentReport) return;
+    var reportUrl = encodeURIComponent(window.location.origin + '/r/' + currentJobId);
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + reportUrl, '_blank');
+    dataLayer.push({ event: 'report_shared', share_channel: 'linkedin', audited_url: currentReport.url, client_name: extractClientName(currentReport.url), client_domain: extractClientDomain(currentReport.url) });
+  }
+
+  function exportMarkdown() {
+    if (!currentReport) return;
+    var r          = currentReport;
+    var cats       = r.categories || {};
+    var perf       = cats.performance || {};
+    var clientName = extractClientName(r.url);
+    var clientDomain = extractClientDomain(r.url);
+    var date = new Date(r.audited_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    var slug = clientName
+      ? clientName.toLowerCase().replace(/\s+/g, '-') + '-landing-page-audit-' + (r.audited_at || '').slice(0, 10)
+      : (r.url || '').replace(/https?:\/\//,'').replace(/[^a-z0-9]/gi,'-').toLowerCase().substring(0, 60);
+
+    var lines = [
+      '---',
+      'tags: [landing-page-audit, google-ads]',
+      'client: "' + (clientName || clientDomain || '') + '"',
+      'domain: "' + clientDomain + '"',
+      'url: "' + (r.url || '') + '"',
+      'audited: ' + (r.audited_at || '').slice(0, 10),
+      'score: ' + r.health_score,
+      'band: ' + r.score_band,
+      'keyword: "' + (r.inferred_keyword || 'unknown') + '"',
+      '---',
+      '',
+      '# Landing Page Audit — ' + (clientName || r.url),
+      '',
+      '| | |',
+      '|---|---|',
+      (clientName ? '| **Client** | ' + clientName + ' |' : ''),
+      '| **Domain** | ' + clientDomain + ' |',
+      '| **URL** | ' + (r.url || '') + ' |',
+      '| **Audited** | ' + date + ' |',
+      '| **Score** | ' + r.health_score + '/100 — ' + r.score_band + ' |',
+      '| **Inferred keyword** | ' + (r.inferred_keyword || 'Not identified') + ' (' + (r.keyword_confidence || 'none') + ' confidence) |',
+      '',
+      '## Core Web Vitals (mobile)',
+      '',
+      '| Metric | Value |',
+      '|--------|-------|',
+      '| LCP | ' + (perf.lcp || 'N/A') + ' |',
+      '| CLS | ' + (perf.cls || 'N/A') + ' |',
+      '| INP | ' + (perf.inp || 'N/A') + ' |',
+      '| TTFB | ' + (perf.ttfb || 'N/A') + ' |',
+      '| Mobile score | ' + (perf.mobile_score != null ? perf.mobile_score + '/100' : 'N/A') + ' |',
+      '| Desktop score | ' + (perf.desktop_score != null ? perf.desktop_score + '/100' : 'N/A') + ' |',
+      ''
+    ];
+
+    if (r.priority_actions && r.priority_actions.length) {
+      lines.push('## Priority Actions', '');
+      r.priority_actions.forEach(function (a, i) {
+        lines.push((i + 1) + '. **[' + (a.severity || '').toUpperCase() + '] ' + (a.title || '') + '**');
+        lines.push('   ' + (a.fix || ''));
+        lines.push('');
+      });
+    }
+
+    var sections = [
+      { key: 'performance',             label: 'Technical Performance' },
+      { key: 'keyword_clarity',         label: 'Keyword & Intent' },
+      { key: 'landing_page_experience', label: 'Landing Page Experience' },
+      { key: 'conversion_architecture', label: 'Conversion Architecture' },
+      { key: 'trust_signals',           label: 'Trust Signals' },
+      { key: 'mobile',                  label: 'Mobile Experience' }
+    ];
+
+    sections.forEach(function (sec) {
+      var catMap = { mobile: ['mobile'], performance: ['performance'] };
+      var catKeys = catMap[sec.key] || [sec.key];
+      var sFindings = (r.findings || []).filter(function (f) { return catKeys.indexOf(f.category) !== -1; });
+      lines.push('## ' + sec.label, '');
+      if (sFindings.length === 0) {
+        lines.push('No issues found.', '');
+      } else {
+        sFindings.forEach(function (f) {
+          lines.push('### ' + (f.severity || '').charAt(0).toUpperCase() + (f.severity || '').slice(1) + ' — ' + (f.title || ''));
+          lines.push('');
+          lines.push(f.detail || '');
+          lines.push('');
+          lines.push('**Fix:** ' + (f.fix || ''));
+          lines.push('');
+        });
+      }
+    });
+
+    lines.push('---');
+    lines.push('*Generated by [Phillips. Landing Page Audit Tool](https://www.phillips-uk.com/landing-page-audit)*');
+
+    var md   = lines.join('\n');
+    var blob = new Blob([md], { type: 'text/markdown; charset=utf-8' });
+    var link = document.createElement('a');
+    link.href     = URL.createObjectURL(blob);
+    link.download = 'lp-audit-' + new Date().toISOString().slice(0, 10) + '-' + slug + '.md';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+
+    dataLayer.push({ event: 'report_exported', export_format: 'markdown', audited_url: r.url });
+  }
+</script>
+
 </body>
 </html>
