@@ -491,8 +491,7 @@ function Nav({ active }) {
         <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
           <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
           <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
-          <a href="#" style={linkStyle("cs")}>Creative Scoring</a>
-          <a href="#" style={linkStyle("guides")}>Guides</a>
+          <a href="/guides" style={linkStyle("guides")}>Guides</a>
           <BtnFilledSmall href="/#contact">Get in touch</BtnFilledSmall>
         </nav>
       </div>
@@ -1030,6 +1029,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
       || (window.location.pathname.match(/^\/r\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/) || [])[1];
     if (urlId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(urlId)) {
       currentJobId = urlId;
+      var root = document.getElementById('root');
+      if (root) root.style.display = 'none';
+      var tc = document.getElementById('tool-container');
+      if (tc) tc.style.display = 'block';
       document.getElementById('input-section').style.display   = 'none';
       document.getElementById('loading-section').style.display = 'block';
       activateStep(4);
@@ -1099,6 +1102,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     // Generate job ID and push to URL for sharing/bookmarking
     currentJobId = crypto.randomUUID();
     window.history.pushState({}, '', '/r/' + currentJobId);
+
+    // Hide React shell, reveal functional tool container
+    var root = document.getElementById('root');
+    if (root) root.style.display = 'none';
+    var tc = document.getElementById('tool-container');
+    if (tc) tc.style.display = 'block';
 
     document.getElementById('input-section').style.display   = 'none';
     document.getElementById('loading-section').style.display = 'block';
