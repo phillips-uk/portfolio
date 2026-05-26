@@ -48,10 +48,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 /* Warm-tuned palette so severity colours sit inside the Phillips. system.
    High:    warm red    Medium: amber     Low: mid grey     Pass: muted green */
 const SEV = {
-  high:   { label: "High",   fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
-  medium: { label: "Medium", fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
-  low:    { label: "Low",    fg: "#6B6B6B", bg: "#EFECE6", border: "#DCD7CC" },
-  pass:   { label: "Pass",   fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+  critical: { label: "Critical", fg: "#7B1C0C", bg: "#F5D5CD", border: "#E8B4A8" },
+  high:     { label: "High",     fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
+  medium:   { label: "Medium",   fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  low:      { label: "Low",      fg: "#6B6B6B", bg: "#EFECE6", border: "#DCD7CC" },
+  pass:     { label: "Pass",     fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+  suggest:  { label: "Suggest",  fg: "#4A6B7A", bg: "#E4EEF2", border: "#C0D8E4" },
 };
 
 /* =============== BUTTONS =============== */
@@ -118,7 +120,7 @@ function PdfDownloadButton() {
         catch (e) { console.error(e); }
         finally { setBusy(false); }
       }}>
-      {busy ? "Generating PDFâ¦" : "Download PDF"}
+      {busy ? "Generating PDF…" : "Download PDF"}
     </BtnOutline>
   );
 }
@@ -872,7 +874,7 @@ function CategoryBlock({ name, blurb, score, findings, metrics, defaultOpen }) {
         </div>
 
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          {["high", "medium", "low", "pass"].map(k => counts[k] ? (
+          {["critical", "high", "medium", "low", "pass", "suggest"].map(k => counts[k] ? (
             <span key={k} style={{
               fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
               textTransform: "uppercase", color: SEV[k].fg,
@@ -1777,7 +1779,7 @@ function PdfCategory({ cat }) {
           </div>
         </div>
         <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
-          {["high", "medium", "low", "pass"].map(k => counts[k] ? (
+          {["critical", "high", "medium", "low", "pass", "suggest"].map(k => counts[k] ? (
             <PdfPill key={k} tokens={PDF_SEV[k]}>{counts[k]} {PDF_SEV[k].label}</PdfPill>
           ) : null)}
         </div>
