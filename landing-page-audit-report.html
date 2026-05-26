@@ -593,13 +593,13 @@ function ProblemFixImpact({ detail, fix, impact, dense }) {
       </div>
     </div>
   );
+  // Don't show Problem if it's blank or identical to Fix (old stored audits)
+  const showProblem = detail && detail !== fix;
   return (
     <div>
-      <Row label="Problem" body={detail}/>
-      <Row label="Fix" body={fix}/>
-      <Row label="Impact" body={
-        <span style={{ color: "#6B6B6B" }}>{impact}</span>
-      }/>
+      {showProblem && <Row label="Problem" body={detail}/>}
+      {fix    && <Row label="Fix" body={fix}/>}
+      {impact && <Row label="Impact" body={<span style={{ color: "#6B6B6B" }}>{impact}</span>}/>}
     </div>
   );
 }
