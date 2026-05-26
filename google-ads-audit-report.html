@@ -268,7 +268,7 @@ const ACCOUNT = {
     { label: "Spend",       value: "£48,320", delta: "+12% vs prev. 30d", trend: "up"   },
     { label: "Impressions", value: "1.42M",   delta: "+8%  vs prev. 30d", trend: "up"   },
     { label: "Clicks",      value: "31,640",  delta: "+4%  vs prev. 30d", trend: "up"   },
-    { label: "Conversions", value: "612",     delta: "â6%  vs prev. 30d", trend: "down" },
+    { label: "Conversions", value: "612",     delta: "−6%  vs prev. 30d", trend: "down" },
   ],
 };
 
@@ -368,7 +368,7 @@ const CATEGORIES = [
       {
         severity: "low",
         title: "No ad scheduling on a campaign with clear dayparting",
-        detail: "The \"Lead Gen · Search\" campaign converts at 1.4Ã account-average between 09:00–17:00 weekdays, but runs at flat 24/7 bids.",
+        detail: "The \"Lead Gen · Search\" campaign converts at 1.4× account-average between 09:00–17:00 weekdays, but runs at flat 24/7 bids.",
         fix: "Apply an ad schedule with a +20% modifier on weekday business hours. Review after 30 days.",
         impact: "CPA · spend efficiency",
       },
@@ -554,6 +554,37 @@ const PRIORITY = CATEGORIES
 /* Overall score: weighted average of category scores */
 const OVERALL = Math.round(CATEGORIES.reduce((s, c) => s + c.score, 0) / CATEGORIES.length);
 const OVERALL_BAND = BAND[bandFor(OVERALL)];
+
+/* =============== N-GRAM DEMO DATA =============== */
+const NGRAM_DATA = [
+  { term: "free",               n: 1, clicks: 234, cost: 382.60, conv: 0 },
+  { term: "cheap",              n: 1, clicks: 167, cost: 281.40, conv: 1 },
+  { term: "DIY",                n: 1, clicks: 142, cost: 243.80, conv: 0 },
+  { term: "reviews",            n: 1, clicks:  98, cost: 167.40, conv: 2 },
+  { term: "wholesale",          n: 1, clicks:  76, cost: 128.60, conv: 0 },
+  { term: "second hand",        n: 2, clicks: 189, cost: 312.40, conv: 0 },
+  { term: "free delivery",      n: 2, clicks: 156, cost: 261.80, conv: 0 },
+  { term: "budget camping",     n: 2, clicks: 112, cost: 187.20, conv: 0 },
+  { term: "best deals",         n: 2, clicks:  98, cost: 163.80, conv: 1 },
+  { term: "hire near me",       n: 2, clicks:  74, cost: 124.60, conv: 0 },
+  { term: "how to make",        n: 3, clicks:  78, cost: 134.20, conv: 0 },
+  { term: "free returns on",    n: 3, clicks:  67, cost: 112.40, conv: 0 },
+  { term: "where can i buy",    n: 3, clicks:  56, cost:  94.80, conv: 1 },
+  { term: "cheap tents online", n: 3, clicks:  44, cost:  73.60, conv: 0 },
+];
+
+/* =============== DAY/HOUR HEATMAP DEMO DATA =============== */
+const HEATMAP = [
+  [0,0,0,0,0,0,1,2,5,8,9,8,6,7,8,7,6,4,3,2,1,1,0,0],
+  [0,0,0,0,0,0,1,3,6,9,11,10,7,9,10,9,7,4,3,2,1,1,0,0],
+  [0,0,0,0,0,0,1,2,7,9,10,9,6,8,9,8,6,4,3,2,1,0,0,0],
+  [0,0,0,0,0,0,1,2,6,8,9,8,6,8,9,8,5,3,3,2,1,1,0,0],
+  [0,0,0,0,0,0,1,2,5,7,8,7,5,6,7,6,4,3,2,1,1,0,0,0],
+  [0,0,0,0,0,0,0,1,2,4,5,5,4,4,4,3,2,2,1,1,0,0,0,0],
+  [0,0,0,0,0,0,0,0,1,3,4,4,3,3,3,2,2,1,1,0,0,0,0,0],
+];
+const DAYS_LABEL = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const HEATMAP_MAX = Math.max(...HEATMAP.flat());
 
 /* =============== REPORT HEADER =============== */
 function ReportHeader() {
@@ -993,6 +1024,284 @@ function FindingRow({ severity, title, detail, fix, impact }) {
   );
 }
 
+/* =============== SEARCH TERM N-GRAMS =============== */
+function SearchTermNgrams() {
+  const [filter, setFilter] = React.useState(0);
+  const filtered = filter === 0 ? NGRAM_DATA : NGRAM_DATA.filter(t => t.n === filter);
+  const wasteTotal = NGRAM_DATA.filter(t => t.conv === 0).reduce((s, t) => s + t.cost, 0);
+  const fmt = (n) => "\xA3" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  const tabs = [
+    { label: "All patterns", val: 0 },
+    { label: "1-word",       val: 1 },
+    { label: "2-word",       val: 2 },
+    { label: "3-word",       val: 3 },
+  ];
+
+  return (
+    <section className="sec-cream">
+      <div className="page-w">
+        {/* Header */}
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 40 }}>
+          <span style={{
+            display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830", marginBottom: 12,
+          }}>Search term waste</span>
+          <h2 style={{
+            fontSize: "clamp(28px, 3.5vw, 36px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.1, color: "#1A1A1A",
+            margin: "0 0 10px",
+          }}>
+            N-gram analysis — <em style={{ fontStyle: "italic", color: "#985830" }}>non-buyer intent patterns</em>
+          </h2>
+          <p style={{ fontSize: 14, color: "#6B6B6B", margin: 0, lineHeight: 1.6 }}>
+            {fmt(wasteTotal)} spent on search terms with zero conversions in the last 30 days. These n-gram patterns appear across multiple search terms — adding them as negatives removes the entire class of query.
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+          {tabs.map(t => {
+            const active = filter === t.val;
+            return (
+              <button key={t.val} onClick={() => setFilter(t.val)} style={{
+                padding: "7px 16px", fontSize: 13, fontWeight: 600,
+                borderRadius: 4, border: "1.5px solid",
+                borderColor: active ? "#985830" : "#E8D8C4",
+                background: active ? "#985830" : "#fff",
+                color: active ? "#fff" : "#1A1A1A",
+                cursor: "pointer", fontFamily: "inherit",
+                transition: "all 150ms cubic-bezier(0.2,0,0,1)",
+              }}>{t.label}</button>
+            );
+          })}
+        </div>
+
+        {/* Table */}
+        <div style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          overflow: "hidden", boxShadow: "0 2px 8px rgba(152,88,48,0.08)",
+        }}>
+          {/* Table header */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 80px 90px 90px 80px 120px",
+            padding: "12px 20px",
+            background: "#F5EBD9",
+            borderBottom: "1px solid #E8D8C4",
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
+            textTransform: "uppercase", color: "#985830",
+            gap: 8,
+          }}>
+            <span>Pattern</span>
+            <span style={{ textAlign: "right" }}>N-gram</span>
+            <span style={{ textAlign: "right" }}>Clicks</span>
+            <span style={{ textAlign: "right" }}>Cost</span>
+            <span style={{ textAlign: "right" }}>Conv.</span>
+            <span style={{ textAlign: "right" }}>Status</span>
+          </div>
+          {filtered.map((row, i) => {
+            const isWaste = row.conv === 0;
+            const cpa = row.conv > 0 ? fmt(row.cost / row.conv) + " CPA" : null;
+            return (
+              <div key={i} style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 80px 90px 90px 80px 120px",
+                padding: "14px 20px",
+                borderBottom: i < filtered.length - 1 ? "1px solid #E8D8C4" : "none",
+                background: i % 2 === 0 ? "#fff" : "#FDFAF6",
+                alignItems: "center", gap: 8,
+              }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#1A1A1A", fontFamily: "monospace" }}>
+                  "{row.term}"
+                </span>
+                <span style={{ fontSize: 13, color: "#6B6B6B", textAlign: "right" }}>
+                  {row.n}-word
+                </span>
+                <span style={{ fontSize: 13, color: "#1A1A1A", textAlign: "right" }}>
+                  {row.clicks.toLocaleString()}
+                </span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1A1A", textAlign: "right" }}>
+                  {fmt(row.cost)}
+                </span>
+                <span style={{ fontSize: 13, color: "#1A1A1A", textAlign: "right" }}>
+                  {row.conv}
+                </span>
+                <span style={{ textAlign: "right" }}>
+                  {isWaste ? (
+                    <span style={{
+                      display: "inline-block", fontSize: 11, fontWeight: 700,
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      padding: "3px 10px", borderRadius: 20,
+                      background: "#F3D9D2", color: "#8C1A0A", border: "1px solid #E0B0A2",
+                    }}>Confirmed waste</span>
+                  ) : (
+                    <span style={{
+                      display: "inline-block", fontSize: 11, fontWeight: 700,
+                      letterSpacing: "0.08em", textTransform: "uppercase",
+                      padding: "3px 10px", borderRadius: 20,
+                      background: "#F5EBD9", color: "#985830", border: "1px solid #E8D8C4",
+                    }}>{cpa}</span>
+                  )}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Callout */}
+        <div style={{
+          marginTop: 20, padding: "16px 20px",
+          background: "#F5EBD9", borderRadius: 6, border: "1px solid #E8D8C4",
+          fontSize: 13, color: "#1A1A1A", lineHeight: 1.6,
+        }}>
+          <strong>Recommended action:</strong> Add the zero-conversion 1-word patterns as campaign-level negatives this week. 2- and 3-word patterns with zero conversions follow in the next pass. Expected waste recapture: <strong>{fmt(NGRAM_DATA.filter(t=>t.conv===0).reduce((s,t)=>s+t.cost,0))}/month</strong>.
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =============== DAY & HOUR HEATMAP =============== */
+function DayHourHeatmap() {
+  const hourTotals = Array.from({length: 24}, (_, h) => HEATMAP.reduce((s, row) => s + row[h], 0));
+  const dayTotals  = HEATMAP.map(row => row.reduce((s, v) => s + v, 0));
+  const grandTotal = dayTotals.reduce((s, v) => s + v, 0);
+  const peakHour   = hourTotals.indexOf(Math.max(...hourTotals));
+
+  function cellColor(v) {
+    if (v === 0) return "#F5F2EE";
+    const t = Math.min(v / HEATMAP_MAX, 1);
+    // interpolate cream → amber: #FDF6EE → #985830
+    const r = Math.round(0xFD + (0x98 - 0xFD) * t);
+    const g = Math.round(0xF6 + (0x58 - 0xF6) * t);
+    const b = Math.round(0xEE + (0x30 - 0xEE) * t);
+    return `rgb(${r},${g},${b})`;
+  }
+  function textColor(v) {
+    return v / HEATMAP_MAX > 0.55 ? "#fff" : "#1A1A1A";
+  }
+
+  const CELL = { width: 34, height: 28, fontSize: 10, borderRadius: 3, margin: 1.5 };
+
+  return (
+    <section className="sec-white">
+      <div className="page-w">
+        {/* Header */}
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 40 }}>
+          <span style={{
+            display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830", marginBottom: 12,
+          }}>Conversion timing</span>
+          <h2 style={{
+            fontSize: "clamp(28px, 3.5vw, 36px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.1, color: "#1A1A1A",
+            margin: "0 0 10px",
+          }}>
+            When does Smart Bidding <em style={{ fontStyle: "italic", color: "#985830" }}>have signal?</em>
+          </h2>
+          <p style={{ fontSize: 14, color: "#6B6B6B", margin: 0, lineHeight: 1.6 }}>
+            Conversions by day and hour over the last 30 days. Dark cells = high conversion volume. Budget runs flat 24/7 — this heatmap shows where ad scheduling could recapture efficiency.
+          </p>
+        </div>
+
+        {/* Heatmap card */}
+        <div style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          padding: "32px 28px 28px",
+          boxShadow: "0 2px 8px rgba(152,88,48,0.08)",
+          overflowX: "auto",
+        }}>
+          <div style={{ minWidth: 860 }}>
+            {/* Hour axis labels */}
+            <div style={{ display: "flex", marginLeft: 52, marginBottom: 4 }}>
+              {Array.from({length: 24}, (_, h) => (
+                <div key={h} style={{
+                  width: CELL.width + CELL.margin * 2, textAlign: "center",
+                  fontSize: 9, color: "#6B6B6B", fontWeight: 500,
+                }}>
+                  {h % 3 === 0 ? `${String(h).padStart(2,"0")}:00` : ""}
+                </div>
+              ))}
+            </div>
+
+            {/* Rows */}
+            {HEATMAP.map((row, d) => (
+              <div key={d} style={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+                {/* Day label */}
+                <div style={{
+                  width: 48, fontSize: 11, fontWeight: 600, color: "#6B6B6B",
+                  flexShrink: 0, letterSpacing: "0.03em",
+                }}>
+                  {DAYS_LABEL[d]}
+                </div>
+                {/* Hour cells */}
+                {row.map((v, h) => (
+                  <div key={h} style={{
+                    width: CELL.width, height: CELL.height,
+                    margin: CELL.margin,
+                    borderRadius: CELL.borderRadius,
+                    background: cellColor(v),
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: CELL.fontSize, fontWeight: 600,
+                    color: textColor(v),
+                    flexShrink: 0,
+                  }}>
+                    {v > 0 ? v : ""}
+                  </div>
+                ))}
+                {/* Row total */}
+                <div style={{
+                  marginLeft: 10, fontSize: 11, fontWeight: 700,
+                  color: "#985830", minWidth: 28, textAlign: "right",
+                }}>
+                  {dayTotals[d]}
+                </div>
+              </div>
+            ))}
+
+            {/* Hour totals row */}
+            <div style={{ display: "flex", alignItems: "center", marginTop: 8, marginLeft: 52 }}>
+              {hourTotals.map((v, h) => (
+                <div key={h} style={{
+                  width: CELL.width + CELL.margin * 2, textAlign: "center",
+                  fontSize: 10, fontWeight: v === Math.max(...hourTotals) ? 700 : 400,
+                  color: v === Math.max(...hourTotals) ? "#985830" : "#6B6B6B",
+                }}>
+                  {v > 0 ? v : ""}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Insight strip */}
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 16,
+        }}>
+          {[
+            { label: "Peak conversion window", value: `${String(peakHour).padStart(2,"0")}:00–${String(peakHour+2).padStart(2,"0")}:00 weekdays` },
+            { label: "Weekend share of conversions", value: `${Math.round((dayTotals[5]+dayTotals[6])/grandTotal*100)}% of total` },
+            { label: "Dead hours (zero conversions)", value: `00:00–06:00 daily` },
+          ].map((s, i) => (
+            <div key={i} style={{
+              background: "#F5EBD9", border: "1px solid #E8D8C4",
+              borderRadius: 6, padding: "16px 18px",
+            }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#985830", marginBottom: 6 }}>
+                {s.label}
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.01em" }}>
+                {s.value}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* =============== END CTA (DARK) =============== */
 function EndCta() {
   return (
@@ -1080,6 +1389,8 @@ function App() {
       <Nav active="ga"/>
       <ReportHeader/>
       <PriorityActions/>
+      <SearchTermNgrams/>
+      <DayHourHeatmap/>
       <FindingsByCategory/>
       <EndCta/>
       <Footer/>
