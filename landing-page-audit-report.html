@@ -1155,8 +1155,8 @@ function NgramTable({ rows }) {
   );
 }
 
-/* =============== LPE ESTIMATE + TRACKING =============== */
-function LpeAndTracking() {
+/* =============== LPE ESTIMATE =============== */
+function LpeSection() {
   const audit = useAudit();
 
   const mockLpe = [
@@ -1187,6 +1187,27 @@ function LpeAndTracking() {
     ];
   })() : mockLpe;
 
+  return (
+    <section className="sec-white">
+      <div className="page-w">
+        <SectionHeader
+          eyebrow="Landing Page Experience"
+          title="Estimated rating against"
+          emphasis="the same signals Google uses."
+          sub="The signals here mirror Google's published Landing Page Experience guidance. Estimated rating is calculated from the signal mix below."
+        />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }}>
+          <LpeTable rows={lpe}/>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =============== TRACKING STATUS =============== */
+function TrackingSection() {
+  const audit = useAudit();
+
   const mockTracking = [
     { tag: "Google Tag Manager",             status: "ok"      },
     { tag: "GA4",                            status: "ok"      },
@@ -1203,34 +1224,21 @@ function LpeAndTracking() {
   })() : mockTracking;
 
   return (
-    <section className="sec-white">
+    <section className="sec-cream">
       <div className="page-w">
         <SectionHeader
-          eyebrow="Landing Page Experience"
-          title="Estimated rating against"
-          emphasis="the same signals Google uses."
-          sub="The signals here mirror Google's published Landing Page Experience guidance. Estimated rating is calculated from the signal mix below."
+          eyebrow="Tracking status"
+          title="What's"
+          emphasis="firing on this page."
+          sub="Detected from page source and rendered page data — informational only, not included in the audit score."
         />
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16, marginBottom: 48 }}>
-          <LpeTable rows={lpe}/>
-        </div>
-
-        <div style={{ marginTop: 64 }}>
-          <SectionHeader
-            eyebrow="Tracking status"
-            title="What's"
-            emphasis="firing on this page."
-            sub="A landing page audit is only as useful as the tracking that confirms it works. Detected from the page source, not your accounts."
-          />
-          <p style={{
-            fontSize: 13, lineHeight: 1.6, color: "#6B6B6B",
-            margin: "-16px 0 24px", paddingLeft: 27, maxWidth: 720,
-          }}>
-            Detected from page source and rendered page data. Tags loaded dynamically via a tag manager container may not appear even if they are firing correctly.
-          </p>
-          <TrackingTable rows={tracking}/>
-        </div>
+        <p style={{
+          fontSize: 13, lineHeight: 1.6, color: "#6B6B6B",
+          margin: "-16px 0 24px", paddingLeft: 27, maxWidth: 720,
+        }}>
+          Tags loaded dynamically via a tag manager container may not appear even if they are firing correctly. Verify in your browser's network tab or Tag Assistant.
+        </p>
+        <TrackingTable rows={tracking}/>
       </div>
     </section>
   );
@@ -2246,9 +2254,10 @@ function App() {
         <Nav active="lp"/>
         <ReportHeader/>
         <PriorityActions/>
-        <FindingsByCategory/>
         <KeywordInference/>
-        <LpeAndTracking/>
+        <LpeSection/>
+        <TrackingSection/>
+        <FindingsByCategory/>
         <EndCta/>
         <Footer/>
         <PdfLayout/>
