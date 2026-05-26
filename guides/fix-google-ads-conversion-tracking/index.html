@@ -200,8 +200,8 @@
 
     /* ── Article header ── */
     .article-header {
-      margin-bottom: 48px;
-      padding-bottom: 32px;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
 
     .section-rule {
@@ -604,21 +604,73 @@
       font-weight: 500;
     }
 
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13px;
-      color: var(--mid);
+    /* ── Article hero (branded header) ── */
+    .article-hero {
+      background: linear-gradient(180deg, #ffffff 0%, #FDF6EE 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 48px 72px;
     }
-
-    footer a {
+    .article-hero__inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
       color: var(--amber);
       text-decoration: none;
+      margin-bottom: 28px;
+      transition: gap 150ms;
     }
+    .back-link:hover { gap: 10px; }
+    .article-hero__rule {
+      border-left: 3px solid var(--amber);
+      padding-left: 24px;
+    }
+
+    /* ── Footer (dark, matching rest of site) ── */
+    .site-footer {
+      background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%);
+      padding: 28px 48px;
+    }
+    .site-footer__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .site-footer__left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+    .site-footer__logo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+    .site-footer__logo .dot { color: var(--amber); }
+    .site-footer__links {
+      display: flex;
+      gap: 20px;
+    }
+    .site-footer__link {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      transition: color 150ms;
+    }
+    .site-footer__link:hover { color: rgba(255,255,255,0.75); }
 
     /* ── Code blocks ── */
     .code-block {
@@ -1123,23 +1175,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <main>
-  <article class="article-wrap">
 
-    <header class="article-header">
-      <span class="article-tag">Google Ads Guide</span>
-      <h1>Google Ads Conversion Tracking Not Working? How to Fix It (2026)</h1>
-      <div class="article-meta">
-        <span>By <strong>Lewis Phillips</strong></span>
-        <span class="dot-sep"></span>
-        <span>Published <strong>21 May 2026</strong></span>
-        <span class="dot-sep"></span>
-        <span>12 min read</span>
+  <!-- Branded hero header -->
+  <section class="article-hero">
+    <div class="article-hero__inner">
+      <a href="/guides/" class="back-link">&larr; All guides</a>
+      <div class="article-hero__rule">
+        <header class="article-header">
+          <span class="article-tag">Google Ads Guide</span>
+          <h1>Google Ads Conversion Tracking Not Working? How to Fix It (2026)</h1>
+          <div class="article-meta">
+            <span>By <strong>Lewis Phillips</strong></span>
+            <span class="dot-sep"></span>
+            <span>Published <strong>21 May 2026</strong></span>
+            <span class="dot-sep"></span>
+            <span>12 min read</span>
+          </div>
+          <p class="article-intro">
+            Broken conversion tracking is not just a reporting problem. Smart Bidding uses your conversion data as its primary signal. If the data is wrong, your bids are wrong. This guide covers every common cause of conversion tracking failure, from basic installation issues to the architecture mistakes that silently degrade bidding performance, including 2026 Enhanced Conversions changes that affect how data reaches Google Ads.
+          </p>
+        </header>
       </div>
-      <p class="article-intro">
-        Broken conversion tracking is not just a reporting problem. Smart Bidding uses your conversion data as its primary signal. If the data is wrong, your bids are wrong. This guide covers every common cause of conversion tracking failure, from basic installation issues to the architecture mistakes that silently degrade bidding performance, including 2026 Enhanced Conversions changes that affect how data reaches Google Ads.
-      </p>
-    </header>
+    </div>
+  </section>
 
+  <article class="article-wrap">
     <div class="article-body">
 
       <!-- ── Why it matters ── -->
@@ -1679,9 +1739,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </article>
 </main>
 
-<footer>
-  <span>&copy; 2026 Phillips.</span>
-  <a href="/">phillips-uk.com</a>
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__left">
+      <a href="/" class="site-footer__logo">Phillips<span class="dot">.</span></a>
+      <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+    </div>
+    <div class="site-footer__links">
+      <a href="/landing-page-audit" class="site-footer__link">Landing Page Audit</a>
+      <a href="/google-ads-audit" class="site-footer__link">Google Ads Audit</a>
+      <a href="/guides/" class="site-footer__link">Guides</a>
+      <a href="/#contact" class="site-footer__link">Get in touch</a>
+    </div>
+  </div>
 </footer>
 
 <script>
