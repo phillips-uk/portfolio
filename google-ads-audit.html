@@ -142,7 +142,7 @@ function Nav({ active }) {
           <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
           <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
           <a href="/guides" style={linkStyle("guides")}>Guides</a>
-          <BtnFilledSmall>Get in touch</BtnFilledSmall>
+          <BtnFilledSmall onClick={() => window.location.href = '/#contact'}>Get in touch</BtnFilledSmall>
         </nav>
       </div>
     </header>
@@ -171,7 +171,7 @@ function Hero() {
               fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
               textTransform: "uppercase", color: "#985830",
             }}>
-              Free Â· Read-only Â· Results in ~60 seconds
+              Free · Read-only · Results in ~60 seconds
             </span>
 
             <h1 style={{
@@ -718,7 +718,7 @@ function Contact() {
         <div style={{
           marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)",
         }}>
-          Free Â· Read-only Â· No card Â· No agency pitch
+          Free · Read-only · No card · No agency pitch
         </div>
       </div>
     </section>
@@ -741,7 +741,7 @@ function Footer() {
           <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
             Phillips<span style={{ color: "#985830" }}>.</span>
           </span>
-          <span>© 2026 Lewis Phillips Â· phillips-uk.com</span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
         </div>
       </div>
     </footer>

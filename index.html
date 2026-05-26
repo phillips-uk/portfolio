@@ -1,1956 +1,944 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
-  <!-- End Google Tag Manager -->
-
-  <!-- SEO -->
-  <title>Lewis Phillips | Senior Performance Marketing & AI Automation</title>
-  <meta name="description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
-  <meta name="author" content="Lewis Phillips">
-  <link rel="canonical" href="https://www.phillips-uk.com">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
-  <link rel="stylesheet" href="/brand.css">
-
-  <!-- Open Graph (LinkedIn, Facebook, iMessage, Slack etc.) -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.phillips-uk.com">
-  <meta property="og:title" content="Lewis Phillips | Senior Performance Marketing & AI Automation">
-  <meta property="og:description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
-  <meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:locale" content="en_GB">
-
-  <!-- Twitter / X Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://www.phillips-uk.com">
-  <meta name="twitter:title" content="Lewis Phillips | Senior Performance Marketing & AI Automation">
-  <meta name="twitter:description" content="Senior performance marketer with £50M+ in paid media managed across Google, Meta, Apple and Microsoft. Specialist in AI-powered workflows, conversion tracking and marketing automation.">
-  <meta name="twitter:image" content="https://www.phillips-uk.com/images/og-image.png">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --amber:  #985830;
-      --ink:    #1A1A1A;
-      --cream:  #FDF6EE;
-      --border: #E8D8C4;
-      --mid:    #6B6B6B;
-      --light:  #F7F7F7;
-      --white:  #FFFFFF;
-    }
-
-    html { scroll-behavior: smooth; overflow-x: hidden; }
-    body { overflow-x: hidden; }
-
-    body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background: var(--white);
-      color: var(--ink);
-      font-size: 16px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    /* ── MOBILE NAV OVERLAY ── */
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      background: var(--white);
-      flex-direction: column;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.2s ease, visibility 0.2s ease;
-      overflow-y: auto;
-    }
-    .mobile-nav.is-open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-    .mobile-nav__header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .mobile-nav__close {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 24px;
-      color: var(--ink);
-      line-height: 1;
-    }
-    .mobile-nav__links {
-      list-style: none;
-      flex: 1;
-    }
-    .mobile-nav__links li a {
-      display: flex;
-      align-items: center;
-      min-height: 56px;
-      padding: 0 24px;
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-    .mobile-nav__links li a:hover,
-    .mobile-nav__links li a:active { background: var(--cream); }
-    .mobile-nav__tools {
-      padding: 20px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .mobile-nav__tool-link {
-      display: flex;
-      align-items: center;
-      min-height: 48px;
-      padding: 0 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--amber);
-      text-decoration: none;
-      border: 1.5px solid var(--amber);
-      border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
-    }
-    .mobile-nav__tool-link:hover { background: var(--amber); color: var(--white); }
-    .mobile-nav__footer {
-      padding: 24px;
-    }
-    .mobile-nav__cta {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 52px;
-      background: var(--amber);
-      color: var(--white);
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: background 0.15s;
-    }
-    .mobile-nav__cta:hover { background: #7a4525; }
-
-    /* ── LAYOUT ── */
-    .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
-    .section-wrap { padding: 60px 0; }
-    .rule { border: none; border-top: 1px solid var(--border); }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 40px;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .two-col .section-label { margin-bottom: 0; padding-top: 4px; }
-
-    /* ── HERO ── */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 140px 48px 88px;
-      max-width: 1040px;
-      margin: 0 auto;
-    }
-
-
-    .eyebrow {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: clamp(52px, 7.5vw, 88px);
-      font-weight: 700;
-      letter-spacing: -3px;
-      line-height: 1.0;
-      color: var(--ink);
-      margin-bottom: 28px;
-    }
-
-    .hero-sub {
-      font-size: clamp(16px, 1.9vw, 18px);
-      color: var(--mid);
-      max-width: 860px;
-      line-height: 1.75;
-      margin-bottom: 48px;
-    }
-
-    /* Hero stats */
-    .hero-stats {
-      display: flex;
-      gap: 48px;
-      margin-bottom: 40px;
-      padding-bottom: 40px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .hero-stat-val {
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: -1.5px;
-      color: var(--ink);
-      line-height: 1;
-    }
-
-    .hero-stat-label {
-      font-size: 12px;
-      color: var(--mid);
-      margin-top: 5px;
-      line-height: 1.4;
-    }
-
-    .hero-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tag {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--amber);
-      background: var(--cream);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 3px;
-    }
-
-
-    .hero-avatar {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      object-fit: cover;
-      object-position: center 15%;
-      display: block;
-      margin-bottom: 28px;
-      border: 2px solid var(--border);
-    }
-
-    /* ── CLIENTS ── */
-    .client-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .client-cell {
-      background: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 20px;
-      min-height: 80px;
-      transition: background 0.15s;
-    }
-    .client-cell:hover { background: var(--cream); }
-
-    .client-cell img {
-      max-width: 110px;
-      max-height: 36px;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      mix-blend-mode: multiply;
-      filter: grayscale(100%) opacity(0.5);
-      transition: filter 0.25s;
-    }
-    .client-cell:hover img { filter: grayscale(0%) opacity(1); }
-
-    .client-cell .brand-text {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      color: #BBBBBB;
-      text-align: center;
-      transition: color 0.15s;
-    }
-    .client-cell:hover .brand-text { color: var(--amber); }
-    a.client-cell { text-decoration: none; cursor: pointer; outline: none; }
-    a.client-cell:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
-
-    /* ── SELECTED WORK ── */
-    .work-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .work-card {
-      background: var(--white);
-      padding: 36px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      transition: background 0.15s;
-    }
-    .work-card:hover { background: var(--cream); }
-
-    .work-client {
-      font-size: 19px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      color: var(--ink);
-    }
-
-    .work-role {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-top: 4px;
-    }
-
-    .work-metrics {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px 28px;
-    }
-
-    .work-metric {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .work-metric-val {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      color: var(--ink);
-      line-height: 1;
-      border-bottom: 2.5px solid var(--amber);
-      display: inline-block;
-      padding-bottom: 2px;
-    }
-
-    .work-metric-label {
-      font-size: 11px;
-      color: var(--mid);
-      line-height: 1.3;
-    }
-
-    .work-desc {
-      font-size: 13.5px;
-      color: var(--mid);
-      line-height: 1.68;
-    }
-
-    .work-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    /* ── WORK CARD ACCORDION ── desktop: always expanded */
-    .work-card__body {
-      display: grid;
-      grid-template-rows: 1fr;
-    }
-    .work-card__body > div {
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .work-card__body > div > *:first-child {
-      padding-top: 16px;
-    }
-    .work-toggle { display: none; }
-
-    .work-tag {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--mid);
-      border: 1px solid var(--border);
-      padding: 3px 8px;
-      border-radius: 2px;
-    }
-
-    .work-tag--type {
-      color: var(--amber);
-      border-color: var(--amber);
-      background: rgba(152,88,48,0.06);
-    }
-
-    /* ── SERVICES ── */
-    .service-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .service-card {
-      background: var(--white);
-      padding: 28px 24px;
-      transition: background 0.15s;
-    }
-    .service-card:hover { background: var(--cream); }
-
-    .service-card h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 8px;
-    }
-
-    .service-card p {
-      font-size: 13px;
-      color: var(--mid);
-      line-height: 1.65;
-    }
-
-    /* ── TOOLS ── */
-    .tools-intro {
-      font-size: 15px;
-      color: var(--mid);
-      line-height: 1.65;
-      margin-bottom: 28px;
-    }
-
-    .tool-list { list-style: none; }
-
-    .tool-list li {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 24px;
-      align-items: baseline;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .tool-list li:first-child { border-top: 1px solid var(--border); }
-
-    .tool-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--ink);
-    }
-
-    .tool-desc {
-      font-size: 13px;
-      color: var(--mid);
-      line-height: 1.55;
-    }
-
-    /* ── CREAM SECTIONS ── */
-    #analysis-section,
-    #toolkit-section {
-      background: var(--cream);
-    }
-
-    /* ── GUIDES SECTION ── */
-    .guides-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    .guide-card {
-      display: flex;
-      flex-direction: column;
-      text-decoration: none;
-      color: inherit;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 24px;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .guide-card:hover {
-      border-color: var(--amber);
-      box-shadow: 0 4px 20px rgba(152,88,48,0.08);
-    }
-    .guide-card__tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--amber);
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 12px;
-      margin-bottom: 14px;
-      align-self: flex-start;
-    }
-    .guide-card h3 {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.3;
-      margin-bottom: 8px;
-    }
-    .guide-card p {
-      font-size: 13px;
-      color: var(--mid);
-      line-height: 1.6;
-      flex: 1;
-      margin-bottom: 16px;
-    }
-    .guide-card__meta {
-      font-size: 12px;
-      color: var(--mid);
-      margin-bottom: 12px;
-    }
-    .guide-card__read {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--amber);
-    }
-
-    /* ── AGENTIC ── */
-    #agentic {
-      background: var(--ink);
-      padding: 72px 0;
-    }
-
-    #agentic .container { max-width: 1040px; margin: 0 auto; padding: 0 48px; }
-
-    .agentic-top {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 64px;
-      align-items: end;
-      margin-bottom: 56px;
-    }
-
-    #agentic .section-label { color: var(--amber); margin-bottom: 0; padding-top: 4px; }
-
-    .agentic-headline {
-      font-size: clamp(32px, 4.5vw, 52px);
-      font-weight: 700;
-      letter-spacing: -2px;
-      line-height: 1.05;
-      color: var(--white);
-    }
-
-    .agentic-headline em {
-      font-style: normal;
-      color: var(--amber);
-    }
-
-    .agentic-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .agentic-card {
-      background: rgba(255,255,255,0.03);
-      padding: 32px 28px;
-      transition: background 0.15s;
-    }
-    .agentic-card:hover { background: rgba(255,255,255,0.07); }
-
-    .agentic-card-num {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--amber);
-      margin-bottom: 16px;
-    }
-
-    .agentic-card h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 10px;
-      letter-spacing: -0.2px;
-    }
-
-    .agentic-card p {
-      font-size: 13.5px;
-      color: rgba(255,255,255,0.62);
-      line-height: 1.65;
-    }
-
-    .agentic-card p strong {
-      color: rgba(255,255,255,0.8);
-      font-weight: 600;
-    }
-
-    .agentic-cta {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    .agentic-cta-btn {
-      display: inline-block;
-      background: var(--amber);
-      color: var(--white);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      padding: 12px 28px;
-      border-radius: 4px;
-      transition: background 0.15s;
-    }
-    .agentic-cta-btn:hover { background: #7a4525; }
-
-    .agentic-cta-btn--outline {
-      background: transparent;
-      color: var(--white);
-      border: 1.5px solid rgba(255,255,255,0.35);
-      margin-left: 12px;
-    }
-    .agentic-cta-btn--outline:hover { background: rgba(255,255,255,0.08); }
-
-    @media (max-width: 760px) {
-      .agentic-cta {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-      }
-      .agentic-cta-btn--outline {
-        margin-left: 0;
-      }
-    }
-
-    .agentic-cta-note {
-      display: block;
-      margin-top: 12px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.4);
-      letter-spacing: 0.02em;
-    }
-
-    /* ── BRAIN BLOCK ── */
-    .brain-block {
-      margin-top: 72px;
-      padding-top: 56px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 72px;
-      align-items: center;
-    }
-
-    .brain-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--amber);
-      text-transform: uppercase;
-      display: block;
-      margin-bottom: 18px;
-    }
-
-    .brain-headline {
-      font-size: clamp(22px, 2.6vw, 30px);
-      font-weight: 700;
-      letter-spacing: -0.8px;
-      line-height: 1.15;
-      color: var(--white);
-      margin-bottom: 18px;
-    }
-
-    .brain-desc {
-      font-size: 14px;
-      color: rgba(255,255,255,0.62);
-      line-height: 1.7;
-    }
-
-    .brain-nodes {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .brain-node {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 18px 20px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 6px;
-    }
-
-    .brain-node-num {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--amber);
-      min-width: 20px;
-      padding-top: 2px;
-    }
-
-    .brain-node-text {
-      font-size: 13px;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.45;
-    }
-
-    .brain-connector {
-      display: flex;
-      align-items: center;
-      padding: 5px 20px;
-      color: rgba(255,255,255,0.18);
-      font-size: 13px;
-    }
-
-    .brain-visual {
-      margin-top: 64px;
-      margin-left: -24px;
-      margin-right: -24px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.07);
-    }
-
-    .brain-visual img {
-      width: 100%;
-      display: block;
-    }
-
-    .brain-visual-caption {
-      text-align: center;
-      font-size: 11px;
-      color: rgba(255,255,255,0.22);
-      padding: 12px 16px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: rgba(255,255,255,0.02);
-    }
-
-    /* ── ANALYSIS ── */
-    .analysis-list { list-style: none; }
-
-    .analysis-item {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 32px;
-      align-items: start;
-      padding: 28px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .analysis-item:first-child { border-top: 1px solid var(--border); }
-
-    .analysis-num {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      color: var(--amber);
-      line-height: 1;
-      padding-top: 2px;
-    }
-
-    .analysis-num-sub {
-      font-size: 11px;
-      color: var(--mid);
-      margin-top: 4px;
-      line-height: 1.3;
-    }
-
-    .analysis-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 4px;
-      letter-spacing: -0.2px;
-    }
-
-    .analysis-method {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--amber);
-      background: var(--cream);
-      border: 1px solid var(--border);
-      padding: 2px 8px;
-      border-radius: 2px;
-      margin-bottom: 10px;
-    }
-
-    .analysis-desc {
-      font-size: 13.5px;
-      color: var(--mid);
-      line-height: 1.65;
-    }
-
-    .analysis-desc strong {
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    /* ── ANALYSIS ACCORDION ── desktop: always expanded */
-    .analysis-item__body {
-      display: grid;
-      grid-template-rows: 1fr;
-    }
-    .analysis-item__body > div { overflow: hidden; }
-    .analysis-item__body > div > *:first-child { padding-top: 10px; }
-    .analysis-toggle { display: none; }
-
-    /* ── MOBILE-ONLY ACCORDION (services + agentic) ── */
-    .mobile-toggle { display: none; }
-
-    .agentic-card h3,
-    .service-card h3 { margin-bottom: 0; }
-
-    /* ── CERTIFICATIONS ── */
-    .cert-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .cert-cell {
-      background: var(--white);
-      padding: 18px 20px;
-      transition: background 0.15s;
-    }
-    .cert-cell:hover { background: var(--cream); }
-
-    .cert-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.4;
-    }
-
-    .cert-issuer {
-      font-size: 11px;
-      color: var(--mid);
-      margin-top: 3px;
-    }
-
-    /* ── TESTIMONIALS ── */
-    .testimonial-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .testimonial-card {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 28px 32px;
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 32px;
-      align-items: center;
-    }
-
-    .testimonial-attribution {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 12px;
-      padding-right: 32px;
-      border-right: 1px solid var(--border);
-    }
-
-    .testimonial-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 1px solid var(--border);
-    }
-
-    .testimonial-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .testimonial-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .testimonial-name a {
-      color: inherit;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: color 0.15s;
-    }
-
-    .testimonial-name a:hover { color: var(--amber); }
-
-    .testimonial-name a svg {
-      flex-shrink: 0;
-      opacity: 0.45;
-      transition: opacity 0.15s;
-    }
-
-    .testimonial-name a:hover svg { opacity: 1; }
-
-    .testimonial-role {
-      font-size: 12px;
-      color: var(--mid);
-      line-height: 1.4;
-    }
-
-    .testimonial-quote {
-      font-size: 14px;
-      line-height: 1.75;
-      color: var(--ink);
-      margin: 0;
-      font-style: italic;
-    }
-
-    /* ── CONTACT ── */
-    #contact {
-      background: var(--ink);
-      padding: 72px 48px 60px;
-      text-align: center;
-    }
-
-    #contact h2 {
-      font-size: clamp(36px, 5vw, 56px);
-      font-weight: 700;
-      letter-spacing: -2px;
-      color: var(--white);
-      margin-bottom: 12px;
-    }
-
-    #contact p {
-      font-size: 16px;
-      color: rgba(255,255,255,0.45);
-      margin-bottom: 36px;
-    }
-
-    #contact a.contact-cta {
-      display: inline-block;
-      background: var(--amber);
-      color: var(--white);
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-decoration: none;
-      padding: 14px 36px;
-      border-radius: 4px;
-      transition: background 0.15s;
-    }
-    #contact a.contact-cta:hover { background: #7a4525; }
-
-    .social-links { display: flex; gap: 20px; align-items: center; }
-    .social-links a { color: var(--mid); display: flex; transition: color 0.2s; }
-    .social-links a:hover { color: var(--amber); }
-
-    .contact-socials { display: flex; gap: 20px; justify-content: center; margin-top: 28px; }
-    .contact-socials a { color: rgba(255,255,255,0.5); display: flex; transition: color 0.2s; }
-    .contact-socials a:hover { color: #fff; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 760px) {
-      .mobile-nav { display: flex; }
-      .container { padding: 0 24px; }
-      .section-wrap { padding: 44px 0; }
-      #hero { padding: 90px 24px 48px; min-height: auto; }
-      .two-col { grid-template-columns: 1fr; gap: 24px; }
-      .two-col .section-label { margin-bottom: 0; }
-      .hero-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin-bottom: 40px;
-        padding-bottom: 40px;
-        border-bottom: 1px solid var(--border);
-        text-align: center;
-      }
-      .work-metric-val { font-size: 22px; }
-      .work-grid, .service-grid { grid-template-columns: 1fr; }
-      .client-grid { grid-template-columns: repeat(3, 1fr); }
-      .client-cell { padding: 14px 8px; min-height: 56px; }
-      .client-cell img { max-width: 72px; max-height: 26px; }
-      .cert-grid { grid-template-columns: repeat(2, 1fr); }
-      .testimonial-card { grid-template-columns: 1fr; gap: 20px; }
-      .testimonial-attribution { flex-direction: row; text-align: left; padding-right: 0; border-right: none; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-      .testimonial-avatar { width: 44px; height: 44px; }
-      .agentic-top { grid-template-columns: 1fr; gap: 16px; }
-      .agentic-headline { font-size: clamp(26px, 5vw, 52px); }
-      .agentic-grid { grid-template-columns: 1fr; }
-      #agentic .container { padding: 0 24px; }
-      #agentic { padding: 44px 0; }
-      .brain-block { grid-template-columns: 1fr; gap: 40px; }
-      .brain-visual { margin-left: 0; margin-right: 0; }
-      .tool-list li { grid-template-columns: 1fr; gap: 6px; }
-      .analysis-item { grid-template-columns: 1fr; gap: 12px; }
-      #contact { padding: 72px 24px; }
-      footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
-      .section-label { margin-bottom: 24px; }
-
-      /* accordions — always expanded on mobile */
-      .work-card__body { grid-template-rows: 1fr; }
-      .work-toggle { display: none; }
-
-      .analysis-item__body { grid-template-rows: 1fr; }
-      .analysis-toggle { display: none; }
-
-      .mobile-accordion__body { grid-template-rows: 1fr; }
-      .mobile-toggle { display: none; }
-    }
-
-    /* ── VERY SMALL SCREENS ── */
-    @media (max-width: 400px) {
-      h1 { font-size: 44px; letter-spacing: -2px; }
-      .hero-stat-val { font-size: 28px; }
-      .hero-sub { font-size: 15px; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lewis Phillips | Senior Performance Marketing &amp; AI Automation</title>
+<meta name="description" content="Senior performance marketing professional with 11 years running paid media at scale — Google Ads, Meta, Apple Search Ads — and the AI tools to audit, score and automate it.">
+<link rel="canonical" href="https://www.phillips-uk.com/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+
+<!-- Preconnect to GTM -->
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+
+<style>
+  :root { --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif; --ink: #1A1A1A; --white: #FFFFFF; --cream: #FDF6EE; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .sec-white { background: #fff; padding: 120px 0; }
+  .sec-cream { background: #FDF6EE; padding: 120px 0; }
+  ::selection { background: #985830; color: #fff; }
+  *, *::before, *::after { box-sizing: border-box; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 </head>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+<body class="ph">
+<div id="root"></div>
 
-  <!-- NAV -->
-  <nav class="p-nav">
-    <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
-    <div class="p-nav__links">
-      <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
-      <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
-      <a href="/guides/" class="p-nav__link">Guides</a>
-    </div>
-    <a href="#contact" class="p-nav__cta">Get in touch</a>
-    <button class="p-nav__burger" aria-label="Open menu" aria-expanded="false" id="p-nav-burger">
-      <span class="p-nav__burger-line"></span>
-      <span class="p-nav__burger-line"></span>
-      <span class="p-nav__burger-line"></span>
-    </button>
-  </nav>
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-  <!-- MOBILE NAV OVERLAY -->
-  <div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation menu">
-    <div class="mobile-nav__header">
-      <a href="#" class="mark">Phillips<span class="dot">.</span></a>
-      <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close menu">&#x2715;</button>
-    </div>
-    <ul class="mobile-nav__links">
-      <li><a href="/guides/">Guides</a></li>
-      <li><a href="#work">Selected Work</a></li>
-      <li><a href="#agentic">AI Workflows</a></li>
-      <li><a href="#certifications">Certifications</a></li>
-      <li><a href="#contact">Get in touch</a></li>
-    </ul>
-    <div class="mobile-nav__tools">
-      <a href="/landing-page-audit" class="mobile-nav__tool-link">Free Landing Page Audit &rarr;</a>
-      <a href="/google-ads-audit" class="mobile-nav__tool-link">Free Google Ads Audit &rarr;</a>
-    </div>
-    <div class="mobile-nav__footer">
-      <a href="mailto:lewis@phillips-uk.com" class="mobile-nav__cta">Get in touch</a>
-    </div>
-  </div>
+<script type="text/babel">
 
-  <!-- HERO -->
-  <section id="hero">
-    <img src="images/profile.jpg" alt="Lewis Phillips" class="hero-avatar">
-    <h1>Lewis<br>Phillips</h1>
-    <p class="eyebrow">Performance Marketing &amp; AI Workflows</p>
-    <p class="hero-sub">
-      I'm a performance marketer with 11 years' experience across paid media, SEO and growth. I've managed Google Ads, Meta, Microsoft Ads, Apple Search Ads and affiliate activity at scale, including £50M+ in annual media spend across 8 international markets. I work across the full performance stack: campaign architecture, conversion tracking, bidding strategy, reporting and team mentoring. More recently, I've been building AI-powered workflows that speed up audits, analysis and optimisation — turning complex performance data into clearer commercial decisions.
-    </p>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "logoSize": 37
+}/*EDITMODE-END*/;
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, onClick, small }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+        padding: small ? "10px 20px" : "14px 30px",
+        fontSize: small ? 13 : 14, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+        letterSpacing: "-0.005em",
+      }}>{children}</button>
+  );
+}
+function BtnOutline({ children, onClick, small }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#985830" : "transparent",
+        color: h ? "#fff" : "#985830",
+        border: "1.5px solid #985830",
+        padding: small ? "9px 18px" : "12px 28px",
+        fontSize: small ? 13 : 14, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "all 150ms cubic-bezier(0.2,0,0,1)",
+      }}>{children}</button>
+  );
+}
 
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-val">£50M+</div>
-        <div class="hero-stat-label">Annual paid media<br>managed</div>
+/* =============== NAV =============== */
+function Nav() {
+  const linkStyle = { fontSize: 14, fontWeight: 500, color: "#6B6B6B", textDecoration: "none" };
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64,
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px",
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={linkStyle}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={linkStyle}>Google Ads Audit</a>
+          <a href="/guides" style={linkStyle}>Guides</a>
+          <BtnFilled small onClick={() => location.hash = "#contact"}>Get in touch</BtnFilled>
+        </nav>
       </div>
-      <div>
-        <div class="hero-stat-val">8</div>
-        <div class="hero-stat-label">International<br>markets</div>
-      </div>
-      <div>
-        <div class="hero-stat-val">11 yrs</div>
-        <div class="hero-stat-label">In performance<br>marketing</div>
-      </div>
-    </div>
+    </header>
+  );
+}
+const navLink = { fontSize: 14, fontWeight: 500, color: "#6B6B6B", textDecoration: "none" };
 
-    <div class="hero-tags">
-      <span class="tag">Google Ads</span>
-      <span class="tag">Meta Ads</span>
-      <span class="tag">Microsoft Ads</span>
-      <span class="tag">Apple Search Ads</span>
-      <span class="tag">Affiliate Marketing</span>
-      <span class="tag">SEO</span>
-      <span class="tag">B2B Lead Gen</span>
-      <span class="tag">B2C Acquisition</span>
-      <span class="tag">eCommerce Growth</span>
-      <span class="tag">MQL → SQL Funnels</span>
-      <span class="tag">GA4 &amp; GTM</span>
-      <span class="tag">AI Workflows</span>
-    </div>
-  </section>
-
-
-  <hr class="rule">
-
-  <!-- CLIENTS -->
-  <div class="section-wrap">
-    <div class="container">
-      <p class="section-label">Clients &amp; Brands</p>
-      <div class="client-grid">
-        <a class="client-cell" href="https://www.angi.com" target="_blank" rel="noopener">
-          <img src="logos/angi.svg" alt="Angi">
-        </a>
-        <a class="client-cell" href="https://www.leerenee.com/" target="_blank" rel="noopener">
-          <img src="logos/leerenee.png" alt="Lee Renée Jewellery">
-        </a>
-        <a class="client-cell" href="https://www.myiabonner.com" target="_blank" rel="noopener">
-          <img src="logos/myiabonner.png" alt="Myia Bonner">
-        </a>
-        <a class="client-cell" href="https://enginehousebexley.co.uk/" target="_blank" rel="noopener">
-          <img src="logos/enginehouse.png" alt="The Engine House Bexley">
-        </a>
-        <div class="client-cell">
-          <img src="logos/pommier.jpg" alt="The Pommier">
-        </div>
-        <a class="client-cell" href="https://www.gogglesquad.co.uk/" target="_blank" rel="noopener">
-          <img src="logos/gogglesquad.png" alt="Goggle Squad">
-        </a>
-        <a class="client-cell" href="https://www.mybuilder.com" target="_blank" rel="noopener">
-          <img src="logos/mybuilder-purple.png" alt="MyBuilder">
-        </a>
-        <a class="client-cell" href="https://www.homestars.com" target="_blank" rel="noopener">
-          <img src="logos/homestars-purple.png" alt="HomeStars">
-        </a>
-        <a class="client-cell" href="https://www.werkspot.nl" target="_blank" rel="noopener">
-          <img src="logos/werkspot-purple.png" alt="Werkspot">
-        </a>
-        <a class="client-cell" href="https://www.instapro.it" target="_blank" rel="noopener">
-          <img src="logos/instapro-purple.png" alt="Instapro">
-        </a>
-        <a class="client-cell" href="https://www.travaux.com" target="_blank" rel="noopener">
-          <img src="logos/travaux-purple.png" alt="Travaux.com">
-        </a>
-        <a class="client-cell" href="https://www.myhammer.de" target="_blank" rel="noopener">
-          <img src="logos/myhammer-purple.png" alt="MyHammer">
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <hr class="rule">
-
-  <!-- SELECTED WORK -->
-  <div class="section-wrap" id="work">
-    <div class="container">
-      <p class="section-label">Selected Work</p>
-      <div class="work-grid">
-
-        <!-- Angi Inc. -->
-        <div class="work-card">
+/* =============== HERO =============== */
+function Hero() {
+  return (
+    <section style={{
+      background: "linear-gradient(180deg, #FFFFFF 0%, #FDF6EE 100%)",
+      padding: "112px 32px 96px",
+      borderBottom: "1px solid #E8D8C4",
+    }}>
+      <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 320px",
+          gap: 64, alignItems: "center",
+          marginBottom: 72,
+        }}>
           <div>
-            <div class="work-client">Angi Inc.</div>
-            <div class="work-role">Performance Marketing Manager - 8 Markets</div>
-          </div>
-          <div class="work-metrics">
-            <div class="work-metric">
-              <span class="work-metric-val">£50M+</span>
-              <span class="work-metric-label">Annual paid media managed</span>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 10,
+              background: "#F5EBD9",
+              padding: "7px 14px", borderRadius: 20,
+              marginBottom: 32,
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830" }}/>
+              <span style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+                textTransform: "uppercase", color: "#985830",
+              }}>Senior Performance Marketing · Builder</span>
             </div>
-            <div class="work-metric">
-              <span class="work-metric-val">8 markets</span>
-              <span class="work-metric-label">UK, US, Canada &amp; Europe</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">Strong YoY</span>
-              <span class="work-metric-label">B2B CPA reduction</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">Double-digit</span>
-              <span class="work-metric-label">B2C margin improvement</span>
-            </div>
-          </div>
-          <button class="work-toggle" aria-expanded="false">
-            <span>View details</span>
-            <span class="work-toggle__icon">↓</span>
-          </button>
-          <div class="work-card__body">
-            <div>
-              <p class="work-desc">
-                Led performance marketing across Angi's international home-services marketplaces, including MyBuilder UK, HomeStars Canada, Werkspot Netherlands and Instapro US, with wider support across European markets. Managed £50M+ annual paid media investment across B2B contractor and B2C homeowner acquisition funnels.
-              </p>
-              <p class="work-desc">
-                Built geo-bucketed tCPA models using demand, margin and conversion data, delivering meaningful B2C margin improvement. On the B2B side, developed multi-stage acquisition funnels that reduced CPA significantly YoY while growing volume.
-              </p>
-              <p class="work-desc">
-                Also led structured experimentation across ad copy, bidding and campaign architecture, including RSA headline testing across 6 markets, Apple Search Ads optimisation, and new market launches including Boston.
-              </p>
-              <div class="work-tags">
-                <span class="work-tag work-tag--type">B2B</span>
-                <span class="work-tag work-tag--type">B2C</span>
-                <span class="work-tag work-tag--type">Marketplace Growth</span>
-                <span class="work-tag">Google Ads</span>
-                <span class="work-tag">Meta Ads</span>
-                <span class="work-tag">Apple Search Ads</span>
-                <span class="work-tag">Verizon / Yahoo</span>
-                <span class="work-tag">LinkedIn</span>
-                <span class="work-tag">Affiliate Marketing</span>
-                <span class="work-tag">Conversion Tracking</span>
-                <span class="work-tag">Google Analytics</span>
-                <span class="work-tag">Looker</span>
-              </div>
+
+            <h1 style={{
+              fontSize: "clamp(48px, 5.6vw, 72px)",
+              fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.04,
+              color: "#1A1A1A", margin: "0 0 28px",
+            }}>
+              Eleven years running paid media.{" "}
+              <span style={{ color: "#985830" }}>I also build the tools.</span>
+            </h1>
+
+            <p style={{
+              fontSize: 19, lineHeight: 1.55, color: "#1A1A1A",
+              margin: "0 0 36px",
+            }}>
+              Inside Google Ads, Meta, Microsoft Ads, LinkedIn and Apple
+              Search Ads. £50M+ in annual media spend across 8 markets. I also
+              write the Claude Code and AI workflows that audit accounts,
+              score creative and turn performance data into decisions.
+            </p>
+
+            <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
+              <BtnFilled onClick={() => document.getElementById("work").scrollIntoView({ behavior: "smooth", block: "start" })}>See the work</BtnFilled>
+              <BtnOutline onClick={() => location.hash = "#contact"}>Get in touch</BtnOutline>
             </div>
           </div>
+
+          <HeadshotSlot />
         </div>
 
-        <!-- The Pommier -->
-        <div class="work-card">
-          <div>
-            <div class="work-client">The Pommier</div>
-            <div class="work-role">Founder &amp; CEO &mdash; 2015–2020</div>
-          </div>
-          <div class="work-metrics">
-            <div class="work-metric">
-              <span class="work-metric-val">£1M</span>
-              <span class="work-metric-label">Annual revenue by year 3</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">260</span>
-              <span class="work-metric-label">Brands across 40 countries</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">250k+</span>
-              <span class="work-metric-label">SKU marketplace catalogue</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">11</span>
-              <span class="work-metric-label">Employees hired and led</span>
-            </div>
-          </div>
-          <button class="work-toggle" aria-expanded="false">
-            <span>View details</span>
-            <span class="work-toggle__icon">↓</span>
-          </button>
-          <div class="work-card__body">
-            <div>
-              <p class="work-desc">
-                Founded and scaled a self-funded omni-channel fashion marketplace, combining ecommerce with physical retail in Covent Garden and Boxpark Shoreditch. Built the business across multiple revenue streams: B2C product sales, B2B seller subscriptions, transaction fees and paid retail placement.
-              </p>
-              <p class="work-desc">
-                Grew the partner network to 260 independent brands across 40 countries using designer scouting, HubSpot CRM, email nurturing and seller upsell journeys. Managed up to £25k/month in paid media across Google Search, Shopping, Display, Facebook and Instagram, including product feed management across a 250k+ SKU catalogue.
-              </p>
-              <p class="work-desc">
-                Hired and led an 11-person team across retail, fulfilment, marketing and ecommerce operations.
-              </p>
-              <div class="work-tags">
-                <span class="work-tag work-tag--type">B2B</span>
-                <span class="work-tag work-tag--type">B2C</span>
-                <span class="work-tag work-tag--type">Founder</span>
-                <span class="work-tag work-tag--type">Marketplace Growth</span>
-                <span class="work-tag">Google Ads</span>
-                <span class="work-tag">Meta Ads</span>
-                <span class="work-tag">SEO</span>
-                <span class="work-tag">CRM</span>
-                <span class="work-tag">Affiliate Marketing</span>
-                <span class="work-tag">Retail Operations</span>
-                <span class="work-tag">Conversion Tracking</span>
-                <span class="work-tag">Shopify</span>
-                <span class="work-tag">Google Analytics</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <HeroStats />
+      </div>
+    </section>
+  );
+}
 
-        <!-- Lee Renée -->
-        <div class="work-card">
-          <div>
-            <div class="work-client">Lee Renée Jewellery</div>
-            <div class="work-role">Digital Marketing Consultant &mdash; 2022–Present</div>
-          </div>
-          <div class="work-metrics">
-            <div class="work-metric">
-              <span class="work-metric-val">4.85×</span>
-              <span class="work-metric-label">ROAS in 2025</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">8.85×</span>
-              <span class="work-metric-label">Peak monthly ROAS</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">+49%</span>
-              <span class="work-metric-label">Revenue growth YoY</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">Top 5</span>
-              <span class="work-metric-label">Organic rankings for commercial terms</span>
-            </div>
-          </div>
-          <button class="work-toggle" aria-expanded="false">
-            <span>View details</span>
-            <span class="work-toggle__icon">↓</span>
-          </button>
-          <div class="work-card__body">
-            <div>
-              <p class="work-desc">
-                Full-service digital marketing for a premium Hatton Garden jewellery brand, retained for 4+ years. Built the Shopify website, Google Ads account and SEO presence from scratch, then scaled acquisition across Search, Shopping, PMax and organic search.
-              </p>
-              <p class="work-desc">
-                Grew ROAS from 2.72× in 2022 to 4.85× in 2025, with a peak month of 8.85× ROAS in December 2024. Managed campaigns across a 5,000-SKU catalogue, covering product feed optimisation, keyword research, ad copy testing and landing page improvements.
-              </p>
-              <p class="work-desc">
-                Built organic visibility from zero, achieving top 5 rankings for commercial non-brand terms including cherry blossom rings, ladybird jewellery, book necklaces, tie pins and lapel pins.
-              </p>
-              <div class="work-tags">
-                <span class="work-tag work-tag--type">DTC</span>
-                <span class="work-tag work-tag--type">eCommerce</span>
-                <span class="work-tag">Google Ads</span>
-                <span class="work-tag">SEO</span>
-                <span class="work-tag">Conversion Tracking</span>
-                <span class="work-tag">Shopify</span>
-                <span class="work-tag">Google Analytics</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Engine House -->
-        <div class="work-card">
-          <div>
-            <div class="work-client">The Engine House Bexley</div>
-            <div class="work-role">Google Ads &amp; Tracking &mdash; 2024–Present</div>
-          </div>
-          <div class="work-metrics">
-            <div class="work-metric">
-              <span class="work-metric-val">4 wks</span>
-              <span class="work-metric-label">Broken setup to clean tracking live</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">EC + CM2</span>
-              <span class="work-metric-label">Enhanced Conversions &amp; Consent Mode v2</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">2 domains</span>
-              <span class="work-metric-label">Cross-domain tracking rebuilt</span>
-            </div>
-            <div class="work-metric">
-              <span class="work-metric-val">B2B</span>
-              <span class="work-metric-label">Serviced office lead generation</span>
-            </div>
-          </div>
-          <button class="work-toggle" aria-expanded="false">
-            <span>View details</span>
-            <span class="work-toggle__icon">↓</span>
-          </button>
-          <div class="work-card__body">
-            <div>
-              <p class="work-desc">
-                Took over a self-built Google Ads and tracking setup for a serviced office and meeting room provider where conversion tracking was unreliable, broad match was wasting spend, and campaign structure was limiting control.
-              </p>
-              <p class="work-desc">
-                Rebuilt the measurement foundation from scratch, including GTM container architecture, GA4 configuration, Consent Mode v2, Enhanced Conversions with form email capture, and cross-domain tracking across two domains.
-              </p>
-              <p class="work-desc">
-                Restructured Google Ads activity around cleaner intent groups, tighter keyword control and lead-form conversions, while improving landing page relevance and conversion focus so paid traffic had a better chance of turning into enquiries.
-              </p>
-              <div class="work-tags">
-                <span class="work-tag work-tag--type">B2B</span>
-                <span class="work-tag work-tag--type">Lead Gen</span>
-                <span class="work-tag">Conversion Tracking</span>
-                <span class="work-tag">Shopify</span>
-                <span class="work-tag">Google Ads</span>
-                <span class="work-tag">Google Analytics</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
+/* Headshot slot - swap the placeholder for an <img> when assets/profile.jpg lands.
+   Shape is square-with-rounded-corners so it works equally well for a
+   tight portrait crop or a circular framed photo. */
+function HeadshotSlot() {
+  return (
+    <div style={{
+      position: "relative",
+      width: 320, height: 420,
+      maxWidth: "100%",
+    }}>
+      {/* Amber offset block behind - brand-anchored framing */}
+      <div style={{
+        position: "absolute", inset: "16px -16px -16px 16px",
+        background: "#F5EBD9",
+        borderRadius: 8,
+      }}/>
+      {/* Photo surface */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "#FDF6EE",
+        border: "1px solid #E8D8C4",
+        borderRadius: 8,
+        overflow: "hidden",
+      }}>
+        <img
+          src="images/profile.jpg"
+          alt="Lewis Phillips"
+          style={{
+            width: "100%", height: "100%",
+            objectFit: "cover",
+            objectPosition: "center top",
+            display: "block",
+            padding: "5px",
+            boxSizing: "border-box",
+          }}
+        />
       </div>
     </div>
-  </div>
+  );
+}
 
-  <hr class="rule">
-
-  <!-- ANALYSIS -->
-  <div class="section-wrap" id="analysis-section">
-    <div class="container">
-      <div class="two-col">
-        <span class="section-label">Selected Analysis</span>
-        <ul class="analysis-list">
-
-          <li class="analysis-item">
-            <div>
-              <div class="analysis-num">+16.2%</div>
-              <div class="analysis-num-sub">margin improvement</div>
-            </div>
-            <div>
-              <div class="analysis-title">Geo-Bucketing Bid Model</div>
-              <span class="analysis-method">tCPA Modelling · Location Value · B2C Acquisition</span>
-              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
-              <div class="analysis-item__body"><div>
-                <p class="analysis-desc">Replaced flat national CPA targets with location-based bidding tiers built from demand, conversion rate and margin data. This allowed high-value areas to be pushed more aggressively while lower-value areas were managed more conservatively. Delivered a <strong>12% cost reduction</strong>, <strong>16.2% margin improvement</strong> and <strong>19% growth in high-value location conversions</strong>.</p>
-              </div></div>
-            </div>
-          </li>
-
-          <li class="analysis-item">
-            <div>
-              <div class="analysis-num">+25%</div>
-              <div class="analysis-num-sub">impression-to-conversion rate</div>
-            </div>
-            <div>
-              <div class="analysis-title">RSA Headline Theme Analysis</div>
-              <span class="analysis-method">Creative Testing · Z-Test · Multi-Market</span>
-              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
-              <div class="analysis-item__body"><div>
-                <p class="analysis-desc">Built a 1,300-row RSA headline library and grouped assets by message type, including question-led, location-led, CTA, price-led and keyword insertion headlines. Used Z-test validation to separate headlines that drove clicks from headlines that drove conversions, then applied the learnings across six markets in five languages. Also completed a policy compliance review, identifying risky terms and approved alternatives.</p>
-              </div></div>
-            </div>
-          </li>
-
-          <li class="analysis-item">
-            <div>
-              <div class="analysis-num">+26%</div>
-              <div class="analysis-num-sub">incremental conversion rate</div>
-            </div>
-            <div>
-              <div class="analysis-title">AI Max Incremental Evaluation</div>
-              <span class="analysis-method">Incrementality Testing · 4 Markets · Budget Allocation</span>
-              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
-              <div class="analysis-item__body"><div>
-                <p class="analysis-desc">Built a framework to measure AI Max's true contribution beyond Google's blended platform reporting. Tested performance across four markets to separate genuinely incremental conversions from existing keyword overlap.</p>
-                <p class="analysis-desc" style="margin-top:10px">The analysis showed that <strong>74% of AI Max volume was already covered by existing keywords</strong>, while only 26% represented net-new incremental conversions. Key landing pages drove the majority of AI Max margin, helping determine which campaigns to scale aggressively, which to limit, and where closer monitoring was needed.</p>
-              </div></div>
-            </div>
-          </li>
-
-          <li class="analysis-item">
-            <div>
-              <div class="analysis-num">~30%</div>
-              <div class="analysis-num-sub">CPA reduction YoY</div>
-            </div>
-            <div>
-              <div class="analysis-title">Weighted Funnel tROAS Model</div>
-              <span class="analysis-method">B2B Lead Gen · Funnel Modelling · Value-Based Bidding</span>
-              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
-              <div class="analysis-item__body"><div>
-                <p class="analysis-desc">Built a weighted multi-stage B2B acquisition funnel tracking users from initial engagement through to completed submission. Assigned value to each funnel stage based on its contribution to downstream conversion, then segmented campaigns into high, medium and low value portfolios with separate tROAS bidding strategies.</p>
-                <p class="analysis-desc" style="margin-top:10px">This shifted optimisation away from raw lead volume and toward qualified acquisition behaviour, delivering <strong>~30% CPA reduction</strong> alongside <strong>~20% YoY volume growth</strong>.</p>
-              </div></div>
-            </div>
-          </li>
-
-          <li class="analysis-item">
-            <div>
-              <div class="analysis-num">~75%</div>
-              <div class="analysis-num-sub">cost per install reduction</div>
-            </div>
-            <div>
-              <div class="analysis-title">Apple Search Ads Rebuild</div>
-              <span class="analysis-method">App Growth · Search Intent · Keyword Promotion</span>
-              <button class="analysis-toggle" aria-expanded="false"><span>Read more</span><span class="analysis-toggle__icon">↓</span></button>
-              <div class="analysis-item__body"><div>
-                <p class="analysis-desc">Rebuilt an Apple Search Ads account around clear intent segments: brand, competitor, discovery and high-intent exact match campaigns. Created a keyword promotion workflow that moved proven search terms from broad discovery into exact match campaigns, reducing CPI from <strong>£2.09 to £0.52</strong> while improving signal quality and campaign control.</p>
-              </div></div>
-            </div>
-          </li>
-
-        </ul>
-      </div>
+function HeroStats() {
+  const items = [
+    { n: "£50M+",  label: "Annual paid media managed" },
+    { n: "11 yrs", label: "In performance marketing" },
+    { n: "8",      label: "International markets" },
+    { n: "4",      label: "Channels run at scale" },
+  ];
+  return (
+    <div style={{
+      display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+      background: "#fff",
+      border: "1px solid #E8D8C4",
+      borderRadius: 6,
+    }}>
+      {items.map((s, i) => (
+        <div key={i} style={{
+          padding: "28px 28px",
+          borderLeft: i === 0 ? 0 : "1px solid #E8D8C4",
+        }}>
+          <div style={{
+            fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em",
+            color: "#985830", lineHeight: 1, marginBottom: 10,
+          }}>{s.n}</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "#1A1A1A" }}>{s.label}</div>
+        </div>
+      ))}
     </div>
-  </div>
+  );
+}
 
-  <!-- AGENTIC -->
-  <section id="agentic">
-    <div class="container">
-      <div class="agentic-top">
-        <span class="section-label">Marketing Automation &amp; AI Workflows</span>
-        <h2 class="agentic-headline">Automation that turns performance data<br>into <em>action</em></h2>
-      </div>
-      <div class="agentic-grid">
-
-        <div class="agentic-card" data-mobile-accordion>
-          <div class="agentic-card-num">01</div>
-          <h3>Tracking &amp; Measurement Audits</h3>
-          <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-          <div class="mobile-accordion__body"><div>
-            <p>Automates checks across GTM, Google Ads, GA4, Enhanced Conversions and Consent Mode v2, then produces a prioritised fix plan instead of a generic issue list. Built to catch tracking problems before they distort reporting or bidding signals.</p>
-          </div></div>
-        </div>
-
-        <div class="agentic-card" data-mobile-accordion>
-          <div class="agentic-card-num">02</div>
-          <h3>Weekly Performance Workflow</h3>
-          <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-          <div class="mobile-accordion__body"><div>
-            <p>Pulls Google Ads performance data, runs search term checks, highlights wasted spend and produces a weekly account deep-dive with clear action items. Reports are written into Obsidian, exported where needed, and pushed into Monday.com so analysis turns into follow-through.</p>
-          </div></div>
-        </div>
-
-        <div class="agentic-card" data-mobile-accordion>
-          <div class="agentic-card-num">03</div>
-          <h3>Feed &amp; SEO Optimisation</h3>
-          <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-          <div class="mobile-accordion__body"><div>
-            <p>Audits Merchant Center and Shopify product data, then proposes improvements to Shopping titles, product types, SEO titles and meta descriptions. The workflow keeps human review in place before anything is applied, so automation speeds up the work without blindly changing live accounts.</p>
-          </div></div>
-        </div>
-
-      </div>
-
-      <div class="agentic-cta">
-        <a href="https://github.com/phillips-uk/google-ads-automation/tree/main" target="_blank" rel="noopener" class="agentic-cta-btn">View the GitHub repo</a>
-        <a href="/google-ads-audit" class="agentic-cta-btn agentic-cta-btn--outline" onclick="window.dataLayer=window.dataLayer||[];dataLayer.push({event:'audit_cta_click'});">Try the Google Ads audit tool →</a>
-        <span class="agentic-cta-note">Live demo — connects to your own account, read-only</span>
-      </div>
-
-      <div class="brain-block">
-        <div>
-          <span class="brain-label">The Knowledge Layer</span>
-          <h3 class="brain-headline">A performance knowledge base that improves with every workflow</h3>
-          <p class="brain-desc">Every audit, report and performance check writes structured output into a persistent knowledge base. Each new cycle can reference previous findings, recurring issues, decisions made and results observed - so analysis compounds over time rather than starting from scratch.</p>
-          <p class="brain-desc" style="margin-top: 14px;">The goal is simple: make performance workflows faster, more consistent and better informed every time they run.</p>
-        </div>
-        <div class="brain-nodes">
-          <div class="brain-node">
-            <span class="brain-node-num">01</span>
-            <span class="brain-node-text">Workflow runs - audit, report or performance check completes</span>
-          </div>
-          <div class="brain-connector">↓</div>
-          <div class="brain-node">
-            <span class="brain-node-num">02</span>
-            <span class="brain-node-text">Output is stored - structured, dated and searchable</span>
-          </div>
-          <div class="brain-connector">↓</div>
-          <div class="brain-node">
-            <span class="brain-node-num">03</span>
-            <span class="brain-node-text">Next cycle reads history - patterns, context and previous decisions carry forward</span>
-          </div>
-          <div class="brain-connector">↓</div>
-          <div class="brain-node">
-            <span class="brain-node-num">04</span>
-            <span class="brain-node-text">Actions improve - recommendations become sharper over time</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="brain-visual">
-        <img src="images/graph.png" alt="Live knowledge graph showing hundreds of connected notes across performance marketing workflows">
-        <div class="brain-visual-caption">Live knowledge graph - every note connected, every cycle building on the last</div>
-      </div>
-
-    </div>
-  </section>
-
-  <hr class="rule">
-
-  <!-- SERVICES -->
-  <div class="section-wrap">
-    <div class="container">
-      <div class="two-col">
-        <span class="section-label">Services</span>
-        <div class="service-grid">
-
-          <div class="service-card" data-mobile-accordion>
-            <h3>Performance Marketing Strategy</h3>
-            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-            <div class="mobile-accordion__body"><div>
-              <p>Full-funnel acquisition planning across B2B, B2C and eCommerce. Channel mix, budget allocation, testing roadmaps and commercial targets built around growth, CPA, ROAS and margin.</p>
-            </div></div>
-          </div>
-
-          <div class="service-card" data-mobile-accordion>
-            <h3>Paid Media Management</h3>
-            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-            <div class="mobile-accordion__body"><div>
-              <p>Google Ads, Microsoft Ads, Apple Search Ads, Meta and LinkedIn - from account structure and bidding strategy to creative testing, scaling decisions and ongoing optimisation.</p>
-            </div></div>
-          </div>
-
-          <div class="service-card" data-mobile-accordion>
-            <h3>eCommerce &amp; Shopping Growth</h3>
-            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-            <div class="mobile-accordion__body"><div>
-              <p>Google Shopping, Performance Max, Shopify, Merchant Center and product feed optimisation. Built for large catalogues, product-level visibility and profitable revenue growth.</p>
-            </div></div>
-          </div>
-
-          <div class="service-card" data-mobile-accordion>
-            <h3>Conversion Tracking &amp; Attribution</h3>
-            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-            <div class="mobile-accordion__body"><div>
-              <p>GTM, GA4, Enhanced Conversions, Consent Mode v2 and cross-domain tracking. Measurement foundations that give bidding systems cleaner signals and teams clearer reporting.</p>
-            </div></div>
-          </div>
-
-          <div class="service-card" data-mobile-accordion>
-            <h3>SEO &amp; Organic Growth</h3>
-            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-            <div class="mobile-accordion__body"><div>
-              <p>Technical SEO, Shopify on-page optimisation, Search Console analysis, Core Web Vitals and structured data. Practical SEO focused on visibility, catalogue quality and commercial search demand.</p>
-            </div></div>
-          </div>
-
-          <div class="service-card" data-mobile-accordion>
-            <h3>Marketing Automation &amp; AI Workflows</h3>
-            <button class="mobile-toggle" aria-expanded="false"><span>Expand</span><span class="mobile-toggle__icon">↓</span></button>
-            <div class="mobile-accordion__body"><div>
-              <p>Python and AI-assisted workflows that reduce manual analysis, flag issues early and turn performance data into clear next actions across Google Ads, Merchant Center, Shopify and tracking systems.</p>
-            </div></div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <hr class="rule">
-
-  <!-- TOOLS -->
-  <div class="section-wrap" id="toolkit-section">
-    <div class="container">
-      <div class="two-col">
-        <span class="section-label">Automation Toolkit</span>
-        <div>
-          <p class="tools-intro">
-            Practical automation tools built to reduce manual analysis, catch problems earlier and turn performance data into clear next actions.
+/* =============== TOOLS SHOWCASE =============== */
+function ToolsShowcase() {
+  return (
+    <section id="tools" className="sec-white" data-screen-label="Tools">
+      <div className="page-w">
+        <div style={{
+          borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 56,
+        }}>
+          <span style={{
+            display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830", marginBottom: 12,
+          }}>Things I've built</span>
+          <h2 style={{
+            fontSize: "clamp(36px, 4.5vw, 52px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.08, margin: "0 0 16px",
+            color: "#1A1A1A", maxWidth: 800,
+          }}>
+            Three live tools, built and shipped. <em style={{ fontStyle: "italic", color: "#985830" }}>Try any of them.</em>
+          </h2>
+          <p style={{
+            fontSize: 17, lineHeight: 1.55, color: "#6B6B6B",
+            margin: 0, maxWidth: 640,
+          }}>
+            Each tool encodes a real audit methodology I use on accounts. Claude Code workflows on the backend; Google Ads API, GA4 and Merchant Center on the inputs. Read-only, free, and a fair preview of how I think about paid media.
           </p>
-          <ul class="tool-list">
-            <li>
-              <span class="tool-name">Tracking Audit</span>
-              <span class="tool-desc">Checks GTM, Google Ads, GA4, Enhanced Conversions and Consent Mode v2, then produces a prioritised fix plan. Built to catch tracking issues before they damage reporting, attribution or Smart Bidding signals.</span>
-            </li>
-            <li>
-              <span class="tool-name">Weekly Performance Review</span>
-              <span class="tool-desc">Pulls Google Ads data, reviews search terms, highlights wasted spend and generates a weekly campaign deep-dive with action items. Turns account review work into a repeatable workflow instead of a manual Monday slog.</span>
-            </li>
-            <li>
-              <span class="tool-name">Feed Health</span>
-              <span class="tool-desc">Audits Merchant Center and Shopify product data, checking approval rates, product fields and Shopping title quality. Suggests feed improvements for review before approved changes are applied via Shopify.</span>
-            </li>
-            <li>
-              <span class="tool-name">SEO Audit</span>
-              <span class="tool-desc">Reviews Shopify title tags, meta descriptions, image alt text, thin content and orphan products, then combines this with Core Web Vitals and Search Console data to prioritise the fixes most likely to matter.</span>
-            </li>
-            <li>
-              <span class="tool-name">Search Console Review</span>
-              <span class="tool-desc">Analyses ranking movement each week, highlighting quick wins, CTR gaps, declining queries and new top-20 entries so SEO work is based on movement and opportunity, not guesswork.</span>
-            </li>
-          </ul>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          <ToolCard
+            label="Live tool · Google OAuth"
+            title="Google Ads Audit"
+            href="/google-ads-audit"
+            description="Connect a Google Ads account and get a 9-point diagnostic in under 60 seconds. Severity-ranked issues, a specific fix for each, and a downloadable PDF. The audit I'd run on day one of any new account."
+            stack={["Claude Code", "Google Ads API", "GA4", "GTM"]}
+            mock={<GoogleAdsMock />}
+          />
+          <ToolCard
+            label="Live tool · URL input"
+            title="Landing Page Audit"
+            href="/landing-page-audit"
+            description="Paste a URL. The tool scores hook, proof, friction and conversion path against the same rubric I use in client teardowns. Core Web Vitals included so you see what Quality Score sees."
+            stack={["Claude Code", "GA4", "Shopify", "Gemini"]}
+            mock={<LandingPageMock />}
+          />
+          <ToolCard
+            label="Live tool · Image upload"
+            title="Creative Scoring"
+            href="/creative-analysis"
+            description="Upload an ad creative and get scored on hook, message-to-market match, format fit and friction in the first three seconds. Trained on 1,300 RSAs from my own multi-market testing."
+            stack={["Claude Code", "ChatGPT", "Gemini"]}
+            mock={<CreativeMock />}
+          />
+        </div>
+
+        <div style={{
+          marginTop: 32, padding: 24, background: "#fff",
+          border: "1px solid #E8D8C4", borderRadius: 6,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: 16,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 999, background: "#985830" }}/>
+            <span style={{ fontSize: 14, color: "#1A1A1A" }}>
+              Source is on GitHub - read the code, run it yourself, fork it.
+            </span>
+          </div>
+          <BtnOutline small>View on GitHub →</BtnOutline>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+  );
+}
 
-  <hr class="rule">
-
-  <!-- GUIDES -->
-  <div class="section-wrap" id="guides">
-    <div class="container">
-      <div class="two-col">
-        <div>
-          <span class="section-label">Guides</span>
-          <a href="/guides/" style="display:block;font-size:13px;font-weight:500;color:var(--amber);text-decoration:none;margin-top:8px;">View all &rarr;</a>
+function ToolCard({ label, title, href, description, stack, mock }) {
+  const [hover, setHover] = React.useState(false);
+  return (
+    <a
+      href={href || "#"}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{
+        background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+        overflow: "hidden", display: "flex", flexDirection: "column",
+        boxShadow: hover ? "0 8px 24px rgba(152, 88, 48, 0.10)" : "none",
+        transition: "box-shadow 200ms, border-color 200ms",
+        borderColor: hover ? "#985830" : "#E8D8C4",
+        textDecoration: "none", cursor: "pointer",
+      }}>
+      <div style={{
+        height: 200, background: "#FDF6EE",
+        borderBottom: "1px solid #E8D8C4",
+        padding: 18, position: "relative",
+      }}>
+        {mock}
+      </div>
+      <div style={{ padding: 28, display: "flex", flexDirection: "column", flex: 1 }}>
+        <span style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+          textTransform: "uppercase", color: "#985830",
+        }}>{label}</span>
+        <h3 style={{
+          fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em",
+          lineHeight: 1.2, color: "#1A1A1A", margin: "12px 0 12px",
+        }}>{title}</h3>
+        <p style={{
+          fontSize: 14, lineHeight: 1.6, color: "#6B6B6B",
+          margin: "0 0 24px", flex: 1,
+        }}>{description}</p>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 24 }}>
+          {stack.map((s, i) => (
+            <span key={i} style={{
+              fontSize: 11, color: "#6B6B6B", padding: "4px 9px",
+              border: "1px solid #E8D8C4", borderRadius: 20,
+              background: "transparent",
+            }}>{s}</span>
+          ))}
         </div>
-        <div>
-          <div class="guides-row">
-            <a href="/guides/fix-google-ads-conversion-tracking/" class="guide-card">
-              <span class="guide-card__tag">Google Ads</span>
-              <h3>How to Fix Google Ads Conversion Tracking</h3>
-              <p>The seven most common causes — inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures, Consent Mode v2 and the April 2026 GA4 changes.</p>
-              <div class="guide-card__meta">21 May 2026 &middot; 12 min read</div>
-              <span class="guide-card__read">Read guide &rarr;</span>
-            </a>
-          </div>
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          paddingTop: 18, borderTop: "1px solid #E8D8C4",
+        }}>
+          <span style={{ fontSize: 12, color: "#6B6B6B" }}>Free · Read-only</span>
+          <span style={{
+            fontSize: 13, fontWeight: 600, color: "#985830",
+          }}>Try it →</span>
         </div>
       </div>
-    </div>
-  </div>
+    </a>
+  );
+}
 
-  <hr class="rule">
-
-  <!-- CERTIFICATIONS -->
-  <div class="section-wrap" id="certifications">
-    <div class="container">
-      <div class="two-col">
-        <span class="section-label">Certifications</span>
-        <div class="cert-grid">
-
-          <div class="cert-cell">
-            <div class="cert-name">Google Search Ads</div>
-            <div class="cert-issuer">Google</div>
+/* =============== TOOL MOCKS =============== */
+function GoogleAdsMock() {
+  return (
+    <div style={{ display: "flex", gap: 12, height: "100%" }}>
+      <div style={{
+        background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+        borderRadius: 4, padding: "14px 16px",
+        display: "flex", flexDirection: "column", justifyContent: "center",
+        minWidth: 92,
+      }}>
+        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#B87040" }}>Score</div>
+        <div style={{ fontSize: 36, fontWeight: 700, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1, marginTop: 4 }}>67</div>
+        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", marginTop: 2 }}>of 100</div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+        {[
+          { sev: "Critical", text: "GA4 import set as primary conversion", c: "#985830", f: "#fff" },
+          { sev: "High",     text: "62% spend on broad match, no signals", c: "#F5EBD9", f: "#985830" },
+          { sev: "Medium",   text: "Customer Match list not connected", c: "transparent", f: "#6B6B6B", b: "1px solid #E8D8C4" },
+        ].map((r, i) => (
+          <div key={i} style={{
+            background: "#fff", borderRadius: 4,
+            border: "1px solid #E8D8C4",
+            padding: "8px 10px",
+            display: "flex", gap: 8, alignItems: "center",
+            fontSize: 10,
+          }}>
+            <span style={{
+              background: r.c, color: r.f, border: r.b || 0,
+              fontSize: 8, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+              padding: "3px 7px", borderRadius: 20, whiteSpace: "nowrap",
+            }}>{r.sev}</span>
+            <span style={{ fontSize: 11, color: "#1A1A1A", lineHeight: 1.3 }}>{r.text}</span>
           </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">Apple Ads Certification</div>
-            <div class="cert-issuer">Apple</div>
-          </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">Google Ads Measurement</div>
-            <div class="cert-issuer">Google</div>
-          </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">AI-Powered Performance Ads</div>
-            <div class="cert-issuer">Google</div>
-          </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">AI-Powered Shopping Ads</div>
-            <div class="cert-issuer">Google</div>
-          </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">Conversion Tracking Mastery</div>
-            <div class="cert-issuer">Google</div>
-          </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">Looker Data Analysis</div>
-            <div class="cert-issuer">Google / Looker</div>
-          </div>
-
-          <div class="cert-cell">
-            <div class="cert-name">Microsoft Search Advertising</div>
-            <div class="cert-issuer">Microsoft</div>
-          </div>
-
-
-        </div>
+        ))}
       </div>
     </div>
-  </div>
+  );
+}
 
-  <div style="border-top: 1px solid var(--border); margin: 0 48px;"></div>
-
-  <!-- TESTIMONIALS -->
-  <div class="section-wrap">
-    <div class="container">
-      <div class="two-col">
-        <span class="section-label">References</span>
-        <div class="testimonial-grid">
-
-          <div class="testimonial-card">
-            <div class="testimonial-attribution">
-              <img src="images/testimonial-vladimir.jpg" alt="Vladimir Musaev" class="testimonial-avatar">
-              <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/vlad-musaev/" target="_blank" rel="noopener">Vladimir Musaev<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
-                <span class="testimonial-role">Director of Performance Marketing, Instapro Group - managed Lewis directly</span>
-              </div>
-            </div>
-            <p class="testimonial-quote">"I'll be short and sweet: Lewis is an absolute legend to work with! He was on my team for four-plus years, leading performance delivery and execution for paid search, paid social, and display for our UK brand, MyBuilder.com. Passionate, driven, entrepreneurial, Lewis has a can-do attitude towards any curveball or complex project that comes his way. He's a fantastic team player who consistently delivered not only within his domain but also helped other teammates achieve their goals. He brings new ideas and shares his experience across the board. Without him, MyBuilder wouldn't be where it is today! Lewis also brings heart, humor, banter, and a good mood to any team meeting, workshop, retrospective, or anything else. He's an absolute joy to be around and work with. I can wholeheartedly recommend him for any performance marketing role - he would be a tremendous asset to any company. Thanks for the good times, Lewis!"</p>
-          </div>
-
-          <div class="testimonial-card">
-            <div class="testimonial-attribution">
-              <img src="images/testimonial-lewie.jpg" alt="Lewie Winters" class="testimonial-avatar">
-              <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/lewie-winters-59a67a48/" target="_blank" rel="noopener">Lewie Winters<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
-                <span class="testimonial-role">Digital Strategy and Transformation Manager · client</span>
-              </div>
-            </div>
-            <p class="testimonial-quote">"Working with Lewis has been a brilliant experience and I wouldn't hesitate to recommend him. We initially brought him in to support our Google Ads and tracking setup, but he very quickly became much more than just a PPC specialist. Lewis took the time to understand the business properly, identified issues in both our tracking and campaign structure that had been missed previously, and completely rebuilt the foundations. What stood out was that he never just 'did the work' — he explained what he was changing, why it mattered and the impact it would have on results. His knowledge across Google Ads, conversion tracking and optimisation is incredibly strong, but what impressed me most was the ownership he took. He treated our business as if it was his own and was always looking for ways to improve performance beyond the original brief."</p>
-          </div>
-
-          <div class="testimonial-card">
-            <div class="testimonial-attribution">
-              <img src="images/testimonial-lee.jpg" alt="Lee Preston" class="testimonial-avatar">
-              <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/lee-renee-2a026270/" target="_blank" rel="noopener">Lee Preston<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
-                <span class="testimonial-role">Founder &amp; CEO, Lee Renee Jewellery - client</span>
-              </div>
-            </div>
-            <p class="testimonial-quote">"Lewis has worked for me for 6 years now on helping me develop my e-commerce store in every way. He is very committed, hard working, results-focused, insightful and goes the extra mile. He's also very easy to work with and a nice guy to boot, which really helps make my life much easier as a small business owner. I highly recommend him."</p>
-          </div>
-
-          <div class="testimonial-card">
-            <div class="testimonial-attribution">
-              <img src="images/testimonial-jonas.jpg" alt="Jonas Theurich" class="testimonial-avatar">
-              <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/jonas-theurich-9a6957206/" target="_blank" rel="noopener">Jonas Theurich<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
-                <span class="testimonial-role">Performance Marketing Manager, MyHammer - peer</span>
-              </div>
-            </div>
-            <p class="testimonial-quote">"Lewis is incredibly strong from a professional point of view — he consistently delivered great work, supported the team whenever it was needed and really made a difference through his experience and reliability. At the same time he always managed to lighten the mood even in stressful situations. Working with him was not only easy but genuinely fun, and I really appreciate how supportive he has been. It made a big difference for me."</p>
-          </div>
-
-          <div class="testimonial-card">
-            <div class="testimonial-attribution">
-              <img src="images/testimonial-aiden.jpg" alt="Aiden Pryor" class="testimonial-avatar">
-              <div class="testimonial-meta">
-                <span class="testimonial-name"><a href="https://www.linkedin.com/in/aiden-pryor-624225184/" target="_blank" rel="noopener">Aiden Pryor<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></span>
-                <span class="testimonial-role">Senior Marketing Content Producer, Angi - peer</span>
-              </div>
-            </div>
-            <p class="testimonial-quote">"Lewis was my Claude before Claude - as a colleague, if I ever had any SEM / SEO questions or needed help gathering data on the performance of my creatives, he would be my first stop. Not only would he always give me a detailed, accessible explanation of what is what, he helped me in crafting creative that would benefit the business. Now, with his own AI-powered techniques that he has picked up and taught - he is truly set to be one of the best in class at what he does. Every chance I got to work with Lewis was always informative and, thanks to his natural wit and humour, entertaining too."</p>
-          </div>
-
+function LandingPageMock() {
+  return (
+    <div style={{ display: "flex", gap: 10, height: "100%" }}>
+      <div style={{
+        background: "#fff", border: "1px solid #E8D8C4", borderRadius: 4,
+        width: 90, padding: 8, display: "flex", flexDirection: "column", gap: 6,
+      }}>
+        <div style={{ height: 8, background: "#E8D8C4", borderRadius: 2, width: "70%" }}/>
+        <div style={{ height: 18, background: "#1A1A1A", borderRadius: 2 }}/>
+        <div style={{ height: 6, background: "#F5EBD9", borderRadius: 2 }}/>
+        <div style={{ height: 6, background: "#F5EBD9", borderRadius: 2, width: "80%" }}/>
+        <div style={{ height: 20, background: "#985830", borderRadius: 2, width: "60%", marginTop: 4 }}/>
+        <div style={{ marginTop: 6, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+          <div style={{ height: 16, background: "#FDF6EE", borderRadius: 2, border: "1px solid #E8D8C4" }}/>
+          <div style={{ height: 16, background: "#FDF6EE", borderRadius: 2, border: "1px solid #E8D8C4" }}/>
         </div>
       </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+        {[
+          { k: "Hook",        v: "B+" },
+          { k: "Proof",       v: "C"  },
+          { k: "Friction",    v: "B"  },
+          { k: "Conv. path",  v: "A−" },
+        ].map((r, i) => (
+          <div key={i} style={{
+            background: "#fff", border: "1px solid #E8D8C4", borderRadius: 4,
+            padding: "8px 12px", display: "flex", justifyContent: "space-between", alignItems: "center",
+          }}>
+            <span style={{ fontSize: 11, color: "#1A1A1A", fontWeight: 500 }}>{r.k}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: r.v.startsWith("A") ? "#985830" : "#1A1A1A", letterSpacing: "-0.02em" }}>{r.v}</span>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
+  );
+}
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <h2>Let's work together</h2>
-    <p>Open to senior performance marketing, growth and paid acquisition roles, alongside selected consulting projects.</p>
-    <a href="mailto:lewis@phillips-uk.com" class="contact-cta">Get in touch</a>
-    <div class="contact-socials">
-      <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      </a>
-      <a href="https://github.com/phillips-uk" target="_blank" rel="noopener" aria-label="GitHub">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.929.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-      </a>
+function CreativeMock() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, height: "100%" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, flex: 1,
+      }}>
+        {[
+          { g: "A",  c: "#985830", t: "fg" },
+          { g: "B+", c: "#1A1A1A", t: "fg" },
+          { g: "C",  c: "#6B6B6B", t: "fg" },
+        ].map((c, i) => (
+          <div key={i} style={{
+            background: "#fff", border: "1px solid #E8D8C4", borderRadius: 4,
+            padding: 10, display: "flex", flexDirection: "column",
+            justifyContent: "space-between", position: "relative",
+          }}>
+            <div style={{ height: 36, background: "#F5EBD9", borderRadius: 2 }}/>
+            <div style={{ marginTop: 8 }}>
+              <div style={{
+                fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "#6B6B6B",
+              }}>Grade</div>
+              <div style={{
+                fontSize: 22, fontWeight: 700, color: c.c, lineHeight: 1, letterSpacing: "-0.03em",
+              }}>{c.g}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{
+        background: "#fff", border: "1px solid #E8D8C4", borderRadius: 4,
+        padding: "8px 12px", fontSize: 10, color: "#6B6B6B",
+        display: "flex", justifyContent: "space-between",
+      }}>
+        <span>Hook · Match · Format · Friction</span>
+        <span style={{ color: "#985830", fontWeight: 600 }}>4 dimensions</span>
+      </div>
     </div>
-  </section>
+  );
+}
 
-  <script>
-    document.querySelectorAll('.work-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const card = btn.closest('.work-card');
-        const isOpen = card.classList.toggle('is-open');
-        btn.setAttribute('aria-expanded', isOpen);
-        btn.querySelector('span').textContent = isOpen ? 'Hide details' : 'View details';
-      });
-    });
-    document.querySelectorAll('.analysis-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const item = btn.closest('.analysis-item');
-        const isOpen = item.classList.toggle('is-open');
-        btn.setAttribute('aria-expanded', isOpen);
-        btn.querySelector('span').textContent = isOpen ? 'Hide' : 'Read more';
-      });
-    });
-    document.querySelectorAll('.mobile-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const card = btn.closest('[data-mobile-accordion]');
-        const isOpen = card.classList.toggle('is-mobile-open');
-        btn.setAttribute('aria-expanded', isOpen);
-        btn.querySelector('span').textContent = isOpen ? 'Hide' : 'Expand';
-      });
-    });
+/* =============== RANGE / COMBINATION =============== */
+function Range() {
+  return (
+    <section id="range" className="sec-cream" data-screen-label="Range">
+      <div className="page-w">
+        <div style={{
+          textAlign: "center", marginBottom: 56, maxWidth: 760,
+          marginLeft: "auto", marginRight: "auto",
+        }}>
+          <span style={{
+            display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830", marginBottom: 16,
+          }}>Range</span>
+          <h2 style={{
+            fontSize: "clamp(36px, 4.5vw, 48px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.08,
+            color: "#1A1A1A", margin: "0 0 16px",
+          }}>
+            Marketer who <em style={{ fontStyle: "italic", color: "#985830" }}>ships code.</em>
+          </h2>
+          <p style={{ fontSize: 17, lineHeight: 1.6, color: "#6B6B6B", margin: 0 }}>
+            The combination is rare. I don't wait on a dev queue to
+            instrument tracking, prototype a tool, or write the workflow
+            that turns a CSV into a decision.
+          </p>
+        </div>
 
-    /* ── BURGER MENU ── */
-    (function () {
-      var burger = document.getElementById('p-nav-burger');
-      var mobileNav = document.getElementById('mobile-nav');
-      var closeBtn = document.getElementById('mobile-nav-close');
+        <div style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24,
+        }}>
+          <RangeCol
+            label="I run paid media"
+            title="Across channels, markets and funnels."
+            items={[
+              "Google Ads - Search, Shopping, PMax, YouTube, Demand Gen",
+              "Meta, LinkedIn and Microsoft Ads",
+              "Apple Search Ads, Verizon/Yahoo and affiliate channels",
+              "tCPA / tROAS bidding, conversion-value modelling",
+              "Geo-bucketed bid models built on demand, margin and conversion data",
+              "B2B lead gen and B2C eCommerce, 8 markets",
+            ]}
+          />
+          <RangeCol
+            label="I build the systems"
+            title="Tracking, automation, AI workflows."
+            items={[
+              "GTM container architecture, GA4, Consent Mode v2",
+              "Enhanced Conversions, cross-domain tracking",
+              "Claude Code workflows for audits, reports and feed checks",
+              "Persistent knowledge base - each audit informs the next",
+              "Obsidian → Monday.com pipeline for action follow-through",
+              "Working tools shipped end-to-end (see above)",
+            ]}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
 
-      function openMenu() {
-        burger.classList.add('is-open');
-        burger.setAttribute('aria-expanded', 'true');
-        mobileNav.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
-      }
+function RangeCol({ label, title, items }) {
+  return (
+    <div style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+      padding: 36,
+    }}>
+      <span style={{
+        display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: "#985830", marginBottom: 14,
+      }}>{label}</span>
+      <h3 style={{
+        fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em",
+        lineHeight: 1.2, color: "#1A1A1A", margin: "0 0 24px",
+      }}>{title}</h3>
+      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 14 }}>
+        {items.map((it, i) => (
+          <li key={i} style={{
+            display: "flex", gap: 12, alignItems: "flex-start",
+            paddingTop: 14, borderTop: i === 0 ? 0 : "1px solid #E8D8C4",
+          }}>
+            <span style={{ color: "#985830", lineHeight: 1.5, fontSize: 14 }}>-</span>
+            <span style={{ fontSize: 14, lineHeight: 1.5, color: "#1A1A1A" }}>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
-      function closeMenu() {
-        burger.classList.remove('is-open');
-        burger.setAttribute('aria-expanded', 'false');
-        mobileNav.classList.remove('is-open');
-        document.body.style.overflow = '';
-      }
+/* =============== SELECTED WORK (COMPACT) =============== */
+function Work() {
+  const items = [
+    {
+      client: "Angi Inc.",
+      role: "Performance Marketing Manager · 8 markets",
+      kpis: [
+        { n: "8", l: "Markets covered" },
+        { n: "4", l: "Brands managed" },
+        { n: "6+", l: "Years in role" },
+      ],
+      blurb: "Led paid media for MyBuilder UK, HomeStars Canada, Werkspot NL and Instapro US. Built geo-bucketed tCPA models integrating demand signals, conversion rate and margin data, ran the experimentation programme and led EU performance marketing teams through quarterly optimisation cycles.",
+      quote: "Lewis was on my team for four-plus years, leading performance delivery for paid search, paid social and display. Without him, MyBuilder wouldn't be where it is today.",
+      attribution: "Vladimir Musaev - Director of Performance Marketing, Instapro Group",
+    },
+    {
+      client: "Lee Renée Jewellery",
+      role: "Digital Marketing Consultant · 2022–Present",
+      kpis: [
+        { n: "4.85×",  l: "ROAS in 2025 (from 2.72× in '22)" },
+        { n: "8.85×",  l: "peak monthly ROAS · Dec '24" },
+        { n: "+49%",   l: "revenue growth YoY" },
+      ],
+      blurb: "Built the Shopify, Google Ads and SEO presence from zero. Scaled across Search, Shopping, PMax and organic. Top-5 organic rankings for commercial non-brand terms.",
+      quote: "Very committed, hard working, results-focused, insightful and goes the extra mile. He treated the business as his own.",
+      attribution: "Lee Preston - Founder & CEO, Lee Renée Jewellery",
+    },
+    {
+      client: "Engine House Bexley",
+      role: "Google Ads & Tracking · 2024–Present",
+      kpis: [
+        { n: "4 wks",   l: "broken setup to clean tracking" },
+        { n: "EC + CM2",l: "Enhanced Conv. + Consent Mode v2" },
+        { n: "2 domains", l: "cross-domain tracking rebuilt" },
+      ],
+      blurb: "Rebuilt the measurement foundation from scratch. Restructured Ads around cleaner intent groups and tighter keyword control for B2B lead generation.",
+      quote: "He never just 'did the work' - he explained what he was changing, why it mattered and the impact it would have. He treated our business as if it was his own.",
+      attribution: "Lewie Winters - Digital Strategy & Transformation Manager",
+    },
+  ];
+  return (
+    <section id="work" className="sec-cream" data-screen-label="Selected work">
+      <div className="page-w">
+        <div style={{
+          borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 48,
+        }}>
+          <span style={{
+            display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830", marginBottom: 12,
+          }}>Selected Work</span>
+          <h2 style={{
+            fontSize: "clamp(36px, 4.5vw, 48px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.08,
+            color: "#1A1A1A", margin: "0 0 16px", maxWidth: 760,
+          }}>
+            Selected work. <em style={{ fontStyle: "italic", color: "#985830" }}>Real results.</em>
+          </h2>
+        </div>
 
-      burger.addEventListener('click', function () {
-        if (mobileNav.classList.contains('is-open')) {
-          closeMenu();
-        } else {
-          openMenu();
-        }
-      });
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {items.map((w, i) => (
+            <div key={i} style={{
+              background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+              padding: "32px 36px",
+              boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
+              display: "grid",
+              gridTemplateColumns: w.kpis ? "260px 1fr 1fr" : "260px 1fr",
+              gap: 40, alignItems: "start",
+            }}>
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: "#1A1A1A", marginBottom: 6 }}>{w.client}</div>
+                <div style={{ fontSize: 13, color: "#6B6B6B", lineHeight: 1.4 }}>{w.role}</div>
+              </div>
+              <div>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: "#1A1A1A", margin: 0 }}>{w.blurb}</p>
+                {w.quote && (
+                  <div style={{
+                    marginTop: 20, paddingTop: 20,
+                    borderTop: "1px solid #E8D8C4",
+                  }}>
+                    <p style={{
+                      fontSize: 14, lineHeight: 1.6,
+                      fontStyle: "italic", color: "#1A1A1A",
+                      margin: "0 0 10px",
+                    }}>“{w.quote}”</p>
+                    <div style={{ fontSize: 12, color: "#6B6B6B" }}>{w.attribution}</div>
+                  </div>
+                )}
+              </div>
+              {w.kpis && (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+                  {w.kpis.map((k, j) => (
+                    <div key={j}>
+                      <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.03em", color: "#985830", lineHeight: 1, marginBottom: 6 }}>{k.n}</div>
+                      <div style={{ fontSize: 11, color: "#6B6B6B", lineHeight: 1.35 }}>{k.l}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
-      closeBtn.addEventListener('click', closeMenu);
+        <ClientLogos />
+      </div>
+    </section>
+  );
+}
 
-      // Close when any nav link is tapped
-      mobileNav.querySelectorAll('a').forEach(function (link) {
-        link.addEventListener('click', closeMenu);
-      });
+function ClientLogos() {
+  const logos = ["Angi", "MyBuilder", "HomeStars", "Werkspot", "Instapro", "Engine House", "Lee Renée", "The Pommier"];
+  return (
+    <div style={{
+      marginTop: 56, padding: "40px 0",
+      borderTop: "1px solid #E8D8C4",
+    }}>
+      <div style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: "#6B6B6B",
+        marginBottom: 24, textAlign: "center",
+      }}>Clients &amp; brands worked with</div>
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 24,
+      }}>
+        {logos.map((l, i) => (
+          <span key={i} style={{
+            fontSize: 15, fontWeight: 600, color: "#6B6B6B",
+            letterSpacing: "-0.01em", opacity: 0.85,
+          }}>{l}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-      // Close on overlay background click (outside the content area)
-      mobileNav.addEventListener('click', function (e) {
-        if (e.target === mobileNav) {
-          closeMenu();
-        }
-      });
+/* =============== SELECTED ANALYSIS =============== */
+function Analysis() {
+  const items = [
+    {
+      result: "+16.2%", resultLabel: "margin improvement",
+      title: "Geo-Bucketing Bid Model",
+      tags: ["tCPA Modelling", "Location Value", "B2C Acquisition"],
+      body: "Replaced flat national CPA targets with location-based bidding tiers built from demand, conversion rate and margin data. Allowed high-value areas to be pushed more aggressively while lower-value areas were managed conservatively. Delivered 12% cost reduction, 16.2% margin improvement and 19% growth in high-value location conversions.",
+    },
+    {
+      result: "+25%", resultLabel: "impression-to-conversion rate",
+      title: "RSA Headline Theme Analysis",
+      tags: ["Creative Testing", "Z-Test", "Multi-Market"],
+      body: "Built a 1,300-row RSA headline library grouped by message type. Used Z-test validation to separate headlines that drove clicks from those that drove conversions, then applied learnings across six markets in five languages.",
+    },
+    {
+      result: "+26%", resultLabel: "incremental conversion rate",
+      title: "AI Max Incremental Evaluation",
+      tags: ["Incrementality Testing", "4 Markets", "Budget Allocation"],
+      body: "Built a framework to measure AI Max's true contribution beyond Google's blended reporting. Found 74% of AI Max volume was already covered by existing keywords - only 26% was genuinely incremental. Used to determine where to scale aggressively and where to limit spend.",
+    },
+    {
+      result: "≈30%", resultLabel: "CPA reduction YoY",
+      title: "Weighted Funnel tROAS Model",
+      tags: ["B2B Lead Gen", "Funnel Modelling", "Value-Based Bidding"],
+      body: "Built a weighted multi-stage B2B funnel assigning value to each stage based on downstream conversion contribution. Segmented into high / medium / low value portfolios with separate tROAS strategies. Shifted optimisation from raw lead volume to qualified behaviour - ~30% CPA reduction alongside ~20% YoY volume growth.",
+    },
+    {
+      result: "≈75%", resultLabel: "cost per install reduction",
+      title: "Apple Search Ads Rebuild",
+      tags: ["App Growth", "Search Intent", "Keyword Promotion"],
+      body: "Rebuilt around clear intent segments: brand, competitor, discovery and high-intent exact match. Created a keyword promotion workflow moving proven terms from broad discovery into exact match, reducing CPI from £2.09 to £0.52.",
+      featured: true,
+    },
+  ];
+  return (
+    <section id="analysis" className="sec-white" data-screen-label="Selected analysis">
+      <div className="page-w">
+        <div style={{
+          borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 48,
+        }}>
+          <span style={{
+            display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830", marginBottom: 12,
+          }}>Selected Analysis</span>
+          <h2 style={{
+            fontSize: "clamp(36px, 4.5vw, 48px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.08,
+            color: "#1A1A1A", margin: "0 0 16px", maxWidth: 760,
+          }}>
+            The work behind <em style={{ fontStyle: "italic", color: "#985830" }}>the numbers.</em>
+          </h2>
+          <p style={{
+            fontSize: 17, lineHeight: 1.55, color: "#6B6B6B",
+            margin: 0, maxWidth: 600,
+          }}>
+            Five projects showing methodology, not just outcomes.
+          </p>
+        </div>
 
-      // Close on Escape key
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) {
-          closeMenu();
-        }
-      });
-    }());
-  </script>
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20,
+        }}>
+          {items.map((it, i) => <AnalysisCard key={i} {...it} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
 
+function AnalysisCard({ result, resultLabel, title, tags, body, featured }) {
+  return (
+    <div style={{
+      background: "#FDF6EE",
+      borderLeft: "3px solid #985830",
+      borderTop: "1px solid #E8D8C4",
+      borderRight: "1px solid #E8D8C4",
+      borderBottom: "1px solid #E8D8C4",
+      borderRadius: 6,
+      padding: "28px 32px",
+      boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
+      gridColumn: featured ? "1 / -1" : "auto",
+      display: "flex", flexDirection: "column", gap: 14,
+    }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+        <span style={{
+          fontSize: 44, fontWeight: 700, letterSpacing: "-0.035em",
+          color: "#985830", lineHeight: 1,
+        }}>{result}</span>
+        <span style={{ fontSize: 14, color: "#6B6B6B", letterSpacing: "-0.005em" }}>{resultLabel}</span>
+      </div>
+      <div style={{
+        fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em",
+        color: "#1A1A1A", lineHeight: 1.2,
+      }}>{title}</div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {tags.map((t, i) => (
+          <span key={i} style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#985830",
+          }}>
+            {t}{i < tags.length - 1 ? " \u00b7" : ""}
+          </span>
+        ))}
+      </div>
+      <p style={{
+        fontSize: 14, lineHeight: 1.6, color: "#1A1A1A", margin: 0,
+      }}>{body}</p>
+    </div>
+  );
+}
+
+/* =============== CONTACT =============== */
+function Contact() {
+  return (
+    <section id="contact" data-screen-label="Get in touch" style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "120px 32px",
+    }}>
+      <div style={{ maxWidth: 880, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <span style={{
+            display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#B87040", marginBottom: 20,
+          }}>Get in touch</span>
+          <h2 style={{
+            fontSize: "clamp(40px, 5vw, 56px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
+            margin: "0 0 24px",
+          }}>
+            Open to senior roles. <em style={{ fontStyle: "italic", color: "#985830" }}>Select consulting.</em>
+          </h2>
+          <p style={{
+            fontSize: 18, lineHeight: 1.6, color: "rgba(255,255,255,0.72)",
+            margin: 0, maxWidth: 640, marginLeft: "auto", marginRight: "auto",
+          }}>
+            Looking for senior performance marketing, growth or paid acquisition roles, either in-house or agency. Open to selected consulting alongside.
+          </p>
+        </div>
+
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0,
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 6,
+        }}>
+          <ContactItem method="Email"    value="lewis@phillips-uk.com" href="mailto:lewis@phillips-uk.com" />
+          <ContactItem method="LinkedIn" value="/in/lewis-p"           href="#" border />
+          <ContactItem method="GitHub"   value="phillips-uk"            href="#" border />
+        </div>
+
+        <div style={{
+          textAlign: "center", marginTop: 40,
+          fontSize: 13, color: "rgba(255,255,255,0.5)",
+        }}>
+          Based in the UK · Open to in-house, agency or selected consulting
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ContactItem({ method, value, href, border }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <a href={href}
+      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        padding: "32px 28px", textDecoration: "none",
+        borderLeft: border ? "1px solid rgba(255,255,255,0.08)" : 0,
+        display: "block",
+        background: h ? "rgba(152,88,48,0.08)" : "transparent",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      }}>
+      <div style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: "#B87040", marginBottom: 10,
+      }}>{method}</div>
+      <div style={{
+        fontSize: 18, fontWeight: 600, color: "#fff",
+        letterSpacing: "-0.01em",
+      }}>{value} →</div>
+    </a>
+  );
+}
+
+/* =============== FOOTER =============== */
+function Footer() {
+  return (
+    <footer style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      borderTop: 0,
+      padding: "28px 32px",
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 12,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* =============== APP =============== */
+function App() {
+  return (
+    <div>
+      <Nav logoSize={TWEAK_DEFAULTS.logoSize} />
+      <Hero />
+      <Work />
+      <Analysis />
+      <Range />
+      <ToolsShowcase />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
 </body>
 </html>

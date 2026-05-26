@@ -210,7 +210,7 @@ function Nav({ active }) {
           <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
           <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
           <a href="/guides" style={linkStyle("guides")}>Guides</a>
-          <BtnFilledSmall>Get in touch</BtnFilledSmall>
+          <BtnFilledSmall onClick={() => window.location.href = '/#contact'}>Get in touch</BtnFilledSmall>
         </nav>
       </div>
     </header>
@@ -300,7 +300,7 @@ function ReportHeader() {
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
             <BtnOutline icon={<IconShare/>}>Share</BtnOutline>
             <PdfDownloadButton/>
-            <BtnFilledSmall>Run another audit</BtnFilledSmall>
+            <BtnFilledSmall onClick={() => window.location.href = '/landing-page-audit'}>Run another audit</BtnFilledSmall>
           </div>
         </div>
 
@@ -339,7 +339,7 @@ function ReportHeader() {
             textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
           }}>
             <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830" }}/>
-            Page type Â· {pageType}
+            Page type · {pageType}
           </span>
         </div>
 
@@ -402,9 +402,9 @@ function ScoreCard({ score, band }) {
           display: "flex", justifyContent: "space-between",
           fontSize: 11, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.005em",
         }}>
-          <span>0 Â· Needs work</span>
-          <span>50 Â· Mixed</span>
-          <span>100 Â· Excellent</span>
+          <span>0 · Needs work</span>
+          <span>50 · Mixed</span>
+          <span>100 · Excellent</span>
         </div>
       </div>
     </div>
@@ -432,7 +432,7 @@ function ScoreBreakdown() {
       }}>
         <Eyebrow>Score breakdown</Eyebrow>
         <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-          10 findings Â· 2 high Â· 5 medium Â· 3 low
+          10 findings · 2 high · 5 medium · 3 low
         </span>
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -628,21 +628,21 @@ function FindingsByCategory() {
           title: "Mobile LCP: 5.20s",
           detail: "Largest Contentful Paint on mobile is 5.20s. Google's threshold for a \"good\" experience is 2.5s. Real-user data (CrUX) confirms the field result, not just a lab figure.",
           fix: "Preload the hero image with fetchpriority=\"high\", convert to WebP at 1Ã device pixel ratio, and defer the chat widget until after onload.",
-          impact: "Quality Score Â· Landing Page Experience Â· mobile CPC",
+          impact: "Quality Score · Landing Page Experience · mobile CPC",
         },
         {
           severity: "medium",
           title: "Mobile performance score: 47/100",
           detail: "Lighthouse mobile score sits at 47/100 — in Google's \"poor\" band. Desktop is healthier at 72/100, but the majority of paid clicks are mobile, so mobile is what drives Landing Page Experience for most ad groups.",
           fix: "Resolve the LCP and TTFB findings below. Defer non-critical third-party scripts (chat widget, A/B test tooling) until after first interaction.",
-          impact: "Landing Page Experience Â· mobile bounce rate",
+          impact: "Landing Page Experience · mobile bounce rate",
         },
         {
           severity: "low",
           title: "TTFB: 320ms",
           detail: "Time to First Byte is 320ms — above the 200ms target. Server response is an early signal that compounds into LCP and INP downstream.",
           fix: "Move to edge caching on the product templates. Check that the CDN is configured for HTML, not just static assets.",
-          impact: "LCP Â· INP Â· server cost",
+          impact: "LCP · INP · server cost",
         },
         {
           severity: "pass",
@@ -671,7 +671,7 @@ function FindingsByCategory() {
           title: "H1 doesn't echo the URL or title tag keyword",
           detail: "URL is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". The H1 is the strongest single signal Google uses to confirm the page topic.",
           fix: "Rewrite the H1 to include the keyword phrase that ad groups send traffic against, e.g. \"Premium Wool Throw — the best-seller\".",
-          impact: "Quality Score Â· Ad Relevance",
+          impact: "Quality Score · Ad Relevance",
         },
       ],
     },
@@ -686,7 +686,7 @@ function FindingsByCategory() {
           title: "Above-the-fold copy doesn't restate the offer",
           detail: "The first viewport contains a hero image and a lifestyle headline, but no restatement of what's being sold or the offer terms. Users arriving on a mid-funnel ad won't see message match without scrolling.",
           fix: "Add a subhead under the H1 that names the product and the offer in plain language — one line, no marketing copy.",
-          impact: "Ad Relevance Â· bounce rate",
+          impact: "Ad Relevance · bounce rate",
         },
         {
           severity: "medium",
@@ -708,14 +708,14 @@ function FindingsByCategory() {
           title: "Four competing CTAs above the fold",
           detail: "Hero contains \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture — none promoted over the others. Multiple primary actions split user attention and reduce conversion rate on every channel.",
           fix: "Promote one CTA to primary based on the campaign objective. Demote the rest to outline or move them below the fold.",
-          impact: "Conversion rate Â· Landing Page Experience",
+          impact: "Conversion rate · Landing Page Experience",
         },
         {
           severity: "medium",
           title: "Form requests phone number as a required field",
           detail: "The lead form requires phone number — typically a 20–30% drop-off versus making it optional. Most B2C buyers will not give a phone number to receive product information.",
           fix: "Make phone optional or remove the field. If sales needs phone, capture it on the thank-you page instead.",
-          impact: "Lead volume Â· CPL",
+          impact: "Lead volume · CPL",
         },
       ],
     },
@@ -729,7 +729,7 @@ function FindingsByCategory() {
           severity: "low",
           title: "No risk reducer near the primary CTA",
           detail: "Returns policy, delivery terms and any guarantee are buried in the footer. Pages that surface a one-line risk reducer adjacent to the CTA convert measurably better on cold paid traffic.",
-          fix: "Add a single line under the primary CTA: \"Free 30-day returns Â· Delivered in 2–3 days\".",
+          fix: "Add a single line under the primary CTA: \"Free 30-day returns · Delivered in 2–3 days\".",
           impact: "Conversion rate from cold paid traffic",
         },
         {
@@ -752,7 +752,7 @@ function FindingsByCategory() {
           title: "Two tap targets under 44px",
           detail: "The footer social icons and the size-selector chevrons sit at 32px and 36px respectively. Google's mobile guidelines flag anything under 48Ã48 as a usability issue.",
           fix: "Increase tap-target size to 44Ã44 minimum on both the footer icons and the size-selector controls.",
-          impact: "Mobile bounce rate Â· Landing Page Experience",
+          impact: "Mobile bounce rate · Landing Page Experience",
         },
         {
           severity: "pass",
@@ -938,7 +938,7 @@ function CwvStrip({ metrics }) {
           {d.value}<span style={{ fontSize: big ? 14 : 12, color: "#6B6B6B", fontWeight: 500, marginLeft: 2 }}>{d.unit}</span>
         </div>
         <div style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-          {d.sub ? <>{d.sub} Â· </> : null}{d.target ? <>target {d.target}</> : null}
+          {d.sub ? <>{d.sub} · </> : null}{d.target ? <>target {d.target}</> : null}
         </div>
       </div>
     );
@@ -949,7 +949,7 @@ function CwvStrip({ metrics }) {
       <div style={{
         fontSize: 10, fontWeight: 700, letterSpacing: "0.14em",
         textTransform: "uppercase", color: "#985830", marginBottom: 12,
-      }}>PageSpeed Insights Â· raw data</div>
+      }}>PageSpeed Insights · raw data</div>
 
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
@@ -1398,7 +1398,7 @@ function EndCta() {
           Audit another page. <em style={{ fontStyle: "italic", color: "#985830" }}>Or take it to the account.</em>
         </h2>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <BtnFilled large>Run another audit</BtnFilled>
+          <BtnFilled large onClick={() => window.location.href = '/landing-page-audit'}>Run another audit</BtnFilled>
           <a href="/google-ads-audit" style={{
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             padding: "16px 32px", fontSize: 15, fontWeight: 600,
@@ -1409,7 +1409,7 @@ function EndCta() {
           </a>
         </div>
         <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-          Free Â· No account Â· Results in ~60 seconds
+          Free · No account · Results in ~60 seconds
         </div>
       </div>
     </section>
@@ -1432,7 +1432,7 @@ function Footer() {
           <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
             Phillips<span style={{ color: "#985830" }}>.</span>
           </span>
-          <span>© 2026 Lewis Phillips Â· phillips-uk.com</span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
         </div>
       </div>
     </footer>
@@ -1473,7 +1473,7 @@ function IconLink() {
 const PDF_DATA = {
   url: "https://yourstore.com/products/best-seller",
   pageType: "Lead Gen",
-  audited: "26 May 2026 Â· 14:32",
+  audited: "26 May 2026 · 14:32",
   score: 58,
   band: "Average",
   breakdown: [
@@ -1490,21 +1490,21 @@ const PDF_DATA = {
       title: "LCP on mobile is 5.20s — well above Google's 2.5s threshold",
       problem: "Largest Contentful Paint clocks 5.20s on mobile. Google treats anything above 2.5s as a Landing Page Experience deduction. CrUX data shows the page sits in the bottom quartile for its category.",
       fix: "Preload the hero image, compress to WebP under 150KB, and defer the chat widget script until after first interaction.",
-      impact: "Quality Score Â· Landing Page Experience Â· mobile CPC",
+      impact: "Quality Score · Landing Page Experience · mobile CPC",
     },
     {
       severity: "high",
       title: "No clear single conversion goal above the fold",
       problem: "The hero contains four competing CTAs: \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture. Eye-tracking research and Google's own LPE guidance both penalise pages without a single primary action.",
       fix: "Promote one CTA — the one tied to the campaign objective — to primary. Demote the rest to secondary outline or move them below the fold.",
-      impact: "Conversion rate Â· Landing Page Experience Â· Ad Relevance",
+      impact: "Conversion rate · Landing Page Experience · Ad Relevance",
     },
     {
       severity: "medium",
       title: "H1 doesn't echo the primary keyword from the URL or title tag",
       problem: "URL slug is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". Google looks for keyword echo across H1, title and URL to confirm message match.",
       fix: "Rewrite the H1 to include the keyword phrase from the ad group it receives traffic from — e.g. \"Premium Wool Throw — the best-seller\".",
-      impact: "Quality Score Â· Ad Relevance Â· keyword-level CPC",
+      impact: "Quality Score · Ad Relevance · keyword-level CPC",
     },
   ],
   categories: [
@@ -1524,15 +1524,15 @@ const PDF_DATA = {
         { severity: "high",   title: "Mobile LCP: 5.20s",
           problem: "Largest Contentful Paint on mobile is 5.20s. Google's threshold for a \"good\" experience is 2.5s. Real-user data (CrUX) confirms the field result, not just a lab figure.",
           fix: "Preload the hero image with fetchpriority=\"high\", convert to WebP at 1Ã device pixel ratio, and defer the chat widget until after onload.",
-          impact: "Quality Score Â· Landing Page Experience Â· mobile CPC" },
+          impact: "Quality Score · Landing Page Experience · mobile CPC" },
         { severity: "medium", title: "Mobile performance score: 47/100",
           problem: "Lighthouse mobile score sits at 47/100 — in Google's \"poor\" band. Desktop is healthier at 72/100, but the majority of paid clicks are mobile, so mobile is what drives Landing Page Experience for most ad groups.",
           fix: "Resolve the LCP and TTFB findings below. Defer non-critical third-party scripts (chat widget, A/B test tooling) until after first interaction.",
-          impact: "Landing Page Experience Â· mobile bounce rate" },
+          impact: "Landing Page Experience · mobile bounce rate" },
         { severity: "low",    title: "TTFB: 320ms",
           problem: "Time to First Byte is 320ms — above the 200ms target. Server response is an early signal that compounds into LCP and INP downstream.",
           fix: "Move to edge caching on the product templates. Check that the CDN is configured for HTML, not just static assets.",
-          impact: "LCP Â· INP Â· server cost" },
+          impact: "LCP · INP · server cost" },
         { severity: "pass",   title: "CLS: 0.041",
           problem: "Cumulative Layout Shift sits at 0.041 — well under Google's 0.1 threshold. No visible jumpiness on load.",
           fix: "No action needed.", impact: "—" },
@@ -1549,7 +1549,7 @@ const PDF_DATA = {
         { severity: "medium", title: "H1 doesn't echo the URL or title tag keyword",
           problem: "URL is /best-seller, title tag is \"Best Seller — Premium Wool Throw\", but the H1 reads \"Made for slow mornings\". The H1 is the strongest single signal Google uses to confirm the page topic.",
           fix: "Rewrite the H1 to include the keyword phrase that ad groups send traffic against, e.g. \"Premium Wool Throw — the best-seller\".",
-          impact: "Quality Score Â· Ad Relevance" },
+          impact: "Quality Score · Ad Relevance" },
       ],
     },
     {
@@ -1560,7 +1560,7 @@ const PDF_DATA = {
         { severity: "medium", title: "Above-the-fold copy doesn't restate the offer",
           problem: "The first viewport contains a hero image and a lifestyle headline, but no restatement of what's being sold or the offer terms. Users arriving on a mid-funnel ad won't see message match without scrolling.",
           fix: "Add a subhead under the H1 that names the product and the offer in plain language — one line, no marketing copy.",
-          impact: "Ad Relevance Â· bounce rate" },
+          impact: "Ad Relevance · bounce rate" },
         { severity: "medium", title: "Title tag is 71 characters — risks truncation in SERPs",
           problem: "Current title tag is 71 characters. Google typically truncates around 60. The keyword sits at character 1 (good) but the brand and offer at the end will be cut.",
           fix: "Shorten to under 60 characters and keep the keyword in the first 40.",
@@ -1575,11 +1575,11 @@ const PDF_DATA = {
         { severity: "high",   title: "Four competing CTAs above the fold",
           problem: "Hero contains \"Shop now\", \"View collection\", \"Watch the film\", and a newsletter capture — none promoted over the others. Multiple primary actions split user attention and reduce conversion rate on every channel.",
           fix: "Promote one CTA to primary based on the campaign objective. Demote the rest to outline or move them below the fold.",
-          impact: "Conversion rate Â· Landing Page Experience" },
+          impact: "Conversion rate · Landing Page Experience" },
         { severity: "medium", title: "Form requests phone number as a required field",
           problem: "The lead form requires phone number — typically a 20–30% drop-off versus making it optional. Most B2C buyers will not give a phone number to receive product information.",
           fix: "Make phone optional or remove the field. If sales needs phone, capture it on the thank-you page instead.",
-          impact: "Lead volume Â· CPL" },
+          impact: "Lead volume · CPL" },
       ],
     },
     {
@@ -1589,7 +1589,7 @@ const PDF_DATA = {
       findings: [
         { severity: "low",  title: "No risk reducer near the primary CTA",
           problem: "Returns policy, delivery terms and any guarantee are buried in the footer. Pages that surface a one-line risk reducer adjacent to the CTA convert measurably better on cold paid traffic.",
-          fix: "Add a single line under the primary CTA: \"Free 30-day returns Â· Delivered in 2–3 days\".",
+          fix: "Add a single line under the primary CTA: \"Free 30-day returns · Delivered in 2–3 days\".",
           impact: "Conversion rate from cold paid traffic" },
         { severity: "pass", title: "Reviews are present, visible, and from a verified provider",
           problem: "Trustpilot widget rendering above the fold with a 4.6 average. Verified provider, not handpicked testimonials.",
@@ -1604,7 +1604,7 @@ const PDF_DATA = {
         { severity: "low",  title: "Two tap targets under 44px",
           problem: "The footer social icons and the size-selector chevrons sit at 32px and 36px respectively. Google's mobile guidelines flag anything under 48x48 as a usability issue.",
           fix: "Increase tap-target size to 44x44 minimum on both the footer icons and the size-selector controls.",
-          impact: "Mobile bounce rate Â· Landing Page Experience" },
+          impact: "Mobile bounce rate · Landing Page Experience" },
         { severity: "pass", title: "Viewport meta tag is correctly configured",
           problem: "The viewport meta tag is present with width set to device-width and initial-scale 1. Page scales correctly on mobile devices.",
           fix: "No action needed.", impact: "—" },
@@ -1613,7 +1613,7 @@ const PDF_DATA = {
   ],
   keyword: {
     primary: "premium wool throw",
-    confidence: "Medium Â· 68%",
+    confidence: "Medium · 68%",
     confidencePct: 68,
     note: "H1 lifestyle copy and title-tag product copy disagree. Confidence sits in medium territory — that ambiguity is itself a Quality Score risk.",
     ngrams: [
@@ -1801,7 +1801,7 @@ function PdfCategory({ cat }) {
 function PdfCwvStrip({ cwv }) {
   return (
     <div style={{ padding: "10px 0 4px", borderBottom: "1px solid #F0E5D2", marginBottom: 4 }}>
-      <PdfEyebrow>PageSpeed Insights Â· raw data</PdfEyebrow>
+      <PdfEyebrow>PageSpeed Insights · raw data</PdfEyebrow>
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8,
         marginTop: 8,
@@ -1869,7 +1869,7 @@ function PdfLayout() {
             fontSize: 9, color: "#6B6B6B", letterSpacing: "0.10em",
             textTransform: "uppercase", fontWeight: 600,
           }}>
-            Landing Page Audit Â· {d.audited}
+            Landing Page Audit · {d.audited}
           </div>
         </div>
 
@@ -1910,7 +1910,7 @@ function PdfLayout() {
               letterSpacing: "-0.005em",
             }}>{d.url}</div>
           </div>
-          <PdfPill tokens={{ fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" }}>Page type Â· {d.pageType}</PdfPill>
+          <PdfPill tokens={{ fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" }}>Page type · {d.pageType}</PdfPill>
         </div>
 
         {/* Score card (dark) */}
@@ -1957,9 +1957,9 @@ function PdfLayout() {
               fontSize: 8, color: "rgba(255,255,255,0.5)",
               marginTop: 8, letterSpacing: "-0.005em",
             }}>
-              <span>0 Â· Poor</span>
-              <span>50 Â· Average</span>
-              <span>100 Â· Excellent</span>
+              <span>0 · Poor</span>
+              <span>50 · Average</span>
+              <span>100 · Excellent</span>
             </div>
           </div>
         </div>
@@ -1974,7 +1974,7 @@ function PdfLayout() {
             marginBottom: 6,
           }}>
             <PdfEyebrow>Score breakdown</PdfEyebrow>
-            <span style={{ fontSize: 9, color: "#6B6B6B" }}>10 findings Â· 2 high Â· 5 medium Â· 3 low</span>
+            <span style={{ fontSize: 9, color: "#6B6B6B" }}>10 findings · 2 high · 5 medium · 3 low</span>
           </div>
           {d.breakdown.map((r, i) => (
             <div key={i} style={{
@@ -2228,7 +2228,7 @@ function PdfLayout() {
           display: "flex", justifyContent: "space-between",
           fontSize: 9, color: "#6B6B6B", letterSpacing: "-0.005em",
         }}>
-          <span>End of report Â· {d.audited}</span>
+          <span>End of report · {d.audited}</span>
           <span>phillips-uk.com</span>
         </div>
       </div>

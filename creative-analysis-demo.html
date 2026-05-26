@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creative Scoring — Example Report | Phillips.</title>
+  <meta name="description" content="An example creative analysis report. Four ad creatives scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+  <link rel="canonical" href="https://www.phillips-uk.com/creative-analysis-demo">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+  <link rel="stylesheet" href="/brand.css">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+  <!-- End Google Tag Manager -->
+
+  <style>
+    /* ── Layout ── */
+    .page-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Page header ── */
+    .report-page-header {
+      padding: 52px 0 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+
+    .report-page-header .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--mid);
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color 0.15s;
+    }
+
+    .report-page-header .back-link:hover { color: var(--amber); }
+
+    .report-page-header .section-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 14px;
+    }
+
+    .report-page-header h1 {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 10px;
+      line-height: 1.15;
+    }
+
+    .report-page-header p {
+      font-size: 15px;
+      color: var(--mid);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    /* ── Ranked summary table ── */
+    .ranked-table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(152,88,48,0.08);
+      margin-bottom: 40px;
+    }
+
+    .ranked-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .ranked-table th {
+      background: var(--amber);
+      color: var(--white);
+      font-weight: 600;
+      padding: 11px 14px;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .ranked-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .ranked-table tr:last-child td { border-bottom: none; }
+    .ranked-table tr:nth-child(even) td { background: var(--cream); }
+    .ranked-table tr:nth-child(odd)  td { background: var(--white); }
+
+    .creative-name {
+      font-weight: 500;
+      color: var(--ink);
+      font-size: 12px;
+      max-width: 200px;
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .score-badge.green { background: #E8F5E9; color: #2E7D32; }
+    .score-badge.amber { background: #FFF3E0; color: #E65100; }
+    .score-badge.red   { background: #FFEBEE; color: #C62828; }
+
+    .dim-cell { text-align: center; min-width: 68px; }
+
+    .dim-num {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .dim-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      width: 40px;
+      margin: 0 auto;
+    }
+
+    .dim-bar-fill { height: 100%; border-radius: 3px; }
+    .dim-bar-fill.green { background: #4CAF50; }
+    .dim-bar-fill.amber { background: #FF9800; }
+    .dim-bar-fill.red   { background: #F44336; }
+
+    /* ── Detail cards ── */
+    .detail-cards { display: flex; flex-direction: column; gap: 32px; }
+
+    .detail-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(152,88,48,0.08);
+    }
+
+    .detail-card-header {
+      background: var(--amber);
+      color: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .detail-card-meta { display: flex; align-items: center; gap: 10px; }
+
+    .detail-card-rank {
+      font-size: 12px;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    .detail-card-filename {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .detail-card-badge {
+      background: rgba(255,255,255,0.2);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .detail-dim-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .detail-dim-table th {
+      background: var(--cream);
+      color: var(--mid);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-dim-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .detail-dim-table tr:last-child td { border-bottom: none; }
+
+    .detail-dim-name {
+      font-weight: 700;
+      color: var(--amber);
+      font-size: 12px;
+      white-space: nowrap;
+      width: 140px;
+    }
+
+    .detail-dim-score { width: 54px; text-align: center; }
+
+    .detail-dim-rationale {
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .weak-badge {
+      display: inline-block;
+      background: #FFF3E0;
+      border: 1px solid #FF9800;
+      color: #E65100;
+      border-radius: 3px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .overall-notes {
+      background: var(--cream);
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .overall-notes strong {
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ── Section heading ── */
+    .section-heading {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── CTA strip ── */
+    .demo-cta-strip {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 48px;
+      box-shadow: 0 1px 4px rgba(152,88,48,0.08);
+    }
+
+    .demo-cta-strip p {
+      font-size: 15px;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .demo-cta-strip p span {
+      display: block;
+      font-size: 13px;
+      color: var(--mid);
+      margin-top: 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 11px 22px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      border: 1.5px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--amber); color: var(--white); border-color: var(--amber); }
+    .btn-primary:hover { background: var(--amber-dark); border-color: var(--amber-dark); }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .ranked-table th:nth-child(n+4),
+      .ranked-table td:nth-child(n+4) { display: none; }
+      .detail-dim-name { min-width: 100px; width: 100px; }
+      .demo-cta-strip { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<nav class="p-nav">
+  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
+  <div class="p-nav__links">
+    <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
+    <a href="/guides/" class="p-nav__link">Guides</a>
+  </div>
+  <a href="/#contact" class="p-nav__cta">Get in touch</a>
+  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+    <span class="p-nav__burger-line"></span>
+  </button>
+</nav>
+<div class="p-nav__mobile" id="p-nav-mobile">
+  <a href="/landing-page-audit" class="p-nav__mobile-link">Landing Page Audit</a>
+  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
+  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
+  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ── Page header ── -->
+  <div class="report-page-header">
+    <a href="/creative-analysis" class="back-link">&#8592; Back to Creative Scoring</a>
+    <div class="section-label">EXAMPLE REPORT</div>
+    <h1>Four creatives. Scored and ranked.</h1>
+    <p>This is what a report looks like. Four sample ad creatives, each scored across five dimensions with specific weak signals flagged on any dimension below 7.</p>
+  </div>
+
+  <!-- ── Ranked summary table ── -->
+  <h2 class="section-heading">Ranked summary</h2>
+  <div class="ranked-table-wrap">
+    <table class="ranked-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Creative</th>
+          <th>Score</th>
+          <th>Hook</th>
+          <th>Hierarchy</th>
+          <th>Copy</th>
+          <th>Brand</th>
+          <th>Fatigue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><div class="creative-name">summer_prospecting_ugc-hero.mp4 <span style="color:var(--mid);font-weight:400">[opening]</span></div></td>
+          <td><span class="score-badge green">7.2</span></td>
+          <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><div class="creative-name">summer_prospecting_static-offer.jpg</div></td>
+          <td><span class="score-badge amber">6.6</span></td>
+          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><div class="creative-name">retargeting_abandoned-cart_v2.jpg</div></td>
+          <td><span class="score-badge amber">5.6</span></td>
+          <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><div class="creative-name">retargeting_generic-cta.jpg</div></td>
+          <td><span class="score-badge red">3.8</span></td>
+          <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
+          <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Detail cards ── -->
+  <h2 class="section-heading">Creative breakdowns</h2>
+  <div class="detail-cards">
+
+    <!-- #1 -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <div class="detail-card-meta">
+          <span class="detail-card-rank">#1</span>
+          <span class="detail-card-filename">summer_prospecting_ugc-hero.mp4 [opening]</span>
+        </div>
+        <span class="detail-card-badge">7.2 / 10</span>
+      </div>
+      <table class="detail-dim-table">
+        <thead>
+          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="detail-dim-name">Hook quality</td>
+            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
+            <td class="detail-dim-rationale">Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Visual hierarchy</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive.<br><span class="weak-badge">Weak signal: Background element in bottom-right competes with the subject for attention.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Copy clarity</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">The headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text is present in this frame, which is acceptable for an opening hook.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Brand consistency</td>
+            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
+            <td class="detail-dim-rationale">Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.<br><span class="weak-badge">Weak signal: No logo or brand lockup. This creative could belong to any brand.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Fatigue signals</td>
+            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
+            <td class="detail-dim-rationale">Format avoids common fatigued treatments. No plain white background, no static talking head with no hook variant. The motion-first approach is less saturated than most UGC in this category.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="overall-notes">
+        <strong>Overall notes</strong>
+        The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring. Priority fix: add a subtle branded element to the bottom-left corner without obscuring the hook.
+      </div>
+    </div>
+
+    <!-- #2 -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <div class="detail-card-meta">
+          <span class="detail-card-rank">#2</span>
+          <span class="detail-card-filename">summer_prospecting_static-offer.jpg</span>
+        </div>
+        <span class="detail-card-badge">6.6 / 10</span>
+      </div>
+      <table class="detail-dim-table">
+        <thead>
+          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="detail-dim-name">Hook quality</td>
+            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
+            <td class="detail-dim-rationale">Product is clearly visible and the offer is readable, but there is no pattern interrupt to stop a scrolling thumb. Static format with no motion, contrast surprise, or emotional trigger.<br><span class="weak-badge">Weak signal: Static product shot with no scroll-stopping element. Likely to be skipped on mobile feed.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Visual hierarchy</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">Product is the clear focal point. Headline and price point sit naturally below it. Clean layout with adequate white space. No competing visual elements.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Copy clarity</td>
+            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
+            <td class="detail-dim-rationale">Offer is specific and immediately legible. Discount percentage and end date are both visible. No ambiguity about what is being sold or what the deal is.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Brand consistency</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">Brand colours applied consistently. Logo positioned correctly. Font choice matches the brand system. Minor inconsistency in the CTA button colour weight.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Fatigue signals</td>
+            <td class="detail-dim-score"><span class="score-badge amber">5</span></td>
+            <td class="detail-dim-rationale">Plain white background product shot is one of the most overused formats in paid social. The format has been saturated for two-plus years across e-commerce categories.<br><span class="weak-badge">Weak signal: Plain white background product format. High fatigue risk — audiences have learned to skip this format.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="overall-notes">
+        <strong>Overall notes</strong>
+        Strong on clarity and brand, weak on attention capture. The copy does its job but the format will not stop the scroll. The fatigue signal is the main risk here. Test a lifestyle or contextual background version of this offer against the plain white to measure the CTR delta.
+      </div>
+    </div>
+
+    <!-- #3 -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <div class="detail-card-meta">
+          <span class="detail-card-rank">#3</span>
+          <span class="detail-card-filename">retargeting_abandoned-cart_v2.jpg</span>
+        </div>
+        <span class="detail-card-badge">5.6 / 10</span>
+      </div>
+      <table class="detail-dim-table">
+        <thead>
+          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="detail-dim-name">Hook quality</td>
+            <td class="detail-dim-score"><span class="score-badge amber">5</span></td>
+            <td class="detail-dim-rationale">Retargeting context means the audience already knows the product, which reduces the hook burden slightly. Even so, the creative does not leverage that recognition with a specific reengagement angle.<br><span class="weak-badge">Weak signal: No urgency or reengagement hook. Retargeting creatives need a specific reason to return, not just a product reminder.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Visual hierarchy</td>
+            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
+            <td class="detail-dim-rationale">Product is identifiable but the composition has two competing focal points: the product image and a text overlay of equal visual weight.<br><span class="weak-badge">Weak signal: Two competing focal points at equal weight. The eye does not know where to go first.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Copy clarity</td>
+            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
+            <td class="detail-dim-rationale">The reminder message is clear. "You left something behind" framing is specific and relevant to an abandoned cart audience. Message lands in under two seconds.</td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Brand consistency</td>
+            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
+            <td class="detail-dim-rationale">Brand colours are present but the text weight used on the overlay is lighter than the brand system standard, creating a visual inconsistency.<br><span class="weak-badge">Weak signal: Text weight inconsistency with brand system. Feels off-brand at a glance.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Fatigue signals</td>
+            <td class="detail-dim-score"><span class="score-badge red">4</span></td>
+            <td class="detail-dim-rationale">Generic "you left something" format with product image and text overlay is among the most replicated retargeting formats. No differentiating visual treatment.<br><span class="weak-badge">Weak signal: Overused retargeting format with no visual differentiation. Audiences in this segment will have seen near-identical creatives from competitors.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="overall-notes">
+        <strong>Overall notes</strong>
+        The copy angle is right for a retargeting audience but the execution is generic. Fatigue risk is high. The format needs a visual differentiator: a time-limited offer, social proof element, or a format change (video or UGC) to separate it from the noise in this audience segment.
+      </div>
+    </div>
+
+    <!-- #4 -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <div class="detail-card-meta">
+          <span class="detail-card-rank">#4</span>
+          <span class="detail-card-filename">retargeting_generic-cta.jpg</span>
+        </div>
+        <span class="detail-card-badge">3.8 / 10</span>
+      </div>
+      <table class="detail-dim-table">
+        <thead>
+          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="detail-dim-name">Hook quality</td>
+            <td class="detail-dim-score"><span class="score-badge red">3</span></td>
+            <td class="detail-dim-rationale">No visual trigger, no text hook, no motion. The creative opens on a product shot with a logo and a CTA button. There is nothing to stop a scroll.<br><span class="weak-badge">Weak signal: No hook element of any kind. The creative assumes the audience will stop voluntarily.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Visual hierarchy</td>
+            <td class="detail-dim-score"><span class="score-badge red">4</span></td>
+            <td class="detail-dim-rationale">Logo, product, headline, and CTA button all compete at similar visual weights. No single element dominates. Reading order is unclear.<br><span class="weak-badge">Weak signal: Four elements at equal weight with no clear visual priority. The reader's eye has nowhere to land.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Copy clarity</td>
+            <td class="detail-dim-score"><span class="score-badge amber">5</span></td>
+            <td class="detail-dim-rationale">The product name is legible but the headline does not state a benefit or offer. The CTA is "Shop Now" with no supporting context.<br><span class="weak-badge">Weak signal: "Shop Now" CTA with no offer, benefit, or urgency. Gives the audience no reason to act now rather than later.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Brand consistency</td>
+            <td class="detail-dim-score"><span class="score-badge red">4</span></td>
+            <td class="detail-dim-rationale">Brand colours are present but the layout does not follow the brand's established visual system. Feels like a template rather than a brand asset.<br><span class="weak-badge">Weak signal: Template-style layout with no branded personality. Indistinguishable from competitor creative at a glance.</span></td>
+          </tr>
+          <tr>
+            <td class="detail-dim-name">Fatigue signals</td>
+            <td class="detail-dim-score"><span class="score-badge red">3</span></td>
+            <td class="detail-dim-rationale">Logo-first layout, plain background, generic "Shop Now" CTA. This creative hits three of the five most common ad fatigue indicators simultaneously.<br><span class="weak-badge">Weak signal: Logo-first layout + plain background + generic CTA. Three high-fatigue signals in one creative.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="overall-notes">
+        <strong>Overall notes</strong>
+        This creative has no hook, no visual hierarchy, and no specific offer. It is built around brand visibility rather than performance. For paid social, where the audience did not choose to see the ad, every element needs to earn its place. This creative needs a complete rebuild starting from the hook. The brand assets are present — the problem is how they are deployed.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── CTA strip ── -->
+  <div class="demo-cta-strip">
+    <p>
+      Run this on your own creatives.
+      <span>Upload images or videos. Each one scored and ranked in the same format.</span>
+    </p>
+    <a href="/creative-analysis" class="btn btn-primary">Score your creatives</a>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var burger=document.getElementById('p-nav-burger');
+  var mobile=document.getElementById('p-nav-mobile');
+  if(!burger||!mobile)return;
+  burger.addEventListener('click',function(){
+    var open=burger.getAttribute('aria-expanded')==='true';
+    burger.setAttribute('aria-expanded',String(!open));
+    var nav=document.querySelector('.p-nav');
+    var offset=nav?nav.getBoundingClientRect().bottom+window.scrollY:64;
+    mobile.style.top=offset+'px';
+    mobile.style.display=open?'none':'block';
+  });
+})();
+</script>
+</body>
+</html>

@@ -134,7 +134,7 @@ function Nav({ active }) {
           <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
           <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
           <a href="/guides" style={linkStyle("guides")}>Guides</a>
-          <BtnFilledSmall>Get in touch</BtnFilledSmall>
+          <BtnFilledSmall onClick={() => window.location.href = '/#contact'}>Get in touch</BtnFilledSmall>
         </nav>
       </div>
     </header>
@@ -262,8 +262,8 @@ function ProblemFixImpact({ detail, fix, impact, dense }) {
 const ACCOUNT = {
   name: "Acme Outdoors Ltd",
   cid: "287-441-9032",
-  audited: "26 May 2026 Â· 14:32",
-  window: "Last 30 days Â· 26 Apr – 25 May 2026",
+  audited: "26 May 2026 · 14:32",
+  window: "Last 30 days · 26 Apr – 25 May 2026",
   stats: [
     { label: "Spend",       value: "£48,320", delta: "+12% vs prev. 30d", trend: "up"   },
     { label: "Impressions", value: "1.42M",   delta: "+8%  vs prev. 30d", trend: "up"   },
@@ -284,14 +284,14 @@ const CATEGORIES = [
         title: "12 keywords duplicated across 4 campaigns",
         detail: "Twelve exact-match keywords appear in more than one campaign, splitting Quality Score history and forcing the auction to pick a winner internally. Brand and generic campaigns are both bidding on \"acme outdoors\".",
         fix: "Add the duplicates as negatives in the lower-priority campaign. Keep brand terms only in the brand campaign.",
-        impact: "Quality Score consolidation Â· CPC",
+        impact: "Quality Score consolidation · CPC",
       },
       {
         severity: "low",
         title: "Three ad groups contain more than 20 keywords",
         detail: "Three ad groups exceed 20 keywords. Above this threshold, RSAs lose relevance to individual queries and Quality Score drifts down.",
         fix: "Split the three groups by intent — informational, comparison, transactional — so RSA copy can speak to one cluster of queries.",
-        impact: "Quality Score Â· Ad Relevance",
+        impact: "Quality Score · Ad Relevance",
       },
       {
         severity: "pass",
@@ -313,14 +313,14 @@ const CATEGORIES = [
         title: "GA4 import set as primary conversion action",
         detail: "The GA4 \"purchase\" event is imported as a primary conversion action alongside the native Google Ads purchase tag. Smart Bidding is counting some purchases twice and others not at all, depending on cookie state.",
         fix: "Set the GA4 import to Secondary. Keep the native Google Ads tag as the only Primary purchase action.",
-        impact: "Smart Bidding signal integrity Â· CPA accuracy",
+        impact: "Smart Bidding signal integrity · CPA accuracy",
       },
       {
         severity: "high",
         title: "Enhanced Conversions not configured",
         detail: "Enhanced Conversions is not detected on the purchase tag. Without it, attribution drops 15–25% on iOS and gaps appear in cross-device journeys.",
         fix: "Configure Enhanced Conversions for Web via GTM. Hash email at the source and pass through the user_data field.",
-        impact: "Attribution coverage Â· iOS conversion recovery",
+        impact: "Attribution coverage · iOS conversion recovery",
       },
       {
         severity: "medium",
@@ -340,37 +340,37 @@ const CATEGORIES = [
       {
         severity: "high",
         title: "tCPA set on a campaign with 8 conversions in 30 days",
-        detail: "The \"Outerwear Â· Search\" campaign is on tCPA but generated only 8 conversions in the last 30 days. Smart Bidding needs roughly 30 conversions per 30 days before tCPA is reliable.",
+        detail: "The \"Outerwear · Search\" campaign is on tCPA but generated only 8 conversions in the last 30 days. Smart Bidding needs roughly 30 conversions per 30 days before tCPA is reliable.",
         fix: "Switch to Maximise Conversions until volume builds, or consolidate this campaign with a higher-volume one of the same intent.",
-        impact: "CPA volatility Â· wasted spend in learning phase",
+        impact: "CPA volatility · wasted spend in learning phase",
       },
       {
         severity: "high",
         title: "37% of spend in the bottom quartile of campaigns by CPA",
         detail: "Over a third of spend lands in campaigns whose CPA sits in the bottom 25% of the account. Two of those campaigns have run at the same budget for over a year.",
         fix: "Reduce budgets on the two flagged campaigns by 30%. Re-allocate to the top-quartile campaigns capped by impression-share.",
-        impact: "Blended CPA Â· conversion volume",
+        impact: "Blended CPA · conversion volume",
       },
       {
         severity: "medium",
         title: "Two campaigns in active learning for 14+ days",
         detail: "Two campaigns have been in learning for more than two weeks — typically caused by repeated daily changes to bids, budget or assets.",
         fix: "Freeze edits on both campaigns for seven days. If they stay in learning after that, the issue is conversion volume, not change frequency.",
-        impact: "Smart Bidding stability Â· CPA",
+        impact: "Smart Bidding stability · CPA",
       },
       {
         severity: "medium",
         title: "Daily budget capping on the top-performing campaign",
-        detail: "The \"Tents Â· Shopping\" campaign is hitting its daily budget cap on 22 of the last 30 days and losing 18% impression share to budget.",
+        detail: "The \"Tents · Shopping\" campaign is hitting its daily budget cap on 22 of the last 30 days and losing 18% impression share to budget.",
         fix: "Raise the budget by 25% and monitor CPA over 14 days. If CPA holds, raise again.",
         impact: "Conversions left on the table",
       },
       {
         severity: "low",
         title: "No ad scheduling on a campaign with clear dayparting",
-        detail: "The \"Lead Gen Â· Search\" campaign converts at 1.4Ã account-average between 09:00–17:00 weekdays, but runs at flat 24/7 bids.",
+        detail: "The \"Lead Gen · Search\" campaign converts at 1.4Ã account-average between 09:00–17:00 weekdays, but runs at flat 24/7 bids.",
         fix: "Apply an ad schedule with a +20% modifier on weekday business hours. Review after 30 days.",
-        impact: "CPA Â· spend efficiency",
+        impact: "CPA · spend efficiency",
       },
     ],
   },
@@ -385,35 +385,35 @@ const CATEGORIES = [
         title: "£4,820 spent on zero-conversion search terms",
         detail: "In the last 30 days, £4,820 spent across 64 search terms returned zero conversions. The top offenders share clear patterns — \"free\", \"DIY\", \"how to\".",
         fix: "Add the seven identified intent modifiers as campaign-level negatives. Re-run the audit in 14 days.",
-        impact: "Confirmed waste Â· 10% of spend",
+        impact: "Confirmed waste · 10% of spend",
       },
       {
         severity: "medium",
         title: "Broad Match expanding spend without conversion lift",
         detail: "Broad Match keywords account for 42% of clicks but only 28% of conversions. The Broad expansion is matching to commercially adjacent queries that don't convert.",
         fix: "Convert the bottom-quartile Broad keywords to Phrase. Keep Broad where conversion rate is at or above account average.",
-        impact: "Conversion rate Â· CPA",
+        impact: "Conversion rate · CPA",
       },
       {
         severity: "medium",
         title: "Below-average Landing Page Experience on 22% of keywords",
         detail: "22% of active keywords show below-average Landing Page Experience. Concentrated in keywords routing to the homepage rather than a category or product page.",
         fix: "Re-route the affected keywords to a matching category page. Run the Landing Page Audit on the top three destinations.",
-        impact: "CPC Â· Quality Score",
+        impact: "CPC · Quality Score",
       },
       {
         severity: "medium",
         title: "Below-average Ad Relevance on the brand-defence campaign",
         detail: "The brand-defence campaign shows below-average Ad Relevance across all five ad groups. RSAs are generic; none mention the brand explicitly in headlines.",
         fix: "Rewrite headlines to include the brand name in at least three of ten headline variations.",
-        impact: "Ad Relevance Â· brand CPC",
+        impact: "Ad Relevance · brand CPC",
       },
       {
         severity: "low",
         title: "11% of keywords have a Quality Score below 5",
         detail: "11% of active keywords sit at QS 4 or lower — concentrated in three ad groups where ad copy and keyword intent diverge.",
         fix: "Rewrite RSAs in the three flagged ad groups to echo the keyword themes, or pause the worst-performing keywords entirely.",
-        impact: "CPC Â· Ad Relevance",
+        impact: "CPC · Ad Relevance",
       },
       {
         severity: "pass",
@@ -435,14 +435,14 @@ const CATEGORIES = [
         title: "No Customer Match lists uploaded",
         detail: "The account has zero Customer Match lists active. Customer email and phone lists feed Smart Bidding directly — without them, the algorithm is guessing about repeat buyers and known prospects.",
         fix: "Export the customer file from Shopify, hash and upload via Customer Match. Apply as observation on all Search campaigns.",
-        impact: "Smart Bidding signal Â· attribution accuracy",
+        impact: "Smart Bidding signal · attribution accuracy",
       },
       {
         severity: "medium",
         title: "GA4 remarketing audiences not linked to Google Ads",
         detail: "Eleven GA4 audiences are defined but only three are imported into Google Ads. The remaining eight (including \"Cart abandoners 7d\" and \"Pricing page viewers\") are unused.",
         fix: "Import all eligible GA4 audiences into Google Ads and attach as observation to Search and Shopping campaigns.",
-        impact: "Smart Bidding signal Â· audience reporting",
+        impact: "Smart Bidding signal · audience reporting",
       },
     ],
   },
@@ -457,14 +457,14 @@ const CATEGORIES = [
         title: "No PMax campaigns tested against current campaign structure — missing incremental reach",
         detail: "Performance Max isn't running in the account. PMax fills inventory the existing Search and Shopping campaigns can't reach — YouTube, Discover, Gmail, Maps. Without it the account is leaving incremental conversions to competitors who do test it.",
         fix: "Launch one PMax campaign for the top-margin product line with a clear conversion-value floor and audience signals. Hold the existing campaigns flat for 30 days and compare incremental conversions.",
-        impact: "Incremental reach Â· conversion volume",
+        impact: "Incremental reach · conversion volume",
       },
       {
         severity: "medium",
         title: "tCPA targets set with fewer than 30 conversions/month — insufficient data for Smart Bidding to optimise",
         detail: "Four campaigns are running tCPA with sub-30-conversions-per-month volume. Below this threshold, Smart Bidding can't separate signal from noise and CPA drifts wide of target.",
         fix: "Consolidate low-volume campaigns into shared-budget portfolios where intent allows, or switch the offenders to Maximise Conversions until they clear 30/month.",
-        impact: "Smart Bidding stability Â· CPA accuracy",
+        impact: "Smart Bidding stability · CPA accuracy",
       },
     ],
   },
@@ -479,14 +479,14 @@ const CATEGORIES = [
         title: "No supplemental feed — GTIN/MPN attributes absent on 34% of products, reducing Shopping eligibility",
         detail: "A third of the product catalogue is missing GTIN or MPN attributes. Without them, Google can't validate the listing against the broader product graph, suppressing impression eligibility on high-intent Shopping queries.",
         fix: "Set up a supplemental feed in Merchant Center to backfill GTIN and MPN values for the affected SKUs. Re-fetch and verify within 48 hours.",
-        impact: "Shopping impression share Â· conversion volume",
+        impact: "Shopping impression share · conversion volume",
       },
       {
         severity: "medium",
         title: "Product titles don't front-load primary keyword — Ad Relevance and QS suppressed",
         detail: "Sampled product titles lead with brand and lifestyle descriptors rather than the category keyword. Google matches Shopping titles left-to-right; the buying keyword sitting at character 40+ reduces matching strength.",
         fix: "Restructure titles to lead with the category keyword: [Category] [Variant] [Brand] [Size]. Test on the top-20 SKUs by impression first.",
-        impact: "Shopping Ad Relevance Â· Quality Score",
+        impact: "Shopping Ad Relevance · Quality Score",
       },
     ],
   },
@@ -501,14 +501,14 @@ const CATEGORIES = [
         title: "Four ad groups have ad strength \"Average\" or below",
         detail: "Four ad groups are running RSAs at \"Average\" or \"Poor\" ad strength. Most are missing pinned headlines and have fewer than 8 active headline variations.",
         fix: "Bring all RSAs to 10–15 unique headlines and 3–4 descriptions. Pin one keyword-matched headline to position 1.",
-        impact: "Ad Strength Â· Ad Relevance",
+        impact: "Ad Strength · Ad Relevance",
       },
       {
         severity: "low",
         title: "Sitelinks present on only 60% of campaigns",
         detail: "Sitelinks are configured at the account level but only enabled on 60% of campaigns. Sitelinks improve CTR and surface secondary intents.",
         fix: "Push the account-level sitelinks to all eligible Search campaigns. Add campaign-specific sitelinks where the offer differs.",
-        impact: "CTR Â· ad real estate",
+        impact: "CTR · ad real estate",
       },
       {
         severity: "pass",
@@ -530,14 +530,14 @@ const CATEGORIES = [
         title: "Primary landing page LCP 5.2s — above 2.5s threshold, directly suppressing Quality Score and raising CPC",
         detail: "The top-spending campaigns route to a landing page with Largest Contentful Paint of 5.2s on mobile. Google treats anything above 2.5s as a Landing Page Experience deduction, which feeds directly into Quality Score and CPC.",
         fix: "Run the Landing Page Audit on the destination URL. Preload the hero image, defer non-critical third-party scripts, and re-test in 14 days.",
-        impact: "Quality Score Â· CPC Â· conversion rate",
+        impact: "Quality Score · CPC · conversion rate",
       },
       {
         severity: "medium",
         title: "No dedicated post-click pages — all campaigns routing to homepage, reducing message match",
         detail: "Every Search campaign destination is the homepage. Message match between ad copy and landing page is what closes a cold click — a generic homepage signals \"start over\" rather than \"continue the journey\".",
         fix: "Build one post-click page per ad group cluster that restates the offer above the fold and uses a single primary CTA. Start with the top-three campaigns by spend.",
-        impact: "Conversion rate Â· Landing Page Experience",
+        impact: "Conversion rate · Landing Page Experience",
       },
     ],
   },
@@ -577,7 +577,7 @@ function ReportHeader() {
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
             <BtnOutline icon={<IconShare/>}>Share</BtnOutline>
             <BtnOutline icon={<IconDownload/>}>Download PDF</BtnOutline>
-            <BtnFilledSmall>Run another audit</BtnFilledSmall>
+            <BtnFilledSmall onClick={() => window.location.href = '/google-ads-audit'}>Run another audit</BtnFilledSmall>
           </div>
         </div>
 
@@ -603,7 +603,7 @@ function ReportHeader() {
               letterSpacing: "-0.01em",
             }}>{ACCOUNT.name}</div>
             <div style={{ fontSize: 12, color: "#6B6B6B", marginTop: 2, fontVariantNumeric: "tabular-nums" }}>
-              Customer ID {ACCOUNT.cid} Â· {ACCOUNT.window}
+              Customer ID {ACCOUNT.cid} · {ACCOUNT.window}
             </div>
           </div>
         </div>
@@ -706,10 +706,10 @@ function ScoreCard() {
           display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4,
           fontSize: 10, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.005em",
         }}>
-          <span>Poor Â· 0–49</span>
-          <span>Average Â· 50–69</span>
-          <span>Good Â· 70–84</span>
-          <span style={{ textAlign: "right" }}>Excellent Â· 85+</span>
+          <span>Poor · 0–49</span>
+          <span>Average · 50–69</span>
+          <span>Good · 70–84</span>
+          <span style={{ textAlign: "right" }}>Excellent · 85+</span>
         </div>
       </div>
     </div>
@@ -1010,7 +1010,7 @@ function EndCta() {
           Run it on another account. <em style={{ fontStyle: "italic", color: "#985830" }}>Or audit the landing pages too.</em>
         </h2>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <BtnFilled large>Run another audit</BtnFilled>
+          <BtnFilled large onClick={() => window.location.href = '/google-ads-audit'}>Run another audit</BtnFilled>
           <a href="/landing-page-audit" style={{
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             padding: "16px 32px", fontSize: 15, fontWeight: 600,
@@ -1021,7 +1021,7 @@ function EndCta() {
           </a>
         </div>
         <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-          Free Â· Read-only Â· No card Â· No agency pitch
+          Free · Read-only · No card · No agency pitch
         </div>
       </div>
     </section>
@@ -1044,7 +1044,7 @@ function Footer() {
           <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
             Phillips<span style={{ color: "#985830" }}>.</span>
           </span>
-          <span>© 2026 Lewis Phillips Â· phillips-uk.com</span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
         </div>
       </div>
     </footer>
