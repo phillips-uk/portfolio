@@ -875,6 +875,88 @@ function AnalysisCard({ result, resultLabel, title, tags, body, featured }) {
   );
 }
 
+/* =============== GUIDES SECTION =============== */
+const GUIDE_CARDS = [
+  {
+    slug: "fix-google-ads-conversion-tracking",
+    cat: "Conversion Tracking",
+    time: "12 min read",
+    title: "Google Ads Conversion Tracking Not Working? How to Fix It",
+    desc: "Smart Bidding optimises toward your conversion data. If the data is wrong, your bids are wrong. Seven causes and their fixes.",
+  },
+  {
+    slug: "improve-google-ads-quality-score",
+    cat: "Google Ads",
+    time: "10 min read",
+    title: "Google Ads Quality Score Low? How to Improve It",
+    desc: "Quality Score affects what you pay per click. Covers Expected CTR, Ad Relevance and Landing Page Experience — with specific fixes for each.",
+  },
+];
+
+function GuidesSection() {
+  return (
+    <section style={{ background: "#fff", padding: "96px 0 80px", borderTop: "1px solid #E8D8C4" }}>
+      <div className="page-w">
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 36, flexWrap: "wrap", gap: 16 }}>
+          <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24 }}>
+            <span style={{ display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 10 }}>Guides</span>
+            <h2 style={{ fontSize: "clamp(28px, 3vw, 36px)", fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.15, color: "#1A1A1A", margin: 0 }}>
+              Free guides for paid search practitioners.
+            </h2>
+          </div>
+          <a href="/guides/" style={{ fontSize: 14, fontWeight: 600, color: "#985830", textDecoration: "none", letterSpacing: "-0.005em", whiteSpace: "nowrap" }}>All guides →</a>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
+          {GUIDE_CARDS.map(g => <HomepageGuideCard key={g.slug} guide={g}/>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HomepageGuideCard({ guide }) {
+  const [h, setH] = React.useState(false);
+  const catColor = { "Conversion Tracking": "#4F5760", "Google Ads": "#985830" }[guide.cat] || "#985830";
+  const catBg    = { "Conversion Tracking": "#E4E7EB", "Google Ads": "#F5EBD9" }[guide.cat] || "#F5EBD9";
+  const catBorder= { "Conversion Tracking": "#CFD4DA", "Google Ads": "#E8D8C4" }[guide.cat] || "#E8D8C4";
+  return (
+    <a
+      href={`/guides/${guide.slug}/`}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit",
+        background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6, padding: "24px 26px",
+        transition: "transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1)",
+        transform: h ? "translateY(-3px)" : "translateY(0)",
+        boxShadow: h ? "0 8px 28px rgba(152,88,48,0.10)" : "none",
+        borderColor: h ? "#985830" : "#E8D8C4",
+      }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: catBg, color: catColor, border: `1px solid ${catBorder}`,
+          padding: "3px 9px", borderRadius: 20,
+          fontSize: 10, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", lineHeight: 1,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: 999, background: catColor, display: "inline-block" }}/>
+          {guide.cat}
+        </span>
+        <span style={{ fontSize: 11, color: "#6B6B6B" }}>{guide.time}</span>
+      </div>
+      <h3 style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.015em", lineHeight: 1.3, color: "#1A1A1A", margin: "0 0 10px", textWrap: "pretty" }}>{guide.title}</h3>
+      <p style={{ fontSize: 14, lineHeight: 1.55, color: "#6B6B6B", margin: "0 0 20px", flex: 1 }}>{guide.desc}</p>
+      <span style={{
+        display: "inline-flex", alignItems: "center", gap: 6,
+        fontSize: 13, fontWeight: 600, color: "#985830",
+      }}>
+        Read guide
+        <span style={{ display: "inline-block", transform: h ? "translateX(3px)" : "translateX(0)", transition: "transform 200ms cubic-bezier(0.2,0,0,1)" }}>→</span>
+      </span>
+    </a>
+  );
+}
+
 /* =============== CONTACT =============== */
 function Contact() {
   return (
@@ -981,6 +1063,7 @@ function App() {
       <Hero />
       <Work />
       <Analysis />
+      <GuidesSection />
       <Range />
       <ToolsShowcase />
       <Contact />
