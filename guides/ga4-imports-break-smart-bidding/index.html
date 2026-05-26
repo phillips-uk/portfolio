@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why GA4 imports break Smart Bidding | Phillips. Guides</title>
+<meta name="description" content="Setting GA4 purchase events as your Primary conversion in Google Ads is the most common configuration error I audit. Here's what it does to Smart Bidding — and how to fix it.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.phillips-uk.com/guides/ga4-imports-break-smart-bidding/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+
+<meta property="og:title" content="Why GA4 imports break Smart Bidding | Phillips. Guides">
+<meta property="og:description" content="Setting GA4 purchase events as your Primary conversion in Google Ads is the most common configuration error I audit.">
+<meta property="og:url" content="https://www.phillips-uk.com/guides/ga4-imports-break-smart-bidding/">
+<meta property="og:type" content="article">
+
+<style>
+  :root {
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --ink: #1A1A1A;
+    --white: #ffffff;
+    --cream: #FDF6EE;
+    --amber: #985830;
+    --mid: #6B6B6B;
+    --border: #E8D8C4;
+  }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w { max-width: 680px; margin: 0 auto; padding: 0 32px; }
+  ::selection { background: #985830; color: #fff; }
+  *, *::before, *::after { box-sizing: border-box; }
+  /* Article body type */
+  .article-body p {
+    font-size: 17px; line-height: 1.7;
+    color: #1A1A1A; margin: 0 0 22px;
+    letter-spacing: -0.003em;
+  }
+  .article-body p:last-child { margin-bottom: 0; }
+  .article-body h2 {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.2;
+    color: #1A1A1A; margin: 56px 0 18px;
+  }
+  .article-body h2:first-child { margin-top: 0; }
+  .article-body strong { font-weight: 700; color: #1A1A1A; }
+  .article-body em { font-style: italic; color: #985830; }
+  .article-body a {
+    color: #985830; text-decoration: underline;
+    text-decoration-thickness: 1px; text-underline-offset: 3px;
+    text-decoration-color: rgba(152, 88, 48, 0.4);
+    transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .article-body a:hover { text-decoration-color: #985830; }
+  .article-body ul { padding-left: 22px; margin: 0 0 22px; }
+  .article-body li {
+    font-size: 17px; line-height: 1.7; color: #1A1A1A;
+    margin-bottom: 8px; letter-spacing: -0.003em;
+  }
+  .article-body li::marker { color: #985830; }
+  @media (max-width: 700px) {
+    .page-w { padding: 0 20px; }
+    .read-w { padding: 0 20px; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+/* =============== CATEGORY TOKENS =============== */
+const CAT = {
+  "Google Ads":    { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  "Landing Pages": { fg: "#2E5F5C", bg: "#DCEAE8", border: "#BFD6D2" },
+  "Tracking":      { fg: "#4F5760", bg: "#E4E7EB", border: "#CFD4DA" },
+};
+
+/* =============== POST META =============== */
+const POST = {
+  cat: "Google Ads",
+  title: "Why GA4 imports break Smart Bidding",
+  byline: "Lewis Phillips · 26 May 2026 · 5 min read",
+  time: "5 min read",
+  lede: "Setting GA4 purchase events as your Primary conversion in Google Ads is the most common account configuration error I audit. Here’s exactly what it does to Smart Bidding — and how to fix it in under ten minutes.",
+};
+
+const RELATED = [
+  {
+    slug: "fix-google-ads-conversion-tracking",
+    cat: "Google Ads",
+    time: "12 min read",
+    title: "How to Fix Google Ads Conversion Tracking",
+    desc: "The seven most common causes of broken conversion tracking — inactive actions, duplicate counting, wrong primary/secondary setup and more.",
+  },
+];
+
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, href }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <a href={href} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        background: h ? "#7A3F1F" : "#985830", color: "#fff",
+        padding: "10px 20px", fontSize: 13, fontWeight: 600,
+        borderRadius: 4, textDecoration: "none", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      }}>{children}</a>
+  );
+}
+
+/* =============== NAV =============== */
+function Nav() {
+  const base = { fontSize: 14, fontWeight: 500, color: "#6B6B6B", textDecoration: "none", transition: "color 150ms" };
+  const active = { ...base, color: "#1A1A1A", fontWeight: 600 };
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64,
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px",
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav className="nav-links" style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={base}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={base}>Google Ads Audit</a>
+          <a href="/guides/" style={active}>Guides</a>
+          <BtnFilled href="/#contact">Get in touch</BtnFilled>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* =============== PRIMITIVES =============== */
+function Eyebrow({ children, color = "#985830" }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+      textTransform: "uppercase", color,
+    }}>{children}</span>
+  );
+}
+
+function CategoryPill({ cat, size = "md" }) {
+  const t = CAT[cat] || CAT["Google Ads"];
+  const pad = size === "sm" ? "3px 9px" : "4px 11px";
+  const fs = size === "sm" ? 10 : 11;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: t.bg, color: t.fg,
+      border: `1px solid ${t.border}`,
+      padding: pad, borderRadius: 20,
+      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
+      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: 999, background: t.fg, display: "inline-block" }}/>
+      {cat}
+    </span>
+  );
+}
+
+/* =============== ARTICLE HEADER =============== */
+function ArticleHeader() {
+  return (
+    <header style={{ background: "#fff", padding: "64px 0 48px" }}>
+      <div className="read-w">
+        {/* Breadcrumb */}
+        <div style={{
+          fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em",
+          marginBottom: 28,
+        }}>
+          <a href="/guides/" style={{ color: "#6B6B6B", textDecoration: "none" }}>Guides</a>
+          <span style={{ margin: "0 8px", color: "#E8D8C4" }}>/</span>
+          <span style={{ color: "#985830", fontWeight: 600 }}>{POST.cat}</span>
+        </div>
+
+        {/* Category + read time */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 28 }}>
+          <CategoryPill cat={POST.cat}/>
+          <span style={{ fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
+            {POST.time}
+          </span>
+        </div>
+
+        {/* H1 */}
+        <h1 style={{
+          fontSize: "clamp(36px, 4.8vw, 52px)", fontWeight: 700,
+          letterSpacing: "-0.025em", lineHeight: 1.06,
+          color: "#1A1A1A", margin: "0 0 24px",
+        }}>
+          {POST.title}
+        </h1>
+
+        {/* Byline */}
+        <div style={{
+          fontSize: 13, color: "#6B6B6B", letterSpacing: "-0.005em",
+          paddingBottom: 28, borderBottom: "1px solid #E8D8C4",
+          marginBottom: 32,
+        }}>
+          {POST.byline}
+        </div>
+
+        {/* Lede */}
+        <p style={{
+          fontSize: 20, lineHeight: 1.55,
+          color: "#1A1A1A", margin: 0,
+          letterSpacing: "-0.005em",
+          fontWeight: 500,
+        }}>
+          {POST.lede}
+        </p>
+      </div>
+    </header>
+  );
+}
+
+/* =============== ARTICLE BODY =============== */
+function ArticleBody() {
+  return (
+    <section style={{ background: "#fff", padding: "8px 0 96px" }}>
+      <div className="read-w">
+        <div className="article-body">
+
+          <h2>The problem in plain English</h2>
+          <p>
+            When you link GA4 to Google Ads and import the <strong>purchase</strong> event as a conversion action, Google Ads treats it as a primary signal &mdash; exactly the same weight it would give a native Google Ads conversion tag. That sounds fine. It isn&rsquo;t.
+          </p>
+          <p>
+            GA4 conversions are <strong>modelled</strong>. Google reconstructs them from session data, consent state, and cross-device joining. The native Google Ads tag is <strong>observed</strong> &mdash; it fires on the actual thank-you page, in the actual user&rsquo;s browser, on the actual click. Two different things measuring two different events.
+          </p>
+          <p>
+            Smart Bidding doesn&rsquo;t know the difference. It will train on whichever signal you mark Primary. If that&rsquo;s the modelled one, you&rsquo;re bidding on Google&rsquo;s best guess about what happened &mdash; sometimes inflated, sometimes deflated, never quite right.
+          </p>
+
+          <h2>What the data looks like</h2>
+          <p>
+            This is the version that&rsquo;s hard to catch. Cost-per-conversion looks fine. The bidding strategy stays in the green. CPA holds steady week-on-week.
+          </p>
+          <p>
+            But ROAS softens. Impression share starts drifting down on your best campaigns. New customer mix shifts toward people who were going to buy anyway. The signal looks plausible enough that nobody investigates &mdash; and the longer it runs, the more Smart Bidding bakes the noise into its baseline.
+          </p>
+          <p>
+            By the time someone notices the gap between what Google Ads reports and what actually hit the bank account, the model has been training on shaky ground for months.
+          </p>
+
+          <h2>Why it&rsquo;s so common</h2>
+          <p>
+            The default path makes the mistake for you. Most accounts get set up in this order:
+          </p>
+          <ul>
+            <li>GA4 goes in first, usually by a developer or analytics person.</li>
+            <li>Google Ads is linked to GA4 to pull audience and conversion data.</li>
+            <li>The GA4 purchase event appears in Google Ads conversion settings as importable.</li>
+            <li>Someone clicks Import. It defaults to Primary.</li>
+          </ul>
+          <p>
+            Nobody designed it this way. It&rsquo;s the path of least resistance, and the UI doesn&rsquo;t flag the consequence. The native Google Ads tag &mdash; the one that should be Primary &mdash; either never gets implemented, or gets left as Secondary because there&rsquo;s already a Primary in place.
+          </p>
+
+          <h2>The fix</h2>
+          <p>
+            Ten minutes, two steps:
+          </p>
+          <ul>
+            <li><strong>Demote the GA4 import to Secondary.</strong> Google Ads &rarr; Tools &rarr; Conversions &rarr; the GA4-imported action &rarr; Edit settings &rarr; set to Secondary. This keeps the data flowing for reporting without letting Smart Bidding train on it.</li>
+            <li><strong>Set up a native Google Ads conversion tag</strong> via GTM, firing on the actual thank-you page or post-purchase event. Mark it Primary. Add Enhanced Conversions while you&rsquo;re in there &mdash; same tag, ten extra minutes, materially better attribution on iOS.</li>
+          </ul>
+          <p>
+            Once both are in place, give the account 14 days. Smart Bidding will retrain on the observed signal. CPA reporting will look different &mdash; usually <em>worse</em> on paper, because the modelled signal was over-counting. ROAS, the thing you actually care about, will start to recover.
+          </p>
+
+          <h2>Check yours</h2>
+          <p>
+            If you&rsquo;re not sure which signal Smart Bidding is training on, the Google Ads Audit checks it directly. It reads your Conversions page, identifies which actions are set to Primary, and flags any GA4 imports sitting in that slot.
+          </p>
+          <p>
+            <a href="/google-ads-audit">Run the Google Ads Audit &rarr;</a>
+          </p>
+
+        </div>
+
+        <PullQuote/>
+      </div>
+    </section>
+  );
+}
+
+function PullQuote() {
+  return (
+    <blockquote style={{
+      margin: "64px 0 0",
+      background: "#FDF6EE",
+      borderLeft: "3px solid #985830",
+      padding: "32px 36px",
+      borderRadius: "0 6px 6px 0",
+    }}>
+      <p style={{
+        fontSize: 22, lineHeight: 1.4,
+        color: "#1A1A1A", margin: 0,
+        letterSpacing: "-0.015em", fontWeight: 500,
+        fontStyle: "italic",
+      }}>
+        &ldquo;Smart Bidding is only as good as the conversion signal you give it. If that signal is modelled, you&rsquo;re bidding on approximations.&rdquo;
+      </p>
+    </blockquote>
+  );
+}
+
+/* =============== RELATED =============== */
+function Related() {
+  return (
+    <section style={{ background: "#FDF6EE", padding: "72px 0 96px" }}>
+      <div className="page-w">
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 28 }}>
+          <Eyebrow>Related guides</Eyebrow>
+          <h2 style={{
+            fontSize: "clamp(24px, 2.6vw, 30px)", fontWeight: 700,
+            letterSpacing: "-0.02em", lineHeight: 1.15,
+            color: "#1A1A1A", margin: "10px 0 0",
+          }}>
+            Keep reading.
+          </h2>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: 16,
+        }}>
+          {RELATED.map(g => <RelatedCard key={g.slug} guide={g}/>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RelatedCard({ guide }) {
+  const [h, setH] = React.useState(false);
+  const t = CAT[guide.cat] || CAT["Google Ads"];
+  return (
+    <a
+      href={`/guides/${guide.slug}/`}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        display: "flex", flexDirection: "column",
+        textDecoration: "none", color: "inherit",
+        background: "#fff",
+        border: "1px solid #E8D8C4",
+        borderRadius: 6,
+        padding: "24px 26px",
+        transition: "transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1)",
+        transform: h ? "translateY(-3px)" : "translateY(0)",
+        boxShadow: h ? "0 8px 28px rgba(152, 88, 48, 0.10)" : "0 1px 0 rgba(152, 88, 48, 0.02)",
+        borderColor: h ? "#985830" : "#E8D8C4",
+        minHeight: 220,
+      }}>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: t.bg, color: t.fg,
+          border: `1px solid ${t.border}`,
+          padding: "3px 9px", borderRadius: 20,
+          fontSize: 10, fontWeight: 700, letterSpacing: "0.10em",
+          textTransform: "uppercase", lineHeight: 1,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: 999, background: t.fg, display: "inline-block" }}/>
+          {guide.cat}
+        </span>
+        <span style={{ fontSize: 11, color: "#6B6B6B" }}>{guide.time}</span>
+      </div>
+
+      <h3 style={{
+        fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
+        lineHeight: 1.25, color: "#1A1A1A",
+        margin: "0 0 12px",
+      }}>{guide.title}</h3>
+
+      <p style={{ fontSize: 14, lineHeight: 1.55, color: "#6B6B6B", margin: "0 0 24px" }}>{guide.desc}</p>
+
+      <span style={{
+        marginTop: "auto",
+        display: "inline-flex", alignItems: "center", gap: 6,
+        fontSize: 13, fontWeight: 600, color: "#985830",
+      }}>
+        Read guide
+        <span style={{
+          display: "inline-block",
+          transform: h ? "translateX(3px)" : "translateX(0)",
+          transition: "transform 200ms cubic-bezier(0.2,0,0,1)",
+        }}>&rarr;</span>
+      </span>
+    </a>
+  );
+}
+
+/* =============== END CTA =============== */
+function EndCta() {
+  return (
+    <section style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "96px 32px",
+    }}>
+      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
+        <Eyebrow color="#B87040">Ready to check yours?</Eyebrow>
+        <h2 style={{
+          fontSize: "clamp(36px, 4.6vw, 52px)", fontWeight: 700,
+          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
+          margin: "20px 0 32px",
+        }}>
+          Run the audit. <em style={{ fontStyle: "italic", color: "#985830" }}>See what&rsquo;s actually going on.</em>
+        </h2>
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <a href="/landing-page-audit" style={ctaButtonStyle(true)}>
+            Run the Landing Page Audit &rarr;
+          </a>
+          <a href="/google-ads-audit" style={ctaButtonStyle(false)}>
+            Run the Google Ads Audit &rarr;
+          </a>
+        </div>
+        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+          Free &middot; Read-only &middot; No agency pitch
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ctaButtonStyle(filled) {
+  return {
+    display: "inline-flex", alignItems: "center", justifyContent: "center",
+    padding: "16px 32px", fontSize: 15, fontWeight: 600,
+    color: "#fff",
+    background: filled ? "#985830" : "transparent",
+    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.3)",
+    borderRadius: 4, textDecoration: "none", letterSpacing: "-0.005em",
+  };
+}
+
+/* =============== FOOTER =============== */
+function Footer() {
+  return (
+    <footer style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "28px 32px",
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 12,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <a href="/" style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em", textDecoration: "none" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </a>
+          <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+        </div>
+        <div style={{ display: "flex", gap: 20 }}>
+          <a href="/landing-page-audit" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Google Ads Audit</a>
+          <a href="/#contact" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Get in touch</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* =============== APP =============== */
+function App() {
+  return (
+    <div>
+      <Nav/>
+      <ArticleHeader/>
+      <ArticleBody/>
+      <Related/>
+      <EndCta/>
+      <Footer/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

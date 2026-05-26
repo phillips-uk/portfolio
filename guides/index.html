@@ -11,329 +11,462 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Google Ads Guides | Phillips.</title>
-<meta name="description" content="Practical Google Ads guides from a performance marketer with 11 years' experience. No fluff — just what actually works.">
+<title>Guides | Phillips.</title>
+<meta name="description" content="Short, practical reads on paid media, landing pages and tracking. Written from 11 years running paid accounts — no agency speak, no fluff.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.phillips-uk.com/guides/">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 
-<meta property="og:title" content="Google Ads Guides | Phillips.">
-<meta property="og:description" content="Practical Google Ads guides from a performance marketer with 11 years' experience.">
+<meta property="og:title" content="Guides | Phillips.">
+<meta property="og:description" content="Short, practical reads on paid media, landing pages and tracking.">
 <meta property="og:url" content="https://www.phillips-uk.com/guides/">
 <meta property="og:type" content="website">
 
-<link rel="stylesheet" href="/brand.css">
 <style>
-  main { padding-top: 64px; }
-
-  /* ── Hero ── */
-  .guides-hero {
-    background: linear-gradient(180deg, #ffffff 0%, #FDF6EE 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 72px 48px 80px;
+  :root {
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --ink: #1A1A1A;
+    --white: #ffffff;
+    --cream: #FDF6EE;
+    --amber: #985830;
+    --mid: #6B6B6B;
+    --border: #E8D8C4;
   }
-  .guides-hero__inner {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .guides-hero__eyebrow {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 16px;
-  }
-  .guides-hero__rule {
-    display: flex;
-    align-items: flex-start;
-    gap: 0;
-    border-left: 3px solid var(--amber);
-    padding-left: 24px;
-    max-width: 760px;
-  }
-  .guides-hero h1 {
-    font-size: clamp(36px, 4.5vw, 52px);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.08;
-    color: var(--ink);
-    margin-bottom: 20px;
-  }
-  .guides-hero h1 em {
-    font-style: italic;
-    color: var(--amber);
-  }
-  .guides-hero__sub {
-    font-size: 18px;
-    line-height: 1.6;
-    color: var(--ink);
-    max-width: 560px;
-    margin: 0;
-  }
-
-  /* ── Guides section ── */
-  .guides-section {
-    background: var(--cream);
-    padding: 80px 48px 96px;
-  }
-  .guides-section__inner {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .guides-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 20px;
-  }
-
-  /* ── Guide card ── */
-  .guide-card {
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    color: inherit;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 32px 36px;
-    box-shadow: 0 2px 8px rgba(152, 88, 48, 0.08);
-    transition: border-color 150ms cubic-bezier(0.2,0,0,1),
-                box-shadow 150ms cubic-bezier(0.2,0,0,1),
-                transform 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .guide-card:hover {
-    border-color: var(--amber);
-    box-shadow: 0 8px 24px rgba(152, 88, 48, 0.14);
-    transform: translateY(-2px);
-  }
-  .guide-card__tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--amber);
-    background: var(--amber-surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 12px;
-    margin-bottom: 18px;
-    align-self: flex-start;
-  }
-  .guide-card h2 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-    color: var(--ink);
-    margin-bottom: 12px;
-  }
-  .guide-card p {
-    font-size: 14px;
-    color: var(--mid);
-    line-height: 1.65;
-    flex: 1;
-    margin-bottom: 24px;
-  }
-  .guide-card__meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--mid);
-    margin-bottom: 16px;
-  }
-  .guide-card__meta-sep {
-    width: 3px;
-    height: 3px;
-    background: var(--border);
-    border-radius: 50%;
-  }
-  .guide-card__cta {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--amber);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: gap 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .guide-card:hover .guide-card__cta { gap: 10px; }
-
-  /* ── More guides placeholder ── */
-  .guides-coming {
-    margin-top: 32px;
-    padding: 24px 32px;
-    background: var(--white);
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .guides-coming__dot {
-    width: 8px;
-    height: 8px;
-    background: var(--amber);
-    border-radius: 50%;
-    flex-shrink: 0;
-    opacity: 0.4;
-  }
-  .guides-coming p {
-    font-size: 14px;
-    color: var(--mid);
-    margin: 0;
-  }
-
-  /* ── Footer (dark, matching rest of site) ── */
-  .site-footer {
-    background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%);
-    border-top: none;
-    padding: 28px 48px;
-  }
-  .site-footer__inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .site-footer__left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-  }
-  .site-footer__logo {
-    font-size: 16px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -0.01em;
-    text-decoration: none;
-  }
-  .site-footer__logo .dot { color: var(--amber); }
-  .site-footer__links {
-    display: flex;
-    gap: 20px;
-  }
-  .site-footer__link {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    text-decoration: none;
-    transition: color 150ms;
-  }
-  .site-footer__link:hover { color: rgba(255,255,255,0.75); }
-
-  /* ── Responsive ── */
-  @media (max-width: 760px) {
-    .guides-hero { padding: 56px 24px 64px; }
-    .guides-section { padding: 56px 24px 72px; }
-    .guides-grid { grid-template-columns: 1fr; }
-    .site-footer { padding: 24px; }
-    .site-footer__inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+  .sec-white { background: #fff; padding: 64px 0; }
+  .sec-cream { background: #FDF6EE; padding: 64px 0; }
+  ::selection { background: #985830; color: #fff; }
+  *, *::before, *::after { box-sizing: border-box; }
+  @media (max-width: 700px) {
+    .page-w { padding: 0 20px; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
   }
 </style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- GTM noscript -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<!-- Nav -->
-<nav class="p-nav">
-  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
-  <div class="p-nav__links">
-    <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
-    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
-    <a href="/guides/" class="p-nav__link" style="color: #1A1A1A; font-weight: 600;">Guides</a>
-  </div>
-  <a href="/#contact" class="p-nav__cta">Get in touch</a>
-  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
-    <span class="p-nav__burger-line"></span>
-    <span class="p-nav__burger-line"></span>
-    <span class="p-nav__burger-line"></span>
-  </button>
-</nav>
-<div class="p-nav__mobile" id="p-nav-mobile">
-  <a href="/landing-page-audit" class="p-nav__mobile-link">Landing Page Audit</a>
-  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
-  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
-  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
-</div>
+<div id="root"></div>
 
-<main>
+<script type="text/babel">
 
-  <!-- Hero -->
-  <section class="guides-hero">
-    <div class="guides-hero__inner">
-      <div class="guides-hero__rule">
-        <div>
-          <span class="guides-hero__eyebrow">Guides</span>
-          <h1>Google Ads guides.<br><em>What actually works.</em></h1>
-          <p class="guides-hero__sub">Written from real account work — not Google documentation. Each guide covers a specific problem, how to diagnose it, and how to fix it.</p>
+/* =============== CATEGORY TOKENS =============== */
+const CAT = {
+  "Google Ads":         { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  "Conversion Tracking":{ fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  "Landing Pages":      { fg: "#2E5F5C", bg: "#DCEAE8", border: "#BFD6D2" },
+  "Tracking":           { fg: "#4F5760", bg: "#E4E7EB", border: "#CFD4DA" },
+};
+
+/* =============== GUIDES =============== */
+const GUIDES = [
+  {
+    slug: "ga4-imports-break-smart-bidding",
+    cat: "Google Ads",
+    time: "5 min read",
+    date: "26 May 2026",
+    title: "Why GA4 imports break Smart Bidding",
+    desc: "The most common paid media mistake — and why it’s not obvious until CPA doubles.",
+    live: true,
+  },
+  {
+    slug: "fix-google-ads-conversion-tracking",
+    cat: "Conversion Tracking",
+    time: "12 min read",
+    date: "21 May 2026",
+    title: "How to Fix Google Ads Conversion Tracking",
+    desc: "The seven most common causes of broken conversion tracking — inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures and Consent Mode v2 silent issues.",
+    live: true,
+  },
+  {
+    slug: "tcpa-thin-conversion-window",
+    cat: "Google Ads",
+    time: "4 min read",
+    title: "tCPA on a thin conversion window",
+    desc: "How to spot campaigns learning on bad data before they lock in the wrong baseline.",
+    live: false,
+  },
+  {
+    slug: "lcp-above-2-5s-real-cpc",
+    cat: "Landing Pages",
+    time: "6 min read",
+    title: "LCP above 2.5s costs you real CPC",
+    desc: "The direct line between Core Web Vitals and your Quality Score — with numbers.",
+    live: false,
+  },
+  {
+    slug: "consent-mode-v2-defaulting-denied",
+    cat: "Tracking",
+    time: "5 min read",
+    title: "Consent Mode v2 and what defaulting to denied actually means",
+    desc: "It’s not a compliance checkbox. It’s a data gap that warps every downstream report.",
+    live: false,
+  },
+  {
+    slug: "enhanced-conversions-what-and-why",
+    cat: "Google Ads",
+    time: "4 min read",
+    title: "Enhanced Conversions: what it is, why you probably don’t have it",
+    desc: "The easiest high-ROI fix on most accounts. Also the most skipped.",
+    live: false,
+  },
+];
+
+const FILTERS = ["All", "Google Ads", "Landing Pages", "Tracking"];
+
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, href }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <a href={href} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        background: h ? "#7A3F1F" : "#985830", color: "#fff",
+        padding: "10px 20px", fontSize: 13, fontWeight: 600,
+        borderRadius: 4, textDecoration: "none", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      }}>{children}</a>
+  );
+}
+
+/* =============== NAV =============== */
+function Nav() {
+  const base = { fontSize: 14, fontWeight: 500, color: "#6B6B6B", textDecoration: "none", transition: "color 150ms" };
+  const active = { ...base, color: "#1A1A1A", fontWeight: 600 };
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64,
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px",
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav className="nav-links" style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={base}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={base}>Google Ads Audit</a>
+          <a href="/guides/" style={active}>Guides</a>
+          <BtnFilled href="/#contact">Get in touch</BtnFilled>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* =============== SHARED PRIMITIVES =============== */
+function Eyebrow({ children, color = "#985830" }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+      textTransform: "uppercase", color,
+    }}>{children}</span>
+  );
+}
+
+function CategoryPill({ cat, size = "md" }) {
+  const t = CAT[cat] || CAT["Google Ads"];
+  const pad = size === "sm" ? "3px 9px" : "4px 11px";
+  const fs = size === "sm" ? 10 : 11;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: t.bg, color: t.fg,
+      border: `1px solid ${t.border}`,
+      padding: pad, borderRadius: 20,
+      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
+      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: 999, background: t.fg, display: "inline-block" }}/>
+      {cat}
+    </span>
+  );
+}
+
+/* =============== HERO =============== */
+function Hero() {
+  return (
+    <section style={{ background: "#fff", padding: "72px 0 56px" }}>
+      <div className="page-w">
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, maxWidth: 860 }}>
+          <Eyebrow>Guides</Eyebrow>
+          <h1 style={{
+            fontSize: "clamp(40px, 5.4vw, 64px)", fontWeight: 700,
+            letterSpacing: "-0.025em", lineHeight: 1.04,
+            color: "#1A1A1A", margin: "16px 0 0",
+          }}>
+            Things worth knowing before you <em style={{ fontStyle: "italic", color: "#985830" }}>run an audit.</em>
+          </h1>
+          <p style={{
+            fontSize: 18, lineHeight: 1.55, color: "#6B6B6B",
+            margin: "20px 0 0", maxWidth: 620,
+          }}>
+            Short, practical reads. No fluff, no agency speak. Written from 11 years running paid media.
+          </p>
         </div>
       </div>
+    </section>
+  );
+}
+
+/* =============== FILTER BAR =============== */
+function FilterBar({ value, onChange }) {
+  return (
+    <div style={{
+      position: "sticky", top: 64, zIndex: 40,
+      background: "#FDF6EE",
+      borderTop: "1px solid #E8D8C4",
+      borderBottom: "1px solid #E8D8C4",
+    }}>
+      <div className="page-w" style={{
+        padding: "16px 32px",
+        display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
+      }}>
+        <Eyebrow>Filter</Eyebrow>
+        <span style={{ width: 4, height: 4, borderRadius: 999, background: "#E8D8C4", margin: "0 6px" }}/>
+        {FILTERS.map(f => (
+          <FilterPill key={f} label={f} active={value === f} onClick={() => onChange(f)}/>
+        ))}
+      </div>
     </div>
-  </section>
+  );
+}
 
-  <!-- Guides grid -->
-  <section class="guides-section">
-    <div class="guides-section__inner">
-      <div class="guides-grid">
+function FilterPill({ label, active, onClick }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        background: active ? "#1A1A1A" : (h ? "#fff" : "transparent"),
+        color: active ? "#fff" : "#1A1A1A",
+        border: `1px solid ${active ? "#1A1A1A" : "#E8D8C4"}`,
+        padding: "8px 16px",
+        fontSize: 13, fontWeight: 600,
+        borderRadius: 999, cursor: "pointer", fontFamily: "inherit",
+        letterSpacing: "-0.005em",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
+      }}>
+      {label}
+    </button>
+  );
+}
 
-        <a href="/guides/fix-google-ads-conversion-tracking/" class="guide-card">
-          <span class="guide-card__tag">Conversion Tracking</span>
-          <h2>How to Fix Google Ads Conversion Tracking</h2>
-          <p>The seven most common causes of broken conversion tracking — inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures, Consent Mode v2 silent issues, and the 2026 GA4 changes.</p>
-          <div class="guide-card__meta">
-            <span>21 May 2026</span>
-            <span class="guide-card__meta-sep"></span>
-            <span>12 min read</span>
+/* =============== GUIDE GRID =============== */
+function GuideGrid({ filter }) {
+  const visible = filter === "All" ? GUIDES : GUIDES.filter(g => g.cat === filter);
+
+  return (
+    <section className="sec-cream" style={{ padding: "56px 0 96px" }}>
+      <div className="page-w">
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "flex-end",
+          marginBottom: 28, gap: 24, flexWrap: "wrap",
+        }}>
+          <Eyebrow>{filter === "All" ? "All guides" : filter}</Eyebrow>
+          <span style={{ fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
+            {visible.length} {visible.length === 1 ? "guide" : "guides"}
+          </span>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+          gap: 16,
+        }}>
+          {visible.map(g => <GuideCard key={g.slug} guide={g}/>)}
+        </div>
+
+        {visible.length === 0 && (
+          <div style={{
+            background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+            padding: "48px 32px", textAlign: "center",
+            color: "#6B6B6B", fontSize: 14,
+          }}>
+            No guides in this category yet. Check back soon.
           </div>
-          <span class="guide-card__cta">Read guide &rarr;</span>
-        </a>
+        )}
+      </div>
+    </section>
+  );
+}
 
+function GuideCard({ guide }) {
+  const [h, setH] = React.useState(false);
+  const isLive = guide.live !== false;
+
+  return (
+    <a
+      href={isLive ? `/guides/${guide.slug}/` : undefined}
+      onClick={!isLive ? (e) => e.preventDefault() : undefined}
+      onMouseEnter={() => isLive && setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        display: "flex", flexDirection: "column",
+        textDecoration: "none", color: "inherit",
+        background: "#fff",
+        border: "1px solid #E8D8C4",
+        borderRadius: 6,
+        padding: "24px 26px",
+        transition: "transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1)",
+        transform: h ? "translateY(-3px)" : "translateY(0)",
+        boxShadow: h ? "0 8px 28px rgba(152, 88, 48, 0.10)" : "0 1px 0 rgba(152, 88, 48, 0.02)",
+        borderColor: h ? "#985830" : "#E8D8C4",
+        minHeight: 260,
+        cursor: isLive ? "pointer" : "default",
+        opacity: isLive ? 1 : 0.6,
+      }}>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+        <CategoryPill cat={guide.cat} size="sm"/>
+        <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
+          {guide.time}
+        </span>
+        {!isLive && (
+          <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase",
+            color: "#6B6B6B", background: "#F0EEEB", border: "1px solid #E8D8C4",
+            padding: "2px 8px", borderRadius: 20,
+          }}>Coming soon</span>
+        )}
       </div>
 
-      <div class="guides-coming">
-        <span class="guides-coming__dot"></span>
-        <p>More guides in progress — Smart Bidding setup, negative keyword strategy, and Quality Score diagnostics.</p>
+      <h3 style={{
+        fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
+        lineHeight: 1.25, color: "#1A1A1A",
+        margin: "0 0 12px",
+      }}>{guide.title}</h3>
+
+      <p style={{
+        fontSize: 14, lineHeight: 1.55, color: "#6B6B6B",
+        margin: "0 0 24px",
+      }}>{guide.desc}</p>
+
+      {isLive && (
+        <span style={{
+          marginTop: "auto",
+          display: "inline-flex", alignItems: "center", gap: 6,
+          fontSize: 13, fontWeight: 600,
+          color: "#985830",
+          letterSpacing: "-0.005em",
+        }}>
+          Read guide
+          <span style={{
+            display: "inline-block",
+            transform: h ? "translateX(3px)" : "translateX(0)",
+            transition: "transform 200ms cubic-bezier(0.2,0,0,1)",
+          }}>&rarr;</span>
+        </span>
+      )}
+    </a>
+  );
+}
+
+/* =============== END CTA (DARK) =============== */
+function EndCta() {
+  return (
+    <section style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "96px 32px",
+    }}>
+      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
+        <Eyebrow color="#B87040">Ready to check yours?</Eyebrow>
+        <h2 style={{
+          fontSize: "clamp(36px, 4.6vw, 52px)", fontWeight: 700,
+          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
+          margin: "20px 0 32px",
+        }}>
+          Run the audit. <em style={{ fontStyle: "italic", color: "#985830" }}>See what&rsquo;s actually going on.</em>
+        </h2>
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <a href="/landing-page-audit" style={ctaButtonStyle(true)}>
+            Run the Landing Page Audit &rarr;
+          </a>
+          <a href="/google-ads-audit" style={ctaButtonStyle(false)}>
+            Run the Google Ads Audit &rarr;
+          </a>
+        </div>
+        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+          Free &middot; Read-only &middot; No agency pitch
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  );
+}
 
-</main>
+function ctaButtonStyle(filled) {
+  return {
+    display: "inline-flex", alignItems: "center", justifyContent: "center",
+    padding: "16px 32px", fontSize: 15, fontWeight: 600,
+    color: "#fff",
+    background: filled ? "#985830" : "transparent",
+    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.3)",
+    borderRadius: 4, textDecoration: "none", letterSpacing: "-0.005em",
+  };
+}
 
-<!-- Footer -->
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <div class="site-footer__left">
-      <a href="/" class="site-footer__logo">Phillips<span class="dot">.</span></a>
-      <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
-    </div>
-    <div class="site-footer__links">
-      <a href="/landing-page-audit" class="site-footer__link">Landing Page Audit</a>
-      <a href="/google-ads-audit" class="site-footer__link">Google Ads Audit</a>
-      <a href="/#contact" class="site-footer__link">Get in touch</a>
-    </div>
-  </div>
-</footer>
+/* =============== FOOTER =============== */
+function Footer() {
+  return (
+    <footer style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "28px 32px",
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 12,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <a href="/" style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em", textDecoration: "none" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </a>
+          <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+        </div>
+        <div style={{ display: "flex", gap: 20 }}>
+          <a href="/landing-page-audit" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Google Ads Audit</a>
+          <a href="/#contact" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Get in touch</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
 
-<script>
-  // Mobile nav toggle
-  var burger = document.getElementById('p-nav-burger');
-  var mobile = document.getElementById('p-nav-mobile');
-  if (burger && mobile) {
-    burger.addEventListener('click', function() {
-      var open = mobile.classList.toggle('is-open');
-      burger.setAttribute('aria-expanded', open);
-    });
-  }
+/* =============== APP =============== */
+function App() {
+  const [filter, setFilter] = React.useState("All");
+  return (
+    <div>
+      <Nav/>
+      <Hero/>
+      <FilterBar value={filter} onChange={setFilter}/>
+      <GuideGrid filter={filter}/>
+      <EndCta/>
+      <Footer/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
