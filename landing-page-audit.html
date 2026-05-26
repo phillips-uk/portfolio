@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Preconnect to GTM to reduce LCP on mobile -->
+  <!-- Preconnect to GTM -->
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
@@ -45,44 +45,26 @@
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Does the tool access my Google Ads account?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. The tool only reads the public page at the URL you enter. No account connection, no OAuth, no login required." }
-      },
-      {
-        "@type": "Question",
-        "name": "How is the keyword inferred?",
-        "acceptedAnswer": { "@type": "Answer", "text": "AI analyses your headline, title tag, meta description and opening copy — the same signals Google uses to score relevance for Landing Page Experience. If a clear keyword cannot be inferred, that ambiguity is itself the finding." }
-      },
-      {
-        "@type": "Question",
-        "name": "My page uses React or JavaScript. Will it work?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Performance data comes from Google's real rendering engine via PageSpeed Insights, so CWV data is accurate regardless of how the page is built. Content analysis (keyword inference, H1 detection) may be limited for client-side rendered pages — any limitations are noted in the report." }
-      },
-      {
-        "@type": "Question",
-        "name": "What is Landing Page Experience?",
-        "acceptedAnswer": { "@type": "Answer", "text": "One of the three components of Quality Score, alongside Expected CTR and Ad Relevance. A below-average Landing Page Experience raises your CPCs and reduces ad delivery. It is assessed per keyword and per ad." }
-      },
-      {
-        "@type": "Question",
-        "name": "Is this related to the Google Ads Audit Tool?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Google Ads Audit checks your account structure, bidding, keywords, and tracking. This tool checks where the clicks land. Together they cover the full paid search picture." }
-      },
-      {
-        "@type": "Question",
-        "name": "Why is this free?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Landing page quality is one of the three inputs to Quality Score. Most audits treat it as a CRO problem. It is also a paid search problem, and I want to show that." }
-      }
+      { "@type": "Question", "name": "Does the tool access my Google Ads account?", "acceptedAnswer": { "@type": "Answer", "text": "No. The tool only reads the public page at the URL you enter. No account connection, no OAuth, no login required." } },
+      { "@type": "Question", "name": "How is the keyword inferred?", "acceptedAnswer": { "@type": "Answer", "text": "AI analyses your headline, title tag, meta description and opening copy — the same signals Google uses to score relevance for Landing Page Experience. If a clear keyword cannot be inferred, that ambiguity is itself the finding." } },
+      { "@type": "Question", "name": "My page uses React or JavaScript. Will it work?", "acceptedAnswer": { "@type": "Answer", "text": "Performance data comes from Google's real rendering engine via PageSpeed Insights, so CWV data is accurate regardless of how the page is built. Content analysis may be limited for client-side rendered pages — any limitations are noted in the report." } },
+      { "@type": "Question", "name": "What is Landing Page Experience?", "acceptedAnswer": { "@type": "Answer", "text": "One of the three components of Quality Score, alongside Expected CTR and Ad Relevance. A below-average Landing Page Experience raises your CPCs and reduces ad delivery. It is assessed per keyword and per ad." } },
+      { "@type": "Question", "name": "Is this related to the Google Ads Audit Tool?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Google Ads Audit checks your account structure, bidding, keywords, and tracking. This tool checks where the clicks land. Together they cover the full paid search picture." } },
+      { "@type": "Question", "name": "Why is this free?", "acceptedAnswer": { "@type": "Answer", "text": "Landing page quality is one of the three inputs to Quality Score. Most audits treat it as a CRO problem. It is also a paid search problem, and I want to show that." } }
     ]
   }
   </script>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="/brand.css">
   <link rel="stylesheet" href="/report.css">
   <style>
     :root {
+      --font-sans:   "Helvetica Neue", Helvetica, Arial, sans-serif;
       --amber:       #985830;
       --amber-light: #b87040;
       --ink:         #1A1A1A;
@@ -99,29 +81,36 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: var(--font-sans);
       font-size: 16px;
       line-height: 1.6;
       color: var(--ink);
       background: var(--white);
       -webkit-font-smoothing: antialiased;
     }
+    ::selection { background: #985830; color: #fff; }
 
-    main {
-      min-height: 100vh; padding-top: 64px;
-      display: flex; align-items: flex-start; justify-content: center;
-    }
-    .container { width: 100%; max-width: 760px; padding: 60px 24px 80px; }
+    /* ── Sections used by React shell ── */
+    .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+    .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
+    .sec-white { background: #fff; padding: 96px 0; }
+    .sec-cream { background: #FDF6EE; padding: 96px 0; }
 
-    /* ── Hero ── */
-    .hero { text-align: center; margin-bottom: 48px; }
-    .hero h1 {
-      font-size: clamp(28px, 5vw, 42px); font-weight: 700;
-      letter-spacing: -0.03em; line-height: 1.15;
-      color: var(--ink); margin-bottom: 16px;
+    /* ── Functional tool container ── */
+    #tool-container {
+      display: none; /* shown by JS after React mounts */
+      width: 100%; max-width: 760px; padding: 60px 24px 80px;
+      margin: 0 auto;
     }
-    .hero h1 span { color: var(--amber); }
-    .hero p { font-size: 17px; color: var(--mid); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── Hero pill (used in React hero area) ── */
+    .hero-pill {
+      display: inline-block;
+      background: #F5EBD9; border-radius: 20px;
+      padding: 7px 14px; margin-bottom: 28px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #985830;
+    }
 
     /* ── Card ── */
     .card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 40px; }
@@ -134,45 +123,26 @@
       border: 1px solid var(--border); border-radius: 8px;
       font-size: 15px; color: var(--ink); background: var(--white);
       transition: border-color 0.15s; -webkit-appearance: none;
+      font-family: var(--font-sans);
     }
-    input[type="url"]:focus, input[type="text"]:focus {
-      outline: none; border-color: var(--amber);
-      box-shadow: 0 0 0 3px rgba(152,88,48,0.08);
-    }
+    input[type="url"]:focus, input[type="text"]:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(152,88,48,0.08); }
     input::placeholder { color: #BFBFBF; }
     .input-hint { font-size: 12px; color: var(--mid); margin-top: 6px; }
 
     /* ── Buttons ── */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      gap: 8px; padding: 14px 28px; border-radius: 8px;
-      font-size: 15px; font-weight: 600; cursor: pointer;
-      transition: all 0.15s; text-decoration: none; border: none;
-    }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-decoration: none; border: none; font-family: var(--font-sans); }
     .btn-primary { background: var(--amber); color: var(--white); width: 100%; }
     .btn-primary:hover { background: var(--amber-light); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* ── Loading ── */
     #loading-section { display: none; text-align: center; }
-    .spinner {
-      width: 48px; height: 48px;
-      border: 3px solid var(--border); border-top-color: var(--amber);
-      border-radius: 50%; animation: spin 0.8s linear infinite;
-      margin: 0 auto 24px;
-    }
+    .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
     .loading-sub  { font-size: 14px; color: var(--mid); min-height: 20px; transition: opacity 0.3s ease; }
-    .progress-steps {
-      margin-top: 32px; text-align: left;
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px 24px;
-    }
-    .progress-step {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 13px; color: var(--mid); padding: 5px 0; transition: color 0.3s;
-    }
+    .progress-steps { margin-top: 32px; text-align: left; background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+    .progress-step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--mid); padding: 5px 0; transition: color 0.3s; }
     .progress-step.done   { color: var(--green); }
     .progress-step.active { color: var(--amber); font-weight: 600; }
     .progress-icon { font-size: 14px; width: 18px; text-align: center; }
@@ -181,23 +151,9 @@
     #report-section { display: none; }
 
     /* Score info toggle */
-    .score-info-btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 16px; height: 16px; border-radius: 50%;
-      background: none; border: 1.5px solid rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 700;
-      font-style: italic; font-family: Georgia, serif;
-      cursor: pointer; margin-left: 8px; vertical-align: middle;
-      line-height: 1; transition: border-color 0.15s, color 0.15s; padding: 0;
-    }
+    .score-info-btn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: none; border: 1.5px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 700; font-style: italic; font-family: Georgia, serif; cursor: pointer; margin-left: 8px; vertical-align: middle; line-height: 1; transition: border-color 0.15s, color 0.15s; padding: 0; }
     .score-info-btn:hover { border-color: var(--amber); color: var(--amber); }
-    .score-info-panel {
-      display: none; text-align: left;
-      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 8px; padding: 16px 18px;
-      margin: 12px auto 0; max-width: 400px;
-      font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.65;
-    }
+    .score-info-panel { display: none; text-align: left; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 16px 18px; margin: 12px auto 0; max-width: 400px; font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.65; }
     .score-info-panel.open { display: block; }
     .score-info-panel strong { color: rgba(255,255,255,0.85); }
     .score-info-panel table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11.5px; }
@@ -207,18 +163,9 @@
     .score-info-panel .sev-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
 
     /* Metrics explainer */
-    .metrics-explainer {
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px 24px; margin-bottom: 40px;
-      font-size: 13px; color: var(--mid);
-    }
-    .metrics-explainer-title {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--amber); margin-bottom: 14px;
-    }
-    .metrics-explainer-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px;
-    }
+    .metrics-explainer { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 40px; font-size: 13px; color: var(--mid); }
+    .metrics-explainer-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
+    .metrics-explainer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; }
     .me-row { display: flex; flex-direction: column; gap: 2px; }
     .me-label { font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; }
     .me-desc { font-size: 12px; line-height: 1.5; }
@@ -231,13 +178,7 @@
     }
 
     /* Executive summary */
-    .exec-summary {
-      background: #FAFAFA; border: 1px solid var(--border);
-      border-left: 3px solid var(--amber); border-radius: 6px;
-      padding: 12px 16px; font-size: 14px; color: var(--dark);
-      line-height: 1.5; margin-bottom: 20px; font-weight: 500;
-    }
-
+    .exec-summary { background: #FAFAFA; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 12px 16px; font-size: 14px; color: var(--dark); line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
 
     /* Issue cards */
     .findings-block { margin-bottom: 0; }
@@ -245,51 +186,25 @@
     .category-section:last-child { border-bottom: none; }
     .category-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 0; }
     .category-hdr-name { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
-
     .pass-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--green); margin-top: 16px; }
     .pass-icon { font-size: 15px; }
-
     .effort-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
     .effort-low    { color: #2E7D32; background: #E8F5E9; }
     .effort-medium { color: #7B4F00; background: #FFF3CD; }
     .effort-high   { color: #7B1C1C; background: #FDECEA; }
-    /* Google Ads audit framing note */
     .ads-audit-note { display: flex; align-items: flex-start; gap: 10px; background: #FDF6EE; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 10px 14px; margin-bottom: 24px; font-size: 12px; color: var(--mid); line-height: 1.55; }
     .ads-audit-note strong { color: var(--ink); }
-
-    /* JS-rendered warning */
-    .js-warning {
-      background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px;
-      padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #795548; line-height: 1.6;
-    }
+    .js-warning { background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #795548; line-height: 1.6; }
     .js-warning strong { color: #5D4037; }
-
-    /* Cookie banner notice */
-    .cookie-banner-notice {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #F1F8E9; border: 1px solid #C5E1A5; border-radius: 20px;
-      padding: 4px 12px; margin-bottom: 20px; font-size: 12px; color: #558B2F;
-    }
-
-    /* Blocked-page warning */
-    .blocked-warning {
-      background: #FDECEA; border: 1px solid #F5C6C2; border-radius: 8px;
-      padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #7B2D28; line-height: 1.6;
-    }
+    .cookie-banner-notice { display: inline-flex; align-items: center; gap: 6px; background: #F1F8E9; border: 1px solid #C5E1A5; border-radius: 20px; padding: 4px 12px; margin-bottom: 20px; font-size: 12px; color: #558B2F; }
+    .blocked-warning { background: #FDECEA; border: 1px solid #F5C6C2; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #7B2D28; line-height: 1.6; }
     .blocked-warning strong { color: #5B1E1B; }
     .blocked-warning .bw-note { margin-top: 6px; font-size: 12px; color: #9E6461; }
-
-    /* Keyword inference card */
-    .keyword-card {
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px 24px; margin-top: 20px;
-    }
+    .keyword-card { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-top: 20px; }
     .keyword-card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
     .keyword-card-kw { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--ink); margin-bottom: 6px; }
     .keyword-card-meta { font-size: 12px; color: var(--mid); line-height: 1.6; }
     .keyword-none { font-size: 14px; color: var(--red); font-weight: 600; }
-
-    /* N-gram keyword table */
     .ngram-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
     .ngram-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 8px; }
     .ngram-table { width: 100%; border-collapse: collapse; }
@@ -298,19 +213,15 @@
     .ngram-phrase { font-weight: 600; color: var(--ink); width: 55%; }
     .ngram-count  { color: var(--mid); font-variant-numeric: tabular-nums; width: 15%; }
     .ngram-badges { width: 30%; text-align: right; }
-    .ngram-badge  { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
-                    text-transform: uppercase; padding: 2px 5px; border-radius: 3px; margin-left: 3px; }
+    .ngram-badge  { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 5px; border-radius: 3px; margin-left: 3px; }
     .badge-url    { background: var(--amber); color: #fff; }
     .badge-h1     { background: var(--ink); color: #fff; }
     .badge-title  { background: var(--border); color: var(--ink); }
-
-    /* LPE estimate panel */
     .lpe-panel { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
     .lpe-panel-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 4px; }
     .lpe-panel-note  { font-size: 11px; color: var(--mid); margin-bottom: 10px; line-height: 1.5; }
     .lpe-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .lpe-table th { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-                    color: var(--mid); padding: 0 6px 6px 0; text-align: left; border-bottom: 1px solid var(--border); }
+    .lpe-table th { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mid); padding: 0 6px 6px 0; text-align: left; border-bottom: 1px solid var(--border); }
     .lpe-table th.lpe-col-now, .lpe-table th.lpe-col-pot { text-align: center; }
     .lpe-table td { padding: 7px 6px 7px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .lpe-table tr:last-child td { border-bottom: none; }
@@ -323,16 +234,12 @@
     }
     .dot-on  { color: var(--amber); }
     .dot-off { color: var(--border); }
-    .lpe-band { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 7px;
-                border-radius: 4px; white-space: nowrap; }
+    .lpe-band { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 4px; white-space: nowrap; }
     .lpe-above   { background: #E8F5E9; color: #2E7D32; }
     .lpe-average { background: #FDF6EE; color: var(--amber); border: 1px solid var(--border); }
     .lpe-below   { background: #FDECEA; color: #C0392B; }
     .lpe-arrow   { font-size: 11px; color: var(--mid); padding: 0 4px; }
-    .lpe-improve-note { margin-top: 10px; font-size: 11px; color: var(--mid); padding: 8px 10px;
-                        background: var(--light); border-radius: 6px; line-height: 1.5; }
-
-    /* Tracking status row */
+    .lpe-improve-note { margin-top: 10px; font-size: 11px; color: var(--mid); padding: 8px 10px; background: var(--light); border-radius: 6px; line-height: 1.5; }
     .tracking-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     .tracking-row:last-child { border-bottom: none; }
     .tracking-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -341,113 +248,61 @@
     .t-orange{ background: var(--orange); }
     .tracking-name { font-weight: 600; color: var(--ink); flex: 1; }
     .tracking-status-text { font-size: 11px; color: var(--mid); }
-
-    /* Below-fold content sections */
     .content-section { padding: 80px 0; border-top: 1px solid var(--border); }
     .content-section h2 { font-size: clamp(22px, 4vw, 32px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--ink); margin-bottom: 16px; }
     .content-section p  { font-size: 16px; color: var(--mid); line-height: 1.7; margin-bottom: 16px; max-width: 600px; }
-
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; }
     @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; gap: 24px; } }
     .col-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; }
     .check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
     .check-list li { font-size: 14px; color: var(--ink); line-height: 1.5; padding-left: 22px; position: relative; }
     .check-list li::before { content: '●'; position: absolute; left: 0; color: var(--amber); font-size: 8px; top: 5px; }
-
-    .why-free {
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 12px; padding: 32px 40px; margin-top: 48px;
-    }
+    .why-free { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 32px 40px; margin-top: 48px; }
     .why-free blockquote { font-size: 17px; color: var(--ink); line-height: 1.7; font-style: italic; margin-bottom: 12px; }
     .why-free cite { font-size: 13px; color: var(--mid); font-style: normal; }
-
-    /* FAQ */
     .faq-list { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
     .faq-item { border-top: 1px solid var(--border); }
     .faq-item:last-child { border-bottom: 1px solid var(--border); }
-    .faq-q {
-      width: 100%; text-align: left; padding: 20px 0;
-      font-size: 15px; font-weight: 600; color: var(--ink);
-      background: none; border: none; cursor: pointer;
-      display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    }
+    .faq-q { width: 100%; text-align: left; padding: 20px 0; font-size: 15px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--font-sans); }
     .faq-q:hover { color: var(--amber); }
     .faq-icon { font-size: 18px; color: var(--amber); flex-shrink: 0; line-height: 1; transition: transform 0.2s; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
     .faq-a { display: none; padding: 0 0 20px; font-size: 14px; color: var(--mid); line-height: 1.75; }
     .faq-item.open .faq-a { display: block; }
-
     .action-item-left { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 80px; }
     .action-body { min-width: 0; }
-
-    /* PSI failure notice */
-    .psi-notice {
-      background: var(--light); border: 1px solid var(--border); border-radius: 8px;
-      padding: 10px 14px; font-size: 12px; color: var(--mid); margin-bottom: 12px; line-height: 1.5;
-    }
-
-    /* Methodology */
+    .psi-notice { background: var(--light); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--mid); margin-bottom: 12px; line-height: 1.5; }
     .methodology { background: var(--light); border-radius: 12px; padding: 32px 40px; margin-top: 48px; }
     .methodology h3 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 12px; }
     .methodology p  { font-size: 14px; color: var(--mid); line-height: 1.7; }
-
-    /* CTA section — LP-specific text elements (layout from report.css) */
     .cta-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; }
     .cta-heading { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: #fff; margin-bottom: 24px; }
     .cta-heading em { color: var(--amber); font-style: normal; }
-    .btn-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--amber); color: var(--white);
-      padding: 16px 32px; border-radius: 8px;
-      font-size: 15px; font-weight: 600; text-decoration: none;
-      transition: background 0.15s;
-    }
+    .btn-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--amber); color: var(--white); padding: 16px 32px; border-radius: 8px; font-size: 15px; font-weight: 600; text-decoration: none; transition: background 0.15s; }
     .btn-cta:hover { background: var(--amber-light); }
-
-    /* Share & export */
     .share-confirm { font-size: 12px; color: var(--amber); margin-top: 6px; display: none; text-align: right; }
-
-    /* Info severity (eCommerce tracking notes etc.) — LP-specific overrides */
     .issue-card.sev-info .issue-fix-label { color: #1565C0; }
     .issue-card.sev-info .pfi-fix { color: #1565C0; }
-
-    /* Page type badge */
     .page-type-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-top: 10px; }
     .page-type-ecommerce { background: rgba(152,88,48,0.25); color: var(--amber); border: 1px solid rgba(152,88,48,0.4); }
     .page-type-lead-gen  { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.2); }
-
-    /* N-gram note for eCommerce */
     .ngram-note { font-size: 11px; color: var(--mid); margin-left: 8px; font-weight: 400; font-style: italic; }
-
-    /* PDF / print — LP-specific additions (general report print styles in report.css) */
     @media print {
-      /* LP-specific hidden elements */
       .score-info-btn, .score-info-panel, .ads-audit-note { display: none !important; }
-
-      /* LP-specific header elements */
       .keyword-line { background: #F7F7F7 !important; border: 1px solid #E8D8C4 !important; color: #1A1A1A !important; }
       .kw-label { color: #985830 !important; }
       .keyword-conf { color: #6B6B6B !important; }
       .page-type-badge { color: #1A1A1A !important; background: #F7F7F7 !important; border: 1px solid #ccc !important; }
-
-      /* Category headers */
       .category-hdr-name { color: #1A1A1A !important; }
       .category-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-      /* Effort badges */
       .effort-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-      /* LPE table (LP-specific component) */
       .lpe-panel { page-break-inside: avoid; break-inside: avoid; }
       .lpe-band  { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .dot-on  { color: #985830 !important; }
-
-      /* Page breaks */
       .section-wrap-print { page-break-before: auto; }
     }
-
     @media (max-width: 640px) {
-      .container { padding: 40px 16px 60px; }
+      #tool-container { padding: 40px 16px 60px; }
       .card { padding: 28px 20px; }
     }
   </style>
@@ -457,42 +312,20 @@
 <!-- GTM noscript -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<nav class="p-nav">
-  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
-  <div class="p-nav__links">
-    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
-    <a href="/creative-analysis" class="p-nav__link">Creative Scoring</a>
-    <a href="/guides/" class="p-nav__link">Guides</a>
-  </div>
-  <a href="/#contact" class="p-nav__cta">Get in touch</a>
-  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
-    <span class="p-nav__burger-line"></span>
-    <span class="p-nav__burger-line"></span>
-    <span class="p-nav__burger-line"></span>
-  </button>
-</nav>
-<div class="p-nav__mobile" id="p-nav-mobile">
-  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
-  <a href="/creative-analysis" class="p-nav__mobile-link">Creative Scoring</a>
-  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
-  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
-</div>
+<!-- React shell mounts here -->
+<div id="root"></div>
 
-<main>
-<div class="container">
+<!-- Hidden input used by startAudit() — synced from React state via window.__lpUrl -->
+<input type="hidden" id="url-input" value="">
 
-  <!-- ── Hero ── -->
-  <div class="hero">
-    <div class="hero-pill">Free · No account needed · Results in ~60 seconds</div>
-    <h1>Free <span>Landing Page Audit</span><br>for Paid Media</h1>
-    <p>Paste a URL. Get a paid media diagnosis: real Core Web Vitals from Google's own engine, AI-powered findings on keyword clarity, conversion architecture, and trust signals. Every issue framed as Problem → Fix → Impact. Built around Google Ads signals. Equally useful for Meta. Free. No account connection.</p>
-  </div>
+<!-- Functional tool sections — shown/hidden by JS -->
+<div id="tool-container">
 
-  <!-- ── Input ── -->
+  <!-- ── Input card (visible initially inside tool container) ── -->
   <div id="input-section" class="card">
     <div class="form-group">
-      <label for="url-input">Landing page URL</label>
-      <input type="url" id="url-input" placeholder="https://example.com/landing-page" autocomplete="off" autocorrect="off" spellcheck="false">
+      <label for="url-input-visible">Landing page URL</label>
+      <input type="url" id="url-input-visible" placeholder="https://example.com/landing-page" autocomplete="off" autocorrect="off" spellcheck="false" oninput="document.getElementById('url-input').value=this.value">
       <p class="input-hint">The full URL of the page your paid ads send traffic to.</p>
     </div>
     <button class="btn btn-primary" id="audit-btn" onclick="startAudit()">Audit this page</button>
@@ -517,7 +350,7 @@
     <div id="report-html"></div>
   </div>
 
-  <!-- ── Below-fold content (SEO + value) ── -->
+  <!-- ── Below-fold SEO content ── -->
   <div class="content-section" id="below-fold-1">
     <h2>Every finding framed in paid media terms</h2>
     <p>Most landing page tools give you generic CRO advice. This one uses Google Ads signals as its primary lens: Quality Score, Landing Page Experience, message match. Every finding is framed as a paid traffic problem, not a web design problem. The conversion architecture, trust, mobile, and page speed findings apply equally to Meta Ads and any other paid channel.</p>
@@ -559,52 +392,31 @@
 
     <div class="faq-list">
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          Does the tool access my Google Ads account?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">Does the tool access my Google Ads account?<span class="faq-icon">+</span></button>
         <div class="faq-a">No. The tool only reads the public page at the URL you enter. No account connection, no OAuth, no login required.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          How is the keyword inferred?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">How is the keyword inferred?<span class="faq-icon">+</span></button>
         <div class="faq-a">Two methods run in parallel. First, the tool counts every 2 and 3-word phrase across the page and surfaces the top five by frequency — weighted by whether the phrase also appears in the URL, H1, or title tag. Second, AI analyses the headline, title tag, meta description, and opening copy to infer a single primary keyword with a confidence rating. If a clear keyword cannot be inferred, that ambiguity is itself the finding: Google cannot determine it either.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          My page uses React or JavaScript. Will it work?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">My page uses React or JavaScript. Will it work?<span class="faq-icon">+</span></button>
         <div class="faq-a">Performance data comes from Google's real rendering engine via PageSpeed Insights, so Core Web Vitals data is accurate regardless of how the page is built. Content analysis (keyword inference, H1 detection) may be limited for client-side rendered pages — any limitations are noted in the report.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          What is Landing Page Experience?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">What is Landing Page Experience?<span class="faq-icon">+</span></button>
         <div class="faq-a">One of the three components of Quality Score, alongside Expected CTR and Ad Relevance. A below-average Landing Page Experience raises your CPCs and reduces ad delivery. It is assessed per keyword and per ad — the same landing page can score differently for different keywords.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          Is this related to the Google Ads Audit Tool?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">Is this related to the Google Ads Audit Tool?<span class="faq-icon">+</span></button>
         <div class="faq-a">Yes. The <a href="/google-ads-audit" style="color:var(--amber)">Google Ads Audit Tool</a> checks your account structure, bidding, keywords, and tracking setup. This tool checks where the clicks land. Together they cover the full paid search picture — account and landing page.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          Does this work for Meta Ads too?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">Does this work for Meta Ads too?<span class="faq-icon">+</span></button>
         <div class="faq-a">Yes. The tool uses Google Ads signals as its primary lens — Quality Score, Landing Page Experience, keyword clarity — but the conversion architecture, page speed, mobile experience, and trust signal findings apply to any paid channel. Meta's delivery algorithm also penalises slow, low-quality landing pages and rewards pages with strong engagement. If a page isn't converting for Google Ads, it almost certainly isn't converting for Meta either.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          Why is this free?
-          <span class="faq-icon">+</span>
-        </button>
+        <button class="faq-q" onclick="toggleFaq(this)">Why is this free?<span class="faq-icon">+</span></button>
         <div class="faq-a">Landing page quality is one of the three inputs to Quality Score — and a direct lever on Meta's delivery too. Most audits treat it as a CRO problem. It is also a paid media problem, and I want to show that.</div>
       </div>
     </div>
@@ -616,10 +428,437 @@
     </div>
   </div>
 
+</div><!-- /#tool-container -->
 
-</div><!-- /.container -->
-</main>
+<script type="text/babel">
 
+/* ── Shared URL state: React writes here, startAudit() reads it ── */
+window.__lpSetUrl = null;
+
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, onClick, large, full }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+        padding: large ? "16px 32px" : "14px 30px",
+        fontSize: large ? 15 : 14, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+        letterSpacing: "-0.005em",
+        width: full ? "100%" : "auto",
+      }}>{children}</button>
+  );
+}
+function BtnFilledSmall({ children, href }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <a href={href || "/#contact"} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? "#7A3F1F" : "#985830", color: "#fff",
+        padding: "10px 20px", fontSize: 13, fontWeight: 600,
+        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+        textDecoration: "none", display: "inline-block",
+      }}>{children}</a>
+  );
+}
+
+/* =============== NAV =============== */
+function Nav({ active }) {
+  const linkStyle = (k) => ({
+    fontSize: 14, fontWeight: 500,
+    color: active === k ? "#1A1A1A" : "#6B6B6B",
+    textDecoration: "none",
+    transition: "color 150ms cubic-bezier(0.2,0,0,1)",
+  });
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64,
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px",
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
+          <a href="#" style={linkStyle("cs")}>Creative Scoring</a>
+          <a href="#" style={linkStyle("guides")}>Guides</a>
+          <BtnFilledSmall href="/#contact">Get in touch</BtnFilledSmall>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* =============== HERO =============== */
+function Hero() {
+  return (
+    <section style={{
+      background: "linear-gradient(180deg, #FFFFFF 0%, #FDF6EE 100%)",
+      padding: "96px 32px 96px",
+      borderBottom: "1px solid #E8D8C4",
+    }}>
+      <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+        <div style={{
+          display: "grid", gridTemplateColumns: "1fr 440px",
+          gap: 56, alignItems: "center",
+        }}>
+          <div>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 10,
+              background: "#F5EBD9",
+              padding: "7px 14px", borderRadius: 20,
+              marginBottom: 28,
+              fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "#985830",
+            }}>
+              Free · No account needed · Results in ~60 seconds
+            </span>
+
+            <h1 style={{
+              fontSize: "clamp(46px, 5.4vw, 64px)",
+              fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.04,
+              color: "#1A1A1A", margin: "0 0 24px",
+            }}>
+              Free Landing Page Audit <span style={{ color: "#985830" }}>for Paid Media</span>
+            </h1>
+
+            <p style={{
+              fontSize: 18, lineHeight: 1.6, color: "#1A1A1A",
+              margin: 0,
+            }}>
+              Paste a URL. Get a paid media diagnosis: real Core Web Vitals from Google's own engine, AI-powered findings on keyword clarity, conversion architecture, and trust signals. Every issue framed as Problem → Fix → Impact. Built around Google Ads signals. Equally useful for Meta. Free. No account connection.
+            </p>
+          </div>
+
+          <UrlAuditCard />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function UrlAuditCard() {
+  const [val, setVal] = React.useState("");
+  const [focus, setFocus] = React.useState(false);
+
+  // Sync value to hidden input so startAudit() can read it
+  function handleChange(e) {
+    const v = e.target.value;
+    setVal(v);
+    const hidden = document.getElementById('url-input');
+    if (hidden) hidden.value = v;
+  }
+
+  function handleAudit() {
+    const hidden = document.getElementById('url-input');
+    if (hidden) hidden.value = val;
+    if (typeof startAudit === 'function') startAudit();
+  }
+
+  return (
+    <div style={{
+      background: "#fff",
+      border: "1px solid #E8D8C4",
+      borderRadius: 8,
+      padding: 28,
+      boxShadow: "0 8px 24px rgba(152, 88, 48, 0.10)",
+    }}>
+      <div style={{
+        display: "flex", alignItems: "center", gap: 10,
+        paddingBottom: 18, borderBottom: "1px solid #E8D8C4",
+      }}>
+        <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A" }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </span>
+        <span style={{
+          marginLeft: "auto",
+          fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+          textTransform: "uppercase", color: "#985830",
+          background: "#F5EBD9", padding: "4px 10px", borderRadius: 20,
+        }}>Audit in ~60s</span>
+      </div>
+
+      <label htmlFor="url-card" style={{
+        display: "block", marginTop: 18, marginBottom: 10,
+        fontSize: 13, fontWeight: 600, color: "#1A1A1A",
+      }}>Landing page URL</label>
+
+      <input
+        id="url-card"
+        type="url"
+        value={val}
+        onChange={handleChange}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        placeholder="https://example.com/landing-page"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
+        style={{
+          width: "100%", fontFamily: "inherit", fontSize: 14,
+          padding: "12px 14px",
+          border: `1px solid ${focus ? "#985830" : "#E8D8C4"}`,
+          borderRadius: 4, color: "#1A1A1A", background: "#fff", outline: "none",
+          transition: "border-color 150ms cubic-bezier(0.2,0,0,1)",
+        }}
+      />
+      <p style={{
+        fontSize: 12, color: "#6B6B6B", margin: "8px 0 18px", lineHeight: 1.5,
+      }}>The full URL of the page your paid ads send traffic to.</p>
+
+      <BtnFilled full onClick={handleAudit}>Audit this page</BtnFilled>
+
+      <div style={{
+        marginTop: 22, paddingTop: 18, borderTop: "1px solid #E8D8C4",
+        display: "flex", flexDirection: "column", gap: 8,
+      }}>
+        {[
+          "No account connection",
+          "No data stored after audit",
+          "Real Core Web Vitals from Google",
+        ].map((t, i) => (
+          <div key={i} style={{
+            display: "flex", gap: 10, alignItems: "center",
+            fontSize: 12, color: "#1A1A1A",
+          }}>
+            <span style={{
+              width: 14, height: 14, borderRadius: 999,
+              background: "#F5EBD9", color: "#985830",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 10, fontWeight: 700, flexShrink: 0,
+            }}>✓</span>
+            <span>{t}</span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        marginTop: 18, fontSize: 12, color: "#6B6B6B",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+      }}>
+        <span>Not ready?</span>
+        <a href="/landing-page-audit?preview=report" style={{ color: "#985830", textDecoration: "none", fontWeight: 600 }}>View a demo report →</a>
+      </div>
+    </div>
+  );
+}
+
+/* =============== FRAMED SECTION =============== */
+function FramedSection() {
+  const checked = [
+    "Core Web Vitals: LCP, CLS, and INP from Google's real PageSpeed Insights engine, mobile and desktop in parallel",
+    "Keyword clarity: AI infers your primary keyword from H1, title tag, URL, and opening copy. If it can't tell, Google can't either",
+    "Landing Page Experience signals: H1 quality, title alignment, above-fold relevance, message match",
+    "Conversion architecture: CTA presence and specificity, form friction, single-goal clarity",
+    "Trust signals: social proof, risk reducers, contact information, privacy policy",
+    "Mobile experience: performance score, viewport, tap target sizing",
+  ];
+  const received = [
+    "A health score from 0-100 with specific deductions per issue - so you know exactly what's costing you",
+    "Every finding in Problem → Fix → Impact format - what's wrong, one concrete action, and the specific paid media metric it moves",
+    "A priority actions list - the top three fixes ranked by severity",
+    "Your top keyword phrases ranked by page signals, with H1, title tag, and URL matches called out",
+    "An estimated Landing Page Experience rating based on the same signals Google uses",
+    "Real CWV data for mobile and desktop - not estimates, not simulations",
+  ];
+  return (
+    <section className="sec-cream">
+      <div className="page-w">
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 48 }}>
+          <span style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 12 }}>Approach</span>
+          <h2 style={{ fontSize: "clamp(36px, 4.5vw, 48px)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.08, color: "#1A1A1A", margin: "0 0 20px", maxWidth: 800 }}>
+            Every finding framed in <em style={{ fontStyle: "italic", color: "#985830" }}>paid media terms</em>.
+          </h2>
+          <p style={{ fontSize: 17, lineHeight: 1.6, color: "#1A1A1A", margin: 0, maxWidth: 760 }}>
+            Most landing page tools give you generic CRO advice. This one uses Google Ads signals as its primary lens: Quality Score, Landing Page Experience, message match. Every finding is framed as a paid traffic problem, not a web design problem.
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 24 }}>
+          <ListCard title="What gets checked" items={checked} marker="dot" />
+          <ListCard title="What you receive" items={received} marker="check" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ListCard({ title, items, marker }) {
+  return (
+    <div style={{ background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6, padding: "32px 36px", boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 18 }}>{title}</div>
+      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+        {items.map((it, i) => (
+          <li key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", paddingTop: 12, borderTop: i === 0 ? 0 : "1px solid #E8D8C4" }}>
+            {marker === "dot"
+              ? <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830", marginTop: 8, flexShrink: 0 }}/>
+              : <span style={{ width: 16, height: 16, borderRadius: 999, background: "#F5EBD9", color: "#985830", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span>
+            }
+            <span style={{ fontSize: 14, lineHeight: 1.55, color: "#1A1A1A", flex: 1 }}>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* =============== PULL QUOTE =============== */
+function PullQuote() {
+  return (
+    <section className="sec-white">
+      <div className="read-w">
+        <div style={{ textAlign: "left", maxWidth: 760, margin: "0 auto", paddingLeft: 32, position: "relative" }}>
+          <span style={{ position: "absolute", left: 0, top: -4, fontSize: 80, lineHeight: 1, color: "#985830", fontWeight: 700, letterSpacing: "-0.05em" }}>"</span>
+          <p style={{ fontSize: 26, lineHeight: 1.4, color: "#1A1A1A", margin: "0 0 24px", letterSpacing: "-0.015em", fontWeight: 500 }}>
+            Landing page quality is one of the three inputs to Quality Score — and a direct lever on Meta's delivery algorithm too. Most audits treat it as a CRO problem.{" "}
+            <em style={{ fontStyle: "italic", color: "#985830" }}>It is also a paid media problem, and I want to show that.</em>
+          </p>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.005em" }}>— Lewis Phillips, Phillips<span style={{ color: "#985830" }}>.</span></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =============== FAQ =============== */
+function FAQ() {
+  const items = [
+    { q: "Does the tool access my Google Ads account?", a: "No. The tool only reads the public page at the URL you enter. No account connection, no OAuth, no login required." },
+    { q: "How is the keyword inferred?", a: "Two methods run in parallel. First, the tool counts every 2 and 3-word phrase across the page and surfaces the top five by frequency — weighted by whether the phrase also appears in the URL, H1, or title tag. Second, AI analyses the headline, title tag, meta description, and opening copy to infer a single primary keyword with a confidence rating. If a clear keyword cannot be inferred, that ambiguity is itself the finding: Google cannot determine it either." },
+    { q: "My page uses React or JavaScript. Will it work?", a: "Performance data comes from Google's real rendering engine via PageSpeed Insights, so Core Web Vitals data is accurate regardless of how the page is built. Content analysis may be limited for client-side rendered pages — any limitations are noted in the report." },
+    { q: "What is Landing Page Experience?", a: "One of the three components of Quality Score, alongside Expected CTR and Ad Relevance. A below-average Landing Page Experience raises your CPCs and reduces ad delivery. It is assessed per keyword and per ad — the same landing page can score differently for different keywords." },
+    { q: "Is this related to the Google Ads Audit Tool?", a: "Yes. The Google Ads Audit Tool checks your account structure, bidding, keywords, and tracking setup. This tool checks where the clicks land. Together they cover the full paid search picture — account and landing page." },
+    { q: "Does this work for Meta Ads too?", a: "Yes. The tool uses Google Ads signals as its primary lens — Quality Score, Landing Page Experience, keyword clarity — but the conversion architecture, page speed, mobile experience, and trust signal findings apply to any paid channel." },
+    { q: "Why is this free?", a: "Landing page quality is one of the three inputs to Quality Score — and a direct lever on Meta's delivery too. Most audits treat it as a CRO problem. It is also a paid media problem, and I want to show that." },
+  ];
+  return (
+    <section className="sec-cream" id="faq">
+      <div className="page-w">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 56, alignItems: "start" }}>
+          <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, position: "sticky", top: 96 }}>
+            <span style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 12 }}>Frequently asked questions</span>
+            <h2 style={{ fontSize: "clamp(32px, 3.8vw, 40px)", fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.1, color: "#1A1A1A", margin: 0 }}>
+              Common <em style={{ fontStyle: "italic", color: "#985830" }}>questions</em>.
+            </h2>
+          </div>
+          <div>
+            {items.map((it, i) => <FAQItem key={i} {...it} defaultOpen={i === 0} />)}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FAQItem({ q, a, defaultOpen }) {
+  const [open, setOpen] = React.useState(!!defaultOpen);
+  return (
+    <div style={{ borderTop: "1px solid #E8D8C4", padding: "20px 0" }}>
+      <button onClick={() => setOpen(v => !v)} style={{ width: "100%", background: "transparent", border: 0, padding: 0, display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", fontFamily: "inherit", textAlign: "left", gap: 16 }}>
+        <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1.3 }}>{q}</span>
+        <span style={{ fontSize: 18, color: "#985830", width: 24, height: 24, display: "inline-flex", alignItems: "center", justifyContent: "center", transform: open ? "rotate(45deg)" : "rotate(0deg)", transition: "transform 150ms cubic-bezier(0.2,0,0,1)", flexShrink: 0 }}>+</span>
+      </button>
+      {open && <p style={{ margin: "14px 0 0", fontSize: 15, lineHeight: 1.65, color: "#1A1A1A" }}>{a}</p>}
+    </div>
+  );
+}
+
+/* =============== HOW IT WORKS =============== */
+function HowItWorks() {
+  return (
+    <section className="sec-white">
+      <div className="page-w">
+        <div style={{ maxWidth: 880 }}>
+          <span style={{ display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 18 }}>Under the hood</span>
+          <h3 style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.15, color: "#1A1A1A", margin: "0 0 24px" }}>How the audit works.</h3>
+          <p style={{ fontSize: 17, lineHeight: 1.7, color: "#1A1A1A", margin: "0 0 18px" }}>
+            The tool fetches the page HTML and runs two parallel requests to the Google PageSpeed Insights API — one for mobile, one for desktop. Core Web Vitals are sourced from Google's real Lighthouse rendering engine, not estimates. Content analysis is handled by an AI model with a specific brief: evaluate the page from a paid media perspective and return findings in Problem → Fix → Impact format.
+          </p>
+          <p style={{ fontSize: 17, lineHeight: 1.7, color: "#1A1A1A", margin: 0 }}>
+            Use it alongside the <a href="/google-ads-audit" style={{ color: "#985830", textDecoration: "none", fontWeight: 600 }}>Google Ads Audit Tool</a> for a full account and landing page diagnosis.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =============== CROSS LINK =============== */
+function CrossLink() {
+  return (
+    <section style={{ background: "#FDF6EE", padding: "40px 32px", borderTop: "1px solid #E8D8C4", borderBottom: "1px solid #E8D8C4" }}>
+      <div style={{ maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+        <p style={{ fontSize: 17, color: "#1A1A1A", margin: 0, lineHeight: 1.5 }}>Want to audit the account, not just the page?</p>
+        <a href="/google-ads-audit" style={{ fontSize: 15, fontWeight: 600, color: "#985830", textDecoration: "none", letterSpacing: "-0.005em" }}>Run the Google Ads audit →</a>
+      </div>
+    </section>
+  );
+}
+
+/* =============== CONTACT =============== */
+function Contact() {
+  function scrollToTool() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const card = document.getElementById('url-card');
+    if (card) setTimeout(() => card.focus(), 600);
+  }
+  return (
+    <section id="contact" style={{ background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)", padding: "120px 32px" }}>
+      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
+        <span style={{ display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#B87040", marginBottom: 20 }}>Audit your page</span>
+        <h2 style={{ fontSize: "clamp(40px, 5vw, 56px)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff", margin: "0 0 32px" }}>
+          Paste a URL. <em style={{ fontStyle: "italic", color: "#985830" }}>Get a real diagnosis.</em>
+        </h2>
+        <button onClick={scrollToTool} style={{ background: "#985830", color: "#fff", border: 0, padding: "16px 32px", fontSize: 15, fontWeight: 600, borderRadius: 4, cursor: "pointer", fontFamily: "inherit" }}>Audit this page</button>
+        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>Free · No account · Results in ~60 seconds</div>
+      </div>
+    </section>
+  );
+}
+
+/* =============== FOOTER =============== */
+function Footer() {
+  return (
+    <footer style={{ background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)", borderTop: 0, padding: "28px 32px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>Phillips<span style={{ color: "#985830" }}>.</span></span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* =============== APP =============== */
+function App() {
+  return (
+    <div>
+      <Nav active="lp" />
+      <Hero />
+      <FramedSection />
+      <PullQuote />
+      <FAQ />
+      <HowItWorks />
+      <CrossLink />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
 <script>
   var currentJobId  = null;
   var currentReport = null;
@@ -776,6 +1015,8 @@
     // Preview mode — no audit token required
     var previewParam = new URLSearchParams(window.location.search).get('preview');
     if (previewParam === 'report') {
+      window.location.replace('/landing-page-audit-report');
+      return;
       try {
         showReport(MOCK_LP_REPORT, false);
       } catch(e) {
@@ -843,7 +1084,7 @@
   }
 
   function startAudit() {
-    var raw = document.getElementById('url-input').value.trim();
+    var raw = ( document.getElementById('url-card') ? document.getElementById('url-card').value : document.getElementById('url-input').value ).trim();
     if (!raw) { alert('Please enter a URL.'); return; }
 
     // Auto-prepend https:// if missing
@@ -963,7 +1204,7 @@
     clearInterval(pollInterval);
     document.getElementById('report-section').style.display = 'none';
     document.getElementById('input-section').style.display  = 'block';
-    document.getElementById('url-input').value = '';
+    document.getElementById('url-input').value = ''; var uc = document.getElementById('url-card'); if (uc) uc.value = '';
     ['below-fold-1','below-fold-2','below-fold-3'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.style.display = '';
     });
