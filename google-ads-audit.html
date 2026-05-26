@@ -190,7 +190,11 @@ function Hero() {
             </p>
 
             <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
-              <BtnFilled large>Run my audit</BtnFilled>
+              <BtnFilled large onClick={() => {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ event: 'audit_cta_click' });
+                document.getElementById('connect-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }}>Run my audit</BtnFilled>
               <BtnGhostLink onClick={() => window.location.href = '/google-ads-audit-report'}>or view a demo →</BtnGhostLink>
             </div>
           </div>
@@ -205,7 +209,7 @@ function Hero() {
 /* Connect card on the right side of hero */
 function ConnectCard() {
   return (
-    <div style={{
+    <div id="connect-card" style={{
       background: "#fff",
       border: "1px solid #E8D8C4",
       borderRadius: 8,
@@ -275,6 +279,7 @@ function GoogleSignInButton() {
   const [h, setH] = React.useState(false);
   return (
     <button
+      onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'audit_started' }); }}
       onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
         width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
