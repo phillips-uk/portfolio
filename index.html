@@ -910,8 +910,8 @@ function Contact() {
           borderRadius: 6,
         }}>
           <ContactItem method="Email"    value="lewis@phillips-uk.com" href="mailto:lewis@phillips-uk.com" />
-          <ContactItem method="LinkedIn" value="/in/lewis-p"           href="#" border />
-          <ContactItem method="GitHub"   value="phillips-uk"            href="#" border />
+          <ContactItem method="LinkedIn" value="/in/lewis-p"           href="https://www.linkedin.com/in/lewis-p" target="_blank" border />
+          <ContactItem method="GitHub"   value="phillips-uk"            href="https://github.com/phillips-uk" target="_blank" border />
         </div>
 
         <div style={{
@@ -925,10 +925,10 @@ function Contact() {
   );
 }
 
-function ContactItem({ method, value, href, border }) {
+function ContactItem({ method, value, href, target, border }) {
   const [h, setH] = React.useState(false);
   return (
-    <a href={href}
+    <a href={href} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined}
       onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
         padding: "32px 28px", textDecoration: "none",
