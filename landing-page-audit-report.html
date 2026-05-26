@@ -98,12 +98,42 @@ function BtnOutline({ children, onClick, icon, disabled }) {
         borderRadius: 4,
         cursor: disabled ? "default" : "pointer",
         fontFamily: "inherit",
+        outline: "none",
         transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
         display: "inline-flex", alignItems: "center", gap: 8,
       }}>
       {icon}
       <span>{children}</span>
     </button>
+  );
+}
+
+function ShareButton() {
+  const [copied, setCopied] = React.useState(false);
+  function handleShare() {
+    const url = window.location.href;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => fallbackCopy(url));
+    } else {
+      fallbackCopy(url);
+    }
+  }
+  function fallbackCopy(url) {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+  return (
+    <BtnOutline icon={<IconShare/>} onClick={handleShare}>
+      {copied ? "Link copied!" : "Share"}
+    </BtnOutline>
   );
 }
 
@@ -300,7 +330,7 @@ function ReportHeader() {
             <span style={{ fontSize: 12, color: "#6B6B6B" }}>{time}</span>
           </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <BtnOutline icon={<IconShare/>}>Share</BtnOutline>
+            <ShareButton/>
             <PdfDownloadButton/>
             <BtnFilledSmall onClick={() => window.location.href = '/landing-page-audit'}>Run another audit</BtnFilledSmall>
           </div>
