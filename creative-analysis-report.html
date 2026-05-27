@@ -10,140 +10,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 
 <meta charset="utf-8">
-<title>Creative Scoring Report | Phillips.</title>
-<meta name="description" content="Your AI creative scoring report. Ranked creatives scored across six dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, originality, and offer clarity.">
-<meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
-
+<title>Creative Analysis Report | Phillips.</title>
+<meta name="description" content="Creative analysis report. Ad creatives scored and ranked across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<link rel="icon" href="/assets/favicon.svg">
 <style>
-:root {
-  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --ink: #1A1A1A;
-  --white: #FFFFFF;
-  --amber: #985830;
-  --cream: #FDF6EE;
-  --border: #E8D8C4;
-}
-html, body { margin: 0; padding: 0; }
-body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
-.page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-::selection { background: #985830; color: #fff; }
-*, *::before, *::after { box-sizing: border-box; }
-@keyframes ph-spin { to { transform: rotate(360deg); } }
-@keyframes ph-pulse { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
-
-/* Nav */
-.ph-nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.96); backdrop-filter: saturate(120%); border-bottom: 1px solid #E8D8C4; height: 64px; }
-.ph-nav-inner { max-width: 1200px; margin: 0 auto; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
-.ph-logo { text-decoration: none; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; color: #1A1A1A; line-height: 1; }
-.ph-logo span { color: #985830; }
-.ph-nav-links { display: flex; align-items: center; gap: 28px; }
-.ph-nav-link { font-size: 14px; font-weight: 500; color: #6B6B6B; text-decoration: none; transition: color 150ms; }
-.ph-nav-link:hover { color: #1A1A1A; }
-.ph-nav-btn { background: #985830; color: #fff; border: 0; padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; transition: background 150ms; text-decoration: none; display: inline-block; letter-spacing: -0.005em; }
-.ph-nav-btn:hover { background: #7A3F1F; }
-.ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
-.ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
-.ph-drawer.open { display: block; }
-.ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-.ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
-.ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
-.ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
-.ph-drawer-link:hover { color: #1A1A1A; }
-.ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
-.ph-drawer-cta:hover { background: #7A3F1F; }
-
-/* Score colours */
-.score-high  { color: #2D6A4F; background: #E6EFE4; border-color: #CDDCC8; }
-.score-mid   { color: #985830; background: #FDF6EE; border-color: #E8D8C4; }
-.score-low   { color: #C0392B; background: #F5D5CD; border-color: #E8B4A8; }
-
-/* Buttons */
-.btn-outline {
-  background: transparent; color: #985830;
-  border: 1.5px solid #985830;
-  padding: 10px 18px; font-size: 13px; font-weight: 600;
-  border-radius: 4px; cursor: pointer; font-family: inherit;
-  display: inline-flex; align-items: center; gap: 7px;
-  transition: background 150ms, color 150ms; letter-spacing: -0.005em;
-  text-decoration: none;
-}
-.btn-outline:hover { background: #985830; color: #fff; }
-.btn-outline:disabled { opacity: 0.6; cursor: default; }
-.btn-filled-sm {
-  background: #985830; color: #fff; border: 0;
-  padding: 10px 20px; font-size: 13px; font-weight: 600;
-  border-radius: 4px; cursor: pointer; font-family: inherit;
-  display: inline-flex; align-items: center; gap: 7px;
-  transition: background 150ms; letter-spacing: -0.005em;
-  text-decoration: none;
-}
-.btn-filled-sm:hover { background: #7A3F1F; }
-
-/* Creative card */
-.creative-card {
-  background: #fff; border: 1px solid #E8D8C4; border-radius: 8px;
-  overflow: hidden; margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(152,88,48,0.06);
-  transition: box-shadow 200ms;
-}
-.creative-card:hover { box-shadow: 0 6px 24px rgba(152,88,48,0.10); }
-
-/* Score bar */
-.score-bar-track {
-  height: 6px; background: #F0E5D2; border-radius: 999px; overflow: hidden;
-}
-.score-bar-fill {
-  height: 100%; border-radius: 999px;
-  transition: width 600ms cubic-bezier(0.2,0,0,1);
-}
-
-/* Dimension row */
-.dim-row {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 0; border-top: 1px solid #F5EBD9;
-}
-.dim-row:first-child { border-top: none; }
-
-/* Weak signal / impact badges */
-.impact-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 600;
-  padding: 3px 8px; border-radius: 4px;
-  letter-spacing: -0.003em; margin-top: 6px;
-}
-.impact-critical { background:#FFEBEE; border:1px solid #EF9A9A; color:#B71C1C; }
-.impact-high     { background:#FFF3E0; border:1px solid #FF9800; color:#E65100; }
-.impact-quick_win { background:#E8F4FD; border:1px solid #90CAF9; color:#1565C0; }
-
-/* Loading / error states */
-#ca-loading-screen { min-height: 100vh; background: #FDF6EE; display: flex; align-items: center; justify-content: center; padding: 24px; }
-#ca-error-screen { min-height: 100vh; background: #FDF6EE; display: flex; align-items: center; justify-content: center; padding: 24px; }
-
-/* Print / PDF */
-@media print {
-  .no-print { display: none !important; }
-  .ph-nav { display: none !important; }
-  .ph-footer { display: none !important; }
-  body { background: #fff !important; }
-  .creative-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; border: 1px solid #E8D8C4 !important; }
-}
-#pdf-layout { display: none; }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .ph-nav-links { display: none; }
-  .ph-hamburger { display: flex; align-items: center; justify-content: center; }
-}
-@media (max-width: 600px) {
-  .page-w { padding: 0 20px; }
-  .ph-nav-inner { padding: 0 20px; }
-  .report-header-inner { flex-direction: column; align-items: flex-start !important; gap: 12px !important; }
-  .toolbar-row { flex-direction: column; align-items: flex-start !important; }
-}
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1A1A1A; background: #fff; }
+  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .report-w { max-width: 900px;  margin: 0 auto; padding: 0 32px; }
+  .sec-white { background: #fff;     padding: 72px 0; }
+  .sec-cream { background: #FDF6EE; padding: 72px 0; }
+  ::selection { background: #985830; color: #fff; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @keyframes ca-spin   { to { transform: rotate(360deg); } }
+  @keyframes ca-fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes ph-spin   { to { transform: rotate(360deg); } }
+  @media (max-width: 720px) {
+    .report-w           { padding: 0 20px; }
+    .page-w             { padding: 0 20px; }
+    .dim-grid           { grid-template-columns: 1fr !important; }
+    .card-notes-grid    { grid-template-columns: 1fr !important; }
+    .summary-table      { display: none; }
+    .header-stats       { grid-template-columns: repeat(2, 1fr) !important; }
+    .meta-bar-inner     { flex-direction: column; gap: 10px !important; align-items: flex-start !important; }
+  }
 </style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="ph">
 <!-- Google Tag Manager (noscript) -->
@@ -151,418 +47,1071 @@ body { font-family: var(--font-sans); color: var(--ink); background: var(--white
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-<!-- =============== LOADING STATE =============== -->
-<div id="ca-loading-screen">
-  <div style="text-align:center;max-width:400px;">
-    <div style="width:52px;height:52px;margin:0 auto 24px;display:inline-flex;align-items:center;justify-content:center;">
-      <svg width="52" height="52" viewBox="0 0 56 56" style="animation:ph-spin 0.9s linear infinite">
-        <circle cx="28" cy="28" r="22" fill="none" stroke="#F5EBD9" stroke-width="4"/>
-        <path d="M50 28 A22 22 0 0 0 28 6" fill="none" stroke="#985830" stroke-width="4" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div style="font-size:20px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-bottom:8px;">Loading your report&hellip;</div>
-    <div id="ca-load-msg" style="font-size:14px;color:#6B6B6B;line-height:1.5;">Retrieving scores from Claude.</div>
-  </div>
-</div>
-
-<!-- =============== ERROR STATE =============== -->
-<div id="ca-error-screen" style="display:none;">
-  <div style="text-align:center;max-width:480px;background:#fff;border:1px solid #E8D8C4;border-radius:8px;padding:48px 40px;box-shadow:0 8px 32px rgba(152,88,48,0.08);">
-    <div style="font-size:32px;margin-bottom:16px;">&#x26A0;&#xFE0F;</div>
-    <div style="font-size:20px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-bottom:10px;">Report not found</div>
-    <div id="ca-error-msg" style="font-size:15px;color:#6B6B6B;line-height:1.6;margin-bottom:28px;">This report may have expired or the link is incorrect.</div>
-    <a href="/creative-analysis" style="display:inline-flex;align-items:center;gap:8px;background:#985830;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:-0.005em;">Score new creatives &rarr;</a>
-  </div>
-</div>
-
-<!-- =============== REPORT =============== -->
-<div id="ca-report" style="display:none;">
-
-  <!-- NAV -->
-  <header class="ph-nav no-print">
-    <div class="ph-nav-inner">
-      <a href="/" class="ph-logo">Phillips<span>.</span></a>
-      <nav class="ph-nav-links">
-        <a href="/landing-page-audit" class="ph-nav-link">Landing Page Audit</a>
-        <a href="/google-ads-audit" class="ph-nav-link">Google Ads Audit</a>
-        <a href="/creative-analysis" class="ph-nav-link active">Creative Scoring</a>
-        <a href="/guides/" class="ph-nav-link">Guides</a>
-        <a href="/#contact" class="ph-nav-btn">Get in touch</a>
-      </nav>
-      <button class="ph-hamburger" onclick="document.getElementById('ph-report-drawer').classList.add('open')" aria-label="Open menu">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
-      </button>
-    </div>
-  </header>
-  <div id="ph-report-drawer" class="ph-drawer no-print">
-    <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-report-drawer').classList.remove('open')"></div>
-    <div class="ph-drawer-panel">
-      <button class="ph-drawer-close" onclick="document.getElementById('ph-report-drawer').classList.remove('open')">&#x2715;</button>
-      <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
-      <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
-      <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
-      <a href="/guides/" class="ph-drawer-link">Guides</a>
-      <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
-    </div>
-  </div>
-
-  <!-- REPORT HEADER -->
-  <section style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:56px 0 52px;">
-    <div class="page-w">
-      <!-- back link -->
-      <div style="margin-bottom:28px;" class="no-print">
-        <a href="/creative-analysis" style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.55);text-decoration:none;display:inline-flex;align-items:center;gap:6px;letter-spacing:-0.003em;transition:color 150ms;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          Score more creatives
-        </a>
-      </div>
-
-      <div class="report-header-inner" style="display:flex;align-items:flex-start;justify-content:space-between;gap:32px;flex-wrap:wrap;">
-        <div>
-          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(152,88,48,0.25);border:1px solid rgba(152,88,48,0.4);padding:5px 12px;border-radius:999px;font-size:11px;font-weight:700;color:#E8A96B;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;">
-            <span style="width:5px;height:5px;border-radius:999px;background:#985830;display:inline-block;animation:ph-pulse 2s ease-in-out infinite;"></span>
-            Creative Analysis Report
-          </div>
-          <h1 style="font-size:clamp(28px,3.5vw,40px);font-weight:700;letter-spacing:-0.025em;line-height:1.1;color:#fff;margin:0 0 12px;text-wrap:balance;">
-            <span id="rpt-title">Creative Scoring Report</span>
-          </h1>
-          <p id="rpt-meta" style="font-size:14px;color:rgba(255,255,255,0.55);margin:0;letter-spacing:-0.003em;"></p>
-        </div>
-        <!-- Summary stats -->
-        <div id="rpt-stats" style="display:flex;gap:24px;flex-wrap:wrap;"></div>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="toolbar-row no-print" style="display:flex;align-items:center;gap:12px;margin-top:32px;flex-wrap:wrap;">
-        <button id="share-btn" class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Share link
-        </button>
-        <button id="pdf-btn" class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download PDF
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- RANKED REPORT -->
-  <section style="background:#FDF6EE;padding:56px 0 80px;">
-    <div class="page-w">
-      <div id="rpt-creatives"></div>
-    </div>
-  </section>
-
-  <!-- CROSS-SELL -->
-  <section style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:56px 32px;" class="no-print">
-    <div style="max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;">
-      <p style="font-size:18px;line-height:1.45;color:#fff;margin:0;letter-spacing:-0.01em;font-weight:500;max-width:640px;">
-        Creative is one lever. The account and the landing page are the other two.
-      </p>
-      <a href="/google-ads-audit" style="display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#fff;background:#985830;padding:14px 24px;border-radius:4px;text-decoration:none;letter-spacing:-0.005em;">
-        Audit your Google Ads &rarr;
-      </a>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="ph-footer no-print" style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:28px 32px;border-top:1px solid rgba(255,255,255,0.08);">
-    <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);">
-        <span style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em;">Phillips<span style="color:#985830;">.</span></span>
-        <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
-      </div>
-    </div>
-  </footer>
-
-</div><!-- /ca-report -->
-
-<!-- PDF hidden layout -->
-<div id="pdf-layout">
-  <div id="pdf-content"></div>
-</div>
+<div id="root"></div>
 
 <script>
-// =============== HELPERS ===============
-function scoreClass(s) {
-  return s >= 7 ? 'score-high' : (s >= 5 ? 'score-mid' : 'score-low');
-}
-function scoreColor(s) {
-  return s >= 7 ? '#2D6A4F' : (s >= 5 ? '#985830' : '#C0392B');
-}
-function scoreBarColor(s) {
-  return s >= 7 ? '#2D6A4F' : (s >= 5 ? '#985830' : '#C0392B');
-}
-function formatName(name) {
-  return name.replace(/_/g, ' ').replace(/\.jpg$/i, '').replace(/\.png$/i, '').replace(/\.jpeg$/i, '');
-}
-function fmtDate(iso) {
-  if (!iso) return '';
+window.downloadCreativePDF = async function () {
+  const el = document.getElementById('pdf-layout');
+  if (!el) { console.error('downloadCreativePDF: #pdf-layout not found'); return; }
+  if (!window.html2pdf) { console.error('downloadCreativePDF: html2pdf.js not loaded'); return; }
+  const prev = {
+    display: el.style.display, position: el.style.position,
+    left: el.style.left, top: el.style.top,
+    zIndex: el.style.zIndex, visibility: el.style.visibility,
+  };
+  el.style.display    = 'block';
+  el.style.position   = 'fixed';
+  el.style.left       = '-10000px';
+  el.style.top        = '0';
+  el.style.zIndex     = '-1';
+  el.style.visibility = 'visible';
   try {
-    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  } catch(e) { return ''; }
-}
-
-const DIMENSIONS = [
-  { key: 'hook_quality',      label: 'Hook Quality',           num: '01' },
-  { key: 'visual_hierarchy',  label: 'Visual Hierarchy',       num: '02' },
-  { key: 'copy_clarity',      label: 'Copy Clarity',           num: '03' },
-  { key: 'brand_consistency', label: 'Brand Consistency',      num: '04' },
-  { key: 'fatigue_signals',   label: 'Originality & Fatigue',  num: '05' },
-  { key: 'offer_clarity',     label: 'Offer Clarity',          num: '06' },
-];
-
-const IMPACT_LABELS = { critical: 'CRITICAL', high: 'HIGH', quick_win: 'QUICK WIN' };
-function impactBadge(weakSignal, impact) {
-  if (!weakSignal) return '';
-  const cls = impact ? `impact-${impact}` : 'impact-high';
-  const lbl = IMPACT_LABELS[impact] || '';
-  const prefix = lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : '';
-  return `<div><span class="impact-badge ${cls}">${prefix}${weakSignal}</span></div>`;
-}
-
-// =============== RENDER ===============
-function renderStats(results, scoredAt) {
-  const composites = results.map(r => r.composite);
-  const avg = composites.length ? (composites.reduce((a,b) => a+b, 0) / composites.length) : 0;
-  const top = Math.max(...composites);
-  const statsEl = document.getElementById('rpt-stats');
-  statsEl.innerHTML = [
-    { label: 'Creatives scored', value: results.length },
-    { label: 'Avg composite',    value: avg.toFixed(1) + ' / 10' },
-    { label: 'Top score',        value: top.toFixed(1) + ' / 10' },
-  ].map(s => `
-    <div style="text-align:left;">
-      <div style="font-size:28px;font-weight:700;letter-spacing:-0.02em;color:#fff;line-height:1;">${s.value}</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:-0.003em;">${s.label}</div>
-    </div>
-  `).join('<div style="width:1px;background:rgba(255,255,255,0.1);align-self:stretch;"></div>');
-
-  const metaEl = document.getElementById('rpt-meta');
-  if (scoredAt) metaEl.textContent = 'Scored ' + fmtDate(scoredAt);
-
-  const titleEl = document.getElementById('rpt-title');
-  titleEl.textContent = results.length + ' creative' + (results.length !== 1 ? 's' : '') + ' scored';
-}
-
-function renderCreatives(results) {
-  const sorted = [...results].sort((a,b) => b.composite - a.composite);
-  const container = document.getElementById('rpt-creatives');
-  container.innerHTML = '';
-
-  sorted.forEach((item, idx) => {
-    const rank = idx + 1;
-    const composite = typeof item.composite === 'number' ? item.composite : 0;
-    const dims = item.result || {};
-    const displayName = formatName(item.name || 'Creative ' + rank);
-    const barPct = (composite / 10 * 100).toFixed(1);
-    const sc = scoreClass(composite);
-
-    const dimsHtml = DIMENSIONS.map(d => {
-      const dimData = dims[d.key] || {};
-      const score = typeof dimData.score === 'number' ? dimData.score : 0;
-      const rationale = dimData.rationale || '';
-      const weakSignal = dimData.weak_signal || null;
-      const impact = dimData.impact || null;
-      const dimBarPct = (score / 10 * 100).toFixed(1);
-      return `
-        <div class="dim-row">
-          <div style="width:28px;height:28px;border-radius:4px;background:#FDF6EE;border:1px solid #E8D8C4;color:#985830;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;letter-spacing:0.04em;">${d.num}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;">
-              <span style="font-size:13.5px;font-weight:700;color:#1A1A1A;letter-spacing:-0.005em;">${d.label}</span>
-              <span style="font-size:13px;font-weight:700;color:${scoreColor(score)};flex-shrink:0;">${score}/10</span>
-            </div>
-            <div class="score-bar-track" style="margin-bottom:8px;">
-              <div class="score-bar-fill" style="width:${dimBarPct}%;background:${scoreBarColor(score)};"></div>
-            </div>
-            ${rationale ? `<p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0;">${rationale}</p>` : ''}
-            ${impactBadge(weakSignal, impact)}
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    const card = document.createElement('div');
-    card.className = 'creative-card';
-    card.innerHTML = `
-      <!-- Card header -->
-      <div style="padding:20px 24px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:36px;height:36px;border-radius:6px;background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;">#${rank}</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;line-height:1.2;word-break:break-word;">${displayName}</div>
-            <div style="font-size:11.5px;color:#6B6B6B;margin-top:3px;letter-spacing:-0.003em;">${item.name || ''}</div>
-          </div>
-        </div>
-        <div style="flex-shrink:0;">
-          <span style="display:inline-flex;align-items:baseline;gap:4px;padding:6px 14px;border-radius:6px;border:1.5px solid;font-weight:700;" class="${sc}">
-            <span style="font-size:22px;letter-spacing:-0.02em;line-height:1;">${composite.toFixed(1)}</span>
-            <span style="font-size:13px;opacity:0.7;">/10</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Composite bar -->
-      <div style="padding:0 24px 20px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;">Composite score</span>
-          <span style="font-size:11px;color:#6B6B6B;">${composite.toFixed(1)} / 10</span>
-        </div>
-        <div class="score-bar-track">
-          <div class="score-bar-fill" style="width:${barPct}%;background:${scoreBarColor(composite)};"></div>
-        </div>
-      </div>
-
-      <!-- Dimensions -->
-      <div style="padding:0 24px 24px;border-top:1px solid #F5EBD9;">
-        <div style="padding-top:16px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:4px;">Dimension Breakdown</div>
-          ${dimsHtml}
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-// =============== SHARE BUTTON ===============
-document.getElementById('share-btn').addEventListener('click', function() {
-  const btn = this;
-  const url = window.location.href;
-  function copied() {
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Link copied!`;
-    setTimeout(() => {
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share link`;
-    }, 2000);
-  }
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(copied).catch(() => fallbackCopy(url, copied));
-  } else {
-    fallbackCopy(url, copied);
-  }
-  function fallbackCopy(u, cb) {
-    const ta = document.createElement('textarea');
-    ta.value = u; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); cb(); } catch(e) {}
-    document.body.removeChild(ta);
-  }
-});
-
-// =============== PDF DOWNLOAD ===============
-document.getElementById('pdf-btn').addEventListener('click', async function() {
-  const btn = this;
-  btn.disabled = true;
-  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 56 56" style="animation:ph-spin 0.8s linear infinite"><circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4"/><path d="M50 28 A22 22 0 0 0 28 6" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg> Generating…`;
-
-  try {
-    // Build a clean PDF content from the rendered report
-    const creativesHtml = document.getElementById('rpt-creatives').innerHTML;
-    const titleText = document.getElementById('rpt-title').textContent;
-    const metaText  = document.getElementById('rpt-meta').textContent;
-
-    const pdfContent = document.getElementById('pdf-content');
-    pdfContent.innerHTML = `
-      <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#1A1A1A;padding:12px 0;">
-        <div style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:28px 32px 24px;border-radius:6px;margin-bottom:24px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#E8A96B;margin-bottom:10px;">Creative Analysis Report — Phillips.</div>
-          <div style="font-size:22px;font-weight:700;letter-spacing:-0.02em;color:#fff;margin-bottom:6px;">${titleText}</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);">${metaText} &middot; phillips-uk.com/creative-analysis</div>
-        </div>
-        <div>${creativesHtml}</div>
-      </div>
-    `;
-
-    const pdfLayout = document.getElementById('pdf-layout');
-    pdfLayout.style.display = 'block';
-
-    const today = new Date().toISOString().slice(0,10);
-    await html2pdf().set({
-      margin:      [8, 8, 8, 8],
-      filename:    `creative-analysis-${today}.pdf`,
-      image:       { type: 'jpeg', quality: 0.92 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:   { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(pdfLayout).save();
-
-  } catch(e) {
-    console.error('PDF error:', e);
+    await window.html2pdf()
+      .set({
+        margin: [12, 14, 12, 14],
+        filename: 'Creative-Analysis-Report.pdf',
+        image: { type: 'jpeg', quality: 0.96 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 760, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+        pagebreak: { mode: ['css', 'legacy'], before: '.pdf-page-break' },
+      })
+      .from(el)
+      .save();
   } finally {
-    document.getElementById('pdf-layout').style.display = 'none';
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
+    Object.assign(el.style, prev);
   }
-});
+};
+</script>
 
-// =============== LOAD REPORT ===============
-function showError(msg) {
-  document.getElementById('ca-loading-screen').style.display = 'none';
-  const errScreen = document.getElementById('ca-error-screen');
-  errScreen.style.display = 'flex';
-  document.getElementById('ca-error-msg').textContent = msg || 'This report may have expired or the link is incorrect.';
+<script type="text/babel">
+
+
+
+/* =============== SCORE COLOR MAP =============== */
+function scoreColor(n) {
+  if (n >= 7) return { fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8", label: "Strong" };
+  if (n >= 5) return { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4", label: "Average" };
+  return { fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5", label: "Weak" };
 }
 
-function showReport(data) {
-  document.getElementById('ca-loading-screen').style.display = 'none';
-  document.getElementById('ca-report').style.display = 'block';
-  const results = (data.results || []).sort((a,b) => b.composite - a.composite);
-  renderStats(results, data.scored_at || data.completed_at || null);
-  renderCreatives(results);
+const DIM_KEYS = ["hook", "hierarchy", "copy", "brand", "fatigue"];
+const DIM_LABELS = {
+  hook: "Hook quality",
+  hierarchy: "Visual hierarchy",
+  copy: "Copy clarity",
+  brand: "Brand consistency",
+  fatigue: "Fatigue signals"
+};
+
+/* =============== DATA =============== */
+const CREATIVES = [
+{
+  rank: 1,
+  file: "summer_prospecting_ugc-hero.mp4",
+  sub: "opening frame",
+  type: "video",
+  composite: 7.2,
+  scores: { hook: 8, hierarchy: 7, copy: 7, brand: 6, fatigue: 8 },
+  dims: {
+    hook: { rationale: "Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.", weak: null },
+    hierarchy: { rationale: "Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive.", weak: "Background element in bottom-right competes with the subject for attention." },
+    copy: { rationale: "Headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text in this frame — acceptable for an opening hook.", weak: null },
+    brand: { rationale: "Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.", weak: "No logo or brand lockup. This creative could belong to any brand." },
+    fatigue: { rationale: "Format avoids common fatigued treatments. No plain white background, no static talking-head variant. The motion-first approach is less saturated than most UGC in this category.", weak: null }
+  },
+  notes: "The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring.",
+  priority: "Add a subtle branded element to the bottom-left corner without obscuring the hook."
+},
+{
+  rank: 2,
+  file: "summer_prospecting_static-offer.jpg",
+  sub: "static",
+  type: "image",
+  composite: 6.6,
+  scores: { hook: 6, hierarchy: 7, copy: 8, brand: 7, fatigue: 5 },
+  dims: {
+    hook: { rationale: "Product is clearly visible and the offer is readable, but there is no pattern interrupt to stop a scrolling thumb. Static format with no motion, contrast surprise, or emotional trigger.", weak: "Static product shot with no scroll-stopping element. Likely to be skipped on mobile feed." },
+    hierarchy: { rationale: "Product is the clear focal point. Headline and price point sit naturally below. Clean layout with adequate white space. No competing visual elements.", weak: null },
+    copy: { rationale: "Offer is specific and immediately legible. Discount percentage and end date both visible. No ambiguity about what is being sold or what the deal is.", weak: null },
+    brand: { rationale: "Brand colours applied consistently. Logo positioned correctly. Font choice matches the brand system. Minor inconsistency in the CTA button colour weight.", weak: null },
+    fatigue: { rationale: "Plain white background product shot is one of the most overused formats in paid social. The format has been saturated for two-plus years across e-commerce categories.", weak: "Plain white background product format. High fatigue risk — audiences have learned to skip this format." }
+  },
+  notes: "Strong on clarity and brand, weak on attention capture. The copy does its job but the format won't stop the scroll. Fatigue signal is the main risk here.",
+  priority: "Test a lifestyle or contextual background version of this offer against the plain white to measure the CTR delta."
+},
+{
+  rank: 3,
+  file: "retargeting_abandoned-cart_v2.jpg",
+  sub: "static",
+  type: "image",
+  composite: 5.6,
+  scores: { hook: 5, hierarchy: 6, copy: 7, brand: 6, fatigue: 4 },
+  dims: {
+    hook: { rationale: "Retargeting context means the audience already knows the product, which reduces the hook burden slightly. Even so, the creative doesn't leverage that recognition with a specific reengagement angle.", weak: "No urgency or reengagement hook. Retargeting creatives need a specific reason to return, not just a product reminder." },
+    hierarchy: { rationale: "Product is identifiable but the composition has two competing focal points: the product image and a text overlay of equal visual weight.", weak: "Two competing focal points at equal weight. The eye doesn't know where to go first." },
+    copy: { rationale: "Reminder message is clear. 'You left something behind' framing is specific and relevant to an abandoned-cart audience. Lands in under two seconds.", weak: null },
+    brand: { rationale: "Brand colours present but the text weight on the overlay is lighter than the brand system standard, creating a visual inconsistency.", weak: "Text weight inconsistency with brand system. Feels off-brand at a glance." },
+    fatigue: { rationale: "Generic 'you left something' format with product image and text overlay is among the most replicated retargeting formats. No differentiating visual treatment.", weak: "Overused retargeting format with no visual differentiation. Audiences in this segment will have seen near-identical creatives from competitors." }
+  },
+  notes: "Copy angle is right for a retargeting audience but the execution is generic. Fatigue risk is high.",
+  priority: "Add a visual differentiator — a time-limited offer, social proof element, or a format change (video or UGC) to separate it from the noise in this audience segment."
+},
+{
+  rank: 4,
+  file: "retargeting_generic-cta.jpg",
+  sub: "static",
+  type: "image",
+  composite: 3.8,
+  scores: { hook: 3, hierarchy: 4, copy: 5, brand: 4, fatigue: 3 },
+  dims: {
+    hook: { rationale: "No visual trigger, no text hook, no motion. The creative opens on a product shot with a logo and a CTA button. There's nothing to stop a scroll.", weak: "No hook element of any kind. The creative assumes the audience will stop voluntarily." },
+    hierarchy: { rationale: "Logo, product, headline, and CTA button all compete at similar visual weights. No single element dominates. Reading order is unclear.", weak: "Four elements at equal weight with no clear visual priority. The reader's eye has nowhere to land." },
+    copy: { rationale: "Product name is legible but the headline doesn't state a benefit or offer. The CTA is 'Shop Now' with no supporting context.", weak: "'Shop Now' CTA with no offer, benefit, or urgency. Gives the audience no reason to act now rather than later." },
+    brand: { rationale: "Brand colours present but the layout doesn't follow the brand's established visual system. Feels like a template rather than a brand asset.", weak: "Template-style layout with no branded personality. Indistinguishable from competitor creative at a glance." },
+    fatigue: { rationale: "Logo-first layout, plain background, generic 'Shop Now' CTA. Hits three of the five most common ad fatigue indicators simultaneously.", weak: "Logo-first layout + plain background + generic CTA. Three high-fatigue signals in one creative." }
+  },
+  notes: "No hook, no visual hierarchy, no specific offer. Built around brand visibility rather than performance. For paid social, where the audience didn't choose to see the ad, every element needs to earn its place.",
+  priority: "Complete rebuild starting from the hook. The brand assets are present — the problem is how they're deployed."
+}];
+
+
+/* =============== LOADING STATE =============== */
+function LoadingState() {
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "#fff",
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center", zIndex: 100
+    }}>
+      <div style={{
+        width: 40, height: 40, borderRadius: 999,
+        border: "3px solid #F0E5D2", borderTopColor: "#985830",
+        animation: "ca-spin 0.75s linear infinite", marginBottom: 20
+      }}></div>
+      <div style={{ fontSize: 17, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.01em" }}>
+        Loading your report…
+      </div>
+    </div>);
+
 }
 
-async function pollReport(jobId) {
-  const loadMsg = document.getElementById('ca-load-msg');
-  let attempts = 0;
-  const maxAttempts = 90; // 3 min max
+/* =============== ICONS =============== */
+function IconDownload() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>);
 
-  return new Promise((resolve, reject) => {
-    const iv = setInterval(async () => {
-      attempts++;
-      if (attempts > maxAttempts) { clearInterval(iv); reject(new Error('Report timed out. Please try scoring again.')); return; }
-      try {
-        const r = await fetch(`/.netlify/functions/creative-status?id=${encodeURIComponent(jobId)}`);
-        if (r.status === 404) { clearInterval(iv); reject(new Error('Report not found. It may have expired.')); return; }
-        const d = await r.json();
-        if (d.status === 'done') { clearInterval(iv); resolve(d); }
-        else if (d.status === 'error') { clearInterval(iv); reject(new Error(d.message || 'Scoring failed.')); }
-        else if (d.status === 'progress') {
-          if (d.total) loadMsg.textContent = `Scoring in progress: ${d.done || 0} of ${d.total} complete.`;
-          else loadMsg.textContent = 'Scoring in progress…';
-        } else if (d.status === 'pending') {
-          loadMsg.textContent = 'Waiting for scoring to begin…';
-        }
-      } catch(e) { /* network blip */ }
-    }, 2000);
+}
+function IconShare() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      <polyline points="16 6 12 2 8 6" />
+      <line x1="12" y1="2" x2="12" y2="15" />
+    </svg>);
+
+}
+function Spinner() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" style={{ animation: "ph-spin 0.8s linear infinite" }}>
+      <circle cx="12" cy="12" r="9" fill="none" stroke="#985830" strokeWidth="2.5" strokeOpacity="0.25" />
+      <path d="M21 12a9 9 0 0 0-9-9" fill="none" stroke="#985830" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>);
+
+}
+
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, onClick, large, href }) {
+  const [h, setH] = React.useState(false);
+  const C = href ? "a" : "button";
+  return (
+    <C onClick={onClick} href={href}
+    onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    style={{
+      background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+      padding: large ? "16px 32px" : "14px 30px",
+      fontSize: large ? 15 : 14, fontWeight: 600,
+      borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      letterSpacing: "-0.005em", textDecoration: "none",
+      display: "inline-flex", alignItems: "center", gap: 6
+    }}>{children}</C>);
+
+}
+function BtnFilledSmall({ children, onClick, href }) {
+  const [h, setH] = React.useState(false);
+  const C = href ? "a" : "button";
+  return (
+    <C onClick={onClick} href={href}
+    onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    style={{
+      background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+      padding: "10px 20px", fontSize: 13, fontWeight: 600,
+      borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      textDecoration: "none", display: "inline-flex", alignItems: "center"
+    }}>{children}</C>);
+
+}
+function BtnOutline({ children, onClick, icon, disabled }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} disabled={disabled}
+    onMouseEnter={() => !disabled && setH(true)} onMouseLeave={() => setH(false)}
+    style={{
+      background: disabled ? "transparent" : h ? "#985830" : "transparent",
+      color: disabled ? "#6B6B6B" : h ? "#fff" : "#1A1A1A",
+      border: `1.5px solid ${disabled ? "#E8D8C4" : "#985830"}`,
+      padding: "9px 16px", fontSize: 13, fontWeight: 600,
+      borderRadius: 4, cursor: disabled ? "default" : "pointer",
+      fontFamily: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
+      display: "inline-flex", alignItems: "center", gap: 8
+    }}>
+      {icon}
+      <span>{children}</span>
+    </button>);
+
+}
+function PdfDownloadButton() {
+  const [busy, setBusy] = React.useState(false);
+  return (
+    <BtnOutline
+      icon={busy ? <Spinner /> : <IconDownload />}
+      disabled={busy}
+      onClick={async () => {
+        if (busy || !window.downloadCreativePDF) return;
+        setBusy(true);
+        try {await window.downloadCreativePDF();}
+        catch (e) {console.error(e);} finally
+        {setBusy(false);}
+      }}>
+      {busy ? "Generating…" : "Download PDF"}
+    </BtnOutline>);
+
+}
+
+/* =============== NAV =============== */
+function Nav() {
+  const linkStyle = (active) => ({
+    fontSize: 14, fontWeight: 500,
+    color: active ? "#1A1A1A" : "#6B6B6B",
+    textDecoration: "none",
+    transition: "color 150ms cubic-bezier(0.2,0,0,1)"
   });
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px"
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={linkStyle(false)}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={linkStyle(false)}>Google Ads Audit</a>
+          <a href="/creative-analysis" style={linkStyle(true)}>Creative Scoring</a>
+          <a href="/guides/" style={linkStyle(false)}>Guides</a>
+          <BtnFilledSmall href="/#contact">Get in touch</BtnFilledSmall>
+        </nav>
+      </div>
+    </header>);
+
 }
 
-(async function init() {
-  const params = new URLSearchParams(window.location.search);
-  const jobId  = params.get('id');
+/* =============== EYEBROW =============== */
+function Eyebrow({ children, color = "#985830" }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+      textTransform: "uppercase", color
+    }}>{children}</span>);
 
-  if (!jobId) { showError('No report ID in URL. Please score your creatives first.'); return; }
+}
 
-  try {
-    // First fetch — may already be done
-    const r = await fetch(`/.netlify/functions/creative-status?id=${encodeURIComponent(jobId)}`);
-    if (r.status === 404) { showError('Report not found. It may have expired.'); return; }
-    const d = await r.json();
 
-    if (d.status === 'done') {
-      showReport(d);
-    } else if (d.status === 'error') {
-      showError(d.message || 'Scoring failed.');
-    } else {
-      // Still in progress — poll
-      const result = await pollReport(jobId);
-      showReport(result);
-    }
-  } catch(e) {
-    showError(e.message || 'Failed to load report. Please try again.');
-  }
-})();
+
+/* =============== REPORT HEADER — light (matches LP Audit) =============== */
+function ReportHeader() {
+  const avg = (CREATIVES.reduce((s, c) => s + c.composite, 0) / CREATIVES.length).toFixed(1);
+  const weakCount = CREATIVES.reduce((n, c) => n + DIM_KEYS.filter((k) => c.dims[k].weak).length, 0);
+  return (
+    <section style={{
+      padding: "56px 0 64px",
+      borderBottom: "1px solid #E8D8C4", background: "linear-gradient(rgb(255, 255, 255) 0%, rgb(253, 246, 238) 100%) 0% 0% / cover"
+    }}>
+      <div className="report-w">
+        {/* Back link + action buttons */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: 14, marginBottom: 40
+        }}>
+          <a href="/creative-analysis" style={{
+            fontSize: 13, fontWeight: 600, color: "#6B6B6B",
+            textDecoration: "none", letterSpacing: "-0.005em",
+            transition: "color 150ms cubic-bezier(0.2,0,0,1)"
+          }}>← Back to Creative Scoring</a>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <BtnOutline icon={<IconShare />} onClick={() => {
+              navigator.clipboard.writeText(window.location.href).catch(() => {});
+            }}>Share</BtnOutline>
+            <PdfDownloadButton />
+            <BtnFilledSmall href="/creative-analysis">Score your creatives →</BtnFilledSmall>
+          </div>
+        </div>
+
+        {/* Eyebrow label */}
+        <div style={{ marginBottom: 20 }}>
+          <Eyebrow>Creative analysis</Eyebrow>
+        </div>
+
+        {/* Headline */}
+        <h1 style={{
+          fontSize: "clamp(36px, 4.8vw, 54px)", fontWeight: 700,
+          letterSpacing: "-0.03em", lineHeight: 1.04,
+          color: "#1A1A1A", margin: "0 0 16px", textWrap: "balance"
+        }}>
+          Four creatives.{" "}
+          <em style={{ fontStyle: "italic", color: "#985830" }}>Scored and ranked.</em>
+        </h1>
+        <p style={{
+          fontSize: 16, lineHeight: 1.6,
+          margin: "0 0 48px", maxWidth: 580, color: "rgb(26, 26, 26)"
+        }}>
+          Four sample ad creatives, each scored across five dimensions with specific weak signals flagged on any dimension below 7.
+        </p>
+
+        {/* Stats card */}
+        <div style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          boxShadow: "0 2px 8px rgba(152,88,48,0.07)", overflow: "hidden"
+        }}>
+          <div className="header-stats" style={{
+            display: "grid", gridTemplateColumns: "repeat(4, 1fr)"
+          }}>
+            <HeaderStat label="Creatives scored" v={CREATIVES.length} first={true} />
+            <HeaderStat label="Composite average" v={avg} unit="/ 10" />
+            <HeaderStat label="Top score" v={CREATIVES[0].composite.toFixed(1)} unit="/ 10" />
+            <HeaderStat label="Weak signals flagged" v={weakCount} />
+          </div>
+        </div>
+      </div>
+    </section>);
+
+}
+
+function HeaderStat({ label, v, unit, first }) {
+  return (
+    <div style={{ padding: "28px 28px", borderLeft: first ? "none" : "1px solid #E8D8C4" }}>
+      <div style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
+        textTransform: "uppercase", color: "#6B6B6B", marginBottom: 12
+      }}>{label}</div>
+      <div style={{
+        fontSize: 38, fontWeight: 700, color: "#1A1A1A",
+        letterSpacing: "-0.03em", lineHeight: 1,
+        fontVariantNumeric: "tabular-nums",
+        display: "flex", alignItems: "baseline", gap: 6
+      }}>
+        {v}
+        {unit && <span style={{ fontSize: 15, color: "#6B6B6B", fontWeight: 500 }}>{unit}</span>}
+      </div>
+    </div>);
+
+}
+
+/* =============== RANKED SUMMARY =============== */
+function RankedSummary() {
+  return (
+    <section className="sec-cream" style={{ paddingTop: 56, paddingBottom: 56 }}>
+      <div className="report-w">
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 20, marginBottom: 28 }}>
+          <Eyebrow>Ranked summary</Eyebrow>
+          <h2 style={{
+            fontSize: "clamp(26px, 3vw, 34px)", fontWeight: 700,
+            letterSpacing: "-0.02em", lineHeight: 1.1,
+            color: "#1A1A1A", margin: "10px 0 0"
+          }}>Composite + per-dimension scores.</h2>
+        </div>
+        <div className="summary-table" style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          overflow: "hidden", boxShadow: "0 1px 4px rgba(152,88,48,0.08)"
+        }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "52px 2fr 1.2fr repeat(5, 0.6fr)",
+            background: "#FDF6EE", borderBottom: "1px solid #E8D8C4",
+            padding: "13px 20px", gap: 14
+          }}>
+            {["#", "Creative", "Composite", "Hook", "Hier.", "Copy", "Brand", "Fatigue"].map((h, i) =>
+            <span key={i} style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#985830" }}>{h}</span>
+            )}
+          </div>
+          {CREATIVES.map((c, i) =>
+          <SummaryRow key={i} c={c} last={i === CREATIVES.length - 1} />
+          )}
+        </div>
+      </div>
+    </section>);
+
+}
+
+function SummaryRow({ c, last }) {
+  const compColor = scoreColor(c.composite);
+  return (
+    <a href={`#creative-${c.rank}`} style={{
+      display: "grid",
+      gridTemplateColumns: "52px 2fr 1.2fr repeat(5, 0.6fr)",
+      padding: "16px 20px",
+      borderBottom: last ? "none" : "1px solid #F0E5D2",
+      alignItems: "center", gap: 14,
+      textDecoration: "none", color: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1)"
+    }}
+    onMouseEnter={(e) => e.currentTarget.style.background = "#FDF6EE"}
+    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+      <span style={{
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        width: 32, height: 28, borderRadius: 6,
+        background: "#985830", color: "#fff",
+        fontSize: 13, fontWeight: 700, letterSpacing: "-0.005em",
+        fontVariantNumeric: "tabular-nums", flexShrink: 0
+      }}>#{c.rank}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+        <span style={{
+          width: 26, height: 26, borderRadius: 4,
+          background: "#FDF6EE", border: "1px solid #E8D8C4",
+          color: "#985830", flexShrink: 0,
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          fontSize: 9, fontWeight: 700, letterSpacing: "0.04em"
+        }}>{c.type === "video" ? "VID" : "IMG"}</span>
+        <div style={{ minWidth: 0 }}>
+          <div style={{
+            fontSize: 13, fontWeight: 600, color: "#1A1A1A",
+            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace"
+          }}>{c.file}</div>
+          {c.sub && <div style={{ fontSize: 11, color: "#6B6B6B", marginTop: 2 }}>{c.sub}</div>}
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{
+          fontSize: 17, fontWeight: 700, color: compColor.fg,
+          letterSpacing: "-0.01em", fontVariantNumeric: "tabular-nums", minWidth: 32
+        }}>{c.composite.toFixed(1)}</span>
+        <div style={{ flex: 1, minWidth: 50, maxWidth: 100 }}>
+          <ScoreBar value={c.composite} max={10} height={6} isComposite />
+        </div>
+      </div>
+      {DIM_KEYS.map((k) => {
+        const sc = scoreColor(c.scores[k]);
+        return (
+          <span key={k} style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 30, height: 26, borderRadius: 4,
+            background: sc.bg, color: sc.fg,
+            border: `1px solid ${sc.border}`,
+            fontSize: 12, fontWeight: 700, fontVariantNumeric: "tabular-nums"
+          }}>{c.scores[k]}</span>);
+
+      })}
+    </a>);
+
+}
+
+/* =============== SCORE BAR =============== */
+function ScoreBar({ value, max = 10, height = 6, isComposite = false }) {
+  const pct = Math.max(0, Math.min(100, value / max * 100));
+  const color = isComposite ? "#985830" : scoreColor(value).fg;
+  return (
+    <div style={{ width: "100%", height, background: "#F0E5D2", borderRadius: 999, overflow: "hidden" }}>
+      <div style={{
+        width: `${pct}%`, height: "100%",
+        background: color, borderRadius: 999,
+        transition: "width 400ms cubic-bezier(0.2,0,0,1)"
+      }}></div>
+    </div>);
+
+}
+
+/* =============== WEAK SIGNAL CHIP =============== */
+function WeakChip() {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      color: "#B83A1F", background: "#F8E4DC",
+      border: "1px solid #EBC4B5",
+      padding: "3px 10px", borderRadius: 20,
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
+      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap"
+    }}>Weak signal</span>);
+
+}
+
+/* =============== BREAKDOWNS =============== */
+function Breakdowns() {
+  return (
+    <section className="sec-white" style={{ paddingTop: 56 }}>
+      <div className="report-w">
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 20, marginBottom: 36 }}>
+          <Eyebrow>Creative breakdowns</Eyebrow>
+          <h2 style={{
+            fontSize: "clamp(26px, 3vw, 34px)", fontWeight: 700,
+            letterSpacing: "-0.02em", lineHeight: 1.1,
+            color: "#1A1A1A", margin: "10px 0 12px"
+          }}>What's working, what isn't, what to do about it.</h2>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6B6B6B", margin: 0 }}>
+            Each creative gets a per-dimension rationale, weak signals flagged on any score of 6 or below, and a priority fix.
+          </p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {CREATIVES.map((c) => <BreakdownCard key={c.rank} c={c} />)}
+        </div>
+      </div>
+    </section>);
+
+}
+
+function BreakdownCard({ c }) {
+  const compColor = scoreColor(c.composite);
+  return (
+    <article id={`creative-${c.rank}`} style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+      padding: "28px 28px 28px",
+      boxShadow: "0 1px 4px rgba(152,88,48,0.08)",
+      scrollMarginTop: 88,
+      animation: "ca-fadein 300ms ease both"
+    }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "1fr auto",
+        gap: 20, alignItems: "start",
+        paddingBottom: 22, borderBottom: "1px solid #F0E5D2", marginBottom: 22
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              height: 26, minWidth: 36,
+              background: "#985830", color: "#fff",
+              borderRadius: 6, padding: "0 10px",
+              fontSize: 12, fontWeight: 700, letterSpacing: "0.02em",
+              fontVariantNumeric: "tabular-nums"
+            }}>#{c.rank}</span>
+            <span style={{
+              width: 26, height: 26, borderRadius: 4,
+              background: "#FDF6EE", border: "1px solid #E8D8C4", color: "#985830",
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              fontSize: 9, fontWeight: 700, letterSpacing: "0.04em"
+            }}>{c.type === "video" ? "VID" : "IMG"}</span>
+            {c.sub &&
+            <span style={{
+              fontSize: 11, color: "#6B6B6B", letterSpacing: "0.04em",
+              textTransform: "uppercase", fontWeight: 600
+            }}>{c.sub}</span>
+            }
+          </div>
+          <h3 style={{
+            fontSize: 20, fontWeight: 700, color: "#1A1A1A",
+            letterSpacing: "-0.015em", lineHeight: 1.25, margin: 0,
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+            wordBreak: "break-all"
+          }}>{c.file}</h3>
+        </div>
+        <CompositeChip composite={c.composite} color={compColor} />
+      </div>
+
+      <div style={{ marginBottom: 4 }}>
+        <Eyebrow>Dimension Breakdown</Eyebrow>
+      </div>
+      <div style={{
+        border: "1px solid #E8D8C4", borderRadius: 6, overflow: "hidden",
+        marginTop: 10, marginBottom: 22
+      }}>
+        <div className="dim-grid" style={{
+          display: "grid", gridTemplateColumns: "160px 88px 1fr",
+          background: "#FDF6EE", borderBottom: "1px solid #E8D8C4",
+          padding: "12px 18px", gap: 16
+        }}>
+          {["Dimension", "Score", "Rationale"].map((h, i) =>
+          <span key={i} style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#985830" }}>{h}</span>
+          )}
+        </div>
+        {DIM_KEYS.map((k, i) =>
+        <DimRow key={k} k={k} dim={c.dims[k]} score={c.scores[k]} last={i === DIM_KEYS.length - 1} />
+        )}
+      </div>
+
+      <div className="card-notes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <div style={{
+          background: "#FDF6EE", border: "1px solid #E8D8C4", borderRadius: 6,
+          padding: "18px 20px"
+        }}>
+          <Eyebrow>Overall notes</Eyebrow>
+          <p style={{ fontSize: 14, lineHeight: 1.6, color: "#1A1A1A", margin: "10px 0 0" }}>{c.notes}</p>
+        </div>
+        <div style={{
+          background: "#fff", borderRadius: "0 6px 6px 0",
+          border: "1px solid #E8D8C4", borderLeft: "3px solid #985830",
+          padding: "18px 20px"
+        }}>
+          <Eyebrow>Priority fix</Eyebrow>
+          <p style={{ fontSize: 14, lineHeight: 1.6, color: "#1A1A1A", margin: "10px 0 0", fontWeight: 500 }}>{c.priority}</p>
+        </div>
+      </div>
+    </article>);
+
+}
+
+function CompositeChip({ composite, color }) {
+  return (
+    <div style={{
+      background: color.bg, border: `1px solid ${color.border}`,
+      borderRadius: 6, padding: "12px 18px",
+      textAlign: "right", minWidth: 130
+    }}>
+      <div style={{ marginBottom: 6 }}>
+        <Eyebrow color={color.fg}>Composite score</Eyebrow>
+      </div>
+      <div style={{
+        fontSize: 26, fontWeight: 700, color: color.fg,
+        letterSpacing: "-0.02em", lineHeight: 1,
+        fontVariantNumeric: "tabular-nums"
+      }}>
+        {composite.toFixed(1)}
+        <span style={{ fontSize: 12, fontWeight: 500, opacity: 0.7 }}> / 10</span>
+      </div>
+      <div style={{ fontSize: 11, fontWeight: 600, color: color.fg, opacity: 0.75, marginTop: 4, letterSpacing: "0.04em" }}>{color.label}</div>
+    </div>);
+
+}
+
+function DimRow({ k, dim, score, last }) {
+  const sc = scoreColor(score);
+  return (
+    <div className="dim-grid" style={{
+      display: "grid", gridTemplateColumns: "160px 88px 1fr",
+      padding: "15px 18px",
+      borderBottom: last ? "none" : "1px solid #F0E5D2",
+      gap: 16, alignItems: "start"
+    }}>
+      <div style={{ fontSize: 14, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.005em", paddingTop: 3 }}>{DIM_LABELS[k]}</div>
+      <div style={{ paddingTop: 2 }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <span style={{
+            fontSize: 17, fontWeight: 700, color: sc.fg,
+            letterSpacing: "-0.01em", fontVariantNumeric: "tabular-nums", minWidth: 20
+          }}>{score}</span>
+        </div>
+        <div style={{ marginTop: 6, width: 64 }}>
+          <ScoreBar value={score} max={10} height={6} />
+        </div>
+      </div>
+      <div>
+        <div style={{ fontSize: 14, lineHeight: 1.6, color: "#1A1A1A" }}>{dim.rationale}</div>
+        {dim.weak &&
+        <div style={{
+          marginTop: 10, background: "#F8E4DC",
+          border: "1px solid #EBC4B5", borderRadius: 6,
+          padding: "10px 12px",
+          display: "flex", gap: 10, alignItems: "flex-start"
+        }}>
+            <div style={{ marginTop: 1, flexShrink: 0 }}><WeakChip /></div>
+            <div style={{ fontSize: 13, lineHeight: 1.55, color: "#1A1A1A" }}>{dim.weak}</div>
+          </div>
+        }
+      </div>
+    </div>);
+
+}
+
+/* =============== RUN YOUR OWN =============== */
+function RunYourOwn() {
+  return (
+    <section className="sec-cream" style={{ paddingTop: 48, paddingBottom: 56 }}>
+      <div className="report-w">
+        <div style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          padding: "32px 36px",
+          display: "grid", gridTemplateColumns: "1fr auto",
+          gap: 28, alignItems: "center",
+          boxShadow: "0 1px 4px rgba(152,88,48,0.08)"
+        }}>
+          <div>
+            <Eyebrow>Run your own</Eyebrow>
+            <div style={{
+              fontSize: 21, fontWeight: 700, color: "#1A1A1A",
+              letterSpacing: "-0.018em", lineHeight: 1.3,
+              margin: "12px 0 8px", textWrap: "balance"
+            }}>Run this on your own creatives.</div>
+            <div style={{ fontSize: 15, lineHeight: 1.55, color: "#6B6B6B" }}>
+              Upload images or videos. Each one scored and ranked in the same format. No account connection, files not stored after scoring.
+            </div>
+          </div>
+          <BtnFilled large href="/creative-analysis">Score your creatives →</BtnFilled>
+        </div>
+      </div>
+    </section>);
+
+}
+
+/* =============== DARK FOOTER CTA =============== */
+function FooterCrossSell() {
+  return (
+    <section style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "52px 32px"
+    }}>
+      <div style={{
+        maxWidth: 900, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 18
+      }}>
+        <p style={{
+          fontSize: 17, lineHeight: 1.5, color: "#fff",
+          margin: 0, letterSpacing: "-0.01em", fontWeight: 500, maxWidth: 560
+        }}>
+          Creative is one lever. The account and the landing page are the other two.
+        </p>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <a href="/google-ads-audit" style={darkBtn(true)}>Audit your Google Ads →</a>
+          <a href="/landing-page-audit" style={darkBtn(false)}>Audit your landing page →</a>
+        </div>
+      </div>
+    </section>);
+
+}
+function darkBtn(filled) {
+  return {
+    display: "inline-flex", alignItems: "center", gap: 8,
+    fontSize: 14, fontWeight: 600, color: "#fff",
+    background: filled ? "#985830" : "transparent",
+    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.30)",
+    padding: "12px 20px", borderRadius: 4,
+    textDecoration: "none", letterSpacing: "-0.005em"
+  };
+}
+
+function Footer() {
+  return (
+    <footer style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "28px 32px",
+      borderTop: "1px solid rgba(255,255,255,0.08)"
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 12
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
+        </div>
+      </div>
+    </footer>);
+
+}
+
+/* =============== PDF LAYOUT =============== */
+function PdfScoreBar({ value, max = 10, color }) {
+  const pct = Math.max(0, Math.min(100, value / max * 100));
+  return (
+    <div style={{ width: 56, height: 4, background: "#F0E5D2", borderRadius: 2, overflow: "hidden", display: "inline-block" }}>
+      <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 2 }} />
+    </div>);
+
+}
+
+function PdfLayout() {
+  const avg = (CREATIVES.reduce((s, c) => s + c.composite, 0) / CREATIVES.length).toFixed(1);
+  const weakCount = CREATIVES.reduce((n, c) => n + DIM_KEYS.filter((k) => c.dims[k].weak).length, 0);
+
+  const pdfFont = "'Helvetica Neue', Helvetica, Arial, sans-serif";
+  const base = { fontFamily: pdfFont, color: "#1A1A1A" };
+
+  return (
+    <div id="pdf-layout" style={{ display: "none", ...base, background: "#fff", width: 760 }}>
+
+      {/* ====== COVER ====== */}
+      <div style={{ padding: "36px 44px 32px" }}>
+        {/* Logo + label row */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 36 }}>
+          <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </div>
+          <div style={{
+            display: "inline-flex", alignItems: "center",
+            background: "rgba(152,88,48,0.10)", border: "1px solid #E8D8C4",
+            color: "#985830", padding: "4px 14px", borderRadius: 999,
+            fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase"
+          }}>Creative Analysis Report</div>
+        </div>
+
+        {/* Headline + intro */}
+        <div style={{ borderBottom: "2px solid #985830", paddingBottom: 28, marginBottom: 28 }}>
+          <div style={{ fontSize: 38, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.05, color: "#1A1A1A", marginBottom: 12 }}>
+            Four creatives.<br />
+            <span style={{ fontStyle: "italic", color: "#985830" }}>Scored and ranked.</span>
+          </div>
+          <div style={{ fontSize: 11, color: "#6B6B6B", marginBottom: 8 }}>27 May 2026</div>
+          <div style={{ fontSize: 12, lineHeight: 1.65, color: "#6B6B6B", maxWidth: 500 }}>
+            Four sample ad creatives, each scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals. Weak signals flagged on any dimension scoring below 7.
+          </div>
+        </div>
+
+        {/* Stats strip */}
+        <div style={{ display: "flex", gap: 0 }}>
+          {[
+          { label: "Creatives scored", v: CREATIVES.length, unit: null },
+          { label: "Composite average", v: avg, unit: "/ 10" },
+          { label: "Top score", v: CREATIVES[0].composite.toFixed(1), unit: "/ 10" },
+          { label: "Weak signals flagged", v: weakCount, unit: null }].
+          map((s, i) =>
+          <div key={i} style={{ flex: 1, paddingLeft: i === 0 ? 0 : 20, borderLeft: i === 0 ? "none" : "1px solid #E8D8C4" }}>
+              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 7 }}>{s.label}</div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.025em", lineHeight: 1, display: "flex", alignItems: "baseline", gap: 5 }}>
+                {s.v}
+                {s.unit && <span style={{ fontSize: 11, fontWeight: 500, color: "#6B6B6B" }}>{s.unit}</span>}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ====== RANKED SUMMARY ====== */}
+      <div style={{ padding: "0 44px 32px" }}>
+        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 14, marginBottom: 16 }}>
+          <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 4 }}>Ranked summary</div>
+          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em", color: "#1A1A1A" }}>Composite + per-dimension scores.</div>
+        </div>
+
+        <div style={{ border: "1px solid #E8D8C4", borderRadius: 4, overflow: "hidden" }}>
+          {/* Header row */}
+          <div style={{ display: "flex", background: "#FDF6EE", borderBottom: "1px solid #E8D8C4", padding: "9px 16px", gap: 0 }}>
+            {[
+            { label: "#", w: 40 },
+            { label: "Creative", w: 240 },
+            { label: "Composite", w: 110 },
+            { label: "Hook", w: 52 },
+            { label: "Hier.", w: 52 },
+            { label: "Copy", w: 52 },
+            { label: "Brand", w: 52 },
+            { label: "Fatigue", w: 52 }].
+            map((h, i) =>
+            <div key={i} style={{ width: h.w, flexShrink: 0, fontSize: 8, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#985830" }}>{h.label}</div>
+            )}
+          </div>
+          {CREATIVES.map((c, i) => {
+            const cc = scoreColor(c.composite);
+            return (
+              <div key={i} style={{
+                display: "flex", padding: "12px 16px",
+                borderTop: "1px solid #F0E5D2", alignItems: "center", gap: 0
+              }}>
+                <div style={{ width: 40, flexShrink: 0 }}>
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    width: 24, height: 22, borderRadius: 4,
+                    background: "#985830", color: "#fff", fontSize: 10, fontWeight: 700
+                  }}>#{c.rank}</span>
+                </div>
+                <div style={{ width: 240, flexShrink: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                    <span style={{
+                      display: "inline-flex", alignItems: "center", justifyContent: "center",
+                      padding: "2px 6px", borderRadius: 3,
+                      background: "#FDF6EE", border: "1px solid #E8D8C4",
+                      color: "#985830", fontSize: 7, fontWeight: 700, letterSpacing: "0.04em"
+                    }}>{c.type === "video" ? "VID" : "IMG"}</span>
+                  </div>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: "#1A1A1A", fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 220 }}>{c.file}</div>
+                  {c.sub && <div style={{ fontSize: 9, color: "#6B6B6B", marginTop: 1 }}>{c.sub}</div>}
+                </div>
+                <div style={{ width: 110, flexShrink: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: cc.fg, letterSpacing: "-0.01em", minWidth: 28 }}>{c.composite.toFixed(1)}</span>
+                  <div style={{ width: 50, height: 4, background: "#F0E5D2", borderRadius: 2 }}>
+                    <div style={{ width: `${c.composite / 10 * 100}%`, height: "100%", background: "#985830", borderRadius: 2 }} />
+                  </div>
+                </div>
+                {DIM_KEYS.map((k) => {
+                  const sc = scoreColor(c.scores[k]);
+                  return (
+                    <div key={k} style={{ width: 52, flexShrink: 0 }}>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", justifyContent: "center",
+                        width: 28, height: 22, borderRadius: 4,
+                        background: sc.bg, color: sc.fg,
+                        border: `1px solid ${sc.border}`,
+                        fontSize: 11, fontWeight: 700
+                      }}>{c.scores[k]}</span>
+                    </div>);
+
+                })}
+              </div>);
+
+          })}
+        </div>
+      </div>
+
+      {/* ====== PER-CREATIVE BREAKDOWNS ====== */}
+      {CREATIVES.map((c) => {
+        const cc = scoreColor(c.composite);
+        const weakCount = DIM_KEYS.filter((k) => c.dims[k].weak).length;
+        return (
+          <div key={c.rank} className="pdf-page-break" style={{ padding: "32px 44px 0" }}>
+            {/* Creative header */}
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+              paddingBottom: 16, borderBottom: "1px solid #E8D8C4", marginBottom: 16
+            }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    padding: "3px 10px", height: 22, borderRadius: 4,
+                    background: "#985830", color: "#fff", fontSize: 10, fontWeight: 700
+                  }}>#{c.rank}</span>
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    padding: "2px 7px", height: 20, borderRadius: 3,
+                    background: "#FDF6EE", border: "1px solid #E8D8C4",
+                    color: "#985830", fontSize: 7, fontWeight: 700, letterSpacing: "0.04em"
+                  }}>{c.type === "video" ? "VID" : "IMG"}</span>
+                  {c.sub && <span style={{ fontSize: 9, color: "#6B6B6B", letterSpacing: "0.04em", textTransform: "uppercase", fontWeight: 600 }}>{c.sub}</span>}
+                  {weakCount > 0 &&
+                  <span style={{
+                    fontSize: 8, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: "#B83A1F", background: "#F8E4DC", border: "1px solid #EBC4B5",
+                    padding: "2px 8px", borderRadius: 20
+                  }}>{weakCount} weak signal{weakCount !== 1 ? "s" : ""}</span>
+                  }
+                </div>
+                <div style={{
+                  fontSize: 17, fontWeight: 700, letterSpacing: "-0.015em",
+                  color: "#1A1A1A", fontFamily: "monospace", wordBreak: "break-all"
+                }}>{c.file}</div>
+              </div>
+              <div style={{
+                background: cc.bg, border: `1px solid ${cc.border}`,
+                borderRadius: 5, padding: "10px 16px",
+                textAlign: "right", marginLeft: 20, flexShrink: 0
+              }}>
+                <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: cc.fg, marginBottom: 4 }}>Composite</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: cc.fg, letterSpacing: "-0.02em", lineHeight: 1 }}>
+                  {c.composite.toFixed(1)}<span style={{ fontSize: 10, fontWeight: 500, opacity: 0.7 }}> / 10</span>
+                </div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: cc.fg, opacity: 0.75, marginTop: 2 }}>{cc.label}</div>
+              </div>
+            </div>
+
+            {/* Dimension table */}
+            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 8 }}>Dimension breakdown</div>
+            <div style={{ border: "1px solid #E8D8C4", borderRadius: 4, overflow: "hidden", marginBottom: 12 }}>
+              {/* Column headers */}
+              <div style={{ display: "flex", background: "#FDF6EE", borderBottom: "1px solid #E8D8C4", padding: "9px 14px" }}>
+                <div style={{ width: 130, flexShrink: 0, fontSize: 8, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#985830" }}>Dimension</div>
+                <div style={{ width: 86, flexShrink: 0, fontSize: 8, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#985830" }}>Score</div>
+                <div style={{ flex: 1, fontSize: 8, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#985830" }}>Rationale</div>
+              </div>
+              {DIM_KEYS.map((k, i) => {
+                const sc = scoreColor(c.scores[k]);
+                const dim = c.dims[k];
+                return (
+                  <div key={k} style={{
+                    display: "flex", padding: "12px 14px",
+                    borderTop: i === 0 ? "none" : "1px solid #F0E5D2",
+                    alignItems: "flex-start"
+                  }}>
+                    <div style={{ width: 130, flexShrink: 0, fontSize: 11, fontWeight: 600, color: "#1A1A1A", paddingTop: 2 }}>{DIM_LABELS[k]}</div>
+                    <div style={{ width: 86, flexShrink: 0, paddingTop: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
+                        <span style={{ fontSize: 15, fontWeight: 700, color: sc.fg, letterSpacing: "-0.01em" }}>{c.scores[k]}</span>
+                        <span style={{ fontSize: 9, color: sc.fg, fontWeight: 600 }}>/ 10</span>
+                      </div>
+                      <div style={{ width: 56, height: 4, background: "#F0E5D2", borderRadius: 2, overflow: "hidden" }}>
+                        <div style={{ width: `${c.scores[k] / 10 * 100}%`, height: "100%", background: sc.fg, borderRadius: 2 }} />
+                      </div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 11, lineHeight: 1.6, color: "#1A1A1A" }}>{dim.rationale}</div>
+                      {dim.weak &&
+                      <div style={{
+                        marginTop: 8, background: "#F8E4DC",
+                        border: "1px solid #EBC4B5", borderRadius: 4, padding: "8px 10px"
+                      }}>
+                          <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#B83A1F", marginBottom: 5 }}>Weak signal</div>
+                          <div style={{ fontSize: 10, lineHeight: 1.55, color: "#1A1A1A" }}>{dim.weak}</div>
+                        </div>
+                      }
+                    </div>
+                  </div>);
+
+              })}
+            </div>
+
+            {/* Notes + Priority */}
+            <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+              <div style={{ flex: 1, background: "#FDF6EE", border: "1px solid #E8D8C4", borderRadius: 4, padding: "14px 16px" }}>
+                <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 6 }}>Overall notes</div>
+                <div style={{ fontSize: 11, lineHeight: 1.65, color: "#1A1A1A" }}>{c.notes}</div>
+              </div>
+              <div style={{ flex: 1, background: "#fff", border: "1px solid #E8D8C4", borderLeft: "3px solid #985830", borderRadius: "0 4px 4px 0", padding: "14px 16px" }}>
+                <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#985830", marginBottom: 6 }}>Priority fix</div>
+                <div style={{ fontSize: 11, lineHeight: 1.65, color: "#1A1A1A", fontWeight: 500 }}>{c.priority}</div>
+              </div>
+            </div>
+          </div>);
+
+      })}
+
+      {/* Footer line */}
+      <div style={{ margin: "28px 44px 0", paddingTop: 12, borderTop: "1px solid #E8D8C4", display: "flex", justifyContent: "space-between", fontSize: 9, color: "#6B6B6B" }}>
+        <span>End of report · 27 May 2026</span>
+        <span>phillips-uk.com</span>
+      </div>
+      <div style={{ height: 24 }}></div>
+    </div>);
+
+}
+
+/* =============== APP =============== */
+function App() {
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (loading) return <LoadingState />;
+
+  return (
+    <div>
+      <Nav />
+      <ReportHeader />
+      <RankedSummary />
+      <Breakdowns />
+      <RunYourOwn />
+      <FooterCrossSell />
+      <Footer />
+      <PdfLayout />
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
