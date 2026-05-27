@@ -91,12 +91,13 @@ DIMENSIONS — score each 1 to 10:
 
 1. hook_quality
    Interpretation depends on frame position — see the user message for context.
+   For static images and non-video content: score on TWO combined factors — (a) pattern interrupt: does it stop the scroll via unusual composition, contrast, human face, or unexpected subject? and (b) emotional resonance: does it make the viewer feel something — curiosity, desire, humour, urgency, aspiration? A score of 8–10 requires both. A creative that interrupts without connecting emotionally caps at 6. A creative with emotional resonance but weak pattern interrupt caps at 7. Note in rationale which factor is limiting the score.
 
 2. visual_hierarchy
    Is there a clear focal point? Is the reading order obvious without effort? Penalise competing elements, lack of contrast between subject and background, unclear where the eye should land first.
 
 3. copy_clarity
-   Can the message be understood in under two seconds? Penalise ambiguous headlines, missing or vague CTAs, copy that requires context to understand, too much text for the format. Award high scores when the value proposition is immediately legible.
+   Can the message be understood in under two seconds? Penalise ambiguous headlines, missing or vague CTAs, copy that requires context to understand, too much text for the format. Award high scores when the value proposition is immediately legible. For video frames, see the user message for sound-off legibility context.
 
 4. brand_consistency
    Coherent colours, fonts, and tone consistent with a specific brand identity. A creative that could belong to any brand scores 1–4. Clear, consistent brand identity scores 7–10. Penalise mismatched palettes, inconsistent typography, or absence of any brand signals.
@@ -128,19 +129,25 @@ const FRAME_SCORING_CONTEXT = {
   opening: `This is the OPENING FRAME of a video ad (first ~33% of the video).
 
 Frame-specific dimension interpretations:
-- hook_quality (PRIMARY for this frame): Does this frame stop the scroll? Assess pattern interrupts (unusual angle, motion blur, colour contrast, human face/emotion), emotional triggers (curiosity, desire, humour, urgency), and immediate visual impact. 1–3 = generic, forgettable. 7–10 = strong scroll-stop in the first instant.
+- hook_quality (PRIMARY for this frame): Assess TWO factors combined:
+  1. Pattern interrupt — does this frame stop the scroll? Unusual angle, motion blur, colour contrast, human face/emotion, unexpected subject matter.
+  2. Emotional resonance — does it make the viewer feel something? Curiosity, desire, humour, urgency, belonging, aspiration. A creative can interrupt without connecting.
+  Score 8–10 if strong on both. Score 5–7 if strong on one but weak on the other — note in rationale which is limiting. Score 1–4 if weak on both.
+- copy_clarity (sound-off legibility): In addition to standard copy clarity, assess whether the message lands with audio muted. Score 8–10 if captions, overlaid text, or visual-only storytelling fully communicates the message without sound. Score 4–6 if the viewer gets the gist but would miss nuance. Score 1–3 if the frame only makes sense with audio (voiceover-dependent, uncontextualised dialogue, no supporting text). Flag absence of captions or text support as a weak signal.
 - offer_clarity: Score 7 if no explicit offer is shown — the opening frame's job is to hook attention, not sell. Only penalise (below 7) if a clumsy or confusing offer attempt actively undermines the hook. Do not flag absence of an offer as a weak signal on an opening frame.`,
 
   mid: `This is the MID FRAME of a video ad (~33–66% of video duration).
 
 Frame-specific dimension interpretations:
 - hook_quality (measures RETENTION for this frame, not scroll-stopping): Does this frame hold attention and develop the story? Does it build towards the offer or maintain viewer momentum? Score high if the narrative is progressing and the viewer has a clear reason to keep watching. Score low if the frame feels flat, repetitive, or like the viewer would drop off here.
+- copy_clarity (sound-off legibility): Assess whether the narrative is still followable with audio muted. Score 8–10 if on-screen text, captions, or clear visual action fully carries the story. Score 4–6 if the visual content is plausible but context-dependent. Score 1–3 if the frame is completely reliant on voiceover or dialogue to make sense — a viewer watching without audio would be lost. Flag as a weak signal if no text or captioning supports the mid-section.
 - offer_clarity: Partially relevant. Score moderately (5–7) if the value proposition is beginning to emerge or be hinted at. Only penalise below 5 if the mid-frame is actively confusing or contradicts the hook.`,
 
   close: `This is the CLOSING FRAME of a video ad (final ~33% of the video).
 
 Frame-specific dimension interpretations:
 - hook_quality (measures CTA STRENGTH for this frame): Is there a clear, compelling call-to-action? Does this frame convert? Score high (8–10) for a specific, urgent CTA with clear next steps. Score low (1–4) for a weak, generic, or absent CTA. "Shop Now" with no offer context scores no higher than 4.
+- copy_clarity (sound-off legibility): The closing frame must be fully legible without audio — this is when the viewer needs to act. Score 8–10 if the CTA, offer, and next step are entirely carried by on-screen text or visuals. Score 4–6 if the CTA is visible but offer context is missing without audio. Score 1–3 if the call-to-action only makes sense with voiceover. No captions on a closing frame is a critical weak signal — flag it.
 - offer_clarity (PRIMARY for this frame): The specific offer must be completely clear by the close. Penalise heavily if the price, discount, outcome, or benefit is not immediately obvious. A closing frame with no discernible offer is a critical failure.`
 };
 
