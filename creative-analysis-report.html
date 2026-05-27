@@ -325,6 +325,46 @@ function getFrameInfo(name) {
 // Returns an array of groups, sorted by group composite descending.
 // Each group: { type:'video', base, frames:[...sorted opening→mid→close], composite }
 //          or { type:'image', item, composite }
+// Role-based video composite: each dimension is drawn from the frame where it's meaningful.
+// Averaging all 6 dimensions equally across 3 frames produces noise — hook quality on a
+// close frame and offer clarity on an opening frame tell you nothing useful.
+//
+// Assembly:
+//   hook_quality    → opening only   (scroll-stop = first impression)
+//   visual_hierarchy → average all   (production quality throughout)
+//   copy_clarity    → minimum all    (weakest link — one incoherent frame hurts the whole)
+//   brand_consistency → average all  (must be consistent throughout)
+//   fatigue_signals → opening only   (format freshness = first impression)
+//   offer_clarity   → close only     (offer only needs to land at the end)
+function videoCompositeScore(frames) {
+  const opening = frames.find(f => f._frameInfo?.key === 'opening');
+  const mid     = frames.find(f => f._frameInfo?.key === 'mid');
+  const close   = frames.find(f => f._frameInfo?.key === 'close');
+
+  const get = (frame, dim) => {
+    const s = frame?.result?.[dim]?.score;
+    return typeof s === 'number' ? s : null;
+  };
+
+  const avg = (...vals) => {
+    const v = vals.filter(x => x !== null);
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+  };
+
+  const scores = [
+    get(opening, 'hook_quality'),                                                          // opening only
+    avg(get(opening,'visual_hierarchy'), get(mid,'visual_hierarchy'),  get(close,'visual_hierarchy')), // all
+    Math.min(...[opening,mid,close].map(f => get(f,'copy_clarity')).filter(x=>x!==null)) || null, // weakest
+    avg(get(opening,'brand_consistency'), get(mid,'brand_consistency'), get(close,'brand_consistency')), // all
+    get(opening, 'fatigue_signals'),                                                       // opening only
+    get(close,   'offer_clarity'),                                                         // close only
+  ].filter(x => x !== null);
+
+  if (!scores.length) return 0;
+  const composite = scores.reduce((a, b) => a + b, 0) / scores.length;
+  return Math.round(composite * 10) / 10;
+}
+
 function groupResults(results) {
   const groups = [];
   const videoMap = {}; // base -> group
@@ -346,8 +386,8 @@ function groupResults(results) {
   for (const g of groups) {
     if (g.type === 'video') {
       g.frames.sort((a, b) => a._frameInfo.order - b._frameInfo.order);
-      // Group composite = average of its frames
-      g.composite = g.frames.reduce((s, f) => s + (f.composite || 0), 0) / g.frames.length;
+      // Composite assembled from primary frame per dimension — not a naïve average
+      g.composite = videoCompositeScore(g.frames);
     }
   }
 
@@ -449,7 +489,7 @@ function renderSummaryTable(results) {
             <span style="font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${baseName}</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:13px;font-weight:600;color:#6B6B6B;font-style:italic;">avg ${g.composite.toFixed(1)}</span>
+            <span style="font-size:16px;font-weight:700;color:${scoreColor(g.composite)};font-variant-numeric:tabular-nums;">${g.composite.toFixed(1)}</span>
           </div>
           ${DIMENSIONS.map(() => `<span></span>`).join('')}
         </div>
@@ -623,7 +663,8 @@ function renderCreatives(results) {
         <span style="display:inline-flex;align-items:center;justify-content:center;height:26px;min-width:38px;background:#985830;color:#fff;border-radius:6px;padding:0 10px;font-size:12px;font-weight:700;">#${gIdx+1}</span>
         <span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;background:#fff;border:1px solid #E8D8C4;padding:3px 8px;border-radius:3px;">VIDEO</span>
         <span style="font-size:16px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;">${baseName}</span>
-        <span style="font-size:13px;color:#6B6B6B;">· ${g.frames.length} frames · avg composite ${g.composite.toFixed(1)}</span>
+        <span style="font-size:13px;color:#6B6B6B;">· ${g.frames.length} frames</span>
+        <span style="display:inline-flex;align-items:baseline;gap:4px;margin-left:4px;"><span style="font-size:16px;font-weight:700;color:${scoreColor(g.composite)};font-variant-numeric:tabular-nums;">${g.composite.toFixed(1)}</span><span style="font-size:11px;color:#6B6B6B;">/10</span></span>
       `;
       groupEl.appendChild(groupHeader);
 
