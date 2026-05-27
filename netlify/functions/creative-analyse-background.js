@@ -443,7 +443,9 @@ function escHtml(str) {
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return;
 
-  // Parse body
+  // Parse body — only jobId + token are expected here.
+  // File data is stored in Blobs by creative-upload.js (regular function)
+  // to work around the ~256KB body limit on background functions.
   let body;
   try {
     body = JSON.parse(event.body || '{}');
@@ -451,8 +453,8 @@ exports.handler = async function (event) {
     return;
   }
 
-  const { jobId, token, files } = body;
-  if (!jobId || !token || !Array.isArray(files) || files.length === 0) return;
+  const { jobId, token } = body;
+  if (!jobId || !token) return;
 
   // Validate jobId format
   if (!/^[a-z0-9]{6,32}$/.test(jobId)) return;
@@ -466,16 +468,33 @@ exports.handler = async function (event) {
     return;
   }
 
+  // Load files from Blobs (uploaded by creative-upload.js)
+  let store;
+  let files;
+  try {
+    store = getJobStore();
+    const raw = await store.get(`${jobId}-files`);
+    if (!raw) {
+      console.error('[creative-analyse] no files blob found for job', jobId);
+      await store.set(jobId, JSON.stringify({ status: 'error', message: 'File data missing — please re-upload.' }));
+      return;
+    }
+    files = JSON.parse(raw);
+  } catch (e) {
+    console.error('[creative-analyse] blob read error:', e.message);
+    return;
+  }
+
+  if (!Array.isArray(files) || files.length === 0) return;
+
   // Separate audio items (for transcript) from scorable creative files.
   // Audio items have names starting with '_audio_' — they are never scored directly.
   const audioItems   = files.filter(f => f.name && f.name.startsWith('_audio_'));
   const scorableRaw  = files.filter(f => !f.name || !f.name.startsWith('_audio_'));
   const fileList     = scorableRaw.slice(0, MAX_FILES);
 
-  // Init blob store and mark job as pending
-  let store;
+  // Mark job as in-progress
   try {
-    store = getJobStore();
     await store.set(jobId, JSON.stringify({ status: 'pending' }));
   } catch (e) {
     console.error('[creative-analyse] blob init error:', e.message);

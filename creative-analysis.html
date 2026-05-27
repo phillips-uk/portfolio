@@ -1077,17 +1077,33 @@ scoreBtn.addEventListener('click', async () => {
     // Step 1 — extract frames / compress
     const encoded = await prepareFiles(files, detail => setLoadingStep(1, detail));
 
-    // Step 2 — upload
-    setLoadingStep(2, `${encoded.length} frame${encoded.length !== 1 ? 's' : ''} ready`);
+    // Step 2 — upload files to Blobs via regular function (background functions
+    // have a ~256KB body limit; regular functions accept the full payload)
+    const itemCount = encoded.length;
+    const frameCount = encoded.filter(f => !f.name.startsWith('_audio_')).length;
+    setLoadingStep(2, `${frameCount} frame${frameCount !== 1 ? 's' : ''} ready — uploading`);
     const jobId = (Math.random().toString(36).slice(2, 10) + Date.now().toString(36)).slice(0, 24);
-    const resp = await fetch('/.netlify/functions/creative-analyse-background', {
+
+    // Step 2a: store files via the regular upload function
+    const uploadResp = await fetch('/.netlify/functions/creative-upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jobId, token, files: encoded })
     });
+    if (!uploadResp.ok) {
+      if (uploadResp.status === 401) { caLoading.style.display = 'none'; document.body.style.overflow = ''; clearToken(); showAuthUI(); scoreBtn.disabled = false; return; }
+      throw new Error(`Upload failed (${uploadResp.status}). Try fewer files or contact Lewis.`);
+    }
+
+    // Step 2b: trigger background scoring (tiny payload — just jobId + token)
+    const resp = await fetch('/.netlify/functions/creative-analyse-background', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobId, token })
+    });
     if (!resp.ok) {
       if (resp.status === 401) { caLoading.style.display = 'none'; document.body.style.overflow = ''; clearToken(); showAuthUI(); scoreBtn.disabled = false; return; }
-      throw new Error(`Upload failed (${resp.status}). Try fewer files or contact Lewis.`);
+      throw new Error(`Scoring trigger failed (${resp.status}). Please try again.`);
     }
 
     // Step 3 — scoring
