@@ -11,7 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <meta charset="utf-8">
 <title>Creative Scoring Report | Phillips.</title>
-<meta name="description" content="Your AI creative scoring report. Ranked creatives scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<meta name="description" content="Your AI creative scoring report. Ranked creatives scored across six dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, originality, and offer clarity.">
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 
@@ -107,13 +107,16 @@ body { font-family: var(--font-sans); color: var(--ink); background: var(--white
 }
 .dim-row:first-child { border-top: none; }
 
-/* Weak signal badge */
-.weak-badge {
-  display: inline-block; font-size: 11px; font-weight: 600;
-  padding: 3px 8px; border-radius: 999px;
-  background: #F5D5CD; color: #7B1C0C; border: 1px solid #E8B4A8;
-  letter-spacing: -0.003em; margin-top: 4px;
+/* Weak signal / impact badges */
+.impact-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px;
+  letter-spacing: -0.003em; margin-top: 6px;
 }
+.impact-critical { background:#FFEBEE; border:1px solid #EF9A9A; color:#B71C1C; }
+.impact-high     { background:#FFF3E0; border:1px solid #FF9800; color:#E65100; }
+.impact-quick_win { background:#E8F4FD; border:1px solid #90CAF9; color:#1565C0; }
 
 /* Loading / error states */
 #ca-loading-screen { min-height: 100vh; background: #FDF6EE; display: flex; align-items: center; justify-content: center; padding: 24px; }
@@ -301,12 +304,22 @@ function fmtDate(iso) {
 }
 
 const DIMENSIONS = [
-  { key: 'hook_quality',      label: 'Hook Quality',        num: '01' },
-  { key: 'visual_hierarchy',  label: 'Visual Hierarchy',    num: '02' },
-  { key: 'copy_clarity',      label: 'Copy Clarity',        num: '03' },
-  { key: 'brand_consistency', label: 'Brand Consistency',   num: '04' },
-  { key: 'fatigue_signals',   label: 'Fatigue Signals',     num: '05' },
+  { key: 'hook_quality',      label: 'Hook Quality',           num: '01' },
+  { key: 'visual_hierarchy',  label: 'Visual Hierarchy',       num: '02' },
+  { key: 'copy_clarity',      label: 'Copy Clarity',           num: '03' },
+  { key: 'brand_consistency', label: 'Brand Consistency',      num: '04' },
+  { key: 'fatigue_signals',   label: 'Originality & Fatigue',  num: '05' },
+  { key: 'offer_clarity',     label: 'Offer Clarity',          num: '06' },
 ];
+
+const IMPACT_LABELS = { critical: 'CRITICAL', high: 'HIGH', quick_win: 'QUICK WIN' };
+function impactBadge(weakSignal, impact) {
+  if (!weakSignal) return '';
+  const cls = impact ? `impact-${impact}` : 'impact-high';
+  const lbl = IMPACT_LABELS[impact] || '';
+  const prefix = lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : '';
+  return `<div><span class="impact-badge ${cls}">${prefix}${weakSignal}</span></div>`;
+}
 
 // =============== RENDER ===============
 function renderStats(results, scoredAt) {
@@ -350,6 +363,7 @@ function renderCreatives(results) {
       const score = typeof dimData.score === 'number' ? dimData.score : 0;
       const rationale = dimData.rationale || '';
       const weakSignal = dimData.weak_signal || null;
+      const impact = dimData.impact || null;
       const dimBarPct = (score / 10 * 100).toFixed(1);
       return `
         <div class="dim-row">
@@ -363,7 +377,7 @@ function renderCreatives(results) {
               <div class="score-bar-fill" style="width:${dimBarPct}%;background:${scoreBarColor(score)};"></div>
             </div>
             ${rationale ? `<p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0;">${rationale}</p>` : ''}
-            ${weakSignal ? `<span class="weak-badge">&#9888; ${weakSignal}</span>` : ''}
+            ${impactBadge(weakSignal, impact)}
           </div>
         </div>
       `;

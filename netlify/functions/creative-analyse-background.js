@@ -19,18 +19,19 @@ const Anthropic    = require('@anthropic-ai/sdk');
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const SCORING_MODEL = 'claude-opus-4-5';
+const SCORING_MODEL = 'claude-opus-4-7';
 const MAX_FILES     = 20;
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB in base64 terms (actual file ~15 MB)
 const TOKEN_TTL_MS  = 24 * 60 * 60 * 1000;
 
-const DIMENSIONS = ['hook_quality', 'visual_hierarchy', 'copy_clarity', 'brand_consistency', 'fatigue_signals'];
+const DIMENSIONS = ['hook_quality', 'visual_hierarchy', 'copy_clarity', 'brand_consistency', 'fatigue_signals', 'offer_clarity'];
 const DIMENSION_LABELS = {
   hook_quality:       'Hook quality',
   visual_hierarchy:   'Visual hierarchy',
   copy_clarity:       'Copy clarity',
   brand_consistency:  'Brand consistency',
-  fatigue_signals:    'Fatigue signals'
+  fatigue_signals:    'Originality & Fatigue',
+  offer_clarity:      'Offer clarity'
 };
 
 // ── Token verification ────────────────────────────────────────────────────────
@@ -77,7 +78,7 @@ function getJobStore() {
 
 // ── Claude scoring ────────────────────────────────────────────────────────────
 
-const SCORING_SYSTEM = `You are an expert paid media creative analyst. Your job is to score advertising creatives across five dimensions. You assess only what is visible in the supplied image.
+const SCORING_SYSTEM = `You are an expert paid media creative analyst. Your job is to score advertising creatives across six dimensions. You assess only what is visible in the supplied image.
 
 DIMENSIONS — score each 1 to 10:
 
@@ -94,15 +95,28 @@ DIMENSIONS — score each 1 to 10:
    Coherent colours, fonts, and tone consistent with a specific brand identity. A creative that could belong to any brand scores 1–4. Clear, consistent brand identity scores 7–10. Penalise mismatched palettes, inconsistent typography, or absence of any brand signals.
 
 5. fatigue_signals
-   Assess the ABSENCE of fatigued formats. High score = low fatigue risk. Penalise: plain white background product shots with no creative treatment, straight-to-camera UGC with no hook variant, generic blue/green CTA buttons with "Shop Now" or "Learn More", stock photography aesthetics, over-saturated lifestyle imagery. Award high scores to formats that feel fresh or less saturated in the category.
+   Score HIGH for original, fresh formats. Score LOW for saturated, overused formats. Penalise: plain white background product shots with no creative treatment, straight-to-camera UGC with no hook variant, generic "Shop Now" / "Learn More" CTAs, stock photography aesthetics, formats saturated 12+ months ago. Award high scores to formats that feel genuinely fresh or novel in the category.
+
+6. offer_clarity
+   Can the specific offer be named in under two seconds? Assess whether there is a concrete, specific value proposition visible (price, discount, free trial, outcome, clear benefit). Penalise vague or absent offers, generic CTAs ("Shop Now", "Learn More") where the viewer knows what to click but not why. Award high scores when the exact offer is immediately obvious without reading anything twice.
+   10 = Specific compelling offer immediately visible
+   7–9 = Clear offer, minor CTA genericness
+   4–6 = Vague offer or generic CTA
+   1–3 = No discernible offer or completely absent CTA
+
+IMPACT TIERS — for any dimension scoring 6 or below, classify the fix priority:
+  "critical"  — core element missing or broken; fix before running this creative
+  "high"      — significant drag on performance; fix before scaling spend
+  "quick_win" — addressable in the next iteration with a small change (reword CTA, reposition element, swap background)
 
 RESPONSE FORMAT — return only valid JSON, no markdown, no explanation outside the JSON:
 {
-  "hook_quality":      { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": "<null or specific issue if score <= 6>" },
-  "visual_hierarchy":  { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": "<null or specific issue if score <= 6>" },
-  "copy_clarity":      { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": "<null or specific issue if score <= 6>" },
-  "brand_consistency": { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": "<null or specific issue if score <= 6>" },
-  "fatigue_signals":   { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": "<null or specific issue if score <= 6>" },
+  "hook_quality":      { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "visual_hierarchy":  { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "copy_clarity":      { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "brand_consistency": { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "fatigue_signals":   { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "offer_clarity":     { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
   "overall_notes": "<2-3 sentences: what works, the priority fix, one specific action>"
 }`;
 
@@ -127,7 +141,7 @@ async function scoreCreative(client, file) {
 
   const message = await client.messages.create({
     model: SCORING_MODEL,
-    max_tokens: 1024,
+    max_tokens: 2048,
     system: SCORING_SYSTEM,
     messages: [
       {
@@ -143,7 +157,7 @@ async function scoreCreative(client, file) {
           },
           {
             type: 'text',
-            text: 'Score this ad creative across all five dimensions. Return only valid JSON.'
+            text: 'Score this ad creative across all six dimensions. Return only valid JSON.'
           }
         ]
       }
@@ -216,11 +230,26 @@ function buildReportHtml(scoredFiles) {
     </tr>`;
   });
 
+  function impactBadge(weakSignal, impact) {
+    if (!weakSignal) return '';
+    const styles = {
+      critical:  'background:#FFEBEE;border:1px solid #EF9A9A;color:#B71C1C;',
+      high:      'background:#FFF3E0;border:1px solid #FF9800;color:#E65100;',
+      quick_win: 'background:#E8F4FD;border:1px solid #90CAF9;color:#1565C0;'
+    };
+    const labels = { critical: 'CRITICAL', high: 'HIGH', quick_win: 'QUICK WIN' };
+    const style = styles[impact] || styles.high;
+    const lbl   = labels[impact] || '';
+    const prefix = lbl
+      ? `<strong style="font-size:9px;letter-spacing:0.05em;margin-right:4px;">${lbl}</strong>`
+      : '';
+    return `<br><span style="display:inline-block;${style}border-radius:4px;padding:2px 8px;font-size:11px;margin-top:6px;">${prefix}${escHtml(weakSignal)}</span>`;
+  }
+
   let html = `<style>
     .cr-table { width:100%; border-collapse:collapse; font-size:13px; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif }
     .cr-table th { background:#985830; color:#fff; font-weight:600; padding:11px 14px; text-align:left; white-space:nowrap; font-size:12px; letter-spacing:0.02em }
     .cr-detail-header { background:#985830; color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif }
-    .cr-weak { display:inline-block; background:#FFF3E0; border:1px solid #FF9800; color:#E65100; border-radius:3px; padding:1px 8px; font-size:11px; font-weight:600; margin-top:6px }
   </style>`;
 
   html += `<div style="overflow-x:auto;border-radius:8px;border:1px solid #E8D8C4;box-shadow:0 1px 4px rgba(152,88,48,0.08);margin-bottom:32px">
@@ -252,9 +281,7 @@ function buildReportHtml(scoredFiles) {
             const dim = r[d] || {};
             const score = dim.score || 0;
             const cls   = scoreClass(score);
-            const weakBadge = dim.weak_signal
-              ? `<br><span class="cr-weak">${escHtml(dim.weak_signal)}</span>`
-              : '';
+            const weakBadge = impactBadge(dim.weak_signal, dim.impact);
             return `<tr>
               <td style="padding:12px 16px;border-bottom:1px solid #E8D8C4;font-weight:600;color:#985830;font-size:12px;white-space:nowrap;width:140px">${DIMENSION_LABELS[d]}</td>
               <td style="padding:12px 16px;border-bottom:1px solid #E8D8C4;text-align:center">${scoreBadge(score)}</td>
@@ -282,12 +309,12 @@ function buildReportMd(scoredFiles) {
   md += `Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC\n\n`;
 
   md += '## Ranked Summary\n\n';
-  md += '| # | Creative | Score | Hook | Hierarchy | Copy | Brand | Fatigue |\n';
-  md += '|---|----------|-------|------|-----------|------|-------|--------|\n';
+  md += '| # | Creative | Score | Hook | Hierarchy | Copy | Brand | Originality | Offer |\n';
+  md += '|---|----------|-------|------|-----------|------|-------|-------------|-------|\n';
   sorted.forEach(function(f, i) {
     const r = f.result;
     const scores = DIMENSIONS.map(function(d) { return r[d] ? r[d].score : 0; });
-    md += `| ${i+1} | ${f.name} | **${f.composite}** | ${scores[0]} | ${scores[1]} | ${scores[2]} | ${scores[3]} | ${scores[4]} |\n`;
+    md += `| ${i+1} | ${f.name} | **${f.composite}** | ${scores[0]} | ${scores[1]} | ${scores[2]} | ${scores[3]} | ${scores[4]} | ${scores[5]} |\n`;
   });
 
   md += '\n---\n\n## Detail\n\n';
@@ -299,7 +326,10 @@ function buildReportMd(scoredFiles) {
       const dim = r[d] || {};
       const score = dim.score || 0;
       md += `**${DIMENSION_LABELS[d]}** — ${score}/10  \n${dim.rationale || ''}`;
-      if (dim.weak_signal) md += `  \n> Weak signal: ${dim.weak_signal}`;
+      if (dim.weak_signal) {
+        const impactLabel = dim.impact ? ` [${dim.impact.toUpperCase().replace('_', ' ')}]` : '';
+        md += `  \n> Weak signal${impactLabel}: ${dim.weak_signal}`;
+      }
       md += '\n\n';
     });
     md += `**Overall notes**  \n${r.overall_notes || ''}\n\n---\n\n`;
@@ -371,6 +401,8 @@ exports.handler = async function (event) {
       await store.set(jobId, JSON.stringify({
         status:  'progress',
         percent: progressPct,
+        done:    i,
+        total:   fileList.length,
         message: `Scoring ${escHtml(file.name)} (${i + 1} of ${fileList.length})...`
       }));
 
@@ -383,11 +415,12 @@ exports.handler = async function (event) {
           name:      file.name,
           composite: 0,
           result:    {
-            hook_quality:      { score: 0, rationale: 'File too large to process.', weak_signal: null },
-            visual_hierarchy:  { score: 0, rationale: 'File too large to process.', weak_signal: null },
-            copy_clarity:      { score: 0, rationale: 'File too large to process.', weak_signal: null },
-            brand_consistency: { score: 0, rationale: 'File too large to process.', weak_signal: null },
-            fatigue_signals:   { score: 0, rationale: 'File too large to process.', weak_signal: null },
+            hook_quality:      { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            visual_hierarchy:  { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            copy_clarity:      { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            brand_consistency: { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            fatigue_signals:   { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            offer_clarity:     { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
             overall_notes:     'This file exceeded the 20 MB size limit and could not be scored.'
           }
         });
@@ -400,11 +433,12 @@ exports.handler = async function (event) {
       } catch (e) {
         console.error(`[creative-analyse] scoring error for ${file.name}:`, e.message);
         result = {
-          hook_quality:      { score: 0, rationale: 'Scoring failed: ' + e.message, weak_signal: null },
-          visual_hierarchy:  { score: 0, rationale: 'Scoring failed.', weak_signal: null },
-          copy_clarity:      { score: 0, rationale: 'Scoring failed.', weak_signal: null },
-          brand_consistency: { score: 0, rationale: 'Scoring failed.', weak_signal: null },
-          fatigue_signals:   { score: 0, rationale: 'Scoring failed.', weak_signal: null },
+          hook_quality:      { score: 0, rationale: 'Scoring failed: ' + e.message, weak_signal: null, impact: null },
+          visual_hierarchy:  { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          copy_clarity:      { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          brand_consistency: { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          fatigue_signals:   { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          offer_clarity:     { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
           overall_notes:     'An error occurred while scoring this creative. Please try again.'
         };
       }
