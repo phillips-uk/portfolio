@@ -128,6 +128,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     display: none; margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: #1A1A1A;
   }
   .faq-item.open .faq-answer { display: block; }
+
+  /* ---- MOBILE NAV ---- */
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .ph-drawer.open { display: block; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .ph-drawer-link:hover { color: #1A1A1A; }
+  .ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: #7A3F1F; }
+
+  /* ---- MOBILE LAYOUT ---- */
+  @media (max-width: 900px) {
+    .ph-nav-desktop { display: none !important; }
+    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
+    /* Hero: stack columns */
+    .hero-inner-grid { grid-template-columns: 1fr !important; }
+    /* Two-up checks cards */
+    .two-up-grid { grid-template-columns: 1fr !important; }
+    /* 3-col check cards → 2-col */
+    .check-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    /* FAQ: stack heading + items */
+    .faq-inner-grid { grid-template-columns: 1fr !important; }
+    .faq-sticky-head { position: static !important; }
+    /* Methodology: stack */
+    .method-grid { grid-template-columns: 1fr !important; }
+    .method-photo { display: none !important; }
+    /* Padding */
+    .sec-white, .sec-cream { padding: 64px 0 !important; }
+    .page-w, .read-w { padding: 0 20px !important; }
+    /* Hero padding */
+    .hero-section { padding: 56px 20px 64px !important; }
+  }
+  @media (max-width: 600px) {
+    /* 2-col → 1-col for check cards */
+    .check-cards-grid { grid-template-columns: 1fr !important; }
+    /* Heads-up banner padding */
+    .heads-up-banner { padding: 12px 20px !important; }
+    /* Footer flex */
+    .footer-inner { flex-direction: column !important; align-items: flex-start !important; }
+    /* Hero h1 spacing */
+    .hero-section h1 { font-size: clamp(36px, 10vw, 52px) !important; }
+    /* Connect card padding */
+    #connect-card { padding: 20px !important; }
+  }
 </style>
 </head>
 <body class="ph">
@@ -145,7 +192,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </script>
 
 <!-- =============== HEADS UP BANNER =============== -->
-<div style="background:#F5EBD9;border-bottom:1px solid #E8D8C4;padding:12px 32px;">
+<div class="heads-up-banner" style="background:#F5EBD9;border-bottom:1px solid #E8D8C4;padding:12px 32px;">
   <div style="max-width:1200px;margin:0 auto;font-size:13px;line-height:1.5;color:#1A1A1A;display:flex;gap:10px;align-items:flex-start;">
     <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#fff;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-top:1px;">Heads up</span>
     <span>This tool is currently going through Google's OAuth app verification process. You may see a security warning when connecting your account - this is expected and temporary. Approval is expected within the next two weeks.</span>
@@ -156,20 +203,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:saturate(120%);border-bottom:1px solid #E8D8C4;height:64px;">
   <div style="max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
     <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1;">Phillips<span style="color:#985830;">.</span></a>
-    <nav style="display:flex;align-items:center;gap:28px;">
+    <nav class="ph-nav-desktop" style="display:flex;align-items:center;gap:28px;">
       <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
       <a href="/google-ads-audit" class="nav-link active">Google Ads Audit</a>
       <a href="/creative-analysis" class="nav-link">Creative Scoring</a>
       <a href="/guides/" class="nav-link">Guides</a>
       <a href="/#contact" class="btn-filled-sm">Get in touch</a>
     </nav>
+    <button class="ph-hamburger" onclick="document.getElementById('ph-gaa-drawer').classList.add('open')" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+    </button>
   </div>
 </header>
+<div id="ph-gaa-drawer" class="ph-drawer">
+  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-gaa-drawer').classList.remove('open')"></div>
+  <div class="ph-drawer-panel">
+    <button class="ph-drawer-close" onclick="document.getElementById('ph-gaa-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="ph-drawer-link active">Google Ads Audit</a>
+    <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
+    <a href="/guides/" class="ph-drawer-link">Guides</a>
+    <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+  </div>
+</div>
 
 <!-- =============== HERO =============== -->
-<section style="background:#FFFFFF;padding:80px 32px 96px;border-bottom:1px solid #E8D8C4;">
+<section class="hero-section" style="background:#FFFFFF;padding:80px 32px 96px;border-bottom:1px solid #E8D8C4;">
   <div style="max-width:1080px;margin:0 auto;">
-    <div style="display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:center;">
+    <div class="hero-inner-grid" style="display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:center;">
       <!-- Left -->
       <div>
         <span style="display:inline-flex;align-items:center;gap:10px;background:#F5EBD9;padding:7px 14px;border-radius:20px;margin-bottom:28px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Free · Read-only · Results in ~60 seconds</span>
@@ -223,7 +284,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- =============== TWO UP CHECKS =============== -->
 <section class="sec-cream">
   <div class="page-w">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div class="two-up-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
       <!-- What gets checked -->
       <div class="list-card">
         <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:18px;">What gets checked</div>
@@ -271,7 +332,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span style="display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:12px;">What gets checked</span>
       <h2 style="font-size:clamp(36px,4.5vw,48px);font-weight:700;letter-spacing:-0.025em;line-height:1.08;color:#1A1A1A;margin:0;max-width:760px;">Every account <em style="font-style:italic;color:#985830;">reviewed the same way</em>.</h2>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+    <div class="check-cards-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
       <!-- 01 -->
       <div class="check-card">
         <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
@@ -360,9 +421,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- =============== FAQ =============== -->
 <section class="sec-white" id="faq">
   <div class="page-w">
-    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:56px;align-items:start;">
+    <div class="faq-inner-grid" style="display:grid;grid-template-columns:1fr 1.6fr;gap:56px;align-items:start;">
       <!-- Sticky heading -->
-      <div style="border-left:3px solid #985830;padding-left:24px;position:sticky;top:96px;">
+      <div class="faq-sticky-head" style="border-left:3px solid #985830;padding-left:24px;position:sticky;top:96px;">
         <span style="display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:12px;">Frequently asked questions</span>
         <h2 style="font-size:clamp(32px,3.8vw,40px);font-weight:700;letter-spacing:-0.02em;line-height:1.1;color:#1A1A1A;margin:0;">Common questions about <em style="font-style:italic;color:#985830;">the audit</em>.</h2>
       </div>
@@ -432,7 +493,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- =============== METHODOLOGY =============== -->
 <section class="sec-cream">
   <div class="page-w">
-    <div style="display:grid;grid-template-columns:1fr 280px;gap:56px;align-items:center;">
+    <div class="method-grid" style="display:grid;grid-template-columns:1fr 280px;gap:56px;align-items:center;">
       <div>
         <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:18px;">About the methodology</span>
         <h2 style="font-size:clamp(36px,4.5vw,48px);font-weight:700;letter-spacing:-0.025em;line-height:1.08;color:#1A1A1A;margin:0 0 28px;max-width:640px;">Built by a <em style="font-style:italic;color:#985830;">practitioner</em>, not a platform.</h2>
@@ -441,7 +502,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0;">If the audit surfaces something significant and you want help fixing it, you can reach me at <a href="https://www.phillips-uk.com" style="color:#985830;text-decoration:none;font-weight:600;">phillips-uk.com</a>.</p>
       </div>
       <!-- Small headshot -->
-      <div style="position:relative;width:280px;height:360px;max-width:100%;">
+      <div class="method-photo" style="position:relative;width:280px;height:360px;max-width:100%;">
         <div style="position:absolute;inset:14px -14px -14px 14px;background:#F5EBD9;border-radius:8px;"></div>
         <div style="position:absolute;inset:0;background:#fff;border:1px solid #E8D8C4;border-radius:8px;overflow:hidden;">
           <img src="/images/profile.jpg" alt="Lewis Phillips" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;padding:5px;box-sizing:border-box;">
@@ -471,7 +532,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- =============== FOOTER =============== -->
 <footer style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);border-top:0;padding:28px 32px;">
-  <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+  <div class="footer-inner" style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
     <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);">
       <span style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em;">Phillips<span style="color:#985830;">.</span></span>
       <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>

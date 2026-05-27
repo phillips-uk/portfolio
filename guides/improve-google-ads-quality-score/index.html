@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
 <!-- End Google Tag Manager -->
@@ -14,7 +14,7 @@
 <meta name="twitter:card" content="summary">
 <title>Google Ads Quality Score Low? How to Improve It (2026) | Phillips. Guides</title>
 <meta name="description" content="Quality Score affects what you pay per click, not just where you rank. Covers Expected CTR, Ad Relevance and Landing Page Experience — with specific fixes for each component.">
-<link rel="icon" href="/assets/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
     "url": "https://www.phillips-uk.com"
   },
   "datePublished": "2026-05-26",
-  "dateModified": "2026-05-26",
+  "dateModified": "2026-05-27",
   "url": "https://www.phillips-uk.com/guides/improve-google-ads-quality-score/"
 }
 </script>
@@ -90,7 +90,7 @@
       "name": "What is a good Quality Score in Google Ads?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Google considers 7–10 above average, 5–6 average, and 1–4 below average. A score of 7 or above generally means your ad and landing page are performing well relative to competitors showing for the same searches. That said, Quality Score is a diagnostic — chasing a 10 on every keyword is a distraction. Focus on the components showing Below average rather than the composite number."
+        "text": "As a practical rule of thumb, 7–10 is usually healthy, 5–6 suggests room for improvement, and 1–4 deserves investigation. But the component ratings matter more than the composite number. A keyword at 5 with only Landing Page Experience below average needs a different fix from a keyword at 5 with Expected CTR below average. Focus on which component is rated Below average rather than the composite score in isolation."
       }
     },
     {
@@ -106,7 +106,7 @@
       "name": "How long does it take for Quality Score to improve?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Quality Score is based on impressions over the last 90 days, so changes take time to reflect. A significant ad copy improvement or landing page change may take 2–4 weeks to show meaningful movement in the score, depending on impression volume. High-volume keywords update faster than low-volume terms. Don't expect overnight changes — check week-over-week using the historical Quality Score column."
+        "text": "Quality Score is influenced by recent historical performance, so changes take time to appear. A meaningful ad copy or landing page improvement may take 2–4 weeks to register, depending on impression volume. High-volume keywords show movement faster than low-volume terms. Track direction using the historical Quality Score column — add it alongside the live score to see week-over-week movement."
       }
     },
     {
@@ -130,11 +130,11 @@
 </script>
 
 <style>
+  /* ── Reset & base ── */
   html, body { margin: 0; padding: 0; }
   body {
     font-family: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-    color: #1A1A1A;
-    background: #FFFFFF;
+    color: #1A1A1A; background: #fff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -143,10 +143,11 @@
   html { scroll-behavior: smooth; }
   [id] { scroll-margin-top: 96px; }
 
-  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .read-w { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+  /* ── Layout ── */
+  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
 
-  /* Article body type */
+  /* ── Article body typography ── */
   .article-body p {
     font-size: 17px; line-height: 1.7;
     color: #1A1A1A; margin: 0 0 22px;
@@ -171,7 +172,7 @@
   .article-body a {
     color: #985830; text-decoration: underline;
     text-decoration-thickness: 1px; text-underline-offset: 3px;
-    text-decoration-color: rgba(152, 88, 48, 0.4);
+    text-decoration-color: rgba(152,88,48,0.4);
     transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
   }
   .article-body a:hover { text-decoration-color: #985830; }
@@ -183,931 +184,911 @@
   .article-body li::marker { color: #985830; }
   .article-body code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.92em;
-    background: #FDF6EE;
-    border: 1px solid #E8D8C4;
-    padding: 1px 6px; border-radius: 3px;
-    color: #7A3F1F;
+    font-size: 0.92em; background: #FDF6EE;
+    border: 1px solid #E8D8C4; padding: 1px 6px;
+    border-radius: 3px; color: #7A3F1F;
+  }
+
+  /* ── Nav ── */
+  .site-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: saturate(120%);
+    border-bottom: 1px solid #E8D8C4; height: 64px;
+  }
+  .site-nav-inner {
+    max-width: 1200px; margin: 0 auto; height: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+  }
+  .nav-logo {
+    text-decoration: none; font-size: 24px; font-weight: 700;
+    letter-spacing: -0.01em; color: #1A1A1A; line-height: 1;
+  }
+  .nav-logo .dot { color: #985830; }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-link {
+    font-size: 14px; font-weight: 500; color: #6B6B6B;
+    text-decoration: none;
+    transition: color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .nav-link:hover { color: #1A1A1A; }
+  .btn-nav {
+    background: #985830; color: #fff; border: 0;
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    border-radius: 4px; cursor: pointer; font-family: inherit;
+    text-decoration: none; display: inline-block;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .btn-nav:hover { background: #7A3F1F; }
+
+  /* ── Eyebrow ── */
+  .eyebrow {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #985830;
+  }
+
+  /* ── Category pill ── */
+  .category-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #F5EBD9; color: #985830; border: 1px solid #E8D8C4;
+    padding: 4px 11px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; line-height: 1; white-space: nowrap;
+  }
+  .pill-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #985830; display: inline-block;
+  }
+
+  /* ── Article header ── */
+  .article-header { background: #fff; padding: 64px 0 48px; }
+  .breadcrumb { font-size: 12px; color: #6B6B6B; letter-spacing: -0.005em; margin-bottom: 28px; }
+  .breadcrumb a { color: #6B6B6B; text-decoration: none; }
+  .breadcrumb .sep { margin: 0 8px; color: #E8D8C4; }
+  .breadcrumb .cur { color: #985830; font-weight: 600; }
+  .article-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .article-readtime { font-size: 12px; color: #6B6B6B; letter-spacing: -0.005em; }
+  .article-h1 {
+    font-size: clamp(36px, 4.8vw, 52px); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.06;
+    color: #1A1A1A; margin: 0 0 24px; text-wrap: balance;
+  }
+  .article-byline {
+    font-size: 13px; color: #6B6B6B; letter-spacing: -0.005em;
+    padding-bottom: 28px; border-bottom: 1px solid #E8D8C4; margin-bottom: 32px;
+  }
+  .article-lede {
+    font-size: 20px; line-height: 1.55; color: #1A1A1A;
+    margin: 0; letter-spacing: -0.005em; font-weight: 500; text-wrap: pretty;
+  }
+
+  /* ── Article section ── */
+  .article-section { background: #fff; padding: 8px 0 96px; }
+
+  /* ── Diagram wrapper ── */
+  .diagram-wrap { margin: 32px 0 56px; }
+  .diagram-label { margin-bottom: 16px; }
+
+  /* ── Ad Rank table ── */
+  .adrank-table {
+    border: 1px solid #E8D8C4; border-radius: 6px;
+    background: #fff; overflow: hidden;
+  }
+  .adrank-head {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.2fr 1fr 80px;
+    background: #FDF6EE; border-bottom: 1px solid #E8D8C4;
+    padding: 14px 24px; gap: 16px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #6B6B6B;
+  }
+  .adrank-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.2fr 1fr 80px;
+    padding: 16px 24px; border-bottom: 1px solid #F0E6D5;
+    align-items: center; gap: 16px; background: #fff;
+  }
+  .adrank-row.highlight { background: #FDF6EE; }
+  .adrank-row:last-of-type { border-bottom: none; }
+  .adrank-advertiser { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+  .adrank-advertiser.amber { font-weight: 700; color: #985830; }
+  .adrank-cell { font-size: 14px; color: #3A3A3A; }
+  .adrank-cpc { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+  .adrank-cpc.amber { color: #985830; }
+  .adrank-pos {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #6B6B6B;
+  }
+  .adrank-pos.amber { color: #985830; }
+  .adrank-foot {
+    padding: 12px 24px; font-size: 12px; color: #6B6B6B;
+    line-height: 1.55; border-top: 1px solid #F0E6D5; background: #FAFAF8;
+  }
+
+  /* ── Component table ── */
+  .comp-table {
+    border: 1px solid #E8D8C4; border-radius: 6px;
+    background: #fff; overflow: hidden;
+  }
+  .comp-head {
+    display: grid; grid-template-columns: 1.1fr 1.6fr 1.6fr 1.4fr;
+    background: #FDF6EE; border-bottom: 1px solid #E8D8C4;
+    padding: 14px 24px; gap: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #6B6B6B;
+  }
+  .comp-row {
+    display: grid; grid-template-columns: 1.1fr 1.6fr 1.6fr 1.4fr;
+    padding: 18px 24px; border-bottom: 1px solid #F0E6D5;
+    align-items: start; gap: 20px;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-name { font-size: 14px; font-weight: 700; color: #985830; letter-spacing: -0.005em; }
+  .comp-cell { font-size: 14px; color: #3A3A3A; line-height: 1.5; }
+  .comp-fix  { font-size: 13px; color: #985830; font-weight: 500; line-height: 1.5; }
+
+  /* ── Issue block ── */
+  .issue-block { margin: 56px 0 24px; }
+  .issue-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
+  .issue-num {
+    font-size: 14px; font-weight: 700; color: #985830;
+    letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
+  }
+  .issue-title {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.018em;
+    line-height: 1.25; color: #1A1A1A; margin: 0; text-wrap: balance;
+  }
+
+  /* ── 2-column card grid ── */
+  .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+
+  /* ── CTR / Ad group verdict cards ── */
+  .verdict-card { border-radius: 6px; background: #fff; overflow: hidden; }
+  .verdict-card-head {
+    padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .verdict-badge {
+    width: 18px; height: 18px; border-radius: 50%; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .verdict-label {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;
+  }
+  .verdict-card-body { padding: 20px 22px; }
+  .verdict-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px; color: #1A1A1A; font-weight: 600;
+    margin-bottom: 12px; letter-spacing: -0.005em;
+  }
+  .verdict-note { font-size: 13px; line-height: 1.55; color: #6B6B6B; }
+
+  /* ── Ad group keyword list ── */
+  .kw-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .kw-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; background: #FAFAF8;
+    border: 1px solid #F0E6D5; border-radius: 4px;
+  }
+  .kw-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .kw-text { font-size: 13px; color: #1A1A1A; letter-spacing: -0.005em; }
+  .kw-card-note {
+    border-top: 1px dashed #E8D8C4; padding-top: 12px;
+    font-size: 12px; color: #6B6B6B; line-height: 1.55; font-style: italic;
+  }
+
+  /* ── Landing page diagram ── */
+  .lp-diagram {
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 24px 28px; margin: 32px 0 56px;
+  }
+  .lp-diagram-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #6B6B6B; margin-bottom: 4px; }
+  .lp-diagram-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 22px; letter-spacing: -0.005em; }
+  .lp-rows { display: flex; flex-direction: column; gap: 16px; }
+  .lp-row {
+    display: grid; grid-template-columns: 1fr auto 1fr auto 1.4fr;
+    align-items: center; gap: 12px; padding: 16px 20px;
+    border-radius: 6px;
+  }
+  .lp-col-label { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #8A8580; margin-bottom: 4px; }
+  .lp-col-ad  { font-size: 13px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.005em; line-height: 1.4; }
+  .lp-col-page { font-size: 13px; color: #3A3A3A; line-height: 1.4; }
+  .lp-arrow { font-size: 18px; color: #985830; padding: 0 4px; }
+  .lp-verdict { font-size: 12px; font-weight: 600; line-height: 1.4; }
+
+  /* ── Mistakes grid ── */
+  .mistakes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 8px 0 56px; }
+  .mistake-col {
+    background: #fff; border: 1px solid #E8D8C4;
+    border-radius: 6px; padding: 20px 22px;
+    display: flex; flex-direction: column;
+  }
+  .mistake-col-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .mistake-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .mistake-col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; }
+  .mistake-col-note { font-size: 12px; color: #6B6B6B; margin-bottom: 16px; }
+  .mistake-items { display: flex; flex-direction: column; gap: 8px; }
+  .mistake-item {
+    display: flex; align-items: start; gap: 12px;
+    padding: 10px 12px; background: #FDF6EE;
+    border: 1px solid #F0E6D5; border-radius: 4px;
+  }
+  .mistake-icon {
+    width: 20px; height: 20px; border-radius: 4px;
+    background: #fff; border: 1px solid #E8D8C4;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #985830;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .mistake-text { font-size: 13px; font-weight: 500; color: #1A1A1A; line-height: 1.35; letter-spacing: -0.005em; }
+
+  /* ── 2026 dark callout ── */
+  .dark-callout-wrap { margin: 56px 0; }
+  .dark-callout {
+    background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%);
+    border-radius: 6px; padding: 32px 36px; color: #fff;
+  }
+  .dark-callout-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 11px; border-radius: 20px;
+    background: rgba(152,88,48,0.18); border: 1px solid rgba(152,88,48,0.4);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #D9A57E; margin-bottom: 20px;
+  }
+  .dark-callout-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #985830; }
+  .dark-callout h3 {
+    font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;
+  }
+  .dark-callout p { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.75); margin: 0 0 14px; }
+  .dark-callout p:last-child { margin-bottom: 0; }
+  .dark-callout a { color: #D9A57E; text-decoration: underline; text-decoration-color: rgba(217,165,126,0.4); transition: text-decoration-color 150ms; }
+  .dark-callout a:hover { text-decoration-color: #D9A57E; }
+
+  /* ── FAQ ── */
+  .faq-list {
+    border: 1px solid #E8D8C4; border-radius: 6px;
+    overflow: hidden; background: #fff; margin: 8px 0 56px;
+  }
+  .faq-item { border-bottom: 1px solid #F0E6D5; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-btn {
+    width: 100%; text-align: left; background: transparent; border: 0;
+    cursor: pointer; padding: 20px 24px; font-family: inherit;
+    display: grid; grid-template-columns: 1fr 24px; gap: 16px; align-items: center;
+  }
+  .faq-q { font-size: 16px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.008em; line-height: 1.4; }
+  .faq-icon {
+    font-size: 20px; color: #985830; line-height: 1; text-align: center;
+    transition: transform 180ms cubic-bezier(0.2,0,0,1); user-select: none;
+  }
+  .faq-icon.is-open { transform: rotate(45deg); }
+  .faq-answer { display: none; padding: 0 24px 22px; font-size: 15px; line-height: 1.65; color: #3A3A3A; }
+  .faq-answer.is-open { display: block; }
+
+  /* ── Author block ── */
+  .author-block {
+    background: #FDF6EE; border: 1px solid #E8D8C4;
+    border-radius: 6px; padding: 28px 32px;
+    display: grid; grid-template-columns: 64px 1fr;
+    gap: 22px; align-items: start; margin-top: 56px;
+  }
+  .author-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid #E8D8C4; }
+  .author-name { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+  .author-role { font-size: 13px; color: #6B6B6B; margin-left: 12px; }
+  .author-bio { font-size: 14px; line-height: 1.65; color: #3A3A3A; margin: 8px 0 14px; max-width: 620px; }
+  .author-link { font-size: 13px; font-weight: 600; color: #985830; text-decoration: none; }
+  .author-link:hover { text-decoration: underline; }
+
+  /* ── Related section ── */
+  .related-section { background: #FDF6EE; padding: 72px 0 96px; }
+  .related-heading-wrap { border-left: 3px solid #985830; padding-left: 24px; margin-bottom: 28px; }
+  .related-heading {
+    font-size: clamp(24px, 2.6vw, 30px); font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.15;
+    color: #1A1A1A; margin: 10px 0 0;
+  }
+  .related-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .related-card {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 24px 26px; min-height: 220px;
+    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms, border-color 200ms;
+  }
+  .related-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(152,88,48,0.10); border-color: #985830; }
+  .related-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .related-card-readtime { font-size: 11px; color: #6B6B6B; letter-spacing: -0.005em; }
+  .related-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; color: #1A1A1A; margin: 0 0 12px; text-wrap: pretty; }
+  .related-card-desc { font-size: 14px; line-height: 1.55; color: #6B6B6B; margin: 0 0 24px; }
+  .related-card-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #985830; letter-spacing: -0.005em; }
+
+  /* ── End CTA ── */
+  .end-cta { background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%); padding: 96px 32px; }
+  .end-cta-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+  .end-cta h2 {
+    font-size: clamp(36px, 4.6vw, 52px); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.06; color: #fff;
+    margin: 20px 0 32px;
+  }
+  .end-cta h2 em { font-style: italic; color: #985830; }
+  .end-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-cta-filled {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
+    background: #985830; border: 1.5px solid #985830;
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: background 150ms;
+  }
+  .btn-cta-filled:hover { background: #7A3F1F; border-color: #7A3F1F; }
+  .btn-cta-outline {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: border-color 150ms;
+  }
+  .btn-cta-outline:hover { border-color: rgba(255,255,255,0.7); }
+  .end-cta-note { margin-top: 32px; font-size: 13px; color: rgba(255,255,255,0.5); }
+
+  /* ── Footer ── */
+  .site-footer { background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%); padding: 28px 32px; }
+  .site-footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-left { display: flex; align-items: center; gap: 16px; font-size: 12px; color: rgba(255,255,255,0.4); }
+  .footer-logo { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+  .footer-logo .dot { color: #985830; }
+
+  /* ── Mobile nav ── */
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .ph-drawer.open { display: block; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .ph-drawer-link:hover, .ph-drawer-link.active { color: #1A1A1A; }
+  .ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: #7A3F1F; }
+
+  /* ── Responsive ── */
+  @media (max-width: 780px) {
+    .nav-links { display: none !important; }
+    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
+    .read-w { padding: 0 20px; }
+    .page-w  { padding: 0 20px; }
+    .cards-2col { grid-template-columns: 1fr; }
+    .mistakes-grid { grid-template-columns: 1fr; }
+    .adrank-table, .comp-table, .lp-diagram { overflow-x: auto; }
+    .adrank-head, .adrank-row { min-width: 520px; }
+    .comp-head, .comp-row { min-width: 560px; }
+    .lp-row { min-width: 560px; }
+    .author-block { grid-template-columns: 1fr; }
+    .article-h1 { font-size: 32px; }
   }
 </style>
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<div id="root"></div>
 
-<script type="text/babel">
+<!-- ═══════════════════════════════════════════ NAV -->
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
+    <nav class="nav-links">
+      <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+      <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
+      <a href="/creative-analysis" class="nav-link">Creative Scoring</a>
+      <a href="/guides/" class="nav-link">Guides</a>
+      <a href="/#contact" class="btn-nav">Get in touch</a>
+    </nav>
+    <button class="ph-hamburger" onclick="document.getElementById('ph-art3-drawer').classList.add('open')" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+    </button>
+  </div>
+</header>
+<div id="ph-art3-drawer" class="ph-drawer">
+  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art3-drawer').classList.remove('open')"></div>
+  <div class="ph-drawer-panel">
+    <button class="ph-drawer-close" onclick="document.getElementById('ph-art3-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
+    <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
+    <a href="/guides/" class="ph-drawer-link active">Guides</a>
+    <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+  </div>
+</div>
 
-/* =============== TOKENS =============== */
-const CAT = {
-  "Google Ads":    { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
-  "Landing Pages": { fg: "#2E5F5C", bg: "#DCEAE8", border: "#BFD6D2" },
-  "Tracking":      { fg: "#4F5760", bg: "#E4E7EB", border: "#CFD4DA" },
-};
-
-const POST = {
-  cat: "Google Ads",
-  title: "Google Ads Quality Score Low? How to Improve It",
-  byline: "Lewis Phillips · 26 May 2026 · 10 min read",
-  time: "10 min read",
-  lede: "Quality Score is a diagnostic, not a KPI — but a keyword sitting at 3 can cost two to three times as much per click as the same keyword at 7, with no change in position. This guide covers what each component actually measures, how to find the problem in your account, and the specific fixes that move the dial on Expected CTR, Ad Relevance, and Landing Page Experience.",
-};
-
-const RELATED = [
-  {
-    slug: "fix-google-ads-conversion-tracking",
-    cat: "Google Ads",
-    time: "12 min read",
-    title: "Google Ads Conversion Tracking Not Working? How to Fix It",
-    desc: "Smart Bidding optimises toward your conversion data. If the data is wrong, your bids are wrong. Every common cause covered.",
-  },
-  {
-    slug: "google-ads-bidding-strategy",
-    cat: "Google Ads",
-    time: "8 min read",
-    title: "Google Ads Bidding Strategy: Which to Use and When",
-    desc: "tCPA, tROAS, Maximise Conversions, manual CPC — when each strategy makes sense and what it takes to make Smart Bidding work.",
-  },
-];
-
-/* =============== PRIMITIVES =============== */
-function Eyebrow({ children, color = "#985830" }) {
-  return (
-    <span style={{
-      display: "inline-block",
-      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-      textTransform: "uppercase", color,
-    }}>{children}</span>
-  );
-}
-
-function CategoryPill({ cat, size = "md" }) {
-  const t = CAT[cat] || CAT["Google Ads"];
-  const pad = size === "sm" ? "3px 9px" : "4px 11px";
-  const fs = size === "sm" ? 10 : 11;
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 6,
-      background: t.bg, color: t.fg,
-      border: `1px solid ${t.border}`,
-      padding: pad, borderRadius: 20,
-      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
-      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: 999, background: t.fg, display: "inline-block" }}/>
-      {cat}
-    </span>
-  );
-}
-
-function BtnFilledSmall({ children, onClick }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
-        padding: "10px 20px", fontSize: 13, fontWeight: 600,
-        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
-      }}>{children}</button>
-  );
-}
-
-/* =============== NAV =============== */
-function Nav({ active }) {
-  const linkStyle = (k) => ({
-    fontSize: 14, fontWeight: 500,
-    color: active === k ? "#1A1A1A" : "#6B6B6B",
-    textDecoration: "none",
-    transition: "color 150ms cubic-bezier(0.2,0,0,1)",
-  });
-  return (
-    <header style={{
-      position: "sticky", top: 0, zIndex: 50,
-      background: "rgba(255,255,255,0.96)",
-      backdropFilter: "saturate(120%)",
-      borderBottom: "1px solid #E8D8C4", height: 64,
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto", height: "100%",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
-      }}>
-        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
-          Phillips<span style={{ color: "#985830" }}>.</span>
-        </a>
-        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
-          <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
-          <a href="/guides/" style={linkStyle("guides")}>Guides</a>
-          <BtnFilledSmall onClick={() => window.location.href = '/#contact'}>Get in touch</BtnFilledSmall>
-        </nav>
-      </div>
-    </header>
-  );
-}
-
-/* =============== ARTICLE HEADER =============== */
-function ArticleHeader() {
-  return (
-    <header style={{ background: "#fff", padding: "64px 0 48px" }}>
-      <div className="read-w">
-        {/* Breadcrumb */}
-        <div style={{
-          fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em",
-          marginBottom: 28,
-        }}>
-          <a href="/guides/" style={{ color: "#6B6B6B", textDecoration: "none" }}>Guides</a>
-          <span style={{ margin: "0 8px", color: "#E8D8C4" }}>/</span>
-          <span style={{ color: "#985830", fontWeight: 600 }}>Quality Score</span>
-        </div>
-
-        {/* Category + read time */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 28 }}>
-          <CategoryPill cat={POST.cat}/>
-          <span style={{ fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-            {POST.time}
-          </span>
-        </div>
-
-        {/* H1 */}
-        <h1 style={{
-          fontSize: "clamp(36px, 4.8vw, 52px)", fontWeight: 700,
-          letterSpacing: "-0.025em", lineHeight: 1.06,
-          color: "#1A1A1A", margin: "0 0 24px",
-          textWrap: "balance",
-        }}>
-          {POST.title}
-        </h1>
-
-        {/* Byline */}
-        <div style={{
-          fontSize: 13, color: "#6B6B6B", letterSpacing: "-0.005em",
-          paddingBottom: 28, borderBottom: "1px solid #E8D8C4",
-          marginBottom: 32,
-        }}>
-          {POST.byline}
-        </div>
-
-        {/* Lede */}
-        <p style={{
-          fontSize: 20, lineHeight: 1.55,
-          color: "#1A1A1A", margin: 0,
-          letterSpacing: "-0.005em",
-          fontWeight: 500,
-          textWrap: "pretty",
-        }}>
-          {POST.lede}
-        </p>
-      </div>
-    </header>
-  );
-}
-
-/* =============== ARTICLE BODY =============== */
-function ArticleBody() {
-  return (
-    <section style={{ background: "#fff", padding: "8px 0 96px" }}>
-      <div className="read-w">
-        <div className="article-body">
-
-          {/* Why it matters */}
-          <h2>Why Quality Score affects what you pay, not just where you rank</h2>
-          <p>
-            Ad Rank determines your position in each auction. It is calculated from your bid, the quality of your ad and landing page, Ad Rank thresholds, competition, search context, and the expected impact of your assets. Quality is not a single number in that formula — it is a real-time assessment Google makes for every auction. The 1–10 Quality Score in your Keywords table is a diagnostic approximation of that quality signal, not the auction input itself.
-          </p>
-          <p>
-            What the diagnostic tells you matters commercially. Google's second-price auction means your actual CPC is partly determined by the ratio of your quality to your competitors'. The simplified version: your cost is roughly the Ad Rank of the advertiser below you divided by your Quality Score. A keyword at QS 3 costs meaningfully more per click than the same keyword at QS 7 — to hold the same position — because your quality score is in the denominator of your cost calculation.
-          </p>
-          <p>
-            <strong>Fix the quality first.</strong> Bidding up on a low-quality keyword makes it worse, not better.
-          </p>
-        </div>
-
-        <AdRankDiagram/>
-
-        <div className="article-body">
-          <h2>The three components — what each one measures</h2>
-          <p>
-            Every Quality Score is built from three components, each rated Above average, Average, or Below average relative to other advertisers showing for the same searches over the last 90 days. A Below average rating on any component tells you something specific about where the problem is.
-          </p>
-        </div>
-
-        <ComponentTable/>
-
-        <div className="article-body">
-          <h2>How to find your Quality Score in Google Ads</h2>
-          <p>
-            Quality Score is not visible by default. You need to add it to the Keywords table manually.
-          </p>
-          <p>
-            Navigate to <strong>Campaigns &rsaquo; Keywords</strong>. Click the columns icon at the top right of the table, then select <strong>Modify columns for keywords</strong>. Under the Quality Score section, add:
-          </p>
-          <ul>
-            <li><strong>Quality Score</strong> — the 1–10 composite</li>
-            <li><strong>Exp. CTR</strong> — Expected CTR component rating</li>
-            <li><strong>Ad Relevance</strong> — Ad Relevance component rating</li>
-            <li><strong>Landing Page Exp.</strong> — Landing Page Experience component rating</li>
-          </ul>
-          <p>
-            Once visible, sort by Quality Score ascending. Work through keywords showing Below average on any component — that is where the fixes are.
-          </p>
-          <p>
-            A dash (<code>—</code>) in the Quality Score column means there is insufficient exact-match impression data to calculate a score. This is normal for low-volume or new keywords. You cannot directly improve a dash — only time and accumulated impressions will generate a score.
-          </p>
-        </div>
-
-        {/* Component 1 */}
-        <Issue n={1} id="component-1" title="Expected CTR is Below average">
-          <p>
-            Expected CTR is Google's prediction of how likely your ad is to be clicked when shown for a specific search query. It is benchmarked against other advertisers showing for the same exact queries. Below average means Google expects your ad to receive fewer clicks than competitors — not that your historical CTR is low, but that it is predicted to be.
-          </p>
-          <p>
-            The most direct lever is your ad copy. Headlines that reflect the searched query raise click prediction because they signal relevance to the user. Generic headlines — "Marketing Agency London", "Quality Products Online" — match no specific intent and score poorly against competitors who have written to the exact query.
-          </p>
-          <p>
-            <strong>Fix:</strong> Rewrite Headline 1 in your Responsive Search Ads to directly reflect the query intent. Use a call-to-action that matches what the searcher wants to do ("Get a Quote" for service intent, "Shop Now" for transactional, "See How It Works" for informational). Add negative keywords to exclude queries where a click is unlikely — every low-intent impression that doesn't get clicked is dragging expected CTR down. Run regular search term audits and exclude irrelevant match expansions before they accumulate.
-          </p>
-        </Issue>
-
-        <CTRDiagram/>
-
-        {/* Component 2 */}
-        <Issue n={2} id="component-2" title="Ad Relevance is Below average">
-          <p>
-            Ad Relevance measures how closely your ad matches the intent behind the search query. It scores poorly when there is a gap between what someone searched for and what your ad says. The most common cause is ad group structure: too many keywords with different intents forced into the same group, served by the same set of ads.
-          </p>
-          <p>
-            If your ad group contains "buy running shoes", "are running shoes good for hiking", and "running shoe care tips", no single set of ads can be highly relevant to all three. The commercial buyer, the curious researcher, and the existing owner are different audiences with different intents.
-          </p>
-          <p>
-            <strong>Fix:</strong> Group keywords with near-identical intent into the same ad group — 5 to 15 closely related terms is a workable target. The headline in your RSA should address the intent shared by all keywords in that group. For high-value exact match keywords with significant impression volume and competitive CPCs, a dedicated ad group gives you full control over the message. The underlying principle is that tight groupings make it possible to write genuinely relevant ads; loose groupings make it structurally impossible.
-          </p>
-        </Issue>
-
-        <AdGroupDiagram/>
-
-        {/* Component 3 */}
-        <Issue n={3} id="component-3" title="Landing Page Experience is Below average">
-          <p>
-            Landing Page Experience reflects how relevant and useful your landing page is to people who click your ad. Google's crawlers assess the page for usefulness of content, ease of navigation, and whether it delivers on what the ad promised. A poor rating here almost always means one of three things: the page is too generic for the query, it loads too slowly, or it performs poorly on mobile.
-          </p>
-          <p>
-            Sending paid traffic to a homepage is the most common structural mistake. The homepage serves too many audiences and too many goals. The user who clicked an ad for "emergency boiler repair London" does not want to navigate through a services menu. A dedicated landing page with a single message and a single conversion action is the correct structure — and it performs better on this component because it unambiguously matches the ad.
-          </p>
-          <p>
-            <strong>Fix:</strong> Match the landing page to the specific ad. The primary keyword should appear in the H1. The offer or service promised in the ad should be the first thing visible on the page. Use PageSpeed Insights (<code>pagespeed.web.dev</code>) to check mobile performance — Google assesses mobile and desktop separately, so a fast desktop page does not compensate for a slow mobile one. For lead generation pages, put the form or call-to-action above the fold on a 375px screen. The page must load quickly, deliver on the ad's promise, and make the next action obvious.
-          </p>
-        </Issue>
-
-        <LandingPageDiagram/>
-
-        <div className="article-body">
-          <h2>The six mistakes that keep Quality Score low</h2>
-          <p>
-            Most Quality Score problems are structural — they are baked into how the account was set up, not just how the ads were written. Fixing individual keywords one at a time is less effective than identifying which of these structural issues applies and fixing it at the root.
-          </p>
-        </div>
-
-        <MistakesGrid/>
-
-        <Update2026/>
-
-        <div className="article-body">
-          <h2>FAQ</h2>
-        </div>
-
-        <Faq/>
-
-        <AuthorBlock/>
-
-      </div>
-    </section>
-  );
-}
-
-/* =============== AD RANK DIAGRAM =============== */
-function AdRankDiagram() {
-  const Row = ({ qs, bid, ar, cpc, pos, highlight }) => (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "1.2fr 1fr 1.2fr 1fr 80px",
-      padding: "16px 24px",
-      borderBottom: "1px solid #F0E6D5",
-      alignItems: "center", gap: 16,
-      background: highlight ? "#FDF6EE" : "#fff",
-    }}>
-      <span style={{ fontSize: 14, fontWeight: highlight ? 700 : 600, color: highlight ? "#985830" : "#1A1A1A" }}>{qs}</span>
-      <span style={{ fontSize: 14, color: "#3A3A3A" }}>{bid}</span>
-      <span style={{ fontSize: 14, color: "#3A3A3A" }}>{ar}</span>
-      <span style={{ fontSize: 14, fontWeight: 600, color: highlight ? "#985830" : "#1A1A1A" }}>{cpc}</span>
-      <span style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
-        textTransform: "uppercase",
-        color: pos === "#1" ? "#985830" : "#6B6B6B",
-      }}>{pos}</span>
+<!-- ═══════════════════════════════════════════ ARTICLE HEADER -->
+<header class="article-header">
+  <div class="read-w">
+    <div class="breadcrumb">
+      <a href="/guides/">Guides</a>
+      <span class="sep">/</span>
+      <span class="cur">Quality Score</span>
     </div>
-  );
-  return (
-    <div style={{ margin: "32px 0 56px" }}>
-      <div style={{ marginBottom: 16 }}>
-        <Eyebrow>Quality score in the auction</Eyebrow>
-      </div>
-      <div style={{
-        border: "1px solid #E8D8C4", borderRadius: 6,
-        background: "#fff", overflow: "hidden",
-      }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1.2fr 1fr 1.2fr 1fr 80px",
-          background: "#FDF6EE",
-          borderBottom: "1px solid #E8D8C4",
-          padding: "14px 24px",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-          textTransform: "uppercase", color: "#6B6B6B",
-        }}>
+    <div class="article-meta">
+      <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+      <span class="article-readtime">10 min read</span>
+    </div>
+    <h1 class="article-h1">Google Ads Quality Score Low? How to Improve It</h1>
+    <div class="article-byline">Lewis Phillips &middot; 26 May 2026 &middot; 10 min read</div>
+    <p class="article-lede">Quality Score is a diagnostic, not a KPI — but a keyword with weak quality signals will typically cost materially more per click than the same keyword with strong signals, at equivalent positions. This guide covers what each component actually measures, how to find the problem in your account, and the specific fixes that move the dial on Expected CTR, Ad Relevance, and Landing Page Experience.</p>
+
+    <div style="margin-top:32px;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px;padding:20px 24px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#985830;margin-bottom:10px;">Quick answer</div>
+      <p style="font-size:16px;line-height:1.6;color:#1A1A1A;margin:0;">To improve Google Ads Quality Score, identify which component is rated Below average: <strong>Expected CTR</strong>, <strong>Ad Relevance</strong>, or <strong>Landing Page Experience</strong>. Fix Expected CTR with stronger intent-matched headlines and negative keywords. Fix Ad Relevance by restructuring ad groups around tighter keyword themes. Fix Landing Page Experience with faster, dedicated landing pages that match the ad&rsquo;s promise. Quality Score is diagnostic — fix the component, not the number.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ ARTICLE BODY -->
+<section class="article-section">
+  <div class="read-w">
+
+    <!-- Why it matters -->
+    <div class="article-body">
+      <h2>Quality Score affects what you pay, not just where you rank</h2>
+      <p>Ad Rank determines your position in each auction. It is calculated from your bid, the quality of your ad and landing page, Ad Rank thresholds, competition, search context, and the expected impact of your assets. Quality is not a single number in that formula — it is a real-time assessment Google makes for every auction. The 1–10 Quality Score in your Keywords table is a diagnostic approximation of that quality signal, not the auction input itself.</p>
+      <p>What the diagnostic tells you matters commercially. Older PPC training explains the quality-cost relationship with a simplified model: your cost is roughly the Ad Rank of the advertiser below you divided by your own quality factor. That model is useful for understanding the direction of travel — better quality can lower the bid needed to compete for the same visibility — but it is a teaching model, not the live Google Ads formula. Real auctions also factor in thresholds, competition, search context and asset impact. The table below illustrates the principle: a keyword with stronger quality signals costs less per click than a lower-quality competitor bidding more.</p>
+      <p>Bidding up can buy visibility, but it does not fix a low-quality keyword. <strong>Fix the quality first</strong> where the economics do not work.</p>
+    </div>
+
+    <!-- Ad Rank diagram -->
+    <div class="diagram-wrap">
+      <div class="diagram-label"><span class="eyebrow">Quality score in the auction</span></div>
+      <div class="adrank-table">
+        <div class="adrank-head">
           <span>Advertiser</span>
           <span>Max CPC</span>
           <span>Ad Rank*</span>
           <span>Actual CPC</span>
           <span>Position</span>
         </div>
-        <Row qs="You — QS 8" bid="£2.00" ar="16" cpc="£1.44" pos="#1" highlight={true}/>
-        <Row qs="Competitor A — QS 5" bid="£3.00" ar="15" cpc="£2.25" pos="#2"/>
-        <Row qs="Competitor B — QS 3" bid="£2.50" ar="7.5" cpc="£1.50" pos="#3"/>
-        <div style={{
-          padding: "12px 24px",
-          fontSize: 12, color: "#6B6B6B", lineHeight: 1.55,
-          borderTop: "1px solid #F0E6D5",
-          background: "#FAFAF8",
-        }}>
-          * Simplified. Real Ad Rank includes six factors. Example illustrates the quality-efficiency relationship — higher QS means lower cost for the same position. Competitor A bids 50% more and still ranks below you.
+        <div class="adrank-row highlight">
+          <span class="adrank-advertiser amber">You &mdash; QS 8</span>
+          <span class="adrank-cell">&pound;2.00</span>
+          <span class="adrank-cell">16</span>
+          <span class="adrank-cpc amber">&pound;1.44</span>
+          <span class="adrank-pos amber">#1</span>
         </div>
+        <div class="adrank-row">
+          <span class="adrank-advertiser">Competitor A &mdash; QS 5</span>
+          <span class="adrank-cell">&pound;3.00</span>
+          <span class="adrank-cell">15</span>
+          <span class="adrank-cpc">&pound;2.25</span>
+          <span class="adrank-pos">#2</span>
+        </div>
+        <div class="adrank-row">
+          <span class="adrank-advertiser">Competitor B &mdash; QS 3</span>
+          <span class="adrank-cell">&pound;2.50</span>
+          <span class="adrank-cell">7.5</span>
+          <span class="adrank-cpc">&pound;1.50</span>
+          <span class="adrank-pos">#3</span>
+        </div>
+        <div class="adrank-foot">* Simplified. Real Ad Rank includes six factors. Example illustrates the quality-efficiency relationship — higher QS means lower cost for the same position. Competitor A bids 50% more and still ranks below you.</div>
       </div>
     </div>
-  );
-}
 
-/* =============== COMPONENT TABLE =============== */
-const COMPONENTS = [
-  {
-    name: "Expected CTR",
-    measures: "Likelihood your ad is clicked when shown for the search query",
-    below: "Ad copy is not compelling or relevant enough to earn clicks at the same rate as competitors",
-    fix: "Rewrite headlines to match query intent. Add negatives to remove low-CTR impressions.",
-  },
-  {
-    name: "Ad Relevance",
-    measures: "How closely your ad matches the intent behind the user's search",
-    below: "Ad copy is too generic or the ad group mixes keywords with different intents",
-    fix: "Tighten ad group structure. Write headlines that address the shared intent of all keywords in the group.",
-  },
-  {
-    name: "Landing Page Experience",
-    measures: "Usefulness and relevance of the page people land on after clicking",
-    below: "Page is too generic (homepage traffic), loads slowly on mobile, or doesn't deliver on the ad's promise",
-    fix: "Dedicated landing pages per ad group. Match the H1 to the ad. Fix mobile load speed.",
-  },
-];
+    <!-- Three components intro -->
+    <div class="article-body">
+      <h2>The three components &mdash; what each one measures</h2>
+      <p>Every Quality Score is built from three components, each rated Above average, Average, or Below average relative to other advertisers showing for the same searches. A Below average rating on any component tells you something specific about where the problem is.</p>
+    </div>
 
-function ComponentTable() {
-  return (
-    <div style={{ margin: "32px 0 56px" }}>
-      <div style={{ marginBottom: 16 }}>
-        <Eyebrow>The three components</Eyebrow>
-      </div>
-      <div style={{
-        border: "1px solid #E8D8C4", borderRadius: 6,
-        background: "#fff", overflow: "hidden",
-      }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1.1fr 1.6fr 1.6fr 1.4fr",
-          background: "#FDF6EE",
-          borderBottom: "1px solid #E8D8C4",
-          padding: "14px 24px",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-          textTransform: "uppercase", color: "#6B6B6B",
-        }}>
+    <!-- Component table -->
+    <div class="diagram-wrap">
+      <div class="diagram-label"><span class="eyebrow">The three components</span></div>
+      <div class="comp-table">
+        <div class="comp-head">
           <span>Component</span>
           <span>What it measures</span>
           <span>What Below average means</span>
           <span>Where to start</span>
         </div>
-        {COMPONENTS.map((r, i) => (
-          <div key={i} style={{
-            display: "grid",
-            gridTemplateColumns: "1.1fr 1.6fr 1.6fr 1.4fr",
-            padding: "18px 24px",
-            borderBottom: i < COMPONENTS.length - 1 ? "1px solid #F0E6D5" : "none",
-            alignItems: "start", gap: 20,
-          }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#985830", letterSpacing: "-0.005em" }}>{r.name}</span>
-            <span style={{ fontSize: 14, color: "#3A3A3A", lineHeight: 1.5 }}>{r.measures}</span>
-            <span style={{ fontSize: 14, color: "#3A3A3A", lineHeight: 1.5 }}>{r.below}</span>
-            <span style={{ fontSize: 13, color: "#985830", fontWeight: 500, lineHeight: 1.5 }}>{r.fix}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* =============== ISSUE BLOCK =============== */
-function Issue({ n, id, title, children }) {
-  return (
-    <div id={id} style={{ margin: "56px 0 24px" }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 16 }}>
-        <span style={{
-          fontSize: 14, fontWeight: 700, color: "#985830",
-          letterSpacing: "0.04em",
-          fontVariantNumeric: "tabular-nums",
-        }}>{String(n).padStart(2, "0")}</span>
-        <h3 style={{
-          fontSize: 22, fontWeight: 700, letterSpacing: "-0.018em",
-          lineHeight: 1.25, color: "#1A1A1A", margin: 0,
-          textWrap: "balance",
-        }}>{title}</h3>
-      </div>
-      <div className="article-body">{children}</div>
-    </div>
-  );
-}
-
-/* =============== CTR DIAGRAM =============== */
-function CTRDiagram() {
-  const items = [
-    { bad: true, label: "Generic headline", ex: '"Marketing Agency London"', note: "No query match. Could belong to any advertiser in the category." },
-    { bad: false, label: "Query-matched headline", ex: '"Google Ads Management — London"', note: "Reflects what was searched. Signals relevance before the click." },
-  ];
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, margin: "32px 0" }}>
-      {items.map((it, i) => {
-        const accent = it.bad ? "#9B3D3D" : "#2E5F5C";
-        const soft   = it.bad ? "#F5E3E3" : "#DCEAE8";
-        const border = it.bad ? "#E0BFBF" : "#BFD6D2";
-        return (
-          <div key={i} style={{ border: `1px solid ${border}`, borderRadius: 6, background: "#fff", overflow: "hidden" }}>
-            <div style={{
-              background: soft, padding: "12px 18px",
-              borderBottom: `1px solid ${border}`,
-              display: "flex", alignItems: "center", gap: 10,
-            }}>
-              <span style={{
-                width: 18, height: 18, borderRadius: 999, background: accent, color: "#fff",
-                display: "inline-flex", alignItems: "center", justifyContent: "center",
-                fontSize: 11, fontWeight: 700,
-              }}>{it.bad ? "✕" : "✓"}</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: accent, textTransform: "uppercase", letterSpacing: "0.10em" }}>{it.label}</span>
-            </div>
-            <div style={{ padding: "20px 22px" }}>
-              <div style={{
-                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-                fontSize: 14, color: "#1A1A1A", fontWeight: 600,
-                marginBottom: 12, letterSpacing: "-0.005em",
-              }}>{it.ex}</div>
-              <div style={{ fontSize: 13, lineHeight: 1.55, color: "#6B6B6B" }}>{it.note}</div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/* =============== AD GROUP DIAGRAM =============== */
-function AdGroupDiagram() {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, margin: "32px 0" }}>
-      <AdGroupCol bad title="Mixed-intent ad group" keywords={["buy running shoes", "are running shoes good for hiking", "running shoe care tips", "running shoe reviews 2026"]} note="One ad cannot match all four intents. At least two keywords will produce Below average Ad Relevance." />
-      <AdGroupCol title="Tightly themed ad group" keywords={["buy running shoes", "running shoes buy online", "order running shoes uk", "running shoes free delivery"]} note="All four keywords share transactional intent. One RSA can be written to address all of them without diluting relevance." />
-    </div>
-  );
-}
-
-function AdGroupCol({ bad = false, title, keywords, note }) {
-  const accent = bad ? "#9B3D3D" : "#2E5F5C";
-  const soft   = bad ? "#F5E3E3" : "#DCEAE8";
-  const border = bad ? "#E0BFBF" : "#BFD6D2";
-  return (
-    <div style={{ border: `1px solid ${border}`, borderRadius: 6, background: "#fff", overflow: "hidden" }}>
-      <div style={{
-        background: soft, padding: "12px 18px",
-        borderBottom: `1px solid ${border}`,
-        display: "flex", alignItems: "center", gap: 10,
-      }}>
-        <span style={{
-          width: 18, height: 18, borderRadius: 999, background: accent, color: "#fff",
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          fontSize: 11, fontWeight: 700,
-        }}>{bad ? "✕" : "✓"}</span>
-        <span style={{ fontSize: 12, fontWeight: 700, color: accent, textTransform: "uppercase", letterSpacing: "0.10em" }}>{title}</span>
-      </div>
-      <div style={{ padding: "18px 22px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-          {keywords.map((kw, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 10,
-              padding: "8px 12px",
-              background: "#FAFAF8", border: "1px solid #F0E6D5",
-              borderRadius: 4,
-            }}>
-              <span style={{
-                width: 6, height: 6, borderRadius: 999,
-                background: bad && i > 0 ? "#9B3D3D" : "#985830",
-                flexShrink: 0,
-              }}/>
-              <span style={{ fontSize: 13, color: "#1A1A1A", letterSpacing: "-0.005em" }}>{kw}</span>
-            </div>
-          ))}
+        <div class="comp-row">
+          <span class="comp-name">Expected CTR</span>
+          <span class="comp-cell">Likelihood your ad is clicked when shown for the search query</span>
+          <span class="comp-cell">Ad copy is not compelling or relevant enough to earn clicks at the same rate as competitors</span>
+          <span class="comp-fix">Rewrite headlines to match query intent. Add negatives to remove low-CTR impressions.</span>
         </div>
-        <div style={{
-          borderTop: "1px dashed #E8D8C4", paddingTop: 12,
-          fontSize: 12, color: "#6B6B6B", lineHeight: 1.55, fontStyle: "italic",
-        }}>{note}</div>
-      </div>
-    </div>
-  );
-}
-
-/* =============== LANDING PAGE DIAGRAM =============== */
-function LandingPageDiagram() {
-  return (
-    <div style={{
-      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
-      padding: "24px 28px", margin: "32px 0 56px",
-    }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 4 }}>Message match</div>
-      <div style={{ fontSize: 15, fontWeight: 600, color: "#1A1A1A", marginBottom: 22, letterSpacing: "-0.005em" }}>The ad's promise must match the page's opening</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        {[
-          { ad: '"Emergency Boiler Repair London — Same Day"', page: "Homepage with a services menu and about us section", verdict: "Mismatch — user must navigate to find what the ad promised", bad: true },
-          { ad: '"Emergency Boiler Repair London — Same Day"', page: "Dedicated page: H1 \"Emergency Boiler Repair — Same Day in London\", phone number prominent, booking form above fold", verdict: "Match — page confirms the ad's promise immediately", bad: false },
-        ].map((r, i) => (
-          <div key={i} style={{
-            display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1.4fr",
-            alignItems: "center", gap: 12,
-            padding: "16px 20px",
-            border: `1px solid ${r.bad ? "#E0BFBF" : "#BFD6D2"}`,
-            borderRadius: 6,
-            background: r.bad ? "#FFF8F8" : "#F8FFFC",
-          }}>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#8A8580", marginBottom: 4 }}>Ad copy</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.005em", lineHeight: 1.4 }}>{r.ad}</div>
-            </div>
-            <div style={{ fontSize: 18, color: "#985830", padding: "0 4px" }}>→</div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: "#8A8580", marginBottom: 4 }}>Landing page</div>
-              <div style={{ fontSize: 13, color: "#3A3A3A", lineHeight: 1.4 }}>{r.page}</div>
-            </div>
-            <div style={{ fontSize: 18, color: r.bad ? "#9B3D3D" : "#2E5F5C", padding: "0 4px" }}>{r.bad ? "✕" : "✓"}</div>
-            <div style={{
-              fontSize: 12, color: r.bad ? "#9B3D3D" : "#2E5F5C",
-              fontWeight: 600, lineHeight: 1.4,
-            }}>{r.verdict}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* =============== MISTAKES GRID =============== */
-const MISTAKES = {
-  immediate: {
-    label: "Fix immediately",
-    note: "Structural — affects every keyword",
-    color: "#985830",
-    items: [
-      { t: "Broad match without negative keywords" },
-      { t: "Homepages as landing pages for specific ad copy" },
-      { t: "Mixed-intent keywords in the same ad group" },
-    ],
-  },
-  week: {
-    label: "Fix this week",
-    note: "Copy and relevance issues",
-    color: "#8A6A4A",
-    items: [
-      { t: "Generic headlines with no query match" },
-      { t: "Slow or non-mobile-optimised landing pages" },
-    ],
-  },
-  avoid: {
-    label: "Stop doing this",
-    note: "Misuse of the metric",
-    color: "#6B6B6B",
-    items: [
-      { t: "Chasing 10/10 as a campaign objective" },
-    ],
-  },
-};
-
-function MistakesGrid() {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, margin: "8px 0 56px" }}>
-      {Object.entries(MISTAKES).map(([k, col]) => (
-        <div key={k} style={{
-          background: "#fff", border: "1px solid #E8D8C4",
-          borderRadius: 6, padding: "20px 22px",
-          display: "flex", flexDirection: "column",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <span style={{ width: 8, height: 8, borderRadius: 999, background: col.color }}/>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase", color: col.color }}>{col.label}</span>
-          </div>
-          <div style={{ fontSize: 12, color: "#6B6B6B", marginBottom: 16 }}>{col.note}</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {col.items.map((it, j) => (
-              <div key={j} style={{
-                display: "flex", alignItems: "start", gap: 12,
-                padding: "10px 12px",
-                background: "#FDF6EE",
-                border: "1px solid #F0E6D5",
-                borderRadius: 4,
-              }}>
-                <span style={{
-                  width: 20, height: 20, borderRadius: 4,
-                  background: "#fff", border: "1px solid #E8D8C4",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 10, fontWeight: 700, color: "#985830",
-                  flexShrink: 0, marginTop: 1,
-                }}>!</span>
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#1A1A1A", lineHeight: 1.35, letterSpacing: "-0.005em" }}>{it.t}</span>
-              </div>
-            ))}
-          </div>
+        <div class="comp-row">
+          <span class="comp-name">Ad Relevance</span>
+          <span class="comp-cell">How closely your ad matches the intent behind the user&rsquo;s search</span>
+          <span class="comp-cell">Ad copy is too generic or the ad group mixes keywords with different intents</span>
+          <span class="comp-fix">Tighten ad group structure. Write headlines that address the shared intent of all keywords in the group.</span>
         </div>
-      ))}
+        <div class="comp-row">
+          <span class="comp-name">Landing Page Experience</span>
+          <span class="comp-cell">Usefulness and relevance of the page people land on after clicking</span>
+          <span class="comp-cell">Page is too generic (homepage traffic), loads slowly on mobile, or doesn&rsquo;t deliver on the ad&rsquo;s promise</span>
+          <span class="comp-fix">Dedicated landing pages per ad group. Match the H1 to the ad. Fix mobile load speed.</span>
+        </div>
+      </div>
     </div>
-  );
-}
 
-/* =============== 2026 UPDATE =============== */
-function Update2026() {
-  return (
-    <div style={{ margin: "56px 0" }}>
-      <div style={{
-        background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-        borderRadius: 6, padding: "32px 36px",
-        color: "#fff",
-      }}>
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 8,
-          padding: "4px 11px", borderRadius: 20,
-          background: "rgba(152,88,48,0.18)",
-          border: "1px solid rgba(152,88,48,0.4)",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-          textTransform: "uppercase", color: "#D9A57E",
-          marginBottom: 20,
-        }}>
-          <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830" }}/>
+    <!-- Symptom table -->
+    <div class="diagram-wrap">
+      <div class="diagram-label"><span class="eyebrow">Quick diagnosis</span></div>
+      <div class="comp-table">
+        <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;background:#FDF6EE;border-bottom:1px solid #E8D8C4;padding:14px 24px;gap:20px;font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;">
+          <span>What you see</span>
+          <span>Likely cause</span>
+          <span>First fix</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:16px 24px;border-bottom:1px solid #F0E6D5;gap:20px;align-items:start;">
+          <span style="font-size:14px;font-weight:600;color:#1A1A1A;">QS 3/10 + Expected CTR Below average</span>
+          <span style="font-size:14px;color:#3A3A3A;line-height:1.5;">Ads are not winning clicks — copy doesn&rsquo;t match query intent</span>
+          <span style="font-size:13px;color:#985830;font-weight:500;line-height:1.5;">Rewrite headlines and add negative keywords</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:16px 24px;border-bottom:1px solid #F0E6D5;gap:20px;align-items:start;">
+          <span style="font-size:14px;font-weight:600;color:#1A1A1A;">QS 4/10 + Ad Relevance Below average</span>
+          <span style="font-size:14px;color:#3A3A3A;line-height:1.5;">Mixed-intent keywords in the same ad group</span>
+          <span style="font-size:13px;color:#985830;font-weight:500;line-height:1.5;">Split keywords by intent into tighter ad groups</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:16px 24px;border-bottom:1px solid #F0E6D5;gap:20px;align-items:start;">
+          <span style="font-size:14px;font-weight:600;color:#1A1A1A;">QS 5/10 + Landing Page Exp. Below average</span>
+          <span style="font-size:14px;color:#3A3A3A;line-height:1.5;">Page mismatch, slow mobile load, or homepage traffic</span>
+          <span style="font-size:13px;color:#985830;font-weight:500;line-height:1.5;">Improve message match and mobile speed</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:16px 24px;border-bottom:1px solid #F0E6D5;gap:20px;align-items:start;">
+          <span style="font-size:14px;font-weight:600;color:#1A1A1A;">Low QS but strong CPA/ROAS</span>
+          <span style="font-size:14px;color:#3A3A3A;line-height:1.5;">Smart Bidding compensating — QS may not be the priority</span>
+          <span style="font-size:13px;color:#985830;font-weight:500;line-height:1.5;">Check performance before intervening</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1.4fr 1.4fr;padding:16px 24px;gap:20px;align-items:start;">
+          <span style="font-size:14px;font-weight:600;color:#1A1A1A;">Dash instead of a score</span>
+          <span style="font-size:14px;color:#3A3A3A;line-height:1.5;">Not enough exact-match impression data yet</span>
+          <span style="font-size:13px;color:#985830;font-weight:500;line-height:1.5;">Wait for impression volume to accumulate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to find QS -->
+    <div class="article-body">
+      <h2>How to find your Quality Score in Google Ads</h2>
+      <p>Quality Score is not visible by default. You need to add it to the Keywords table manually.</p>
+      <p>Navigate to <strong>Campaigns &rsaquo; Keywords</strong>. Click the columns icon at the top right of the table, then select <strong>Modify columns for keywords</strong>. Under the Quality Score section, add:</p>
+      <ul>
+        <li><strong>Quality Score</strong> &mdash; the 1&ndash;10 composite</li>
+        <li><strong>Exp. CTR</strong> &mdash; Expected CTR component rating</li>
+        <li><strong>Ad Relevance</strong> &mdash; Ad Relevance component rating</li>
+        <li><strong>Landing Page Exp.</strong> &mdash; Landing Page Experience component rating</li>
+      </ul>
+      <p>Once visible, sort by Quality Score ascending. Work through keywords showing Below average on any component &mdash; that is where the fixes are.</p>
+      <p>A dash (<code>&mdash;</code>) in the Quality Score column means there is insufficient exact-match impression data to calculate a score. This is normal for low-volume or new keywords. You cannot directly improve a dash &mdash; only time and accumulated impressions will generate a score.</p>
+    </div>
+
+    <!-- Issue 01: Expected CTR -->
+    <div class="issue-block" id="component-1">
+      <div class="issue-header">
+        <span class="issue-num">01</span>
+        <h3 class="issue-title">How to fix Below average Expected CTR</h3>
+      </div>
+      <div class="article-body">
+        <p>Expected CTR is Google&rsquo;s prediction of how likely your ad is to be clicked when shown for a specific search query. It is benchmarked against other advertisers showing for the same exact queries. Below average means Google expects your ad to receive fewer clicks than competitors &mdash; not that your historical CTR is low, but that it is predicted to be. That prediction is weighted by your account&rsquo;s own click history on the keyword: a keyword with a poor historical record carries that footprint even after you improve the copy, and needs both better ads and time for the score to reset.</p>
+        <p>The most direct lever is your ad copy. Headlines that reflect the searched query raise click prediction because they signal relevance to the user. Generic headlines &mdash; &ldquo;Marketing Agency London&rdquo;, &ldquo;Quality Products Online&rdquo; &mdash; match no specific intent and score poorly against competitors who have written to the exact query.</p>
+        <p><strong>Fix:</strong> Rewrite Headline 1 in your Responsive Search Ads to directly reflect the query intent. Use a call-to-action that matches what the searcher wants to do (&ldquo;Get a Quote&rdquo; for service intent, &ldquo;Shop Now&rdquo; for transactional, &ldquo;See How It Works&rdquo; for informational). Add negative keywords to exclude queries where a click is unlikely &mdash; irrelevant impressions weaken expected CTR signals because the keyword accumulates a history of low-click auctions against those queries. Run regular search term audits and exclude irrelevant match expansions before they accumulate.</p>
+      </div>
+    </div>
+
+    <!-- CTR diagram -->
+    <div class="cards-2col">
+      <div class="verdict-card" style="border:1px solid #E0BFBF;">
+        <div class="verdict-card-head" style="background:#F5E3E3;border-bottom-color:#E0BFBF;">
+          <span class="verdict-badge" style="background:#9B3D3D;">&#x2715;</span>
+          <span class="verdict-label" style="color:#9B3D3D;">Generic headline</span>
+        </div>
+        <div class="verdict-card-body">
+          <div class="verdict-mono">&ldquo;Marketing Agency London&rdquo;</div>
+          <div class="verdict-note">No query match. Could belong to any advertiser in the category.</div>
+        </div>
+      </div>
+      <div class="verdict-card" style="border:1px solid #BFD6D2;">
+        <div class="verdict-card-head" style="background:#DCEAE8;border-bottom-color:#BFD6D2;">
+          <span class="verdict-badge" style="background:#2E5F5C;">&#x2713;</span>
+          <span class="verdict-label" style="color:#2E5F5C;">Query-matched headline</span>
+        </div>
+        <div class="verdict-card-body">
+          <div class="verdict-mono">&ldquo;Google Ads Management &mdash; London&rdquo;</div>
+          <div class="verdict-note">Reflects what was searched. Signals relevance before the click.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Issue 02: Ad Relevance -->
+    <div class="issue-block" id="component-2">
+      <div class="issue-header">
+        <span class="issue-num">02</span>
+        <h3 class="issue-title">How to fix Below average Ad Relevance</h3>
+      </div>
+      <div class="article-body">
+        <p>Ad Relevance measures how closely your ad matches the intent behind the search query. It scores poorly when there is a gap between what someone searched for and what your ad says. The most common cause is ad group structure: too many keywords with different intents forced into the same group, served by the same set of ads.</p>
+        <p>If your ad group contains &ldquo;buy running shoes&rdquo;, &ldquo;are running shoes good for hiking&rdquo;, and &ldquo;running shoe care tips&rdquo;, no single set of ads can be highly relevant to all three. The commercial buyer, the curious researcher, and the existing owner are different audiences with different intents.</p>
+        <p><strong>Fix:</strong> Group keywords with near-identical intent into the same ad group &mdash; 5 to 15 closely related terms is a workable target. The headline in your RSA should address the intent shared by all keywords in that group. For high-value exact match keywords with significant impression volume and competitive CPCs, a dedicated ad group gives you full control over the message. The underlying principle is that tight groupings make it possible to write genuinely relevant ads; loose groupings make it structurally impossible.</p>
+      </div>
+    </div>
+
+    <!-- Ad group diagram -->
+    <div class="cards-2col">
+      <div class="verdict-card" style="border:1px solid #E0BFBF;">
+        <div class="verdict-card-head" style="background:#F5E3E3;border-bottom-color:#E0BFBF;">
+          <span class="verdict-badge" style="background:#9B3D3D;">&#x2715;</span>
+          <span class="verdict-label" style="color:#9B3D3D;">Mixed-intent ad group</span>
+        </div>
+        <div class="verdict-card-body">
+          <div class="kw-list">
+            <div class="kw-item"><span class="kw-dot" style="background:#985830;"></span><span class="kw-text">buy running shoes</span></div>
+            <div class="kw-item"><span class="kw-dot" style="background:#9B3D3D;"></span><span class="kw-text">are running shoes good for hiking</span></div>
+            <div class="kw-item"><span class="kw-dot" style="background:#9B3D3D;"></span><span class="kw-text">running shoe care tips</span></div>
+            <div class="kw-item"><span class="kw-dot" style="background:#9B3D3D;"></span><span class="kw-text">running shoe reviews 2026</span></div>
+          </div>
+          <div class="kw-card-note">One ad cannot match all four intents. At least two keywords will produce Below average Ad Relevance.</div>
+        </div>
+      </div>
+      <div class="verdict-card" style="border:1px solid #BFD6D2;">
+        <div class="verdict-card-head" style="background:#DCEAE8;border-bottom-color:#BFD6D2;">
+          <span class="verdict-badge" style="background:#2E5F5C;">&#x2713;</span>
+          <span class="verdict-label" style="color:#2E5F5C;">Tightly themed ad group</span>
+        </div>
+        <div class="verdict-card-body">
+          <div class="kw-list">
+            <div class="kw-item"><span class="kw-dot" style="background:#985830;"></span><span class="kw-text">buy running shoes</span></div>
+            <div class="kw-item"><span class="kw-dot" style="background:#985830;"></span><span class="kw-text">running shoes buy online</span></div>
+            <div class="kw-item"><span class="kw-dot" style="background:#985830;"></span><span class="kw-text">order running shoes uk</span></div>
+            <div class="kw-item"><span class="kw-dot" style="background:#985830;"></span><span class="kw-text">running shoes free delivery</span></div>
+          </div>
+          <div class="kw-card-note">All four keywords share transactional intent. One RSA can be written to address all of them without diluting relevance.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Issue 03: Landing Page Experience -->
+    <div class="issue-block" id="component-3">
+      <div class="issue-header">
+        <span class="issue-num">03</span>
+        <h3 class="issue-title">How to fix Below average Landing Page Experience</h3>
+      </div>
+      <div class="article-body">
+        <p>Landing Page Experience reflects how relevant and useful your landing page is to people who click your ad. Google&rsquo;s crawlers assess the page for usefulness of content, ease of navigation, and whether it delivers on what the ad promised. A poor rating here almost always means one of three things: the page is too generic for the query, it loads too slowly, or it performs poorly on mobile.</p>
+        <p>Sending paid traffic to a homepage is the most common structural mistake. The homepage serves too many audiences and too many goals. The user who clicked an ad for &ldquo;emergency boiler repair London&rdquo; does not want to navigate through a services menu. A dedicated landing page with a single message and a single conversion action is the correct structure &mdash; and it performs better on this component because it unambiguously matches the ad.</p>
+        <p><strong>Fix:</strong> Match the landing page to the specific ad. The primary keyword should appear in the H1. The offer or service promised in the ad should be the first thing visible on the page. Use PageSpeed Insights (<code>pagespeed.web.dev</code>) to check mobile performance &mdash; Google assesses mobile and desktop separately, so a fast desktop page does not compensate for a slow mobile one. For lead generation pages, put the form or call-to-action above the fold on a 375px screen. The page must load quickly, deliver on the ad&rsquo;s promise, and make the next action obvious. For a full audit of message match, CTA strength and mobile speed scoring, <a href="/landing-page-audit">run the free landing page audit</a>.</p>
+      </div>
+    </div>
+
+    <!-- Landing page diagram -->
+    <div class="lp-diagram">
+      <div class="lp-diagram-eyebrow">Message match</div>
+      <div class="lp-diagram-title">The ad&rsquo;s promise must match the page&rsquo;s opening</div>
+      <div class="lp-rows">
+        <div class="lp-row" style="border:1px solid #E0BFBF;background:#FFF8F8;">
+          <div>
+            <div class="lp-col-label">Ad copy</div>
+            <div class="lp-col-ad">&ldquo;Emergency Boiler Repair London &mdash; Same Day&rdquo;</div>
+          </div>
+          <div class="lp-arrow">&rarr;</div>
+          <div>
+            <div class="lp-col-label">Landing page</div>
+            <div class="lp-col-page">Homepage with a services menu and about us section</div>
+          </div>
+          <div style="font-size:18px;color:#9B3D3D;padding:0 4px;">&#x2715;</div>
+          <div class="lp-verdict" style="color:#9B3D3D;">Mismatch &mdash; user must navigate to find what the ad promised</div>
+        </div>
+        <div class="lp-row" style="border:1px solid #BFD6D2;background:#F8FFFC;">
+          <div>
+            <div class="lp-col-label">Ad copy</div>
+            <div class="lp-col-ad">&ldquo;Emergency Boiler Repair London &mdash; Same Day&rdquo;</div>
+          </div>
+          <div class="lp-arrow">&rarr;</div>
+          <div>
+            <div class="lp-col-label">Landing page</div>
+            <div class="lp-col-page">Dedicated page: H1 &ldquo;Emergency Boiler Repair &mdash; Same Day in London&rdquo;, phone number prominent, booking form above fold</div>
+          </div>
+          <div style="font-size:18px;color:#2E5F5C;padding:0 4px;">&#x2713;</div>
+          <div class="lp-verdict" style="color:#2E5F5C;">Match &mdash; page confirms the ad&rsquo;s promise immediately</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Six mistakes -->
+    <div class="article-body">
+      <h2>The six mistakes that keep Quality Score low</h2>
+      <p>Most Quality Score problems are structural &mdash; they are baked into how the account was set up, not just how the ads were written. Fixing individual keywords one at a time is less effective than identifying which of these structural issues applies and fixing it at the root.</p>
+    </div>
+
+    <div class="mistakes-grid">
+      <div class="mistake-col">
+        <div class="mistake-col-header">
+          <span class="mistake-dot" style="background:#985830;"></span>
+          <span class="mistake-col-label" style="color:#985830;">Fix immediately</span>
+        </div>
+        <div class="mistake-col-note">Structural &mdash; affects every keyword</div>
+        <div class="mistake-items">
+          <div class="mistake-item"><span class="mistake-icon">!</span><span class="mistake-text">Broad match without negative keywords</span></div>
+          <div class="mistake-item"><span class="mistake-icon">!</span><span class="mistake-text">Homepages as landing pages for specific ad copy</span></div>
+          <div class="mistake-item"><span class="mistake-icon">!</span><span class="mistake-text">Mixed-intent keywords in the same ad group</span></div>
+        </div>
+      </div>
+      <div class="mistake-col">
+        <div class="mistake-col-header">
+          <span class="mistake-dot" style="background:#8A6A4A;"></span>
+          <span class="mistake-col-label" style="color:#8A6A4A;">Fix this week</span>
+        </div>
+        <div class="mistake-col-note">Copy and relevance issues</div>
+        <div class="mistake-items">
+          <div class="mistake-item"><span class="mistake-icon">!</span><span class="mistake-text">Generic headlines with no query match</span></div>
+          <div class="mistake-item"><span class="mistake-icon">!</span><span class="mistake-text">Slow or non-mobile-optimised landing pages</span></div>
+        </div>
+      </div>
+      <div class="mistake-col">
+        <div class="mistake-col-header">
+          <span class="mistake-dot" style="background:#6B6B6B;"></span>
+          <span class="mistake-col-label" style="color:#6B6B6B;">Stop doing this</span>
+        </div>
+        <div class="mistake-col-note">Misuse of the metric</div>
+        <div class="mistake-items">
+          <div class="mistake-item"><span class="mistake-icon">!</span><span class="mistake-text">Chasing 10/10 as a campaign objective</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026 context -->
+    <div class="dark-callout-wrap">
+      <div class="dark-callout">
+        <div class="dark-callout-badge">
+          <span class="dark-callout-badge-dot"></span>
           2026 Context
         </div>
-        <h3 style={{
-          fontSize: 22, fontWeight: 700, color: "#fff",
-          letterSpacing: "-0.018em", lineHeight: 1.3,
-          margin: "0 0 16px",
-        }}>
-          Quality Score and Smart Bidding are increasingly decoupled.
-        </h3>
-        <p style={{ fontSize: 15, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: "0 0 14px" }}>
-          In accounts running broad match with Smart Bidding, a keyword can sit at QS 3–4 while the campaign hits CPA or ROAS targets. Smart Bidding adjusts bids per auction in real time — it can deprioritise low-quality auctions automatically and still convert efficiently on the ones where signals align. The visible QS reflects exact-match impression history, not the full spread of queries the broad match keyword is actually serving.
-        </p>
-        <p style={{ fontSize: 15, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: "0 0 14px" }}>
-          Quality Score remains most meaningful for exact and phrase match keywords in competitive auctions, where QS most accurately reflects what you are paying relative to competitors. In a well-optimised broad match campaign hitting conversion targets, a low QS number is a diagnostic signal — worth investigating, but not a reason to intervene if performance is healthy.
-        </p>
-        <p style={{ fontSize: 15, lineHeight: 1.65, color: "rgba(255,255,255,0.75)", margin: 0 }}>
-          Quality Score also does not apply to Shopping or Performance Max campaigns. In Shopping, quality signals exist in Google's ad serving system but are not surfaced as a visible score. In PMax, the relevant quality levers are asset group quality and conversion signal quality — not keyword-level QS.
-        </p>
+        <h3>Quality Score and Smart Bidding are increasingly decoupled.</h3>
+        <p>In accounts running broad match with Smart Bidding, a keyword can sit at QS 3&ndash;4 while the campaign hits CPA or ROAS targets. Smart Bidding adjusts bids per auction in real time &mdash; it can deprioritise low-quality auctions automatically and still convert efficiently on the ones where signals align. The visible QS reflects exact-match impression history, not the full spread of queries the broad match keyword is actually serving.</p>
+        <p>Quality Score remains most meaningful for exact and phrase match keywords in competitive auctions, where QS most accurately reflects what you are paying relative to competitors. In a well-optimised broad match campaign hitting conversion targets, a low QS number is a diagnostic signal &mdash; worth investigating, but not a reason to intervene if performance is healthy.</p>
+        <p>Quality Score also does not apply to Shopping or Performance Max campaigns. In Shopping, quality signals exist in Google&rsquo;s ad serving system but are not surfaced as a visible score. In PMax, the relevant quality levers are asset group quality and conversion signal quality &mdash; not keyword-level QS. If Smart Bidding is underperforming despite a structurally sound account, <a href="/guides/fix-google-ads-conversion-tracking/">conversion tracking quality</a> is usually the first thing to check &mdash; not Quality Score.</p>
       </div>
     </div>
-  );
-}
 
-/* =============== FAQ =============== */
-const FAQ = [
-  {
-    q: "What is a good Quality Score in Google Ads?",
-    a: "Google considers 7–10 above average, 5–6 average, and 1–4 below average. A score of 7 or above generally indicates your ad and landing page are performing well relative to competitors. That said, Quality Score is a diagnostic — chasing a 10 on every keyword is a distraction from what matters. Focus on the components showing Below average rather than the composite number."
-  },
-  {
-    q: "Does Quality Score affect Shopping and Performance Max campaigns?",
-    a: "No. The 1–10 Quality Score metric exists only for Search campaign keywords. Shopping and Performance Max campaigns have no keyword structure to score against, so the Quality Score column is unavailable for those campaign types. Quality signals still influence how Google serves ads in these campaigns, but they are not surfaced as a visible score."
-  },
-  {
-    q: "How long does it take for Quality Score to improve?",
-    a: "Quality Score is based on impression data over the last 90 days, so changes take time to appear. A meaningful ad copy or landing page improvement may take 2–4 weeks to register in the score, depending on impression volume. High-volume keywords update faster than low-volume terms. Track trend using the historical Quality Score column — add it alongside the live score to see week-over-week movement."
-  },
-  {
-    q: "Can I have a low Quality Score and still perform well?",
-    a: "Yes, particularly in accounts running broad match with Smart Bidding. Smart Bidding adjusts bids per auction in real time based on conversion signals — it can limit spend on low-quality queries and still hit CPA or ROAS targets. A keyword may show QS 3 while the campaign converts efficiently. Quality Score is most meaningful as a cost indicator for exact and phrase match keywords where the QS calculation most accurately reflects auction reality."
-  },
-  {
-    q: "What is the difference between Quality Score and Ad Rank?",
-    a: "Ad Rank determines your position in each auction and is calculated in real time from six factors: your bid, quality of your ad and landing page, Ad Rank thresholds, auction competitiveness, search context, and expected impact of assets. Quality Score is a keyword-level diagnostic that approximates the quality component — but it is not directly used in the auction. Google is explicit: the visible 1–10 number is not an input into real-time Ad Rank."
-  },
-];
-
-function Faq() {
-  const [open, setOpen] = React.useState(0);
-  return (
-    <div style={{
-      border: "1px solid #E8D8C4", borderRadius: 6, overflow: "hidden",
-      background: "#fff", margin: "8px 0 56px",
-    }}>
-      {FAQ.map((it, i) => {
-        const isOpen = open === i;
-        return (
-          <div key={i} style={{ borderBottom: i < FAQ.length - 1 ? "1px solid #F0E6D5" : "none" }}>
-            <button onClick={() => setOpen(isOpen ? -1 : i)} style={{
-              width: "100%", textAlign: "left",
-              background: "transparent", border: 0, cursor: "pointer",
-              padding: "20px 24px",
-              display: "grid", gridTemplateColumns: "1fr 24px", gap: 16,
-              alignItems: "center", fontFamily: "inherit",
-            }}>
-              <span style={{ fontSize: 16, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.008em", lineHeight: 1.4 }}>{it.q}</span>
-              <span style={{
-                fontSize: 20, color: "#985830", lineHeight: 1,
-                transform: isOpen ? "rotate(45deg)" : "rotate(0)",
-                transition: "transform 180ms cubic-bezier(0.2,0,0,1)",
-                textAlign: "center",
-              }}>+</span>
-            </button>
-            {isOpen && (
-              <div style={{ padding: "0 24px 22px", fontSize: 15, lineHeight: 1.65, color: "#3A3A3A" }}>
-                {it.a}
-              </div>
-            )}
-          </div>
-        );
-      })}
+    <!-- FAQ heading -->
+    <div class="article-body">
+      <h2>FAQ</h2>
     </div>
-  );
-}
 
-/* =============== AUTHOR BLOCK =============== */
-function AuthorBlock() {
-  return (
-    <div style={{
-      background: "#FDF6EE", border: "1px solid #E8D8C4",
-      borderRadius: 6, padding: "28px 32px",
-      display: "grid", gridTemplateColumns: "64px 1fr",
-      gap: 22, alignItems: "start", marginTop: 56,
-    }}>
-      <img src="/assets/profile.jpg" alt="Lewis Phillips" style={{
-        width: 64, height: 64, borderRadius: "50%", objectFit: "cover",
-        border: "1px solid #E8D8C4",
-      }}/>
+    <!-- FAQ accordion -->
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="true">
+          <span class="faq-q">What is a good Quality Score in Google Ads?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">As a practical rule of thumb, 7&ndash;10 is usually healthy, 5&ndash;6 suggests room for improvement, and 1&ndash;4 deserves investigation. But the component ratings matter more than the composite number. A keyword at 5 with only Landing Page Experience below average needs a different fix from a keyword at 5 with Expected CTR below average. Focus on which component is rated Below average rather than the composite score in isolation.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">Does Quality Score affect Shopping and Performance Max campaigns?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">No. The 1&ndash;10 Quality Score metric exists only for Search campaign keywords. Shopping and Performance Max campaigns have no keyword structure to score against, so the Quality Score column is unavailable for those campaign types. Quality signals still influence how Google serves ads in these campaigns, but they are not surfaced as a visible score.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">How long does it take for Quality Score to improve?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Quality Score is influenced by recent historical performance, so changes take time to appear. A meaningful ad copy or landing page improvement may take 2&ndash;4 weeks to register, depending on impression volume. High-volume keywords show movement faster than low-volume terms. Track direction using the historical Quality Score column &mdash; add it alongside the live score to see week-over-week movement.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">Can I have a low Quality Score and still perform well?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Yes, particularly in accounts running broad match with Smart Bidding. Smart Bidding adjusts bids per auction in real time based on conversion signals &mdash; it can limit spend on low-quality queries and still hit CPA or ROAS targets. A keyword may show QS 3 while the campaign converts efficiently. Quality Score is most meaningful as a cost indicator for exact and phrase match keywords where the QS calculation most accurately reflects auction reality.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">What is the difference between Quality Score and Ad Rank?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Ad Rank determines your position in each auction and is calculated in real time from six factors: your bid, quality of your ad and landing page, Ad Rank thresholds, auction competitiveness, search context, and expected impact of assets. Quality Score is a keyword-level diagnostic that approximates the quality component &mdash; but it is not directly used in the auction. Google is explicit: the visible 1&ndash;10 number is not an input into real-time Ad Rank.</div>
+      </div>
+    </div>
+
+    <!-- Author block -->
+    <div class="author-block">
+      <img src="/images/profile.jpg" alt="Lewis Phillips" class="author-avatar">
       <div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 4 }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#1A1A1A" }}>Lewis Phillips</span>
-          <span style={{ fontSize: 13, color: "#6B6B6B" }}>Performance marketer · 11 years</span>
+        <div style="display:flex;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;">
+          <span class="author-name">Lewis Phillips</span>
+          <span class="author-role">Performance marketer &middot; 11 years</span>
         </div>
-        <p style={{ fontSize: 14, lineHeight: 1.65, color: "#3A3A3A", margin: "8px 0 14px", maxWidth: 620 }}>
-          I've managed Google Ads accounts across e-commerce and lead generation — including accounts where a structural Quality Score fix reduced CPC materially without a bid change. This guide draws on that, not a summary of Google's help centre.
-        </p>
-        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" style={{ fontSize: 13, fontWeight: 600, color: "#985830", textDecoration: "none" }}>LinkedIn →</a>
+        <p class="author-bio">I&rsquo;ve managed Google Ads accounts across e-commerce and lead generation &mdash; including accounts where a structural Quality Score fix reduced CPC materially without a bid change. This guide draws on that, not a summary of Google&rsquo;s help centre.</p>
+        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="author-link">LinkedIn &rarr;</a>
       </div>
     </div>
-  );
-}
 
-/* =============== RELATED =============== */
-function Related() {
-  return (
-    <section style={{ background: "#FDF6EE", padding: "72px 0 96px" }}>
-      <div className="page-w">
-        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 28 }}>
-          <Eyebrow>Related guides</Eyebrow>
-          <h2 style={{
-            fontSize: "clamp(24px, 2.6vw, 30px)", fontWeight: 700,
-            letterSpacing: "-0.02em", lineHeight: 1.15,
-            color: "#1A1A1A", margin: "10px 0 0",
-          }}>Keep reading.</h2>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
-          {RELATED.map(g => <RelatedCard key={g.slug} guide={g}/>)}
-        </div>
-      </div>
-    </section>
-  );
-}
+  </div><!-- /read-w -->
+</section>
 
-function RelatedCard({ guide }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <a
-      href={'/guides/' + guide.slug + '/'}
-      onMouseEnter={() => setH(true)}
-      onMouseLeave={() => setH(false)}
-      style={{
-        display: "flex", flexDirection: "column",
-        textDecoration: "none", color: "inherit",
-        background: "#fff",
-        border: "1px solid #E8D8C4",
-        borderRadius: 6,
-        padding: "24px 26px",
-        transition: "transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1)",
-        transform: h ? "translateY(-3px)" : "translateY(0)",
-        boxShadow: h ? "0 8px 28px rgba(152, 88, 48, 0.10)" : "0 1px 0 rgba(152, 88, 48, 0.02)",
-        borderColor: h ? "#985830" : "#E8D8C4",
-        minHeight: 220,
-      }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-        <CategoryPill cat={guide.cat} size="sm"/>
-        <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>{guide.time}</span>
-      </div>
-      <h3 style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em", lineHeight: 1.25, color: "#1A1A1A", margin: "0 0 12px", textWrap: "pretty" }}>{guide.title}</h3>
-      <p style={{ fontSize: 14, lineHeight: 1.55, color: "#6B6B6B", margin: "0 0 24px" }}>{guide.desc}</p>
-      <span style={{
-        marginTop: "auto", display: "inline-flex", alignItems: "center", gap: 6,
-        fontSize: 13, fontWeight: 600, color: "#985830", letterSpacing: "-0.005em",
-      }}>
-        Read guide
-        <span style={{ display: "inline-block", transform: h ? "translateX(3px)" : "translateX(0)", transition: "transform 200ms cubic-bezier(0.2,0,0,1)" }}>→</span>
-      </span>
-    </a>
-  );
-}
-
-/* =============== END CTA (DARK) =============== */
-function EndCta() {
-  return (
-    <section style={{ background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)", padding: "96px 32px" }}>
-      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
-        <Eyebrow color="#B87040">Ready to check yours?</Eyebrow>
-        <h2 style={{
-          fontSize: "clamp(36px, 4.6vw, 52px)", fontWeight: 700,
-          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
-          margin: "20px 0 32px",
-        }}>
-          Run the audit. <em style={{ fontStyle: "italic", color: "#985830" }}>See what's actually going on.</em>
-        </h2>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/google-ads-audit" style={ctaButtonStyle(true)}>Run the Google Ads Audit →</a>
-          <a href="/landing-page-audit" style={ctaButtonStyle(false)}>Run the Landing Page Audit →</a>
-        </div>
-        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-          Free · Read-only · No agency pitch
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ctaButtonStyle(filled) {
-  return {
-    display: "inline-flex", alignItems: "center", justifyContent: "center",
-    padding: "16px 32px", fontSize: 15, fontWeight: 600,
-    color: "#fff",
-    background: filled ? "#985830" : "transparent",
-    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.3)",
-    borderRadius: 4, textDecoration: "none", letterSpacing: "-0.005em",
-  };
-}
-
-/* =============== FOOTER =============== */
-function Footer() {
-  return (
-    <footer style={{ background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)", padding: "28px 32px" }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 12,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
-            Phillips<span style={{ color: "#985830" }}>.</span>
-          </span>
-          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* =============== APP =============== */
-function App() {
-  return (
-    <div data-screen-label="02 Improve Quality Score">
-      <Nav active="guides"/>
-      <ArticleHeader/>
-      <ArticleBody/>
-      <Related/>
-      <EndCta/>
-      <Footer/>
+<!-- ═══════════════════════════════════════════ RELATED -->
+<section class="related-section">
+  <div class="page-w">
+    <div class="related-heading-wrap">
+      <span class="eyebrow">Related guides</span>
+      <h2 class="related-heading">Keep reading.</h2>
     </div>
-  );
-}
+    <div class="related-cards">
+      <a href="/guides/fix-google-ads-conversion-tracking/" class="related-card">
+        <div class="related-card-meta">
+          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+          <span class="related-card-readtime">12 min read</span>
+        </div>
+        <h3 class="related-card-title">Google Ads Conversion Tracking Not Working? How to Fix It</h3>
+        <p class="related-card-desc">Smart Bidding optimises toward your conversion data. If the data is wrong, your bids are wrong. Every common cause covered.</p>
+        <span class="related-card-cta">Read guide &rarr;</span>
+      </a>
+      <a href="/guides/google-ads-bidding-strategy/" class="related-card">
+        <div class="related-card-meta">
+          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+          <span class="related-card-readtime">8 min read</span>
+        </div>
+        <h3 class="related-card-title">Google Ads Bidding Strategy: Which to Use and When</h3>
+        <p class="related-card-desc">tCPA, tROAS, Maximise Conversions, manual CPC &mdash; when each strategy makes sense and what it takes to make Smart Bidding work.</p>
+        <span class="related-card-cta">Read guide &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+<!-- ═══════════════════════════════════════════ END CTA -->
+<section class="end-cta">
+  <div class="end-cta-inner">
+    <span class="eyebrow" style="color:#B87040;">Ready to check yours?</span>
+    <h2>Run the audit. <em>See what&rsquo;s actually going on.</em></h2>
+    <div class="end-cta-btns">
+      <a href="/google-ads-audit" class="btn-cta-filled">Run the Google Ads Audit &rarr;</a>
+      <a href="/landing-page-audit" class="btn-cta-outline">Run the Landing Page Audit &rarr;</a>
+    </div>
+    <div class="end-cta-note">Free &middot; Read-only &middot; No agency pitch</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-left">
+      <span class="footer-logo">Phillips<span class="dot">.</span></span>
+      <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+    </div>
+  </div>
+</footer>
+
+<!-- FAQ accordion script -->
+<script>
+  (function() {
+    var btns = document.querySelectorAll('.faq-btn');
+    // Open first by default
+    var firstAnswer = document.querySelector('.faq-answer');
+    var firstIcon   = document.querySelector('.faq-icon');
+    if (firstAnswer) { firstAnswer.classList.add('is-open'); firstIcon.classList.add('is-open'); }
+
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item   = this.closest('.faq-item');
+        var answer = item.querySelector('.faq-answer');
+        var icon   = item.querySelector('.faq-icon');
+        var isOpen = answer.classList.contains('is-open');
+        // Close all
+        document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.remove('is-open'); });
+        document.querySelectorAll('.faq-icon').forEach(function(i)   { i.classList.remove('is-open'); });
+        // Toggle open
+        if (!isOpen) { answer.classList.add('is-open'); icon.classList.add('is-open'); }
+      });
+    });
+  })();
 </script>
+
 </body>
 </html>

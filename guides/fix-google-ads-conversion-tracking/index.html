@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
 <!-- End Google Tag Manager -->
@@ -14,16 +14,77 @@
 <meta name="twitter:card" content="summary">
 <title>Google Ads Conversion Tracking Not Working? How to Fix It (2026) | Phillips. Guides</title>
 <meta name="description" content="Google Ads conversions not showing, double-counting or stuck inactive? Every common cause covered — with step-by-step fixes for Enhanced Conversions, GA4 imports, Consent Mode v2, auto-tagging.">
-<link rel="icon" href="/assets/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+
+<!-- JSON-LD: Article -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Google Ads Conversion Tracking Not Working? How to Fix It",
+  "description": "Google Ads conversions not showing, double-counting or stuck inactive? Every common cause covered — with step-by-step fixes for Enhanced Conversions, GA4 imports, Consent Mode v2, auto-tagging.",
+  "author": {"@type": "Person", "name": "Lewis Phillips", "url": "https://www.phillips-uk.com"},
+  "datePublished": "2026-05-21",
+  "publisher": {"@type": "Organization", "name": "Phillips.", "url": "https://www.phillips-uk.com"}
+}
+</script>
+
+<!-- JSON-LD: HowTo -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Fix Google Ads Conversion Tracking",
+  "step": [
+    {"@type": "HowToStep", "name": "Identify the symptom", "text": "Match your symptom (inactive status, duplicate conversions, inflated rates) to the likely cause using the diagnosis table."},
+    {"@type": "HowToStep", "name": "Check for duplicate conversion counting", "text": "Open every conversion action and identify any pairs tracking the same event from different sources. Set GA4-imported versions to secondary (Include in Conversions = Off)."},
+    {"@type": "HowToStep", "name": "Verify tag firing with Tag Assistant", "text": "Run Tag Assistant on the conversion page to confirm the tag fires correctly. Check Conversion ID and Label match exactly."},
+    {"@type": "HowToStep", "name": "Confirm Consent Mode v2 firing order", "text": "The Consent Mode default state tag must fire before all other Google tags. Verify in Tag Assistant that consent state shows granted before the conversion tag fires."}
+  ]
+}
+</script>
+
+<!-- JSON-LD: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is my Google Ads conversion tracking not working?",
+      "acceptedAnswer": {"@type": "Answer", "text": "The most common reasons: the tag is not installed or not firing on the right event, auto-tagging is disabled, duplicate conversion actions are both set as primary, Consent Mode v2 is blocking ad_storage for non-consenting users, or Enhanced Conversions is misconfigured. Start at Goals › Conversions › Summary and check status, then run Tag Assistant on the conversion page."}
+    },
+    {
+      "@type": "Question",
+      "name": "What does 'Inactive' mean in Google Ads conversions?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match."}
+    },
+    {
+      "@type": "Question",
+      "name": "Should I import GA4 conversions into Google Ads?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag."}
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check if my Google Ads conversion tag is firing?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Install Google Tag Assistant (free Chrome extension) and navigate to or trigger the conversion event. Tag Assistant shows every Google tag that fires in real time."}
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between primary and secondary conversions?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but don't influence bid decisions."}
+    }
+  ]
+}
+</script>
+
 <style>
+  /* ── Reset & base ── */
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-    color: #1A1A1A;
-    background: #FFFFFF;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1A1A1A; background: #fff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -32,10 +93,11 @@
   html { scroll-behavior: smooth; }
   [id] { scroll-margin-top: 96px; }
 
-  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .read-w { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+  /* ── Layout ── */
+  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
 
-  /* Article body type */
+  /* ── Article body typography ── */
   .article-body p {
     font-size: 17px; line-height: 1.7;
     color: #1A1A1A; margin: 0 0 22px;
@@ -60,7 +122,7 @@
   .article-body a {
     color: #985830; text-decoration: underline;
     text-decoration-thickness: 1px; text-underline-offset: 3px;
-    text-decoration-color: rgba(152, 88, 48, 0.4);
+    text-decoration-color: rgba(152,88,48,0.4);
     transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
   }
   .article-body a:hover { text-decoration-color: #985830; }
@@ -72,1185 +134,1210 @@
   .article-body li::marker { color: #985830; }
   .article-body code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.92em;
-    background: #FDF6EE;
-    border: 1px solid #E8D8C4;
-    padding: 1px 6px; border-radius: 3px;
-    color: #7A3F1F;
+    font-size: 0.92em; background: #FDF6EE;
+    border: 1px solid #E8D8C4; padding: 1px 6px;
+    border-radius: 3px; color: #7A3F1F;
+  }
+
+  /* ── Nav ── */
+  .site-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: saturate(120%);
+    border-bottom: 1px solid #E8D8C4; height: 64px;
+  }
+  .site-nav-inner {
+    max-width: 1200px; margin: 0 auto; height: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+  }
+  .nav-logo {
+    text-decoration: none; font-size: 24px; font-weight: 700;
+    letter-spacing: -0.01em; color: #1A1A1A; line-height: 1;
+  }
+  .nav-logo .dot { color: #985830; }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-link {
+    font-size: 14px; font-weight: 500; color: #6B6B6B;
+    text-decoration: none;
+    transition: color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .nav-link:hover { color: #1A1A1A; }
+  .nav-link.active { font-weight: 600; color: #1A1A1A; }
+  .btn-nav {
+    background: #985830; color: #fff; border: 0;
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    border-radius: 4px; cursor: pointer; font-family: inherit;
+    text-decoration: none; display: inline-block;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .btn-nav:hover { background: #7A3F1F; }
+
+  /* ── Eyebrow ── */
+  .eyebrow {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #985830;
+  }
+  .eyebrow-muted {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase; color: #6B6B6B;
+  }
+
+  /* ── Category pill ── */
+  .category-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #F5EBD9; color: #985830; border: 1px solid #E8D8C4;
+    padding: 4px 11px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; line-height: 1; white-space: nowrap;
+  }
+  .pill-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #985830; display: inline-block;
+  }
+
+  /* ── Article header ── */
+  .article-header { background: #fff; padding: 64px 0 48px; }
+  .breadcrumb { font-size: 12px; color: #6B6B6B; letter-spacing: -0.005em; margin-bottom: 28px; }
+  .breadcrumb a { color: #6B6B6B; text-decoration: none; }
+  .breadcrumb .sep { margin: 0 8px; color: #E8D8C4; }
+  .breadcrumb .cur { color: #985830; font-weight: 600; }
+  .article-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .article-readtime { font-size: 12px; color: #6B6B6B; letter-spacing: -0.005em; }
+  .article-h1 {
+    font-size: clamp(36px, 4.8vw, 52px); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.06;
+    color: #1A1A1A; margin: 0 0 24px; text-wrap: balance;
+  }
+  .article-byline {
+    font-size: 13px; color: #6B6B6B; letter-spacing: -0.005em;
+    padding-bottom: 28px; border-bottom: 1px solid #E8D8C4; margin-bottom: 32px;
+  }
+  .article-lede {
+    font-size: 20px; line-height: 1.55; color: #1A1A1A;
+    margin: 0; letter-spacing: -0.005em; font-weight: 500; text-wrap: pretty;
+  }
+
+  /* ── Article section ── */
+  .article-section { background: #fff; padding: 8px 0 96px; }
+
+  /* ── Symptoms table ── */
+  .symptoms-table {
+    margin: 32px 0 56px;
+  }
+  .symptoms-eyebrow { margin-bottom: 16px; }
+  .data-table {
+    border: 1px solid #E8D8C4; border-radius: 6px;
+    background: #fff; overflow: hidden;
+  }
+  .data-table-head {
+    display: grid;
+    background: #FDF6EE; border-bottom: 1px solid #E8D8C4;
+    padding: 14px 24px; gap: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #6B6B6B;
+  }
+  .data-table-head.cols-3sym { grid-template-columns: 1.3fr 1.4fr 1fr; }
+  .data-table-row {
+    display: grid;
+    padding: 18px 24px; border-bottom: 1px solid #F0E6D5;
+    align-items: start; gap: 20px;
+  }
+  .data-table-row.cols-3sym { grid-template-columns: 1.3fr 1.4fr 1fr; }
+  .data-table-row:last-child { border-bottom: none; }
+  .cell-title { font-size: 14px; font-weight: 600; color: #1A1A1A; line-height: 1.5; letter-spacing: -0.005em; }
+  .cell-body  { font-size: 14px; color: #3A3A3A; line-height: 1.5; }
+  .cell-action { font-size: 13px; color: #985830; font-weight: 500; line-height: 1.5; }
+
+  /* ── Priority grid ── */
+  .priority-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin: 8px 0 56px;
+  }
+  .priority-col {
+    background: #fff; border: 1px solid #E8D8C4;
+    border-radius: 6px; padding: 20px 22px;
+    display: flex; flex-direction: column;
+  }
+  .priority-col-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .priority-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .priority-col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; }
+  .priority-col-note { font-size: 12px; color: #6B6B6B; margin-bottom: 16px; }
+  .priority-items { display: flex; flex-direction: column; gap: 8px; }
+  .priority-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; background: #FDF6EE;
+    border: 1px solid #F0E6D5; border-radius: 4px;
+    text-decoration: none;
+    transition: border-color 150ms cubic-bezier(0.2,0,0,1), background 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .priority-item:hover { border-color: #985830; background: #F5EBD9; }
+  .priority-num {
+    width: 24px; height: 24px; border-radius: 4px;
+    background: #fff; border: 1px solid #E8D8C4;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #985830;
+    flex-shrink: 0;
+  }
+  .priority-text { font-size: 13px; font-weight: 500; color: #1A1A1A; line-height: 1.35; letter-spacing: -0.005em; }
+
+  /* ── Issue block ── */
+  .issue-block { margin: 56px 0 24px; }
+  .issue-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
+  .issue-num {
+    font-size: 14px; font-weight: 700; color: #985830;
+    letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
+  }
+  .issue-title {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.018em;
+    line-height: 1.25; color: #1A1A1A; margin: 0; text-wrap: balance;
+  }
+
+  /* ── Architecture diagram ── */
+  .arch-diagram {
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 24px 28px; margin: 32px 0;
+  }
+  .arch-diagram-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #6B6B6B; margin-bottom: 4px; }
+  .arch-diagram-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 22px; letter-spacing: -0.005em; }
+  .arch-pipes { display: flex; flex-direction: column; gap: 14px; }
+  .arch-pipe {
+    display: grid; grid-template-columns: 1fr auto 1.4fr auto 1.2fr;
+    align-items: stretch; border-radius: 6px; overflow: hidden;
+  }
+  .arch-pipe.amber { border: 1px solid #E8D8C4; }
+  .arch-pipe.slate { border: 1px solid #CFD4DA; }
+  .arch-cell {
+    padding: 18px 20px; display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  }
+  .arch-cell-label { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #8A8580; margin-bottom: 2px; }
+  .arch-cell-main { font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+  .arch-arrow { display: flex; align-items: center; justify-content: center; padding: 0 6px; font-size: 18px; }
+  .arch-caption { margin-top: 18px; font-size: 12px; color: #6B6B6B; line-height: 1.55; }
+
+  /* ── Trigger diagram ── */
+  .trigger-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+  .trigger-col { border-radius: 6px; background: #fff; overflow: hidden; }
+  .trigger-col-head {
+    padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .trigger-badge {
+    width: 18px; height: 18px; border-radius: 50%; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .trigger-label {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;
+  }
+  .trigger-col-body { padding: 18px 20px; }
+  .trigger-steps { display: flex; flex-direction: column; gap: 0; }
+  .trigger-step { display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: start; }
+  .trigger-step-indicator { display: flex; flex-direction: column; align-items: center; }
+  .trigger-step-num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; border-width: 1.5px; border-style: solid;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .trigger-step-line { width: 1px; flex: 1; min-height: 18px; margin: 4px 0; }
+  .trigger-step-text { font-size: 13px; line-height: 1.5; color: #1A1A1A; }
+  .trigger-foot {
+    border-top: 1px dashed #E8D8C4; padding: 12px 20px;
+    font-size: 12px; color: #6B6B6B; font-style: italic;
+  }
+
+  /* ── Code block ── */
+  .code-block { margin: 32px 0; }
+  .code-block-inner {
+    background: #1A1A1A; border-radius: 6px; overflow: hidden;
+    border: 1px solid #2A2A2A;
+  }
+  .code-block-header {
+    padding: 10px 18px; border-bottom: 1px solid #2A2A2A;
+    display: flex; align-items: center; gap: 10px;
+    background: #241408;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #3A3A3A; }
+  .code-caption {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #B87040; margin-left: 8px;
+  }
+  .code-block pre {
+    margin: 0; padding: 20px 22px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px; line-height: 1.65;
+    color: #F2E6D7; overflow-x: auto;
+  }
+  .code-block pre code {
+    background: transparent; border: none; padding: 0;
+    color: inherit; font-size: inherit;
+  }
+
+  /* ── Consent timeline ── */
+  .consent-timeline {
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 24px 28px; margin: 32px 0;
+  }
+  .consent-timeline-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #6B6B6B; margin-bottom: 4px; }
+  .consent-timeline-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 24px; letter-spacing: -0.005em; }
+  .consent-steps { display: flex; flex-direction: column; gap: 0; }
+  .consent-step { display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: start; }
+  .consent-step-indicator { display: flex; flex-direction: column; align-items: center; }
+  .consent-step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1.5px solid #985830;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .consent-step-num.final { background: #985830; color: #fff; }
+  .consent-step-num.normal { background: #fff; color: #985830; }
+  .consent-step-line { width: 1px; flex: 1; background: #E8D8C4; min-height: 32px; margin: 4px 0; }
+  .consent-step-content { padding-bottom: 22px; }
+  .consent-step-content.last { padding-bottom: 0; }
+  .consent-step-title { font-size: 14px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.005em; margin-bottom: 4px; }
+  .consent-step-desc { font-size: 13px; line-height: 1.55; color: #6B6B6B; }
+  .consent-step-desc.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .consent-warning {
+    margin-top: 20px; padding: 12px 16px;
+    background: #FDF6EE; border-radius: 4px;
+    font-size: 12px; line-height: 1.55; color: #6B6B6B;
+  }
+
+  /* ── Best practice table ── */
+  .best-table {
+    border: 1px solid #E8D8C4; border-radius: 6px;
+    background: #fff; overflow: hidden; margin: 32px 0 56px;
+  }
+  .best-table-head {
+    display: grid; grid-template-columns: 1.4fr 1.6fr 1.1fr 1.1fr;
+    background: #FDF6EE; border-bottom: 1px solid #E8D8C4;
+    padding: 14px 24px; gap: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #6B6B6B;
+  }
+  .best-table-row {
+    display: grid; grid-template-columns: 1.4fr 1.6fr 1.1fr 1.1fr;
+    padding: 18px 24px; border-bottom: 1px solid #F0E6D5;
+    align-items: center; gap: 20px;
+  }
+  .best-table-row:last-child { border-bottom: none; }
+  .best-event { font-size: 14px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.005em; }
+  .best-source { font-size: 14px; color: #3A3A3A; }
+  .best-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; line-height: 1;
+  }
+  .best-badge.primary { background: #F5EBD9; color: #985830; border: 1px solid #E8D8C4; }
+  .best-badge.secondary { background: #E4E7EB; color: #4F5760; border: 1px solid #CFD4DA; }
+  .best-badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .best-role { font-size: 13px; color: #3A3A3A; }
+
+  /* ── Verify grid ── */
+  .verify-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin: 32px 0 56px;
+  }
+  .verify-card {
+    background: #fff; border: 1px solid #E8D8C4;
+    border-radius: 6px; padding: 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .verify-icon {
+    width: 44px; height: 44px; border-radius: 6px;
+    background: #FDF6EE; border: 1px solid #E8D8C4;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #985830;
+    letter-spacing: 0.04em; margin-bottom: 16px; flex-shrink: 0;
+  }
+  .verify-title { font-size: 16px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.01em; margin-bottom: 16px; }
+  .verify-row { border-top: 1px solid #F0E6D5; padding: 12px 0; }
+  .verify-row-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #A0998E; margin-bottom: 4px;
+  }
+  .verify-row-value { font-size: 13px; line-height: 1.5; color: #1A1A1A; }
+  .verify-row-value.amber { color: #985830; font-weight: 500; }
+
+  /* ── Dark callout ── */
+  .dark-callout-wrap { margin: 56px 0; }
+  .dark-callout {
+    background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%);
+    border-radius: 6px; padding: 32px 36px; color: #fff;
+  }
+  .dark-callout-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 11px; border-radius: 20px;
+    background: rgba(152,88,48,0.18); border: 1px solid rgba(152,88,48,0.4);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: #D9A57E; margin-bottom: 20px;
+  }
+  .dark-callout-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #985830; }
+  .dark-callout h3 {
+    font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;
+  }
+  .dark-callout p { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.75); margin: 0 0 14px; }
+  .dark-callout p:last-child { margin-bottom: 0; }
+
+  /* ── FAQ ── */
+  .faq-list {
+    border: 1px solid #E8D8C4; border-radius: 6px;
+    overflow: hidden; background: #fff; margin: 8px 0 56px;
+  }
+  .faq-item { border-bottom: 1px solid #F0E6D5; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-btn {
+    width: 100%; text-align: left; background: transparent; border: 0;
+    cursor: pointer; padding: 20px 24px; font-family: inherit;
+    display: grid; grid-template-columns: 1fr 24px; gap: 16px; align-items: center;
+  }
+  .faq-q { font-size: 16px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.008em; line-height: 1.4; }
+  .faq-icon {
+    font-size: 20px; color: #985830; line-height: 1; text-align: center;
+    transition: transform 180ms cubic-bezier(0.2,0,0,1); user-select: none;
+  }
+  .faq-answer { display: none; padding: 0 24px 22px; font-size: 15px; line-height: 1.65; color: #3A3A3A; }
+
+  /* ── Author block ── */
+  .author-block {
+    background: #FDF6EE; border: 1px solid #E8D8C4;
+    border-radius: 6px; padding: 28px 32px;
+    display: grid; grid-template-columns: 64px 1fr;
+    gap: 22px; align-items: start; margin-top: 56px;
+  }
+  .author-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid #E8D8C4; }
+  .author-name { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+  .author-role { font-size: 13px; color: #6B6B6B; margin-left: 12px; }
+  .author-bio { font-size: 14px; line-height: 1.65; color: #3A3A3A; margin: 8px 0 14px; max-width: 620px; }
+  .author-link { font-size: 13px; font-weight: 600; color: #985830; text-decoration: none; }
+  .author-link:hover { text-decoration: underline; }
+
+  /* ── Related section ── */
+  .related-section { background: #FDF6EE; padding: 72px 0 96px; }
+  .related-heading-wrap { border-left: 3px solid #985830; padding-left: 24px; margin-bottom: 28px; }
+  .related-heading {
+    font-size: clamp(24px, 2.6vw, 30px); font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.15;
+    color: #1A1A1A; margin: 10px 0 0;
+  }
+  .related-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .related-card {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 24px 26px; min-height: 220px;
+    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms, border-color 200ms;
+  }
+  .related-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(152,88,48,0.10); border-color: #985830; }
+  .related-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .related-card-readtime { font-size: 11px; color: #6B6B6B; letter-spacing: -0.005em; }
+  .related-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; color: #1A1A1A; margin: 0 0 12px; text-wrap: pretty; }
+  .related-card-desc { font-size: 14px; line-height: 1.55; color: #6B6B6B; margin: 0 0 24px; }
+  .related-card-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #985830; letter-spacing: -0.005em; }
+
+  /* ── End CTA ── */
+  .end-cta { background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%); padding: 96px 32px; }
+  .end-cta-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+  .end-cta h2 {
+    font-size: clamp(36px, 4.6vw, 52px); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.06; color: #fff;
+    margin: 20px 0 32px;
+  }
+  .end-cta h2 em { font-style: italic; color: #985830; }
+  .end-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-cta-filled {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
+    background: #985830; border: 1.5px solid #985830;
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: background 150ms;
+  }
+  .btn-cta-filled:hover { background: #7A3F1F; border-color: #7A3F1F; }
+  .btn-cta-outline {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: border-color 150ms;
+  }
+  .btn-cta-outline:hover { border-color: rgba(255,255,255,0.7); }
+  .end-cta-note { margin-top: 32px; font-size: 13px; color: rgba(255,255,255,0.5); }
+
+  /* ── Footer ── */
+  .site-footer { background: linear-gradient(135deg, #1A1A1A 0%, #241408 100%); padding: 28px 32px; }
+  .site-footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-left { display: flex; align-items: center; gap: 16px; font-size: 12px; color: rgba(255,255,255,0.4); }
+  .footer-logo { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+  .footer-logo .dot { color: #985830; }
+
+  /* ── Mobile nav ── */
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .ph-drawer.open { display: block; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .ph-drawer-link:hover, .ph-drawer-link.active { color: #1A1A1A; }
+  .ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: #7A3F1F; }
+
+  /* ── Responsive ── */
+  @media (max-width: 780px) {
+    .nav-links { display: none !important; }
+    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
+    .read-w { padding: 0 20px; }
+    .page-w  { padding: 0 20px; }
+    .priority-grid { grid-template-columns: 1fr; }
+    .verify-grid { grid-template-columns: 1fr; }
+    .trigger-grid { grid-template-columns: 1fr; }
+    .data-table { overflow-x: auto; }
+    .data-table-head.cols-3sym, .data-table-row.cols-3sym { min-width: 520px; }
+    .best-table { overflow-x: auto; }
+    .best-table-head, .best-table-row { min-width: 560px; }
+    .arch-diagram { overflow-x: auto; }
+    .arch-pipe { min-width: 500px; }
+    .author-block { grid-template-columns: 1fr; }
+    .article-h1 { font-size: 32px; }
   }
 </style>
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<div id="root"></div>
 
-<script type="text/babel">
+<!-- ═══════════════════════════════════════════ NAV -->
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="nav-logo">Phillips<span class="dot">.</span></a>
+    <nav class="nav-links">
+      <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+      <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
+      <a href="/creative-analysis" class="nav-link">Creative Scoring</a>
+      <a href="/guides/" class="nav-link active">Guides</a>
+      <a href="/#contact" class="btn-nav">Get in touch</a>
+    </nav>
+    <button class="ph-hamburger" onclick="document.getElementById('ph-art1-drawer').classList.add('open')" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+    </button>
+  </div>
+</header>
+<div id="ph-art1-drawer" class="ph-drawer">
+  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art1-drawer').classList.remove('open')"></div>
+  <div class="ph-drawer-panel">
+    <button class="ph-drawer-close" onclick="document.getElementById('ph-art1-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
+    <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
+    <a href="/guides/" class="ph-drawer-link active">Guides</a>
+    <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+  </div>
+</div>
 
-/* =============== TOKENS =============== */
-const CAT = {
-  "Google Ads":    { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
-  "Landing Pages": { fg: "#2E5F5C", bg: "#DCEAE8", border: "#BFD6D2" },
-  "Tracking":      { fg: "#4F5760", bg: "#E4E7EB", border: "#CFD4DA" },
-};
+<!-- ═══════════════════════════════════════════ ARTICLE HEADER -->
+<header class="article-header">
+  <div class="read-w">
+    <div class="breadcrumb">
+      <a href="/guides/">Guides</a>
+      <span class="sep">/</span>
+      <span class="cur">Conversion Tracking</span>
+    </div>
+    <div class="article-meta">
+      <span class="category-pill"><span class="pill-dot"></span>Conversion Tracking</span>
+      <span class="article-readtime">12 min read</span>
+    </div>
+    <h1 class="article-h1">How to Fix Google Ads Conversion Tracking</h1>
+    <div class="article-byline">Lewis Phillips &middot; 21 May 2026 &middot; 12 min read</div>
+    <p class="article-lede">Broken conversion tracking isn&rsquo;t a reporting problem. Smart Bidding uses your conversion data as its primary signal &mdash; if the data is wrong, your bids are wrong. This guide covers every common cause, from basic installation issues to the architecture mistakes that silently degrade bidding performance.</p>
+  </div>
+</header>
 
-const POST = {
-  cat: "Google Ads",
-  title: "How to Fix Google Ads Conversion Tracking",
-  byline: "Lewis Phillips · 21 May 2026 · 12 min read",
-  time: "12 min read",
-  lede: "Broken conversion tracking isn't a reporting problem. Smart Bidding uses your conversion data as its primary signal — if the data is wrong, your bids are wrong. This guide covers every common cause, from basic installation issues to the architecture mistakes that silently degrade bidding performance.",
-};
+<!-- ═══════════════════════════════════════════ ARTICLE BODY -->
+<section class="article-section">
+  <div class="read-w">
 
-const RELATED = [
-  {
-    slug: "ga4-imports-break-smart-bidding",
-    cat: "Google Ads",
-    time: "5 min read",
-    title: "Why GA4 imports break Smart Bidding",
-    desc: "The most common paid media mistake — and why it's not obvious until CPA doubles.",
-  },
-  {
-    slug: "enhanced-conversions-what-and-why",
-    cat: "Google Ads",
-    time: "4 min read",
-    title: "Enhanced Conversions: what it is, why you probably don't have it",
-    desc: "The easiest high-ROI fix on most accounts. Also the most skipped.",
-  },
-];
+    <!-- Why it matters -->
+    <div class="article-body">
+      <h2>Why this matters more than people realise</h2>
+      <p>When Smart Bidding decides how much to bid for an auction, it draws on your historical conversion data. Every strategy &mdash; Target CPA, Target ROAS, Maximise Conversions &mdash; works from that same signal. If the data feeding it is incomplete, duplicated, or miscategorised, the algorithm optimises toward the wrong thing.</p>
+      <p>You can have excellent ad copy, tight keyword lists, and a competitive budget, and still get bad results because the conversion data is broken. Most tracking failures are invisible: the account looks like it is working, conversions are being recorded, but the signal going into Smart Bidding is off.</p>
+      <p><strong>Fix conversion tracking first.</strong> Every other optimisation sits on top of it.</p>
+    </div>
 
-/* =============== PRIMITIVES =============== */
-function Eyebrow({ children, color = "#985830" }) {
-  return (
-    <span style={{
-      display: "inline-block",
-      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-      textTransform: "uppercase", color,
-    }}>{children}</span>
-  );
-}
-
-function CategoryPill({ cat, size = "md" }) {
-  const t = CAT[cat] || CAT["Google Ads"];
-  const pad = size === "sm" ? "3px 9px" : "4px 11px";
-  const fs = size === "sm" ? 10 : 11;
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 6,
-      background: t.bg, color: t.fg,
-      border: `1px solid ${t.border}`,
-      padding: pad, borderRadius: 20,
-      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
-      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: 999, background: t.fg, display: "inline-block" }}/>
-      {cat}
-    </span>
-  );
-}
-
-function BtnFilledSmall({ children, onClick }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
-        padding: "10px 20px", fontSize: 13, fontWeight: 600,
-        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
-      }}>{children}</button>
-  );
-}
-
-/* =============== NAV =============== */
-function Nav({ active }) {
-  const linkStyle = (k) => ({
-    fontSize: 14, fontWeight: 500,
-    color: active === k ? "#1A1A1A" : "#6B6B6B",
-    textDecoration: "none",
-    transition: "color 150ms cubic-bezier(0.2,0,0,1)",
-  });
-  return (
-    <header style={{
-      position: "sticky", top: 0, zIndex: 50,
-      background: "rgba(255,255,255,0.96)",
-      backdropFilter: "saturate(120%)",
-      borderBottom: "1px solid #E8D8C4", height: 64,
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto", height: "100%",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
-      }}>
-        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
-          Phillips<span style={{ color: "#985830" }}>.</span>
-        </a>
-        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
-          <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
-          <a href="/guides/" style={linkStyle("guides")}>Guides</a>
-          <BtnFilledSmall onClick={() => window.location.href = '/#contact'}>Get in touch</BtnFilledSmall>
-        </nav>
+    <!-- Symptoms table -->
+    <div class="symptoms-table">
+      <div class="symptoms-eyebrow"><span class="eyebrow">Symptoms &mdash; find your issue fast</span></div>
+      <div class="data-table">
+        <div class="data-table-head cols-3sym">
+          <span>Symptom</span>
+          <span>Likely cause</span>
+          <span>First check</span>
+        </div>
+        <div class="data-table-row cols-3sym">
+          <span class="cell-title">Conversions show zero or status is inactive</span>
+          <span class="cell-body">Tag not firing, wrong Conversion ID or Label</span>
+          <span class="cell-action">Tag Assistant on the conversion page</span>
+        </div>
+        <div class="data-table-row cols-3sym">
+          <span class="cell-title">Conversions doubled or inflated</span>
+          <span class="cell-body">GA4 import and Google Ads tag both set as primary</span>
+          <span class="cell-action">Goals &rsaquo; Conversions &rsaquo; Summary</span>
+        </div>
+        <div class="data-table-row cols-3sym">
+          <span class="cell-title">Conversion rate is 20% or higher</span>
+          <span class="cell-body">Tag firing on page load, not on form submission</span>
+          <span class="cell-action">GTM Preview Mode</span>
+        </div>
+        <div class="data-table-row cols-3sym">
+          <span class="cell-title">Leads in CRM but not in Google Ads</span>
+          <span class="cell-body">Consent blocking, missing GCLID, EC mismatch</span>
+          <span class="cell-action">Tag Assistant + Diagnostics</span>
+        </div>
+        <div class="data-table-row cols-3sym">
+          <span class="cell-title">Sudden drop after a site update</span>
+          <span class="cell-body">GTM container not republished or trigger broken</span>
+          <span class="cell-action">GTM &rsaquo; Versions history</span>
+        </div>
+        <div class="data-table-row cols-3sym">
+          <span class="cell-title">Status shows &ldquo;Needs attention&rdquo;</span>
+          <span class="cell-body">Enhanced Conversions error or consent conflict</span>
+          <span class="cell-action">Goals &rsaquo; Conversions &rsaquo; Diagnostics</span>
+        </div>
       </div>
-    </header>
-  );
-}
+    </div>
 
-/* =============== ARTICLE HEADER =============== */
-function ArticleHeader() {
-  return (
-    <header style={{ background: "#fff", padding: "64px 0 48px" }}>
-      <div className="read-w">
-        {/* Breadcrumb */}
-        <div style={{
-          fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em",
-          marginBottom: 28,
-        }}>
-          <a href="/guides/" style={{ color: "#6B6B6B", textDecoration: "none" }}>Guides</a>
-          <span style={{ margin: "0 8px", color: "#E8D8C4" }}>/</span>
-          <span style={{ color: "#985830", fontWeight: 600 }}>Conversion Tracking</span>
+    <div class="article-body">
+      <h2>The 7 most common conversion tracking issues</h2>
+      <p>Each of these has a different root cause and a different fix. Identify which applies before making changes &mdash; working through them randomly wastes time and makes it harder to know what actually resolved the problem.</p>
+    </div>
+
+    <!-- Priority grid -->
+    <div class="priority-grid">
+      <div class="priority-col">
+        <div class="priority-col-header">
+          <span class="priority-dot" style="background:#985830;"></span>
+          <span class="priority-col-label" style="color:#985830;">Fix immediately</span>
         </div>
-
-        {/* Category + read time */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 28 }}>
-          <CategoryPill cat={POST.cat}/>
-          <span style={{ fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-            {POST.time}
-          </span>
+        <div class="priority-col-note">Material bidding impact</div>
+        <div class="priority-items">
+          <a href="#issue-2" class="priority-item">
+            <span class="priority-num">2</span>
+            <span class="priority-text">Duplicate conversion counting</span>
+          </a>
+          <a href="#issue-3" class="priority-item">
+            <span class="priority-num">3</span>
+            <span class="priority-text">GA4 imported as primary</span>
+          </a>
+          <a href="#issue-7" class="priority-item">
+            <span class="priority-num">7</span>
+            <span class="priority-text">Auto-tagging disabled</span>
+          </a>
         </div>
-
-        {/* H1 */}
-        <h1 style={{
-          fontSize: "clamp(36px, 4.8vw, 52px)", fontWeight: 700,
-          letterSpacing: "-0.025em", lineHeight: 1.06,
-          color: "#1A1A1A", margin: "0 0 24px",
-          textWrap: "balance",
-        }}>
-          {POST.title}
-        </h1>
-
-        {/* Byline */}
-        <div style={{
-          fontSize: 13, color: "#6B6B6B", letterSpacing: "-0.005em",
-          paddingBottom: 28, borderBottom: "1px solid #E8D8C4",
-          marginBottom: 32,
-        }}>
-          {POST.byline}
-        </div>
-
-        {/* Lede */}
-        <p style={{
-          fontSize: 20, lineHeight: 1.55,
-          color: "#1A1A1A", margin: 0,
-          letterSpacing: "-0.005em",
-          fontWeight: 500,
-          textWrap: "pretty",
-        }}>
-          {POST.lede}
-        </p>
       </div>
-    </header>
-  );
-}
-
-/* =============== ARTICLE BODY =============== */
-function ArticleBody() {
-  return (
-    <section style={{ background: "#fff", padding: "8px 0 96px" }}>
-      <div className="read-w">
-        <div className="article-body">
-
-          {/* Why it matters */}
-          <h2>Why this matters more than people realise</h2>
-          <p>
-            When Smart Bidding decides how much to bid for an auction, it draws on your historical conversion data. Every strategy — Target CPA, Target ROAS, Maximise Conversions — works from that same signal. If the data feeding it is incomplete, duplicated, or miscategorised, the algorithm optimises toward the wrong thing.
-          </p>
-          <p>
-            You can have excellent ad copy, tight keyword lists, and a competitive budget, and still get bad results because the conversion data is broken. Most tracking failures are invisible: the account looks like it is working, conversions are being recorded, but the signal going into Smart Bidding is off.
-          </p>
-          <p>
-            <strong>Fix conversion tracking first.</strong> Every other optimisation sits on top of it.
-          </p>
+      <div class="priority-col">
+        <div class="priority-col-header">
+          <span class="priority-dot" style="background:#8A6A4A;"></span>
+          <span class="priority-col-label" style="color:#8A6A4A;">Fix this week</span>
         </div>
-
-        {/* Symptoms table */}
-        <SymptomsTable/>
-
-        <div className="article-body">
-          <h2>The 7 most common conversion tracking issues</h2>
-          <p>
-            Each of these has a different root cause and a different fix. Identify which applies before making changes — working through them randomly wastes time and makes it harder to know what actually resolved the problem.
-          </p>
+        <div class="priority-col-note">Restricts data quality</div>
+        <div class="priority-items">
+          <a href="#issue-4" class="priority-item">
+            <span class="priority-num">4</span>
+            <span class="priority-text">Tag firing on page load</span>
+          </a>
+          <a href="#issue-5" class="priority-item">
+            <span class="priority-num">5</span>
+            <span class="priority-text">Enhanced Conversions misconfigured</span>
+          </a>
+          <a href="#issue-6" class="priority-item">
+            <span class="priority-num">6</span>
+            <span class="priority-text">Consent Mode v2 blocking data</span>
+          </a>
         </div>
-
-        <PriorityGrid/>
-
-        {/* Issues — each as its own block */}
-        <Issue n={1} id="issue-1" title="Conversion action is inactive or shows 'Needs attention'">
-          <p>
-            Usually the first warning you see. <strong>Inactive</strong> means the conversion tag has not fired within the conversion window (typically 30 days). <strong>Needs attention</strong> flags a configuration issue, often Enhanced Conversions failing or a consent mode conflict.
-          </p>
-          <p>
-            <strong>Fix:</strong> Run Tag Assistant on the conversion page to confirm whether the tag fires at all. If the tag fires but status remains inactive, check that the Conversion ID and Label in the tag exactly match the values in your Google Ads conversion action — a single character difference causes a silent mismatch. For Needs attention errors, go to <strong>Goals › Conversions › Diagnostics</strong> and Google will flag the specific field. Common causes: a phone number not in E.164 format (<code>+44xxxxxxxxxx</code>), or <code>user_data</code> being passed before the consent tag fires.
-          </p>
-        </Issue>
-
-        <Issue n={2} id="issue-2" title="Duplicate conversion counting">
-          <p>
-            The most widespread misconfiguration in Google Ads accounts. It happens when two sources are both tracking the same conversion and both are set as primary. The common version: a GTM-deployed Google Ads Conversion Tag <em>and</em> a GA4-imported conversion action both set to Include in Conversions = On for the same event. Every conversion gets counted twice.
-          </p>
-          <p>
-            Impact goes beyond inflated reporting. Smart Bidding receives a corrupted signal — thinks conversions are happening more frequently than they are, at a lower CPA than is real. Performance looks better than it is until you compare against actual revenue or CRM data.
-          </p>
-          <p>
-            <strong>Fix:</strong> Open every conversion action and identify any pairs tracking the same event from different sources. Set the GA4-imported version to <strong>secondary</strong> (Include in Conversions = Off). The GTM-deployed Google Ads Conversion Tag stays primary. Re-run this check every time you add a new conversion source.
-          </p>
-        </Issue>
-
-        <Issue n={3} id="issue-3" title="GA4 conversions imported as primary">
-          <p>
-            A subtle issue that most guides don't cover. Importing GA4 conversions into Google Ads is useful — it gives you GA4's attribution model as a reference point. For most lead-generation accounts, though, a native Google Ads conversion tag belongs in the primary slot, with GA4 imports kept secondary for reporting and validation.
-          </p>
-          <p>
-            Two reasons. First, GA4 and Google Ads can attribute the same conversion differently because they use different reporting models, lookback settings and event processing paths. Bidding against a GA4-attributed metric means Smart Bidding works from data that doesn't always match how Google Ads measures performance. Second, GA4 import latency means conversions can appear in reports with a delay, so the algorithm operates on incomplete recent data.
-          </p>
-        </Issue>
-
-        <ArchitectureDiagram/>
-
-        <div className="article-body">
-          <p>
-            <strong>Fix:</strong> For every conversion action imported from GA4, set <strong>Include in Conversions = Off</strong>. Keep the import for reference and reporting; let your GTM-deployed Google Ads Conversion Tag carry the bidding weight. The rule isn't "never import GA4" — it's "never let two sources track the same event as primary".
-          </p>
+      </div>
+      <div class="priority-col">
+        <div class="priority-col-header">
+          <span class="priority-dot" style="background:#6B6B6B;"></span>
+          <span class="priority-col-label" style="color:#6B6B6B;">Diagnose first</span>
         </div>
-
-        <Issue n={4} id="issue-4" title="Conversion tag firing on page load instead of the actual conversion">
-          <p>
-            Happens most often when an account is set up quickly. A conversion tag gets attached to a Page View trigger on the thank-you URL, which sounds correct, but Page View triggers fire on every visit to that page — direct navigation, link previews, page refreshes all trigger it. Conversion rates of 20–40% in Search campaigns are usually the symptom.
-          </p>
-        </Issue>
-
-        <TriggerDiagram/>
-
-        <div className="article-body">
-          <p>
-            <strong>Fix:</strong> In GTM, use a <strong>Form Submission trigger</strong> on the specific form, or a <strong>Custom Event trigger</strong> firing on a dataLayer event pushed by your form confirmation logic. For Shopify, check the current checkout setup before relying on GTM — the Google &amp; YouTube app or Customer Events approach is usually safer than legacy GTM snippets on checkout pages. Test in Preview Mode: submit once, confirm the trigger fires exactly once on submission.
-          </p>
+        <div class="priority-col-note">Symptom, not root cause</div>
+        <div class="priority-items">
+          <a href="#issue-1" class="priority-item">
+            <span class="priority-num">1</span>
+            <span class="priority-text">Inactive or &ldquo;Needs attention&rdquo;</span>
+          </a>
         </div>
+      </div>
+    </div>
 
-        <Issue n={5} id="issue-5" title="Enhanced Conversions not enabled or misconfigured">
-          <p>
-            Standard browser-side conversion tracking misses a growing share of conversions to ad blockers, iOS ITP, and cookie consent restrictions. Enhanced Conversions recovers a portion by sending hashed customer data alongside the conversion signal, which Google matches to signed-in Google accounts.
-          </p>
-          <p>
-            The common misconfiguration: the Google Ads Conversion Tag is set to <strong>Automatic</strong> user data collection, which scrapes email addresses from the DOM. It's unreliable — misses users who type slowly, fails on single-page apps, doesn't capture phone numbers. The correct approach is <strong>Code mode</strong>: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and read it via a Data Layer Variable.
-          </p>
-        </Issue>
+    <!-- Issue 01 -->
+    <div class="issue-block" id="issue-1">
+      <div class="issue-header">
+        <span class="issue-num">01</span>
+        <h3 class="issue-title">Conversion action is inactive or shows &lsquo;Needs attention&rsquo;</h3>
+      </div>
+      <div class="article-body">
+        <p>Usually the first warning you see. <strong>Inactive</strong> means the conversion tag has not fired within the conversion window (typically 30 days). <strong>Needs attention</strong> flags a configuration issue, often Enhanced Conversions failing or a consent mode conflict.</p>
+        <p><strong>Fix:</strong> Run Tag Assistant on the conversion page to confirm whether the tag fires at all. If the tag fires but status remains inactive, check that the Conversion ID and Label in the tag exactly match the values in your Google Ads conversion action &mdash; a single character difference causes a silent mismatch. For Needs attention errors, go to <strong>Goals &rsaquo; Conversions &rsaquo; Diagnostics</strong> and Google will flag the specific field. Common causes: a phone number not in E.164 format (<code>+44xxxxxxxxxx</code>), or <code>user_data</code> being passed before the consent tag fires.</p>
+      </div>
+    </div>
 
-        <CodeBlock caption="GTM dataLayer push · Enhanced Conversions (Code mode)">{`dataLayer.push({
+    <!-- Issue 02 -->
+    <div class="issue-block" id="issue-2">
+      <div class="issue-header">
+        <span class="issue-num">02</span>
+        <h3 class="issue-title">Duplicate conversion counting</h3>
+      </div>
+      <div class="article-body">
+        <p>The most widespread misconfiguration in Google Ads accounts. It happens when two sources are both tracking the same conversion and both are set as primary. The common version: a GTM-deployed Google Ads Conversion Tag <em>and</em> a GA4-imported conversion action both set to Include in Conversions = On for the same event. Every conversion gets counted twice.</p>
+        <p>Impact goes beyond inflated reporting. Smart Bidding receives a corrupted signal &mdash; thinks conversions are happening more frequently than they are, at a lower CPA than is real. Performance looks better than it is until you compare against actual revenue or CRM data.</p>
+        <p><strong>Fix:</strong> Open every conversion action and identify any pairs tracking the same event from different sources. Set the GA4-imported version to <strong>secondary</strong> (Include in Conversions = Off). The GTM-deployed Google Ads Conversion Tag stays primary. Re-run this check every time you add a new conversion source.</p>
+      </div>
+    </div>
+
+    <!-- Issue 03 -->
+    <div class="issue-block" id="issue-3">
+      <div class="issue-header">
+        <span class="issue-num">03</span>
+        <h3 class="issue-title">GA4 conversions imported as primary</h3>
+      </div>
+      <div class="article-body">
+        <p>A subtle issue that most guides don&rsquo;t cover. Importing GA4 conversions into Google Ads is useful &mdash; it gives you GA4&rsquo;s attribution model as a reference point. For most lead-generation accounts, though, a native Google Ads conversion tag belongs in the primary slot, with GA4 imports kept secondary for reporting and validation.</p>
+        <p>Two reasons. First, GA4 and Google Ads can attribute the same conversion differently because they use different reporting models, lookback settings and event processing paths. Bidding against a GA4-attributed metric means Smart Bidding works from data that doesn&rsquo;t always match how Google Ads measures performance. Second, GA4 import latency means conversions can appear in reports with a delay, so the algorithm operates on incomplete recent data.</p>
+      </div>
+    </div>
+
+    <!-- Architecture diagram -->
+    <div class="arch-diagram">
+      <div class="arch-diagram-eyebrow">What good looks like</div>
+      <div class="arch-diagram-title">Two parallel pipelines, one primary signal</div>
+      <div class="arch-pipes">
+        <div class="arch-pipe amber">
+          <div class="arch-cell" style="background:#F5EBD9;">
+            <div class="arch-cell-label">Source</div>
+            <div class="arch-cell-main" style="color:#985830;">GTM</div>
+          </div>
+          <div class="arch-arrow" style="color:#E8D8C4;">&rarr;</div>
+          <div class="arch-cell" style="background:#fff;">
+            <div class="arch-cell-label">Tag / import</div>
+            <div class="arch-cell-main" style="color:#985830;">Google Ads Conversion Tag</div>
+          </div>
+          <div class="arch-arrow" style="color:#E8D8C4;">&rarr;</div>
+          <div class="arch-cell" style="background:#F5EBD9;">
+            <div class="arch-cell-label">Primary &middot; feeds bids</div>
+            <div class="arch-cell-main" style="color:#985830;">Smart Bidding</div>
+          </div>
+        </div>
+        <div class="arch-pipe slate">
+          <div class="arch-cell" style="background:#E4E7EB;">
+            <div class="arch-cell-label">Source</div>
+            <div class="arch-cell-main" style="color:#4F5760;">GA4</div>
+          </div>
+          <div class="arch-arrow" style="color:#CFD4DA;">&rarr;</div>
+          <div class="arch-cell" style="background:#fff;">
+            <div class="arch-cell-label">Tag / import</div>
+            <div class="arch-cell-main" style="color:#4F5760;">GA4 import (generate_lead)</div>
+          </div>
+          <div class="arch-arrow" style="color:#CFD4DA;">&rarr;</div>
+          <div class="arch-cell" style="background:#E4E7EB;">
+            <div class="arch-cell-label">Secondary &middot; observed</div>
+            <div class="arch-cell-main" style="color:#4F5760;">Reporting only</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-caption">Primary actions feed Smart Bidding. Secondary actions are recorded for reporting but don&rsquo;t influence bid decisions. Never run two primary sources for the same event.</div>
+    </div>
+
+    <div class="article-body">
+      <p><strong>Fix:</strong> For every conversion action imported from GA4, set <strong>Include in Conversions = Off</strong>. Keep the import for reference and reporting; let your GTM-deployed Google Ads Conversion Tag carry the bidding weight. The rule isn&rsquo;t &ldquo;never import GA4&rdquo; &mdash; it&rsquo;s &ldquo;never let two sources track the same event as primary&rdquo;.</p>
+    </div>
+
+    <!-- Issue 04 -->
+    <div class="issue-block" id="issue-4">
+      <div class="issue-header">
+        <span class="issue-num">04</span>
+        <h3 class="issue-title">Conversion tag firing on page load instead of the actual conversion</h3>
+      </div>
+      <div class="article-body">
+        <p>Happens most often when an account is set up quickly. A conversion tag gets attached to a Page View trigger on the thank-you URL, which sounds correct, but Page View triggers fire on every visit to that page &mdash; direct navigation, link previews, page refreshes all trigger it. Conversion rates of 20&ndash;40% in Search campaigns are usually the symptom.</p>
+      </div>
+    </div>
+
+    <!-- Trigger diagram -->
+    <div class="trigger-grid">
+      <!-- Bad column -->
+      <div class="trigger-col" style="border:1px solid #E0BFBF;">
+        <div class="trigger-col-head" style="background:#F5E3E3;border-bottom-color:#E0BFBF;">
+          <span class="trigger-badge" style="background:#9B3D3D;">&#x2715;</span>
+          <span class="trigger-label" style="color:#9B3D3D;">Page View trigger</span>
+        </div>
+        <div class="trigger-col-body">
+          <div class="trigger-steps">
+            <div class="trigger-step">
+              <div class="trigger-step-indicator">
+                <span class="trigger-step-num" style="border-color:#9B3D3D;color:#9B3D3D;">1</span>
+                <span class="trigger-step-line" style="background:#E0BFBF;"></span>
+              </div>
+              <div class="trigger-step-text" style="padding-bottom:18px;">Page View on /thank-you</div>
+            </div>
+            <div class="trigger-step">
+              <div class="trigger-step-indicator">
+                <span class="trigger-step-num" style="border-color:#9B3D3D;color:#9B3D3D;">2</span>
+                <span class="trigger-step-line" style="background:#E0BFBF;"></span>
+              </div>
+              <div class="trigger-step-text" style="padding-bottom:18px;">Fires on every visit &mdash; direct nav, refreshes, link previews</div>
+            </div>
+            <div class="trigger-step">
+              <div class="trigger-step-indicator">
+                <span class="trigger-step-num" style="border-color:#9B3D3D;color:#9B3D3D;">3</span>
+              </div>
+              <div class="trigger-step-text">Inflated conversions &mdash; Smart Bidding trains on bad data</div>
+            </div>
+          </div>
+        </div>
+        <div class="trigger-foot">Conversion rate of 20&ndash;40%? This is why.</div>
+      </div>
+      <!-- Good column -->
+      <div class="trigger-col" style="border:1px solid #BFD6D2;">
+        <div class="trigger-col-head" style="background:#DCEAE8;border-bottom-color:#BFD6D2;">
+          <span class="trigger-badge" style="background:#2E5F5C;">&#x2713;</span>
+          <span class="trigger-label" style="color:#2E5F5C;">Form Submit trigger</span>
+        </div>
+        <div class="trigger-col-body">
+          <div class="trigger-steps">
+            <div class="trigger-step">
+              <div class="trigger-step-indicator">
+                <span class="trigger-step-num" style="border-color:#2E5F5C;color:#2E5F5C;">1</span>
+                <span class="trigger-step-line" style="background:#BFD6D2;"></span>
+              </div>
+              <div class="trigger-step-text" style="padding-bottom:18px;">Form Submission / dataLayer event</div>
+            </div>
+            <div class="trigger-step">
+              <div class="trigger-step-indicator">
+                <span class="trigger-step-num" style="border-color:#2E5F5C;color:#2E5F5C;">2</span>
+                <span class="trigger-step-line" style="background:#BFD6D2;"></span>
+              </div>
+              <div class="trigger-step-text" style="padding-bottom:18px;">Fires only on real submission &mdash; one event, one conversion</div>
+            </div>
+            <div class="trigger-step">
+              <div class="trigger-step-indicator">
+                <span class="trigger-step-num" style="border-color:#2E5F5C;color:#2E5F5C;">3</span>
+              </div>
+              <div class="trigger-step-text">Accurate signal &mdash; Smart Bidding trains on real leads</div>
+            </div>
+          </div>
+        </div>
+        <div class="trigger-foot">Use GTM Preview Mode to confirm exactly once on submit.</div>
+      </div>
+    </div>
+
+    <div class="article-body">
+      <p><strong>Fix:</strong> In GTM, use a <strong>Form Submission trigger</strong> on the specific form, or a <strong>Custom Event trigger</strong> firing on a dataLayer event pushed by your form confirmation logic. For Shopify, check the current checkout setup before relying on GTM &mdash; the Google &amp; YouTube app or Customer Events approach is usually safer than legacy GTM snippets on checkout pages. Test in Preview Mode: submit once, confirm the trigger fires exactly once on submission.</p>
+    </div>
+
+    <!-- Issue 05 -->
+    <div class="issue-block" id="issue-5">
+      <div class="issue-header">
+        <span class="issue-num">05</span>
+        <h3 class="issue-title">Enhanced Conversions not enabled or misconfigured</h3>
+      </div>
+      <div class="article-body">
+        <p>Standard browser-side conversion tracking misses a growing share of conversions to ad blockers, iOS ITP, and cookie consent restrictions. Enhanced Conversions recovers a portion by sending hashed customer data alongside the conversion signal, which Google matches to signed-in Google accounts.</p>
+        <p>The common misconfiguration: the Google Ads Conversion Tag is set to <strong>Automatic</strong> user data collection, which scrapes email addresses from the DOM. It&rsquo;s unreliable &mdash; misses users who type slowly, fails on single-page apps, doesn&rsquo;t capture phone numbers. The correct approach is <strong>Code mode</strong>: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and read it via a Data Layer Variable.</p>
+      </div>
+    </div>
+
+    <!-- Code block -->
+    <div class="code-block">
+      <div class="code-block-inner">
+        <div class="code-block-header">
+          <div class="code-dots">
+            <span class="code-dot"></span>
+            <span class="code-dot"></span>
+            <span class="code-dot"></span>
+          </div>
+          <span class="code-caption">GTM dataLayer push &middot; Enhanced Conversions (Code mode)</span>
+        </div>
+        <pre><code>dataLayer.push({
   'event':     'conversion_form_submit',
   'user_data': {
     'email':        formEmail,        // raw — Google hashes it
     'phone_number': formPhone         // E.164: +447911123456
   }
-});`}</CodeBlock>
-
-        <div className="article-body">
-          <p>
-            <strong>Fix:</strong> Capture email and phone from the form at submission and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be E.164 (UK numbers starting with 07 become +447). After 7 days, check the Enhanced Conversions Diagnostics in Google Ads to confirm user-provided data is being received and match quality is healthy.
-          </p>
-        </div>
-
-        <Issue n={6} id="issue-6" title="Consent Mode v2 silently blocking conversions">
-          <p>
-            The hardest issue to diagnose because there's no error. For advertisers in EEA/UK, Consent Mode v2 is now core to Google Ads measurement. Configured correctly, it signals consent state to Google tags so they can behave appropriately for each user. Configured incorrectly, remarketing and attribution signals can be restricted, conversion modelling degraded, and data blocked silently for users who haven't consented.
-          </p>
-          <p>
-            The failure mode: the Consent Mode default state tag is missing, fires too late, or sets the wrong consent types. Tags that require <code>ad_storage</code> fire before consent is granted on page load, then the consent signal never updates to granted even after the user accepts. Google tags interpret this as a permanently denied state and suppress the conversion.
-          </p>
-        </Issue>
-
-        <ConsentTimeline/>
-
-        <div className="article-body">
-          <p>
-            <strong>Fix:</strong> Your Consent Mode default state tag must fire <strong>before any other Google tag</strong> on every page. Set it to fire on Consent Initialization, with <code>ad_storage</code> and <code>ad_user_data</code> denied by default. Your CMP must push a consent update to the dataLayer when the user accepts. Verify in Tag Assistant that consent state shows granted before the conversion tag fires.
-          </p>
-        </div>
-
-        <Issue n={7} id="issue-7" title="Auto-tagging disabled">
-          <p>
-            Without auto-tagging, Google Ads doesn't append a GCLID parameter to landing page URLs. GCLID is how Google Ads connects an ad click to a subsequent conversion. Disable it and click-based attribution stops working entirely. Most often turned off accidentally after a URL rewrite, or by a developer who thought the parameters were tracking spam.
-          </p>
-          <p>
-            <strong>Fix:</strong> Google Ads: <strong>Admin › Account settings › Auto-tagging</strong>. Toggle it on. If your website strips URL parameters (some CMSs do this), whitelist GCLID in your URL parameter handling, or move to server-side auto-tagging.
-          </p>
-        </Issue>
-
-        <div className="article-body">
-          <h2>What correct setup looks like in 2026</h2>
-          <p>
-            A clean account has one primary conversion action per conversion type, fired directly by a GTM-deployed Google Ads Conversion Tag. GA4-imported equivalents sit alongside it as secondary actions. Here's what that looks like for a typical lead-generation account:
-          </p>
-        </div>
-
-        <BestPracticeTable/>
-
-        <div className="article-body">
-          <h2>How to verify it's working</h2>
-          <p>
-            Making a change and waiting for data is slow and unreliable. Use these three methods to confirm tracking is working immediately after any fix.
-          </p>
-        </div>
-
-        <VerifyGrid/>
-
-        <Update2026/>
-
-        <div className="article-body">
-          <h2>FAQ</h2>
-        </div>
-
-        <Faq/>
-
-        <AuthorBlock/>
-
-      </div>
-    </section>
-  );
-}
-
-/* =============== SYMPTOMS TABLE =============== */
-const SYMPTOMS = [
-  { s: "Conversions show zero or status is inactive", c: "Tag not firing, wrong Conversion ID or Label", f: "Tag Assistant on the conversion page" },
-  { s: "Conversions doubled or inflated", c: "GA4 import and Google Ads tag both set as primary", f: "Goals › Conversions › Summary" },
-  { s: "Conversion rate is 20% or higher", c: "Tag firing on page load, not on form submission", f: "GTM Preview Mode" },
-  { s: "Leads in CRM but not in Google Ads", c: "Consent blocking, missing GCLID, EC mismatch", f: "Tag Assistant + Diagnostics" },
-  { s: "Sudden drop after a site update", c: "GTM container not republished or trigger broken", f: "GTM › Versions history" },
-  { s: "Status shows \"Needs attention\"", c: "Enhanced Conversions error or consent conflict", f: "Goals › Conversions › Diagnostics" },
-];
-
-function SymptomsTable() {
-  return (
-    <div style={{ margin: "32px 0 56px" }}>
-      <div style={{ marginBottom: 16 }}>
-        <Eyebrow>Symptoms — find your issue fast</Eyebrow>
-      </div>
-      <div style={{
-        border: "1px solid #E8D8C4", borderRadius: 6,
-        background: "#fff", overflow: "hidden",
-      }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1.3fr 1.4fr 1fr",
-          background: "#FDF6EE",
-          borderBottom: "1px solid #E8D8C4",
-          padding: "14px 24px",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-          textTransform: "uppercase", color: "#6B6B6B",
-        }}>
-          <span>Symptom</span>
-          <span>Likely cause</span>
-          <span>First check</span>
-        </div>
-        {SYMPTOMS.map((r, i) => (
-          <div key={i} style={{
-            display: "grid",
-            gridTemplateColumns: "1.3fr 1.4fr 1fr",
-            padding: "18px 24px",
-            borderBottom: i < SYMPTOMS.length - 1 ? "1px solid #F0E6D5" : "none",
-            alignItems: "start", gap: 20,
-          }}>
-            <span style={{
-              fontSize: 14, fontWeight: 600, color: "#1A1A1A",
-              lineHeight: 1.5, letterSpacing: "-0.005em",
-            }}>{r.s}</span>
-            <span style={{ fontSize: 14, color: "#3A3A3A", lineHeight: 1.5 }}>{r.c}</span>
-            <span style={{ fontSize: 13, color: "#985830", fontWeight: 500, lineHeight: 1.5 }}>{r.f}</span>
-          </div>
-        ))}
+});</code></pre>
       </div>
     </div>
-  );
-}
 
-/* =============== PRIORITY GRID =============== */
-const TRIAGE = {
-  immediate: {
-    label: "Fix immediately",
-    note: "Material bidding impact",
-    color: "#985830",
-    items: [
-      { n: 2, t: "Duplicate conversion counting" },
-      { n: 3, t: "GA4 imported as primary" },
-      { n: 7, t: "Auto-tagging disabled" },
-    ],
-  },
-  week: {
-    label: "Fix this week",
-    note: "Restricts data quality",
-    color: "#8A6A4A",
-    items: [
-      { n: 4, t: "Tag firing on page load" },
-      { n: 5, t: "Enhanced Conversions misconfigured" },
-      { n: 6, t: "Consent Mode v2 blocking data" },
-    ],
-  },
-  diagnose: {
-    label: "Diagnose first",
-    note: "Symptom, not root cause",
-    color: "#6B6B6B",
-    items: [
-      { n: 1, t: "Inactive or \"Needs attention\"" },
-    ],
-  },
-};
+    <div class="article-body">
+      <p><strong>Fix:</strong> Capture email and phone from the form at submission and push a structured <code>user_data</code> object to the dataLayer. Phone numbers must be E.164 (UK numbers starting with 07 become +447). After 7 days, check the Enhanced Conversions Diagnostics in Google Ads to confirm user-provided data is being received and match quality is healthy.</p>
+    </div>
 
-function PriorityGrid() {
-  return (
-    <div style={{
-      display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-      gap: 16, margin: "8px 0 56px",
-    }}>
-      {Object.entries(TRIAGE).map(([k, col]) => (
-        <div key={k} style={{
-          background: "#fff", border: "1px solid #E8D8C4",
-          borderRadius: 6, padding: "20px 22px",
-          display: "flex", flexDirection: "column",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <span style={{ width: 8, height: 8, borderRadius: 999, background: col.color }}/>
-            <span style={{
-              fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-              textTransform: "uppercase", color: col.color,
-            }}>{col.label}</span>
+    <!-- Issue 06 -->
+    <div class="issue-block" id="issue-6">
+      <div class="issue-header">
+        <span class="issue-num">06</span>
+        <h3 class="issue-title">Consent Mode v2 silently blocking conversions</h3>
+      </div>
+      <div class="article-body">
+        <p>The hardest issue to diagnose because there&rsquo;s no error. For advertisers in EEA/UK, Consent Mode v2 is now core to Google Ads measurement. Configured correctly, it signals consent state to Google tags so they can behave appropriately for each user. Configured incorrectly, remarketing and attribution signals can be restricted, conversion modelling degraded, and data blocked silently for users who haven&rsquo;t consented.</p>
+        <p>The failure mode: the Consent Mode default state tag is missing, fires too late, or sets the wrong consent types. Tags that require <code>ad_storage</code> fire before consent is granted on page load, then the consent signal never updates to granted even after the user accepts. Google tags interpret this as a permanently denied state and suppress the conversion.</p>
+      </div>
+    </div>
+
+    <!-- Consent timeline -->
+    <div class="consent-timeline">
+      <div class="consent-timeline-eyebrow">Correct firing order</div>
+      <div class="consent-timeline-title">Consent Mode v2 &mdash; what should happen on every page load</div>
+      <div class="consent-steps">
+        <div class="consent-step">
+          <div class="consent-step-indicator">
+            <span class="consent-step-num normal">1</span>
+            <span class="consent-step-line"></span>
           </div>
-          <div style={{ fontSize: 12, color: "#6B6B6B", marginBottom: 16 }}>
-            {col.note}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {col.items.map(it => (
-              <a key={it.n} href={`#issue-${it.n}`} style={{
-                display: "flex", alignItems: "center", gap: 12,
-                padding: "10px 12px",
-                background: "#FDF6EE",
-                border: "1px solid #F0E6D5",
-                borderRadius: 4,
-                textDecoration: "none",
-                transition: "border-color 150ms cubic-bezier(0.2,0,0,1), background 150ms cubic-bezier(0.2,0,0,1)",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#985830"; e.currentTarget.style.background = "#F5EBD9"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "#F0E6D5"; e.currentTarget.style.background = "#FDF6EE"; }}>
-                <span style={{
-                  width: 24, height: 24, borderRadius: 4,
-                  background: "#fff", border: "1px solid #E8D8C4",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 11, fontWeight: 700, color: "#985830",
-                  fontVariantNumeric: "tabular-nums",
-                  flexShrink: 0,
-                }}>{it.n}</span>
-                <span style={{
-                  fontSize: 13, fontWeight: 500, color: "#1A1A1A",
-                  lineHeight: 1.35, letterSpacing: "-0.005em",
-                }}>{it.t}</span>
-              </a>
-            ))}
+          <div class="consent-step-content">
+            <div class="consent-step-title">Consent Init tag</div>
+            <div class="consent-step-desc">Fires first, before all other tags</div>
           </div>
         </div>
-      ))}
-    </div>
-  );
-}
-
-/* =============== ISSUE BLOCK =============== */
-function Issue({ n, id, title, children }) {
-  return (
-    <div id={id} style={{ margin: "56px 0 24px" }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 16 }}>
-        <span style={{
-          fontSize: 14, fontWeight: 700, color: "#985830",
-          letterSpacing: "0.04em",
-          fontVariantNumeric: "tabular-nums",
-        }}>{String(n).padStart(2, "0")}</span>
-        <h3 style={{
-          fontSize: 22, fontWeight: 700, letterSpacing: "-0.018em",
-          lineHeight: 1.25, color: "#1A1A1A", margin: 0,
-          textWrap: "balance",
-        }}>{title}</h3>
-      </div>
-      <div className="article-body">{children}</div>
-    </div>
-  );
-}
-
-/* =============== ARCHITECTURE DIAGRAM =============== */
-function ArchitectureDiagram() {
-  const Cell = ({ main, sub, color, soft }) => (
-    <div style={{
-      background: soft, padding: "18px 20px",
-      display: "flex", flexDirection: "column", justifyContent: "center", gap: 4,
-    }}>
-      <div style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-        textTransform: "uppercase", color: "#8A8580",
-      }}>{sub}</div>
-      <div style={{ fontSize: 14, fontWeight: 600, color: color, letterSpacing: "-0.005em" }}>{main}</div>
-    </div>
-  );
-  const Arrow = ({ color }) => (
-    <div style={{
-      display: "flex", alignItems: "center", justifyContent: "center",
-      padding: "0 6px", color, fontSize: 18,
-    }}>→</div>
-  );
-  const Pipe = ({ label, ladder, role, terminal, color, soft, accent }) => (
-    <div style={{
-      display: "grid", gridTemplateColumns: "1fr auto 1.4fr auto 1.2fr",
-      alignItems: "stretch",
-      border: `1px solid ${accent}`, borderRadius: 6, overflow: "hidden",
-    }}>
-      <Cell main={label}    sub="Source"       color={color} soft={soft}/>
-      <Arrow color={accent}/>
-      <Cell main={ladder}   sub="Tag / import" color={color} soft="#fff"/>
-      <Arrow color={accent}/>
-      <Cell main={terminal} sub={role}         color={color} soft={soft}/>
-    </div>
-  );
-  return (
-    <div style={{
-      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
-      padding: "24px 28px", margin: "32px 0",
-    }}>
-      <div style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-        textTransform: "uppercase", color: "#6B6B6B", marginBottom: 4,
-      }}>What good looks like</div>
-      <div style={{
-        fontSize: 15, fontWeight: 600, color: "#1A1A1A",
-        marginBottom: 22, letterSpacing: "-0.005em",
-      }}>
-        Two parallel pipelines, one primary signal
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <Pipe label="GTM" ladder="Google Ads Conversion Tag" terminal="Smart Bidding" role="Primary · feeds bids" color="#985830" soft="#F5EBD9" accent="#E8D8C4"/>
-        <Pipe label="GA4" ladder="GA4 import (generate_lead)" terminal="Reporting only" role="Secondary · observed" color="#4F5760" soft="#E4E7EB" accent="#CFD4DA"/>
-      </div>
-      <div style={{
-        marginTop: 18, fontSize: 12, color: "#6B6B6B", lineHeight: 1.55,
-      }}>
-        Primary actions feed Smart Bidding. Secondary actions are recorded for reporting but don't influence bid decisions. Never run two primary sources for the same event.
-      </div>
-    </div>
-  );
-}
-
-/* =============== TRIGGER DIAGRAM =============== */
-function TriggerDiagram() {
-  return (
-    <div style={{
-      display: "grid", gridTemplateColumns: "1fr 1fr",
-      gap: 16, margin: "32px 0",
-    }}>
-      <TriggerCol bad title="Page View trigger" steps={[
-        "Page View on /thank-you",
-        "Fires on every visit — direct nav, refreshes, link previews",
-        "Inflated conversions — Smart Bidding trains on bad data",
-      ]} foot="Conversion rate of 20–40%? This is why."/>
-      <TriggerCol title="Form Submit trigger" steps={[
-        "Form Submission / dataLayer event",
-        "Fires only on real submission — one event, one conversion",
-        "Accurate signal — Smart Bidding trains on real leads",
-      ]} foot="Use GTM Preview Mode to confirm exactly once on submit."/>
-    </div>
-  );
-}
-
-function TriggerCol({ bad = false, title, steps, foot }) {
-  const accent = bad ? "#9B3D3D" : "#2E5F5C";
-  const accentSoft = bad ? "#F5E3E3" : "#DCEAE8";
-  const accentBorder = bad ? "#E0BFBF" : "#BFD6D2";
-  return (
-    <div style={{
-      border: `1px solid ${accentBorder}`, borderRadius: 6,
-      background: "#fff", overflow: "hidden",
-    }}>
-      <div style={{
-        background: accentSoft, padding: "12px 18px",
-        borderBottom: `1px solid ${accentBorder}`,
-        display: "flex", alignItems: "center", gap: 10,
-      }}>
-        <span style={{
-          width: 18, height: 18, borderRadius: 999, background: accent, color: "#fff",
-          display: "inline-flex", alignItems: "center", justifyContent: "center",
-          fontSize: 11, fontWeight: 700,
-        }}>{bad ? "✕" : "✓"}</span>
-        <span style={{
-          fontSize: 12, fontWeight: 700,
-          color: accent, textTransform: "uppercase", letterSpacing: "0.10em",
-        }}>{title}</span>
-      </div>
-      <div style={{ padding: "18px 20px" }}>
-        {steps.map((s, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: 12, alignItems: "start" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{
-                width: 18, height: 18, borderRadius: 999,
-                background: "#fff", border: `1.5px solid ${accent}`,
-                fontSize: 10, fontWeight: 700, color: accent,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontVariantNumeric: "tabular-nums",
-              }}>{i + 1}</span>
-              {i < steps.length - 1 && (
-                <span style={{ width: 1, flex: 1, background: accentBorder, minHeight: 18, margin: "4px 0" }}/>
-              )}
-            </div>
-            <div style={{
-              fontSize: 13, lineHeight: 1.5, color: "#1A1A1A",
-              paddingBottom: i < steps.length - 1 ? 18 : 0,
-            }}>{s}</div>
+        <div class="consent-step">
+          <div class="consent-step-indicator">
+            <span class="consent-step-num normal">2</span>
+            <span class="consent-step-line"></span>
           </div>
-        ))}
+          <div class="consent-step-content">
+            <div class="consent-step-title">Default state set</div>
+            <div class="consent-step-desc mono">ad_storage = denied&#10;ad_user_data = denied</div>
+          </div>
+        </div>
+        <div class="consent-step">
+          <div class="consent-step-indicator">
+            <span class="consent-step-num normal">3</span>
+            <span class="consent-step-line"></span>
+          </div>
+          <div class="consent-step-content">
+            <div class="consent-step-title">Banner appears</div>
+            <div class="consent-step-desc">User sees the cookie consent prompt</div>
+          </div>
+        </div>
+        <div class="consent-step">
+          <div class="consent-step-indicator">
+            <span class="consent-step-num normal">4</span>
+            <span class="consent-step-line"></span>
+          </div>
+          <div class="consent-step-content">
+            <div class="consent-step-title">User accepts</div>
+            <div class="consent-step-desc">CMP pushes consent update to dataLayer</div>
+          </div>
+        </div>
+        <div class="consent-step">
+          <div class="consent-step-indicator">
+            <span class="consent-step-num normal">5</span>
+            <span class="consent-step-line"></span>
+          </div>
+          <div class="consent-step-content">
+            <div class="consent-step-title">State updated</div>
+            <div class="consent-step-desc mono">ad_storage = granted&#10;ad_user_data = granted</div>
+          </div>
+        </div>
+        <div class="consent-step">
+          <div class="consent-step-indicator">
+            <span class="consent-step-num final">6</span>
+          </div>
+          <div class="consent-step-content last">
+            <div class="consent-step-title">Conversion tag fires</div>
+            <div class="consent-step-desc">Data flows to Google Ads &#x2713;</div>
+          </div>
+        </div>
       </div>
-      <div style={{
-        borderTop: "1px dashed #E8D8C4",
-        padding: "12px 20px",
-        fontSize: 12, color: "#6B6B6B", fontStyle: "italic",
-      }}>{foot}</div>
+      <div class="consent-warning">
+        If steps 1&ndash;2 happen <em style="color:#985830;font-style:italic;">after</em> step 3, the consent signal is permanently denied for that page load &mdash; even if the user accepts.
+      </div>
     </div>
-  );
-}
 
-/* =============== CODE BLOCK =============== */
-function CodeBlock({ caption, children }) {
-  return (
-    <figure style={{ margin: "32px 0" }}>
-      <div style={{
-        background: "#1A1A1A",
-        borderRadius: 6, overflow: "hidden",
-        border: "1px solid #2A2A2A",
-      }}>
-        <div style={{
-          padding: "10px 18px",
-          borderBottom: "1px solid #2A2A2A",
-          display: "flex", alignItems: "center", gap: 10,
-          background: "#241408",
-        }}>
-          <span style={{ display: "flex", gap: 6 }}>
-            <span style={{ width: 10, height: 10, borderRadius: 999, background: "#3A3A3A" }}/>
-            <span style={{ width: 10, height: 10, borderRadius: 999, background: "#3A3A3A" }}/>
-            <span style={{ width: 10, height: 10, borderRadius: 999, background: "#3A3A3A" }}/>
+    <div class="article-body">
+      <p><strong>Fix:</strong> Your Consent Mode default state tag must fire <strong>before any other Google tag</strong> on every page. Set it to fire on Consent Initialization, with <code>ad_storage</code> and <code>ad_user_data</code> denied by default. Your CMP must push a consent update to the dataLayer when the user accepts. Verify in Tag Assistant that consent state shows granted before the conversion tag fires.</p>
+    </div>
+
+    <!-- Issue 07 -->
+    <div class="issue-block" id="issue-7">
+      <div class="issue-header">
+        <span class="issue-num">07</span>
+        <h3 class="issue-title">Auto-tagging disabled</h3>
+      </div>
+      <div class="article-body">
+        <p>Without auto-tagging, Google Ads doesn&rsquo;t append a GCLID parameter to landing page URLs. GCLID is how Google Ads connects an ad click to a subsequent conversion. Disable it and click-based attribution stops working entirely. Most often turned off accidentally after a URL rewrite, or by a developer who thought the parameters were tracking spam.</p>
+        <p><strong>Fix:</strong> Google Ads: <strong>Admin &rsaquo; Account settings &rsaquo; Auto-tagging</strong>. Toggle it on. If your website strips URL parameters (some CMSs do this), whitelist GCLID in your URL parameter handling, or move to server-side auto-tagging.</p>
+      </div>
+    </div>
+
+    <!-- What correct looks like -->
+    <div class="article-body">
+      <h2>What correct setup looks like in 2026</h2>
+      <p>A clean account has one primary conversion action per conversion type, fired directly by a GTM-deployed Google Ads Conversion Tag. GA4-imported equivalents sit alongside it as secondary actions. Here&rsquo;s what that looks like for a typical lead-generation account:</p>
+    </div>
+
+    <div class="best-table">
+      <div class="best-table-head">
+        <span>Conversion event</span>
+        <span>Source</span>
+        <span>Include in Conversions</span>
+        <span>Bidding role</span>
+      </div>
+      <div class="best-table-row">
+        <span class="best-event">Lead form submission</span>
+        <span class="best-source">GTM &mdash; Google Ads Conversion Tag</span>
+        <span>
+          <span class="best-badge primary">
+            <span class="best-badge-dot" style="background:#985830;"></span>
+            On &middot; primary
           </span>
-          <span style={{
-            fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-            textTransform: "uppercase", color: "#B87040", marginLeft: 8,
-          }}>{caption}</span>
+        </span>
+        <span class="best-role">Smart Bidding signal</span>
+      </div>
+      <div class="best-table-row">
+        <span class="best-event">Lead form submission (GA4)</span>
+        <span class="best-source">GA4 import &mdash; generate_lead</span>
+        <span>
+          <span class="best-badge secondary">
+            <span class="best-badge-dot" style="background:#4F5760;"></span>
+            Off &middot; secondary
+          </span>
+        </span>
+        <span class="best-role">Reporting only</span>
+      </div>
+      <div class="best-table-row">
+        <span class="best-event">Purchase</span>
+        <span class="best-source">Shopify / server-side app</span>
+        <span>
+          <span class="best-badge secondary">
+            <span class="best-badge-dot" style="background:#4F5760;"></span>
+            Off &middot; secondary
+          </span>
+        </span>
+        <span class="best-role">Observed</span>
+      </div>
+    </div>
+
+    <!-- How to verify -->
+    <div class="article-body">
+      <h2>How to verify it&rsquo;s working</h2>
+      <p>Making a change and waiting for data is slow and unreliable. Use these three methods to confirm tracking is working immediately after any fix.</p>
+    </div>
+
+    <div class="verify-grid">
+      <div class="verify-card">
+        <div class="verify-icon">TA</div>
+        <div class="verify-title">Google Tag Assistant</div>
+        <div class="verify-row">
+          <div class="verify-row-label">Use when</div>
+          <div class="verify-row-value">Installing or changing a tag</div>
         </div>
-        <pre style={{
-          margin: 0, padding: "20px 22px",
-          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-          fontSize: 13, lineHeight: 1.65,
-          color: "#F2E6D7", overflowX: "auto",
-        }}><code style={{
-          background: "transparent", border: "none", padding: 0,
-          color: "inherit", fontSize: "inherit",
-        }}>{children}</code></pre>
-      </div>
-    </figure>
-  );
-}
-
-/* =============== CONSENT TIMELINE =============== */
-const CONSENT_STEPS = [
-  { t: "Consent Init tag", d: "Fires first, before all other tags" },
-  { t: "Default state set", d: "ad_storage = denied\nad_user_data = denied" },
-  { t: "Banner appears", d: "User sees the cookie consent prompt" },
-  { t: "User accepts", d: "CMP pushes consent update to dataLayer" },
-  { t: "State updated", d: "ad_storage = granted\nad_user_data = granted" },
-  { t: "Conversion tag fires", d: "Data flows to Google Ads ✓" },
-];
-
-function ConsentTimeline() {
-  return (
-    <div style={{
-      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
-      padding: "24px 28px", margin: "32px 0",
-    }}>
-      <div style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-        textTransform: "uppercase", color: "#6B6B6B", marginBottom: 4,
-      }}>Correct firing order</div>
-      <div style={{ fontSize: 15, fontWeight: 600, color: "#1A1A1A", marginBottom: 24, letterSpacing: "-0.005em" }}>
-        Consent Mode v2 — what should happen on every page load
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-        {CONSENT_STEPS.map((s, i) => (
-          <div key={i} style={{
-            display: "grid", gridTemplateColumns: "36px 1fr",
-            gap: 14, alignItems: "start",
-          }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{
-                width: 28, height: 28, borderRadius: 999,
-                background: i === CONSENT_STEPS.length - 1 ? "#985830" : "#fff",
-                color: i === CONSENT_STEPS.length - 1 ? "#fff" : "#985830",
-                border: "1.5px solid #985830",
-                fontSize: 12, fontWeight: 700,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontVariantNumeric: "tabular-nums",
-              }}>{i + 1}</span>
-              {i < CONSENT_STEPS.length - 1 && (
-                <span style={{ width: 1, flex: 1, background: "#E8D8C4", minHeight: 32, margin: "4px 0" }}/>
-              )}
-            </div>
-            <div style={{ paddingBottom: i < CONSENT_STEPS.length - 1 ? 22 : 0 }}>
-              <div style={{
-                fontSize: 14, fontWeight: 600, color: "#1A1A1A",
-                letterSpacing: "-0.005em", marginBottom: 4,
-              }}>{s.t}</div>
-              <div style={{
-                fontSize: 13, lineHeight: 1.55, color: "#6B6B6B",
-                whiteSpace: "pre-line",
-                fontFamily: s.d.includes("=") ? "ui-monospace, SFMono-Regular, Menlo, monospace" : "inherit",
-              }}>{s.d}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{
-        marginTop: 20, padding: "12px 16px",
-        background: "#FDF6EE", borderRadius: 4,
-        fontSize: 12, lineHeight: 1.55, color: "#6B6B6B",
-      }}>
-        If steps 1–2 happen <em style={{ color: "#985830", fontStyle: "italic" }}>after</em> step 3, the consent signal is permanently denied for that page load — even if the user accepts.
-      </div>
-    </div>
-  );
-}
-
-/* =============== BEST PRACTICE TABLE =============== */
-const BEST = [
-  { e: "Lead form submission",       s: "GTM — Google Ads Conversion Tag", inc: "On",  badge: "primary",   role: "Smart Bidding signal" },
-  { e: "Lead form submission (GA4)", s: "GA4 import — generate_lead",      inc: "Off", badge: "secondary", role: "Reporting only" },
-  { e: "Purchase",                   s: "Shopify / server-side app",       inc: "Off", badge: "secondary", role: "Observed" },
-];
-
-function BestPracticeTable() {
-  return (
-    <div style={{ margin: "32px 0 56px" }}>
-      <div style={{
-        border: "1px solid #E8D8C4", borderRadius: 6,
-        background: "#fff", overflow: "hidden",
-      }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1.4fr 1.6fr 1.1fr 1.1fr",
-          background: "#FDF6EE",
-          borderBottom: "1px solid #E8D8C4",
-          padding: "14px 24px",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-          textTransform: "uppercase", color: "#6B6B6B",
-        }}>
-          <span>Conversion event</span>
-          <span>Source</span>
-          <span>Include in Conversions</span>
-          <span>Bidding role</span>
+        <div class="verify-row">
+          <div class="verify-row-label">Shows</div>
+          <div class="verify-row-value">Every Google tag firing in real time, in sequence</div>
         </div>
-        {BEST.map((r, i) => (
-          <div key={i} style={{
-            display: "grid",
-            gridTemplateColumns: "1.4fr 1.6fr 1.1fr 1.1fr",
-            padding: "18px 24px",
-            borderBottom: i < BEST.length - 1 ? "1px solid #F0E6D5" : "none",
-            alignItems: "center", gap: 20,
-          }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.005em" }}>{r.e}</span>
-            <span style={{ fontSize: 14, color: "#3A3A3A" }}>{r.s}</span>
-            <span>
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "4px 10px", borderRadius: 20,
-                background: r.badge === "primary" ? "#F5EBD9" : "#E4E7EB",
-                color: r.badge === "primary" ? "#985830" : "#4F5760",
-                border: `1px solid ${r.badge === "primary" ? "#E8D8C4" : "#CFD4DA"}`,
-                fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
-                textTransform: "uppercase", lineHeight: 1,
-              }}>
-                <span style={{
-                  width: 6, height: 6, borderRadius: 999,
-                  background: r.badge === "primary" ? "#985830" : "#4F5760",
-                }}/>
-                {r.inc} · {r.badge}
-              </span>
-            </span>
-            <span style={{ fontSize: 13, color: "#3A3A3A" }}>{r.role}</span>
-          </div>
-        ))}
+        <div class="verify-row">
+          <div class="verify-row-label">Look for</div>
+          <div class="verify-row-value amber">Conversion Tag present + Conversion ID and Label match your Google Ads action exactly</div>
+        </div>
+      </div>
+      <div class="verify-card">
+        <div class="verify-icon">GTM</div>
+        <div class="verify-title">GTM Preview Mode</div>
+        <div class="verify-row">
+          <div class="verify-row-label">Use when</div>
+          <div class="verify-row-value">Diagnosing trigger timing issues</div>
+        </div>
+        <div class="verify-row">
+          <div class="verify-row-label">Shows</div>
+          <div class="verify-row-value">Every tag and trigger fired at each step of the user journey</div>
+        </div>
+        <div class="verify-row">
+          <div class="verify-row-label">Look for</div>
+          <div class="verify-row-value amber">Conversion tag fires once on form submit &mdash; not on the subsequent page load</div>
+        </div>
+      </div>
+      <div class="verify-card">
+        <div class="verify-icon">Dx</div>
+        <div class="verify-title">Conversion Diagnostics</div>
+        <div class="verify-row">
+          <div class="verify-row-label">Use when</div>
+          <div class="verify-row-value">Checking account-level health after a fix</div>
+        </div>
+        <div class="verify-row">
+          <div class="verify-row-label">Shows</div>
+          <div class="verify-row-value">Automated Google checks: tag presence, auto-tagging, EC match rate, consent status</div>
+        </div>
+        <div class="verify-row">
+          <div class="verify-row-label">Look for</div>
+          <div class="verify-row-value amber">No flags. Updates within 24 hours of any change</div>
+        </div>
       </div>
     </div>
-  );
-}
 
-/* =============== VERIFY GRID =============== */
-const VERIFY = [
-  { t: "Google Tag Assistant",  u: "Installing or changing a tag",            sh: "Every Google tag firing in real time, in sequence",                                lf: "Conversion Tag present + Conversion ID and Label match your Google Ads action exactly",         glyph: "TA" },
-  { t: "GTM Preview Mode",      u: "Diagnosing trigger timing issues",        sh: "Every tag and trigger fired at each step of the user journey",                     lf: "Conversion tag fires once on form submit — not on the subsequent page load",                    glyph: "GTM" },
-  { t: "Conversion Diagnostics",u: "Checking account-level health after a fix", sh: "Automated Google checks: tag presence, auto-tagging, EC match rate, consent status", lf: "No flags. Updates within 24 hours of any change",                                              glyph: "Dx" },
-];
-
-function VerifyGrid() {
-  return (
-    <div style={{
-      display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-      gap: 16, margin: "32px 0 56px",
-    }}>
-      {VERIFY.map((v, i) => (
-        <div key={i} style={{
-          background: "#fff", border: "1px solid #E8D8C4",
-          borderRadius: 6, padding: "22px 24px",
-          display: "flex", flexDirection: "column",
-        }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 6,
-            background: "#FDF6EE", border: "1px solid #E8D8C4",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 12, fontWeight: 700, color: "#985830",
-            letterSpacing: "0.04em", marginBottom: 16,
-          }}>{v.glyph}</div>
-          <div style={{
-            fontSize: 16, fontWeight: 700, color: "#1A1A1A",
-            letterSpacing: "-0.01em", marginBottom: 16,
-          }}>{v.t}</div>
-          <VerifyRow label="Use when" value={v.u}/>
-          <VerifyRow label="Shows" value={v.sh}/>
-          <VerifyRow label="Look for" value={v.lf} amber/>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function VerifyRow({ label, value, amber }) {
-  return (
-    <div style={{ borderTop: "1px solid #F0E6D5", padding: "12px 0" }}>
-      <div style={{
-        fontSize: 10, fontWeight: 700, letterSpacing: "0.10em",
-        textTransform: "uppercase", color: "#A0998E", marginBottom: 4,
-      }}>{label}</div>
-      <div style={{
-        fontSize: 13, lineHeight: 1.5,
-        color: amber ? "#985830" : "#1A1A1A",
-        fontWeight: amber ? 500 : 400,
-      }}>{value}</div>
-    </div>
-  );
-}
-
-/* =============== 2026 UPDATE =============== */
-function Update2026() {
-  return (
-    <div style={{ margin: "56px 0" }}>
-      <div style={{
-        background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-        borderRadius: 6, padding: "32px 36px",
-        color: "#fff",
-      }}>
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 8,
-          padding: "4px 11px", borderRadius: 20,
-          background: "rgba(152,88,48,0.18)",
-          border: "1px solid rgba(152,88,48,0.4)",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
-          textTransform: "uppercase", color: "#D9A57E",
-          marginBottom: 20,
-        }}>
-          <span style={{ width: 6, height: 6, borderRadius: 999, background: "#985830" }}/>
+    <!-- 2026 update -->
+    <div class="dark-callout-wrap">
+      <div class="dark-callout">
+        <div class="dark-callout-badge">
+          <span class="dark-callout-badge-dot"></span>
           2026 Update
         </div>
-        <h3 style={{
-          fontSize: 22, fontWeight: 700, color: "#fff",
-          letterSpacing: "-0.018em", lineHeight: 1.3,
-          margin: "0 0 16px",
-        }}>
-          Enhanced Conversions for web and leads are merging into a single on/off setting.
-        </h3>
-        <p style={{
-          fontSize: 15, lineHeight: 1.65,
-          color: "rgba(255,255,255,0.75)",
-          margin: "0 0 14px",
-        }}>
-          Google Ads now accepts user-provided data simultaneously from website tags, Data Manager, and API connections. Previously these operated more separately.
-        </p>
-        <p style={{
-          fontSize: 15, lineHeight: 1.65,
-          color: "rgba(255,255,255,0.75)",
-          margin: 0,
-        }}>
-          In practice: if you have EC enabled for web and are also sending data through Data Manager or an API integration, Google will now combine those signals. Check your Diagnostics report to confirm data is arriving correctly from each source and match quality is healthy.
-        </p>
+        <h3>Enhanced Conversions for web and leads are merging into a single on/off setting.</h3>
+        <p>Google Ads now accepts user-provided data simultaneously from website tags, Data Manager, and API connections. Previously these operated more separately.</p>
+        <p>In practice: if you have EC enabled for web and are also sending data through Data Manager or an API integration, Google will now combine those signals. Check your Diagnostics report to confirm data is arriving correctly from each source and match quality is healthy.</p>
       </div>
     </div>
-  );
-}
 
-/* =============== FAQ =============== */
-const FAQ = [
-  { q: "Why is my Google Ads conversion tracking not working?",
-    a: "The most common reasons: the tag is not installed or not firing on the right event, auto-tagging is disabled, duplicate conversion actions are both set as primary, Consent Mode v2 is blocking ad_storage for non-consenting users, or Enhanced Conversions is misconfigured. Start at Goals › Conversions › Summary and check status, then run Tag Assistant on the conversion page." },
-  { q: "What does \"Inactive\" mean in Google Ads conversions?",
-    a: "Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match. It doesn't necessarily mean conversions are not happening — it means Google can't see them." },
-  { q: "Should I import GA4 conversions into Google Ads?",
-    a: "Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag. GA4 imports are useful for cross-referencing and reporting — the important rule is never to let two sources track the same event as primary." },
-  { q: "How do I check if my Google Ads conversion tag is firing?",
-    a: "Install Google Tag Assistant (free Chrome extension) and navigate to or trigger the conversion event. Tag Assistant shows every Google tag that fires in real time. For GTM-deployed tags, use GTM Preview Mode to walk through the full user journey and confirm the trigger fires at the right point." },
-  { q: "What is the difference between primary and secondary conversions?",
-    a: "Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but don't influence bid decisions. If primary conversions are duplicated, miscategorised, or include low-quality signals, Smart Bidding optimises toward the wrong thing." },
-];
-
-function Faq() {
-  const [open, setOpen] = React.useState(0);
-  return (
-    <div style={{
-      border: "1px solid #E8D8C4", borderRadius: 6, overflow: "hidden",
-      background: "#fff", margin: "8px 0 56px",
-    }}>
-      {FAQ.map((it, i) => {
-        const isOpen = open === i;
-        return (
-          <div key={i} style={{
-            borderBottom: i < FAQ.length - 1 ? "1px solid #F0E6D5" : "none",
-          }}>
-            <button onClick={() => setOpen(isOpen ? -1 : i)} style={{
-              width: "100%", textAlign: "left",
-              background: "transparent", border: 0, cursor: "pointer",
-              padding: "20px 24px",
-              display: "grid", gridTemplateColumns: "1fr 24px", gap: 16,
-              alignItems: "center", fontFamily: "inherit",
-            }}>
-              <span style={{
-                fontSize: 16, fontWeight: 600, color: "#1A1A1A",
-                letterSpacing: "-0.008em", lineHeight: 1.4,
-              }}>{it.q}</span>
-              <span style={{
-                fontSize: 20, color: "#985830", lineHeight: 1,
-                transform: isOpen ? "rotate(45deg)" : "rotate(0)",
-                transition: "transform 180ms cubic-bezier(0.2,0,0,1)",
-                textAlign: "center",
-              }}>+</span>
-            </button>
-            {isOpen && (
-              <div style={{
-                padding: "0 24px 22px",
-                fontSize: 15, lineHeight: 1.65, color: "#3A3A3A",
-              }}>
-                {it.a}
-              </div>
-            )}
-          </div>
-        );
-      })}
+    <!-- FAQ -->
+    <div class="article-body">
+      <h2>FAQ</h2>
     </div>
-  );
-}
 
-/* =============== AUTHOR BLOCK =============== */
-function AuthorBlock() {
-  return (
-    <div style={{
-      background: "#FDF6EE", border: "1px solid #E8D8C4",
-      borderRadius: 6, padding: "28px 32px",
-      display: "grid", gridTemplateColumns: "64px 1fr",
-      gap: 22, alignItems: "start", marginTop: 56,
-    }}>
-      <img src="/assets/profile.jpg" alt="Lewis Phillips" style={{
-        width: 64, height: 64, borderRadius: "50%", objectFit: "cover",
-        border: "1px solid #E8D8C4",
-      }}/>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="true">
+          <span class="faq-q">Why is my Google Ads conversion tracking not working?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">The most common reasons: the tag is not installed or not firing on the right event, auto-tagging is disabled, duplicate conversion actions are both set as primary, Consent Mode v2 is blocking ad_storage for non-consenting users, or Enhanced Conversions is misconfigured. Start at Goals &rsaquo; Conversions &rsaquo; Summary and check status, then run Tag Assistant on the conversion page.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">What does &lsquo;Inactive&rsquo; mean in Google Ads conversions?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match. It doesn&rsquo;t necessarily mean conversions are not happening &mdash; it means Google can&rsquo;t see them.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">Should I import GA4 conversions into Google Ads?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag. GA4 imports are useful for cross-referencing and reporting &mdash; the important rule is never to let two sources track the same event as primary.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">How do I check if my Google Ads conversion tag is firing?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Install Google Tag Assistant (free Chrome extension) and navigate to or trigger the conversion event. Tag Assistant shows every Google tag that fires in real time. For GTM-deployed tags, use GTM Preview Mode to walk through the full user journey and confirm the trigger fires at the right point.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">What is the difference between primary and secondary conversions?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but don&rsquo;t influence bid decisions. If primary conversions are duplicated, miscategorised, or include low-quality signals, Smart Bidding optimises toward the wrong thing.</div>
+      </div>
+    </div>
+
+    <!-- Author block -->
+    <div class="author-block">
+      <img src="/assets/profile.jpg" alt="Lewis Phillips" class="author-avatar">
       <div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 4 }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#1A1A1A" }}>Lewis Phillips</span>
-          <span style={{ fontSize: 13, color: "#6B6B6B" }}>Performance marketer · 11 years</span>
+        <div style="display:flex;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;">
+          <span class="author-name">Lewis Phillips</span>
+          <span class="author-role">Performance marketer &middot; 11 years</span>
         </div>
-        <p style={{
-          fontSize: 14, lineHeight: 1.65, color: "#3A3A3A",
-          margin: "8px 0 14px", maxWidth: 620,
-        }}>
-          I've built conversion tracking architectures for Shopify and custom-stack accounts — GTM pipelines, Enhanced Conversions, Consent Mode v2, server-side implementations. This guide draws on that, not generic documentation summaries.
-        </p>
-        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" style={{
-          fontSize: 13, fontWeight: 600, color: "#985830", textDecoration: "none",
-        }}>LinkedIn →</a>
+        <p class="author-bio">I&rsquo;ve built conversion tracking architectures for Shopify and custom-stack accounts &mdash; GTM pipelines, Enhanced Conversions, Consent Mode v2, server-side implementations. This guide draws on that, not generic documentation summaries.</p>
+        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="author-link">LinkedIn &rarr;</a>
       </div>
     </div>
-  );
-}
 
-/* =============== RELATED =============== */
-function Related() {
-  return (
-    <section style={{ background: "#FDF6EE", padding: "72px 0 96px" }}>
-      <div className="page-w">
-        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 28 }}>
-          <Eyebrow>Related guides</Eyebrow>
-          <h2 style={{
-            fontSize: "clamp(24px, 2.6vw, 30px)", fontWeight: 700,
-            letterSpacing: "-0.02em", lineHeight: 1.15,
-            color: "#1A1A1A", margin: "10px 0 0",
-          }}>
-            Keep reading.
-          </h2>
-        </div>
+  </div><!-- /read-w -->
+</section>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: 16,
-        }}>
-          {RELATED.map(g => <RelatedCard key={g.slug} guide={g}/>)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function RelatedCard({ guide }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <a
-      href={'/guides/' + guide.slug + '/'}
-      onMouseEnter={() => setH(true)}
-      onMouseLeave={() => setH(false)}
-      style={{
-        display: "flex", flexDirection: "column",
-        textDecoration: "none", color: "inherit",
-        background: "#fff",
-        border: "1px solid #E8D8C4",
-        borderRadius: 6,
-        padding: "24px 26px",
-        transition: "transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1)",
-        transform: h ? "translateY(-3px)" : "translateY(0)",
-        boxShadow: h ? "0 8px 28px rgba(152, 88, 48, 0.10)" : "0 1px 0 rgba(152, 88, 48, 0.02)",
-        borderColor: h ? "#985830" : "#E8D8C4",
-        minHeight: 220,
-      }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-        <CategoryPill cat={guide.cat} size="sm"/>
-        <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-          {guide.time}
-        </span>
-      </div>
-      <h3 style={{
-        fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
-        lineHeight: 1.25, color: "#1A1A1A",
-        margin: "0 0 12px",
-        textWrap: "pretty",
-      }}>{guide.title}</h3>
-      <p style={{
-        fontSize: 14, lineHeight: 1.55, color: "#6B6B6B",
-        margin: "0 0 24px",
-      }}>{guide.desc}</p>
-      <span style={{
-        marginTop: "auto",
-        display: "inline-flex", alignItems: "center", gap: 6,
-        fontSize: 13, fontWeight: 600,
-        color: "#985830",
-        letterSpacing: "-0.005em",
-      }}>
-        Read guide
-        <span style={{
-          display: "inline-block",
-          transform: h ? "translateX(3px)" : "translateX(0)",
-          transition: "transform 200ms cubic-bezier(0.2,0,0,1)",
-        }}>→</span>
-      </span>
-    </a>
-  );
-}
-
-/* =============== END CTA (DARK) =============== */
-function EndCta() {
-  return (
-    <section style={{
-      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-      padding: "96px 32px",
-    }}>
-      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
-        <Eyebrow color="#B87040">Ready to check yours?</Eyebrow>
-        <h2 style={{
-          fontSize: "clamp(36px, 4.6vw, 52px)", fontWeight: 700,
-          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
-          margin: "20px 0 32px",
-        }}>
-          Run the audit. <em style={{ fontStyle: "italic", color: "#985830" }}>See what's actually going on.</em>
-        </h2>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/landing-page-audit" style={ctaButtonStyle(true)}>
-            Run the Landing Page Audit →
-          </a>
-          <a href="/google-ads-audit" style={ctaButtonStyle(false)}>
-            Run the Google Ads Audit →
-          </a>
-        </div>
-        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-          Free · Read-only · No agency pitch
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ctaButtonStyle(filled) {
-  return {
-    display: "inline-flex", alignItems: "center", justifyContent: "center",
-    padding: "16px 32px", fontSize: 15, fontWeight: 600,
-    color: "#fff",
-    background: filled ? "#985830" : "transparent",
-    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.3)",
-    borderRadius: 4, textDecoration: "none", letterSpacing: "-0.005em",
-  };
-}
-
-/* =============== FOOTER =============== */
-function Footer() {
-  return (
-    <footer style={{
-      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-      padding: "28px 32px",
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 12,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
-            Phillips<span style={{ color: "#985830" }}>.</span>
-          </span>
-          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* =============== APP =============== */
-function App() {
-  return (
-    <div data-screen-label="01 Fix Conversion Tracking">
-      <Nav active="guides"/>
-      <ArticleHeader/>
-      <ArticleBody/>
-      <Related/>
-      <EndCta/>
-      <Footer/>
+<!-- ═══════════════════════════════════════════ RELATED -->
+<section class="related-section">
+  <div class="page-w">
+    <div class="related-heading-wrap">
+      <span class="eyebrow">Related guides</span>
+      <h2 class="related-heading">Keep reading.</h2>
     </div>
-  );
-}
+    <div class="related-cards">
+      <a href="/guides/ga4-imports-break-smart-bidding/" class="related-card">
+        <div class="related-card-meta">
+          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+          <span class="related-card-readtime">11 min read</span>
+        </div>
+        <h3 class="related-card-title">Why GA4 imports break Smart Bidding</h3>
+        <p class="related-card-desc">The most common paid media mistake &mdash; and why it&rsquo;s not obvious until CPA doubles.</p>
+        <span class="related-card-cta">Read guide &rarr;</span>
+      </a>
+      <a href="/guides/improve-google-ads-quality-score/" class="related-card">
+        <div class="related-card-meta">
+          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+          <span class="related-card-readtime">10 min read</span>
+        </div>
+        <h3 class="related-card-title">Google Ads Quality Score Low? How to Improve It</h3>
+        <p class="related-card-desc">Quality Score affects what you pay per click, not just where you rank.</p>
+        <span class="related-card-cta">Read guide &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+<!-- ═══════════════════════════════════════════ END CTA -->
+<section class="end-cta">
+  <div class="end-cta-inner">
+    <span class="eyebrow" style="color:#B87040;">Ready to check yours?</span>
+    <h2>Run the audit. <em>See what&rsquo;s actually going on.</em></h2>
+    <div class="end-cta-btns">
+      <a href="/landing-page-audit" class="btn-cta-filled">Run the Landing Page Audit &rarr;</a>
+      <a href="/google-ads-audit" class="btn-cta-outline">Run the Google Ads Audit &rarr;</a>
+    </div>
+    <div class="end-cta-note">Free &middot; Read-only &middot; No agency pitch</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-left">
+      <span class="footer-logo">Phillips<span class="dot">.</span></span>
+      <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+    </div>
+  </div>
+</footer>
+
+<!-- FAQ accordion script -->
+<script>
+  (function() {
+    var btns = document.querySelectorAll('.faq-btn');
+    // Open first by default
+    var firstAnswer = document.querySelector('.faq-answer');
+    var firstIcon   = document.querySelector('.faq-icon');
+    if (firstAnswer) {
+      firstAnswer.style.display = 'block';
+      firstIcon.style.transform = 'rotate(45deg)';
+    }
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var answer = this.nextElementSibling;
+        var icon   = this.querySelector('.faq-icon');
+        var isOpen = answer.style.display === 'block';
+        // Close all
+        document.querySelectorAll('.faq-answer').forEach(function(a) { a.style.display = 'none'; });
+        document.querySelectorAll('.faq-icon').forEach(function(i)   { i.style.transform = 'rotate(0deg)'; });
+        // Toggle open
+        if (!isOpen) {
+          answer.style.display = 'block';
+          icon.style.transform = 'rotate(45deg)';
+        }
+      });
+    });
+  })();
 </script>
+
 </body>
 </html>

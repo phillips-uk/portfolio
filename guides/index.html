@@ -21,6 +21,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta property="og:description" content="Short, practical reads on paid media, landing pages and tracking.">
 <meta property="og:url" content="https://www.phillips-uk.com/guides/">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Guides | Phillips.">
+<meta name="twitter:description" content="Short, practical reads on paid media, landing pages and tracking. Written from 11 years running paid accounts — no agency speak, no fluff.">
 
 <style>
   :root {
@@ -40,442 +43,364 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .sec-cream { background: #FDF6EE; padding: 64px 0; }
   ::selection { background: #985830; color: #fff; }
   *, *::before, *::after { box-sizing: border-box; }
+  /* Mobile nav */
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .ph-drawer.open { display: block; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .ph-drawer-link:hover, .ph-drawer-link.active { color: #1A1A1A; }
+  .ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: #7A3F1F; }
+
   @media (max-width: 700px) {
     .page-w { padding: 0 20px; }
-    .nav-links { display: none; }
-    .nav-cta { display: none; }
+    .nav-links { display: none !important; }
+    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
+  }
+
+  /* Nav */
+  .nav-btn-filled {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #985830; color: #fff;
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    border-radius: 4px; text-decoration: none; font-family: inherit;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .nav-btn-filled:hover { background: #7A3F1F; }
+
+  /* Filter pills */
+  .filter-pill {
+    background: transparent;
+    color: #1A1A1A;
+    border: 1px solid #E8D8C4;
+    padding: 8px 16px;
+    font-size: 13px; font-weight: 600;
+    border-radius: 999px; cursor: pointer; font-family: inherit;
+    letter-spacing: -0.005em;
+    transition: background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1), border-color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .filter-pill:hover { background: #fff; }
+  .filter-pill.active {
+    background: #1A1A1A; color: #fff; border-color: #1A1A1A;
+  }
+
+  /* Guide cards */
+  .guide-card {
+    display: flex; flex-direction: column;
+    text-decoration: none; color: inherit;
+    background: #fff;
+    border: 1px solid #E8D8C4;
+    border-radius: 6px;
+    padding: 24px 26px;
+    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1);
+    min-height: 260px;
+  }
+  .guide-card.is-live { cursor: pointer; }
+  .guide-card.is-coming { cursor: default; opacity: 0.6; }
+  .guide-card.is-live:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(152, 88, 48, 0.10);
+    border-color: #985830;
+  }
+  .guide-card.is-live:hover .card-arrow { transform: translateX(3px); }
+
+  .card-arrow {
+    display: inline-block;
+    transition: transform 200ms cubic-bezier(0.2,0,0,1);
+  }
+
+  /* CTA buttons */
+  .cta-btn-filled {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600;
+    color: #fff; background: #985830;
+    border: 1.5px solid #985830;
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .cta-btn-filled:hover { background: #7A3F1F; border-color: #7A3F1F; }
+
+  .cta-btn-outline {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600;
+    color: #fff; background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: border-color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .cta-btn-outline:hover { border-color: rgba(255,255,255,0.6); }
+
+  /* Guide grid */
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  /* Hidden cards */
+  .guide-card[hidden] { display: none !important; }
+
+  /* Guide count */
+  #guide-count { font-size: 12px; color: #6B6B6B; letter-spacing: -0.005em; }
+
+  /* Filter label */
+  #filter-label {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #985830;
   }
 </style>
-
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- GTM noscript -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<div id="root"></div>
-
-<script type="text/babel">
-
-/* =============== CATEGORY TOKENS =============== */
-const CAT = {
-  "Google Ads":         { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
-  "Conversion Tracking":{ fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
-  "Landing Pages":      { fg: "#2E5F5C", bg: "#DCEAE8", border: "#BFD6D2" },
-  "Tracking":           { fg: "#4F5760", bg: "#E4E7EB", border: "#CFD4DA" },
-};
-
-/* =============== GUIDES =============== */
-const GUIDES = [
-  {
-    slug: "ga4-imports-break-smart-bidding",
-    cat: "Google Ads",
-    time: "5 min read",
-    date: "26 May 2026",
-    title: "Why GA4 imports break Smart Bidding",
-    desc: "The most common paid media mistake — and why it’s not obvious until CPA doubles.",
-    live: true,
-  },
-  {
-    slug: "fix-google-ads-conversion-tracking",
-    cat: "Conversion Tracking",
-    time: "12 min read",
-    date: "21 May 2026",
-    title: "How to Fix Google Ads Conversion Tracking",
-    desc: "The seven most common causes of broken conversion tracking — inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures and Consent Mode v2 silent issues.",
-    live: true,
-  },
-  {
-    slug: "improve-google-ads-quality-score",
-    cat: "Google Ads",
-    time: "10 min read",
-    date: "26 May 2026",
-    title: "Google Ads Quality Score Low? How to Improve It",
-    desc: "Quality Score affects what you pay per click, not just where you rank. Covers Expected CTR, Ad Relevance and Landing Page Experience — with specific fixes for each component.",
-    live: true,
-  },
-  {
-    slug: "tcpa-thin-conversion-window",
-    cat: "Google Ads",
-    time: "4 min read",
-    title: "tCPA on a thin conversion window",
-    desc: "How to spot campaigns learning on bad data before they lock in the wrong baseline.",
-    live: false,
-  },
-  {
-    slug: "lcp-above-2-5s-real-cpc",
-    cat: "Landing Pages",
-    time: "6 min read",
-    title: "LCP above 2.5s costs you real CPC",
-    desc: "The direct line between Core Web Vitals and your Quality Score — with numbers.",
-    live: false,
-  },
-  {
-    slug: "consent-mode-v2-defaulting-denied",
-    cat: "Tracking",
-    time: "5 min read",
-    title: "Consent Mode v2 and what defaulting to denied actually means",
-    desc: "It’s not a compliance checkbox. It’s a data gap that warps every downstream report.",
-    live: false,
-  },
-  {
-    slug: "enhanced-conversions-what-and-why",
-    cat: "Google Ads",
-    time: "4 min read",
-    title: "Enhanced Conversions: what it is, why you probably don’t have it",
-    desc: "The easiest high-ROI fix on most accounts. Also the most skipped.",
-    live: false,
-  },
-];
-
-const FILTERS = ["All", "Google Ads", "Landing Pages", "Tracking"];
-
-/* =============== BUTTONS =============== */
-function BtnFilled({ children, href }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <a href={href} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: h ? "#7A3F1F" : "#985830", color: "#fff",
-        padding: "10px 20px", fontSize: 13, fontWeight: 600,
-        borderRadius: 4, textDecoration: "none", fontFamily: "inherit",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
-      }}>{children}</a>
-  );
-}
-
-/* =============== NAV =============== */
-function Nav() {
-  const base = { fontSize: 14, fontWeight: 500, color: "#6B6B6B", textDecoration: "none", transition: "color 150ms" };
-  const active = { ...base, color: "#1A1A1A", fontWeight: 600 };
-  return (
-    <header style={{
-      position: "sticky", top: 0, zIndex: 50,
-      background: "rgba(255,255,255,0.96)",
-      backdropFilter: "saturate(120%)",
-      borderBottom: "1px solid #E8D8C4", height: 64,
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto", height: "100%",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
-      }}>
-        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
-          Phillips<span style={{ color: "#985830" }}>.</span>
-        </a>
-        <nav className="nav-links" style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <a href="/landing-page-audit" style={base}>Landing Page Audit</a>
-          <a href="/google-ads-audit" style={base}>Google Ads Audit</a>
-          <a href="/guides/" style={active}>Guides</a>
-          <BtnFilled href="/#contact">Get in touch</BtnFilled>
-        </nav>
-      </div>
-    </header>
-  );
-}
-
-/* =============== SHARED PRIMITIVES =============== */
-function Eyebrow({ children, color = "#985830" }) {
-  return (
-    <span style={{
-      display: "inline-block",
-      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-      textTransform: "uppercase", color,
-    }}>{children}</span>
-  );
-}
-
-function CategoryPill({ cat, size = "md" }) {
-  const t = CAT[cat] || CAT["Google Ads"];
-  const pad = size === "sm" ? "3px 9px" : "4px 11px";
-  const fs = size === "sm" ? 10 : 11;
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 6,
-      background: t.bg, color: t.fg,
-      border: `1px solid ${t.border}`,
-      padding: pad, borderRadius: 20,
-      fontSize: fs, fontWeight: 700, letterSpacing: "0.10em",
-      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: 999, background: t.fg, display: "inline-block" }}/>
-      {cat}
-    </span>
-  );
-}
-
-/* =============== HERO =============== */
-function Hero() {
-  return (
-    <section style={{ background: "#fff", padding: "72px 0 56px" }}>
-      <div className="page-w">
-        <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, maxWidth: 860 }}>
-          <Eyebrow>Guides</Eyebrow>
-          <h1 style={{
-            fontSize: "clamp(40px, 5.4vw, 64px)", fontWeight: 700,
-            letterSpacing: "-0.025em", lineHeight: 1.04,
-            color: "#1A1A1A", margin: "16px 0 0",
-          }}>
-            Things worth knowing before you <em style={{ fontStyle: "italic", color: "#985830" }}>run an audit.</em>
-          </h1>
-          <p style={{
-            fontSize: 18, lineHeight: 1.55, color: "#6B6B6B",
-            margin: "20px 0 0", maxWidth: 620,
-          }}>
-            Short, practical reads. No fluff, no agency speak. Written from 11 years running paid media.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* =============== FILTER BAR =============== */
-function FilterBar({ value, onChange }) {
-  return (
-    <div style={{
-      position: "sticky", top: 64, zIndex: 40,
-      background: "#FDF6EE",
-      borderTop: "1px solid #E8D8C4",
-      borderBottom: "1px solid #E8D8C4",
-    }}>
-      <div className="page-w" style={{
-        padding: "16px 32px",
-        display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
-      }}>
-        <Eyebrow>Filter</Eyebrow>
-        <span style={{ width: 4, height: 4, borderRadius: 999, background: "#E8D8C4", margin: "0 6px" }}/>
-        {FILTERS.map(f => (
-          <FilterPill key={f} label={f} active={value === f} onClick={() => onChange(f)}/>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FilterPill({ label, active, onClick }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setH(true)}
-      onMouseLeave={() => setH(false)}
-      style={{
-        background: active ? "#1A1A1A" : (h ? "#fff" : "transparent"),
-        color: active ? "#fff" : "#1A1A1A",
-        border: `1px solid ${active ? "#1A1A1A" : "#E8D8C4"}`,
-        padding: "8px 16px",
-        fontSize: 13, fontWeight: 600,
-        borderRadius: 999, cursor: "pointer", fontFamily: "inherit",
-        letterSpacing: "-0.005em",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
-      }}>
-      {label}
-    </button>
-  );
-}
-
-/* =============== GUIDE GRID =============== */
-function GuideGrid({ filter }) {
-  const visible = filter === "All" ? GUIDES : GUIDES.filter(g => g.cat === filter);
-
-  return (
-    <section className="sec-cream" style={{ padding: "56px 0 96px" }}>
-      <div className="page-w">
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "flex-end",
-          marginBottom: 28, gap: 24, flexWrap: "wrap",
-        }}>
-          <Eyebrow>{filter === "All" ? "All guides" : filter}</Eyebrow>
-          <span style={{ fontSize: 12, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-            {visible.length} {visible.length === 1 ? "guide" : "guides"}
-          </span>
-        </div>
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-          gap: 16,
-        }}>
-          {visible.map(g => <GuideCard key={g.slug} guide={g}/>)}
-        </div>
-
-        {visible.length === 0 && (
-          <div style={{
-            background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
-            padding: "48px 32px", textAlign: "center",
-            color: "#6B6B6B", fontSize: 14,
-          }}>
-            No guides in this category yet. Check back soon.
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function GuideCard({ guide }) {
-  const [h, setH] = React.useState(false);
-  const isLive = guide.live !== false;
-
-  return (
-    <a
-      href={isLive ? `/guides/${guide.slug}/` : undefined}
-      onClick={!isLive ? (e) => e.preventDefault() : undefined}
-      onMouseEnter={() => isLive && setH(true)}
-      onMouseLeave={() => setH(false)}
-      style={{
-        display: "flex", flexDirection: "column",
-        textDecoration: "none", color: "inherit",
-        background: "#fff",
-        border: "1px solid #E8D8C4",
-        borderRadius: 6,
-        padding: "24px 26px",
-        transition: "transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1)",
-        transform: h ? "translateY(-3px)" : "translateY(0)",
-        boxShadow: h ? "0 8px 28px rgba(152, 88, 48, 0.10)" : "0 1px 0 rgba(152, 88, 48, 0.02)",
-        borderColor: h ? "#985830" : "#E8D8C4",
-        minHeight: 260,
-        cursor: isLive ? "pointer" : "default",
-        opacity: isLive ? 1 : 0.6,
-      }}>
-
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-        <CategoryPill cat={guide.cat} size="sm"/>
-        <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-          {guide.time}
-        </span>
-        {!isLive && (
-          <span style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: "0.10em", textTransform: "uppercase",
-            color: "#6B6B6B", background: "#F0EEEB", border: "1px solid #E8D8C4",
-            padding: "2px 8px", borderRadius: 20,
-          }}>Coming soon</span>
-        )}
-      </div>
-
-      <h3 style={{
-        fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
-        lineHeight: 1.25, color: "#1A1A1A",
-        margin: "0 0 12px",
-      }}>{guide.title}</h3>
-
-      <p style={{
-        fontSize: 14, lineHeight: 1.55, color: "#6B6B6B",
-        margin: "0 0 24px",
-      }}>{guide.desc}</p>
-
-      {isLive && (
-        <span style={{
-          marginTop: "auto",
-          display: "inline-flex", alignItems: "center", gap: 6,
-          fontSize: 13, fontWeight: 600,
-          color: "#985830",
-          letterSpacing: "-0.005em",
-        }}>
-          Read guide
-          <span style={{
-            display: "inline-block",
-            transform: h ? "translateX(3px)" : "translateX(0)",
-            transition: "transform 200ms cubic-bezier(0.2,0,0,1)",
-          }}>&rarr;</span>
-        </span>
-      )}
+<!-- ===== NAV ===== -->
+<header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:saturate(120%);border-bottom:1px solid #E8D8C4;height:64px;">
+  <div style="max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+    <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1;">
+      Phillips<span style="color:#985830;">.</span>
     </a>
-  );
-}
+    <nav class="nav-links" style="display:flex;align-items:center;gap:28px;">
+      <a href="/landing-page-audit" style="font-size:14px;font-weight:500;color:#6B6B6B;text-decoration:none;transition:color 150ms;">Landing Page Audit</a>
+      <a href="/google-ads-audit" style="font-size:14px;font-weight:500;color:#6B6B6B;text-decoration:none;transition:color 150ms;">Google Ads Audit</a>
+      <a href="/creative-analysis" style="font-size:14px;font-weight:500;color:#6B6B6B;text-decoration:none;transition:color 150ms;">Creative Scoring</a>
+      <a href="/guides/" style="font-size:14px;font-weight:600;color:#1A1A1A;text-decoration:none;">Guides</a>
+      <a href="/#contact" class="nav-btn-filled">Get in touch</a>
+    </nav>
+    <button class="ph-hamburger" onclick="document.getElementById('ph-guides-drawer').classList.add('open')" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+    </button>
+  </div>
+</header>
+<div id="ph-guides-drawer" class="ph-drawer">
+  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-guides-drawer').classList.remove('open')"></div>
+  <div class="ph-drawer-panel">
+    <button class="ph-drawer-close" onclick="document.getElementById('ph-guides-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
+    <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
+    <a href="/guides/" class="ph-drawer-link active">Guides</a>
+    <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+  </div>
+</div>
 
-/* =============== END CTA (DARK) =============== */
-function EndCta() {
-  return (
-    <section style={{
-      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-      padding: "96px 32px",
-    }}>
-      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
-        <Eyebrow color="#B87040">Ready to check yours?</Eyebrow>
-        <h2 style={{
-          fontSize: "clamp(36px, 4.6vw, 52px)", fontWeight: 700,
-          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
-          margin: "20px 0 32px",
-        }}>
-          Run the audit. <em style={{ fontStyle: "italic", color: "#985830" }}>See what&rsquo;s actually going on.</em>
-        </h2>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/landing-page-audit" style={ctaButtonStyle(true)}>
-            Run the Landing Page Audit &rarr;
-          </a>
-          <a href="/google-ads-audit" style={ctaButtonStyle(false)}>
-            Run the Google Ads Audit &rarr;
-          </a>
-        </div>
-        <div style={{ marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-          Free &middot; Read-only &middot; No agency pitch
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ctaButtonStyle(filled) {
-  return {
-    display: "inline-flex", alignItems: "center", justifyContent: "center",
-    padding: "16px 32px", fontSize: 15, fontWeight: 600,
-    color: "#fff",
-    background: filled ? "#985830" : "transparent",
-    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.3)",
-    borderRadius: 4, textDecoration: "none", letterSpacing: "-0.005em",
-  };
-}
-
-/* =============== FOOTER =============== */
-function Footer() {
-  return (
-    <footer style={{
-      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-      padding: "28px 32px",
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 12,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-          <a href="/" style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em", textDecoration: "none" }}>
-            Phillips<span style={{ color: "#985830" }}>.</span>
-          </a>
-          <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
-        </div>
-        <div style={{ display: "flex", gap: 20 }}>
-          <a href="/landing-page-audit" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Landing Page Audit</a>
-          <a href="/google-ads-audit" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Google Ads Audit</a>
-          <a href="/#contact" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Get in touch</a>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* =============== APP =============== */
-function App() {
-  const [filter, setFilter] = React.useState("All");
-  return (
-    <div>
-      <Nav/>
-      <Hero/>
-      <FilterBar value={filter} onChange={setFilter}/>
-      <GuideGrid filter={filter}/>
-      <EndCta/>
-      <Footer/>
+<!-- ===== HERO ===== -->
+<section style="background:#fff;padding:72px 0 56px;">
+  <div class="page-w">
+    <div style="border-left:3px solid #985830;padding-left:24px;max-width:860px;">
+      <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Guides</span>
+      <h1 style="font-size:clamp(40px, 5.4vw, 64px);font-weight:700;letter-spacing:-0.025em;line-height:1.04;color:#1A1A1A;margin:16px 0 0;">
+        Things worth knowing before you <em style="font-style:italic;color:#985830;">run an audit.</em>
+      </h1>
+      <p style="font-size:18px;line-height:1.55;color:#6B6B6B;margin:20px 0 0;max-width:620px;">
+        Short, practical reads. No fluff, no agency speak. Written from 11 years running paid media.
+      </p>
     </div>
-  );
-}
+  </div>
+</section>
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+<!-- ===== FILTER BAR ===== -->
+<div style="position:sticky;top:64px;z-index:40;background:#FDF6EE;border-top:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
+  <div class="page-w" style="padding:16px 32px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span id="filter-label">Filter</span>
+    <span style="width:4px;height:4px;border-radius:999px;background:#E8D8C4;margin:0 6px;display:inline-block;"></span>
+    <button class="filter-pill active" data-filter="All" onclick="setFilter(this)">All</button>
+    <button class="filter-pill" data-filter="Google Ads" onclick="setFilter(this)">Google Ads</button>
+    <button class="filter-pill" data-filter="Landing Pages" onclick="setFilter(this)">Landing Pages</button>
+    <button class="filter-pill" data-filter="Tracking" onclick="setFilter(this)">Tracking</button>
+  </div>
+</div>
+
+<!-- ===== GUIDE GRID ===== -->
+<section style="background:#FDF6EE;padding:56px 0 96px;">
+  <div class="page-w">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;gap:24px;flex-wrap:wrap;">
+      <span id="filter-heading" style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">All guides</span>
+      <span id="guide-count">7 guides</span>
+    </div>
+
+    <div class="guide-grid" id="guide-grid">
+
+      <!-- Card 1: GA4 Imports — LIVE — Google Ads -->
+      <a href="/guides/ga4-imports-break-smart-bidding/" class="guide-card is-live" data-cat="Google Ads">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+            Google Ads
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">11 min read</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Why GA4 Imports Can Break Smart Bidding</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">When GA4 imports are set as Primary, Smart Bidding trains on modelled data instead of observed conversions. Here's what breaks and how to fix it.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+          Read guide <span class="card-arrow">&rarr;</span>
+        </span>
+      </a>
+
+      <!-- Card 2: Fix Conversion Tracking — LIVE — Tracking -->
+      <a href="/guides/fix-google-ads-conversion-tracking/" class="guide-card is-live" data-cat="Tracking">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#E4E7EB;color:#4F5760;border:1px solid #CFD4DA;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#4F5760;display:inline-block;"></span>
+            Tracking
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">12 min read</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">How to Fix Google Ads Conversion Tracking</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">The seven most common causes of broken conversion tracking — inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures and Consent Mode v2 silent issues.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+          Read guide <span class="card-arrow">&rarr;</span>
+        </span>
+      </a>
+
+      <!-- Card 3: Quality Score — LIVE — Google Ads -->
+      <a href="/guides/improve-google-ads-quality-score/" class="guide-card is-live" data-cat="Google Ads">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+            Google Ads
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">10 min read</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Google Ads Quality Score Low? How to Improve It</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">Quality Score affects what you pay per click, not just where you rank. Covers Expected CTR, Ad Relevance and Landing Page Experience — with specific fixes for each component.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+          Read guide <span class="card-arrow">&rarr;</span>
+        </span>
+      </a>
+
+      <!-- Card 4: tCPA — COMING SOON — Google Ads -->
+      <div class="guide-card is-coming" data-cat="Google Ads">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+            Google Ads
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">4 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">tCPA on a thin conversion window</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">How to spot campaigns learning on bad data before they lock in the wrong baseline.</p>
+      </div>
+
+      <!-- Card 5: LCP — COMING SOON — Landing Pages -->
+      <div class="guide-card is-coming" data-cat="Landing Pages">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#DCEAE8;color:#2E5F5C;border:1px solid #BFD6D2;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#2E5F5C;display:inline-block;"></span>
+            Landing Pages
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">6 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">LCP above 2.5s costs you real CPC</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">The direct line between Core Web Vitals and your Quality Score — with numbers.</p>
+      </div>
+
+      <!-- Card 6: Consent Mode — COMING SOON — Tracking -->
+      <div class="guide-card is-coming" data-cat="Tracking">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#E4E7EB;color:#4F5760;border:1px solid #CFD4DA;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#4F5760;display:inline-block;"></span>
+            Tracking
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">5 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Consent Mode v2 and what defaulting to denied actually means</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">It's not a compliance checkbox. It's a data gap that warps every downstream report.</p>
+      </div>
+
+      <!-- Card 7: Enhanced Conversions — COMING SOON — Google Ads -->
+      <div class="guide-card is-coming" data-cat="Google Ads">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+            Google Ads
+          </span>
+          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">4 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Enhanced Conversions: what it is, why you probably don't have it</h3>
+        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">The easiest high-ROI fix on most accounts. Also the most skipped.</p>
+      </div>
+
+    </div><!-- /guide-grid -->
+
+    <!-- Empty state -->
+    <div id="empty-state" style="display:none;background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:48px 32px;text-align:center;color:#6B6B6B;font-size:14px;">
+      No guides in this category yet. Check back soon.
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== END CTA ===== -->
+<section style="background:linear-gradient(135deg, #1A1A1A 0%, #241408 100%);padding:96px 32px;">
+  <div style="max-width:880px;margin:0 auto;text-align:center;">
+    <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#B87040;">Ready to check yours?</span>
+    <h2 style="font-size:clamp(36px, 4.6vw, 52px);font-weight:700;letter-spacing:-0.025em;line-height:1.06;color:#fff;margin:20px 0 32px;">
+      Run the audit. <em style="font-style:italic;color:#985830;">See what&rsquo;s actually going on.</em>
+    </h2>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <a href="/landing-page-audit" class="cta-btn-filled">Run the Landing Page Audit &rarr;</a>
+      <a href="/google-ads-audit" class="cta-btn-outline">Run the Google Ads Audit &rarr;</a>
+    </div>
+    <div style="margin-top:32px;font-size:13px;color:rgba(255,255,255,0.5);">
+      Free &middot; Read-only &middot; No agency pitch
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer style="background:linear-gradient(135deg, #1A1A1A 0%, #241408 100%);padding:28px 32px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);">
+      <a href="/" style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em;text-decoration:none;">
+        Phillips<span style="color:#985830;">.</span>
+      </a>
+      <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+    </div>
+    <div style="display:flex;gap:20px;">
+      <a href="/landing-page-audit" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Landing Page Audit</a>
+      <a href="/google-ads-audit" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Google Ads Audit</a>
+      <a href="/#contact" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Get in touch</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function setFilter(btn) {
+    var filter = btn.getAttribute('data-filter');
+
+    // Update active pill
+    document.querySelectorAll('.filter-pill').forEach(function(p) {
+      p.classList.toggle('active', p === btn);
+    });
+
+    // Update heading
+    document.getElementById('filter-heading').textContent = filter === 'All' ? 'All guides' : filter;
+
+    // Show/hide cards
+    var cards = document.querySelectorAll('#guide-grid [data-cat]');
+    var visible = 0;
+    cards.forEach(function(card) {
+      var show = filter === 'All' || card.getAttribute('data-cat') === filter;
+      card.hidden = !show;
+      if (show) visible++;
+    });
+
+    // Update count
+    document.getElementById('guide-count').textContent = visible + ' ' + (visible === 1 ? 'guide' : 'guides');
+
+    // Empty state
+    document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+  }
 </script>
 </body>
 </html>
