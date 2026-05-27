@@ -34,6 +34,13 @@ const DIMENSION_LABELS = {
   offer_clarity:      'Offer clarity'
 };
 
+// Frame-position labels override hook_quality and offer_clarity per frame type
+const FRAME_DIMENSION_LABELS = {
+  opening: { hook_quality: 'Hook quality',  offer_clarity: 'Offer clarity' },
+  mid:     { hook_quality: 'Retention',     offer_clarity: 'Offer clarity' },
+  close:   { hook_quality: 'CTA strength',  offer_clarity: 'Offer clarity' },
+};
+
 // ── Token verification ────────────────────────────────────────────────────────
 // Mirrors makeToken() in creative-auth.js
 
@@ -83,7 +90,7 @@ const SCORING_SYSTEM = `You are an expert paid media creative analyst. Your job 
 DIMENSIONS — score each 1 to 10:
 
 1. hook_quality
-   Does this creative stop the scroll? Assess: pattern interrupt (unusual angle, motion blur, colour contrast, human face), emotional trigger (curiosity, desire, humour, urgency), immediate visual impact. A score of 1–3 = generic, forgettable. 7–10 = strong scroll-stop potential.
+   Interpretation depends on frame position — see the user message for context.
 
 2. visual_hierarchy
    Is there a clear focal point? Is the reading order obvious without effort? Penalise competing elements, lack of contrast between subject and background, unclear where the eye should land first.
@@ -98,11 +105,7 @@ DIMENSIONS — score each 1 to 10:
    Score HIGH for original, fresh formats. Score LOW for saturated, overused formats. Penalise: plain white background product shots with no creative treatment, straight-to-camera UGC with no hook variant, generic "Shop Now" / "Learn More" CTAs, stock photography aesthetics, formats saturated 12+ months ago. Award high scores to formats that feel genuinely fresh or novel in the category.
 
 6. offer_clarity
-   Can the specific offer be named in under two seconds? Assess whether there is a concrete, specific value proposition visible (price, discount, free trial, outcome, clear benefit). Penalise vague or absent offers, generic CTAs ("Shop Now", "Learn More") where the viewer knows what to click but not why. Award high scores when the exact offer is immediately obvious without reading anything twice.
-   10 = Specific compelling offer immediately visible
-   7–9 = Clear offer, minor CTA genericness
-   4–6 = Vague offer or generic CTA
-   1–3 = No discernible offer or completely absent CTA
+   Interpretation depends on frame position — see the user message for context.
 
 IMPACT TIERS — for any dimension scoring 6 or below, classify the fix priority:
   "critical"  — core element missing or broken; fix before running this creative
@@ -120,24 +123,49 @@ RESPONSE FORMAT — return only valid JSON, no markdown, no explanation outside 
   "overall_notes": "<2-3 sentences: what works, the priority fix, one specific action>"
 }`;
 
+// Frame-specific scoring context injected into the user message
+const FRAME_SCORING_CONTEXT = {
+  opening: `This is the OPENING FRAME of a video ad (first ~33% of the video).
+
+Frame-specific dimension interpretations:
+- hook_quality (PRIMARY for this frame): Does this frame stop the scroll? Assess pattern interrupts (unusual angle, motion blur, colour contrast, human face/emotion), emotional triggers (curiosity, desire, humour, urgency), and immediate visual impact. 1–3 = generic, forgettable. 7–10 = strong scroll-stop in the first instant.
+- offer_clarity: Score 7 if no explicit offer is shown — the opening frame's job is to hook attention, not sell. Only penalise (below 7) if a clumsy or confusing offer attempt actively undermines the hook. Do not flag absence of an offer as a weak signal on an opening frame.`,
+
+  mid: `This is the MID FRAME of a video ad (~33–66% of video duration).
+
+Frame-specific dimension interpretations:
+- hook_quality (measures RETENTION for this frame, not scroll-stopping): Does this frame hold attention and develop the story? Does it build towards the offer or maintain viewer momentum? Score high if the narrative is progressing and the viewer has a clear reason to keep watching. Score low if the frame feels flat, repetitive, or like the viewer would drop off here.
+- offer_clarity: Partially relevant. Score moderately (5–7) if the value proposition is beginning to emerge or be hinted at. Only penalise below 5 if the mid-frame is actively confusing or contradicts the hook.`,
+
+  close: `This is the CLOSING FRAME of a video ad (final ~33% of the video).
+
+Frame-specific dimension interpretations:
+- hook_quality (measures CTA STRENGTH for this frame): Is there a clear, compelling call-to-action? Does this frame convert? Score high (8–10) for a specific, urgent CTA with clear next steps. Score low (1–4) for a weak, generic, or absent CTA. "Shop Now" with no offer context scores no higher than 4.
+- offer_clarity (PRIMARY for this frame): The specific offer must be completely clear by the close. Penalise heavily if the price, discount, outcome, or benefit is not immediately obvious. A closing frame with no discernible offer is a critical failure.`
+};
+
+// Detect whether a filename is a video frame and return its position
+function detectFrameType(filename) {
+  const m = (filename || '').match(/_(opening|mid|close)\.(jpg|jpeg|png)$/i);
+  if (!m) return null;
+  return m[1].toLowerCase(); // 'opening' | 'mid' | 'close'
+}
+
 async function scoreCreative(client, file) {
   const isVideo = file.mediaType.startsWith('video/');
-
-  // For video, we can only send the first frame (we receive it as an image from the background function).
-  // The file.data is base64-encoded. We pass it as an image content block.
-  // Supported image types for the Anthropic API: jpeg, png, gif, webp
   let imageMediaType = file.mediaType;
-  if (isVideo) {
-    // Videos are received as extracted frames (JPEG) from the calling context.
-    // If we receive raw video data, we inform the model we can't process it.
-    imageMediaType = 'image/jpeg';
-  }
+  if (isVideo) imageMediaType = 'image/jpeg';
 
-  // Map mediaType to Anthropic-supported type
   const supportedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-  const apiMediaType = supportedTypes.includes(imageMediaType)
-    ? imageMediaType
-    : 'image/jpeg';
+  const apiMediaType = supportedTypes.includes(imageMediaType) ? imageMediaType : 'image/jpeg';
+
+  // Build frame-aware user prompt
+  const frameType = detectFrameType(file.name);
+  const frameContext = frameType ? FRAME_SCORING_CONTEXT[frameType] : null;
+
+  const userText = frameContext
+    ? `${frameContext}\n\nScore this frame across all six dimensions using the frame-specific interpretations above. Return only valid JSON.`
+    : 'Score this ad creative across all six dimensions. Return only valid JSON.';
 
   const message = await client.messages.create({
     model: SCORING_MODEL,
@@ -149,25 +177,21 @@ async function scoreCreative(client, file) {
         content: [
           {
             type: 'image',
-            source: {
-              type: 'base64',
-              media_type: apiMediaType,
-              data: file.data
-            }
+            source: { type: 'base64', media_type: apiMediaType, data: file.data }
           },
-          {
-            type: 'text',
-            text: 'Score this ad creative across all six dimensions. Return only valid JSON.'
-          }
+          { type: 'text', text: userText }
         ]
       }
     ]
   });
 
   const raw = message.content[0]?.text || '';
-  // Strip any accidental markdown fences
   const clean = raw.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
-  return JSON.parse(clean);
+  const result = JSON.parse(clean);
+
+  // Attach frameType so the frontend can show contextual labels
+  result._frameType = frameType || null;
+  return result;
 }
 
 // ── Composite score ───────────────────────────────────────────────────────────

@@ -371,6 +371,13 @@ const DIMENSIONS = [
 ];
 const DIM_SHORT = ['Hook','Hier.','Copy','Brand','Fatigue','Offer'];
 
+// Override labels for video frame positions
+const FRAME_DIM_LABELS = {
+  opening: {},
+  mid:     { hook_quality: 'Retention' },
+  close:   { hook_quality: 'CTA strength' },
+};
+
 const IMPACT_LABELS = { critical:'CRITICAL', high:'HIGH', quick_win:'QUICK WIN' };
 
 // ===== RENDER STATS =====
@@ -512,13 +519,15 @@ function renderSummaryTable(results) {
 }
 
 // ===== RENDER CREATIVES =====
-function buildDimRows(dims) {
+function buildDimRows(dims, frameType) {
+  const overrides = (frameType && FRAME_DIM_LABELS[frameType]) || {};
   return DIMENSIONS.map(d => {
     const dimData = dims[d.key] || {};
     const score = typeof dimData.score === 'number' ? dimData.score : 0;
     const rationale = dimData.rationale || '';
     const weakSignal = dimData.weak_signal || null;
     const impact = dimData.impact || null;
+    const label = overrides[d.key] || d.label;
     let badgeHtml = '';
     if (weakSignal) {
       const cls = impact ? `impact-${impact}` : 'impact-high';
@@ -527,7 +536,7 @@ function buildDimRows(dims) {
     }
     return `
       <div class="dim-table-grid">
-        <div style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${d.label}</div>
+        <div style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${label}</div>
         <div>
           <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;">
             <span style="font-size:16px;font-weight:700;color:${scoreColor(score)};font-variant-numeric:tabular-nums;">${score}</span>
@@ -591,7 +600,7 @@ function buildCreativeCard(item, rankLabel, isVideoFrame) {
         <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Score</span>
         <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Rationale</span>
       </div>
-      ${buildDimRows(dims)}
+      ${buildDimRows(dims, dims._frameType || null)}
     </div>
   `;
   return card;
