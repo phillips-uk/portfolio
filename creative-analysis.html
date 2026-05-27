@@ -220,13 +220,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="font-size:14px;font-weight:600;color:#1A1A1A;letter-spacing:-0.005em;">
             Drop files here or <span style="color:#985830;">click to browse</span>
           </div>
-          <div style="font-size:11.5px;color:#6B6B6B;margin-top:4px;">Up to 12 files &middot; 4 MB total batch size</div>
+          <div style="font-size:11.5px;color:#6B6B6B;margin-top:4px;">Up to 12 files &middot; images and video</div>
         </div>
 
         <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm" style="display:none;">
 
         <p style="font-size:12px;line-height:1.5;color:#6B6B6B;margin:10px 0 18px;">
-          JPEG, PNG, GIF, WebP, MP4, MOV, WebM &mdash; keep total batch under 4 MB. Compress video before uploading.
+          JPEG, PNG, GIF, WebP, MP4, MOV, WebM. Videos are automatically compressed to 3 frames before scoring.
         </p>
 
         <div id="file-list" style="display:none;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px;padding:8px;margin-bottom:16px;max-height:200px;overflow-y:auto;"></div>
@@ -624,20 +624,98 @@ dropZone.addEventListener('dragleave', () => { dropZone.style.background = '#FDF
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.style.background = '#FDF6EE'; dropZone.style.borderColor = '#E8D8C4'; addFiles(e.dataTransfer.files); });
 fileInput.addEventListener('change', () => addFiles(fileInput.files));
 
-// =============== UPLOAD & SCORE ===============
-function readFileAsBase64(file) {
+// =============== FILE PREPARATION ===============
+// Images: compress to max 1920px wide, JPEG 85% quality
+// Videos: extract 3 frames (5% / 50% / 90%) via canvas, JPEG 85%
+// This keeps the total POST body well under Netlify's 6MB limit.
+
+const MAX_W    = 1920;
+const JPEG_Q   = 0.85;
+const FRAME_POSITIONS = [0.05, 0.50, 0.90];
+const FRAME_LABELS    = ['opening', 'mid', 'close'];
+
+function canvasToBase64(canvas) {
+  return canvas.toDataURL('image/jpeg', JPEG_Q).split(',')[1];
+}
+
+function compressImageFile(file) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve({
-      name:      file.name,
-      mediaType: file.type || 'application/octet-stream',
-      data:      reader.result.split(',')[1]
-    });
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve([{ name: file.name.replace(/\.[^.]+$/, '.jpg'), mediaType: 'image/jpeg', data: canvasToBase64(c) }]);
+    };
+    img.onerror = reject;
+    img.src = url;
   });
 }
 
+function seekVideo(video, time) {
+  return new Promise(resolve => {
+    const done = () => { video.removeEventListener('seeked', done); resolve(); };
+    video.addEventListener('seeked', done);
+    video.currentTime = time;
+  });
+}
+
+async function extractVideoFrames(file) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    const url = URL.createObjectURL(file);
+
+    video.onloadedmetadata = async () => {
+      try {
+        const duration = video.duration;
+        const baseName = file.name.replace(/\.[^.]+$/, '');
+        const frames = [];
+
+        for (let i = 0; i < FRAME_POSITIONS.length; i++) {
+          await seekVideo(video, duration * FRAME_POSITIONS[i]);
+          let w = video.videoWidth, h = video.videoHeight;
+          if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(video, 0, 0, w, h);
+          frames.push({
+            name:      `${baseName}_${FRAME_LABELS[i]}.jpg`,
+            mediaType: 'image/jpeg',
+            data:      canvasToBase64(c)
+          });
+        }
+
+        URL.revokeObjectURL(url);
+        resolve(frames);
+      } catch (e) { URL.revokeObjectURL(url); reject(e); }
+    };
+
+    video.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`Could not read video: ${file.name}`)); };
+    video.src = url;
+    video.load();
+  });
+}
+
+async function prepareFiles(rawFiles, onProgress) {
+  const prepared = [];
+  for (let i = 0; i < rawFiles.length; i++) {
+    const f = rawFiles[i];
+    onProgress(`Preparing ${i + 1} of ${rawFiles.length}: ${f.name}`);
+    const isVideo = f.type.startsWith('video');
+    const items = isVideo ? await extractVideoFrames(f) : await compressImageFile(f);
+    prepared.push(...items);
+  }
+  return prepared;
+}
+
+// =============== UPLOAD & SCORE ===============
 async function pollJob(jobId) {
   return new Promise((resolve, reject) => {
     const iv = setInterval(async () => {
@@ -666,29 +744,18 @@ scoreBtn.addEventListener('click', async () => {
   const token = getToken();
   if (!token) { clearToken(); showAuthUI(); return; }
 
-  // Netlify has a 6MB request body limit. Base64 adds ~37% overhead,
-  // so cap total raw file size at 4MB to stay safely under the limit.
-  const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // 4 MB raw
-  const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
-  if (totalBytes > MAX_TOTAL_BYTES) {
-    const totalMB = (totalBytes / 1024 / 1024).toFixed(1);
-    showProgressUI(
-      'Files too large to send',
-      `Total: ${totalMB} MB. Keep batch under 4 MB. For video, use short clips or compress first.`
-    );
-    setTimeout(() => { scoreBtn.disabled = false; showUploadUI(); }, 5000);
-    return;
-  }
-
   scoreBtn.disabled = true;
   showProgressUI('Preparing files…', '');
 
   try {
-    // Encode files
-    const encoded = await Promise.all(files.map(readFileAsBase64));
-    showProgressUI('Sending to Claude…', `${encoded.length} file${encoded.length > 1 ? 's' : ''} queued`);
+    // Compress images + extract video frames client-side
+    const encoded = await prepareFiles(files, detail => {
+      document.getElementById('progress-detail').textContent = detail;
+    });
 
-    // Generate job ID (alphanumeric, max 32 chars to pass server validation)
+    showProgressUI('Sending to Claude…', `${encoded.length} frame${encoded.length !== 1 ? 's' : ''} queued`);
+
+    // Generate job ID (lowercase alphanumeric, max 24 chars)
     const jobId = (Math.random().toString(36).slice(2, 10) + Date.now().toString(36)).slice(0, 24);
     lastJobId = jobId;
 
@@ -701,10 +768,7 @@ scoreBtn.addEventListener('click', async () => {
     if (!resp.ok) {
       const txt = await resp.text();
       if (resp.status === 401) { clearToken(); showAuthUI(); return; }
-      if (resp.status === 413 || (txt && txt.includes('too large'))) {
-        throw new Error('Files too large for upload. Keep total batch under 4 MB.');
-      }
-      throw new Error(`Upload failed (${resp.status}). Try with smaller files or fewer at once.`);
+      throw new Error(`Upload failed (${resp.status}). Try fewer files or contact Lewis.`);
     }
 
     showProgressUI('Scoring your creatives…', '');
@@ -718,7 +782,7 @@ scoreBtn.addEventListener('click', async () => {
     setTimeout(() => {
       scoreBtn.disabled = false;
       showUploadUI();
-    }, 3000);
+    }, 4000);
   }
 });
 
