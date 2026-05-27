@@ -14,6 +14,7 @@
 'use strict';
 
 const crypto    = require('crypto');
+const https     = require('https');
 const { getStore } = require('@netlify/blobs');
 const Anthropic    = require('@anthropic-ai/sdk');
 
@@ -165,32 +166,50 @@ function detectFrameBase(filename) {
 }
 
 // ── Whisper transcription ─────────────────────────────────────────────────────
+// Uses https.request + manual multipart body — no FormData/Blob/fetch required.
 
 async function transcribeAudio(audioBase64, mimeType) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return null;
 
-  const buf  = Buffer.from(audioBase64, 'base64');
-  const ext  = mimeType.includes('wav') ? 'wav' : mimeType.includes('webm') ? 'webm' : 'wav';
-  const blob = new Blob([buf], { type: mimeType });
+  const audioBuf  = Buffer.from(audioBase64, 'base64');
+  const ext       = mimeType.includes('wav') ? 'wav' : 'webm';
+  const boundary  = 'Boundary' + crypto.randomBytes(12).toString('hex');
+  const CRLF      = '\r\n';
 
-  const form = new FormData();
-  form.append('file', blob, `audio.${ext}`);
-  form.append('model', 'whisper-1');
-  form.append('response_format', 'text');
+  // Build multipart body manually — works in all Node versions
+  const body = Buffer.concat([
+    Buffer.from(`--${boundary}${CRLF}Content-Disposition: form-data; name="file"; filename="audio.${ext}"${CRLF}Content-Type: ${mimeType}${CRLF}${CRLF}`),
+    audioBuf,
+    Buffer.from(`${CRLF}--${boundary}${CRLF}Content-Disposition: form-data; name="model"${CRLF}${CRLF}whisper-1${CRLF}--${boundary}${CRLF}Content-Disposition: form-data; name="response_format"${CRLF}${CRLF}text${CRLF}--${boundary}--${CRLF}`)
+  ]);
 
-  const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method:  'POST',
-    headers: { 'Authorization': `Bearer ${key}` },
-    body:    form
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'api.openai.com',
+      path:     '/v1/audio/transcriptions',
+      method:   'POST',
+      headers:  {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type':  `multipart/form-data; boundary=${boundary}`,
+        'Content-Length': body.length
+      }
+    }, res => {
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end',  () => {
+        const text = Buffer.concat(chunks).toString('utf8').trim();
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(text);
+        } else {
+          reject(new Error(`Whisper ${res.statusCode}: ${text.slice(0, 200)}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
   });
-
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`Whisper ${resp.status}: ${err.slice(0, 200)}`);
-  }
-
-  return (await resp.text()).trim();
 }
 
 async function scoreCreative(client, file, transcript) {

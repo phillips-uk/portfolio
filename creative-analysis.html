@@ -10,13 +10,88 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
 <!-- End Google Tag Manager -->
 <link rel="canonical" href="https://www.phillips-uk.com/creative-analysis">
-<meta property="og:title" content="AI Ad Creative Scoring Tool — Phillips.">
-<meta property="og:description" content="Upload paid ad creatives and get a scored, ranked report. AI analysis across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<meta property="og:title" content="AI Ad Creative Scoring Tool — Score &amp; Analyse Paid Ad Creatives | Phillips.">
+<meta property="og:description" content="Score paid ad creatives with AI. Ranked report across five dimensions — hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals. Images and video. No account required.">
 <meta property="og:url" content="https://www.phillips-uk.com/creative-analysis">
 <meta property="og:type" content="website">
-<title>AI Ad Creative Scoring Tool — Analyse Paid Ad Creatives | Phillips.</title>
-<meta name="description" content="Upload paid ad creatives and get a scored, ranked report. AI analysis across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<meta property="og:image" content="https://www.phillips-uk.com/assets/og-default.png">
+<title>AI Ad Creative Scoring Tool — Score &amp; Analyse Paid Ad Creatives | Phillips.</title>
+<meta name="description" content="Score paid ad creatives with AI. Ranked report across five dimensions — hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals. Images and video. No account required.">
+<meta name="robots" content="index,follow">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Ad Creative Scoring Tool — Score &amp; Analyse Paid Ad Creatives | Phillips.">
+<meta name="twitter:description" content="Score paid ad creatives with AI. Ranked report across five dimensions — hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Ad Creative Scoring Tool",
+  "description": "Upload paid ad creatives and get an AI-scored, ranked report across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "url": "https://www.phillips-uk.com/creative-analysis",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "provider": {
+    "@type": "Person",
+    "name": "Lewis Phillips",
+    "url": "https://www.phillips-uk.com"
+  },
+  "featureList": [
+    "Hook quality scoring",
+    "Visual hierarchy analysis",
+    "Copy clarity assessment",
+    "Brand consistency review",
+    "Creative fatigue signal detection",
+    "Image and video support",
+    "Batch scoring with ranked output"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is ad creative fatigue?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Creative fatigue describes the point at which an audience has seen a format, style, or message often enough that engagement drops — not because the product is less appealing, but because the creative has lost its ability to interrupt. Common signals include generic UGC formats with no hook, logo-first compositions, plain white product shots without context, and overused CTA phrases like 'Shop now' or 'Learn more'."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does AI scoring differ from a manual creative review?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A manual review depends on the reviewer's frame of reference and changes between sessions. An AI-scored rubric applies the same criteria every time, returns a documented rationale for each score, and flags specific weak signals rather than general impressions. The output is the same whether you score 5 creatives or 50."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use ad creative scoring to brief new creatives?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The weak signal flags are designed to feed directly into briefs. If Hook Quality scores 4 with a note about 'no pattern interrupt in the first frame', that's a specific instruction for the next creative — not a general note about 'making it more engaging'."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I do with a low-scoring creative?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check which dimension is pulling the composite down. A low Hook Quality score points to the opening frame. A low Copy Clarity score points to the headline or body copy. A low Fatigue Signals score means the format itself may need to change, not just the copy or image."
+      }
+    }
+  ]
+}
+</script>
 <style>
   :root {
     --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -163,6 +238,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     transition: transform 150ms cubic-bezier(0.2,0,0,1);
     flex-shrink: 0;
   }
+
+  /* Mobile nav */
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .ph-drawer.open { display: block; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .ph-drawer-link:hover, .ph-drawer-link.active { color: #1A1A1A; }
+  .ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: #7A3F1F; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .cs-nav-links { display: none; }
+    .ph-hamburger { display: flex; align-items: center; justify-content: center; }
+  }
+  @media (max-width: 700px) {
+    .cs-hero-grid { grid-template-columns: 1fr !important; }
+    .cs-approach-grid { grid-template-columns: 1fr !important; }
+    .cs-faq-grid { grid-template-columns: 1fr !important; }
+    .cs-faq-sticky { position: static !important; }
+    .cs-method-grid { grid-template-columns: 1fr !important; }
+    .cs-headshot { display: none; }
+    .cs-cross-grid { grid-template-columns: 1fr !important; }
+  }
 </style>
 </head>
 <body class="ph">
@@ -218,15 +320,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1;">
       Phillips<span style="color:#985830;">.</span>
     </a>
-    <nav style="display:flex;align-items:center;gap:28px;">
+    <nav class="cs-nav-links" style="display:flex;align-items:center;gap:28px;">
       <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
       <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
       <a href="/creative-analysis" class="nav-link active">Creative Scoring</a>
       <a href="/guides/" class="nav-link">Guides</a>
       <a href="/#contact" class="btn-filled-small">Get in touch</a>
     </nav>
+    <button class="ph-hamburger" onclick="document.getElementById('cs-drawer').classList.add('open')" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+    </button>
   </div>
 </header>
+<div id="cs-drawer" class="ph-drawer">
+  <div class="ph-drawer-backdrop" onclick="document.getElementById('cs-drawer').classList.remove('open')"></div>
+  <div class="ph-drawer-panel">
+    <button class="ph-drawer-close" onclick="document.getElementById('cs-drawer').classList.remove('open')">✕</button>
+    <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
+    <a href="/creative-analysis" class="ph-drawer-link active">Creative Scoring</a>
+    <a href="/guides/" class="ph-drawer-link">Guides</a>
+    <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+  </div>
+</div>
 
 <!-- =============== HERO =============== -->
 <section style="background:#fff;padding:72px 0 96px;border-bottom:1px solid #F5EBD9;">
@@ -245,7 +361,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </h1>
 
         <p style="font-size:18px;line-height:1.6;color:#1A1A1A;margin:0 0 28px;max-width:560px;">
-          Upload paid ad creatives. Claude scores each one across five dimensions and returns a ranked report with specific weak signals. Images and video. No account connection.
+          Upload paid ad creatives — images or video. Claude AI scores each one across five dimensions and returns a ranked report with specific weak signal flags: what to pause, what to iterate, what to scale. Works across Meta, Google, and TikTok ad formats. No account connection required.
         </p>
 
         <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
@@ -391,23 +507,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
 
       <div style="background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:28px 30px;">
-        <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Video support</span>
-        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:12px 0 0;">Three frames extracted per video &mdash; opening, midpoint, closing &mdash; each scored independently. The composite reflects all three.</p>
+        <h3 style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin:0 0 12px;">Video support</h3>
+        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:0;">Three frames extracted per video &mdash; opening, midpoint, closing &mdash; each scored independently. The composite reflects all three.</p>
       </div>
 
       <div style="background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:28px 30px;">
-        <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Judgement context</span>
-        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:12px 0 0;">Scores are AI-generated using a consistent rubric. Reproducible and documented &mdash; but should be used alongside campaign performance data, not as a replacement.</p>
+        <h3 style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin:0 0 12px;">Judgement context</h3>
+        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:0;">Scores are AI-generated using a consistent rubric. Reproducible and documented &mdash; but should be used alongside campaign performance data, not as a replacement.</p>
       </div>
 
       <div style="background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:28px 30px;">
-        <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Format agnostic</span>
-        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:12px 0 0;">The rubric applies the same logic to Meta, Google, and TikTok creatives. Platform-specific attention patterns are not currently scored separately &mdash; that&rsquo;s a future scope item.</p>
+        <h3 style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin:0 0 12px;">Format agnostic</h3>
+        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:0;">The rubric applies the same logic to Meta, Google, and TikTok creatives. Platform-specific attention patterns are not currently scored separately &mdash; that&rsquo;s a future scope item.</p>
       </div>
 
       <div style="background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:28px 30px;">
-        <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">What it is not</span>
-        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:12px 0 0;">Not a real-time audience measurement tool. It scores creative signals, not ad performance. A creative can score well here and still underperform if targeting is the problem.</p>
+        <h3 style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin:0 0 12px;">What it is not</h3>
+        <p style="font-size:15px;line-height:1.6;color:#1A1A1A;margin:0;">Not a real-time audience measurement tool. It scores creative signals, not ad performance. A creative can score well here and still underperform if targeting is the problem.</p>
       </div>
 
     </div>
@@ -434,6 +550,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </p>
         <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0 0 20px;">
           This tool applies a consistent five-dimension rubric to every creative you upload. Each image or video frame is scored on hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals. The composite gives you a ranked view across a batch. The weak signal flags tell you exactly what to fix.
+        </p>
+        <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0 0 20px;">
+          Creative quality also feeds directly into paid media efficiency. A creative that fails to hold attention drives up your effective CPM and frequency thresholds — you end up spending more to reach the same number of people before results decay. Identifying the specific weak signal (a low-quality hook, an unclear headline, a fatigued format) is the difference between a brief that fixes the problem and one that just asks for something &ldquo;more engaging&rdquo;.
         </p>
         <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0 0 36px;padding:20px 24px;background:#fff;border-left:3px solid #985830;border-radius:0 6px 6px 0;">
           <strong style="font-weight:700;">What makes a paid creative fail?</strong> Not production quality. It&rsquo;s stopping the scroll, communicating the offer in under two seconds, and avoiding the formats audiences have learned to ignore. The tool is built around those three problems.
@@ -480,7 +599,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- =============== CROSS-SELL =============== -->
 <section class="sec-white">
   <div class="page-w">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
 
       <a href="/google-ads-audit" class="cross-card">
         <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Account level</span>
@@ -496,6 +615,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span style="margin-top:auto;font-size:14px;font-weight:600;color:#985830;display:inline-flex;align-items:center;gap:6px;">Free Landing Page Audit &rarr;</span>
       </a>
 
+    </div>
+    <div style="padding:20px 24px;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <p style="font-size:15px;color:#1A1A1A;margin:0;line-height:1.5;">Conversion tracking issues distorting your performance data? Read the guide.</p>
+      <a href="/guides/fix-google-ads-conversion-tracking/" style="font-size:14px;font-weight:600;color:#985830;text-decoration:none;white-space:nowrap;">Fix Google Ads Conversion Tracking &rarr;</a>
     </div>
   </div>
 </section>
@@ -785,8 +908,10 @@ async function extractVideoAudio(file) {
     }
 
     // Resample to 16 kHz mono via OfflineAudioContext (Whisper preferred rate)
-    const TARGET = 16000;
-    const targetLen = Math.round(decoded.duration * TARGET);
+    // Cap at 60 s — keeps WAV under ~2 MB base64, protecting Netlify's 6 MB body limit
+    const TARGET    = 16000;
+    const MAX_SECS  = 60;
+    const targetLen = Math.round(Math.min(decoded.duration, MAX_SECS) * TARGET);
     const offCtx = new OfflineAudioContext(1, targetLen, TARGET);
 
     // Mix all channels down to mono
