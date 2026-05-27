@@ -40,6 +40,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     50% { opacity: 0.6; }
   }
 
+  /* Loading overlay steps */
+  .ca-step {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1);
+  }
+  .ca-step .ca-step-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 999px;
+    background: #F5EBD9; color: #985830;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+    border: 1px solid #E8D8C4;
+    transition: background 200ms, color 200ms, border-color 200ms;
+  }
+  .ca-step .ca-step-label {
+    font-size: 14px; color: #6B6B6B; letter-spacing: -0.005em;
+    transition: color 200ms;
+  }
+  .ca-step.active { background: #FDF6EE; border-color: #E8D8C4; }
+  .ca-step.active .ca-step-icon {
+    background: #985830; color: #fff; border-color: #985830;
+    animation: ca-pulse 1.4s ease-in-out infinite;
+  }
+  .ca-step.active .ca-step-label { color: #1A1A1A; font-weight: 600; }
+  .ca-step.done .ca-step-icon { background: #4F7A4A; color: #fff; border-color: #4F7A4A; }
+  .ca-step.done .ca-step-label { color: #1A1A1A; }
+
   /* Nav */
   .nav-link {
     font-size: 14px; font-weight: 500; color: #6B6B6B;
@@ -142,6 +170,47 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+
+<!-- =============== FULL-PAGE LOADING OVERLAY =============== -->
+<div id="ca-loading" style="display:none;position:fixed;inset:0;z-index:200;background:#FDF6EE;overflow-y:auto;">
+  <div style="padding:20px 28px 0;">
+    <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1;">Phillips<span style="color:#985830;">.</span></a>
+  </div>
+  <div style="min-height:calc(100vh - 68px);display:flex;align-items:center;justify-content:center;padding:24px;">
+    <div style="width:100%;max-width:560px;">
+      <div style="background:#fff;border:1px solid #E8D8C4;border-radius:8px;padding:48px 44px 40px;box-shadow:0 12px 40px rgba(152,88,48,0.12),0 2px 8px rgba(152,88,48,0.06);text-align:center;">
+        <div style="width:56px;height:56px;margin:0 auto;display:inline-flex;align-items:center;justify-content:center;">
+          <svg width="56" height="56" viewBox="0 0 56 56" style="animation:ca-spin 0.9s linear infinite">
+            <circle cx="28" cy="28" r="22" fill="none" stroke="#F5EBD9" stroke-width="4"/>
+            <path d="M50 28 A22 22 0 0 0 28 6" fill="none" stroke="#985830" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h1 id="ca-loading-title" style="font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;color:#1A1A1A;margin:28px 0 10px;text-wrap:balance;">Scoring your creatives&hellip;</h1>
+        <p id="ca-loading-sub" style="font-size:15px;line-height:1.55;color:#6B6B6B;margin:0 0 32px;">This takes around 60&ndash;90 seconds.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;text-align:left;">
+          <div id="ca-step-1" class="ca-step">
+            <span class="ca-step-icon">&#x25CB;</span>
+            <span class="ca-step-label">Extracting frames and preparing files</span>
+          </div>
+          <div id="ca-step-2" class="ca-step">
+            <span class="ca-step-icon">&#x25CB;</span>
+            <span class="ca-step-label">Uploading to scoring engine</span>
+          </div>
+          <div id="ca-step-3" class="ca-step">
+            <span class="ca-step-icon">&#x25CB;</span>
+            <span class="ca-step-label">Scoring with Claude vision</span>
+          </div>
+          <div id="ca-step-4" class="ca-step">
+            <span class="ca-step-icon">&#x25CB;</span>
+            <span class="ca-step-label">Building your report</span>
+          </div>
+        </div>
+        <div id="ca-loading-detail" style="margin-top:20px;font-size:12px;color:#6B6B6B;min-height:16px;letter-spacing:-0.005em;"></div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid #F0E5D2;font-size:12px;color:#6B6B6B;letter-spacing:-0.005em;">Running Claude vision on every frame. No shortcuts.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- =============== NAV =============== -->
 <header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:saturate(120%);border-bottom:1px solid #E8D8C4;height:64px;">
@@ -250,33 +319,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         </div><!-- /upload-form -->
 
-        <!-- Progress view — shown while scoring -->
-        <div id="progress-view" style="display:none;padding:8px 0 4px;text-align:center;">
-          <div style="width:36px;height:36px;border-radius:999px;border:3px solid #E8D8C4;border-top-color:#985830;animation:ca-spin 0.8s linear infinite;margin:0 auto 16px;"></div>
-          <div id="progress-text" style="font-size:14px;font-weight:600;color:#1A1A1A;margin-bottom:6px;">Scoring your creatives&hellip;</div>
-          <div id="progress-detail" style="font-size:12px;color:#6B6B6B;min-height:16px;"></div>
-        </div>
-
       </div><!-- /upload card -->
-    </div>
-  </div>
-</section>
-
-<!-- =============== RESULTS =============== -->
-<section id="results-section" style="display:none;background:#FDF6EE;padding:64px 0;">
-  <div class="page-w">
-    <div style="border-left:3px solid #985830;padding-left:24px;margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-      <div>
-        <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Scoring complete</span>
-        <h2 id="results-heading" style="font-size:clamp(28px,3.5vw,36px);font-weight:700;letter-spacing:-0.02em;line-height:1.1;color:#1A1A1A;margin:10px 0 0;">Your report is ready.</h2>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <button id="download-md-btn" style="padding:10px 18px;font-size:13px;font-weight:600;font-family:inherit;background:transparent;color:#985830;border:1.5px solid #985830;border-radius:4px;cursor:pointer;letter-spacing:-0.005em;">Download Markdown</button>
-        <button id="score-more-btn" style="padding:10px 18px;font-size:13px;font-weight:600;font-family:inherit;background:#985830;color:#fff;border:0;border-radius:4px;cursor:pointer;letter-spacing:-0.005em;">Score more creatives</button>
-      </div>
-    </div>
-    <div id="report-frame-wrap" style="border-radius:8px;overflow:hidden;border:1px solid #E8D8C4;box-shadow:0 4px 20px rgba(152,88,48,0.10);">
-      <iframe id="report-frame" style="width:100%;height:800px;border:0;display:block;" title="Creative scoring report"></iframe>
     </div>
   </div>
 </section>
@@ -528,34 +571,74 @@ function clearToken() {
   localStorage.removeItem(EXPIRES_KEY);
 }
 
-const authStatus  = document.getElementById('auth-status');
-const authForm    = document.getElementById('auth-form');
-const uploadForm  = document.getElementById('upload-form');
-const progressView = document.getElementById('progress-view');
-const pinInput    = document.getElementById('pin-input');
-const authBtn     = document.getElementById('auth-btn');
-const authError   = document.getElementById('auth-error');
+const authStatus = document.getElementById('auth-status');
+const authForm   = document.getElementById('auth-form');
+const uploadForm = document.getElementById('upload-form');
+const pinInput   = document.getElementById('pin-input');
+const authBtn    = document.getElementById('auth-btn');
+const authError  = document.getElementById('auth-error');
+const caLoading  = document.getElementById('ca-loading');
 
 function showUploadUI() {
-  authStatus.style.color   = '#4F7A4A';
-  authStatus.innerHTML     = '<span style="width:6px;height:6px;border-radius:999px;background:#4F7A4A;display:inline-block;"></span> You\'re signed in';
-  authForm.style.display    = 'none';
-  uploadForm.style.display  = 'block';
-  progressView.style.display = 'none';
+  authStatus.style.color  = '#4F7A4A';
+  authStatus.innerHTML    = '<span style="width:6px;height:6px;border-radius:999px;background:#4F7A4A;display:inline-block;"></span> You\'re signed in';
+  authForm.style.display  = 'none';
+  uploadForm.style.display = 'block';
+  caLoading.style.display = 'none';
+  document.body.style.overflow = '';
 }
 function showAuthUI() {
-  authStatus.style.color   = '#6B6B6B';
-  authStatus.textContent   = 'Not signed in';
-  authForm.style.display    = 'block';
-  uploadForm.style.display  = 'none';
-  progressView.style.display = 'none';
+  authStatus.style.color  = '#6B6B6B';
+  authStatus.textContent  = 'Not signed in';
+  authForm.style.display  = 'block';
+  uploadForm.style.display = 'none';
+  caLoading.style.display = 'none';
+  document.body.style.overflow = '';
 }
-function showProgressUI(text, detail) {
-  authForm.style.display    = 'none';
-  uploadForm.style.display  = 'none';
-  progressView.style.display = 'block';
-  document.getElementById('progress-text').textContent   = text   || 'Scoring your creatives…';
-  document.getElementById('progress-detail').textContent = detail || '';
+
+// Loading overlay helpers
+function showLoadingOverlay() {
+  caLoading.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // Reset steps
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ca-step-' + i);
+    if (el) { el.className = 'ca-step'; el.querySelector('.ca-step-icon').textContent = '○'; }
+  }
+  const titleEl = document.getElementById('ca-loading-title');
+  const subEl   = document.getElementById('ca-loading-sub');
+  if (titleEl) titleEl.textContent = 'Scoring your creatives…';
+  if (subEl)   subEl.textContent   = 'This takes around 60–90 seconds.';
+  document.getElementById('ca-loading-detail').textContent = '';
+}
+function setLoadingStep(stepNum, detail) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ca-step-' + i);
+    if (!el) continue;
+    const icon = el.querySelector('.ca-step-icon');
+    if (i < stepNum) {
+      el.className = 'ca-step done';
+      if (icon) icon.textContent = '✓';
+    } else if (i === stepNum) {
+      el.className = 'ca-step active';
+      if (icon) icon.textContent = '⏳';
+    } else {
+      el.className = 'ca-step';
+      if (icon) icon.textContent = '○';
+    }
+  }
+  const detailEl = document.getElementById('ca-loading-detail');
+  if (detailEl) detailEl.textContent = detail || '';
+}
+function setLoadingError(msg) {
+  const titleEl = document.getElementById('ca-loading-title');
+  const subEl   = document.getElementById('ca-loading-sub');
+  if (titleEl) titleEl.textContent = 'Something went wrong';
+  if (subEl)   subEl.textContent   = msg || 'Please try again.';
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ca-step-' + i);
+    if (el && !el.classList.contains('done')) el.className = 'ca-step';
+  }
 }
 
 // Init
@@ -580,10 +663,10 @@ authBtn.addEventListener('click', async () => {
     pinInput.value = '';
     showUploadUI();
   } catch (err) {
-    authError.textContent     = err.message || 'Sign in failed';
-    authError.style.display   = 'block';
-    authBtn.textContent       = 'Sign in →';
-    authBtn.disabled          = false;
+    authError.textContent   = err.message || 'Sign in failed';
+    authError.style.display = 'block';
+    authBtn.textContent     = 'Sign in →';
+    authBtn.disabled        = false;
   }
 });
 pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') authBtn.click(); });
@@ -596,9 +679,7 @@ const scoreBtn  = document.getElementById('score-btn');
 let files = [];
 
 function addFiles(newFiles) {
-  Array.from(newFiles).forEach(f => {
-    if (files.length < 12) files.push(f);
-  });
+  Array.from(newFiles).forEach(f => { if (files.length < 12) files.push(f); });
   renderFileList();
 }
 function renderFileList() {
@@ -625,19 +706,14 @@ dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.style.back
 fileInput.addEventListener('change', () => addFiles(fileInput.files));
 
 // =============== FILE PREPARATION ===============
-// Images: compress to max 1920px wide, JPEG 85% quality
-// Videos: extract 3 frames (5% / 50% / 90%) via canvas, JPEG 85%
-// This keeps the total POST body well under Netlify's 6MB limit.
-
-const MAX_W    = 1920;
-const JPEG_Q   = 0.85;
+const MAX_W           = 1920;
+const JPEG_Q          = 0.85;
 const FRAME_POSITIONS = [0.05, 0.50, 0.90];
 const FRAME_LABELS    = ['opening', 'mid', 'close'];
 
 function canvasToBase64(canvas) {
   return canvas.toDataURL('image/jpeg', JPEG_Q).split(',')[1];
 }
-
 function compressImageFile(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -655,7 +731,6 @@ function compressImageFile(file) {
     img.src = url;
   });
 }
-
 function seekVideo(video, time) {
   return new Promise(resolve => {
     const done = () => { video.removeEventListener('seeked', done); resolve(); };
@@ -663,53 +738,39 @@ function seekVideo(video, time) {
     video.currentTime = time;
   });
 }
-
 async function extractVideoFrames(file) {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = 'metadata';
+    video.muted = true; video.playsInline = true; video.preload = 'metadata';
     const url = URL.createObjectURL(file);
-
     video.onloadedmetadata = async () => {
       try {
-        const duration = video.duration;
-        const baseName = file.name.replace(/\.[^.]+$/, '');
+        const dur = video.duration;
+        const base = file.name.replace(/\.[^.]+$/, '');
         const frames = [];
-
         for (let i = 0; i < FRAME_POSITIONS.length; i++) {
-          await seekVideo(video, duration * FRAME_POSITIONS[i]);
+          await seekVideo(video, dur * FRAME_POSITIONS[i]);
           let w = video.videoWidth, h = video.videoHeight;
           if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
           const c = document.createElement('canvas');
           c.width = w; c.height = h;
           c.getContext('2d').drawImage(video, 0, 0, w, h);
-          frames.push({
-            name:      `${baseName}_${FRAME_LABELS[i]}.jpg`,
-            mediaType: 'image/jpeg',
-            data:      canvasToBase64(c)
-          });
+          frames.push({ name: `${base}_${FRAME_LABELS[i]}.jpg`, mediaType: 'image/jpeg', data: canvasToBase64(c) });
         }
-
         URL.revokeObjectURL(url);
         resolve(frames);
       } catch (e) { URL.revokeObjectURL(url); reject(e); }
     };
-
     video.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`Could not read video: ${file.name}`)); };
-    video.src = url;
-    video.load();
+    video.src = url; video.load();
   });
 }
-
 async function prepareFiles(rawFiles, onProgress) {
   const prepared = [];
   for (let i = 0; i < rawFiles.length; i++) {
     const f = rawFiles[i];
     onProgress(`Preparing ${i + 1} of ${rawFiles.length}: ${f.name}`);
-    const isVideo = f.type.startsWith('video');
-    const items = isVideo ? await extractVideoFrames(f) : await compressImageFile(f);
+    const items = f.type.startsWith('video') ? await extractVideoFrames(f) : await compressImageFile(f);
     prepared.push(...items);
   }
   return prepared;
@@ -722,22 +783,13 @@ async function pollJob(jobId) {
       try {
         const r = await fetch(`/.netlify/functions/creative-status?id=${jobId}`);
         const d = await r.json();
-        if (d.status === 'done') {
-          clearInterval(iv);
-          resolve(d);
-        } else if (d.status === 'error') {
-          clearInterval(iv);
-          reject(new Error(d.message || 'Scoring error'));
-        } else if (d.status === 'progress' && d.total) {
-          document.getElementById('progress-detail').textContent =
-            `${d.done || 0} of ${d.total} scored`;
-        }
-      } catch(_) { /* network blip — keep polling */ }
+        if (d.status === 'done') { clearInterval(iv); resolve(d); }
+        else if (d.status === 'error') { clearInterval(iv); reject(new Error(d.message || 'Scoring error')); }
+        else if (d.status === 'progress' && d.total) { setLoadingStep(3, `${d.done || 0} of ${d.total} scored`); }
+      } catch(_) { /* network blip */ }
     }, 2000);
   });
 }
-
-let lastJobId = null;
 
 scoreBtn.addEventListener('click', async () => {
   if (!files.length) return;
@@ -745,83 +797,39 @@ scoreBtn.addEventListener('click', async () => {
   if (!token) { clearToken(); showAuthUI(); return; }
 
   scoreBtn.disabled = true;
-  showProgressUI('Preparing files…', '');
+  showLoadingOverlay();
+  setLoadingStep(1, '');
 
   try {
-    // Compress images + extract video frames client-side
-    const encoded = await prepareFiles(files, detail => {
-      document.getElementById('progress-detail').textContent = detail;
-    });
+    // Step 1 — extract frames / compress
+    const encoded = await prepareFiles(files, detail => setLoadingStep(1, detail));
 
-    showProgressUI('Sending to Claude…', `${encoded.length} frame${encoded.length !== 1 ? 's' : ''} queued`);
-
-    // Generate job ID (lowercase alphanumeric, max 24 chars)
+    // Step 2 — upload
+    setLoadingStep(2, `${encoded.length} frame${encoded.length !== 1 ? 's' : ''} ready`);
     const jobId = (Math.random().toString(36).slice(2, 10) + Date.now().toString(36)).slice(0, 24);
-    lastJobId = jobId;
-
-    // POST to background function
     const resp = await fetch('/.netlify/functions/creative-analyse-background', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jobId, token, files: encoded })
     });
     if (!resp.ok) {
-      const txt = await resp.text();
-      if (resp.status === 401) { clearToken(); showAuthUI(); return; }
+      if (resp.status === 401) { caLoading.style.display = 'none'; document.body.style.overflow = ''; clearToken(); showAuthUI(); scoreBtn.disabled = false; return; }
       throw new Error(`Upload failed (${resp.status}). Try fewer files or contact Lewis.`);
     }
 
-    showProgressUI('Scoring your creatives…', '');
+    // Step 3 — scoring
+    setLoadingStep(3, '');
+    await pollJob(jobId);
 
-    // Poll for result
-    const result = await pollJob(jobId);
-    showResults(result, jobId);
+    // Step 4 — building report
+    setLoadingStep(4, '');
+    await new Promise(r => setTimeout(r, 600));
+    window.location.href = `/creative-analysis-report?id=${jobId}`;
 
   } catch (err) {
-    showProgressUI('Something went wrong', err.message);
-    setTimeout(() => {
-      scoreBtn.disabled = false;
-      showUploadUI();
-    }, 4000);
+    setLoadingError(err.message);
+    setTimeout(() => { scoreBtn.disabled = false; showUploadUI(); }, 4000);
   }
-});
-
-function showResults(data, jobId) {
-  // Show results section
-  const section   = document.getElementById('results-section');
-  const iframe    = document.getElementById('report-frame');
-  const heading   = document.getElementById('results-heading');
-  const count     = data.scored_count || files.length;
-
-  heading.textContent = `${count} creative${count !== 1 ? 's' : ''} scored. Your report is ready.`;
-  section.style.display = 'block';
-
-  // Render report HTML in iframe via blob URL
-  if (data.report_html) {
-    const blob = new Blob([data.report_html], { type: 'text/html' });
-    iframe.src = URL.createObjectURL(blob);
-  }
-
-  // Reset card to upload state
-  files = [];
-  renderFileList();
-  scoreBtn.disabled = false;
-  showUploadUI();
-
-  // Scroll to results
-  setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-}
-
-// Download MD
-document.getElementById('download-md-btn').addEventListener('click', () => {
-  if (!lastJobId) return;
-  window.location.href = `/.netlify/functions/creative-status?id=${lastJobId}&download=md`;
-});
-
-// Score more
-document.getElementById('score-more-btn').addEventListener('click', () => {
-  document.getElementById('results-section').style.display = 'none';
-  document.getElementById('upload').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 // =============== FAQ ACCORDION ===============
@@ -830,8 +838,8 @@ document.querySelectorAll('.faq-btn').forEach(btn => {
     const answer = this.nextElementSibling;
     const icon   = this.querySelector('.faq-icon');
     const isOpen = answer.style.display !== 'none';
-    answer.style.display   = isOpen ? 'none' : 'block';
-    icon.style.transform   = isOpen ? 'rotate(0deg)' : 'rotate(45deg)';
+    answer.style.display = isOpen ? 'none' : 'block';
+    icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(45deg)';
   });
 });
 const firstFaq  = document.querySelector('.faq-answer');

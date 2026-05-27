@@ -29,3 +29,15 @@
   from = "/creative-analysis"
   to   = "/creative-analysis.html"
   status = 200
+
+# Creative analysis — example report
+[[redirects]]
+  from = "/creative-analysis-demo"
+  to   = "/creative-analysis-demo.html"
+  status = 200
+
+# Creative analysis — scored report page
+[[redirects]]
+  from = "/creative-analysis-report"
+  to   = "/creative-analysis-report.html"
+  status = 200

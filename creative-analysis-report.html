@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="utf-8">
+<title>Creative Scoring Report | Phillips.</title>
+<meta name="description" content="Your AI creative scoring report. Ranked creatives scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
+
+<style>
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ink: #1A1A1A;
+  --white: #FFFFFF;
+  --amber: #985830;
+  --cream: #FDF6EE;
+  --border: #E8D8C4;
+}
+html, body { margin: 0; padding: 0; }
+body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+.page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+::selection { background: #985830; color: #fff; }
+*, *::before, *::after { box-sizing: border-box; }
+@keyframes ph-spin { to { transform: rotate(360deg); } }
+@keyframes ph-pulse { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+
+/* Nav */
+.ph-nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.96); backdrop-filter: saturate(120%); border-bottom: 1px solid #E8D8C4; height: 64px; }
+.ph-nav-inner { max-width: 1200px; margin: 0 auto; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+.ph-logo { text-decoration: none; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; color: #1A1A1A; line-height: 1; }
+.ph-logo span { color: #985830; }
+.ph-nav-links { display: flex; align-items: center; gap: 28px; }
+.ph-nav-link { font-size: 14px; font-weight: 500; color: #6B6B6B; text-decoration: none; transition: color 150ms; }
+.ph-nav-link:hover { color: #1A1A1A; }
+.ph-nav-btn { background: #985830; color: #fff; border: 0; padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; transition: background 150ms; text-decoration: none; display: inline-block; letter-spacing: -0.005em; }
+.ph-nav-btn:hover { background: #7A3F1F; }
+.ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+.ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+.ph-drawer.open { display: block; }
+.ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+.ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+.ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+.ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+.ph-drawer-link:hover { color: #1A1A1A; }
+.ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+.ph-drawer-cta:hover { background: #7A3F1F; }
+
+/* Score colours */
+.score-high  { color: #2D6A4F; background: #E6EFE4; border-color: #CDDCC8; }
+.score-mid   { color: #985830; background: #FDF6EE; border-color: #E8D8C4; }
+.score-low   { color: #C0392B; background: #F5D5CD; border-color: #E8B4A8; }
+
+/* Buttons */
+.btn-outline {
+  background: transparent; color: #985830;
+  border: 1.5px solid #985830;
+  padding: 10px 18px; font-size: 13px; font-weight: 600;
+  border-radius: 4px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: background 150ms, color 150ms; letter-spacing: -0.005em;
+  text-decoration: none;
+}
+.btn-outline:hover { background: #985830; color: #fff; }
+.btn-outline:disabled { opacity: 0.6; cursor: default; }
+.btn-filled-sm {
+  background: #985830; color: #fff; border: 0;
+  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  border-radius: 4px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: background 150ms; letter-spacing: -0.005em;
+  text-decoration: none;
+}
+.btn-filled-sm:hover { background: #7A3F1F; }
+
+/* Creative card */
+.creative-card {
+  background: #fff; border: 1px solid #E8D8C4; border-radius: 8px;
+  overflow: hidden; margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(152,88,48,0.06);
+  transition: box-shadow 200ms;
+}
+.creative-card:hover { box-shadow: 0 6px 24px rgba(152,88,48,0.10); }
+
+/* Score bar */
+.score-bar-track {
+  height: 6px; background: #F0E5D2; border-radius: 999px; overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%; border-radius: 999px;
+  transition: width 600ms cubic-bezier(0.2,0,0,1);
+}
+
+/* Dimension row */
+.dim-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 0; border-top: 1px solid #F5EBD9;
+}
+.dim-row:first-child { border-top: none; }
+
+/* Weak signal badge */
+.weak-badge {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 999px;
+  background: #F5D5CD; color: #7B1C0C; border: 1px solid #E8B4A8;
+  letter-spacing: -0.003em; margin-top: 4px;
+}
+
+/* Loading / error states */
+#ca-loading-screen { min-height: 100vh; background: #FDF6EE; display: flex; align-items: center; justify-content: center; padding: 24px; }
+#ca-error-screen { min-height: 100vh; background: #FDF6EE; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+/* Print / PDF */
+@media print {
+  .no-print { display: none !important; }
+  .ph-nav { display: none !important; }
+  .ph-footer { display: none !important; }
+  body { background: #fff !important; }
+  .creative-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; border: 1px solid #E8D8C4 !important; }
+}
+#pdf-layout { display: none; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ph-nav-links { display: none; }
+  .ph-hamburger { display: flex; align-items: center; justify-content: center; }
+}
+@media (max-width: 600px) {
+  .page-w { padding: 0 20px; }
+  .ph-nav-inner { padding: 0 20px; }
+  .report-header-inner { flex-direction: column; align-items: flex-start !important; gap: 12px !important; }
+  .toolbar-row { flex-direction: column; align-items: flex-start !important; }
+}
+</style>
+</head>
+<body class="ph">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- =============== LOADING STATE =============== -->
+<div id="ca-loading-screen">
+  <div style="text-align:center;max-width:400px;">
+    <div style="width:52px;height:52px;margin:0 auto 24px;display:inline-flex;align-items:center;justify-content:center;">
+      <svg width="52" height="52" viewBox="0 0 56 56" style="animation:ph-spin 0.9s linear infinite">
+        <circle cx="28" cy="28" r="22" fill="none" stroke="#F5EBD9" stroke-width="4"/>
+        <path d="M50 28 A22 22 0 0 0 28 6" fill="none" stroke="#985830" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="font-size:20px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-bottom:8px;">Loading your report&hellip;</div>
+    <div id="ca-load-msg" style="font-size:14px;color:#6B6B6B;line-height:1.5;">Retrieving scores from Claude.</div>
+  </div>
+</div>
+
+<!-- =============== ERROR STATE =============== -->
+<div id="ca-error-screen" style="display:none;">
+  <div style="text-align:center;max-width:480px;background:#fff;border:1px solid #E8D8C4;border-radius:8px;padding:48px 40px;box-shadow:0 8px 32px rgba(152,88,48,0.08);">
+    <div style="font-size:32px;margin-bottom:16px;">&#x26A0;&#xFE0F;</div>
+    <div style="font-size:20px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-bottom:10px;">Report not found</div>
+    <div id="ca-error-msg" style="font-size:15px;color:#6B6B6B;line-height:1.6;margin-bottom:28px;">This report may have expired or the link is incorrect.</div>
+    <a href="/creative-analysis" style="display:inline-flex;align-items:center;gap:8px;background:#985830;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:-0.005em;">Score new creatives &rarr;</a>
+  </div>
+</div>
+
+<!-- =============== REPORT =============== -->
+<div id="ca-report" style="display:none;">
+
+  <!-- NAV -->
+  <header class="ph-nav no-print">
+    <div class="ph-nav-inner">
+      <a href="/" class="ph-logo">Phillips<span>.</span></a>
+      <nav class="ph-nav-links">
+        <a href="/landing-page-audit" class="ph-nav-link">Landing Page Audit</a>
+        <a href="/google-ads-audit" class="ph-nav-link">Google Ads Audit</a>
+        <a href="/creative-analysis" class="ph-nav-link active">Creative Scoring</a>
+        <a href="/guides/" class="ph-nav-link">Guides</a>
+        <a href="/#contact" class="ph-nav-btn">Get in touch</a>
+      </nav>
+      <button class="ph-hamburger" onclick="document.getElementById('ph-report-drawer').classList.add('open')" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+      </button>
+    </div>
+  </header>
+  <div id="ph-report-drawer" class="ph-drawer no-print">
+    <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-report-drawer').classList.remove('open')"></div>
+    <div class="ph-drawer-panel">
+      <button class="ph-drawer-close" onclick="document.getElementById('ph-report-drawer').classList.remove('open')">&#x2715;</button>
+      <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
+      <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
+      <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
+      <a href="/guides/" class="ph-drawer-link">Guides</a>
+      <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+    </div>
+  </div>
+
+  <!-- REPORT HEADER -->
+  <section style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:56px 0 52px;">
+    <div class="page-w">
+      <!-- back link -->
+      <div style="margin-bottom:28px;" class="no-print">
+        <a href="/creative-analysis" style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.55);text-decoration:none;display:inline-flex;align-items:center;gap:6px;letter-spacing:-0.003em;transition:color 150ms;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Score more creatives
+        </a>
+      </div>
+
+      <div class="report-header-inner" style="display:flex;align-items:flex-start;justify-content:space-between;gap:32px;flex-wrap:wrap;">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(152,88,48,0.25);border:1px solid rgba(152,88,48,0.4);padding:5px 12px;border-radius:999px;font-size:11px;font-weight:700;color:#E8A96B;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;">
+            <span style="width:5px;height:5px;border-radius:999px;background:#985830;display:inline-block;animation:ph-pulse 2s ease-in-out infinite;"></span>
+            Creative Analysis Report
+          </div>
+          <h1 style="font-size:clamp(28px,3.5vw,40px);font-weight:700;letter-spacing:-0.025em;line-height:1.1;color:#fff;margin:0 0 12px;text-wrap:balance;">
+            <span id="rpt-title">Creative Scoring Report</span>
+          </h1>
+          <p id="rpt-meta" style="font-size:14px;color:rgba(255,255,255,0.55);margin:0;letter-spacing:-0.003em;"></p>
+        </div>
+        <!-- Summary stats -->
+        <div id="rpt-stats" style="display:flex;gap:24px;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar-row no-print" style="display:flex;align-items:center;gap:12px;margin-top:32px;flex-wrap:wrap;">
+        <button id="share-btn" class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share link
+        </button>
+        <button id="pdf-btn" class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:#fff;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RANKED REPORT -->
+  <section style="background:#FDF6EE;padding:56px 0 80px;">
+    <div class="page-w">
+      <div id="rpt-creatives"></div>
+    </div>
+  </section>
+
+  <!-- CROSS-SELL -->
+  <section style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:56px 32px;" class="no-print">
+    <div style="max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;">
+      <p style="font-size:18px;line-height:1.45;color:#fff;margin:0;letter-spacing:-0.01em;font-weight:500;max-width:640px;">
+        Creative is one lever. The account and the landing page are the other two.
+      </p>
+      <a href="/google-ads-audit" style="display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:#fff;background:#985830;padding:14px 24px;border-radius:4px;text-decoration:none;letter-spacing:-0.005em;">
+        Audit your Google Ads &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ph-footer no-print" style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:28px 32px;border-top:1px solid rgba(255,255,255,0.08);">
+    <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);">
+        <span style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em;">Phillips<span style="color:#985830;">.</span></span>
+        <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /ca-report -->
+
+<!-- PDF hidden layout -->
+<div id="pdf-layout">
+  <div id="pdf-content"></div>
+</div>
+
+<script>
+// =============== HELPERS ===============
+function scoreClass(s) {
+  return s >= 7 ? 'score-high' : (s >= 5 ? 'score-mid' : 'score-low');
+}
+function scoreColor(s) {
+  return s >= 7 ? '#2D6A4F' : (s >= 5 ? '#985830' : '#C0392B');
+}
+function scoreBarColor(s) {
+  return s >= 7 ? '#2D6A4F' : (s >= 5 ? '#985830' : '#C0392B');
+}
+function formatName(name) {
+  return name.replace(/_/g, ' ').replace(/\.jpg$/i, '').replace(/\.png$/i, '').replace(/\.jpeg$/i, '');
+}
+function fmtDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  } catch(e) { return ''; }
+}
+
+const DIMENSIONS = [
+  { key: 'hook_quality',      label: 'Hook Quality',        num: '01' },
+  { key: 'visual_hierarchy',  label: 'Visual Hierarchy',    num: '02' },
+  { key: 'copy_clarity',      label: 'Copy Clarity',        num: '03' },
+  { key: 'brand_consistency', label: 'Brand Consistency',   num: '04' },
+  { key: 'fatigue_signals',   label: 'Fatigue Signals',     num: '05' },
+];
+
+// =============== RENDER ===============
+function renderStats(results, scoredAt) {
+  const composites = results.map(r => r.composite);
+  const avg = composites.length ? (composites.reduce((a,b) => a+b, 0) / composites.length) : 0;
+  const top = Math.max(...composites);
+  const statsEl = document.getElementById('rpt-stats');
+  statsEl.innerHTML = [
+    { label: 'Creatives scored', value: results.length },
+    { label: 'Avg composite',    value: avg.toFixed(1) + ' / 10' },
+    { label: 'Top score',        value: top.toFixed(1) + ' / 10' },
+  ].map(s => `
+    <div style="text-align:left;">
+      <div style="font-size:28px;font-weight:700;letter-spacing:-0.02em;color:#fff;line-height:1;">${s.value}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:-0.003em;">${s.label}</div>
+    </div>
+  `).join('<div style="width:1px;background:rgba(255,255,255,0.1);align-self:stretch;"></div>');
+
+  const metaEl = document.getElementById('rpt-meta');
+  if (scoredAt) metaEl.textContent = 'Scored ' + fmtDate(scoredAt);
+
+  const titleEl = document.getElementById('rpt-title');
+  titleEl.textContent = results.length + ' creative' + (results.length !== 1 ? 's' : '') + ' scored';
+}
+
+function renderCreatives(results) {
+  const sorted = [...results].sort((a,b) => b.composite - a.composite);
+  const container = document.getElementById('rpt-creatives');
+  container.innerHTML = '';
+
+  sorted.forEach((item, idx) => {
+    const rank = idx + 1;
+    const composite = typeof item.composite === 'number' ? item.composite : 0;
+    const dims = item.result || {};
+    const displayName = formatName(item.name || 'Creative ' + rank);
+    const barPct = (composite / 10 * 100).toFixed(1);
+    const sc = scoreClass(composite);
+
+    const dimsHtml = DIMENSIONS.map(d => {
+      const dimData = dims[d.key] || {};
+      const score = typeof dimData.score === 'number' ? dimData.score : 0;
+      const rationale = dimData.rationale || '';
+      const weakSignal = dimData.weak_signal || null;
+      const dimBarPct = (score / 10 * 100).toFixed(1);
+      return `
+        <div class="dim-row">
+          <div style="width:28px;height:28px;border-radius:4px;background:#FDF6EE;border:1px solid #E8D8C4;color:#985830;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;letter-spacing:0.04em;">${d.num}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;">
+              <span style="font-size:13.5px;font-weight:700;color:#1A1A1A;letter-spacing:-0.005em;">${d.label}</span>
+              <span style="font-size:13px;font-weight:700;color:${scoreColor(score)};flex-shrink:0;">${score}/10</span>
+            </div>
+            <div class="score-bar-track" style="margin-bottom:8px;">
+              <div class="score-bar-fill" style="width:${dimBarPct}%;background:${scoreBarColor(score)};"></div>
+            </div>
+            ${rationale ? `<p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0;">${rationale}</p>` : ''}
+            ${weakSignal ? `<span class="weak-badge">&#9888; ${weakSignal}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'creative-card';
+    card.innerHTML = `
+      <!-- Card header -->
+      <div style="padding:20px 24px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:36px;height:36px;border-radius:6px;background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;">#${rank}</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;line-height:1.2;word-break:break-word;">${displayName}</div>
+            <div style="font-size:11.5px;color:#6B6B6B;margin-top:3px;letter-spacing:-0.003em;">${item.name || ''}</div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;">
+          <span style="display:inline-flex;align-items:baseline;gap:4px;padding:6px 14px;border-radius:6px;border:1.5px solid;font-weight:700;" class="${sc}">
+            <span style="font-size:22px;letter-spacing:-0.02em;line-height:1;">${composite.toFixed(1)}</span>
+            <span style="font-size:13px;opacity:0.7;">/10</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Composite bar -->
+      <div style="padding:0 24px 20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;">Composite score</span>
+          <span style="font-size:11px;color:#6B6B6B;">${composite.toFixed(1)} / 10</span>
+        </div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill" style="width:${barPct}%;background:${scoreBarColor(composite)};"></div>
+        </div>
+      </div>
+
+      <!-- Dimensions -->
+      <div style="padding:0 24px 24px;border-top:1px solid #F5EBD9;">
+        <div style="padding-top:16px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:4px;">Dimension Breakdown</div>
+          ${dimsHtml}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// =============== SHARE BUTTON ===============
+document.getElementById('share-btn').addEventListener('click', function() {
+  const btn = this;
+  const url = window.location.href;
+  function copied() {
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Link copied!`;
+    setTimeout(() => {
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share link`;
+    }, 2000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(copied).catch(() => fallbackCopy(url, copied));
+  } else {
+    fallbackCopy(url, copied);
+  }
+  function fallbackCopy(u, cb) {
+    const ta = document.createElement('textarea');
+    ta.value = u; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); cb(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+});
+
+// =============== PDF DOWNLOAD ===============
+document.getElementById('pdf-btn').addEventListener('click', async function() {
+  const btn = this;
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 56 56" style="animation:ph-spin 0.8s linear infinite"><circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4"/><path d="M50 28 A22 22 0 0 0 28 6" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg> Generating…`;
+
+  try {
+    // Build a clean PDF content from the rendered report
+    const creativesHtml = document.getElementById('rpt-creatives').innerHTML;
+    const titleText = document.getElementById('rpt-title').textContent;
+    const metaText  = document.getElementById('rpt-meta').textContent;
+
+    const pdfContent = document.getElementById('pdf-content');
+    pdfContent.innerHTML = `
+      <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#1A1A1A;padding:12px 0;">
+        <div style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:28px 32px 24px;border-radius:6px;margin-bottom:24px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#E8A96B;margin-bottom:10px;">Creative Analysis Report — Phillips.</div>
+          <div style="font-size:22px;font-weight:700;letter-spacing:-0.02em;color:#fff;margin-bottom:6px;">${titleText}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);">${metaText} &middot; phillips-uk.com/creative-analysis</div>
+        </div>
+        <div>${creativesHtml}</div>
+      </div>
+    `;
+
+    const pdfLayout = document.getElementById('pdf-layout');
+    pdfLayout.style.display = 'block';
+
+    const today = new Date().toISOString().slice(0,10);
+    await html2pdf().set({
+      margin:      [8, 8, 8, 8],
+      filename:    `creative-analysis-${today}.pdf`,
+      image:       { type: 'jpeg', quality: 0.92 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:   { mode: ['avoid-all', 'css', 'legacy'] }
+    }).from(pdfLayout).save();
+
+  } catch(e) {
+    console.error('PDF error:', e);
+  } finally {
+    document.getElementById('pdf-layout').style.display = 'none';
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
+  }
+});
+
+// =============== LOAD REPORT ===============
+function showError(msg) {
+  document.getElementById('ca-loading-screen').style.display = 'none';
+  const errScreen = document.getElementById('ca-error-screen');
+  errScreen.style.display = 'flex';
+  document.getElementById('ca-error-msg').textContent = msg || 'This report may have expired or the link is incorrect.';
+}
+
+function showReport(data) {
+  document.getElementById('ca-loading-screen').style.display = 'none';
+  document.getElementById('ca-report').style.display = 'block';
+  const results = (data.results || []).sort((a,b) => b.composite - a.composite);
+  renderStats(results, data.scored_at || data.completed_at || null);
+  renderCreatives(results);
+}
+
+async function pollReport(jobId) {
+  const loadMsg = document.getElementById('ca-load-msg');
+  let attempts = 0;
+  const maxAttempts = 90; // 3 min max
+
+  return new Promise((resolve, reject) => {
+    const iv = setInterval(async () => {
+      attempts++;
+      if (attempts > maxAttempts) { clearInterval(iv); reject(new Error('Report timed out. Please try scoring again.')); return; }
+      try {
+        const r = await fetch(`/.netlify/functions/creative-status?id=${encodeURIComponent(jobId)}`);
+        if (r.status === 404) { clearInterval(iv); reject(new Error('Report not found. It may have expired.')); return; }
+        const d = await r.json();
+        if (d.status === 'done') { clearInterval(iv); resolve(d); }
+        else if (d.status === 'error') { clearInterval(iv); reject(new Error(d.message || 'Scoring failed.')); }
+        else if (d.status === 'progress') {
+          if (d.total) loadMsg.textContent = `Scoring in progress: ${d.done || 0} of ${d.total} complete.`;
+          else loadMsg.textContent = 'Scoring in progress…';
+        } else if (d.status === 'pending') {
+          loadMsg.textContent = 'Waiting for scoring to begin…';
+        }
+      } catch(e) { /* network blip */ }
+    }, 2000);
+  });
+}
+
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const jobId  = params.get('id');
+
+  if (!jobId) { showError('No report ID in URL. Please score your creatives first.'); return; }
+
+  try {
+    // First fetch — may already be done
+    const r = await fetch(`/.netlify/functions/creative-status?id=${encodeURIComponent(jobId)}`);
+    if (r.status === 404) { showError('Report not found. It may have expired.'); return; }
+    const d = await r.json();
+
+    if (d.status === 'done') {
+      showReport(d);
+    } else if (d.status === 'error') {
+      showError(d.message || 'Scoring failed.');
+    } else {
+      // Still in progress — poll
+      const result = await pollReport(jobId);
+      showReport(result);
+    }
+  } catch(e) {
+    showError(e.message || 'Failed to load report. Please try again.');
+  }
+})();
+</script>
+</body>
+</html>
