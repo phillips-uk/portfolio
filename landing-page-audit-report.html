@@ -13,7 +13,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="utf-8">
 <title>Landing Page Audit Report | Phillips.</title>
 <meta name="description" content="Your landing page audit report. Health score, priority actions, findings by category, keyword inference, and Landing Page Experience estimate.">
-<link rel="icon" href="/favicon.svg?v=2">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 <style>
 :root {
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -251,7 +251,7 @@ function Nav({ active }) {
 
 /* =============== SHARED PRIMITIVES =============== */
 function SeverityBadge({ kind, size = "md" }) {
-  const s = SEV[kind];
+  const s = SEV[kind] || SEV.low;
   const pad = size === "sm" ? "3px 9px" : "4px 11px";
   const fs = size === "sm" ? 10 : 11;
   return (
@@ -948,7 +948,7 @@ function CwvStrip({ metrics }) {
   };
 
   const Tile = ({ d, big }) => {
-    const s = STATE[d.state];
+    const s = STATE[d.state] || STATE.average;
     return (
       <div style={{
         background: "#FDF6EE", border: "1px solid #E8D8C4", borderRadius: 6,
@@ -1327,7 +1327,7 @@ function LpeTable({ rows }) {
       </div>
 
       {rows.map((r, i) => {
-        const s = STATE[r.state];
+        const s = STATE[r.state] || STATE.average;
         return (
           <div key={i} style={{
             display: "grid",
@@ -1361,9 +1361,11 @@ function LpeTable({ rows }) {
 
 function TrackingTable({ rows }) {
   const DOT = {
-    ok:      { fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8", label: "Firing",       icon: "check" },
-    missing: { fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5", label: "Not detected", icon: "cross" },
+    ok:      { fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8", label: "Firing",              icon: "check" },
+    partial: { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4", label: "Remarketing only",    icon: "cross" },
+    missing: { fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5", label: "Not detected",        icon: "cross" },
   };
+  const safeDot = (s) => DOT[s] || DOT.missing;
   const Glyph = ({ kind, color }) => kind === "check" ? (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
@@ -1393,7 +1395,7 @@ function TrackingTable({ rows }) {
         <span>Status</span>
       </div>
       {rows.map((r, i) => {
-        const d = DOT[r.status];
+        const d = safeDot(r.status);
         return (
           <div key={i} style={{
             display: "grid",
@@ -1681,11 +1683,14 @@ const PDF_DATA = {
 };
 
 const PDF_SEV = {
-  high:   { label: "HIGH",   fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
-  medium: { label: "MEDIUM", fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
-  low:    { label: "LOW",    fg: "#6B6B6B", bg: "#EFECE6", border: "#DCD7CC" },
-  pass:   { label: "PASS",   fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+  critical: { label: "CRITICAL", fg: "#7B1C0C", bg: "#F5D5CD", border: "#E8B4A8" },
+  high:     { label: "HIGH",     fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
+  medium:   { label: "MEDIUM",   fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
+  low:      { label: "LOW",      fg: "#6B6B6B", bg: "#EFECE6", border: "#DCD7CC" },
+  pass:     { label: "PASS",     fg: "#4F7A4A", bg: "#E6EFE4", border: "#CDDCC8" },
+  suggest:  { label: "SUGGEST",  fg: "#4A6B7A", bg: "#E4EEF2", border: "#C0D8E4" },
 };
+function safePdfSev(s) { return PDF_SEV[s] || PDF_SEV.low; }
 const PDF_STATE = {
   weak:    { label: "BELOW AVG",  fg: "#B83A1F", bg: "#F8E4DC", border: "#EBC4B5" },
   average: { label: "AVERAGE",    fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4" },
@@ -1775,7 +1780,7 @@ function PdfFinding({ severity, title, problem, fix, impact, idx, total }) {
     }}>
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
         <div style={{ flex: "0 0 90px", paddingTop: 2 }}>
-          <PdfPill tokens={PDF_SEV[severity]}>{PDF_SEV[severity].label}</PdfPill>
+          <PdfPill tokens={safePdfSev(severity)}>{safePdfSev(severity).label}</PdfPill>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <h4 style={{
@@ -1818,7 +1823,7 @@ function PdfCategory({ cat }) {
         </div>
         <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
           {["critical", "high", "medium", "low", "pass", "suggest"].map(k => counts[k] ? (
-            <PdfPill key={k} tokens={PDF_SEV[k]}>{counts[k]} {PDF_SEV[k].label}</PdfPill>
+            <PdfPill key={k} tokens={safePdfSev(k)}>{counts[k]} {safePdfSev(k).label}</PdfPill>
           ) : null)}
         </div>
         <div style={{
@@ -2033,7 +2038,7 @@ function PdfLayout() {
                 {r.score}/{r.total}
               </div>
               <div style={{ flex: "0 0 70px", textAlign: "right" }}>
-                <PdfPill tokens={PDF_SEV[r.severity]}>{PDF_SEV[r.severity].label}</PdfPill>
+                <PdfPill tokens={safePdfSev(r.severity)}>{safePdfSev(r.severity).label}</PdfPill>
               </div>
             </div>
           ))}
@@ -2071,7 +2076,7 @@ function PdfLayout() {
             }}>{String(i + 1).padStart(2, "0")}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ marginBottom: 8 }}>
-                <PdfPill tokens={PDF_SEV[p.severity]}>{PDF_SEV[p.severity].label}</PdfPill>
+                <PdfPill tokens={safePdfSev(p.severity)}>{safePdfSev(p.severity).label}</PdfPill>
               </div>
               <h3 style={{
                 margin: "0 0 10px",
@@ -2276,23 +2281,44 @@ function PdfLayout() {
   );
 }
 
+/* =============== ERROR BOUNDARY =============== */
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(e) { return { error: e }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: "80px 32px", maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#985830", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>Report error</div>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: "#1A1A1A", marginBottom: 16 }}>Something went wrong rendering this report</h1>
+          <p style={{ fontSize: 15, color: "#6B6B6B", marginBottom: 32 }}>The audit completed successfully but the report couldn't render. Try running the audit again or contact lewis@phillips-uk.com if the issue persists.</p>
+          <a href="/landing-page-audit" style={{ display: "inline-block", background: "#985830", color: "#fff", padding: "12px 24px", borderRadius: 4, textDecoration: "none", fontWeight: 600, fontSize: 14 }}>Run a new audit →</a>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /* =============== APP =============== */
 function App() {
   return (
-    <AuditProvider>
-      <div data-screen-label="01 Landing Page Audit Report">
-        <Nav active="lp"/>
-        <ReportHeader/>
-        <PriorityActions/>
-        <KeywordInference/>
-        <LpeSection/>
-        <TrackingSection/>
-        <FindingsByCategory/>
-        <EndCta/>
-        <Footer/>
-        <PdfLayout/>
-      </div>
-    </AuditProvider>
+    <ErrorBoundary>
+      <AuditProvider>
+        <div data-screen-label="01 Landing Page Audit Report">
+          <Nav active="lp"/>
+          <ReportHeader/>
+          <PriorityActions/>
+          <KeywordInference/>
+          <LpeSection/>
+          <TrackingSection/>
+          <FindingsByCategory/>
+          <EndCta/>
+          <Footer/>
+          <PdfLayout/>
+        </div>
+      </AuditProvider>
+    </ErrorBoundary>
   );
 }
 
