@@ -8,12 +8,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
 <!-- End Google Tag Manager -->
-<style data-omelette-injected>html,body{background:transparent}</style>
 
 <meta charset="utf-8">
 <title>Free Google Ads Audit Tool — Run a Full Account Diagnostic | Phillips</title>
 <meta name="description" content="Connect your Google Ads account and get a full 9-point diagnostic in under 60 seconds. Severity-ranked issues, specific fixes, and a downloadable PDF report. Free. Read-only. No data retained.">
-<link rel="icon" href="/favicon.svg?v=2">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.phillips-uk.com/google-ads-audit">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
+<meta property="og:title" content="Free Google Ads Audit Tool — Run a Full Account Diagnostic | Phillips">
+<meta property="og:description" content="Connect your Google Ads account and get a full 9-point diagnostic in under 60 seconds.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 <style>
 :root {
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -31,12 +36,106 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .sec-cream { background: #FDF6EE; padding: 96px 0; }
   ::selection { background: #985830; color: #fff; }
   *, *::before, *::after { box-sizing: border-box; }
+
+  /* Buttons */
+  .btn-filled {
+    background: #985830; color: #fff; border: 0;
+    padding: 16px 32px; font-size: 15px; font-weight: 600;
+    border-radius: 4px; cursor: pointer; font-family: inherit;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+    letter-spacing: -0.005em; display: inline-block; text-decoration: none;
+  }
+  .btn-filled:hover { background: #7A3F1F; }
+
+  .btn-filled-sm {
+    background: #985830; color: #fff; border: 0;
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    border-radius: 4px; cursor: pointer; font-family: inherit;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+    display: inline-block; text-decoration: none;
+  }
+  .btn-filled-sm:hover { background: #7A3F1F; }
+
+  .btn-ghost-link {
+    color: #985830; font-size: 14px; font-weight: 600;
+    text-decoration: none; cursor: pointer;
+  }
+  .btn-ghost-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Nav */
+  .nav-link {
+    font-size: 14px; font-weight: 500; color: #6B6B6B;
+    text-decoration: none; transition: color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .nav-link:hover { color: #1A1A1A; }
+  .nav-link.active { color: #1A1A1A; font-weight: 600; }
+
+  /* Google sign-in button */
+  .google-signin-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
+    background: #fff; border: 1px solid #DADCE0; color: #3C4043;
+    font-size: 14px; font-weight: 600; padding: 12px 16px; border-radius: 4px;
+    cursor: pointer; font-family: inherit;
+    transition: background 150ms cubic-bezier(0.2,0,0,1), box-shadow 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .google-signin-btn:hover { background: #F8F8F8; box-shadow: 0 1px 2px rgba(0,0,0,0.10); }
+
+  /* Cards */
+  .list-card {
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 32px 36px; box-shadow: 0 2px 8px rgba(152,88,48,0.08);
+  }
+  .list-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .list-card li { display: flex; gap: 12px; align-items: flex-start; padding-top: 12px; border-top: 1px solid #E8D8C4; }
+  .list-card li:first-child { border-top: 0; padding-top: 0; }
+
+  .check-card {
+    background: #fff; border: 1px solid #E8D8C4; border-radius: 6px;
+    padding: 28px; box-shadow: 0 2px 8px rgba(152,88,48,0.08);
+    display: flex; flex-direction: column;
+    transition: box-shadow 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .check-card:hover { box-shadow: 0 4px 16px rgba(152,88,48,0.14); }
+
+  /* Marker */
+  .marker-dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: #985830; margin-top: 8px; flex-shrink: 0; display: inline-block;
+  }
+  .marker-check {
+    width: 16px; height: 16px; border-radius: 999px;
+    background: #F5EBD9; color: #985830;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; margin-top: 1px; flex-shrink: 0;
+  }
+
+  /* FAQ */
+  .faq-item { border-top: 1px solid #E8D8C4; padding: 20px 0; }
+  .faq-btn {
+    width: 100%; background: transparent; border: 0; padding: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; font-family: inherit; text-align: left; gap: 16;
+  }
+  .faq-icon {
+    font-size: 18px; color: #985830;
+    width: 24px; height: 24px; display: inline-flex;
+    align-items: center; justify-content: center;
+    transition: transform 150ms cubic-bezier(0.2,0,0,1);
+    flex-shrink: 0;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-answer {
+    display: none; margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: #1A1A1A;
+  }
+  .faq-item.open .faq-answer { display: block; }
 </style>
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 </head>
 <body class="ph">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
 <script>
   // Redirect preview=report to standalone report page
   const _urlParams = new URLSearchParams(window.location.search);
@@ -44,735 +143,363 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     window.location.replace('/google-ads-audit-report');
   }
 </script>
-<div id="root"></div>
 
-<script type="text/babel">
+<!-- =============== HEADS UP BANNER =============== -->
+<div style="background:#F5EBD9;border-bottom:1px solid #E8D8C4;padding:12px 32px;">
+  <div style="max-width:1200px;margin:0 auto;font-size:13px;line-height:1.5;color:#1A1A1A;display:flex;gap:10px;align-items:flex-start;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#fff;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-top:1px;">Heads up</span>
+    <span>This tool is currently going through Google's OAuth app verification process. You may see a security warning when connecting your account - this is expected and temporary. Approval is expected within the next two weeks.</span>
+  </div>
+</div>
 
-/* =============== BUTTONS =============== */
-function BtnFilled({ children, onClick, large }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
-        padding: large ? "16px 32px" : "14px 30px",
-        fontSize: large ? 15 : 14, fontWeight: 600,
-        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
-        letterSpacing: "-0.005em",
-      }}>{children}</button>
-  );
-}
-function BtnGhostLink({ children, onClick }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <a onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        color: "#985830", fontSize: 14, fontWeight: 600,
-        textDecoration: h ? "underline" : "none",
-        textUnderlineOffset: 4, cursor: "pointer",
-      }}>{children}</a>
-  );
-}
-function BtnFilledSmall({ children, onClick }) {
-  const [h, setH] = React.useState(false);
-  return (
-    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
-        padding: "10px 20px",
-        fontSize: 13, fontWeight: 600,
-        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1)",
-      }}>{children}</button>
-  );
-}
+<!-- =============== NAV =============== -->
+<header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:saturate(120%);border-bottom:1px solid #E8D8C4;height:64px;">
+  <div style="max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+    <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1;">Phillips<span style="color:#985830;">.</span></a>
+    <nav style="display:flex;align-items:center;gap:28px;">
+      <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
+      <a href="/google-ads-audit" class="nav-link active">Google Ads Audit</a>
+      <a href="/creative-analysis" class="nav-link">Creative Scoring</a>
+      <a href="/guides/" class="nav-link">Guides</a>
+      <a href="/#contact" class="btn-filled-sm">Get in touch</a>
+    </nav>
+  </div>
+</header>
 
-/* =============== HEADS UP BANNER =============== */
-function HeadsUpBanner() {
-  return (
-    <div style={{
-      background: "#F5EBD9",
-      borderBottom: "1px solid #E8D8C4",
-      padding: "12px 32px",
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        fontSize: 13, lineHeight: 1.5, color: "#1A1A1A",
-        display: "flex", gap: 10, alignItems: "flex-start",
-      }}>
-        <span style={{
-          fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#985830",
-          background: "#fff", padding: "3px 8px", borderRadius: 20,
-          whiteSpace: "nowrap", marginTop: 1,
-        }}>Heads up</span>
-        <span>
-          This tool is currently going through Google's OAuth app verification process. You may see a security warning when connecting your account - this is expected and temporary. Approval is expected within the next two weeks.
-        </span>
+<!-- =============== HERO =============== -->
+<section style="background:#FFFFFF;padding:80px 32px 96px;border-bottom:1px solid #E8D8C4;">
+  <div style="max-width:1080px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:center;">
+      <!-- Left -->
+      <div>
+        <span style="display:inline-flex;align-items:center;gap:10px;background:#F5EBD9;padding:7px 14px;border-radius:20px;margin-bottom:28px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Free · Read-only · Results in ~60 seconds</span>
+        <h1 style="font-size:clamp(48px,5.8vw,68px);font-weight:700;letter-spacing:-0.035em;line-height:1.04;color:#1A1A1A;margin:0 0 24px;">Free Google Ads <span style="color:#985830;">Audit Tool</span></h1>
+        <p style="font-size:18px;line-height:1.6;color:#1A1A1A;margin:0 0 36px;">Connect your Google Ads account and get a full diagnostic in under 60 seconds. Every issue is severity-rated with a specific fix, a direct &#8220;Fix in Ads&#8221; link, and a time estimate. You also get a search term waste analysis, a day-and-hour performance heatmap, and a PDF you can share or take to a meeting.</p>
+        <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-filled" data-scroll-to-connect>Run my audit</button>
+          <a href="/google-ads-audit-report" class="btn-ghost-link">or view a demo &rarr;</a>
+        </div>
+      </div>
+      <!-- Right: ConnectCard -->
+      <div id="connect-card" style="background:#fff;border:1px solid #E8D8C4;border-radius:8px;padding:28px;box-shadow:0 8px 24px rgba(152,88,48,0.10);">
+        <div style="display:flex;align-items:center;gap:10px;padding-bottom:18px;border-bottom:1px solid #E8D8C4;">
+          <span style="font-size:18px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;">Phillips<span style="color:#985830;">.</span></span>
+          <span style="margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#F5EBD9;padding:4px 10px;border-radius:20px;">Step 1 of 3</span>
+        </div>
+        <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:8px;">Free Google Ads audit</div>
+        <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 20px;">Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
+        <button id="google-signin-btn" class="google-signin-btn">
+          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/>
+            <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.167 6.656 3.58 9 3.58Z"/>
+          </svg>
+          <span>Connect Google Ads</span>
+        </button>
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+            <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+            <span>Read-only access only</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+            <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+            <span>No data stored after audit</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+            <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+            <span>No agency pitch</span>
+          </div>
+        </div>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid #E8D8C4;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6B6B6B;">
+          <span>Trouble signing in?</span>
+          <a href="#" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
+        </div>
       </div>
     </div>
-  );
-}
+  </div>
+</section>
 
-/* =============== NAV =============== */
-function Nav({ active }) {
-  const linkStyle = (k) => ({
-    fontSize: 14, fontWeight: 500,
-    color: active === k ? "#1A1A1A" : "#6B6B6B",
-    textDecoration: "none",
-    transition: "color 150ms cubic-bezier(0.2,0,0,1)",
+<!-- =============== TWO UP CHECKS =============== -->
+<section class="sec-cream">
+  <div class="page-w">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <!-- What gets checked -->
+      <div class="list-card">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:18px;">What gets checked</div>
+        <ul>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Conversion tracking - tags, attribution and Enhanced Conversions</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Account structure - ad groups, campaign hierarchy and budget distribution</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Bidding &amp; budget - strategy fit, budget caps and impression share lost</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Keywords &amp; Quality Score - QS distribution, negatives and match type hygiene</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Audience strategy - remarketing lists and Customer Match coverage</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Ad creative &amp; assets - RSA strength, sitelinks and callouts</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Landing pages - message match and Quality Score signals</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Search term patterns - zero-conversion queries with active spend</span></li>
+          <li><span class="marker-dot"></span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Day &amp; hour performance - when your budget works and when it doesn't</span></li>
+        </ul>
+      </div>
+      <!-- What you receive -->
+      <div class="list-card">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:18px;">What you receive</div>
+        <ul>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Account health score (0-100) with Critical, High and Medium breakdown</span></li>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Every issue flagged as Confirmed Waste or Estimated Risk where relevant</span></li>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">A specific fix for every issue, with estimated time to resolve</span></li>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">&#8220;Fix in Ads&#8221; button on each issue - links directly to the right place in Google Ads</span></li>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Search term waste breakdown - patterns costing money without converting</span></li>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Day and hour performance heatmap</span></li>
+          <li><span class="marker-check">&#10003;</span><span style="font-size:14px;line-height:1.55;color:#1A1A1A;flex:1;">Shareable report link and downloadable PDF</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== WHY FREE =============== -->
+<section class="sec-white">
+  <div class="read-w" style="text-align:center;">
+    <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:18px;">Why is this free?</span>
+    <p style="font-size:24px;line-height:1.4;color:#1A1A1A;margin:0;letter-spacing:-0.015em;font-weight:500;">It's a working demo of my audit methodology. <em style="font-style:italic;color:#985830;">If it finds something worth fixing and you want help with it, just give me a shout.</em></p>
+  </div>
+</section>
+
+<!-- =============== REVIEWED SAME WAY =============== -->
+<section class="sec-cream">
+  <div class="page-w">
+    <div style="border-left:3px solid #985830;padding-left:24px;margin-bottom:56px;">
+      <span style="display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:12px;">What gets checked</span>
+      <h2 style="font-size:clamp(36px,4.5vw,48px);font-weight:700;letter-spacing:-0.025em;line-height:1.08;color:#1A1A1A;margin:0;max-width:760px;">Every account <em style="font-style:italic;color:#985830;">reviewed the same way</em>.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <!-- 01 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">01</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Conversion Tracking</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">The most important thing to get right in any Google Ads account. Smart Bidding optimises toward whatever conversion signals it receives. Get those signals wrong and every campaign is heading in the wrong direction. I check for broken tags, duplicate counting, GA4 imports incorrectly set as primary, and whether Enhanced Conversions is set up. This is the first thing I look at because nothing else matters until it's clean.</p>
+      </div>
+      <!-- 02 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">02</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Account Structure</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">Bad structure is usually invisible until you look for it. I check for keyword duplication across campaigns, ad groups that are too broad to generate meaningful Quality Scores, and whether the campaign hierarchy actually maps to how the business works. It's rarely the flashy problem, but it's the one that makes everything else harder to fix.</p>
+      </div>
+      <!-- 03 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">03</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Bidding &amp; Budget</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">I check whether the bidding strategy fits the account. tCPA and tROAS need enough conversion volume to work. Set them too early and Smart Bidding is guessing. I also flag campaigns stuck in learning phase due to constant changes, and budgets that are quietly capping campaigns that should be spending more.</p>
+      </div>
+      <!-- 04 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">04</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Keyword &amp; Quality Score</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">Quality Score is a diagnostic tool, not a target in itself. Low QS means there's a mismatch somewhere between keyword, ad copy, and landing page, and that mismatch costs you in higher CPCs. I check QS distribution across the account, flag the worst-performing ad groups, and look for Broad Match expanding spend into territory you probably didn't intend.</p>
+      </div>
+      <!-- 05 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">05</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Audiences</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">Most accounts have remarketing audiences set up in GA4 and never connected to Google Ads. Customer Match lists often go unused entirely. These are free signals that help Smart Bidding understand who's converting, and most accounts are just leaving them on the table. I check what's set up, what's missing, and whether observation mode audiences are actually attached to campaigns.</p>
+      </div>
+      <!-- 06 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">06</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Smart Bidding &amp; PMax</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">Performance Max needs active management even though it's designed to run on autopilot. I check asset group quality (Google will auto-generate video if you don't provide it, and it's always bad), whether URL expansion is serving spend to irrelevant pages, and whether PMax and standard Search campaigns are competing with each other for the same queries.</p>
+      </div>
+      <!-- 07 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">07</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Product Feed</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">For Shopping campaigns, the feed is everything. A well-structured campaign running on a poor feed will always underperform. I pull the Merchant Center data and check for disapproved products, missing GTINs, pricing mismatches between the feed and website, and title quality. Feed problems are usually fixable fast. They just rarely get looked at.</p>
+      </div>
+      <!-- 08 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">08</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Ad Creative &amp; Assets</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">RSAs need variety to work. Google's system tests headline and description combinations. Give it three headlines and two descriptions and it has almost nothing to test. I check ad strength scores, whether sitelinks and callouts are present on all campaigns, and flag asset groups where thin creative is limiting delivery without it showing up anywhere obvious in the data.</p>
+      </div>
+      <!-- 09 -->
+      <div class="check-card">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;font-variant-numeric:tabular-nums;">09</span>
+          <span style="height:1px;background:#E8D8C4;flex:1;display:inline-block;"></span>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;letter-spacing:-0.015em;line-height:1.2;color:#1A1A1A;margin:0 0 12px;">Landing Pages</h3>
+        <p style="font-size:14px;line-height:1.6;color:#1A1A1A;margin:0;">The keyword, ad copy, and landing page need to tell the same story. When they don't, Quality Score drops and conversion rate suffers. You pay more to get traffic you then lose. I check for message match across the chain, flag slow pages (LCP above 2.5s is a known QS penalty trigger), and look for campaigns sending all traffic to the homepage when better destination pages exist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== FAQ =============== -->
+<section class="sec-white" id="faq">
+  <div class="page-w">
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:56px;align-items:start;">
+      <!-- Sticky heading -->
+      <div style="border-left:3px solid #985830;padding-left:24px;position:sticky;top:96px;">
+        <span style="display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:12px;">Frequently asked questions</span>
+        <h2 style="font-size:clamp(32px,3.8vw,40px);font-weight:700;letter-spacing:-0.02em;line-height:1.1;color:#1A1A1A;margin:0;">Common questions about <em style="font-style:italic;color:#985830;">the audit</em>.</h2>
+      </div>
+      <!-- FAQ items -->
+      <div>
+        <div class="faq-item open">
+          <button class="faq-btn" aria-expanded="true">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">Is this Google Ads audit really free?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">Yes. No trial, no credit card, no upsell partway through. The full audit runs and you get the full PDF report. It's free because a working audit that finds real problems in your account is a better pitch than any case study I could write.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">How does the audit access my Google Ads account?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">Via Google's standard OAuth, the same &#8220;Sign in with Google&#8221; flow you use everywhere. You grant read-only access. The tool can't make changes, can't touch your budget, can't modify campaigns or bids. You can revoke access any time from your Google Account settings.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">Do you store my Google Ads data?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">No. Your data is fetched, used to generate the report, and not stored anywhere. The PDF is generated and downloaded directly to your machine. I don't keep account data, spend data, or anything else from your Google Ads account.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">What Google Ads issues does this tool detect?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">The audit checks conversion tracking, account structure, bidding and budget, keywords and Quality Scores, audience setup, ad creative and assets, and landing pages. It also analyses search term patterns - identifying queries spending money without converting - and produces a day-and-hour performance heatmap. Every issue is rated Critical, High or Medium, with a specific fix and an estimated time to resolve.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">How long does the Google Ads audit take?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">Under 60 seconds. Once you connect your account it reads the data, runs the checks, and generates the PDF in one pass. There's no waiting around and no manual steps.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">What do I receive after the audit?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">A severity-ranked report with a specific fix for every issue found, an estimated time to resolve each one, and a &#8220;Fix in Ads&#8221; button that links directly to the right place in Google Ads. You also get a search term waste breakdown, a day-and-hour performance heatmap, a shareable URL, and a downloadable PDF. It's designed to be used as a working action list, not a score you screenshot and forget.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">Who is this audit for?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">Anyone running Google Ads who wants to know what's actually wrong with their account. That's usually business owners managing their own spend, marketing managers keeping tabs on agency work, or consultants reviewing a new account before taking it on. You need an active Google Ads account with some history for the results to be meaningful.</p>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false">
+            <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">How is this different from WordStream's Performance Grader?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <p class="faq-answer">WordStream gives you a score benchmarked against averages. This gives you a list of specific problems and how to fix them. It's the difference between being told your account scores 62/100 and being told your GA4 import is set as a primary conversion action and Smart Bidding is undercounting conversions as a result. One is a number. The other tells you what to do on Monday morning.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== METHODOLOGY =============== -->
+<section class="sec-cream">
+  <div class="page-w">
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:56px;align-items:center;">
+      <div>
+        <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:18px;">About the methodology</span>
+        <h2 style="font-size:clamp(36px,4.5vw,48px);font-weight:700;letter-spacing:-0.025em;line-height:1.08;color:#1A1A1A;margin:0 0 28px;max-width:640px;">Built by a <em style="font-style:italic;color:#985830;">practitioner</em>, not a platform.</h2>
+        <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0 0 18px;">I'm Lewis Phillips. I've been running Google Ads accounts for 11 years across e-commerce, lead generation, and B2B, managing over &pound;50 million in paid media spend in that time.</p>
+        <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0 0 18px;">The audit categories are the things I check when I take on a new account. Every check maps to a real issue I've found in real accounts, usually more than once. The severity ratings reflect how much each problem typically costs to leave unfixed, based on what I've actually seen in the data.</p>
+        <p style="font-size:17px;line-height:1.65;color:#1A1A1A;margin:0;">If the audit surfaces something significant and you want help fixing it, you can reach me at <a href="https://www.phillips-uk.com" style="color:#985830;text-decoration:none;font-weight:600;">phillips-uk.com</a>.</p>
+      </div>
+      <!-- Small headshot -->
+      <div style="position:relative;width:280px;height:360px;max-width:100%;">
+        <div style="position:absolute;inset:14px -14px -14px 14px;background:#F5EBD9;border-radius:8px;"></div>
+        <div style="position:absolute;inset:0;background:#fff;border:1px solid #E8D8C4;border-radius:8px;overflow:hidden;">
+          <img src="/assets/profile.jpg" alt="Lewis Phillips" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;padding:5px;box-sizing:border-box;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CROSS LINK =============== -->
+<section style="background:#fff;padding:40px 32px;border-top:1px solid #E8D8C4;">
+  <div style="max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+    <p style="font-size:17px;color:#1A1A1A;margin:0;line-height:1.5;">Your ads aren't the only thing affecting performance.</p>
+    <a href="/landing-page-audit" class="btn-ghost-link" style="font-size:15px;letter-spacing:-0.005em;">Audit your landing page &rarr;</a>
+  </div>
+</section>
+
+<!-- =============== CONTACT (DARK) =============== -->
+<section id="contact" style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);padding:120px 32px;">
+  <div style="max-width:880px;margin:0 auto;text-align:center;">
+    <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#B87040;margin-bottom:20px;">Ready when you are</span>
+    <h2 style="font-size:clamp(40px,5vw,56px);font-weight:700;letter-spacing:-0.025em;line-height:1.06;color:#fff;margin:0 0 32px;">Run the audit. <em style="font-style:italic;color:#985830;">14 days back in your hand.</em></h2>
+    <button class="btn-filled" data-scroll-to-connect style="font-size:15px;padding:16px 32px;">Run my audit</button>
+    <div style="margin-top:32px;font-size:13px;color:rgba(255,255,255,0.5);">Free &middot; Read-only &middot; No card &middot; No agency pitch</div>
+  </div>
+</section>
+
+<!-- =============== FOOTER =============== -->
+<footer style="background:linear-gradient(135deg,#1A1A1A 0%,#241408 100%);border-top:0;padding:28px 32px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);">
+      <span style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em;">Phillips<span style="color:#985830;">.</span></span>
+      <span>&copy; 2026 Lewis Phillips &middot; phillips-uk.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth scroll "Run my audit" → #connect-card
+document.querySelectorAll('[data-scroll-to-connect]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.getElementById('connect-card').scrollIntoView({behavior:'smooth',block:'center'});
   });
-  return (
-    <header style={{
-      position: "sticky", top: 0, zIndex: 50,
-      background: "rgba(255,255,255,0.96)",
-      backdropFilter: "saturate(120%)",
-      borderBottom: "1px solid #E8D8C4", height: 64,
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto", height: "100%",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
-      }}>
-        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
-          Phillips<span style={{ color: "#985830" }}>.</span>
-        </a>
-        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <a href="/landing-page-audit" style={linkStyle("lp")}>Landing Page Audit</a>
-          <a href="/google-ads-audit" style={linkStyle("ga")}>Google Ads Audit</a>
-          <a href="/guides/" style={linkStyle("guides")}>Guides</a>
-          <BtnFilledSmall onClick={() => window.location.href = '/#contact'}>Get in touch</BtnFilledSmall>
-        </nav>
-      </div>
-    </header>
-  );
-}
-
-/* =============== HERO =============== */
-function Hero() {
-  return (
-    <section style={{
-      background: "linear-gradient(180deg, #FFFFFF 0%, #FDF6EE 100%)",
-      padding: "80px 32px 96px",
-      borderBottom: "1px solid #E8D8C4",
-    }}>
-      <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 380px",
-          gap: 56, alignItems: "center",
-        }}>
-          <div>
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 10,
-              background: "#F5EBD9",
-              padding: "7px 14px", borderRadius: 20,
-              marginBottom: 28,
-              fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-              textTransform: "uppercase", color: "#985830",
-            }}>
-              Free · Read-only · Results in ~60 seconds
-            </span>
-
-            <h1 style={{
-              fontSize: "clamp(48px, 5.8vw, 68px)",
-              fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.04,
-              color: "#1A1A1A", margin: "0 0 24px",
-            }}>
-              Free Google Ads <span style={{ color: "#985830" }}>Audit Tool</span>
-            </h1>
-
-            <p style={{
-              fontSize: 18, lineHeight: 1.6, color: "#1A1A1A",
-              margin: "0 0 36px",
-            }}>
-              Connect your Google Ads account and get a full diagnostic in under 60 seconds. Every issue is severity-rated with a specific fix, a direct "Fix in Ads" link, and a time estimate. You also get a search term waste analysis, a day-and-hour performance heatmap, and a PDF you can share or take to a meeting.
-            </p>
-
-            <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
-              <BtnFilled large onClick={() => {
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({ event: 'audit_cta_click' });
-                document.getElementById('connect-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }}>Run my audit</BtnFilled>
-              <BtnGhostLink onClick={() => window.location.href = '/google-ads-audit-report'}>or view a demo →</BtnGhostLink>
-            </div>
-          </div>
-
-          <ConnectCard />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* Connect card on the right side of hero */
-function ConnectCard() {
-  return (
-    <div id="connect-card" style={{
-      background: "#fff",
-      border: "1px solid #E8D8C4",
-      borderRadius: 8,
-      padding: 28,
-      boxShadow: "0 8px 24px rgba(152, 88, 48, 0.10)",
-    }}>
-      <div style={{
-        display: "flex", alignItems: "center", gap: 10,
-        paddingBottom: 18, borderBottom: "1px solid #E8D8C4",
-      }}>
-        <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A" }}>
-          Phillips<span style={{ color: "#985830" }}>.</span>
-        </span>
-        <span style={{
-          marginLeft: "auto",
-          fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#985830",
-          background: "#F5EBD9", padding: "4px 10px", borderRadius: 20,
-        }}>Step 1 of 3</span>
-      </div>
-
-      <div style={{
-        fontSize: 18, fontWeight: 700, letterSpacing: "-0.015em",
-        color: "#1A1A1A", marginTop: 18, marginBottom: 8,
-      }}>Free Google Ads audit</div>
-      <p style={{
-        fontSize: 13, lineHeight: 1.55, color: "#6B6B6B",
-        margin: "0 0 20px",
-      }}>Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
-
-      <GoogleSignInButton />
-
-      <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 8 }}>
-        {[
-          "Read-only access only",
-          "No data stored after audit",
-          "No agency pitch",
-        ].map((t, i) => (
-          <div key={i} style={{
-            display: "flex", gap: 10, alignItems: "center",
-            fontSize: 13, color: "#1A1A1A",
-          }}>
-            <span style={{
-              width: 16, height: 16, borderRadius: 999,
-              background: "#F5EBD9", color: "#985830",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 11, fontWeight: 700, flexShrink: 0,
-            }}>✓</span>
-            <span>{t}</span>
-          </div>
-        ))}
-      </div>
-
-      <div style={{
-        marginTop: 22, paddingTop: 18, borderTop: "1px solid #E8D8C4",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        fontSize: 12, color: "#6B6B6B",
-      }}>
-        <span>Trouble signing in?</span>
-        <a href="#" style={{ color: "#985830", textDecoration: "none", fontWeight: 600 }}>Use Customer ID →</a>
-      </div>
-    </div>
-  );
-}
-
-function GoogleSignInButton() {
-  const [h, setH] = React.useState(false);
-  return (
-    <button
-      onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'audit_started' }); }}
-      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
-        background: h ? "#F8F8F8" : "#fff",
-        border: "1px solid #DADCE0",
-        color: "#3C4043", fontSize: 14, fontWeight: 600,
-        padding: "12px 16px", borderRadius: 4,
-        cursor: "pointer", fontFamily: "inherit",
-        transition: "background 150ms cubic-bezier(0.2,0,0,1), box-shadow 150ms cubic-bezier(0.2,0,0,1)",
-        boxShadow: h ? "0 1px 2px rgba(0,0,0,0.10)" : "none",
-      }}>
-      <GoogleG />
-      <span>Connect Google Ads</span>
-    </button>
-  );
-}
-
-function GoogleG() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/>
-      <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/>
-      <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z"/>
-      <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.167 6.656 3.58 9 3.58Z"/>
-    </svg>
-  );
-}
-
-/* =============== TWO UP — WHAT GETS CHECKED + WHAT YOU RECEIVE =============== */
-function TwoUpChecks() {
-  const checked = [
-    "Conversion tracking - tags, attribution and Enhanced Conversions",
-    "Account structure - ad groups, campaign hierarchy and budget distribution",
-    "Bidding & budget - strategy fit, budget caps and impression share lost",
-    "Keywords & Quality Score - QS distribution, negatives and match type hygiene",
-    "Audience strategy - remarketing lists and Customer Match coverage",
-    "Ad creative & assets - RSA strength, sitelinks and callouts",
-    "Landing pages - message match and Quality Score signals",
-    "Search term patterns - zero-conversion queries with active spend",
-    "Day & hour performance - when your budget works and when it doesn't",
-  ];
-  const received = [
-    "Account health score (0-100) with Critical, High and Medium breakdown",
-    "Every issue flagged as Confirmed Waste or Estimated Risk where relevant",
-    "A specific fix for every issue, with estimated time to resolve",
-    "\"Fix in Ads\" button on each issue - links directly to the right place in Google Ads",
-    "Search term waste breakdown - patterns costing money without converting",
-    "Day and hour performance heatmap",
-    "Shareable report link and downloadable PDF",
-  ];
-  return (
-    <section className="sec-cream">
-      <div className="page-w">
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24,
-        }}>
-          <ListCard title="What gets checked" items={checked} marker="dot" />
-          <ListCard title="What you receive" items={received} marker="check" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ListCard({ title, items, marker }) {
-  return (
-    <div style={{
-      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
-      padding: "32px 36px",
-      boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
-    }}>
-      <div style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-        textTransform: "uppercase", color: "#985830", marginBottom: 18,
-      }}>{title}</div>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-        {items.map((it, i) => (
-          <li key={i} style={{
-            display: "flex", gap: 12, alignItems: "flex-start",
-            paddingTop: 12, borderTop: i === 0 ? 0 : "1px solid #E8D8C4",
-          }}>
-            <Marker kind={marker} />
-            <span style={{ fontSize: 14, lineHeight: 1.55, color: "#1A1A1A", flex: 1 }}>{it}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Marker({ kind }) {
-  if (kind === "dot") {
-    return (
-      <span style={{
-        width: 6, height: 6, borderRadius: 999,
-        background: "#985830", marginTop: 8, flexShrink: 0,
-      }}/>
-    );
-  }
-  return (
-    <span style={{
-      width: 16, height: 16, borderRadius: 999,
-      background: "#F5EBD9", color: "#985830",
-      display: "inline-flex", alignItems: "center", justifyContent: "center",
-      fontSize: 11, fontWeight: 700, marginTop: 1, flexShrink: 0,
-    }}>✓</span>
-  );
-}
-
-/* =============== WHY FREE CALLOUT =============== */
-function WhyFree() {
-  return (
-    <section className="sec-white">
-      <div className="read-w" style={{ textAlign: "center" }}>
-        <span style={{
-          display: "inline-block",
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#985830",
-          marginBottom: 18,
-        }}>Why is this free?</span>
-        <p style={{
-          fontSize: 24, lineHeight: 1.4, color: "#1A1A1A",
-          margin: 0, letterSpacing: "-0.015em", fontWeight: 500,
-        }}>
-          It's a working demo of my audit methodology.{" "}
-          <em style={{ fontStyle: "italic", color: "#985830" }}>
-            If it finds something worth fixing and you want help with it, just give me a shout.
-          </em>
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* =============== DEEP DIVE — EVERY ACCOUNT REVIEWED THE SAME WAY =============== */
-function ReviewedSameWay() {
-  const items = [
-    {
-      title: "Conversion Tracking",
-      body: "The most important thing to get right in any Google Ads account. Smart Bidding optimises toward whatever conversion signals it receives. Get those signals wrong and every campaign is heading in the wrong direction. I check for broken tags, duplicate counting, GA4 imports incorrectly set as primary, and whether Enhanced Conversions is set up. This is the first thing I look at because nothing else matters until it's clean.",
-    },
-    {
-      title: "Account Structure",
-      body: "Bad structure is usually invisible until you look for it. I check for keyword duplication across campaigns, ad groups that are too broad to generate meaningful Quality Scores, and whether the campaign hierarchy actually maps to how the business works. It's rarely the flashy problem, but it's the one that makes everything else harder to fix.",
-    },
-    {
-      title: "Bidding & Budget",
-      body: "I check whether the bidding strategy fits the account. tCPA and tROAS need enough conversion volume to work. Set them too early and Smart Bidding is guessing. I also flag campaigns stuck in learning phase due to constant changes, and budgets that are quietly capping campaigns that should be spending more.",
-    },
-    {
-      title: "Keyword & Quality Score",
-      body: "Quality Score is a diagnostic tool, not a target in itself. Low QS means there's a mismatch somewhere between keyword, ad copy, and landing page, and that mismatch costs you in higher CPCs. I check QS distribution across the account, flag the worst-performing ad groups, and look for Broad Match expanding spend into territory you probably didn't intend.",
-    },
-    {
-      title: "Audiences",
-      body: "Most accounts have remarketing audiences set up in GA4 and never connected to Google Ads. Customer Match lists often go unused entirely. These are free signals that help Smart Bidding understand who's converting, and most accounts are just leaving them on the table. I check what's set up, what's missing, and whether observation mode audiences are actually attached to campaigns.",
-    },
-    {
-      title: "Smart Bidding & PMax",
-      body: "Performance Max needs active management even though it's designed to run on autopilot. I check asset group quality (Google will auto-generate video if you don't provide it, and it's always bad), whether URL expansion is serving spend to irrelevant pages, and whether PMax and standard Search campaigns are competing with each other for the same queries.",
-    },
-    {
-      title: "Product Feed",
-      body: "For Shopping campaigns, the feed is everything. A well-structured campaign running on a poor feed will always underperform. I pull the Merchant Center data and check for disapproved products, missing GTINs, pricing mismatches between the feed and website, and title quality. Feed problems are usually fixable fast. They just rarely get looked at.",
-    },
-    {
-      title: "Ad Creative & Assets",
-      body: "RSAs need variety to work. Google's system tests headline and description combinations. Give it three headlines and two descriptions and it has almost nothing to test. I check ad strength scores, whether sitelinks and callouts are present on all campaigns, and flag asset groups where thin creative is limiting delivery without it showing up anywhere obvious in the data.",
-    },
-    {
-      title: "Landing Pages",
-      body: "The keyword, ad copy, and landing page need to tell the same story. When they don't, Quality Score drops and conversion rate suffers. You pay more to get traffic you then lose. I check for message match across the chain, flag slow pages (LCP above 2.5s is a known QS penalty trigger), and look for campaigns sending all traffic to the homepage when better destination pages exist.",
-    },
-  ];
-  return (
-    <section className="sec-cream">
-      <div className="page-w">
-        <div style={{
-          borderLeft: "3px solid #985830", paddingLeft: 24, marginBottom: 56,
-        }}>
-          <span style={{
-            display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-            textTransform: "uppercase", color: "#985830", marginBottom: 12,
-          }}>What gets checked</span>
-          <h2 style={{
-            fontSize: "clamp(36px, 4.5vw, 48px)", fontWeight: 700,
-            letterSpacing: "-0.025em", lineHeight: 1.08,
-            color: "#1A1A1A", margin: 0, maxWidth: 760,
-          }}>
-            Every account <em style={{ fontStyle: "italic", color: "#985830" }}>reviewed the same way</em>.
-          </h2>
-        </div>
-
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16,
-        }}>
-          {items.map((it, i) => <CheckCard key={i} n={i + 1} {...it} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CheckCard({ n, title, body }) {
-  return (
-    <div style={{
-      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
-      padding: "28px 28px 28px",
-      boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
-      display: "flex", flexDirection: "column",
-    }}>
-      <div style={{
-        display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14,
-      }}>
-        <span style={{
-          fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#985830",
-          fontVariantNumeric: "tabular-nums",
-        }}>{String(n).padStart(2, "0")}</span>
-        <span style={{
-          height: 1, background: "#E8D8C4", flex: 1,
-        }}/>
-      </div>
-      <h3 style={{
-        fontSize: 18, fontWeight: 700, letterSpacing: "-0.015em",
-        lineHeight: 1.2, color: "#1A1A1A", margin: "0 0 12px",
-      }}>{title}</h3>
-      <p style={{
-        fontSize: 14, lineHeight: 1.6, color: "#1A1A1A",
-        margin: 0,
-      }}>{body}</p>
-    </div>
-  );
-}
-
-/* =============== FAQ =============== */
-function FAQ() {
-  const items = [
-    { q: "Is this Google Ads audit really free?",
-      a: "Yes. No trial, no credit card, no upsell partway through. The full audit runs and you get the full PDF report. It's free because a working audit that finds real problems in your account is a better pitch than any case study I could write." },
-    { q: "How does the audit access my Google Ads account?",
-      a: "Via Google's standard OAuth, the same \"Sign in with Google\" flow you use everywhere. You grant read-only access. The tool can't make changes, can't touch your budget, can't modify campaigns or bids. You can revoke access any time from your Google Account settings." },
-    { q: "Do you store my Google Ads data?",
-      a: "No. Your data is fetched, used to generate the report, and not stored anywhere. The PDF is generated and downloaded directly to your machine. I don't keep account data, spend data, or anything else from your Google Ads account." },
-    { q: "What Google Ads issues does this tool detect?",
-      a: "The audit checks conversion tracking, account structure, bidding and budget, keywords and Quality Scores, audience setup, ad creative and assets, and landing pages. It also analyses search term patterns - identifying queries spending money without converting - and produces a day-and-hour performance heatmap. Every issue is rated Critical, High or Medium, with a specific fix and an estimated time to resolve." },
-    { q: "How long does the Google Ads audit take?",
-      a: "Under 60 seconds. Once you connect your account it reads the data, runs the checks, and generates the PDF in one pass. There's no waiting around and no manual steps." },
-    { q: "What do I receive after the audit?",
-      a: "A severity-ranked report with a specific fix for every issue found, an estimated time to resolve each one, and a \"Fix in Ads\" button that links directly to the right place in Google Ads. You also get a search term waste breakdown, a day-and-hour performance heatmap, a shareable URL, and a downloadable PDF. It's designed to be used as a working action list, not a score you screenshot and forget." },
-    { q: "Who is this audit for?",
-      a: "Anyone running Google Ads who wants to know what's actually wrong with their account. That's usually business owners managing their own spend, marketing managers keeping tabs on agency work, or consultants reviewing a new account before taking it on. You need an active Google Ads account with some history for the results to be meaningful." },
-    { q: "How is this different from WordStream's Performance Grader?",
-      a: "WordStream gives you a score benchmarked against averages. This gives you a list of specific problems and how to fix them. It's the difference between being told your account scores 62/100 and being told your GA4 import is set as a primary conversion action and Smart Bidding is undercounting conversions as a result. One is a number. The other tells you what to do on Monday morning." },
-  ];
-  return (
-    <section className="sec-white" id="faq">
-      <div className="page-w">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 56, alignItems: "start" }}>
-          <div style={{ borderLeft: "3px solid #985830", paddingLeft: 24, position: "sticky", top: 96 }}>
-            <span style={{
-              display: "block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-              textTransform: "uppercase", color: "#985830", marginBottom: 12,
-            }}>Frequently asked questions</span>
-            <h2 style={{
-              fontSize: "clamp(32px, 3.8vw, 40px)", fontWeight: 700,
-              letterSpacing: "-0.02em", lineHeight: 1.1,
-              color: "#1A1A1A", margin: 0,
-            }}>
-              Common questions about <em style={{ fontStyle: "italic", color: "#985830" }}>the audit</em>.
-            </h2>
-          </div>
-          <div>
-            {items.map((it, i) => <FAQItem key={i} {...it} defaultOpen={i === 0} />)}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FAQItem({ q, a, defaultOpen }) {
-  const [open, setOpen] = React.useState(!!defaultOpen);
-  return (
-    <div style={{
-      borderTop: "1px solid #E8D8C4",
-      padding: "20px 0",
-    }}>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        style={{
-          width: "100%", background: "transparent", border: 0, padding: 0,
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          cursor: "pointer", fontFamily: "inherit", textAlign: "left", gap: 16,
-        }}>
-        <span style={{
-          fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em",
-          color: "#1A1A1A", lineHeight: 1.3,
-        }}>{q}</span>
-        <span style={{
-          fontSize: 18, color: "#985830",
-          width: 24, height: 24, display: "inline-flex",
-          alignItems: "center", justifyContent: "center",
-          transform: open ? "rotate(45deg)" : "rotate(0deg)",
-          transition: "transform 150ms cubic-bezier(0.2,0,0,1)",
-          flexShrink: 0,
-        }}>+</span>
-      </button>
-      {open && (
-        <p style={{
-          margin: "14px 0 0", fontSize: 15, lineHeight: 1.65,
-          color: "#1A1A1A",
-        }}>{a}</p>
-      )}
-    </div>
-  );
-}
-
-/* =============== METHODOLOGY =============== */
-function Methodology() {
-  return (
-    <section className="sec-cream">
-      <div className="page-w">
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 280px",
-          gap: 56, alignItems: "center",
-        }}>
-          <div>
-            <span style={{
-              display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-              textTransform: "uppercase", color: "#985830", marginBottom: 18,
-            }}>About the methodology</span>
-            <h2 style={{
-              fontSize: "clamp(36px, 4.5vw, 48px)", fontWeight: 700,
-              letterSpacing: "-0.025em", lineHeight: 1.08,
-              color: "#1A1A1A", margin: "0 0 28px", maxWidth: 640,
-            }}>
-              Built by a <em style={{ fontStyle: "italic", color: "#985830" }}>practitioner</em>, not a platform.
-            </h2>
-            <p style={{
-              fontSize: 17, lineHeight: 1.65, color: "#1A1A1A",
-              margin: "0 0 18px",
-            }}>
-              I'm Lewis Phillips. I've been running Google Ads accounts for 11 years across e-commerce, lead generation, and B2B, managing over £50 million in paid media spend in that time.
-            </p>
-            <p style={{
-              fontSize: 17, lineHeight: 1.65, color: "#1A1A1A",
-              margin: "0 0 18px",
-            }}>
-              The audit categories are the things I check when I take on a new account. Every check maps to a real issue I've found in real accounts, usually more than once. The severity ratings reflect how much each problem typically costs to leave unfixed, based on what I've actually seen in the data.
-            </p>
-            <p style={{
-              fontSize: 17, lineHeight: 1.65, color: "#1A1A1A",
-              margin: 0,
-            }}>
-              If the audit surfaces something significant and you want help fixing it, you can reach me at <a href="https://www.phillips-uk.com" style={{ color: "#985830", textDecoration: "none", fontWeight: 600 }}>phillips-uk.com</a>.
-            </p>
-          </div>
-
-          <SmallHeadshot />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SmallHeadshot() {
-  return (
-    <div style={{
-      position: "relative",
-      width: 280, height: 360,
-      maxWidth: "100%",
-    }}>
-      <div style={{
-        position: "absolute", inset: "14px -14px -14px 14px",
-        background: "#F5EBD9", borderRadius: 8,
-      }}/>
-      <div style={{
-        position: "absolute", inset: 0,
-        background: "#fff",
-        border: "1px solid #E8D8C4",
-        borderRadius: 8, overflow: "hidden",
-      }}>
-        <img
-          src="/assets/profile.jpg"
-          alt="Lewis Phillips"
-          style={{
-            width: "100%", height: "100%",
-            objectFit: "cover",
-            objectPosition: "center top",
-            display: "block",
-            padding: 5, boxSizing: "border-box",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-/* =============== CROSS LINK =============== */
-function CrossLink() {
-  return (
-    <section style={{ background: "#fff", padding: "40px 32px", borderTop: "1px solid #E8D8C4" }}>
-      <div style={{
-        maxWidth: 1080, margin: "0 auto",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 16,
-      }}>
-        <p style={{ fontSize: 17, color: "#1A1A1A", margin: 0, lineHeight: 1.5 }}>
-          Your ads aren't the only thing affecting performance.
-        </p>
-        <a href="#" style={{
-          fontSize: 15, fontWeight: 600, color: "#985830",
-          textDecoration: "none", letterSpacing: "-0.005em",
-        }}>Audit your landing page →</a>
-      </div>
-    </section>
-  );
-}
-
-/* =============== CONTACT (DARK) =============== */
-function Contact() {
-  return (
-    <section id="contact" style={{
-      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-      padding: "120px 32px",
-    }}>
-      <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
-        <span style={{
-          display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#B87040", marginBottom: 20,
-        }}>Ready when you are</span>
-        <h2 style={{
-          fontSize: "clamp(40px, 5vw, 56px)", fontWeight: 700,
-          letterSpacing: "-0.025em", lineHeight: 1.06, color: "#fff",
-          margin: "0 0 32px",
-        }}>
-          Run the audit. <em style={{ fontStyle: "italic", color: "#985830" }}>14 days back in your hand.</em>
-        </h2>
-        <BtnFilled large>Run my audit</BtnFilled>
-        <div style={{
-          marginTop: 32, fontSize: 13, color: "rgba(255,255,255,0.5)",
-        }}>
-          Free · Read-only · No card · No agency pitch
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* =============== FOOTER =============== */
-function Footer() {
-  return (
-    <footer style={{
-      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
-      borderTop: 0, padding: "28px 32px",
-    }}>
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 12,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
-            Phillips<span style={{ color: "#985830" }}>.</span>
-          </span>
-          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* =============== APP =============== */
-function App() {
-  return (
-    <div data-screen-label="01 Google Ads Audit">
-      <HeadsUpBanner />
-      <Nav active="ga" />
-      <Hero />
-      <TwoUpChecks />
-      <WhyFree />
-      <ReviewedSameWay />
-      <FAQ />
-      <Methodology />
-      <CrossLink />
-      <Contact />
-      <Footer />
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+});
+// GTM on sign-in button
+document.getElementById('google-signin-btn')?.addEventListener('click', function() {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: 'audit_started' });
+});
+// FAQ accordion
+document.querySelectorAll('.faq-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const item = this.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    item.classList.toggle('open', !isOpen);
+    this.setAttribute('aria-expanded', String(!isOpen));
+  });
+});
 </script>
 </body>
 </html>
