@@ -220,13 +220,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="font-size:14px;font-weight:600;color:#1A1A1A;letter-spacing:-0.005em;">
             Drop files here or <span style="color:#985830;">click to browse</span>
           </div>
-          <div style="font-size:11.5px;color:#6B6B6B;margin-top:4px;">Up to 12 files per batch</div>
+          <div style="font-size:11.5px;color:#6B6B6B;margin-top:4px;">Up to 12 files &middot; 4 MB total batch size</div>
         </div>
 
         <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm" style="display:none;">
 
         <p style="font-size:12px;line-height:1.5;color:#6B6B6B;margin:10px 0 18px;">
-          JPEG, PNG, GIF, WebP, MP4, MOV, WebM &mdash; up to 20 MB each.
+          JPEG, PNG, GIF, WebP, MP4, MOV, WebM &mdash; keep total batch under 4 MB. Compress video before uploading.
         </p>
 
         <div id="file-list" style="display:none;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px;padding:8px;margin-bottom:16px;max-height:200px;overflow-y:auto;"></div>
@@ -666,6 +666,20 @@ scoreBtn.addEventListener('click', async () => {
   const token = getToken();
   if (!token) { clearToken(); showAuthUI(); return; }
 
+  // Netlify has a 6MB request body limit. Base64 adds ~37% overhead,
+  // so cap total raw file size at 4MB to stay safely under the limit.
+  const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // 4 MB raw
+  const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+  if (totalBytes > MAX_TOTAL_BYTES) {
+    const totalMB = (totalBytes / 1024 / 1024).toFixed(1);
+    showProgressUI(
+      'Files too large to send',
+      `Total: ${totalMB} MB. Keep batch under 4 MB. For video, use short clips or compress first.`
+    );
+    setTimeout(() => { scoreBtn.disabled = false; showUploadUI(); }, 5000);
+    return;
+  }
+
   scoreBtn.disabled = true;
   showProgressUI('Preparing files…', '');
 
@@ -674,8 +688,8 @@ scoreBtn.addEventListener('click', async () => {
     const encoded = await Promise.all(files.map(readFileAsBase64));
     showProgressUI('Sending to Claude…', `${encoded.length} file${encoded.length > 1 ? 's' : ''} queued`);
 
-    // Generate job ID
-    const jobId = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    // Generate job ID (alphanumeric, max 32 chars to pass server validation)
+    const jobId = (Math.random().toString(36).slice(2, 10) + Date.now().toString(36)).slice(0, 24);
     lastJobId = jobId;
 
     // POST to background function
@@ -686,9 +700,11 @@ scoreBtn.addEventListener('click', async () => {
     });
     if (!resp.ok) {
       const txt = await resp.text();
-      // 401 = token expired
       if (resp.status === 401) { clearToken(); showAuthUI(); return; }
-      throw new Error(`Upload failed (${resp.status}): ${txt}`);
+      if (resp.status === 413 || (txt && txt.includes('too large'))) {
+        throw new Error('Files too large for upload. Keep total batch under 4 MB.');
+      }
+      throw new Error(`Upload failed (${resp.status}). Try with smaller files or fewer at once.`);
     }
 
     showProgressUI('Scoring your creatives…', '');
