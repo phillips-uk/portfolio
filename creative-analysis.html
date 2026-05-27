@@ -765,13 +765,101 @@ async function extractVideoFrames(file) {
     video.src = url; video.load();
   });
 }
+// ── Audio extraction for transcript ──────────────────────────────────────────
+// Decodes audio from a video file using Web Audio API (faster than real-time),
+// resamples to 16 kHz mono via OfflineAudioContext, and encodes as WAV.
+// Result is passed to the backend for Whisper transcription.
+// Fails silently — frames are always scored, transcript is a bonus.
+
+async function extractVideoAudio(file) {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+
+    // Decode the audio track (browser-native, handles MP4/WebM/MOV)
+    const decodeCtx = new AudioContext();
+    let decoded;
+    try {
+      decoded = await decodeCtx.decodeAudioData(arrayBuffer.slice(0));
+    } finally {
+      decodeCtx.close();
+    }
+
+    // Resample to 16 kHz mono via OfflineAudioContext (Whisper preferred rate)
+    const TARGET = 16000;
+    const targetLen = Math.round(decoded.duration * TARGET);
+    const offCtx = new OfflineAudioContext(1, targetLen, TARGET);
+
+    // Mix all channels down to mono
+    const numCh = decoded.numberOfChannels;
+    const monoData = new Float32Array(decoded.length);
+    for (let ch = 0; ch < numCh; ch++) {
+      const chData = decoded.getChannelData(ch);
+      for (let s = 0; s < decoded.length; s++) monoData[s] += chData[s] / numCh;
+    }
+
+    const monoBuffer = offCtx.createBuffer(1, decoded.length, decoded.sampleRate);
+    monoBuffer.copyToChannel(monoData, 0);
+
+    const src = offCtx.createBufferSource();
+    src.buffer = monoBuffer;
+    src.connect(offCtx.destination);
+    src.start(0);
+
+    const resampled = await offCtx.startRendering();
+    const samples = resampled.getChannelData(0);
+
+    // Encode as 16 kHz mono 16-bit PCM WAV
+    const dataLen = samples.length * 2;
+    const wav = new ArrayBuffer(44 + dataLen);
+    const v = new DataView(wav);
+    const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    ws(0, 'RIFF'); v.setUint32(4, 36 + dataLen, true); ws(8, 'WAVE');
+    ws(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, TARGET, true); v.setUint32(28, TARGET * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    ws(36, 'data'); v.setUint32(40, dataLen, true);
+    let off = 44;
+    for (let i = 0; i < samples.length; i++) {
+      const s = Math.max(-1, Math.min(1, samples[i]));
+      v.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      off += 2;
+    }
+
+    // Base64-encode in chunks to avoid call-stack overflow on large buffers
+    const bytes = new Uint8Array(wav);
+    let binary = '';
+    const CHUNK = 8192;
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      binary += String.fromCharCode(...bytes.subarray(i, Math.min(i + CHUNK, bytes.length)));
+    }
+
+    return { data: btoa(binary), mimeType: 'audio/wav' };
+  } catch (e) {
+    console.warn('[audio] extraction skipped for', file.name, '—', e.message);
+    return null;
+  }
+}
+
 async function prepareFiles(rawFiles, onProgress) {
   const prepared = [];
   for (let i = 0; i < rawFiles.length; i++) {
     const f = rawFiles[i];
-    onProgress(`Preparing ${i + 1} of ${rawFiles.length}: ${f.name}`);
-    const items = f.type.startsWith('video') ? await extractVideoFrames(f) : await compressImageFile(f);
-    prepared.push(...items);
+    if (f.type.startsWith('video')) {
+      onProgress(`Extracting frames from ${f.name}`);
+      const frames = await extractVideoFrames(f);
+      prepared.push(...frames);
+
+      onProgress(`Extracting audio from ${f.name}`);
+      const audio = await extractVideoAudio(f);
+      if (audio) {
+        const base = f.name.replace(/\.[^.]+$/, '');
+        prepared.push({ name: `_audio_${base}`, mediaType: audio.mimeType, data: audio.data });
+      }
+    } else {
+      onProgress(`Preparing ${i + 1} of ${rawFiles.length}: ${f.name}`);
+      const items = await compressImageFile(f);
+      prepared.push(...items);
+    }
   }
   return prepared;
 }

@@ -158,7 +158,42 @@ function detectFrameType(filename) {
   return m[1].toLowerCase(); // 'opening' | 'mid' | 'close'
 }
 
-async function scoreCreative(client, file) {
+// Extract the base video name from a frame filename
+function detectFrameBase(filename) {
+  const m = (filename || '').match(/^(.+)_(opening|mid|close)\.(jpg|jpeg|png)$/i);
+  return m ? m[1] : null;
+}
+
+// ── Whisper transcription ─────────────────────────────────────────────────────
+
+async function transcribeAudio(audioBase64, mimeType) {
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) return null;
+
+  const buf  = Buffer.from(audioBase64, 'base64');
+  const ext  = mimeType.includes('wav') ? 'wav' : mimeType.includes('webm') ? 'webm' : 'wav';
+  const blob = new Blob([buf], { type: mimeType });
+
+  const form = new FormData();
+  form.append('file', blob, `audio.${ext}`);
+  form.append('model', 'whisper-1');
+  form.append('response_format', 'text');
+
+  const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    method:  'POST',
+    headers: { 'Authorization': `Bearer ${key}` },
+    body:    form
+  });
+
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error(`Whisper ${resp.status}: ${err.slice(0, 200)}`);
+  }
+
+  return (await resp.text()).trim();
+}
+
+async function scoreCreative(client, file, transcript) {
   const isVideo = file.mediaType.startsWith('video/');
   let imageMediaType = file.mediaType;
   if (isVideo) imageMediaType = 'image/jpeg';
@@ -170,9 +205,14 @@ async function scoreCreative(client, file) {
   const frameType = detectFrameType(file.name);
   const frameContext = frameType ? FRAME_SCORING_CONTEXT[frameType] : null;
 
+  // Inject transcript as additional context when available
+  const transcriptBlock = (transcript && transcript.trim())
+    ? `\n\nFULL VIDEO TRANSCRIPT — what the viewer hears across the entire video:\n"${transcript.trim()}"\n\nUse this alongside the visual frame when scoring. Dimensions like offer_clarity, copy_clarity, and hook_quality should account for what is spoken as well as what is seen. The transcript covers the whole video, not just this frame — weight it accordingly (e.g. a spoken offer in the transcript is most relevant to the closing frame, not the opening).`
+    : '';
+
   const userText = frameContext
-    ? `${frameContext}\n\nScore this frame across all six dimensions using the frame-specific interpretations above. Return only valid JSON.`
-    : 'Score this ad creative across all six dimensions. Return only valid JSON.';
+    ? `${frameContext}${transcriptBlock}\n\nScore this frame across all six dimensions using the frame-specific interpretations above. Return only valid JSON.`
+    : `Score this ad creative across all six dimensions.${transcriptBlock} Return only valid JSON.`;
 
   const message = await client.messages.create({
     model: SCORING_MODEL,
@@ -407,8 +447,11 @@ exports.handler = async function (event) {
     return;
   }
 
-  // Clamp files
-  const fileList = files.slice(0, MAX_FILES);
+  // Separate audio items (for transcript) from scorable creative files.
+  // Audio items have names starting with '_audio_' — they are never scored directly.
+  const audioItems   = files.filter(f => f.name && f.name.startsWith('_audio_'));
+  const scorableRaw  = files.filter(f => !f.name || !f.name.startsWith('_audio_'));
+  const fileList     = scorableRaw.slice(0, MAX_FILES);
 
   // Init blob store and mark job as pending
   let store;
@@ -422,6 +465,25 @@ exports.handler = async function (event) {
 
   try {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    // ── Transcribe audio (parallel, graceful fail) ──────────────────────────
+    // Build a map: videoBaseName → transcript text
+    const transcriptMap = {};
+    if (audioItems.length && process.env.OPENAI_API_KEY) {
+      await Promise.all(audioItems.map(async item => {
+        try {
+          const base = item.name.replace(/^_audio_/, '');
+          const transcript = await transcribeAudio(item.data, item.mediaType || 'audio/wav');
+          if (transcript) {
+            transcriptMap[base] = transcript;
+            console.log(`[creative-analyse] transcript for "${base}": "${transcript.slice(0, 80)}..."`);
+          }
+        } catch (e) {
+          console.warn(`[creative-analyse] transcription skipped for ${item.name}:`, e.message);
+        }
+      }));
+    }
+
     const scoredFiles = [];
 
     for (let i = 0; i < fileList.length; i++) {
@@ -458,9 +520,13 @@ exports.handler = async function (event) {
         continue;
       }
 
+      // Look up transcript for this file (video frames keyed by base name)
+      const frameBase  = detectFrameBase(file.name);
+      const transcript = frameBase ? (transcriptMap[frameBase] || null) : null;
+
       let result;
       try {
-        result = await scoreCreative(client, file);
+        result = await scoreCreative(client, file, transcript);
       } catch (e) {
         console.error(`[creative-analyse] scoring error for ${file.name}:`, e.message);
         result = {
