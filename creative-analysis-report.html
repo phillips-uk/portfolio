@@ -302,7 +302,58 @@ function scoreLabel(s) {
   return s >= 7 ? 'Strong' : (s >= 5 ? 'Average' : 'Weak');
 }
 function formatName(name) {
-  return name.replace(/_/g,'_').replace(/\.(jpg|jpeg|png|mp4|mov|gif|webp)$/i,'').replace(/_/g,' ');
+  // Strip frame suffix and extension, then humanise underscores
+  return name
+    .replace(/_(opening|mid|close)\.(jpg|jpeg|png)$/i, '')
+    .replace(/\.(jpg|jpeg|png|mp4|mov|gif|webp)$/i, '')
+    .replace(/_/g, ' ');
+}
+
+// ===== VIDEO FRAME GROUPING =====
+// Videos are split into _opening.jpg, _mid.jpg, _close.jpg by creative-analysis.html
+const FRAME_ORDER = { opening: 0, mid: 1, close: 2 };
+const FRAME_LABEL = { opening: 'Opening', mid: 'Mid', close: 'Close' };
+
+function getFrameInfo(name) {
+  const m = name.match(/_(opening|mid|close)\.(jpg|jpeg|png)$/i);
+  if (!m) return null;
+  const key = m[1].toLowerCase();
+  const base = name.slice(0, -(m[0].length)); // strip suffix + ext
+  return { base, key, order: FRAME_ORDER[key], label: FRAME_LABEL[key] };
+}
+
+// Returns an array of groups, sorted by group composite descending.
+// Each group: { type:'video', base, frames:[...sorted opening→mid→close], composite }
+//          or { type:'image', item, composite }
+function groupResults(results) {
+  const groups = [];
+  const videoMap = {}; // base -> group
+
+  for (const item of results) {
+    const fi = getFrameInfo(item.name || '');
+    if (fi) {
+      if (!videoMap[fi.base]) {
+        videoMap[fi.base] = { type: 'video', base: fi.base, frames: [] };
+        groups.push(videoMap[fi.base]);
+      }
+      videoMap[fi.base].frames.push({ ...item, _frameInfo: fi });
+    } else {
+      groups.push({ type: 'image', item, composite: item.composite || 0 });
+    }
+  }
+
+  // Sort frames within each video group: opening → mid → close
+  for (const g of groups) {
+    if (g.type === 'video') {
+      g.frames.sort((a, b) => a._frameInfo.order - b._frameInfo.order);
+      // Group composite = average of its frames
+      g.composite = g.frames.reduce((s, f) => s + (f.composite || 0), 0) / g.frames.length;
+    }
+  }
+
+  // Sort groups: highest composite first
+  groups.sort((a, b) => b.composite - a.composite);
+  return groups;
 }
 function fmtDate(iso) {
   if (!iso) return '';
@@ -324,7 +375,10 @@ const IMPACT_LABELS = { critical:'CRITICAL', high:'HIGH', quick_win:'QUICK WIN' 
 
 // ===== RENDER STATS =====
 function renderStats(results, scoredAt) {
-  const composites = results.map(r => r.composite);
+  const groups = groupResults(results);
+  const uniqueCount = groups.length; // 1 video = 1, each image = 1
+
+  const composites = results.map(r => r.composite || 0);
   const avg = composites.length ? (composites.reduce((a,b)=>a+b,0)/composites.length) : 0;
   const top = Math.max(...composites);
   const weakCount = results.reduce((n,r) => {
@@ -333,10 +387,10 @@ function renderStats(results, scoredAt) {
   }, 0);
 
   document.getElementById('rpt-stats').innerHTML = [
-    { label:'Creatives scored',     v: results.length,         unit:null },
-    { label:'Composite average',    v: avg.toFixed(1),         unit:'/ 10' },
-    { label:'Top score',            v: top.toFixed(1),         unit:'/ 10' },
-    { label:'Weak signals flagged', v: weakCount,              unit:null },
+    { label:'Creatives scored',     v: uniqueCount,    unit:null },
+    { label:'Composite average',    v: avg.toFixed(1), unit:'/ 10' },
+    { label:'Top score',            v: top.toFixed(1), unit:'/ 10' },
+    { label:'Weak signals flagged', v: weakCount,      unit:null },
   ].map((s,i) => `
     <div style="padding:24px 28px;border-left:${i===0?'none':'1px solid #E8D8C4'};">
       <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;margin-bottom:10px;">${s.label}</div>
@@ -350,13 +404,15 @@ function renderStats(results, scoredAt) {
   if (scoredAt) metaEl.textContent = 'Scored ' + fmtDate(scoredAt);
 
   const titleEl = document.getElementById('rpt-title');
-  titleEl.textContent = results.length + ' creative' + (results.length !== 1 ? 's' : '') + ' scored and ranked.';
+  titleEl.textContent = uniqueCount + ' creative' + (uniqueCount !== 1 ? 's' : '') + ' scored and ranked.';
 }
 
 // ===== RENDER SUMMARY TABLE =====
 function renderSummaryTable(results) {
   const wrap = document.getElementById('rpt-summary-table');
   if (!wrap) return;
+
+  const groups = groupResults(results);
 
   const dimCols = DIM_SHORT.map(d => `
     <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">${d}</span>
@@ -371,133 +427,218 @@ function renderSummaryTable(results) {
     </div>
   `;
 
-  const rows = results.map((item, idx) => {
-    const rank = idx + 1;
-    const composite = typeof item.composite === 'number' ? item.composite : 0;
-    const dims = item.result || {};
-    const displayName = formatName(item.name || 'Creative ' + rank);
-    const cc = scoreColor(composite);
-    const cBg = scoreBg(composite);
-    const cBorder = scoreBorder(composite);
-
-    const dimCells = DIMENSIONS.map(d => {
-      const sc = typeof (dims[d.key]||{}).score === 'number' ? dims[d.key].score : 0;
-      return `
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:26px;border-radius:4px;background:${scoreBg(sc)};color:${scoreColor(sc)};border:1px solid ${scoreBorder(sc)};font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;">${sc}</span>
-      `;
-    }).join('');
-
-    return `
-      <a href="#creative-${rank}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:14px 20px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
-        onmouseenter="this.style.background='#FDF6EE'" onmouseleave="this.style.background='transparent'">
-        <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:26px;border-radius:6px;background:#985830;color:#fff;font-size:12px;font-weight:700;">#${rank}</span>
-        <div style="min-width:0;">
-          <div style="font-size:13px;font-weight:600;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayName}</div>
-          <div style="font-size:11px;color:#6B6B6B;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name||''}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:16px;font-weight:700;color:${cc};font-variant-numeric:tabular-nums;">${composite.toFixed(1)}</span>
-          <div style="flex:1;min-width:36px;height:6px;background:#F0E5D2;border-radius:999px;overflow:hidden;">
-            <div style="width:${(composite/10*100).toFixed(1)}%;height:100%;background:#985830;border-radius:999px;"></div>
+  let groupRank = 0;
+  const rows = groups.map(g => {
+    if (g.type === 'video') {
+      groupRank++;
+      const rank = groupRank;
+      const baseName = formatName(g.base);
+      // Video group header row
+      const groupHeader = `
+        <div style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:10px 20px;gap:12px;background:#FDF6EE;border-top:1px solid #E8D8C4;align-items:center;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:26px;border-radius:6px;background:#985830;color:#fff;font-size:12px;font-weight:700;">#${rank}</span>
+          <div style="min-width:0;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#985830;background:#F5EBD9;border:1px solid #E8D8C4;padding:2px 7px;border-radius:3px;">VIDEO</span>
+            <span style="font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${baseName}</span>
           </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:13px;font-weight:600;color:#6B6B6B;font-style:italic;">avg ${g.composite.toFixed(1)}</span>
+          </div>
+          ${DIMENSIONS.map(() => `<span></span>`).join('')}
         </div>
-        ${dimCells}
-      </a>
-    `;
+      `;
+      // Frame rows (opening → mid → close)
+      const frameRows = g.frames.map(item => {
+        const composite = item.composite || 0;
+        const dims = item.result || {};
+        const cc = scoreColor(composite);
+        const anchor = 'creative-' + item.name.replace(/[^a-zA-Z0-9]/g,'-');
+        const dimCells = DIMENSIONS.map(d => {
+          const sc = typeof (dims[d.key]||{}).score === 'number' ? dims[d.key].score : 0;
+          return `<span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:26px;border-radius:4px;background:${scoreBg(sc)};color:${scoreColor(sc)};border:1px solid ${scoreBorder(sc)};font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;">${sc}</span>`;
+        }).join('');
+        return `
+          <a href="#${anchor}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:11px 20px 11px 36px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
+            onmouseenter="this.style.background='#FDF6EE'" onmouseleave="this.style.background='transparent'">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:22px;border-radius:4px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;font-size:10px;font-weight:700;letter-spacing:0.04em;">${item._frameInfo.label.toUpperCase()}</span>
+            <div style="min-width:0;padding-left:8px;">
+              <div style="font-size:12px;color:#6B6B6B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item._frameInfo.label} frame</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:16px;font-weight:700;color:${cc};font-variant-numeric:tabular-nums;">${composite.toFixed(1)}</span>
+              <div style="flex:1;min-width:36px;height:6px;background:#F0E5D2;border-radius:999px;overflow:hidden;">
+                <div style="width:${(composite/10*100).toFixed(1)}%;height:100%;background:#985830;border-radius:999px;"></div>
+              </div>
+            </div>
+            ${dimCells}
+          </a>
+        `;
+      }).join('');
+      return groupHeader + frameRows;
+    } else {
+      // Standalone image
+      groupRank++;
+      const rank = groupRank;
+      const composite = g.item.composite || 0;
+      const dims = g.item.result || {};
+      const displayName = formatName(g.item.name || 'Creative ' + rank);
+      const cc = scoreColor(composite);
+      const anchor = 'creative-' + g.item.name.replace(/[^a-zA-Z0-9]/g,'-');
+      const dimCells = DIMENSIONS.map(d => {
+        const sc = typeof (dims[d.key]||{}).score === 'number' ? dims[d.key].score : 0;
+        return `<span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:26px;border-radius:4px;background:${scoreBg(sc)};color:${scoreColor(sc)};border:1px solid ${scoreBorder(sc)};font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;">${sc}</span>`;
+      }).join('');
+      return `
+        <a href="#${anchor}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:14px 20px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
+          onmouseenter="this.style.background='#FDF6EE'" onmouseleave="this.style.background='transparent'">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:26px;border-radius:6px;background:#985830;color:#fff;font-size:12px;font-weight:700;">#${rank}</span>
+          <div style="min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayName}</div>
+            <div style="font-size:11px;color:#6B6B6B;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.item.name||''}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:16px;font-weight:700;color:${cc};font-variant-numeric:tabular-nums;">${composite.toFixed(1)}</span>
+            <div style="flex:1;min-width:36px;height:6px;background:#F0E5D2;border-radius:999px;overflow:hidden;">
+              <div style="width:${(composite/10*100).toFixed(1)}%;height:100%;background:#985830;border-radius:999px;"></div>
+            </div>
+          </div>
+          ${dimCells}
+        </a>
+      `;
+    }
   }).join('');
 
   wrap.innerHTML = headerRow + rows;
 }
 
 // ===== RENDER CREATIVES =====
+function buildDimRows(dims) {
+  return DIMENSIONS.map(d => {
+    const dimData = dims[d.key] || {};
+    const score = typeof dimData.score === 'number' ? dimData.score : 0;
+    const rationale = dimData.rationale || '';
+    const weakSignal = dimData.weak_signal || null;
+    const impact = dimData.impact || null;
+    let badgeHtml = '';
+    if (weakSignal) {
+      const cls = impact ? `impact-${impact}` : 'impact-high';
+      const lbl = IMPACT_LABELS[impact] || '';
+      badgeHtml = `<div class="impact-badge ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${weakSignal}</div>`;
+    }
+    return `
+      <div class="dim-table-grid">
+        <div style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${d.label}</div>
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:16px;font-weight:700;color:${scoreColor(score)};font-variant-numeric:tabular-nums;">${score}</span>
+            <span style="font-size:11px;color:#6B6B6B;">/10</span>
+          </div>
+          <div style="width:60px;" class="score-bar-track">
+            <div class="score-bar-fill" style="width:${(score/10*100).toFixed(1)}%;background:${scoreColor(score)};"></div>
+          </div>
+        </div>
+        <div>
+          ${rationale ? `<div style="font-size:13.5px;line-height:1.6;color:#1A1A1A;">${rationale}</div>` : ''}
+          ${badgeHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function buildCreativeCard(item, rankLabel, isVideoFrame) {
+  const composite = typeof item.composite === 'number' ? item.composite : 0;
+  const dims = item.result || {};
+  const displayName = isVideoFrame
+    ? (item._frameInfo ? item._frameInfo.label + ' frame' : formatName(item.name || ''))
+    : formatName(item.name || '');
+  const cc = scoreColor(composite);
+  const cBg = scoreBg(composite);
+  const cBorder = scoreBorder(composite);
+  const cLabel = scoreLabel(composite);
+  const weakCount = DIMENSIONS.filter(d => dims[d.key] && dims[d.key].weak_signal).length;
+  const anchor = isVideoFrame
+    ? 'creative-' + item.name.replace(/[^a-zA-Z0-9]/g,'-')
+    : 'creative-' + item.name.replace(/[^a-zA-Z0-9]/g,'-');
+
+  const card = document.createElement('article');
+  card.id = anchor;
+  card.style.cssText = 'background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:28px;box-shadow:0 1px 4px rgba(152,88,48,0.08);margin-bottom:20px;scroll-margin-top:88px;animation:ca-fadein 300ms ease both;';
+  card.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;padding-bottom:20px;border-bottom:1px solid #F0E5D2;margin-bottom:20px;">
+      <div style="min-width:0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;height:26px;min-width:38px;background:#985830;color:#fff;border-radius:6px;padding:0 10px;font-size:12px;font-weight:700;">${rankLabel}</span>
+          ${weakCount > 0 ? `<span style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#B83A1F;background:#F8E4DC;border:1px solid #EBC4B5;padding:3px 10px;border-radius:20px;">${weakCount} weak signal${weakCount!==1?'s':''}</span>` : ''}
+        </div>
+        <h3 style="font-size:18px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;line-height:1.3;margin:0;word-break:break-word;">${displayName}</h3>
+        <div style="font-size:12px;color:#6B6B6B;margin-top:4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${item.name||''}</div>
+      </div>
+      <div style="background:${cBg};border:1px solid ${cBorder};border-radius:6px;padding:12px 18px;text-align:right;min-width:130px;flex-shrink:0;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:${cc};margin-bottom:6px;">Composite score</div>
+        <div style="font-size:26px;font-weight:700;color:${cc};letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums;">
+          ${composite.toFixed(1)}<span style="font-size:12px;font-weight:500;opacity:0.7;"> / 10</span>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:${cc};opacity:0.75;margin-top:4px;letter-spacing:0.04em;">${cLabel}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:4px;">
+      <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Dimension Breakdown</span>
+    </div>
+    <div style="border:1px solid #E8D8C4;border-radius:6px;overflow:hidden;margin-top:10px;">
+      <div class="dim-table-grid" style="background:#FDF6EE;border-bottom:1px solid #E8D8C4;padding:11px 18px;">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Dimension</span>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Score</span>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Rationale</span>
+      </div>
+      ${buildDimRows(dims)}
+    </div>
+  `;
+  return card;
+}
+
 function renderCreatives(results) {
   const container = document.getElementById('rpt-creatives');
   container.innerHTML = '';
+  const groups = groupResults(results);
 
-  results.forEach((item, idx) => {
-    const rank = idx + 1;
-    const composite = typeof item.composite === 'number' ? item.composite : 0;
-    const dims = item.result || {};
-    const displayName = formatName(item.name || 'Creative ' + rank);
-    const cc = scoreColor(composite);
-    const cBg = scoreBg(composite);
-    const cBorder = scoreBorder(composite);
-    const cLabel = scoreLabel(composite);
-
-    const dimRows = DIMENSIONS.map(d => {
-      const dimData = dims[d.key] || {};
-      const score = typeof dimData.score === 'number' ? dimData.score : 0;
-      const rationale = dimData.rationale || '';
-      const weakSignal = dimData.weak_signal || null;
-      const impact = dimData.impact || null;
-
-      let badgeHtml = '';
-      if (weakSignal) {
-        const cls = impact ? `impact-${impact}` : 'impact-high';
-        const lbl = IMPACT_LABELS[impact] || '';
-        badgeHtml = `<div class="impact-badge ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${weakSignal}</div>`;
-      }
-
-      return `
-        <div class="dim-table-grid">
-          <div style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${d.label}</div>
-          <div>
-            <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="font-size:16px;font-weight:700;color:${scoreColor(score)};font-variant-numeric:tabular-nums;">${score}</span>
-              <span style="font-size:11px;color:#6B6B6B;">/10</span>
-            </div>
-            <div style="width:60px;" class="score-bar-track">
-              <div class="score-bar-fill" style="width:${(score/10*100).toFixed(1)}%;background:${scoreColor(score)};"></div>
-            </div>
-          </div>
-          <div>
-            ${rationale ? `<div style="font-size:13.5px;line-height:1.6;color:#1A1A1A;">${rationale}</div>` : ''}
-            ${badgeHtml}
-          </div>
-        </div>
+  groups.forEach((g, gIdx) => {
+    if (g.type === 'video') {
+      // Video group header
+      const groupEl = document.createElement('div');
+      groupEl.style.cssText = 'margin-bottom:28px;';
+      const baseName = formatName(g.base);
+      const groupHeader = document.createElement('div');
+      groupHeader.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:14px 20px;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px 6px 0 0;border-bottom:none;';
+      groupHeader.innerHTML = `
+        <span style="display:inline-flex;align-items:center;justify-content:center;height:26px;min-width:38px;background:#985830;color:#fff;border-radius:6px;padding:0 10px;font-size:12px;font-weight:700;">#${gIdx+1}</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;background:#fff;border:1px solid #E8D8C4;padding:3px 8px;border-radius:3px;">VIDEO</span>
+        <span style="font-size:16px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;">${baseName}</span>
+        <span style="font-size:13px;color:#6B6B6B;">· ${g.frames.length} frames · avg composite ${g.composite.toFixed(1)}</span>
       `;
-    }).join('');
+      groupEl.appendChild(groupHeader);
 
-    const weakCount = DIMENSIONS.filter(d => dims[d.key] && dims[d.key].weak_signal).length;
-
-    const card = document.createElement('article');
-    card.id = `creative-${rank}`;
-    card.style.cssText = 'background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:28px;box-shadow:0 1px 4px rgba(152,88,48,0.08);margin-bottom:20px;scroll-margin-top:88px;animation:ca-fadein 300ms ease both;';
-    card.innerHTML = `
-      <!-- Card header -->
-      <div style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;padding-bottom:20px;border-bottom:1px solid #F0E5D2;margin-bottom:20px;">
-        <div style="min-width:0;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
-            <span style="display:inline-flex;align-items:center;justify-content:center;height:26px;min-width:38px;background:#985830;color:#fff;border-radius:6px;padding:0 10px;font-size:12px;font-weight:700;">#${rank}</span>
-            ${weakCount > 0 ? `<span style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#B83A1F;background:#F8E4DC;border:1px solid #EBC4B5;padding:3px 10px;border-radius:20px;">${weakCount} weak signal${weakCount!==1?'s':''}</span>` : ''}
-          </div>
-          <h3 style="font-size:18px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;line-height:1.3;margin:0;word-break:break-word;">${displayName}</h3>
-          <div style="font-size:12px;color:#6B6B6B;margin-top:4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;">${item.name||''}</div>
-        </div>
-        <!-- Composite chip -->
-        <div style="background:${cBg};border:1px solid ${cBorder};border-radius:6px;padding:12px 18px;text-align:right;min-width:130px;flex-shrink:0;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:${cc};margin-bottom:6px;">Composite score</div>
-          <div style="font-size:26px;font-weight:700;color:${cc};letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums;">
-            ${composite.toFixed(1)}<span style="font-size:12px;font-weight:500;opacity:0.7;"> / 10</span>
-          </div>
-          <div style="font-size:11px;font-weight:600;color:${cc};opacity:0.75;margin-top:4px;letter-spacing:0.04em;">${cLabel}</div>
-        </div>
-      </div>
-
-      <!-- Dimension breakdown table -->
-      <div style="margin-bottom:4px;">
-        <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Dimension Breakdown</span>
-      </div>
-      <div style="border:1px solid #E8D8C4;border-radius:6px;overflow:hidden;margin-top:10px;">
-        <div class="dim-table-grid" style="background:#FDF6EE;border-bottom:1px solid #E8D8C4;padding:11px 18px;">
-          <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Dimension</span>
-          <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Score</span>
-          <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#985830;">Rationale</span>
-        </div>
-        ${dimRows}
-      </div>
-    `;
-    container.appendChild(card);
+      // Frame cards: opening → mid → close
+      const framesWrap = document.createElement('div');
+      framesWrap.style.cssText = 'border:1px solid #E8D8C4;border-radius:0 0 6px 6px;overflow:hidden;';
+      g.frames.forEach((item, fIdx) => {
+        const frameLabel = item._frameInfo ? item._frameInfo.label.toUpperCase() : `FRAME ${fIdx+1}`;
+        const card = buildCreativeCard(item, frameLabel, true);
+        card.style.cssText = card.style.cssText
+          .replace('border:1px solid #E8D8C4;', 'border:none;border-top:1px solid #F0E5D2;')
+          .replace('border-radius:6px;', 'border-radius:0;')
+          .replace('animation:ca-fadein 300ms ease both;', `animation:ca-fadein ${300 + fIdx*80}ms ease both;`);
+        if (fIdx === 0) card.style.borderTop = 'none';
+        framesWrap.appendChild(card);
+      });
+      groupEl.appendChild(framesWrap);
+      container.appendChild(groupEl);
+    } else {
+      // Standalone image
+      const rankLabel = '#' + (gIdx + 1);
+      const card = buildCreativeCard(g.item, rankLabel, false);
+      container.appendChild(card);
+    }
   });
 }
 
