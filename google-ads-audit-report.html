@@ -1164,11 +1164,11 @@ function SearchTermNgrams() {
           overflow: "hidden", boxShadow: "0 2px 8px rgba(152,88,48,0.08)",
         }}>
           {/* Inner wrapper gives the grid a concrete min-width so 1fr resolves and the container scrolls */}
-          <div style={{ minWidth: 620 }}>
+          <div style={{ minWidth: 660 }}>
           {/* Table header */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "minmax(120px, 1fr) 80px 90px 90px 80px 120px",
+            gridTemplateColumns: "minmax(120px, 1fr) 80px 90px 90px 80px 150px",
             padding: "12px 20px",
             background: "#F5EBD9",
             borderBottom: "1px solid #E8D8C4",
@@ -1189,7 +1189,7 @@ function SearchTermNgrams() {
             return (
               <div key={i} style={{
                 display: "grid",
-                gridTemplateColumns: "minmax(120px, 1fr) 80px 90px 90px 80px 120px",
+                gridTemplateColumns: "minmax(120px, 1fr) 80px 90px 90px 80px 150px",
                 padding: "14px 20px",
                 borderBottom: i < filtered.length - 1 ? "1px solid #E8D8C4" : "none",
                 background: i % 2 === 0 ? "#fff" : "#FDFAF6",
@@ -1213,16 +1213,16 @@ function SearchTermNgrams() {
                 <span style={{ textAlign: "right" }}>
                   {isWaste ? (
                     <span style={{
-                      display: "inline-block", fontSize: 11, fontWeight: 700,
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      padding: "3px 10px", borderRadius: 20,
+                      display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700,
+                      letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap",
+                      padding: "4px 10px", borderRadius: 20,
                       background: "#F3D9D2", color: "#8C1A0A", border: "1px solid #E0B0A2",
                     }}>Confirmed waste</span>
                   ) : (
                     <span style={{
-                      display: "inline-block", fontSize: 11, fontWeight: 700,
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      padding: "3px 10px", borderRadius: 20,
+                      display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700,
+                      letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap",
+                      padding: "4px 10px", borderRadius: 20,
                       background: "#F5EBD9", color: "#985830", border: "1px solid #E8D8C4",
                     }}>{cpa}</span>
                   )}
