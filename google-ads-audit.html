@@ -646,10 +646,14 @@ function showAccountPicker(token, accountsB64) {
   });
 }
 
-function showManualCid(token) {
+function showManualCid(token, noAccountsContext) {
   setCardStep(1, "Step 1 of 3");
+  const contextMsg = noAccountsContext
+    ? `<p style="font-size:13px;color:#6B6B6B;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:4px;padding:10px 12px;margin:0 0 14px;line-height:1.5;">No Google Ads accounts were found on that login. This can happen if you signed in with a personal Gmail rather than your Ads account. Enter your Customer ID directly below to continue.</p>`
+    : '';
   document.getElementById('connect-card-body').innerHTML = `
     <p style="font-size:14px;font-weight:600;color:#1A1A1A;margin:18px 0 6px;">Enter your Customer ID</p>
+    ${contextMsg}
     <p style="font-size:13px;color:#6B6B6B;margin:0 0 14px;line-height:1.5;">Find it in the top-right corner of Google Ads (format: 000-000-0000).</p>
     <input id="cid-input" type="text" placeholder="e.g. 287-441-9032" style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
     <div id="cid-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:10px;"></div>
@@ -764,6 +768,12 @@ document.getElementById('manual-cid-link')?.addEventListener('click', function(e
     setTimeout(() => document.getElementById('connect-card')?.scrollIntoView({behavior:'smooth',block:'center'}), 200);
     showAccountPicker(token, accounts);
     // Clean URL
+    history.replaceState(null, "", window.location.pathname);
+  } else if (token && p.get('no_accounts')) {
+    // OAuth succeeded but account discovery returned nothing —
+    // show manual CID entry so the user can still run the audit
+    setTimeout(() => document.getElementById('connect-card')?.scrollIntoView({behavior:'smooth',block:'center'}), 200);
+    showManualCid(token, true);
     history.replaceState(null, "", window.location.pathname);
   }
 })();
