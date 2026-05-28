@@ -55,8 +55,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @media (max-width: 700px) {
     .rpt-score-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
     .rpt-kw-grid    { grid-template-columns: 1fr !important; gap: 16px !important; }
-    .rpt-lpe-grid   { overflow-x: auto !important; }
-    .rpt-cat-btn    { grid-template-columns: 1fr auto !important; }
+
+    /* Issue 1 — header action buttons: centre + wrap on mobile */
+    .rpt-header-actions { justify-content: center !important; flex-wrap: wrap !important; }
+
+    /* Issue 2 — URL bar: stack page-type pill below URL */
+    .rpt-url-bar { flex-wrap: wrap !important; }
+    .rpt-url-content { flex: 1 1 0% !important; }
+    .rpt-url-pill { flex: 0 0 100% !important; margin-top: 4px; padding-left: 46px; }
+
+    /* Issue 3 — category blocks: name row 1, pills row 2, hide score, toggle stays row 1 */
+    .rpt-cat-btn {
+      grid-template-columns: 1fr auto !important;
+      grid-template-rows: auto auto !important;
+      gap: 10px 12px !important;
+      padding: 18px 20px !important;
+    }
+    .rpt-cat-pills   { grid-column: 1 !important; grid-row: 2 !important; flex-wrap: wrap !important; }
+    .rpt-cat-score   { display: none !important; }
+    .rpt-cat-chevron { grid-column: 2 !important; grid-row: 1 !important; }
+
+    /* Issue 4 — LPE table: collapse 3-col grid, signal spans top, badge+note below */
+    .rpt-lpe-hdr { display: none !important; }
+    .rpt-lpe-row {
+      grid-template-columns: auto 1fr !important;
+      grid-template-rows: auto auto !important;
+      gap: 6px 10px !important;
+      padding: 14px 20px !important;
+      align-items: start !important;
+    }
+    .rpt-lpe-row > span:first-child  { grid-column: 1 / span 2 !important; font-weight: 600 !important; }
+    .rpt-lpe-row > span:nth-child(2) { grid-column: 1 !important; grid-row: 2 !important; }
+    .rpt-lpe-row > span:last-child   { grid-column: 2 !important; grid-row: 2 !important; }
+
+    /* Issue 5 — FindingRow: let badge shrink to natural width */
+    .rpt-finding-row { grid-template-columns: auto 1fr !important; gap: 14px !important; }
   }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -114,16 +147,22 @@ function BtnFilled({ children, onClick, large, full }) {
       }}>{children}</button>
   );
 }
-function BtnFilledSmall({ children, onClick }) {
+function BtnFilledSmall({ children, onClick, icon, disabled }) {
   const [h, setH] = React.useState(false);
   return (
-    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    <button onClick={onClick} disabled={disabled}
+      onMouseEnter={() => !disabled && setH(true)} onMouseLeave={() => setH(false)}
       style={{
-        background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+        background: disabled ? "#C4956A" : (h ? "#7A3F1F" : "#985830"), color: "#fff", border: 0,
         padding: "10px 20px", fontSize: 13, fontWeight: 600,
-        borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+        borderRadius: 4, cursor: disabled ? "default" : "pointer", fontFamily: "inherit",
         transition: "background 150ms cubic-bezier(0.2,0,0,1)",
-      }}>{children}</button>
+        display: "inline-flex", alignItems: "center", gap: 8,
+        outline: "none",
+      }}>
+      {icon}
+      <span>{children}</span>
+    </button>
   );
 }
 function BtnOutline({ children, onClick, icon, disabled }) {
@@ -182,7 +221,7 @@ function ShareButton() {
 function PdfDownloadButton() {
   const [busy, setBusy] = React.useState(false);
   return (
-    <BtnOutline
+    <BtnFilledSmall
       icon={busy ? <Spinner/> : <IconDownload/>}
       disabled={busy}
       onClick={async () => {
@@ -193,7 +232,7 @@ function PdfDownloadButton() {
         finally { setBusy(false); }
       }}>
       {busy ? "Generating PDF…" : "Download PDF"}
-    </BtnOutline>
+    </BtnFilledSmall>
   );
 }
 
@@ -372,15 +411,14 @@ function ReportHeader() {
             <span style={{ width: 4, height: 4, borderRadius: 999, background: "#E8D8C4" }}/>
             <span style={{ fontSize: 12, color: "#6B6B6B" }}>{time}</span>
           </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+          <div className="rpt-header-actions" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
             <ShareButton/>
             <PdfDownloadButton/>
-            <BtnFilledSmall onClick={() => window.location.href = '/landing-page-audit'}>Run another audit</BtnFilledSmall>
           </div>
         </div>
 
         {/* URL bar */}
-        <div style={{
+        <div className="rpt-url-bar" style={{
           background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
           padding: "16px 20px",
           display: "flex", alignItems: "center", gap: 14,
@@ -394,7 +432,7 @@ function ReportHeader() {
           }}>
             <IconLink/>
           </span>
-          <div style={{ minWidth: 0, flex: 1 }}>
+          <div className="rpt-url-content" style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 4 }}>
               Page audited
             </div>
@@ -404,7 +442,7 @@ function ReportHeader() {
               whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
             }}>{url}</div>
           </div>
-          <span style={{
+          <span className="rpt-url-pill" style={{
             flexShrink: 0,
             display: "inline-flex", alignItems: "center", gap: 6,
             background: "#F5EBD9", color: "#985830",
@@ -927,6 +965,7 @@ function CategoryBlock({ name, blurb, score, findings, metrics, defaultOpen }) {
       overflow: "hidden",
     }}>
       <button
+        className="rpt-cat-btn"
         onClick={() => setOpen(v => !v)}
         style={{
           width: "100%", background: open ? "#FDF6EE" : "transparent",
@@ -946,7 +985,7 @@ function CategoryBlock({ name, blurb, score, findings, metrics, defaultOpen }) {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        <div className="rpt-cat-pills" style={{ display: "flex", gap: 6, alignItems: "center" }}>
           {["critical", "high", "medium", "low", "pass", "suggest"].map(k => counts[k] ? (
             <span key={k} style={{
               fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
@@ -958,19 +997,23 @@ function CategoryBlock({ name, blurb, score, findings, metrics, defaultOpen }) {
           ) : null)}
         </div>
 
-        <div style={{
+        <div className="rpt-cat-score" style={{
           fontSize: 18, fontWeight: 700, color: "#1A1A1A",
           letterSpacing: "-0.015em", fontVariantNumeric: "tabular-nums",
           minWidth: 64, textAlign: "right",
         }}>{score}</div>
 
-        <span style={{
-          fontSize: 20, color: "#985830",
+        <span className="rpt-cat-chevron" style={{
+          color: "#985830",
           width: 24, height: 24, display: "inline-flex",
           alignItems: "center", justifyContent: "center",
-          transform: open ? "rotate(45deg)" : "rotate(0deg)",
+          transform: open ? "rotate(180deg)" : "rotate(0deg)",
           transition: "transform 150ms cubic-bezier(0.2,0,0,1)",
-        }}>+</span>
+        }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6l4 4 4-4" stroke="#985830" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
       </button>
 
       {open && (
@@ -1049,7 +1092,7 @@ function FindingRow({ severity, title, detail, fix, impact }) {
       padding: "24px 0",
       borderTop: "1px solid #F0E5D2",
     }}>
-      <div style={{
+      <div className="rpt-finding-row" style={{
         display: "grid",
         gridTemplateColumns: "108px 1fr",
         gap: 24, alignItems: "flex-start",
@@ -1356,7 +1399,7 @@ function LpeTable({ rows }) {
         </div>
       </div>
 
-      <div style={{
+      <div className="rpt-lpe-hdr" style={{
         display: "grid",
         gridTemplateColumns: "minmax(220px, 1.2fr) 160px 1fr",
         gap: 16, padding: "14px 28px",
@@ -1372,7 +1415,7 @@ function LpeTable({ rows }) {
       {rows.map((r, i) => {
         const s = STATE[r.state] || STATE.average;
         return (
-          <div key={i} style={{
+          <div key={i} className="rpt-lpe-row" style={{
             display: "grid",
             gridTemplateColumns: "minmax(220px, 1.2fr) 160px 1fr",
             gap: 16, padding: "16px 28px",
