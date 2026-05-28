@@ -63,6 +63,7 @@ exports.handler = async function (event) {
 
   // 3. Discover accessible Google Ads accounts via Cloud Run worker
   let accounts = [];
+  let accountsError = null;
   try {
     const workerUrl    = process.env.WORKER_URL;
     const workerSecret = process.env.WORKER_SECRET || "";
@@ -73,15 +74,23 @@ exports.handler = async function (event) {
           "Content-Type":    "application/json",
           "X-Worker-Secret": workerSecret,
         },
-        // Use refresh_token — the Python client uses the same auth as audits
         body: JSON.stringify({ refresh_token: refreshToken }),
       });
       if (accountsRes.ok) {
         accounts = await accountsRes.json();
+        console.log(`[auth-callback] /accounts returned ${accounts.length} account(s) for ${userEmail}`);
+      } else {
+        const body = await accountsRes.text().catch(() => "(unreadable)");
+        accountsError = `HTTP ${accountsRes.status}: ${body}`;
+        console.error(`[auth-callback] /accounts non-OK for ${userEmail}: ${accountsError}`);
       }
+    } else {
+      accountsError = "WORKER_URL not set";
+      console.error("[auth-callback] WORKER_URL env var is missing");
     }
   } catch (e) {
-    console.warn("Account listing failed (non-fatal):", e.message);
+    accountsError = e.message;
+    console.error("[auth-callback] /accounts fetch threw:", e.message);
   }
 
   // 4. Encrypt payload
