@@ -73,8 +73,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .gaa-cat-score   { display: none !important; }
     .gaa-cat-chevron { grid-column: 3 !important; grid-row: 1 !important; }
 
-    /* PriorityCard — stack number on top row, content below */
-    .gaa-priority-card { grid-template-columns: 1fr !important; padding: 20px !important; gap: 8px !important; }
+    /* PriorityCard — number + badge inline row 1, headline full-width row 2, PFI row 3 */
+    .gaa-priority-card {
+      grid-template-columns: auto 1fr !important;
+      grid-template-areas: "num badge" "title title" "pfi pfi" !important;
+      padding: 20px !important;
+      gap: 10px 14px !important;
+    }
     .gaa-priority-num  { font-size: 28px !important; }
 
     /* ProblemFixImpact — stack label above body text */
@@ -956,29 +961,31 @@ function PriorityCard({ n, severity, title, detail, fix, impact, category }) {
       background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
       padding: "28px 32px",
       boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
-      display: "grid", gridTemplateColumns: "56px 1fr", gap: 24,
+      display: "grid",
+      gridTemplateColumns: "56px auto 1fr",
+      gridTemplateAreas: '"num badge title" ". pfi pfi"',
+      columnGap: 14, rowGap: 12,
+      alignItems: "start",
     }}>
       <div className="gaa-priority-num" style={{
+        gridArea: "num",
         fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em",
         color: "#985830", lineHeight: 1,
         fontVariantNumeric: "tabular-nums",
       }}>{String(n).padStart(2, "0")}</div>
-
-      <div>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 16 }}>
-          <div style={{ flexShrink: 0, paddingTop: 2 }}>
-            <SeverityBadge kind={severity}/>
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h3 style={{
-              fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
-              lineHeight: 1.25, color: "#1A1A1A", margin: "0 0 4px",
-            }}>{title}</h3>
-            <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-              from <strong style={{ color: "#1A1A1A", fontWeight: 600 }}>{category}</strong>
-            </span>
-          </div>
-        </div>
+      <div style={{ gridArea: "badge", paddingTop: 3 }}>
+        <SeverityBadge kind={severity}/>
+      </div>
+      <div style={{ gridArea: "title" }}>
+        <h3 style={{
+          fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
+          lineHeight: 1.25, color: "#1A1A1A", margin: "0 0 4px",
+        }}>{title}</h3>
+        <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
+          from <strong style={{ color: "#1A1A1A", fontWeight: 600 }}>{category}</strong>
+        </span>
+      </div>
+      <div style={{ gridArea: "pfi" }}>
         <ProblemFixImpact detail={detail} fix={fix} impact={impact}/>
       </div>
     </div>

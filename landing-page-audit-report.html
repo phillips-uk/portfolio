@@ -88,11 +88,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .rpt-lpe-row > span:nth-child(2) { grid-column: 1 !important; grid-row: 2 !important; }
     .rpt-lpe-row > span:last-child   { grid-column: 2 !important; grid-row: 2 !important; }
 
-    /* PriorityCard — stack number + badge inline, then content below */
+    /* PriorityCard — number + badge inline row 1, headline full-width row 2, PFI row 3 */
     .rpt-priority-card {
-      grid-template-columns: 1fr !important;
+      grid-template-columns: auto 1fr !important;
+      grid-template-areas: "num badge" "title title" "pfi pfi" !important;
       padding: 20px !important;
-      gap: 12px !important;
+      gap: 10px 14px !important;
     }
     .rpt-priority-num { font-size: 28px !important; }
 
@@ -675,25 +676,26 @@ function PriorityCard({ n, severity, title, detail, fix, impact }) {
       padding: "28px 32px",
       boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
       display: "grid",
-      gridTemplateColumns: "56px 1fr",
-      gap: 24,
+      gridTemplateColumns: "56px auto 1fr",
+      gridTemplateAreas: '"num badge title" ". pfi pfi"',
+      columnGap: 14, rowGap: 12,
+      alignItems: "start",
     }}>
       <div className="rpt-priority-num" style={{
+        gridArea: "num",
         fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em",
         color: "#985830", lineHeight: 1,
         fontVariantNumeric: "tabular-nums",
       }}>{String(n).padStart(2, "0")}</div>
-
-      <div>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 16 }}>
-          <div style={{ flexShrink: 0, paddingTop: 2 }}>
-            <SeverityBadge kind={severity}/>
-          </div>
-          <h3 style={{
-            fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
-            lineHeight: 1.25, color: "#1A1A1A", margin: 0, flex: 1, minWidth: 0,
-          }}>{title}</h3>
-        </div>
+      <div style={{ gridArea: "badge", paddingTop: 3 }}>
+        <SeverityBadge kind={severity}/>
+      </div>
+      <h3 style={{
+        gridArea: "title",
+        fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
+        lineHeight: 1.25, color: "#1A1A1A", margin: 0,
+      }}>{title}</h3>
+      <div style={{ gridArea: "pfi" }}>
         <ProblemFixImpact detail={detail} fix={fix} impact={impact}/>
       </div>
     </div>
