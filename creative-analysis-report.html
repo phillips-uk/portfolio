@@ -684,6 +684,17 @@ function buildCreativeCard(item, rankLabel, isVideoFrame) {
       </div>
       ${buildDimRows(dims, dims._frameType || null)}
     </div>
+    ${(dims.overall_notes || dims.priority_action) ? `
+    <div style="margin-top:16px;border:1px solid #E8D8C4;border-radius:6px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;">
+      <div style="background:#FDF6EE;padding:20px 22px;border-right:1px solid #E8D8C4;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:10px;">Overall notes</div>
+        <p style="font-size:14px;line-height:1.65;color:#1A1A1A;margin:0;">${dims.overall_notes || ''}</p>
+      </div>
+      <div style="background:#FDF6EE;padding:20px 22px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;margin-bottom:10px;">Priority fix</div>
+        <p style="font-size:14px;line-height:1.65;color:#1A1A1A;margin:0;">${dims.priority_action || ''}</p>
+      </div>
+    </div>` : ''}
   `;
   return card;
 }

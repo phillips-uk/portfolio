@@ -142,7 +142,8 @@ RESPONSE FORMAT — return only valid JSON, no markdown, no explanation outside 
   "offer_clarity":       { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
   "emotional_resonance": { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
   "sound_off_legibility": null or { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
-  "overall_notes": "<2-3 sentences: what works, the priority fix, one specific action>"
+  "overall_notes": "<2-3 sentences summarising overall strengths and weaknesses>",
+  "priority_action": "<one sharp, specific action the creative team should take first>"
 }`;
 
 // Frame-specific scoring context injected into the user message
@@ -415,9 +416,15 @@ function buildReportHtml(scoredFiles) {
           }).join('')}
         </tbody>
       </table>
-      <div style="background:#FDF6EE;padding:16px 20px;border-top:1px solid #E8D8C4;font-size:13px;color:#1A1A1A;line-height:1.6">
-        <strong style="color:#985830;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px">Overall notes</strong>
-        ${escHtml(r.overall_notes || '')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid #E8D8C4;">
+        <div style="background:#FDF6EE;padding:16px 20px;font-size:13px;color:#1A1A1A;line-height:1.6;border-right:1px solid #E8D8C4;">
+          <strong style="color:#985830;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px">Overall notes</strong>
+          ${escHtml(r.overall_notes || '')}
+        </div>
+        <div style="background:#FDF6EE;padding:16px 20px;font-size:13px;color:#1A1A1A;line-height:1.6;">
+          <strong style="color:#985830;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px">Priority fix</strong>
+          ${escHtml(r.priority_action || '')}
+        </div>
       </div>
     </div>`;
   });
@@ -467,7 +474,8 @@ function buildReportMd(scoredFiles) {
         md += '\n\n';
       }
     });
-    md += `**Overall notes**  \n${r.overall_notes || ''}\n\n---\n\n`;
+    md += `**Overall notes**  \n${r.overall_notes || ''}\n\n`;
+    md += `**Priority fix**  \n${r.priority_action || ''}\n\n---\n\n`;
   });
 
   return md;
@@ -599,7 +607,8 @@ exports.handler = async function (event) {
             offer_clarity:       { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
             emotional_resonance: { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
             sound_off_legibility: null,
-            overall_notes:       'This file exceeded the 20 MB size limit and could not be scored.'
+            overall_notes:       'This file exceeded the 20 MB size limit and could not be scored.',
+            priority_action:     'Re-upload the file under the 20 MB limit to receive a score.'
           }
         });
         continue;
@@ -623,7 +632,8 @@ exports.handler = async function (event) {
           offer_clarity:       { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
           emotional_resonance: { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
           sound_off_legibility: null,
-          overall_notes:       'An error occurred while scoring this creative. Please try again.'
+          overall_notes:       'An error occurred while scoring this creative. Please try again.',
+          priority_action:     'Re-submit the creative to attempt scoring again.'
         };
       }
 
