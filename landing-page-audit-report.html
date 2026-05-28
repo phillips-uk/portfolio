@@ -11,6 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Landing Page Audit Report | Phillips.</title>
 <meta name="description" content="Your landing page audit report. Health score, priority actions, findings by category, keyword inference, and Landing Page Experience estimate.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
@@ -32,6 +33,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   ::selection { background: #985830; color: #fff; }
   *, *::before, *::after { box-sizing: border-box; }
   @keyframes ph-spin { to { transform: rotate(360deg); } }
+
+  /* Mobile nav overlay */
+  .mob-hamburger { display: none; position: fixed; top: 13px; right: 16px; z-index: 300; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .mob-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 400; }
+  .mob-drawer.open { display: block; }
+  .mob-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .mob-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .mob-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .mob-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .mob-drawer-link:hover, .mob-drawer-link.active { color: #1A1A1A; }
+  .mob-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .mob-drawer-cta:hover { background: #7A3F1F; }
+
+  @media (max-width: 900px) {
+    header nav { display: none !important; }
+    header > div { padding: 0 20px !important; }
+    .mob-hamburger { display: flex !important; align-items: center; justify-content: center; }
+    .page-w, .read-w { padding: 0 20px !important; }
+  }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -41,6 +61,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </head>
 <body class="ph">
 <div id="root"></div>
+
+<!-- Mobile nav (appears on ≤900px; overlays the React-rendered sticky header) -->
+<button class="mob-hamburger" onclick="document.getElementById('lpa-mob-drawer').classList.add('open')" aria-label="Open menu">
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+</button>
+<div id="lpa-mob-drawer" class="mob-drawer">
+  <div class="mob-drawer-backdrop" onclick="document.getElementById('lpa-mob-drawer').classList.remove('open')"></div>
+  <div class="mob-drawer-panel">
+    <button class="mob-drawer-close" onclick="document.getElementById('lpa-mob-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/landing-page-audit" class="mob-drawer-link active">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="mob-drawer-link">Google Ads Audit</a>
+    <a href="/creative-analysis" class="mob-drawer-link">Creative Scoring</a>
+    <a href="/guides/" class="mob-drawer-link">Guides</a>
+    <a href="/#contact" class="mob-drawer-cta">Get in touch</a>
+  </div>
+</div>
 
 <script type="text/babel">
 
