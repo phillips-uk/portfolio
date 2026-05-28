@@ -25,14 +25,15 @@ const MAX_FILES     = 20;
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB in base64 terms (actual file ~15 MB)
 const TOKEN_TTL_MS  = 24 * 60 * 60 * 1000;
 
-const DIMENSIONS = ['hook_quality', 'visual_hierarchy', 'copy_clarity', 'brand_consistency', 'fatigue_signals', 'offer_clarity'];
+const DIMENSIONS = ['hook_quality', 'visual_hierarchy', 'copy_clarity', 'brand_consistency', 'fatigue_signals', 'offer_clarity', 'emotional_resonance'];
 const DIMENSION_LABELS = {
-  hook_quality:       'Hook quality',
-  visual_hierarchy:   'Visual hierarchy',
-  copy_clarity:       'Copy clarity',
-  brand_consistency:  'Brand consistency',
-  fatigue_signals:    'Originality & Fatigue',
-  offer_clarity:      'Offer clarity'
+  hook_quality:        'Hook quality',
+  visual_hierarchy:    'Visual hierarchy',
+  copy_clarity:        'Copy clarity',
+  brand_consistency:   'Brand consistency',
+  fatigue_signals:     'Originality & Fatigue',
+  offer_clarity:       'Offer clarity',
+  emotional_resonance: 'Emotional resonance'
 };
 
 // Frame-position labels override hook_quality and offer_clarity per frame type
@@ -86,13 +87,12 @@ function getJobStore() {
 
 // ── Claude scoring ────────────────────────────────────────────────────────────
 
-const SCORING_SYSTEM = `You are an expert paid media creative analyst. Your job is to score advertising creatives across six dimensions. You assess only what is visible in the supplied image.
+const SCORING_SYSTEM = `You are an expert paid media creative analyst. Your job is to score advertising creatives across seven dimensions. You assess only what is visible in the supplied image.
 
 DIMENSIONS — score each 1 to 10:
 
 1. hook_quality
-   Interpretation depends on frame position — see the user message for context.
-   For static images and non-video content: score on TWO combined factors — (a) pattern interrupt: does it stop the scroll via unusual composition, contrast, human face, or unexpected subject? and (b) emotional resonance: does it make the viewer feel something — curiosity, desire, humour, urgency, aspiration? A score of 8–10 requires both. A creative that interrupts without connecting emotionally caps at 6. A creative with emotional resonance but weak pattern interrupt caps at 7. Note in rationale which factor is limiting the score.
+   Does this creative stop the scroll? Assess: pattern interrupt — unusual composition, colour contrast, human face/emotion, motion blur, unexpected subject. A score of 1–3 = generic, easily skipped. 7–10 = strong scroll-stopping power. Note: this dimension scores scroll-stop and pattern interrupt only. Emotional depth is scored separately in emotional_resonance. For video frames, see the user message for frame-specific interpretation.
 
 2. visual_hierarchy
    Is there a clear focal point? Is the reading order obvious without effort? Penalise competing elements, lack of contrast between subject and background, unclear where the eye should land first.
@@ -107,21 +107,41 @@ DIMENSIONS — score each 1 to 10:
    Score HIGH for original, fresh formats. Score LOW for saturated, overused formats. Penalise: plain white background product shots with no creative treatment, straight-to-camera UGC with no hook variant, generic "Shop Now" / "Learn More" CTAs, stock photography aesthetics, formats saturated 12+ months ago. Award high scores to formats that feel genuinely fresh or novel in the category.
 
 6. offer_clarity
-   Interpretation depends on frame position — see the user message for context.
+   Can the specific offer be named in under two seconds? Assess whether there is a concrete, specific value proposition visible (price, discount, free trial, outcome, clear benefit). Penalise vague or absent offers, generic CTAs ("Shop Now", "Learn More") where the viewer knows what to click but not why. Award high scores when the exact offer is immediately obvious. For video frames, see the user message for frame-specific interpretation.
+   10 = Specific compelling offer immediately visible
+   7–9 = Clear offer, minor CTA genericness
+   4–6 = Vague offer or generic CTA
+   1–3 = No discernible offer or completely absent CTA
+
+7. emotional_resonance
+   Distinct from hook_quality (scroll-stop). Does this creative generate genuine emotional response — desire, humour, empathy, aspiration, or urgency that feels earned? A bold pattern-interrupt may stop the scroll but leave the viewer emotionally flat.
+   10 = Strong emotional response — the creative makes you feel something specific
+   7–9 = Clear emotional signal, real resonance
+   4–6 = Flat — intellectually communicates but does not emotionally engage
+   1–3 = Completely emotionally inert — no feeling triggered
 
 IMPACT TIERS — for any dimension scoring 6 or below, classify the fix priority:
   "critical"  — core element missing or broken; fix before running this creative
   "high"      — significant drag on performance; fix before scaling spend
   "quick_win" — addressable in the next iteration with a small change (reword CTA, reposition element, swap background)
 
+SOUND-OFF LEGIBILITY (optional, video frames only):
+If this appears to be a video frame (motion blur, text overlays, caption bars, video-style composition), include "sound_off_legibility" in your response. Set to null for clearly static images.
+  10 = Fully self-contained without audio
+  7–9 = Mostly clear sound-off, minor audio dependency
+  4–6 = Partial — viewer misses key meaning without audio
+  1–3 = Only makes sense with audio (voiceover-dependent, no supporting text)
+
 RESPONSE FORMAT — return only valid JSON, no markdown, no explanation outside the JSON:
 {
-  "hook_quality":      { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
-  "visual_hierarchy":  { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
-  "copy_clarity":      { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
-  "brand_consistency": { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
-  "fatigue_signals":   { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
-  "offer_clarity":     { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "hook_quality":        { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "visual_hierarchy":    { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "copy_clarity":        { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "brand_consistency":   { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "fatigue_signals":     { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "offer_clarity":       { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "emotional_resonance": { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
+  "sound_off_legibility": null or { "score": <1-10>, "rationale": "<one sentence>", "weak_signal": <null or "specific issue">, "impact": <null or "critical"|"high"|"quick_win"> },
   "overall_notes": "<2-3 sentences: what works, the priority fix, one specific action>"
 }`;
 
@@ -130,10 +150,8 @@ const FRAME_SCORING_CONTEXT = {
   opening: `This is the OPENING FRAME of a video ad (first ~33% of the video).
 
 Frame-specific dimension interpretations:
-- hook_quality (PRIMARY for this frame): Assess TWO factors combined:
-  1. Pattern interrupt — does this frame stop the scroll? Unusual angle, motion blur, colour contrast, human face/emotion, unexpected subject matter.
-  2. Emotional resonance — does it make the viewer feel something? Curiosity, desire, humour, urgency, belonging, aspiration. A creative can interrupt without connecting.
-  Score 8–10 if strong on both. Score 5–7 if strong on one but weak on the other — note in rationale which is limiting. Score 1–4 if weak on both.
+- hook_quality (PRIMARY for this frame — scroll-stop only): Does this frame stop the scroll? Assess pattern interrupt: unusual angle, motion blur, strong colour contrast, human face/emotion, unexpected subject matter. Score purely on whether this frame would stop a thumb. Score 8–10 = immediate, compelling stop. Score 1–4 = generic, easily skipped.
+- emotional_resonance (opening frame): Does this frame make the viewer feel something that pulls them in? Curiosity, desire, humour, urgency, belonging, aspiration. A strong pattern interrupt can stop the scroll without creating emotional connection. Score these separately — a creative can score high on hook_quality (grabs attention) but low here (doesn't make you feel anything), or vice versa.
 - copy_clarity (sound-off legibility): In addition to standard copy clarity, assess whether the message lands with audio muted. Score 8–10 if captions, overlaid text, or visual-only storytelling fully communicates the message without sound. Score 4–6 if the viewer gets the gist but would miss nuance. Score 1–3 if the frame only makes sense with audio (voiceover-dependent, uncontextualised dialogue, no supporting text). Flag absence of captions or text support as a weak signal.
 - offer_clarity: Score 7 if no explicit offer is shown — the opening frame's job is to hook attention, not sell. Only penalise (below 7) if a clumsy or confusing offer attempt actively undermines the hook. Do not flag absence of an offer as a weak signal on an opening frame.`,
 
@@ -141,6 +159,7 @@ Frame-specific dimension interpretations:
 
 Frame-specific dimension interpretations:
 - hook_quality (measures RETENTION for this frame, not scroll-stopping): Does this frame hold attention and develop the story? Does it build towards the offer or maintain viewer momentum? Score high if the narrative is progressing and the viewer has a clear reason to keep watching. Score low if the frame feels flat, repetitive, or like the viewer would drop off here.
+- emotional_resonance (mid frame): Is the emotional arc developing or deepening? Does this frame build the connection or desire established in the opening? Score high if the emotional journey is progressing. Score low if the emotional temperature drops or the frame is purely functional/informational.
 - copy_clarity (sound-off legibility): Assess whether the narrative is still followable with audio muted. Score 8–10 if on-screen text, captions, or clear visual action fully carries the story. Score 4–6 if the visual content is plausible but context-dependent. Score 1–3 if the frame is completely reliant on voiceover or dialogue to make sense — a viewer watching without audio would be lost. Flag as a weak signal if no text or captioning supports the mid-section.
 - offer_clarity: Partially relevant. Score moderately (5–7) if the value proposition is beginning to emerge or be hinted at. Only penalise below 5 if the mid-frame is actively confusing or contradicts the hook.`,
 
@@ -148,6 +167,7 @@ Frame-specific dimension interpretations:
 
 Frame-specific dimension interpretations:
 - hook_quality (measures CTA STRENGTH for this frame): Is there a clear, compelling call-to-action? Does this frame convert? Score high (8–10) for a specific, urgent CTA with clear next steps. Score low (1–4) for a weak, generic, or absent CTA. "Shop Now" with no offer context scores no higher than 4.
+- emotional_resonance (closing frame): Does the closing frame land with emotional impact? Does it create a sense of desire, urgency, or aspiration that converts? A closing frame that only shows a CTA with no emotional close scores low here. Score high if the emotional payoff is clear and compelling.
 - copy_clarity (sound-off legibility): The closing frame must be fully legible without audio — this is when the viewer needs to act. Score 8–10 if the CTA, offer, and next step are entirely carried by on-screen text or visuals. Score 4–6 if the CTA is visible but offer context is missing without audio. Score 1–3 if the call-to-action only makes sense with voiceover. No captions on a closing frame is a critical weak signal — flag it.
 - offer_clarity (PRIMARY for this frame): The specific offer must be completely clear by the close. Penalise heavily if the price, discount, outcome, or benefit is not immediately obvious. A closing frame with no discernible offer is a critical failure.`
 };
@@ -230,12 +250,12 @@ async function scoreCreative(client, file, transcript) {
     : '';
 
   const userText = frameContext
-    ? `${frameContext}${transcriptBlock}\n\nScore this frame across all six dimensions using the frame-specific interpretations above. Return only valid JSON.`
-    : `Score this ad creative across all six dimensions.${transcriptBlock} Return only valid JSON.`;
+    ? `${frameContext}${transcriptBlock}\n\nScore this frame across all seven dimensions using the frame-specific interpretations above. Return only valid JSON.`
+    : `Score this ad creative across all seven dimensions.${transcriptBlock} Return only valid JSON.`;
 
   const message = await client.messages.create({
     model: SCORING_MODEL,
-    max_tokens: 2048,
+    max_tokens: 3072,
     system: SCORING_SYSTEM,
     messages: [
       {
@@ -370,13 +390,28 @@ function buildReportHtml(scoredFiles) {
           ${DIMENSIONS.map(function(d) {
             const dim = r[d] || {};
             const score = dim.score || 0;
-            const cls   = scoreClass(score);
             const weakBadge = impactBadge(dim.weak_signal, dim.impact);
-            return `<tr>
+            let rows = `<tr>
               <td style="padding:12px 16px;border-bottom:1px solid #E8D8C4;font-weight:600;color:#985830;font-size:12px;white-space:nowrap;width:140px">${DIMENSION_LABELS[d]}</td>
               <td style="padding:12px 16px;border-bottom:1px solid #E8D8C4;text-align:center">${scoreBadge(score)}</td>
               <td style="padding:12px 16px;border-bottom:1px solid #E8D8C4;color:#1A1A1A;font-size:13px;line-height:1.5">${escHtml(dim.rationale || '')}${weakBadge}</td>
             </tr>`;
+            // Append sound_off_legibility sub-row after copy_clarity
+            if (d === 'copy_clarity' && r.sound_off_legibility) {
+              const sol = r.sound_off_legibility;
+              const solScore = sol.score || 0;
+              const solColour = solScore >= 7 ? barColour.green : solScore >= 5 ? barColour.amber : barColour.red;
+              rows += `<tr>
+                <td style="padding:7px 16px 7px 28px;border-bottom:1px solid #E8D8C4;color:#6B6B6B;font-size:11px;white-space:nowrap;background:#FAFAF8">
+                  <span style="opacity:0.6;margin-right:4px;">↳</span>Sound-off
+                </td>
+                <td style="padding:7px 16px;border-bottom:1px solid #E8D8C4;text-align:center;background:#FAFAF8">
+                  <span style="font-size:12px;font-weight:700;color:${solColour};">${solScore}</span>
+                </td>
+                <td style="padding:7px 16px;border-bottom:1px solid #E8D8C4;color:#6B6B6B;font-size:12px;font-style:italic;background:#FAFAF8">${escHtml(sol.rationale || '')}${impactBadge(sol.weak_signal, sol.impact)}</td>
+              </tr>`;
+            }
+            return rows;
           }).join('')}
         </tbody>
       </table>
@@ -399,12 +434,12 @@ function buildReportMd(scoredFiles) {
   md += `Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC\n\n`;
 
   md += '## Ranked Summary\n\n';
-  md += '| # | Creative | Score | Hook | Hierarchy | Copy | Brand | Originality | Offer |\n';
-  md += '|---|----------|-------|------|-----------|------|-------|-------------|-------|\n';
+  md += '| # | Creative | Score | Hook | Hierarchy | Copy | Brand | Originality | Offer | Emotion |\n';
+  md += '|---|----------|-------|------|-----------|------|-------|-------------|-------|--------|\n';
   sorted.forEach(function(f, i) {
     const r = f.result;
     const scores = DIMENSIONS.map(function(d) { return r[d] ? r[d].score : 0; });
-    md += `| ${i+1} | ${f.name} | **${f.composite}** | ${scores[0]} | ${scores[1]} | ${scores[2]} | ${scores[3]} | ${scores[4]} | ${scores[5]} |\n`;
+    md += `| ${i+1} | ${f.name} | **${f.composite}** | ${scores[0]} | ${scores[1]} | ${scores[2]} | ${scores[3]} | ${scores[4]} | ${scores[5]} | ${scores[6]} |\n`;
   });
 
   md += '\n---\n\n## Detail\n\n';
@@ -421,6 +456,16 @@ function buildReportMd(scoredFiles) {
         md += `  \n> Weak signal${impactLabel}: ${dim.weak_signal}`;
       }
       md += '\n\n';
+      // Sound-off sub-criterion after Copy Clarity
+      if (d === 'copy_clarity' && r.sound_off_legibility) {
+        const sol = r.sound_off_legibility;
+        md += `  *↳ Sound-off legibility — ${sol.score || 0}/10*  \n*${sol.rationale || ''}*`;
+        if (sol.weak_signal) {
+          const lbl = sol.impact ? ` [${sol.impact.toUpperCase().replace('_', ' ')}]` : '';
+          md += `  \n> Sound-off weak signal${lbl}: ${sol.weak_signal}`;
+        }
+        md += '\n\n';
+      }
     });
     md += `**Overall notes**  \n${r.overall_notes || ''}\n\n---\n\n`;
   });
@@ -546,13 +591,15 @@ exports.handler = async function (event) {
           name:      file.name,
           composite: 0,
           result:    {
-            hook_quality:      { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
-            visual_hierarchy:  { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
-            copy_clarity:      { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
-            brand_consistency: { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
-            fatigue_signals:   { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
-            offer_clarity:     { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
-            overall_notes:     'This file exceeded the 20 MB size limit and could not be scored.'
+            hook_quality:        { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            visual_hierarchy:    { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            copy_clarity:        { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            brand_consistency:   { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            fatigue_signals:     { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            offer_clarity:       { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            emotional_resonance: { score: 0, rationale: 'File too large to process.', weak_signal: null, impact: null },
+            sound_off_legibility: null,
+            overall_notes:       'This file exceeded the 20 MB size limit and could not be scored.'
           }
         });
         continue;
@@ -568,13 +615,15 @@ exports.handler = async function (event) {
       } catch (e) {
         console.error(`[creative-analyse] scoring error for ${file.name}:`, e.message);
         result = {
-          hook_quality:      { score: 0, rationale: 'Scoring failed: ' + e.message, weak_signal: null, impact: null },
-          visual_hierarchy:  { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
-          copy_clarity:      { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
-          brand_consistency: { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
-          fatigue_signals:   { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
-          offer_clarity:     { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
-          overall_notes:     'An error occurred while scoring this creative. Please try again.'
+          hook_quality:        { score: 0, rationale: 'Scoring failed: ' + e.message, weak_signal: null, impact: null },
+          visual_hierarchy:    { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          copy_clarity:        { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          brand_consistency:   { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          fatigue_signals:     { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          offer_clarity:       { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          emotional_resonance: { score: 0, rationale: 'Scoring failed.', weak_signal: null, impact: null },
+          sound_off_legibility: null,
+          overall_notes:       'An error occurred while scoring this creative. Please try again.'
         };
       }
 

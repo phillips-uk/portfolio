@@ -409,20 +409,21 @@ function fmtDate(iso) {
 }
 
 const DIMENSIONS = [
-  { key:'hook_quality',      label:'Hook quality',         num:'01' },
-  { key:'visual_hierarchy',  label:'Visual hierarchy',     num:'02' },
-  { key:'copy_clarity',      label:'Copy clarity',         num:'03' },
-  { key:'brand_consistency', label:'Brand consistency',    num:'04' },
-  { key:'fatigue_signals',   label:'Originality & fatigue',num:'05' },
-  { key:'offer_clarity',     label:'Offer clarity',        num:'06' },
+  { key:'hook_quality',        label:'Hook quality',           num:'01' },
+  { key:'visual_hierarchy',    label:'Visual hierarchy',       num:'02' },
+  { key:'copy_clarity',        label:'Copy clarity',           num:'03' },
+  { key:'brand_consistency',   label:'Brand consistency',      num:'04' },
+  { key:'fatigue_signals',     label:'Originality & fatigue',  num:'05' },
+  { key:'offer_clarity',       label:'Offer clarity',          num:'06' },
+  { key:'emotional_resonance', label:'Emotional resonance',    num:'07' },
 ];
-const DIM_SHORT = ['Hook','Hier.','Copy','Brand','Fatigue','Offer'];
+const DIM_SHORT = ['Hook','Hier.','Copy','Brand','Fatigue','Offer','Emot.'];
 
 // Override labels for video frame positions
 const FRAME_DIM_LABELS = {
-  opening: {},
-  mid:     { hook_quality: 'Retention' },
-  close:   { hook_quality: 'CTA strength' },
+  opening: { emotional_resonance: 'Emotional pull' },
+  mid:     { hook_quality: 'Retention', emotional_resonance: 'Emotional arc' },
+  close:   { hook_quality: 'CTA strength', emotional_resonance: 'Emotional close' },
 };
 
 const IMPACT_LABELS = { critical:'CRITICAL', high:'HIGH', quick_win:'QUICK WIN' };
@@ -568,7 +569,8 @@ function renderSummaryTable(results) {
 // ===== RENDER CREATIVES =====
 function buildDimRows(dims, frameType) {
   const overrides = (frameType && FRAME_DIM_LABELS[frameType]) || {};
-  return DIMENSIONS.map(d => {
+  let html = '';
+  DIMENSIONS.forEach(d => {
     const dimData = dims[d.key] || {};
     const score = typeof dimData.score === 'number' ? dimData.score : 0;
     const rationale = dimData.rationale || '';
@@ -581,7 +583,7 @@ function buildDimRows(dims, frameType) {
       const lbl = IMPACT_LABELS[impact] || '';
       badgeHtml = `<div class="impact-badge ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${weakSignal}</div>`;
     }
-    return `
+    html += `
       <div class="dim-table-grid">
         <div style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${label}</div>
         <div>
@@ -599,7 +601,37 @@ function buildDimRows(dims, frameType) {
         </div>
       </div>
     `;
-  }).join('');
+    // Sound-off legibility sub-row after Copy Clarity
+    if (d.key === 'copy_clarity' && dims.sound_off_legibility) {
+      const sol = dims.sound_off_legibility;
+      const solScore = typeof sol.score === 'number' ? sol.score : 0;
+      let solBadge = '';
+      if (sol.weak_signal) {
+        const cls = sol.impact ? `impact-${sol.impact}` : 'impact-high';
+        const lbl = IMPACT_LABELS[sol.impact] || '';
+        solBadge = `<div class="impact-badge ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${sol.weak_signal}</div>`;
+      }
+      html += `
+        <div class="dim-table-grid" style="background:#FAFAF8;">
+          <div style="font-size:12px;font-weight:500;color:#6B6B6B;padding-top:3px;padding-left:14px;">↳ Sound-off</div>
+          <div>
+            <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:14px;font-weight:700;color:${scoreColor(solScore)};font-variant-numeric:tabular-nums;">${solScore}</span>
+              <span style="font-size:11px;color:#6B6B6B;">/10</span>
+            </div>
+            <div style="width:60px;" class="score-bar-track">
+              <div class="score-bar-fill" style="width:${(solScore/10*100).toFixed(1)}%;background:${scoreColor(solScore)};"></div>
+            </div>
+          </div>
+          <div>
+            ${sol.rationale ? `<div style="font-size:12.5px;line-height:1.6;color:#6B6B6B;font-style:italic;">${sol.rationale}</div>` : ''}
+            ${solBadge}
+          </div>
+        </div>
+      `;
+    }
+  });
+  return html;
 }
 
 function buildCreativeCard(item, rankLabel, isVideoFrame) {
