@@ -32,8 +32,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
   .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
   .read-w { max-width: 760px; margin: 0 auto; padding: 0 24px; }
-  .sec-white { background: #fff; padding: 80px 0; }
-  .sec-cream { background: #FDF6EE; padding: 80px 0; }
+  .sec-white { background: #fff; padding: 96px 0; }
+  .sec-cream { background: #FDF6EE; padding: 96px 0; }
   ::selection { background: #985830; color: #fff; }
   *, *::before, *::after { box-sizing: border-box; }
 
@@ -668,7 +668,7 @@ function ReportHeader() {
   return (
     <section style={{
       background: "linear-gradient(180deg, #FFFFFF 0%, #FDF6EE 100%)",
-      padding: "56px 0 72px",
+      padding: "80px 0 96px",
       borderBottom: "1px solid #E8D8C4",
     }}>
       <div className="page-w">
@@ -1163,10 +1163,12 @@ function SearchTermNgrams() {
           background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
           overflow: "hidden", boxShadow: "0 2px 8px rgba(152,88,48,0.08)",
         }}>
+          {/* Inner wrapper gives the grid a concrete min-width so 1fr resolves and the container scrolls */}
+          <div style={{ minWidth: 620 }}>
           {/* Table header */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 80px 90px 90px 80px 120px",
+            gridTemplateColumns: "minmax(120px, 1fr) 80px 90px 90px 80px 120px",
             padding: "12px 20px",
             background: "#F5EBD9",
             borderBottom: "1px solid #E8D8C4",
@@ -1187,7 +1189,7 @@ function SearchTermNgrams() {
             return (
               <div key={i} style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 80px 90px 90px 80px 120px",
+                gridTemplateColumns: "minmax(120px, 1fr) 80px 90px 90px 80px 120px",
                 padding: "14px 20px",
                 borderBottom: i < filtered.length - 1 ? "1px solid #E8D8C4" : "none",
                 background: i % 2 === 0 ? "#fff" : "#FDFAF6",
@@ -1228,6 +1230,7 @@ function SearchTermNgrams() {
               </div>
             );
           })}
+          </div>{/* end min-width wrapper */}
         </div>
 
         {/* Callout */}
