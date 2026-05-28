@@ -90,6 +90,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* Issue 5 — FindingRow: let badge shrink to natural width */
     .rpt-finding-row { grid-template-columns: auto 1fr !important; gap: 14px !important; }
+
+    /* PriorityCard — stack number + badge inline, then content below */
+    .rpt-priority-card {
+      grid-template-columns: 1fr !important;
+      padding: 20px !important;
+      gap: 12px !important;
+    }
+    .rpt-priority-num { font-size: 28px !important; }
+
+    /* TrackingTable — status column fits to content */
+    .rpt-tracking-hdr  { grid-template-columns: 1fr auto !important; }
+    .rpt-tracking-row  { grid-template-columns: 1fr auto !important; }
   }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -655,7 +667,7 @@ function PriorityActions() {
 
 function PriorityCard({ n, severity, title, detail, fix, impact }) {
   return (
-    <div style={{
+    <div className="rpt-priority-card" style={{
       background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
       padding: "28px 32px",
       boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
@@ -663,7 +675,7 @@ function PriorityCard({ n, severity, title, detail, fix, impact }) {
       gridTemplateColumns: "56px 1fr",
       gap: 24,
     }}>
-      <div style={{
+      <div className="rpt-priority-num" style={{
         fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em",
         color: "#985830", lineHeight: 1,
         fontVariantNumeric: "tabular-nums",
@@ -1468,7 +1480,7 @@ function TrackingTable({ rows }) {
       background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
       overflow: "hidden",
     }}>
-      <div style={{
+      <div className="rpt-tracking-hdr" style={{
         display: "grid",
         gridTemplateColumns: "1fr 220px",
         gap: 16, padding: "14px 28px",
@@ -1483,7 +1495,7 @@ function TrackingTable({ rows }) {
       {rows.map((r, i) => {
         const d = safeDot(r.status);
         return (
-          <div key={i} style={{
+          <div key={i} className="rpt-tracking-row" style={{
             display: "grid",
             gridTemplateColumns: "1fr 220px",
             gap: 16, padding: "18px 28px",
