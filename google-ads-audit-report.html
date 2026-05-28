@@ -965,17 +965,20 @@ function PriorityCard({ n, severity, title, detail, fix, impact, category }) {
       }}>{String(n).padStart(2, "0")}</div>
 
       <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
-          <SeverityBadge kind={severity}/>
-          <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
-            from <strong style={{ color: "#1A1A1A", fontWeight: 600 }}>{category}</strong>
-          </span>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 16 }}>
+          <div style={{ flexShrink: 0, paddingTop: 2 }}>
+            <SeverityBadge kind={severity}/>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{
+              fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
+              lineHeight: 1.25, color: "#1A1A1A", margin: "0 0 4px",
+            }}>{title}</h3>
+            <span style={{ fontSize: 11, color: "#6B6B6B", letterSpacing: "-0.005em" }}>
+              from <strong style={{ color: "#1A1A1A", fontWeight: 600 }}>{category}</strong>
+            </span>
+          </div>
         </div>
-        <h3 style={{
-          fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em",
-          lineHeight: 1.25, color: "#1A1A1A", margin: "0 0 16px",
-          maxWidth: 760,
-        }}>{title}</h3>
         <ProblemFixImpact detail={detail} fix={fix} impact={impact}/>
       </div>
     </div>
