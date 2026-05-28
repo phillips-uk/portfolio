@@ -102,6 +102,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     /* TrackingTable — status column fits to content */
     .rpt-tracking-hdr  { grid-template-columns: 1fr auto !important; }
     .rpt-tracking-row  { grid-template-columns: 1fr auto !important; }
+
+    /* ProblemFixImpact — stack label above body text */
+    .rpt-pfi-row {
+      grid-template-columns: 1fr !important;
+      gap: 4px !important;
+    }
   }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -699,7 +705,7 @@ function PriorityCard({ n, severity, title, detail, fix, impact }) {
 
 function ProblemFixImpact({ detail, fix, impact, dense }) {
   const Row = ({ label, body }) => (
-    <div style={{
+    <div className="rpt-pfi-row" style={{
       display: "grid",
       gridTemplateColumns: dense ? "78px 1fr" : "86px 1fr",
       gap: 16,

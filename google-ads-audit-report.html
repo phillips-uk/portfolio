@@ -75,6 +75,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* FindingRow mobile reflow */
     .gaa-finding-row { grid-template-columns: auto 1fr !important; gap: 14px !important; }
+
+    /* ProblemFixImpact — stack label above body text */
+    .rpt-pfi-row {
+      grid-template-columns: 1fr !important;
+      gap: 4px !important;
+    }
   }
   @media (max-width: 400px) {
     .gaa-cat-grid { grid-template-columns: 1fr !important; }
@@ -305,7 +311,7 @@ function SectionHeader({ eyebrow, title, emphasis, sub }) {
 
 function ProblemFixImpact({ detail, fix, impact, dense }) {
   const Row = ({ label, body }) => (
-    <div style={{
+    <div className="rpt-pfi-row" style={{
       display: "grid",
       gridTemplateColumns: dense ? "78px 1fr" : "86px 1fr",
       gap: 16,
