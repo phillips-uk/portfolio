@@ -35,6 +35,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .sec-white { background: #fff; padding: 96px 0; }
   .sec-cream { background: #FDF6EE; padding: 96px 0; }
   ::selection { background: #985830; color: #fff; }
+  @keyframes ph-spin { to { transform: rotate(360deg); } }
   *, *::before, *::after { box-sizing: border-box; }
 
   /* Mobile nav overlay */
@@ -95,6 +96,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="ph">
 <div id="root"></div>
@@ -628,15 +630,15 @@ const CATEGORIES = [
 
 /* Derive priority actions: highest severity first, then by category order */
 const SEV_RANK = { critical: 0, high: 1, medium: 2, low: 3, pass: 4 };
-const PRIORITY = CATEGORIES
+let PRIORITY = CATEGORIES
   .flatMap(c => c.findings.map(f => ({ ...f, category: c.name })))
   .filter(f => f.severity !== "pass")
   .sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity])
   .slice(0, 3);
 
 /* Overall score: weighted average of category scores */
-const OVERALL = Math.round(CATEGORIES.reduce((s, c) => s + c.score, 0) / CATEGORIES.length);
-const OVERALL_BAND = BAND[bandFor(OVERALL)];
+let OVERALL = Math.round(CATEGORIES.reduce((s, c) => s + c.score, 0) / CATEGORIES.length);
+let OVERALL_BAND = BAND[bandFor(OVERALL)];
 
 /* =============== N-GRAM DEMO DATA =============== */
 const NGRAM_DATA = [
@@ -667,7 +669,58 @@ const HEATMAP = [
   [0,0,0,0,0,0,0,0,1,3,4,4,3,3,3,2,2,1,1,0,0,0,0,0],
 ];
 const DAYS_LABEL = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-const HEATMAP_MAX = Math.max(...HEATMAP.flat());
+let HEATMAP_MAX = Math.max(...HEATMAP.flat());
+
+function Spinner() {
+  return <div style={{ width:14, height:14, border:"2px solid rgba(255,255,255,0.4)", borderTopColor:"#fff", borderRadius:"50%", animation:"ph-spin 0.7s linear infinite" }}/>;
+}
+
+/* =============== SHARE + PDF BUTTONS =============== */
+function ShareButton() {
+  const [copied, setCopied] = React.useState(false);
+  function handleShare() {
+    const url = window.location.href;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true); setTimeout(() => setCopied(false), 2000);
+      }).catch(() => fallback(url));
+    } else { fallback(url); }
+  }
+  function fallback(url) {
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.cssText = "position:fixed;opacity:0;";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+  return <BtnOutline icon={<IconShare/>} onClick={handleShare}>{copied ? "Link copied!" : "Share"}</BtnOutline>;
+}
+
+function PdfDownloadButton() {
+  const [busy, setBusy] = React.useState(false);
+  async function handleDownload() {
+    if (busy || !window.html2pdf) return;
+    setBusy(true);
+    try {
+      const el = document.getElementById('root');
+      const filename = "google-ads-audit-" + (ACCOUNT.cid || "report") + "-" + new Date().toISOString().slice(0,10) + ".pdf";
+      await html2pdf().set({
+        margin: [8,8,8,8],
+        filename,
+        image: { type:'jpeg', quality: 0.92 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+        pagebreak: { mode: ['avoid-all','css','legacy'] },
+      }).from(el).save();
+    } catch(e) { console.error(e); }
+    finally { setBusy(false); }
+  }
+  return (
+    <BtnFilledSmall icon={busy ? <Spinner/> : <IconDownload/>} disabled={busy} onClick={handleDownload}>
+      {busy ? "Generating…" : "Download PDF"}
+    </BtnFilledSmall>
+  );
+}
 
 /* =============== REPORT HEADER =============== */
 function ReportHeader() {
@@ -689,8 +742,8 @@ function ReportHeader() {
             <span style={{ fontSize: 12, color: "#6B6B6B" }}>{ACCOUNT.audited}</span>
           </div>
           <div className="gaa-header-actions" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <BtnOutline icon={<IconShare/>}>Share</BtnOutline>
-            <BtnFilledSmall icon={<IconDownload/>}>Download PDF</BtnFilledSmall>
+            <ShareButton/>
+            <PdfDownloadButton/>
           </div>
         </div>
 
@@ -1473,18 +1526,162 @@ function IconDownload() {
 }
 
 /* =============== APP =============== */
+/* =============== LIVE DATA LOADER =============== */
+const CAT_LABELS = {
+  conversion_foundation: "Conversion Tracking",
+  account_structure:     "Account Structure",
+  bidding:               "Bidding & Budget",
+  keyword_hygiene:       "Keyword Hygiene",
+  audiences:             "Audiences",
+  creative:              "Ad Creative",
+  traffic_quality:       "Traffic Quality",
+  ai_automation:         "AI & Automation",
+  feed_health:           "Feed Health",
+};
+
+function applyReportData(raw) {
+  // Account
+  ACCOUNT.name     = raw.account_name || raw.user_name || "Your Account";
+  ACCOUNT.cid      = (() => { const s = String(raw.customer_id || "").replace(/\D/g,""); return s.length===10?s.slice(0,3)+"-"+s.slice(3,6)+"-"+s.slice(6):s; })();
+  ACCOUNT.score    = raw.score || 0;
+  ACCOUNT.window   = (raw.metadata && raw.metadata.lookback) || "Last 30 days";
+  ACCOUNT.audited  = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  if (raw.metadata && raw.metadata.currency) ACCOUNT.currency = raw.metadata.currency;
+  if (raw.metadata && raw.metadata.total_spend != null) ACCOUNT.spend = raw.metadata.total_spend;
+
+  // Categories
+  if (raw.categories && typeof raw.categories === "object") {
+    CATEGORIES.length = 0;
+    const entries = Array.isArray(raw.categories)
+      ? raw.categories
+      : Object.entries(raw.categories).map(([key, cat]) => ({ key, ...cat }));
+    entries.forEach(cat => {
+      CATEGORIES.push({
+        name:     cat.label || CAT_LABELS[cat.key || cat.name] || cat.name || cat.key || "Category",
+        score:    cat.score || 0,
+        findings: (cat.findings || []).map(f => ({
+          severity: (f.severity || "medium").toLowerCase(),
+          title:    f.title || f.check || "",
+          detail:   f.detail || f.description || "",
+          fix:      f.recommendation || f.fix || "",
+          impact:   f.impact || "",
+        })),
+      });
+    });
+  }
+
+  // Recalculate derived values
+  PRIORITY = CATEGORIES
+    .flatMap(c => c.findings.map(f => ({ ...f, category: c.name })))
+    .filter(f => f.severity !== "pass")
+    .sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity])
+    .slice(0, 3);
+  OVERALL      = CATEGORIES.length ? Math.round(CATEGORIES.reduce((s,c) => s+c.score, 0) / CATEGORIES.length) : 0;
+  OVERALL_BAND = BAND[bandFor(OVERALL)];
+
+  // N-gram data
+  const ngramSrc = raw.ngram_data || raw.search_terms || raw.ngrams;
+  if (Array.isArray(ngramSrc) && ngramSrc.length) {
+    NGRAM_DATA.length = 0;
+    ngramSrc.forEach(r => NGRAM_DATA.push({
+      pattern: r.pattern || r.term || r.query || "",
+      clicks:  r.clicks  || 0,
+      cost:    r.cost    || 0,
+      conv:    r.conversions || r.conv || 0,
+      cpa:     r.cpa     || 0,
+      status:  r.status  || "review",
+    }));
+  }
+
+  // Heatmap (7 rows × 24 hours)
+  const heatSrc = raw.heatmap || raw.day_hour_performance || raw.day_hour_heatmap;
+  if (Array.isArray(heatSrc) && heatSrc.length) {
+    HEATMAP.length = 0;
+    heatSrc.forEach(row => HEATMAP.push(Array.isArray(row) ? row : Object.values(row)));
+    HEATMAP_MAX = Math.max(...HEATMAP.flat());
+  }
+}
+
+function LoadingScreen() {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"60vh", gap:16 }}>
+      <div style={{ width:40, height:40, border:"3px solid #F5EBD9", borderTopColor:"#985830", borderRadius:"50%", animation:"ph-spin 0.8s linear infinite" }}/>
+      <p style={{ fontSize:15, color:"#6B6B6B", margin:0 }}>Loading your report…</p>
+    </div>
+  );
+}
+
+function ErrorScreen() {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"60vh", gap:16, padding:"0 24px", textAlign:"center" }}>
+      <div style={{ fontSize:36 }}>⚠️</div>
+      <h2 style={{ fontSize:22, fontWeight:700, color:"#1A1A1A", margin:0 }}>Couldn't load this report</h2>
+      <p style={{ fontSize:15, color:"#6B6B6B", maxWidth:400, margin:0 }}>The report link may have expired or the audit is still processing. Try running the audit again.</p>
+      <a href="/google-ads-audit" style={{ background:"#985830", color:"#fff", padding:"12px 24px", borderRadius:4, textDecoration:"none", fontWeight:600, fontSize:14 }}>Run audit</a>
+    </div>
+  );
+}
+
+function ReportLoader({ children }) {
+  const [phase, setPhase] = React.useState(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('id') || p.get('direct')) return 'loading';
+    return 'demo';
+  });
+
+  React.useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const id     = p.get('id');
+    const direct = p.get('direct');
+
+    if (direct === '1') {
+      // Data was stored in sessionStorage by the audit tool
+      try {
+        const stored = sessionStorage.getItem('gaa_result_direct');
+        if (stored) {
+          applyReportData(JSON.parse(stored));
+          sessionStorage.removeItem('gaa_result_direct');
+          setPhase('live');
+          return;
+        }
+      } catch(e) {}
+      setPhase('error');
+      return;
+    }
+
+    if (!id) { setPhase('demo'); return; }
+
+    fetch("/.netlify/functions/get-report?id=" + encodeURIComponent(id))
+      .then(r => {
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      })
+      .then(raw => {
+        applyReportData(raw);
+        setPhase('live');
+      })
+      .catch(() => setPhase('error'));
+  }, []);
+
+  if (phase === 'loading') return <><Nav active="ga"/><LoadingScreen/></>;
+  if (phase === 'error')   return <><Nav active="ga"/><ErrorScreen/></>;
+  return children;
+}
+
 function App() {
   return (
-    <div data-screen-label="01 Google Ads Audit Report">
-      <Nav active="ga"/>
-      <ReportHeader/>
-      <PriorityActions/>
-      <SearchTermNgrams/>
-      <DayHourHeatmap/>
-      <FindingsByCategory/>
-      <EndCta/>
-      <Footer/>
-    </div>
+    <ReportLoader>
+      <div data-screen-label="01 Google Ads Audit Report">
+        <Nav active="ga"/>
+        <ReportHeader/>
+        <PriorityActions/>
+        <SearchTermNgrams/>
+        <DayHourHeatmap/>
+        <FindingsByCategory/>
+        <EndCta/>
+        <Footer/>
+      </div>
+    </ReportLoader>
   );
 }
 

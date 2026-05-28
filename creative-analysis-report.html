@@ -103,7 +103,7 @@ body { font-family: var(--font-sans); color: var(--ink); background: var(--white
 /* ---- SUMMARY TABLE ---- */
 .summary-table-grid {
   display: grid;
-  grid-template-columns: 44px 1fr 100px repeat(6, 52px);
+  grid-template-columns: 44px 1fr 100px repeat(7, 52px);
   align-items: center;
 }
 @media (max-width: 760px) { .summary-table-wrap { display: none; } }
@@ -490,7 +490,7 @@ function renderSummaryTable(results) {
       const baseName = formatName(g.base);
       // Video group header row
       const groupHeader = `
-        <div style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:10px 20px;gap:12px;background:#FDF6EE;border-top:1px solid #E8D8C4;align-items:center;">
+        <div style="display:grid;grid-template-columns:44px 1fr 100px repeat(7,52px);padding:10px 20px;gap:12px;background:#FDF6EE;border-top:1px solid #E8D8C4;align-items:center;">
           <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:26px;border-radius:6px;background:#985830;color:#fff;font-size:12px;font-weight:700;">#${rank}</span>
           <div style="min-width:0;display:flex;align-items:center;gap:8px;">
             <span style="font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#985830;background:#F5EBD9;border:1px solid #E8D8C4;padding:2px 7px;border-radius:3px;">VIDEO</span>
@@ -513,7 +513,7 @@ function renderSummaryTable(results) {
           return `<span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:26px;border-radius:4px;background:${scoreBg(sc)};color:${scoreColor(sc)};border:1px solid ${scoreBorder(sc)};font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;">${sc}</span>`;
         }).join('');
         return `
-          <a href="#${anchor}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:11px 20px 11px 36px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
+          <a href="#${anchor}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(7,52px);padding:11px 20px 11px 36px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
             onmouseenter="this.style.background='#FDF6EE'" onmouseleave="this.style.background='transparent'">
             <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:22px;border-radius:4px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;font-size:10px;font-weight:700;letter-spacing:0.04em;">${item._frameInfo.label.toUpperCase()}</span>
             <div style="min-width:0;padding-left:8px;">
@@ -544,7 +544,7 @@ function renderSummaryTable(results) {
         return `<span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:26px;border-radius:4px;background:${scoreBg(sc)};color:${scoreColor(sc)};border:1px solid ${scoreBorder(sc)};font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;">${sc}</span>`;
       }).join('');
       return `
-        <a href="#${anchor}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(6,52px);padding:14px 20px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
+        <a href="#${anchor}" style="display:grid;grid-template-columns:44px 1fr 100px repeat(7,52px);padding:14px 20px;border-top:1px solid #F0E5D2;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:background 150ms;"
           onmouseenter="this.style.background='#FDF6EE'" onmouseleave="this.style.background='transparent'">
           <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:26px;border-radius:6px;background:#985830;color:#fff;font-size:12px;font-weight:700;">#${rank}</span>
           <div style="min-width:0;">

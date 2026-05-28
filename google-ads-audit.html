@@ -246,36 +246,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="connect-card" style="background:#fff;border:1px solid #E8D8C4;border-radius:8px;padding:28px;box-shadow:0 8px 24px rgba(152,88,48,0.10);">
         <div style="display:flex;align-items:center;gap:10px;padding-bottom:18px;border-bottom:1px solid #E8D8C4;">
           <span style="font-size:18px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;">Phillips<span style="color:#985830;">.</span></span>
-          <span style="margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#F5EBD9;padding:4px 10px;border-radius:20px;">Step 1 of 3</span>
+          <span id="card-step-pill" style="margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#F5EBD9;padding:4px 10px;border-radius:20px;">Step 1 of 3</span>
         </div>
-        <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:8px;">Free Google Ads audit</div>
-        <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 20px;">Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
-        <button id="google-signin-btn" class="google-signin-btn">
-          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/>
-            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/>
-            <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z"/>
-            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.167 6.656 3.58 9 3.58Z"/>
-          </svg>
-          <span>Connect Google Ads</span>
-        </button>
-        <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-            <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-            <span>Read-only access only</span>
+        <div id="connect-card-body">
+          <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:8px;">Free Google Ads audit</div>
+          <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 20px;">Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
+          <button id="google-signin-btn" class="google-signin-btn">
+            <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/>
+              <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z"/>
+              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.167 6.656 3.58 9 3.58Z"/>
+            </svg>
+            <span>Connect Google Ads</span>
+          </button>
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+              <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+              <span>Read-only access only</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+              <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+              <span>No data stored after audit</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+              <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+              <span>No agency pitch</span>
+            </div>
           </div>
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-            <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-            <span>No data stored after audit</span>
+          <div style="margin-top:22px;padding-top:18px;border-top:1px solid #E8D8C4;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6B6B6B;">
+            <span>Trouble signing in?</span>
+            <a href="#" id="manual-cid-link" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
           </div>
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-            <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-            <span>No agency pitch</span>
-          </div>
-        </div>
-        <div style="margin-top:22px;padding-top:18px;border-top:1px solid #E8D8C4;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6B6B6B;">
-          <span>Trouble signing in?</span>
-          <a href="#" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
         </div>
       </div>
     </div>
@@ -542,18 +544,231 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
 
 <script>
-// Smooth scroll "Run my audit" → #connect-card
+// ── OAuth constants ────────────────────────────────────────────────────────
+const GOOGLE_CLIENT_ID    = "339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com";
+const OAUTH_REDIRECT_URI  = "https://phillips-uk.com/.netlify/functions/auth-callback";
+const OAUTH_SCOPE         = "https://www.googleapis.com/auth/adwords openid email profile";
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function formatCid(raw) {
+  const s = String(raw).replace(/\D/g, "");
+  return s.length === 10 ? s.slice(0,3)+"-"+s.slice(3,6)+"-"+s.slice(6) : s;
+}
+function escHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function googleSvg() {
+  return `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/>
+    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/>
+    <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z"/>
+    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.167 6.656 3.58 9 3.58Z"/>
+  </svg>`;
+}
+
+// ── OAuth initiation ────────────────────────────────────────────────────────
+function initiateOAuth() {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: 'audit_connect_clicked' });
+  const p = new URLSearchParams({
+    client_id:     GOOGLE_CLIENT_ID,
+    redirect_uri:  OAUTH_REDIRECT_URI,
+    response_type: "code",
+    scope:         OAUTH_SCOPE,
+    access_type:   "offline",
+    prompt:        "consent",
+  });
+  window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + p;
+}
+
+// ── Card state machine ──────────────────────────────────────────────────────
+function setCardStep(step, label) {
+  const pill = document.getElementById('card-step-pill');
+  if (pill) pill.textContent = label || "Step " + step + " of 3";
+}
+
+function showCardError(msg) {
+  setCardStep(1, "Step 1 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <div style="background:#F8E4DC;border:1px solid #EBC4B5;border-radius:6px;padding:14px 16px;margin-top:18px;margin-bottom:18px;">
+      <div style="font-size:13px;font-weight:700;color:#B83A1F;margin-bottom:4px;">Connection failed</div>
+      <div style="font-size:13px;color:#1A1A1A;line-height:1.5;">${escHtml(msg)}</div>
+    </div>
+    <button class="google-signin-btn" onclick="initiateOAuth()">
+      ${googleSvg()}<span>Try again</span>
+    </button>
+    <div style="margin-top:16px;font-size:12px;color:#6B6B6B;text-align:center;">
+      <a href="#" id="manual-cid-link" style="color:#985830;text-decoration:none;font-weight:600;">Enter Customer ID manually &rarr;</a>
+    </div>`;
+  document.getElementById('manual-cid-link')?.addEventListener('click', function(e){
+    e.preventDefault(); showManualCid(null);
+  });
+}
+
+function showAccountPicker(token, accountsB64) {
+  let accounts;
+  try {
+    let s = accountsB64.replace(/-/g,'+').replace(/_/g,'/');
+    while (s.length % 4) s += '=';
+    accounts = JSON.parse(atob(s));
+  } catch(e) {
+    showCardError("Couldn't read account list. Please try connecting again.");
+    return;
+  }
+
+  // Single account — skip picker
+  if (accounts.length === 1) {
+    runAudit(token, accounts[0].id);
+    return;
+  }
+
+  setCardStep(2, "Step 2 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <p style="font-size:14px;font-weight:600;color:#1A1A1A;margin:18px 0 6px;">Choose the account to audit</p>
+    <p style="font-size:13px;color:#6B6B6B;margin:0 0 14px;line-height:1.5;">I found ${accounts.length} Google Ads accounts on your login.</p>
+    <div id="account-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid #E8D8C4;font-size:12px;color:#6B6B6B;">
+      <a href="#" id="manual-cid-link" style="color:#985830;text-decoration:none;font-weight:600;">Enter Customer ID manually &rarr;</a>
+    </div>`;
+
+  const list = document.getElementById('account-list');
+  accounts.forEach(a => {
+    const btn = document.createElement('button');
+    btn.style.cssText = "width:100%;background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;font-family:inherit;transition:border-color 150ms;";
+    btn.innerHTML = `<div><div style="font-size:14px;font-weight:600;color:#1A1A1A;">${escHtml(a.name)}${a.manager?'<span style="font-size:11px;font-weight:400;color:#6B6B6B;margin-left:6px;">(Manager)</span>':''}</div><div style="font-size:12px;color:#6B6B6B;margin-top:2px;">${formatCid(a.id)}</div></div><span style="color:#985830;font-size:16px;">→</span>`;
+    btn.addEventListener('mouseenter', () => btn.style.borderColor = "#985830");
+    btn.addEventListener('mouseleave', () => btn.style.borderColor = "#E8D8C4");
+    btn.addEventListener('click', () => runAudit(token, a.id));
+    list.appendChild(btn);
+  });
+  document.getElementById('manual-cid-link')?.addEventListener('click', function(e){
+    e.preventDefault(); showManualCid(token);
+  });
+}
+
+function showManualCid(token) {
+  setCardStep(1, "Step 1 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <p style="font-size:14px;font-weight:600;color:#1A1A1A;margin:18px 0 6px;">Enter your Customer ID</p>
+    <p style="font-size:13px;color:#6B6B6B;margin:0 0 14px;line-height:1.5;">Find it in the top-right corner of Google Ads (format: 000-000-0000).</p>
+    <input id="cid-input" type="text" placeholder="e.g. 287-441-9032" style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
+    <div id="cid-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:10px;"></div>
+    ${token ? `<button id="cid-submit-btn" style="width:100%;background:#985830;color:#fff;border:0;padding:11px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Run audit</button>` : `<button class="google-signin-btn" onclick="initiateOAuth()">${googleSvg()}<span>Connect Google first</span></button>`}`;
+  if (token) {
+    document.getElementById('cid-submit-btn').addEventListener('click', () => {
+      const raw = document.getElementById('cid-input').value.replace(/[-\s]/g,'').trim();
+      if (!/^\d{10}$/.test(raw)) {
+        const err = document.getElementById('cid-error');
+        err.textContent = "Please enter a valid 10-digit Customer ID (e.g. 287-441-9032).";
+        err.style.display = 'block'; return;
+      }
+      runAudit(token, raw);
+    });
+  }
+}
+
+// ── Audit runner ────────────────────────────────────────────────────────────
+function showLoadingState() {
+  setCardStep(3, "Running audit…");
+  document.getElementById('connect-card-body').innerHTML = `
+    <div style="text-align:center;padding:24px 0 8px;">
+      <div style="width:36px;height:36px;border:3px solid #F5EBD9;border-top-color:#985830;border-radius:50%;animation:ph-spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+      <div style="font-size:15px;font-weight:600;color:#1A1A1A;margin-bottom:6px;">Analysing your account…</div>
+      <div id="audit-progress-msg" style="font-size:13px;color:#6B6B6B;">Connecting to Google Ads</div>
+    </div>`;
+  const steps = ["Fetching campaign data…","Running diagnostics…","Generating your report…"];
+  let i = 0;
+  const delays = [6000, 12000, 18000];
+  function advance() {
+    const el = document.getElementById('audit-progress-msg');
+    if (!el || i >= steps.length) return;
+    el.textContent = steps[i];
+    setTimeout(advance, delays[i++]);
+  }
+  setTimeout(advance, 2500);
+}
+
+async function runAudit(token, cid) {
+  showLoadingState();
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: 'audit_started', account_id: formatCid(cid) });
+
+  try {
+    const res = await fetch("/.netlify/functions/trigger-audit", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ token, customer_id: cid }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (res.status === 429 || data.error === "already_audited") {
+        showCardError("This account has already received its free audit. Get in touch for an ongoing review.");
+      } else {
+        showCardError(data.detail || data.error || "Something went wrong. Please try again.");
+      }
+      return;
+    }
+
+    window.dataLayer.push({ event: 'audit_complete', score: data.score || 0 });
+
+    // Redirect to report page with the audit ID
+    if (data.audit_id) {
+      window.location.href = "/google-ads-audit-report?id=" + encodeURIComponent(data.audit_id);
+    } else {
+      // Fallback: store raw data and pass via sessionStorage
+      try { sessionStorage.setItem('gaa_result_direct', JSON.stringify(data)); } catch(e) {}
+      window.location.href = "/google-ads-audit-report?direct=1";
+    }
+
+  } catch(err) {
+    showCardError("Could not reach the audit server. Please check your connection and try again.");
+  }
+}
+
+// ── Smooth scroll ───────────────────────────────────────────────────────────
 document.querySelectorAll('[data-scroll-to-connect]').forEach(btn => {
   btn.addEventListener('click', function() {
     document.getElementById('connect-card').scrollIntoView({behavior:'smooth',block:'center'});
   });
 });
-// GTM on sign-in button
-document.getElementById('google-signin-btn')?.addEventListener('click', function() {
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ event: 'audit_started' });
+
+// ── Connect button ──────────────────────────────────────────────────────────
+document.getElementById('google-signin-btn')?.addEventListener('click', initiateOAuth);
+
+// ── Manual CID link (default card footer) ──────────────────────────────────
+document.getElementById('manual-cid-link')?.addEventListener('click', function(e){
+  e.preventDefault(); showManualCid(null);
 });
-// FAQ accordion
+
+// ── URL param handling on load ─────────────────────────────────────────────
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  const token    = p.get('token');
+  const accounts = p.get('accounts');
+  const error    = p.get('error');
+
+  if (error) {
+    const msgs = {
+      access_denied:       "You cancelled the sign-in. Click below to try again.",
+      no_refresh_token:    "Sign-in didn't return the right permissions. Please try again.",
+      token_exchange_failed: "There was a problem connecting to Google. Please try again.",
+    };
+    // Scroll to card and show error
+    setTimeout(() => document.getElementById('connect-card')?.scrollIntoView({behavior:'smooth',block:'center'}), 200);
+    showCardError(msgs[error] || "Something went wrong during sign-in (" + error + "). Please try again.");
+    // Clean URL
+    history.replaceState(null, "", window.location.pathname);
+  } else if (token && accounts) {
+    // OAuth callback — show account picker
+    setTimeout(() => document.getElementById('connect-card')?.scrollIntoView({behavior:'smooth',block:'center'}), 200);
+    showAccountPicker(token, accounts);
+    // Clean URL
+    history.replaceState(null, "", window.location.pathname);
+  }
+})();
+
+// ── FAQ accordion ───────────────────────────────────────────────────────────
 document.querySelectorAll('.faq-btn').forEach(btn => {
   btn.addEventListener('click', function() {
     const item = this.closest('.faq-item');
