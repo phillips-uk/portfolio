@@ -11,7 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
 <!-- End Google Tag Manager -->
 <title>Creative Scoring — Example Report | Phillips.</title>
-<meta name="description" content="An example creative analysis report. Four ad creatives scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<meta name="description" content="An example creative analysis report. Four ad creatives scored across seven dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, originality, offer clarity, and emotional resonance.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 <style>
   :root {
@@ -105,13 +105,15 @@ function scoreColor(n) {
   return { fg: "#C0392B", bg: "#F8E0DC", border: "#EBC4B5", label: "Weak" };
 }
 
-const DIM_KEYS = ["hook", "hierarchy", "copy", "brand", "fatigue"];
+const DIM_KEYS = ["hook", "hierarchy", "copy", "brand", "fatigue", "offer", "emotion"];
 const DIM_LABELS = {
-  hook: "Hook quality",
+  hook:      "Hook quality",
   hierarchy: "Visual hierarchy",
-  copy: "Copy clarity",
-  brand: "Brand consistency",
-  fatigue: "Fatigue signals"
+  copy:      "Copy clarity",
+  brand:     "Brand consistency",
+  fatigue:   "Originality & fatigue",
+  offer:     "Offer clarity",
+  emotion:   "Emotional resonance"
 };
 
 /* =============== DATA =============== */
@@ -121,14 +123,16 @@ const CREATIVES = [
   file: "summer_prospecting_ugc-hero.mp4",
   sub: "opening frame",
   type: "video",
-  composite: 7.2,
-  scores: { hook: 8, hierarchy: 7, copy: 7, brand: 6, fatigue: 8 },
+  composite: 7.1,
+  scores: { hook: 8, hierarchy: 7, copy: 7, brand: 6, fatigue: 8, offer: 7, emotion: 7 },
   dims: {
-    hook: { rationale: "Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.", weak: null },
-    hierarchy: { rationale: "Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive.", weak: "Background element in bottom-right competes with the subject for attention." },
-    copy: { rationale: "Headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text in this frame — acceptable for an opening hook.", weak: null },
-    brand: { rationale: "Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.", weak: "No logo or brand lockup. This creative could belong to any brand." },
-    fatigue: { rationale: "Format avoids common fatigued treatments. No plain white background, no static talking-head variant. The motion-first approach is less saturated than most UGC in this category.", weak: null }
+    hook:      { rationale: "Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.", weak: null, impact: null },
+    hierarchy: { rationale: "Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive.", weak: "Background element in bottom-right competes with the subject for attention.", impact: "quick_win" },
+    copy:      { rationale: "Headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA in this opening frame — acceptable here.", weak: null, impact: null },
+    brand:     { rationale: "Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.", weak: "No logo or brand lockup. This creative could belong to any brand.", impact: "high" },
+    fatigue:   { rationale: "Format avoids common fatigued treatments. No plain white background, no static talking-head variant. The motion-first approach is less saturated than most UGC in this category.", weak: null, impact: null },
+    offer:     { rationale: "Opening frame; no offer is expected here — the hook frame's job is to capture attention, not sell. Offer context is acceptable later in the video.", weak: null, impact: null },
+    emotion:   { rationale: "The motion close-up and caption sequence creates genuine curiosity pull — the viewer wants to know what's being said and what happens next.", weak: null, impact: null }
   },
   notes: "The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring.",
   priority: "Add a subtle branded element to the bottom-left corner without obscuring the hook."
@@ -138,50 +142,56 @@ const CREATIVES = [
   file: "summer_prospecting_static-offer.jpg",
   sub: "static",
   type: "image",
-  composite: 6.6,
-  scores: { hook: 6, hierarchy: 7, copy: 8, brand: 7, fatigue: 5 },
+  composite: 6.4,
+  scores: { hook: 6, hierarchy: 7, copy: 8, brand: 7, fatigue: 5, offer: 8, emotion: 4 },
   dims: {
-    hook: { rationale: "Product is clearly visible and the offer is readable, but there is no pattern interrupt to stop a scrolling thumb. Static format with no motion, contrast surprise, or emotional trigger.", weak: "Static product shot with no scroll-stopping element. Likely to be skipped on mobile feed." },
-    hierarchy: { rationale: "Product is the clear focal point. Headline and price point sit naturally below. Clean layout with adequate white space. No competing visual elements.", weak: null },
-    copy: { rationale: "Offer is specific and immediately legible. Discount percentage and end date both visible. No ambiguity about what is being sold or what the deal is.", weak: null },
-    brand: { rationale: "Brand colours applied consistently. Logo positioned correctly. Font choice matches the brand system. Minor inconsistency in the CTA button colour weight.", weak: null },
-    fatigue: { rationale: "Plain white background product shot is one of the most overused formats in paid social. The format has been saturated for two-plus years across e-commerce categories.", weak: "Plain white background product format. High fatigue risk — audiences have learned to skip this format." }
+    hook:      { rationale: "Product is clearly visible and the offer is readable, but there is no pattern interrupt to stop a scrolling thumb. Static format with no motion, contrast surprise, or emotional trigger.", weak: "Static product shot with no scroll-stopping element. Likely to be skipped on mobile feed.", impact: "high" },
+    hierarchy: { rationale: "Product is the clear focal point. Headline and price point sit naturally below. Clean layout with adequate white space. No competing visual elements.", weak: null, impact: null },
+    copy:      { rationale: "Offer is specific and immediately legible. Discount percentage and end date both visible. No ambiguity about what is being sold or what the deal is.", weak: null, impact: null },
+    brand:     { rationale: "Brand colours applied consistently. Logo positioned correctly. Font choice matches the brand system. Minor inconsistency in the CTA button colour weight.", weak: null, impact: null },
+    fatigue:   { rationale: "Plain white background product shot is one of the most overused formats in paid social. The format has been saturated for two-plus years across e-commerce categories.", weak: "Plain white background product format. High fatigue risk — audiences have learned to skip this format.", impact: "high" },
+    offer:     { rationale: "Discount percentage and end date are both visible and immediately legible — the specific offer is unambiguous.", weak: null, impact: null },
+    emotion:   { rationale: "The creative communicates the offer logically but creates no emotional pull — it reads as a price tag, not a desire. Purely transactional.", weak: "No emotional hook — purely transactional. Viewers will compare price without engagement.", impact: "high" }
   },
-  notes: "Strong on clarity and brand, weak on attention capture. The copy does its job but the format won't stop the scroll. Fatigue signal is the main risk here.",
-  priority: "Test a lifestyle or contextual background version of this offer against the plain white to measure the CTR delta."
+  notes: "Strong on clarity and brand, weak on attention capture and emotional engagement. The copy does its job but the format won't stop the scroll and the offer-first framing generates no desire.",
+  priority: "Test a lifestyle or contextual background version of this offer against the plain white to measure CTR delta and add a desire-based headline alongside the price."
 },
 {
   rank: 3,
   file: "retargeting_abandoned-cart_v2.jpg",
   sub: "static",
   type: "image",
-  composite: 5.6,
-  scores: { hook: 5, hierarchy: 6, copy: 7, brand: 6, fatigue: 4 },
+  composite: 5.3,
+  scores: { hook: 5, hierarchy: 6, copy: 7, brand: 6, fatigue: 4, offer: 5, emotion: 4 },
   dims: {
-    hook: { rationale: "Retargeting context means the audience already knows the product, which reduces the hook burden slightly. Even so, the creative doesn't leverage that recognition with a specific reengagement angle.", weak: "No urgency or reengagement hook. Retargeting creatives need a specific reason to return, not just a product reminder." },
-    hierarchy: { rationale: "Product is identifiable but the composition has two competing focal points: the product image and a text overlay of equal visual weight.", weak: "Two competing focal points at equal weight. The eye doesn't know where to go first." },
-    copy: { rationale: "Reminder message is clear. 'You left something behind' framing is specific and relevant to an abandoned-cart audience. Lands in under two seconds.", weak: null },
-    brand: { rationale: "Brand colours present but the text weight on the overlay is lighter than the brand system standard, creating a visual inconsistency.", weak: "Text weight inconsistency with brand system. Feels off-brand at a glance." },
-    fatigue: { rationale: "Generic 'you left something' format with product image and text overlay is among the most replicated retargeting formats. No differentiating visual treatment.", weak: "Overused retargeting format with no visual differentiation. Audiences in this segment will have seen near-identical creatives from competitors." }
+    hook:      { rationale: "Retargeting context means the audience already knows the product, which reduces the hook burden slightly. Even so, the creative doesn't leverage that recognition with a specific reengagement angle.", weak: "No urgency or reengagement hook. Retargeting creatives need a specific reason to return, not just a product reminder.", impact: "high" },
+    hierarchy: { rationale: "Product is identifiable but the composition has two competing focal points: the product image and a text overlay of equal visual weight.", weak: "Two competing focal points at equal weight. The eye doesn't know where to go first.", impact: "high" },
+    copy:      { rationale: "Reminder message is clear. 'You left something behind' framing is specific and relevant to an abandoned-cart audience. Lands in under two seconds.", weak: null, impact: null },
+    brand:     { rationale: "Brand colours present but the text weight on the overlay is lighter than the brand system standard, creating a visual inconsistency.", weak: "Text weight inconsistency with brand system. Feels off-brand at a glance.", impact: "quick_win" },
+    fatigue:   { rationale: "Generic 'you left something' format with product image and text overlay is among the most replicated retargeting formats. No differentiating visual treatment.", weak: "Overused retargeting format with no visual differentiation. Audiences in this segment will have seen near-identical creatives from competitors.", impact: "high" },
+    offer:     { rationale: "The creative identifies the product but includes no incentive, discount, or urgency — the offer is just 'come back', which gives the audience no reason to act now.", weak: "No incentive or urgency offer. Retargeting audiences need a reason to act, not just a reminder.", impact: "high" },
+    emotion:   { rationale: "The retargeting angle is understated and generates no urgency or emotional pull — the creative fails to create the 'I should do something about this' feeling needed in this funnel stage.", weak: "No urgency or emotional pressure for a retargeting audience at this stage of the funnel.", impact: "high" }
   },
-  notes: "Copy angle is right for a retargeting audience but the execution is generic. Fatigue risk is high.",
-  priority: "Add a visual differentiator — a time-limited offer, social proof element, or a format change (video or UGC) to separate it from the noise in this audience segment."
+  notes: "Copy angle is right for a retargeting audience but the execution is generic. Fatigue risk is high, there's no offer incentive, and the emotional temperature is too low for a conversion-stage creative.",
+  priority: "Add a time-limited incentive and test a social-proof variant (reviews, 'X people bought this today') to introduce urgency and emotional validation."
 },
 {
   rank: 4,
   file: "retargeting_generic-cta.jpg",
   sub: "static",
   type: "image",
-  composite: 3.8,
-  scores: { hook: 3, hierarchy: 4, copy: 5, brand: 4, fatigue: 3 },
+  composite: 3.3,
+  scores: { hook: 3, hierarchy: 4, copy: 5, brand: 4, fatigue: 3, offer: 2, emotion: 2 },
   dims: {
-    hook: { rationale: "No visual trigger, no text hook, no motion. The creative opens on a product shot with a logo and a CTA button. There's nothing to stop a scroll.", weak: "No hook element of any kind. The creative assumes the audience will stop voluntarily." },
-    hierarchy: { rationale: "Logo, product, headline, and CTA button all compete at similar visual weights. No single element dominates. Reading order is unclear.", weak: "Four elements at equal weight with no clear visual priority. The reader's eye has nowhere to land." },
-    copy: { rationale: "Product name is legible but the headline doesn't state a benefit or offer. The CTA is 'Shop Now' with no supporting context.", weak: "'Shop Now' CTA with no offer, benefit, or urgency. Gives the audience no reason to act now rather than later." },
-    brand: { rationale: "Brand colours present but the layout doesn't follow the brand's established visual system. Feels like a template rather than a brand asset.", weak: "Template-style layout with no branded personality. Indistinguishable from competitor creative at a glance." },
-    fatigue: { rationale: "Logo-first layout, plain background, generic 'Shop Now' CTA. Hits three of the five most common ad fatigue indicators simultaneously.", weak: "Logo-first layout + plain background + generic CTA. Three high-fatigue signals in one creative." }
+    hook:      { rationale: "No visual trigger, no text hook, no motion. The creative opens on a product shot with a logo and a CTA button. There is nothing to stop a scroll.", weak: "No hook element of any kind. The creative assumes the audience will stop voluntarily.", impact: "critical" },
+    hierarchy: { rationale: "Logo, product, headline, and CTA button all compete at similar visual weights. No single element dominates. Reading order is unclear.", weak: "Four elements at equal weight with no clear visual priority. The reader's eye has nowhere to land.", impact: "critical" },
+    copy:      { rationale: "Product name is legible but the headline doesn't state a benefit or offer. The CTA is 'Shop Now' with no supporting context.", weak: "'Shop Now' CTA with no offer, benefit, or urgency. Gives the audience no reason to act now rather than later.", impact: "critical" },
+    brand:     { rationale: "Brand colours present but the layout doesn't follow the brand's established visual system. Feels like a template rather than a brand asset.", weak: "Template-style layout with no branded personality. Indistinguishable from competitor creative at a glance.", impact: "high" },
+    fatigue:   { rationale: "Logo-first layout, plain background, generic 'Shop Now' CTA. Hits three of the most common ad fatigue indicators simultaneously.", weak: "Logo-first layout + plain background + generic CTA. Three critical fatigue signals in one creative.", impact: "critical" },
+    offer:     { rationale: "'Shop Now' with no accompanying offer, benefit, or incentive. The viewer has no reason to act — there is nothing to shop for in the creative.", weak: "Completely absent offer — no price, no benefit, no incentive visible anywhere.", impact: "critical" },
+    emotion:   { rationale: "The creative is entirely emotionally inert — no feeling, no desire, no curiosity is generated. It expects the viewer to act without any emotional motivation.", weak: "Zero emotional engagement — no reason for the viewer to feel anything or want to act.", impact: "critical" }
   },
-  notes: "No hook, no visual hierarchy, no specific offer. Built around brand visibility rather than performance. For paid social, where the audience didn't choose to see the ad, every element needs to earn its place.",
+  notes: "No hook, no visual hierarchy, no specific offer, no emotional engagement. Built around brand visibility rather than performance. For paid social, where the audience didn't choose to see the ad, every element needs to earn its place.",
   priority: "Complete rebuild starting from the hook. The brand assets are present — the problem is how they're deployed."
 }];
 
@@ -329,7 +339,7 @@ function ReportHeader() {
             fontSize: 17, lineHeight: 1.6, color: "#1A1A1A",
             margin: 0, maxWidth: 700
           }}>
-            This is what a report looks like. Four sample ad creatives, each scored across five dimensions with specific weak signals flagged on any dimension below 7.
+            This is what a report looks like. Four sample ad creatives, each scored across seven dimensions with impact-tiered weak signals flagged on any dimension scoring 6 or below.
           </p>
         </div>
 
@@ -401,7 +411,7 @@ function RankedSummary() {
           {/* Header */}
           <div className="demo-row-hdr" style={{
             display: "grid",
-            gridTemplateColumns: "44px 2fr 1.2fr repeat(5, 0.7fr)",
+            gridTemplateColumns: "44px 2fr 1.2fr repeat(7, 0.7fr)",
             background: "#FDF6EE",
             borderBottom: "1px solid #E8D8C4",
             padding: "14px 24px",
@@ -417,6 +427,8 @@ function RankedSummary() {
             <span>Copy</span>
             <span>Brand</span>
             <span>Fatigue</span>
+            <span>Offer</span>
+            <span>Emot.</span>
           </div>
 
           {CREATIVES.map((c, i) =>
@@ -433,7 +445,7 @@ function SummaryRow({ c, last }) {
   return (
     <a href={`#creative-${c.rank}`} className="demo-row" style={{
       display: "grid",
-      gridTemplateColumns: "44px 2fr 1.2fr repeat(5, 0.7fr)",
+      gridTemplateColumns: "44px 2fr 1.2fr repeat(7, 0.7fr)",
       padding: "18px 24px",
       borderBottom: last ? "none" : "1px solid #F0E5D2",
       alignItems: "center", gap: 16,
@@ -515,21 +527,24 @@ function ScoreBar({ value, max = 10, height = 8 }) {
 
 }
 
-/* =============== WEAK SIGNAL CHIP =============== */
-function WeakChip() {
+/* =============== IMPACT BADGE =============== */
+const IMPACT_STYLES = {
+  critical:  { bg: "#FFEBEE", border: "#EF9A9A", color: "#B71C1C", label: "CRITICAL" },
+  high:      { bg: "#FFF3E0", border: "#FF9800", color: "#E65100", label: "HIGH" },
+  quick_win: { bg: "#E8F4FD", border: "#90CAF9", color: "#1565C0", label: "QUICK WIN" }
+};
+function ImpactBadge({ impact }) {
+  const s = IMPACT_STYLES[impact] || IMPACT_STYLES.high;
   return (
     <span style={{
-      display: "inline-flex", alignItems: "center", gap: 6,
-      background: "rgba(152, 88, 48, 0.15)",
-      color: "#985830",
-      padding: "3px 9px", borderRadius: 20,
-      fontSize: 10, fontWeight: 700, letterSpacing: "0.10em",
-      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap"
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: s.bg, border: `1px solid ${s.border}`, color: s.color,
+      padding: "2px 8px", borderRadius: 4,
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+      lineHeight: 1.5, whiteSpace: "nowrap", flexShrink: 0
     }}>
-      <span style={{ width: 5, height: 5, borderRadius: 999, background: "#985830" }} />
-      Weak signal
+      {s.label}
     </span>);
-
 }
 
 /* =============== BREAKDOWNS =============== */
@@ -550,7 +565,7 @@ function Breakdowns() {
             What's working, what isn't, what to do about it.
           </h2>
           <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6B6B6B", margin: 0, maxWidth: 680 }}>
-            Each creative gets a per-dimension rationale, weak signals flagged on any score of 6 or below, and a priority fix.
+            Each creative gets a per-dimension rationale, impact-tiered weak signals flagged on any score of 6 or below (Critical / High / Quick Win), and a priority fix.
           </p>
         </div>
 
@@ -732,19 +747,17 @@ function DimRow({ k, dim, score, last }) {
         {dim.weak &&
         <div style={{
           marginTop: 10,
-          background: "rgba(152, 88, 48, 0.08)",
-          border: "1px solid rgba(152, 88, 48, 0.20)",
+          background: dim.impact === "critical" ? "#FFEBEE" : dim.impact === "quick_win" ? "#E8F4FD" : "#FFF3E0",
+          border: `1px solid ${dim.impact === "critical" ? "#EF9A9A" : dim.impact === "quick_win" ? "#90CAF9" : "#FF9800"}`,
           borderRadius: 6,
           padding: "10px 12px",
           display: "flex", gap: 10, alignItems: "flex-start"
         }}>
-            <div style={{ marginTop: 1 }}>
-              <WeakChip />
-            </div>
-            <div style={{
-            fontSize: 13, lineHeight: 1.55, color: "#1A1A1A", flex: 1
-          }}>{dim.weak}</div>
+          <div style={{ marginTop: 1, flexShrink: 0 }}>
+            <ImpactBadge impact={dim.impact} />
           </div>
+          <div style={{ fontSize: 13, lineHeight: 1.55, color: "#1A1A1A", flex: 1 }}>{dim.weak}</div>
+        </div>
         }
       </div>
     </div>);
