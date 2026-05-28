@@ -1,652 +1,875 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creative Scoring — Example Report | Phillips.</title>
-  <meta name="description" content="An example creative analysis report. Four ad creatives scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
-  <link rel="canonical" href="https://www.phillips-uk.com/creative-analysis-demo">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
-  <link rel="stylesheet" href="/brand.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<!-- End Google Tag Manager -->
+<title>Creative Scoring — Example Report | Phillips.</title>
+<meta name="description" content="An example creative analysis report. Four ad creatives scored across five dimensions: hook quality, visual hierarchy, copy clarity, brand consistency, and fatigue signals.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<style>
+  :root {
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --ink: #1A1A1A;
+    --white: #FFFFFF;
+  }
+</style>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+  .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .sec-white { background: #fff; padding: 80px 0; }
+  .sec-cream { background: #FDF6EE; padding: 80px 0; }
+  ::selection { background: #985830; color: #fff; }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+</style>
+<style>
+  /* Mobile hamburger + drawer */
+  .mob-hamburger { display: none; position: fixed; top: 13px; right: 16px; z-index: 300; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .mob-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 400; }
+  .mob-drawer.open { display: block; }
+  .mob-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+  .mob-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .mob-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .mob-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
+  .mob-drawer-link:hover, .mob-drawer-link.active { color: #1A1A1A; }
+  .mob-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .mob-drawer-cta:hover { background: #7A3F1F; }
 
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
-  <!-- End Google Tag Manager -->
-
-  <style>
-    /* ── Layout ── */
-    .page-wrap {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
-    }
-
-    /* ── Page header ── */
-    .report-page-header {
-      padding: 52px 0 40px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 48px;
-    }
-
-    .report-page-header .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: var(--mid);
-      text-decoration: none;
-      margin-bottom: 20px;
-      transition: color 0.15s;
-    }
-
-    .report-page-header .back-link:hover { color: var(--amber); }
-
-    .report-page-header .section-label {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--amber);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 14px;
-      margin-bottom: 14px;
-    }
-
-    .report-page-header h1 {
-      font-size: clamp(26px, 4vw, 38px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-      margin-bottom: 10px;
-      line-height: 1.15;
-    }
-
-    .report-page-header p {
-      font-size: 15px;
-      color: var(--mid);
-      max-width: 560px;
-      line-height: 1.6;
-    }
-
-    /* ── Ranked summary table ── */
-    .ranked-table-wrap {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      box-shadow: 0 1px 4px rgba(152,88,48,0.08);
-      margin-bottom: 40px;
-    }
-
-    .ranked-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .ranked-table th {
-      background: var(--amber);
-      color: var(--white);
-      font-weight: 600;
-      padding: 11px 14px;
-      text-align: left;
-      white-space: nowrap;
-      font-size: 12px;
-      letter-spacing: 0.02em;
-    }
-
-    .ranked-table td {
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
-
-    .ranked-table tr:last-child td { border-bottom: none; }
-    .ranked-table tr:nth-child(even) td { background: var(--cream); }
-    .ranked-table tr:nth-child(odd)  td { background: var(--white); }
-
-    .creative-name {
-      font-weight: 500;
-      color: var(--ink);
-      font-size: 12px;
-      max-width: 200px;
-    }
-
-    .score-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 38px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .score-badge.green { background: #E8F5E9; color: #2E7D32; }
-    .score-badge.amber { background: #FFF3E0; color: #E65100; }
-    .score-badge.red   { background: #FFEBEE; color: #C62828; }
-
-    .dim-cell { text-align: center; min-width: 68px; }
-
-    .dim-num {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .dim-bar-track {
-      height: 6px;
-      background: var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-      width: 40px;
-      margin: 0 auto;
-    }
-
-    .dim-bar-fill { height: 100%; border-radius: 3px; }
-    .dim-bar-fill.green { background: #4CAF50; }
-    .dim-bar-fill.amber { background: #FF9800; }
-    .dim-bar-fill.red   { background: #F44336; }
-
-    /* ── Detail cards ── */
-    .detail-cards { display: flex; flex-direction: column; gap: 32px; }
-
-    .detail-card {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(152,88,48,0.08);
-    }
-
-    .detail-card-header {
-      background: var(--amber);
-      color: var(--white);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .detail-card-meta { display: flex; align-items: center; gap: 10px; }
-
-    .detail-card-rank {
-      font-size: 12px;
-      opacity: 0.7;
-      font-weight: 400;
-    }
-
-    .detail-card-filename {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .detail-card-badge {
-      background: rgba(255,255,255,0.2);
-      color: var(--white);
-      font-size: 14px;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 4px;
-      white-space: nowrap;
-    }
-
-    .detail-dim-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .detail-dim-table th {
-      background: var(--cream);
-      color: var(--mid);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 9px 16px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .detail-dim-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-
-    .detail-dim-table tr:last-child td { border-bottom: none; }
-
-    .detail-dim-name {
-      font-weight: 700;
-      color: var(--amber);
-      font-size: 12px;
-      white-space: nowrap;
-      width: 140px;
-    }
-
-    .detail-dim-score { width: 54px; text-align: center; }
-
-    .detail-dim-rationale {
-      color: var(--ink);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .weak-badge {
-      display: inline-block;
-      background: #FFF3E0;
-      border: 1px solid #FF9800;
-      color: #E65100;
-      border-radius: 3px;
-      padding: 1px 8px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-top: 6px;
-    }
-
-    .overall-notes {
-      background: var(--cream);
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      font-size: 13px;
-      color: var(--ink);
-      line-height: 1.6;
-    }
-
-    .overall-notes strong {
-      color: var(--amber);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    /* ── Section heading ── */
-    .section-heading {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 20px;
-      letter-spacing: -0.01em;
-    }
-
-    /* ── CTA strip ── */
-    .demo-cta-strip {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 28px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      margin-top: 48px;
-      box-shadow: 0 1px 4px rgba(152,88,48,0.08);
-    }
-
-    .demo-cta-strip p {
-      font-size: 15px;
-      color: var(--ink);
-      margin: 0;
-      line-height: 1.5;
-    }
-
-    .demo-cta-strip p span {
-      display: block;
-      font-size: 13px;
-      color: var(--mid);
-      margin-top: 4px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      font-family: var(--font);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 6px;
-      padding: 11px 22px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      border: 1.5px solid transparent;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .btn-primary { background: var(--amber); color: var(--white); border-color: var(--amber); }
-    .btn-primary:hover { background: var(--amber-dark); border-color: var(--amber-dark); }
-
-    /* ── Responsive ── */
-    @media (max-width: 640px) {
-      .ranked-table th:nth-child(n+4),
-      .ranked-table td:nth-child(n+4) { display: none; }
-      .detail-dim-name { min-width: 100px; width: 100px; }
-      .demo-cta-strip { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+  @media (max-width: 900px) {
+    header nav { display: none !important; }
+    header > div { padding: 0 20px !important; }
+    .mob-hamburger { display: flex !important; align-items: center; justify-content: center; }
+    .page-w, .read-w { padding: 0 20px !important; }
+  }
+  @media (max-width: 700px) {
+    /* Stats strip: 4-col → 2-col */
+    .demo-stats-strip { grid-template-columns: repeat(2, 1fr) !important; }
+    /* Summary table: scroll horizontally on mobile */
+    .demo-ranked-wrap { overflow-x: auto !important; }
+    .demo-row-hdr, .demo-row { min-width: 520px; display: grid; }
+    /* Per-dimension table in each card: scroll horizontally */
+    .demo-dim-wrap { overflow-x: auto !important; }
+    .demo-dim-hdr, .demo-dim-row { min-width: 440px; }
+    /* Overall notes + priority fix: stack vertically */
+    .demo-card-bottom { grid-template-columns: 1fr !important; }
+    /* CTA strip: stack */
+    .demo-cta-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    .demo-cta-grid > div:last-child { display: flex; justify-content: flex-start; }
+    /* Card padding reduce */
+    article { padding: 20px !important; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="ph">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div id="root"></div>
 
-<!-- GTM noscript -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-
-<nav class="p-nav">
-  <a href="/" class="p-nav__logo">Phillips<span class="dot">.</span></a>
-  <div class="p-nav__links">
-    <a href="/landing-page-audit" class="p-nav__link">Landing Page Audit</a>
-    <a href="/google-ads-audit" class="p-nav__link">Google Ads Audit</a>
-    <a href="/guides/" class="p-nav__link">Guides</a>
+<!-- Mobile nav (appears on ≤900px; overlays the React-rendered sticky header) -->
+<button class="mob-hamburger" onclick="document.getElementById('demo-mob-drawer').classList.add('open')" aria-label="Open menu">
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+</button>
+<div id="demo-mob-drawer" class="mob-drawer">
+  <div class="mob-drawer-backdrop" onclick="document.getElementById('demo-mob-drawer').classList.remove('open')"></div>
+  <div class="mob-drawer-panel">
+    <button class="mob-drawer-close" onclick="document.getElementById('demo-mob-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/landing-page-audit" class="mob-drawer-link">Landing Page Audit</a>
+    <a href="/google-ads-audit" class="mob-drawer-link">Google Ads Audit</a>
+    <a href="/creative-analysis" class="mob-drawer-link active">Creative Scoring</a>
+    <a href="/guides/" class="mob-drawer-link">Guides</a>
+    <a href="/#contact" class="mob-drawer-cta">Get in touch</a>
   </div>
-  <a href="/#contact" class="p-nav__cta">Get in touch</a>
-  <button class="p-nav__burger" id="p-nav-burger" aria-label="Open menu" aria-expanded="false">
-    <span class="p-nav__burger-line"></span>
-    <span class="p-nav__burger-line"></span>
-    <span class="p-nav__burger-line"></span>
-  </button>
-</nav>
-<div class="p-nav__mobile" id="p-nav-mobile">
-  <a href="/landing-page-audit" class="p-nav__mobile-link">Landing Page Audit</a>
-  <a href="/google-ads-audit" class="p-nav__mobile-link">Google Ads Audit</a>
-  <a href="/guides/" class="p-nav__mobile-link">Guides</a>
-  <a href="/#contact" class="p-nav__mobile-cta">Get in touch</a>
 </div>
 
-<div class="page-wrap">
+<script type="text/babel">
 
-  <!-- ── Page header ── -->
-  <div class="report-page-header">
-    <a href="/creative-analysis" class="back-link">&#8592; Back to Creative Scoring</a>
-    <div class="section-label">EXAMPLE REPORT</div>
-    <h1>Four creatives. Scored and ranked.</h1>
-    <p>This is what a report looks like. Four sample ad creatives, each scored across five dimensions with specific weak signals flagged on any dimension below 7.</p>
-  </div>
 
-  <!-- ── Ranked summary table ── -->
-  <h2 class="section-heading">Ranked summary</h2>
-  <div class="ranked-table-wrap">
-    <table class="ranked-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Creative</th>
-          <th>Score</th>
-          <th>Hook</th>
-          <th>Hierarchy</th>
-          <th>Copy</th>
-          <th>Brand</th>
-          <th>Fatigue</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td><div class="creative-name">summer_prospecting_ugc-hero.mp4 <span style="color:var(--mid);font-weight:400">[opening]</span></div></td>
-          <td><span class="score-badge green">7.2</span></td>
-          <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td><div class="creative-name">summer_prospecting_static-offer.jpg</div></td>
-          <td><span class="score-badge amber">6.6</span></td>
-          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">8</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:80%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td><div class="creative-name">retargeting_abandoned-cart_v2.jpg</div></td>
-          <td><span class="score-badge amber">5.6</span></td>
-          <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">7</span><div class="dim-bar-track"><div class="dim-bar-fill green" style="width:70%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">6</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:60%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td><div class="creative-name">retargeting_generic-cta.jpg</div></td>
-          <td><span class="score-badge red">3.8</span></td>
-          <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">5</span><div class="dim-bar-track"><div class="dim-bar-fill amber" style="width:50%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">4</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:40%"></div></div></td>
-          <td class="dim-cell"><span class="dim-num">3</span><div class="dim-bar-track"><div class="dim-bar-fill red" style="width:30%"></div></div></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+/* =============== SCORE COLOR MAP =============== */
+function scoreColor(n) {
+  if (n >= 7) return { fg: "#2D6A4F", bg: "#E1EFE6", border: "#BFD9C8", label: "Strong" };
+  if (n >= 5) return { fg: "#985830", bg: "#F5EBD9", border: "#E8D8C4", label: "Average" };
+  return { fg: "#C0392B", bg: "#F8E0DC", border: "#EBC4B5", label: "Weak" };
+}
 
-  <!-- ── Detail cards ── -->
-  <h2 class="section-heading">Creative breakdowns</h2>
-  <div class="detail-cards">
+const DIM_KEYS = ["hook", "hierarchy", "copy", "brand", "fatigue"];
+const DIM_LABELS = {
+  hook: "Hook quality",
+  hierarchy: "Visual hierarchy",
+  copy: "Copy clarity",
+  brand: "Brand consistency",
+  fatigue: "Fatigue signals"
+};
 
-    <!-- #1 -->
-    <div class="detail-card">
-      <div class="detail-card-header">
-        <div class="detail-card-meta">
-          <span class="detail-card-rank">#1</span>
-          <span class="detail-card-filename">summer_prospecting_ugc-hero.mp4 [opening]</span>
-        </div>
-        <span class="detail-card-badge">7.2 / 10</span>
-      </div>
-      <table class="detail-dim-table">
-        <thead>
-          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="detail-dim-name">Hook quality</td>
-            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
-            <td class="detail-dim-rationale">Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Visual hierarchy</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive.<br><span class="weak-badge">Weak signal: Background element in bottom-right competes with the subject for attention.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Copy clarity</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">The headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text is present in this frame, which is acceptable for an opening hook.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Brand consistency</td>
-            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
-            <td class="detail-dim-rationale">Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.<br><span class="weak-badge">Weak signal: No logo or brand lockup. This creative could belong to any brand.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Fatigue signals</td>
-            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
-            <td class="detail-dim-rationale">Format avoids common fatigued treatments. No plain white background, no static talking head with no hook variant. The motion-first approach is less saturated than most UGC in this category.</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="overall-notes">
-        <strong>Overall notes</strong>
-        The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring. Priority fix: add a subtle branded element to the bottom-left corner without obscuring the hook.
-      </div>
-    </div>
+/* =============== DATA =============== */
+const CREATIVES = [
+{
+  rank: 1,
+  file: "summer_prospecting_ugc-hero.mp4",
+  sub: "opening frame",
+  type: "video",
+  composite: 7.2,
+  scores: { hook: 8, hierarchy: 7, copy: 7, brand: 6, fatigue: 8 },
+  dims: {
+    hook: { rationale: "Close-up motion in the opening frame creates an immediate pattern interrupt. The on-screen text caption loads within the first second, giving the viewer a clear reason to stay.", weak: null },
+    hierarchy: { rationale: "Subject occupies the upper two-thirds of the frame with negative space used cleanly below. Reading order is intuitive.", weak: "Background element in bottom-right competes with the subject for attention." },
+    copy: { rationale: "Headline caption is legible and specific. The value proposition is clear in under two seconds. No explicit CTA text in this frame — acceptable for an opening hook.", weak: null },
+    brand: { rationale: "Amber overlay text matches product palette but no logo or consistent brand lockup visible in this frame.", weak: "No logo or brand lockup. This creative could belong to any brand." },
+    fatigue: { rationale: "Format avoids common fatigued treatments. No plain white background, no static talking-head variant. The motion-first approach is less saturated than most UGC in this category.", weak: null }
+  },
+  notes: "The opening frame lands a strong pattern interrupt with close-up motion and an on-screen text hook. Visual hierarchy is clean. The main gap is brand anchoring.",
+  priority: "Add a subtle branded element to the bottom-left corner without obscuring the hook."
+},
+{
+  rank: 2,
+  file: "summer_prospecting_static-offer.jpg",
+  sub: "static",
+  type: "image",
+  composite: 6.6,
+  scores: { hook: 6, hierarchy: 7, copy: 8, brand: 7, fatigue: 5 },
+  dims: {
+    hook: { rationale: "Product is clearly visible and the offer is readable, but there is no pattern interrupt to stop a scrolling thumb. Static format with no motion, contrast surprise, or emotional trigger.", weak: "Static product shot with no scroll-stopping element. Likely to be skipped on mobile feed." },
+    hierarchy: { rationale: "Product is the clear focal point. Headline and price point sit naturally below. Clean layout with adequate white space. No competing visual elements.", weak: null },
+    copy: { rationale: "Offer is specific and immediately legible. Discount percentage and end date both visible. No ambiguity about what is being sold or what the deal is.", weak: null },
+    brand: { rationale: "Brand colours applied consistently. Logo positioned correctly. Font choice matches the brand system. Minor inconsistency in the CTA button colour weight.", weak: null },
+    fatigue: { rationale: "Plain white background product shot is one of the most overused formats in paid social. The format has been saturated for two-plus years across e-commerce categories.", weak: "Plain white background product format. High fatigue risk — audiences have learned to skip this format." }
+  },
+  notes: "Strong on clarity and brand, weak on attention capture. The copy does its job but the format won't stop the scroll. Fatigue signal is the main risk here.",
+  priority: "Test a lifestyle or contextual background version of this offer against the plain white to measure the CTR delta."
+},
+{
+  rank: 3,
+  file: "retargeting_abandoned-cart_v2.jpg",
+  sub: "static",
+  type: "image",
+  composite: 5.6,
+  scores: { hook: 5, hierarchy: 6, copy: 7, brand: 6, fatigue: 4 },
+  dims: {
+    hook: { rationale: "Retargeting context means the audience already knows the product, which reduces the hook burden slightly. Even so, the creative doesn't leverage that recognition with a specific reengagement angle.", weak: "No urgency or reengagement hook. Retargeting creatives need a specific reason to return, not just a product reminder." },
+    hierarchy: { rationale: "Product is identifiable but the composition has two competing focal points: the product image and a text overlay of equal visual weight.", weak: "Two competing focal points at equal weight. The eye doesn't know where to go first." },
+    copy: { rationale: "Reminder message is clear. 'You left something behind' framing is specific and relevant to an abandoned-cart audience. Lands in under two seconds.", weak: null },
+    brand: { rationale: "Brand colours present but the text weight on the overlay is lighter than the brand system standard, creating a visual inconsistency.", weak: "Text weight inconsistency with brand system. Feels off-brand at a glance." },
+    fatigue: { rationale: "Generic 'you left something' format with product image and text overlay is among the most replicated retargeting formats. No differentiating visual treatment.", weak: "Overused retargeting format with no visual differentiation. Audiences in this segment will have seen near-identical creatives from competitors." }
+  },
+  notes: "Copy angle is right for a retargeting audience but the execution is generic. Fatigue risk is high.",
+  priority: "Add a visual differentiator — a time-limited offer, social proof element, or a format change (video or UGC) to separate it from the noise in this audience segment."
+},
+{
+  rank: 4,
+  file: "retargeting_generic-cta.jpg",
+  sub: "static",
+  type: "image",
+  composite: 3.8,
+  scores: { hook: 3, hierarchy: 4, copy: 5, brand: 4, fatigue: 3 },
+  dims: {
+    hook: { rationale: "No visual trigger, no text hook, no motion. The creative opens on a product shot with a logo and a CTA button. There's nothing to stop a scroll.", weak: "No hook element of any kind. The creative assumes the audience will stop voluntarily." },
+    hierarchy: { rationale: "Logo, product, headline, and CTA button all compete at similar visual weights. No single element dominates. Reading order is unclear.", weak: "Four elements at equal weight with no clear visual priority. The reader's eye has nowhere to land." },
+    copy: { rationale: "Product name is legible but the headline doesn't state a benefit or offer. The CTA is 'Shop Now' with no supporting context.", weak: "'Shop Now' CTA with no offer, benefit, or urgency. Gives the audience no reason to act now rather than later." },
+    brand: { rationale: "Brand colours present but the layout doesn't follow the brand's established visual system. Feels like a template rather than a brand asset.", weak: "Template-style layout with no branded personality. Indistinguishable from competitor creative at a glance." },
+    fatigue: { rationale: "Logo-first layout, plain background, generic 'Shop Now' CTA. Hits three of the five most common ad fatigue indicators simultaneously.", weak: "Logo-first layout + plain background + generic CTA. Three high-fatigue signals in one creative." }
+  },
+  notes: "No hook, no visual hierarchy, no specific offer. Built around brand visibility rather than performance. For paid social, where the audience didn't choose to see the ad, every element needs to earn its place.",
+  priority: "Complete rebuild starting from the hook. The brand assets are present — the problem is how they're deployed."
+}];
 
-    <!-- #2 -->
-    <div class="detail-card">
-      <div class="detail-card-header">
-        <div class="detail-card-meta">
-          <span class="detail-card-rank">#2</span>
-          <span class="detail-card-filename">summer_prospecting_static-offer.jpg</span>
-        </div>
-        <span class="detail-card-badge">6.6 / 10</span>
-      </div>
-      <table class="detail-dim-table">
-        <thead>
-          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="detail-dim-name">Hook quality</td>
-            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
-            <td class="detail-dim-rationale">Product is clearly visible and the offer is readable, but there is no pattern interrupt to stop a scrolling thumb. Static format with no motion, contrast surprise, or emotional trigger.<br><span class="weak-badge">Weak signal: Static product shot with no scroll-stopping element. Likely to be skipped on mobile feed.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Visual hierarchy</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">Product is the clear focal point. Headline and price point sit naturally below it. Clean layout with adequate white space. No competing visual elements.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Copy clarity</td>
-            <td class="detail-dim-score"><span class="score-badge green">8</span></td>
-            <td class="detail-dim-rationale">Offer is specific and immediately legible. Discount percentage and end date are both visible. No ambiguity about what is being sold or what the deal is.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Brand consistency</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">Brand colours applied consistently. Logo positioned correctly. Font choice matches the brand system. Minor inconsistency in the CTA button colour weight.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Fatigue signals</td>
-            <td class="detail-dim-score"><span class="score-badge amber">5</span></td>
-            <td class="detail-dim-rationale">Plain white background product shot is one of the most overused formats in paid social. The format has been saturated for two-plus years across e-commerce categories.<br><span class="weak-badge">Weak signal: Plain white background product format. High fatigue risk — audiences have learned to skip this format.</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="overall-notes">
-        <strong>Overall notes</strong>
-        Strong on clarity and brand, weak on attention capture. The copy does its job but the format will not stop the scroll. The fatigue signal is the main risk here. Test a lifestyle or contextual background version of this offer against the plain white to measure the CTR delta.
-      </div>
-    </div>
 
-    <!-- #3 -->
-    <div class="detail-card">
-      <div class="detail-card-header">
-        <div class="detail-card-meta">
-          <span class="detail-card-rank">#3</span>
-          <span class="detail-card-filename">retargeting_abandoned-cart_v2.jpg</span>
-        </div>
-        <span class="detail-card-badge">5.6 / 10</span>
-      </div>
-      <table class="detail-dim-table">
-        <thead>
-          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="detail-dim-name">Hook quality</td>
-            <td class="detail-dim-score"><span class="score-badge amber">5</span></td>
-            <td class="detail-dim-rationale">Retargeting context means the audience already knows the product, which reduces the hook burden slightly. Even so, the creative does not leverage that recognition with a specific reengagement angle.<br><span class="weak-badge">Weak signal: No urgency or reengagement hook. Retargeting creatives need a specific reason to return, not just a product reminder.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Visual hierarchy</td>
-            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
-            <td class="detail-dim-rationale">Product is identifiable but the composition has two competing focal points: the product image and a text overlay of equal visual weight.<br><span class="weak-badge">Weak signal: Two competing focal points at equal weight. The eye does not know where to go first.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Copy clarity</td>
-            <td class="detail-dim-score"><span class="score-badge green">7</span></td>
-            <td class="detail-dim-rationale">The reminder message is clear. "You left something behind" framing is specific and relevant to an abandoned cart audience. Message lands in under two seconds.</td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Brand consistency</td>
-            <td class="detail-dim-score"><span class="score-badge amber">6</span></td>
-            <td class="detail-dim-rationale">Brand colours are present but the text weight used on the overlay is lighter than the brand system standard, creating a visual inconsistency.<br><span class="weak-badge">Weak signal: Text weight inconsistency with brand system. Feels off-brand at a glance.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Fatigue signals</td>
-            <td class="detail-dim-score"><span class="score-badge red">4</span></td>
-            <td class="detail-dim-rationale">Generic "you left something" format with product image and text overlay is among the most replicated retargeting formats. No differentiating visual treatment.<br><span class="weak-badge">Weak signal: Overused retargeting format with no visual differentiation. Audiences in this segment will have seen near-identical creatives from competitors.</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="overall-notes">
-        <strong>Overall notes</strong>
-        The copy angle is right for a retargeting audience but the execution is generic. Fatigue risk is high. The format needs a visual differentiator: a time-limited offer, social proof element, or a format change (video or UGC) to separate it from the noise in this audience segment.
-      </div>
-    </div>
+/* =============== BUTTONS =============== */
+function BtnFilled({ children, onClick, large, href }) {
+  const [h, setH] = React.useState(false);
+  const C = href ? "a" : "button";
+  return (
+    <C onClick={onClick} href={href} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    style={{
+      background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+      padding: large ? "16px 32px" : "14px 30px",
+      fontSize: large ? 15 : 14, fontWeight: 600,
+      borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1)",
+      letterSpacing: "-0.005em",
+      textDecoration: "none",
+      display: "inline-flex", alignItems: "center", gap: 6
+    }}>{children}</C>);
 
-    <!-- #4 -->
-    <div class="detail-card">
-      <div class="detail-card-header">
-        <div class="detail-card-meta">
-          <span class="detail-card-rank">#4</span>
-          <span class="detail-card-filename">retargeting_generic-cta.jpg</span>
-        </div>
-        <span class="detail-card-badge">3.8 / 10</span>
-      </div>
-      <table class="detail-dim-table">
-        <thead>
-          <tr><th>Dimension</th><th>Score</th><th>Rationale</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="detail-dim-name">Hook quality</td>
-            <td class="detail-dim-score"><span class="score-badge red">3</span></td>
-            <td class="detail-dim-rationale">No visual trigger, no text hook, no motion. The creative opens on a product shot with a logo and a CTA button. There is nothing to stop a scroll.<br><span class="weak-badge">Weak signal: No hook element of any kind. The creative assumes the audience will stop voluntarily.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Visual hierarchy</td>
-            <td class="detail-dim-score"><span class="score-badge red">4</span></td>
-            <td class="detail-dim-rationale">Logo, product, headline, and CTA button all compete at similar visual weights. No single element dominates. Reading order is unclear.<br><span class="weak-badge">Weak signal: Four elements at equal weight with no clear visual priority. The reader's eye has nowhere to land.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Copy clarity</td>
-            <td class="detail-dim-score"><span class="score-badge amber">5</span></td>
-            <td class="detail-dim-rationale">The product name is legible but the headline does not state a benefit or offer. The CTA is "Shop Now" with no supporting context.<br><span class="weak-badge">Weak signal: "Shop Now" CTA with no offer, benefit, or urgency. Gives the audience no reason to act now rather than later.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Brand consistency</td>
-            <td class="detail-dim-score"><span class="score-badge red">4</span></td>
-            <td class="detail-dim-rationale">Brand colours are present but the layout does not follow the brand's established visual system. Feels like a template rather than a brand asset.<br><span class="weak-badge">Weak signal: Template-style layout with no branded personality. Indistinguishable from competitor creative at a glance.</span></td>
-          </tr>
-          <tr>
-            <td class="detail-dim-name">Fatigue signals</td>
-            <td class="detail-dim-score"><span class="score-badge red">3</span></td>
-            <td class="detail-dim-rationale">Logo-first layout, plain background, generic "Shop Now" CTA. This creative hits three of the five most common ad fatigue indicators simultaneously.<br><span class="weak-badge">Weak signal: Logo-first layout + plain background + generic CTA. Three high-fatigue signals in one creative.</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="overall-notes">
-        <strong>Overall notes</strong>
-        This creative has no hook, no visual hierarchy, and no specific offer. It is built around brand visibility rather than performance. For paid social, where the audience did not choose to see the ad, every element needs to earn its place. This creative needs a complete rebuild starting from the hook. The brand assets are present — the problem is how they are deployed.
-      </div>
-    </div>
+}
 
-  </div>
+function BtnOutline({ children, onClick, href }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <a href={href} onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    style={{
+      background: h ? "#985830" : "transparent",
+      color: h ? "#fff" : "#985830",
+      border: "1.5px solid #985830",
+      padding: "10px 18px",
+      fontSize: 13, fontWeight: 600,
+      borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+      textDecoration: "none",
+      display: "inline-flex", alignItems: "center", gap: 8,
+      transition: "background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1)",
+      letterSpacing: "-0.005em"
+    }}>{children}</a>);
 
-  <!-- ── CTA strip ── -->
-  <div class="demo-cta-strip">
-    <p>
-      Run this on your own creatives.
-      <span>Upload images or videos. Each one scored and ranked in the same format.</span>
-    </p>
-    <a href="/creative-analysis" class="btn btn-primary">Score your creatives</a>
-  </div>
+}
 
-</div>
+function BtnFilledSmall({ children, onClick }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    style={{
+      background: h ? "#7A3F1F" : "#985830", color: "#fff", border: 0,
+      padding: "10px 20px", fontSize: 13, fontWeight: 600,
+      borderRadius: 4, cursor: "pointer", fontFamily: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1)"
+    }}>{children}</button>);
 
-<script>
-(function(){
-  var burger=document.getElementById('p-nav-burger');
-  var mobile=document.getElementById('p-nav-mobile');
-  if(!burger||!mobile)return;
-  burger.addEventListener('click',function(){
-    var open=burger.getAttribute('aria-expanded')==='true';
-    burger.setAttribute('aria-expanded',String(!open));
-    var nav=document.querySelector('.p-nav');
-    var offset=nav?nav.getBoundingClientRect().bottom+window.scrollY:64;
-    mobile.style.top=offset+'px';
-    mobile.style.display=open?'none':'block';
+}
+
+/* =============== NAV =============== */
+function Nav() {
+  const linkStyle = (active) => ({
+    fontSize: 14, fontWeight: 500,
+    color: active ? "#1A1A1A" : "#6B6B6B",
+    textDecoration: "none",
+    transition: "color 150ms cubic-bezier(0.2,0,0,1)"
   });
-})();
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "saturate(120%)",
+      borderBottom: "1px solid #E8D8C4", height: 64
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 32px"
+      }}>
+        <a href="/" style={{ textDecoration: "none", fontSize: 24, fontWeight: 700, letterSpacing: "-0.01em", color: "#1A1A1A", lineHeight: 1 }}>
+          Phillips<span style={{ color: "#985830" }}>.</span>
+        </a>
+        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <a href="/landing-page-audit" style={linkStyle(false)}>Landing Page Audit</a>
+          <a href="/google-ads-audit" style={linkStyle(false)}>Google Ads Audit</a>
+          <a href="/creative-analysis" style={linkStyle(true)}>Creative Scoring</a>
+          <a href="/guides/" style={linkStyle(false)}>Guides</a>
+          <BtnFilledSmall onClick={() => window.location.href = "/#contact"}>Get in touch</BtnFilledSmall>
+        </nav>
+      </div>
+    </header>);
+
+}
+
+/* =============== EYEBROW =============== */
+function Eyebrow({ children, color = "#985830" }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+      textTransform: "uppercase", color
+    }}>{children}</span>);
+
+}
+
+/* =============== REPORT HEADER =============== */
+function ReportHeader() {
+  const avg = (CREATIVES.reduce((s, c) => s + c.composite, 0) / CREATIVES.length).toFixed(1);
+  const weakCount = CREATIVES.reduce((n, c) =>
+  n + DIM_KEYS.filter((k) => c.dims[k].weak).length, 0);
+
+  return (
+    <section style={{
+      background: "linear-gradient(180deg, #FFFFFF 0%, #FDF6EE 100%)",
+      padding: "44px 0 64px",
+      borderBottom: "1px solid #E8D8C4"
+    }}>
+      <div className="page-w">
+        {/* Top meta bar */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: 16, marginBottom: 36
+        }}>
+          <a href="/creative-analysis" style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            fontSize: 13, fontWeight: 600, color: "#985830",
+            textDecoration: "none"
+          }}>
+            ← Back to Creative Scoring
+          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <BtnOutline>Download .md</BtnOutline>
+            <BtnFilledSmall>Run on your creatives</BtnFilledSmall>
+          </div>
+        </div>
+
+        {/* Hero header */}
+        <div style={{ maxWidth: 880, marginBottom: 40 }}>
+          <Eyebrow>Example report</Eyebrow>
+          <h1 style={{
+            fontSize: "clamp(40px, 5.4vw, 64px)", fontWeight: 700,
+            letterSpacing: "-0.03em", lineHeight: 1.04,
+            color: "#1A1A1A", margin: "16px 0 22px",
+            textWrap: "balance"
+          }}>
+            Four creatives. <em style={{ fontStyle: "italic", color: "#985830" }}>Scored and ranked.</em>
+          </h1>
+          <p style={{
+            fontSize: 17, lineHeight: 1.6, color: "#1A1A1A",
+            margin: 0, maxWidth: 700
+          }}>
+            This is what a report looks like. Four sample ad creatives, each scored across five dimensions with specific weak signals flagged on any dimension below 7.
+          </p>
+        </div>
+
+        {/* Stats strip */}
+        <div className="demo-stats-strip" style={{
+          display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 0, background: "#fff",
+          border: "1px solid #E8D8C4", borderRadius: 6,
+          overflow: "hidden",
+          boxShadow: "0 2px 8px rgba(152, 88, 48, 0.06)"
+        }}>
+          <Stat label="Creatives scored" v={CREATIVES.length} />
+          <Stat label="Composite average" v={avg} unit="/ 10" />
+          <Stat label="Top score" v={CREATIVES[0].composite.toFixed(1)} unit="/ 10" />
+          <Stat label="Weak signals flagged" v={weakCount} />
+        </div>
+      </div>
+    </section>);
+
+}
+
+function Stat({ label, v, unit }) {
+  return (
+    <div style={{
+      padding: "22px 26px",
+      borderLeft: "1px solid #F0E5D2"
+    }}>
+      <div style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
+        textTransform: "uppercase", color: "#6B6B6B", marginBottom: 8
+      }}>{label}</div>
+      <div style={{
+        fontSize: 30, fontWeight: 700, color: "#1A1A1A",
+        letterSpacing: "-0.025em", lineHeight: 1,
+        fontVariantNumeric: "tabular-nums",
+        display: "flex", alignItems: "baseline", gap: 6
+      }}>
+        {v}
+        {unit && <span style={{ fontSize: 14, color: "#6B6B6B", fontWeight: 500 }}>{unit}</span>}
+      </div>
+    </div>);
+
+}
+
+/* =============== RANKED SUMMARY =============== */
+function RankedSummary() {
+  return (
+    <section className="sec-white" style={{ paddingTop: 64, paddingBottom: 56, backgroundColor: "rgb(253, 246, 238)" }}>
+      <div className="page-w">
+        <div style={{
+          borderLeft: "3px solid #985830", paddingLeft: 24,
+          marginBottom: 28
+        }}>
+          <Eyebrow>Ranked summary</Eyebrow>
+          <h2 style={{
+            fontSize: "clamp(28px, 3.2vw, 36px)", fontWeight: 700,
+            letterSpacing: "-0.02em", lineHeight: 1.1,
+            color: "#1A1A1A", margin: "10px 0 0"
+          }}>
+            Composite + per-dimension scores.
+          </h2>
+        </div>
+
+        <div className="demo-ranked-wrap" style={{
+          background: "#fff", border: "1px solid #E8D8C4", borderRadius: 6,
+          overflow: "hidden",
+          boxShadow: "0 2px 8px rgba(152, 88, 48, 0.06)"
+        }}>
+          {/* Header */}
+          <div className="demo-row-hdr" style={{
+            display: "grid",
+            gridTemplateColumns: "44px 2fr 1.2fr repeat(5, 0.7fr)",
+            background: "#FDF6EE",
+            borderBottom: "1px solid #E8D8C4",
+            padding: "14px 24px",
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
+            textTransform: "uppercase", color: "#6B6B6B",
+            gap: 16
+          }}>
+            <span>#</span>
+            <span>Creative</span>
+            <span>Composite</span>
+            <span>Hook</span>
+            <span>Hier.</span>
+            <span>Copy</span>
+            <span>Brand</span>
+            <span>Fatigue</span>
+          </div>
+
+          {CREATIVES.map((c, i) =>
+          <SummaryRow key={i} c={c} last={i === CREATIVES.length - 1} />
+          )}
+        </div>
+      </div>
+    </section>);
+
+}
+
+function SummaryRow({ c, last }) {
+  const compColor = scoreColor(c.composite);
+  return (
+    <a href={`#creative-${c.rank}`} className="demo-row" style={{
+      display: "grid",
+      gridTemplateColumns: "44px 2fr 1.2fr repeat(5, 0.7fr)",
+      padding: "18px 24px",
+      borderBottom: last ? "none" : "1px solid #F0E5D2",
+      alignItems: "center", gap: 16,
+      textDecoration: "none", color: "inherit",
+      transition: "background 150ms cubic-bezier(0.2,0,0,1)"
+    }}
+    onMouseEnter={(e) => e.currentTarget.style.background = "#FDF6EE"}
+    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+      <span style={{
+        fontSize: 14, fontWeight: 700, color: "#985830",
+        letterSpacing: "-0.005em",
+        fontVariantNumeric: "tabular-nums"
+      }}>#{c.rank}</span>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+        <span style={{
+          width: 28, height: 28, borderRadius: 4,
+          background: "#FDF6EE", border: "1px solid #E8D8C4",
+          color: "#985830", flexShrink: 0,
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          fontSize: 10, fontWeight: 700, letterSpacing: "0.04em"
+        }}>{c.type === "video" ? "VID" : "IMG"}</span>
+        <div style={{ minWidth: 0 }}>
+          <div style={{
+            fontSize: 14, fontWeight: 600, color: "#1A1A1A",
+            letterSpacing: "-0.005em",
+            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace"
+          }}>{c.file}</div>
+          {c.sub &&
+          <div style={{ fontSize: 11, color: "#6B6B6B", marginTop: 2 }}>{c.sub}</div>
+          }
+        </div>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{
+          fontSize: 18, fontWeight: 700, color: compColor.fg,
+          letterSpacing: "-0.01em", fontVariantNumeric: "tabular-nums",
+          minWidth: 36
+        }}>{c.composite.toFixed(1)}</span>
+        <div style={{ flex: 1, minWidth: 60, maxWidth: 120 }}>
+          <ScoreBar value={c.composite} max={10} height={6} />
+        </div>
+      </div>
+
+      {DIM_KEYS.map((k) => {
+        const sc = scoreColor(c.scores[k]);
+        return (
+          <span key={k} style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 32, height: 28,
+            background: sc.bg, color: sc.fg,
+            border: `1px solid ${sc.border}`,
+            borderRadius: 4,
+            fontSize: 13, fontWeight: 700,
+            fontVariantNumeric: "tabular-nums"
+          }}>{c.scores[k]}</span>);
+
+      })}
+    </a>);
+
+}
+
+function ScoreBar({ value, max = 10, height = 8 }) {
+  const pct = Math.max(0, Math.min(100, value / max * 100));
+  const c = scoreColor(value);
+  return (
+    <div style={{
+      width: "100%", height, background: "#E8D8C4", borderRadius: 999,
+      overflow: "hidden"
+    }}>
+      <div style={{
+        width: `${pct}%`, height: "100%",
+        background: c.fg, borderRadius: 999,
+        transition: "width 400ms cubic-bezier(0.2,0,0,1)"
+      }} />
+    </div>);
+
+}
+
+/* =============== WEAK SIGNAL CHIP =============== */
+function WeakChip() {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: "rgba(152, 88, 48, 0.15)",
+      color: "#985830",
+      padding: "3px 9px", borderRadius: 20,
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.10em",
+      textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap"
+    }}>
+      <span style={{ width: 5, height: 5, borderRadius: 999, background: "#985830" }} />
+      Weak signal
+    </span>);
+
+}
+
+/* =============== BREAKDOWNS =============== */
+function Breakdowns() {
+  return (
+    <section className="sec-cream" style={{ paddingTop: 64, backgroundColor: "rgb(255, 255, 254)" }}>
+      <div className="page-w">
+        <div style={{
+          borderLeft: "3px solid #985830", paddingLeft: 24,
+          marginBottom: 36, maxWidth: 820
+        }}>
+          <Eyebrow>Creative breakdowns</Eyebrow>
+          <h2 style={{
+            fontSize: "clamp(28px, 3.2vw, 36px)", fontWeight: 700,
+            letterSpacing: "-0.02em", lineHeight: 1.1,
+            color: "#1A1A1A", margin: "10px 0 14px"
+          }}>
+            What's working, what isn't, what to do about it.
+          </h2>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "#6B6B6B", margin: 0, maxWidth: 680 }}>
+            Each creative gets a per-dimension rationale, weak signals flagged on any score of 6 or below, and a priority fix.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {CREATIVES.map((c) => <BreakdownCard key={c.rank} c={c} />)}
+        </div>
+      </div>
+    </section>);
+
+}
+
+function BreakdownCard({ c }) {
+  const compColor = scoreColor(c.composite);
+  return (
+    <article id={`creative-${c.rank}`} style={{
+      background: "#fff", border: "1px solid #E8D8C4", borderRadius: 8,
+      padding: "32px 36px 36px",
+      boxShadow: "0 2px 8px rgba(152, 88, 48, 0.08)",
+      scrollMarginTop: 88
+    }}>
+      {/* Card header */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1fr auto",
+        gap: 24, alignItems: "start",
+        paddingBottom: 24,
+        borderBottom: "1px solid #F0E5D2",
+        marginBottom: 24
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 10, marginBottom: 12
+          }}>
+            <span style={{
+              fontSize: 14, fontWeight: 700, color: "#985830",
+              letterSpacing: "-0.005em",
+              fontVariantNumeric: "tabular-nums"
+            }}>#{c.rank}</span>
+            <span style={{
+              width: 28, height: 28, borderRadius: 4,
+              background: "#FDF6EE", border: "1px solid #E8D8C4",
+              color: "#985830",
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.04em"
+            }}>{c.type === "video" ? "VID" : "IMG"}</span>
+            {c.sub &&
+            <span style={{
+              fontSize: 11, color: "#6B6B6B", letterSpacing: "0.04em",
+              textTransform: "uppercase", fontWeight: 600
+            }}>{c.sub}</span>
+            }
+          </div>
+          <h3 style={{
+            fontSize: 22, fontWeight: 700, color: "#1A1A1A",
+            letterSpacing: "-0.015em", lineHeight: 1.25,
+            margin: 0,
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+            wordBreak: "break-all"
+          }}>{c.file}</h3>
+        </div>
+
+        <CompositeChip composite={c.composite} color={compColor} />
+      </div>
+
+      {/* Per-dimension table */}
+      <div className="demo-dim-wrap" style={{
+        border: "1px solid #E8D8C4", borderRadius: 6, overflow: "hidden",
+        marginBottom: 24
+      }}>
+        <div className="demo-dim-hdr" style={{
+          display: "grid",
+          gridTemplateColumns: "180px 96px 1fr",
+          background: "#FDF6EE",
+          borderBottom: "1px solid #E8D8C4",
+          padding: "12px 20px",
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.10em",
+          textTransform: "uppercase", color: "#6B6B6B",
+          gap: 18
+        }}>
+          <span>Dimension</span>
+          <span>Score</span>
+          <span>Rationale</span>
+        </div>
+
+        {DIM_KEYS.map((k, i) =>
+        <DimRow key={k} k={k} dim={c.dims[k]} score={c.scores[k]} last={i === DIM_KEYS.length - 1} />
+        )}
+      </div>
+
+      {/* Overall + priority */}
+      <div className="demo-card-bottom" style={{
+        display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16
+      }}>
+        <div style={{
+          background: "#FDF6EE", border: "1px solid #E8D8C4", borderRadius: 6,
+          padding: "20px 22px"
+        }}>
+          <Eyebrow>Overall notes</Eyebrow>
+          <p style={{
+            fontSize: 14, lineHeight: 1.6, color: "#1A1A1A",
+            margin: "10px 0 0"
+          }}>{c.notes}</p>
+        </div>
+        <div style={{
+          background: "#fff",
+          border: "1px solid #E8D8C4", borderLeft: "3px solid #985830",
+          borderRadius: "0 6px 6px 0",
+          padding: "20px 22px"
+        }}>
+          <Eyebrow>Priority fix</Eyebrow>
+          <p style={{
+            fontSize: 14, lineHeight: 1.6, color: "#1A1A1A",
+            margin: "10px 0 0", fontWeight: 500
+          }}>{c.priority}</p>
+        </div>
+      </div>
+    </article>);
+
+}
+
+function CompositeChip({ composite, color }) {
+  return (
+    <div style={{
+      background: color.bg, border: `1px solid ${color.border}`,
+      borderRadius: 6, padding: "12px 20px",
+      textAlign: "right", minWidth: 140
+    }}>
+      <div style={{
+        fontSize: 10, fontWeight: 700, letterSpacing: "0.10em",
+        textTransform: "uppercase", color: color.fg, marginBottom: 4, opacity: 0.85
+      }}>Composite · {color.label}</div>
+      <div style={{
+        fontSize: 28, fontWeight: 700, color: color.fg,
+        letterSpacing: "-0.02em", lineHeight: 1,
+        fontVariantNumeric: "tabular-nums"
+      }}>
+        {composite.toFixed(1)}
+        <span style={{ fontSize: 13, fontWeight: 500, opacity: 0.75 }}> / 10</span>
+      </div>
+    </div>);
+
+}
+
+function DimRow({ k, dim, score, last }) {
+  const sc = scoreColor(score);
+  return (
+    <div className="demo-dim-row" style={{
+      display: "grid",
+      gridTemplateColumns: "180px 96px 1fr",
+      padding: "16px 20px",
+      borderBottom: last ? "none" : "1px solid #F0E5D2",
+      gap: 18, alignItems: "start"
+    }}>
+      <div style={{
+        fontSize: 14, fontWeight: 600, color: "#1A1A1A",
+        letterSpacing: "-0.005em", paddingTop: 4
+      }}>{DIM_LABELS[k]}</div>
+
+      <div style={{ paddingTop: 2 }}>
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 8
+        }}>
+          <span style={{
+            fontSize: 18, fontWeight: 700, color: sc.fg,
+            letterSpacing: "-0.01em",
+            fontVariantNumeric: "tabular-nums",
+            minWidth: 22
+          }}>{score}</span>
+        </div>
+        <div style={{ marginTop: 6, width: 70 }}>
+          <ScoreBar value={score} max={10} height={5} />
+        </div>
+      </div>
+
+      <div>
+        <div style={{
+          fontSize: 14, lineHeight: 1.6, color: "#1A1A1A"
+        }}>{dim.rationale}</div>
+        {dim.weak &&
+        <div style={{
+          marginTop: 10,
+          background: "rgba(152, 88, 48, 0.08)",
+          border: "1px solid rgba(152, 88, 48, 0.20)",
+          borderRadius: 6,
+          padding: "10px 12px",
+          display: "flex", gap: 10, alignItems: "flex-start"
+        }}>
+            <div style={{ marginTop: 1 }}>
+              <WeakChip />
+            </div>
+            <div style={{
+            fontSize: 13, lineHeight: 1.55, color: "#1A1A1A", flex: 1
+          }}>{dim.weak}</div>
+          </div>
+        }
+      </div>
+    </div>);
+
+}
+
+/* =============== RUN-YOUR-OWN CTA =============== */
+function RunYourOwn() {
+  return (
+    <section className="sec-white" style={{ backgroundColor: "rgb(253, 246, 238)" }}>
+      <div className="page-w">
+        <div className="demo-cta-grid" style={{
+          background: "#fff", border: "1px solid #E8D8C4",
+          borderRadius: 8, padding: "36px 40px",
+          display: "grid", gridTemplateColumns: "1fr auto",
+          gap: 32, alignItems: "center",
+          boxShadow: "0 2px 8px rgba(152, 88, 48, 0.06)"
+        }}>
+          <div>
+            <Eyebrow>Run your own</Eyebrow>
+            <div style={{
+              fontSize: 22, fontWeight: 700, color: "#1A1A1A",
+              letterSpacing: "-0.018em", lineHeight: 1.3,
+              margin: "12px 0 8px", textWrap: "balance"
+            }}>
+              Run this on your own creatives.
+            </div>
+            <div style={{
+              fontSize: 15, lineHeight: 1.55, color: "#6B6B6B", maxWidth: 580
+            }}>
+              Upload images or videos. Each one scored and ranked in the same format. No account connection, files not stored after scoring.
+            </div>
+          </div>
+          <BtnFilled large href="/creative-analysis">
+            Score your creatives →
+          </BtnFilled>
+        </div>
+      </div>
+    </section>);
+
+}
+
+/* =============== DARK FOOTER CTA =============== */
+function FooterCrossSell() {
+  return (
+    <section style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "56px 32px"
+    }}>
+      <div style={{
+        maxWidth: 1080, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 18
+      }}>
+        <p style={{
+          fontSize: 18, lineHeight: 1.45, color: "#fff",
+          margin: 0, letterSpacing: "-0.01em", fontWeight: 500,
+          maxWidth: 640
+        }}>
+          Creative is one lever. The account and the landing page are the other two.
+        </p>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <a href="/google-ads-audit" style={darkCtaBtn(true)}>
+            Audit your Google Ads →
+          </a>
+          <a href="/landing-page-audit" style={darkCtaBtn(false)}>
+            Audit your landing page →
+          </a>
+        </div>
+      </div>
+    </section>);
+
+}
+
+function darkCtaBtn(filled) {
+  return {
+    display: "inline-flex", alignItems: "center", gap: 8,
+    fontSize: 15, fontWeight: 600,
+    color: "#fff",
+    background: filled ? "#985830" : "transparent",
+    border: filled ? "1.5px solid #985830" : "1.5px solid rgba(255,255,255,0.3)",
+    padding: "13px 22px", borderRadius: 4,
+    textDecoration: "none", letterSpacing: "-0.005em"
+  };
+}
+
+function Footer() {
+  return (
+    <footer style={{
+      background: "linear-gradient(135deg, #1A1A1A 0%, #241408 100%)",
+      padding: "28px 32px",
+      borderTop: "1px solid rgba(255,255,255,0.08)"
+    }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 12
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>
+            Phillips<span style={{ color: "#985830" }}>.</span>
+          </span>
+          <span>© 2026 Lewis Phillips · phillips-uk.com</span>
+        </div>
+      </div>
+    </footer>);
+
+}
+
+/* =============== APP =============== */
+function App() {
+  return (
+    <div data-screen-label="01 Creative Analysis Demo">
+      <Nav />
+      <ReportHeader />
+      <RankedSummary />
+      <Breakdowns />
+      <RunYourOwn />
+      <FooterCrossSell />
+      <Footer />
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
