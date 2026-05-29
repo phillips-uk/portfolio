@@ -528,7 +528,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* ── Responsive ── */
   @media (max-width: 900px) {
     .hero-grid { grid-template-columns: 1fr; }
-    .headshot-wrap { display: none; }
+    .headshot-wrap { display: block; width: 160px; height: 160px; margin: 28px auto 0; }
+    .headshot-shadow { display: none; }
+    .headshot-surface { border-radius: 50%; }
     .hero-inner > .hero-grid > div:first-child { text-align: left; }
     .hero-btns { justify-content: center; }
     .hero-stats { grid-template-columns: repeat(2, 1fr); }
