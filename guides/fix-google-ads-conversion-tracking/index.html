@@ -600,18 +600,33 @@
     .priority-grid { grid-template-columns: 1fr; }
     .verify-grid { grid-template-columns: 1fr; }
     .trigger-grid { grid-template-columns: 1fr; }
-    /* Tables: stacked card layout instead of horizontal scroll */
-    .data-table > div:first-child, .best-table > div:first-child { display: none !important; }
-    .data-table > div:not(:first-child), .best-table > div:not(:first-child) {
+    /* Symptom/diagnosis table: stacked with data-labels */
+    .data-table > div:first-child { display: none !important; }
+    .data-table > div:not(:first-child) {
       display: flex !important; flex-direction: column !important;
       gap: 12px; min-width: 0 !important; padding: 16px 20px !important;
     }
-    .data-table > div:not(:first-child) > span[data-label]::before,
-    .best-table > div:not(:first-child) > span[data-label]::before {
+    .data-table > div:not(:first-child) > span[data-label]::before {
       content: attr(data-label); display: block;
       font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
       text-transform: uppercase; color: #985830; margin-bottom: 3px;
     }
+    /* Best-practice table: semantic card layout — badge → name → source → role */
+    .best-table > div:first-child { display: none !important; }
+    .best-table-row {
+      display: flex !important; flex-direction: column !important;
+      gap: 4px !important; min-width: 0 !important;
+      padding: 16px 20px !important;
+      border-bottom: 1px solid #F0E6D5 !important;
+    }
+    .best-table-row:last-child { border-bottom: none !important; }
+    /* Suppress auto-generated data-labels on best-table */
+    .best-table-row > span[data-label]::before { display: none !important; }
+    /* Reorder: badge (3rd span) first, then event, source, role */
+    .best-table-row > span:nth-child(3) { order: -2; margin-bottom: 6px; }
+    .best-event { order: -1; font-size: 15px !important; font-weight: 700 !important; margin-bottom: 2px; }
+    .best-source { order: 0; font-size: 13px !important; color: #6B6B6B !important; }
+    .best-role  { order: 1; font-size: 12px !important; color: #985830 !important; font-weight: 500 !important; margin-top: 4px; }
     /* arch-pipe: stack cells vertically */
     .arch-pipe { display: flex !important; flex-direction: column !important; min-width: 0 !important; }
     .arch-arrow { display: none !important; }
