@@ -1540,65 +1540,94 @@ const CAT_LABELS = {
 };
 
 function applyReportData(raw) {
-  // Account
-  ACCOUNT.name     = raw.account_name || raw.user_name || "Your Account";
-  ACCOUNT.cid      = (() => { const s = String(raw.customer_id || "").replace(/\D/g,""); return s.length===10?s.slice(0,3)+"-"+s.slice(3,6)+"-"+s.slice(6):s; })();
-  ACCOUNT.score    = raw.score || 0;
-  ACCOUNT.window   = (raw.metadata && raw.metadata.lookback) || "Last 30 days";
-  ACCOUNT.audited  = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  if (raw.metadata && raw.metadata.currency) ACCOUNT.currency = raw.metadata.currency;
-  if (raw.metadata && raw.metadata.total_spend != null) ACCOUNT.spend = raw.metadata.total_spend;
+  const SEV_PENALTY = { critical: 20, high: 10, medium: 4, low: 1 };
+  const meta = raw.metadata || {};
 
-  // Categories
-  if (raw.categories && typeof raw.categories === "object") {
+  // Account
+  ACCOUNT.name    = raw.user_name || raw.account_name || "Your Account";
+  ACCOUNT.cid     = (() => { const s = String(raw.customer_id || "").replace(/\D/g,""); return s.length===10?s.slice(0,3)+"-"+s.slice(3,6)+"-"+s.slice(6):s; })();
+  ACCOUNT.score   = raw.score || 0;
+  ACCOUNT.window  = meta.lookback || "Last 30 days";
+  ACCOUNT.audited = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  if (meta.currency) ACCOUNT.currency = meta.currency;
+
+  // Map a single issue object to the finding format
+  function mapIssue(f) {
+    return {
+      severity: (f.severity || "medium").toLowerCase(),
+      title:    f.title || f.check || "",
+      detail:   f.detail || "",
+      fix:      f.recommendation || f.fix || "",
+      impact:   f.reasoning || f.impact || "",
+    };
+  }
+
+  // Categories — dict keyed by category slug, each has {label, issues[], passes[]}
+  if (raw.categories && typeof raw.categories === "object" && !Array.isArray(raw.categories)) {
     CATEGORIES.length = 0;
-    const entries = Array.isArray(raw.categories)
-      ? raw.categories
-      : Object.entries(raw.categories).map(([key, cat]) => ({ key, ...cat }));
-    entries.forEach(cat => {
+    Object.entries(raw.categories).forEach(([key, cat]) => {
+      const issues = cat.issues || cat.findings || [];
+      // Compute score from severity penalties
+      const penalty = issues.reduce((sum, f) => sum + (SEV_PENALTY[(f.severity||"medium").toLowerCase()] || 0), 0);
       CATEGORIES.push({
-        name:     cat.label || CAT_LABELS[cat.key || cat.name] || cat.name || cat.key || "Category",
-        score:    cat.score || 0,
-        findings: (cat.findings || []).map(f => ({
-          severity: (f.severity || "medium").toLowerCase(),
-          title:    f.title || f.check || "",
-          detail:   f.detail || f.description || "",
-          fix:      f.recommendation || f.fix || "",
-          impact:   f.impact || "",
-        })),
+        name:     cat.label || CAT_LABELS[key] || key,
+        score:    Math.max(0, 100 - penalty),
+        findings: issues.map(mapIssue),
       });
     });
   }
 
-  // Recalculate derived values
-  PRIORITY = CATEGORIES
-    .flatMap(c => c.findings.map(f => ({ ...f, category: c.name })))
-    .filter(f => f.severity !== "pass")
-    .sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity])
-    .slice(0, 3);
-  OVERALL      = CATEGORIES.length ? Math.round(CATEGORIES.reduce((s,c) => s+c.score, 0) / CATEGORIES.length) : 0;
-  OVERALL_BAND = BAND[bandFor(OVERALL)];
-
-  // N-gram data
-  const ngramSrc = raw.ngram_data || raw.search_terms || raw.ngrams;
-  if (Array.isArray(ngramSrc) && ngramSrc.length) {
-    NGRAM_DATA.length = 0;
-    ngramSrc.forEach(r => NGRAM_DATA.push({
-      pattern: r.pattern || r.term || r.query || "",
-      clicks:  r.clicks  || 0,
-      cost:    r.cost    || 0,
-      conv:    r.conversions || r.conv || 0,
-      cpa:     r.cpa     || 0,
-      status:  r.status  || "review",
+  // Priority — use top_3 array (full issue objects with all fields)
+  const top3 = raw.top_3 || [];
+  if (top3.length) {
+    PRIORITY = top3.map(f => ({
+      ...mapIssue(f),
+      category: CAT_LABELS[f.category] || f.category || "",
     }));
+  } else {
+    // Fallback: derive from categories
+    PRIORITY = CATEGORIES
+      .flatMap(c => c.findings.map(f => ({ ...f, category: c.name })))
+      .filter(f => f.severity !== "pass")
+      .sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity])
+      .slice(0, 3);
   }
 
-  // Heatmap (7 rows × 24 hours)
-  const heatSrc = raw.heatmap || raw.day_hour_performance || raw.day_hour_heatmap;
-  if (Array.isArray(heatSrc) && heatSrc.length) {
+  OVERALL      = raw.score || (CATEGORIES.length ? Math.round(CATEGORIES.reduce((s,c) => s+c.score, 0) / CATEGORIES.length) : 0);
+  OVERALL_BAND = BAND[bandFor(OVERALL)];
+
+  // N-gram data — metadata.ngrams.{performing, wasted}
+  const ngramMeta = meta.ngrams;
+  if (ngramMeta && (ngramMeta.performing || ngramMeta.wasted)) {
+    NGRAM_DATA.length = 0;
+    const addNgrams = (arr, status) => (arr || []).forEach(r => {
+      const conv = r.conversions || r.conv || 0;
+      NGRAM_DATA.push({
+        pattern: r.ngram || r.pattern || r.term || "",
+        clicks:  r.clicks  || 0,
+        cost:    r.cost    || 0,
+        conv,
+        cpa:     conv > 0 ? Math.round((r.cost / conv) * 100) / 100 : 0,
+        status,
+      });
+    });
+    addNgrams(ngramMeta.performing, "performing");
+    addNgrams(ngramMeta.wasted,     "wasted");
+  }
+
+  // Heatmap — metadata.heatmap.cells: [{day, hour, conversions, clicks, cost, impressions}]
+  const heatCells = (meta.heatmap && meta.heatmap.cells) || meta.heatmap;
+  if (Array.isArray(heatCells) && heatCells.length) {
+    // Build 7×24 grid, using conversions (fall back to clicks)
+    const grid = Array.from({length: 7}, () => Array(24).fill(0));
+    heatCells.forEach(c => {
+      const row = c.day  >= 0 && c.day  < 7  ? c.day  : null;
+      const col = c.hour >= 0 && c.hour < 24 ? c.hour : null;
+      if (row !== null && col !== null) grid[row][col] = c.conversions || c.clicks || 0;
+    });
     HEATMAP.length = 0;
-    heatSrc.forEach(row => HEATMAP.push(Array.isArray(row) ? row : Object.values(row)));
-    HEATMAP_MAX = Math.max(...HEATMAP.flat());
+    grid.forEach(row => HEATMAP.push(row));
+    HEATMAP_MAX = Math.max(...HEATMAP.flat()) || 1;
   }
 }
 
