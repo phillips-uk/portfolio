@@ -1651,8 +1651,11 @@ function applyReportData(raw) {
     NGRAM_DATA.length = 0;
     const addNgrams = (arr, status) => (arr || []).forEach(r => {
       const conv = r.conversions || r.conv || 0;
+      const text = r.ngram || r.term || r.pattern || "";
       NGRAM_DATA.push({
-        pattern: r.ngram || r.pattern || r.term || "",
+        term:    text,      // component renders row.term in the Pattern column
+        pattern: text,      // keep for any other references
+        n:       r.n || 1,  // component renders {row.n}-word
         clicks:  r.clicks  || 0,
         cost:    r.cost    || 0,
         conv,
