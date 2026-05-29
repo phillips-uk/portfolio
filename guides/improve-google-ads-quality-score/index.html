@@ -563,14 +563,38 @@
     .page-w  { padding: 0 20px; }
     .cards-2col { grid-template-columns: 1fr; }
     .mistakes-grid { grid-template-columns: 1fr; }
-    /* Tables: stacked card layout instead of horizontal scroll */
+    /* ── adrank-table: advertiser name + position on row 1, stat tiles on row 2 ── */
     .adrank-head { display: none !important; }
-    .adrank-row { display: flex !important; flex-direction: column !important; gap: 12px; min-width: 0 !important; padding: 16px 20px !important; }
-    .adrank-row > span[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #985830; margin-bottom: 3px; }
-    /* comp-table: first child = header (works for class-based and inline-styled rows) */
+    .adrank-row { display: flex !important; flex-wrap: wrap !important; align-items: center; min-width: 0 !important; padding: 14px 16px !important; gap: 0; row-gap: 10px; }
+    /* Advertiser: left of row 1 */
+    .adrank-row > span:nth-child(1) { flex: 1 1 auto; font-size: 14px !important; }
+    .adrank-row > span:nth-child(1)::before { display: none !important; }
+    /* Position badge: right of row 1 */
+    .adrank-row > span:nth-child(5) { flex: 0 0 auto; font-size: 12px !important; font-weight: 700 !important; background: #FDF6EE; border: 1px solid #E8D8C4; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em; }
+    .adrank-row > span:nth-child(5)::before { display: none !important; }
+    /* Stat tiles (Max CPC, Ad Rank, Actual CPC): row 2, equal thirds, value big + label below */
+    .adrank-row > span:nth-child(2),
+    .adrank-row > span:nth-child(3),
+    .adrank-row > span:nth-child(4) { flex: 1 1 0; display: flex !important; flex-direction: column-reverse !important; align-items: flex-start; padding: 8px 10px; border-top: 1px solid #F0E5D2; font-size: 16px !important; font-weight: 700 !important; min-width: 0; }
+    .adrank-row > span:nth-child(2)[data-label]::before,
+    .adrank-row > span:nth-child(3)[data-label]::before,
+    .adrank-row > span:nth-child(4)[data-label]::before { content: attr(data-label) !important; display: block !important; font-size: 9px !important; font-weight: 400 !important; letter-spacing: 0.07em; text-transform: uppercase; color: #A0998E; margin-top: 3px; }
+
+    /* ── Three-components comp-table: visual hierarchy cards ── */
     .comp-table > div:first-child { display: none !important; }
-    .comp-table > div:not(:first-child) { display: flex !important; flex-direction: column !important; gap: 12px; min-width: 0 !important; padding: 16px 20px !important; }
-    .comp-table > div:not(:first-child) > span[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #985830; margin-bottom: 3px; }
+    /* Quick-diagnosis table (inline-styled rows): generic stacking with data-labels */
+    .comp-table > div:not(:first-child):not(.comp-row) { display: flex !important; flex-direction: column !important; gap: 12px; min-width: 0 !important; padding: 16px 20px !important; }
+    .comp-table > div:not(:first-child):not(.comp-row) > span[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #985830; margin-bottom: 3px; }
+    /* Named comp-row: semantic card layout */
+    .comp-row { display: block !important; padding: 18px 20px !important; min-width: 0 !important; }
+    .comp-row > span:nth-child(1) { display: block; font-size: 16px !important; font-weight: 700 !important; color: #985830; margin-bottom: 8px; }
+    .comp-row > span:nth-child(1)::before { display: none !important; }
+    .comp-row > span:nth-child(2) { display: block; font-size: 14px !important; color: #3A3A3A; line-height: 1.55; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #F0E5D2; }
+    .comp-row > span:nth-child(2)::before { display: none !important; }
+    .comp-row > span:nth-child(3) { display: block; font-size: 13px !important; background: #FDF6EE; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; }
+    .comp-row > span:nth-child(3)::before { content: "Below average" !important; display: block !important; font-size: 9px; font-weight: 700 !important; letter-spacing: 0.08em; text-transform: uppercase; color: #B83A1F; margin-bottom: 5px; }
+    .comp-row > span:nth-child(4) { display: block; font-size: 13px !important; }
+    .comp-row > span:nth-child(4)::before { content: "Fix" !important; display: block !important; font-size: 9px; font-weight: 700 !important; letter-spacing: 0.08em; text-transform: uppercase; color: #985830; margin-bottom: 5px; }
     /* lp-row: stack vertically */
     .lp-row { display: flex !important; flex-direction: column !important; min-width: 0 !important; gap: 8px; }
     .lp-arrow { display: none !important; }
