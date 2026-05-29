@@ -1014,11 +1014,18 @@ function CategoryBlock({ name, blurb, score, findings, metrics, defaultOpen }) {
           ) : null)}
         </div>
 
-        <div className="rpt-cat-score" style={{
-          fontSize: 18, fontWeight: 700, color: "#1A1A1A",
-          letterSpacing: "-0.015em", fontVariantNumeric: "tabular-nums",
-          minWidth: 64, textAlign: "right",
-        }}>{score}</div>
+        {score != null && (() => {
+          const parts = String(score).split("/").map(s => parseFloat(s.trim()));
+          const pct = parts.length === 2 && parts[1] > 0 ? (parts[0] / parts[1]) * 100 : parts[0];
+          const scoreColor = pct >= 90 ? "#4F7A4A" : pct >= 50 ? "#985830" : "#B83A1F";
+          return (
+            <div className="rpt-cat-score" style={{
+              fontSize: 18, fontWeight: 700, color: scoreColor,
+              letterSpacing: "-0.015em", fontVariantNumeric: "tabular-nums",
+              minWidth: 64, textAlign: "right",
+            }}>{score}</div>
+          );
+        })()}
 
         <span className="rpt-cat-chevron" style={{
           color: "#985830",
