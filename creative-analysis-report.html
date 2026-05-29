@@ -126,6 +126,10 @@ body { font-family: var(--font-sans); color: var(--ink); background: var(--white
 .smry-dim-tile { display:inline-flex; align-items:center; justify-content:center; width:26px; height:22px; border-radius:3px; font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; }
 
 /* ---- DIMENSION TABLE ---- */
+.dim-name-cell { display: block; }
+.dim-impact-mob { display: none; }   /* hidden on desktop, shown on mobile */
+.dim-badge-desk { display: inline-flex; } /* shown on desktop, hidden on mobile */
+.dim-weak-mob   { display: none; }   /* hidden on desktop, shown on mobile */
 .dim-table-grid {
   display: grid;
   grid-template-columns: 148px 84px 1fr;
@@ -136,12 +140,19 @@ body { font-family: var(--font-sans); color: var(--ink); background: var(--white
 }
 .dim-table-grid:first-child { border-top: none; }
 @media (max-width: 680px) {
-  .dim-table-grid { grid-template-columns: 1fr; gap: 6px; }
+  .dim-table-grid { grid-template-columns: 1fr; gap: 4px; padding: 14px 16px; }
   .report-w { padding: 0 20px; }
   .page-w   { padding: 0 20px; }
   .header-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .card-hdr { grid-template-columns: 1fr !important; }
   .card-hdr .card-score-box { min-width: 0 !important; }
+  /* Dim name cell: flex so impact pill sits top-right */
+  .dim-name-cell { display: flex !important; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  /* Show mobile impact pill, hide desktop combined badge */
+  .dim-impact-mob { display: inline-flex !important; }
+  .dim-badge-desk { display: none !important; }
+  /* Show weak text as plain line below rationale */
+  .dim-weak-mob { display: block !important; }
 }
 @media (max-width: 900px) {
   .ph-nav-links { display: none; }
@@ -658,15 +669,24 @@ function buildDimRows(dims, frameType) {
     const weakSignal = dimData.weak_signal || null;
     const impact = dimData.impact || null;
     const label = overrides[d.key] || d.label;
-    let badgeHtml = '';
+    let impactPillMob = '';
+    let badgeDesk = '';
+    let weakTextMob = '';
     if (weakSignal) {
       const cls = impact ? `impact-${impact}` : 'impact-high';
       const lbl = IMPACT_LABELS[impact] || '';
-      badgeHtml = `<div class="impact-badge ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${weakSignal}</div>`;
+      // Mobile: separate pill (top-right of name row) + plain weak text below rationale
+      impactPillMob = lbl ? `<span class="impact-badge dim-impact-mob ${cls}" style="flex-shrink:0;margin-top:2px;">${lbl}</span>` : '';
+      weakTextMob = `<div class="dim-weak-mob" style="font-size:12px;line-height:1.5;color:#6B6B6B;margin-top:4px;font-style:italic;">${weakSignal}</div>`;
+      // Desktop: combined label + text in one badge (unchanged)
+      badgeDesk = `<div class="impact-badge dim-badge-desk ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${weakSignal}</div>`;
     }
     html += `
       <div class="dim-table-grid">
-        <div style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${label}</div>
+        <div class="dim-name-cell">
+          <span style="font-size:13.5px;font-weight:600;color:#1A1A1A;padding-top:3px;">${label}</span>
+          ${impactPillMob}
+        </div>
         <div>
           <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;">
             <span style="font-size:16px;font-weight:700;color:${scoreColor(score)};font-variant-numeric:tabular-nums;">${score}</span>
@@ -678,7 +698,8 @@ function buildDimRows(dims, frameType) {
         </div>
         <div>
           ${rationale ? `<div style="font-size:13.5px;line-height:1.6;color:#1A1A1A;">${rationale}</div>` : ''}
-          ${badgeHtml}
+          ${badgeDesk}
+          ${weakTextMob}
         </div>
       </div>
     `;
@@ -686,15 +707,20 @@ function buildDimRows(dims, frameType) {
     if (d.key === 'copy_clarity' && dims.sound_off_legibility) {
       const sol = dims.sound_off_legibility;
       const solScore = typeof sol.score === 'number' ? sol.score : 0;
-      let solBadge = '';
+      let solPillMob = '', solBadgeDesk = '', solWeakMob = '';
       if (sol.weak_signal) {
         const cls = sol.impact ? `impact-${sol.impact}` : 'impact-high';
         const lbl = IMPACT_LABELS[sol.impact] || '';
-        solBadge = `<div class="impact-badge ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${sol.weak_signal}</div>`;
+        solPillMob   = lbl ? `<span class="impact-badge dim-impact-mob ${cls}" style="flex-shrink:0;margin-top:2px;">${lbl}</span>` : '';
+        solWeakMob   = `<div class="dim-weak-mob" style="font-size:12px;line-height:1.5;color:#6B6B6B;margin-top:4px;font-style:italic;">${sol.weak_signal}</div>`;
+        solBadgeDesk = `<div class="impact-badge dim-badge-desk ${cls}">${lbl ? `<strong style="font-size:9px;letter-spacing:0.06em;">${lbl}</strong> ` : ''}${sol.weak_signal}</div>`;
       }
       html += `
         <div class="dim-table-grid" style="background:#FAFAF8;">
-          <div style="font-size:12px;font-weight:500;color:#6B6B6B;padding-top:3px;padding-left:14px;">↳ Sound-off</div>
+          <div class="dim-name-cell" style="padding-left:14px;">
+            <span style="font-size:12px;font-weight:500;color:#6B6B6B;padding-top:3px;">↳ Sound-off</span>
+            ${solPillMob}
+          </div>
           <div>
             <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;">
               <span style="font-size:14px;font-weight:700;color:${scoreColor(solScore)};font-variant-numeric:tabular-nums;">${solScore}</span>
@@ -706,7 +732,8 @@ function buildDimRows(dims, frameType) {
           </div>
           <div>
             ${sol.rationale ? `<div style="font-size:12.5px;line-height:1.6;color:#6B6B6B;font-style:italic;">${sol.rationale}</div>` : ''}
-            ${solBadge}
+            ${solBadgeDesk}
+            ${solWeakMob}
           </div>
         </div>
       `;
