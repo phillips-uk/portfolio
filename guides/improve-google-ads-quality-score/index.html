@@ -563,10 +563,17 @@
     .page-w  { padding: 0 20px; }
     .cards-2col { grid-template-columns: 1fr; }
     .mistakes-grid { grid-template-columns: 1fr; }
-    .adrank-table, .comp-table, .lp-diagram { overflow-x: auto; }
-    .adrank-head, .adrank-row { min-width: 520px; }
-    .comp-head, .comp-row { min-width: 560px; }
-    .lp-row { min-width: 560px; }
+    /* Tables: stacked card layout instead of horizontal scroll */
+    .adrank-head { display: none !important; }
+    .adrank-row { display: flex !important; flex-direction: column !important; gap: 12px; min-width: 0 !important; padding: 16px 20px !important; }
+    .adrank-row > span[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #985830; margin-bottom: 3px; }
+    /* comp-table: first child = header (works for class-based and inline-styled rows) */
+    .comp-table > div:first-child { display: none !important; }
+    .comp-table > div:not(:first-child) { display: flex !important; flex-direction: column !important; gap: 12px; min-width: 0 !important; padding: 16px 20px !important; }
+    .comp-table > div:not(:first-child) > span[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #985830; margin-bottom: 3px; }
+    /* lp-row: stack vertically */
+    .lp-row { display: flex !important; flex-direction: column !important; min-width: 0 !important; gap: 8px; }
+    .lp-arrow { display: none !important; }
     .author-block { grid-template-columns: 1fr; }
     .article-h1 { font-size: 32px; }
   }
@@ -1090,5 +1097,26 @@
   })();
 </script>
 
+<script>
+(function(){
+  // adrank-table: class-based
+  var aHead = document.querySelector('.adrank-head');
+  if(aHead){
+    var aHdrs = [].map.call(aHead.children, function(c){ return c.textContent.trim(); });
+    document.querySelectorAll('.adrank-row').forEach(function(row){
+      [].forEach.call(row.children, function(cell, i){ if(aHdrs[i]) cell.dataset.label = aHdrs[i]; });
+    });
+  }
+  // comp-tables: first child = header (handles both class-based and inline-styled rows)
+  document.querySelectorAll('.comp-table').forEach(function(table){
+    var head = table.children[0];
+    if(!head) return;
+    var hdrs = [].map.call(head.querySelectorAll('span'), function(s){ return s.textContent.trim(); });
+    for(var i=1; i<table.children.length; i++){
+      [].forEach.call(table.children[i].querySelectorAll(':scope > span'), function(cell, j){ if(hdrs[j]) cell.dataset.label = hdrs[j]; });
+    }
+  });
+})();
+</script>
 </body>
 </html>
