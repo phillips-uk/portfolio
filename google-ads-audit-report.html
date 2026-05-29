@@ -911,7 +911,7 @@ function StatsBar() {
             lineHeight: 1, marginBottom: 6,
           }}>{s.value}</div>
           <div style={{
-            fontSize: 11, color: s.trend === "up" ? "#4F7A4A" : "#B83A1F",
+            fontSize: 11, color: s.trend === "up" ? "#4F7A4A" : s.trend === "down" ? "#B83A1F" : "#6B6B6B",
             fontWeight: 500, letterSpacing: "-0.005em",
             fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap",
           }}>{s.delta}</div>
@@ -1550,6 +1550,44 @@ function applyReportData(raw) {
   ACCOUNT.window  = meta.lookback || "Last 30 days";
   ACCOUNT.audited = new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   if (meta.currency) ACCOUNT.currency = meta.currency;
+
+  // Stats bar — compute from campaign data + benchmarks
+  const sym = ACCOUNT.currency === "GBP" ? "£" : ACCOUNT.currency === "EUR" ? "€" : "$";
+  const bm  = meta.benchmarks || {};
+
+  // Estimate total spend: scan all issues for campaign avg_daily_spend (avoids double-counting)
+  const seenCampaigns = new Set();
+  let totalDailySpend = 0;
+  Object.values(raw.categories || {}).forEach(cat => {
+    (cat.issues || cat.findings || []).forEach(issue => {
+      ((issue.data || {}).campaigns || []).forEach(c => {
+        if (c.name && !seenCampaigns.has(c.name)) {
+          seenCampaigns.add(c.name);
+          totalDailySpend += c.avg_daily_spend || 0;
+        }
+      });
+    });
+  });
+  const estSpend = totalDailySpend > 0 ? Math.round(totalDailySpend * 30) : null;
+
+  ACCOUNT.stats = [
+    estSpend != null
+      ? { label: "30d Spend", value: sym + estSpend.toLocaleString("en-GB"), delta: "Est. from campaign data", trend: "neutral" }
+      : null,
+    bm.search_ctr != null
+      ? { label: "Search CTR", value: bm.search_ctr.toFixed(2) + "%", delta: bm.search_ctr >= 5 ? "Above 5% benchmark" : "Below 5% benchmark", trend: bm.search_ctr >= 5 ? "up" : "down" }
+      : null,
+    bm.cost_per_conv != null
+      ? { label: "Cost / Conv.", value: sym + bm.cost_per_conv.toFixed(2), delta: "Last 30 days", trend: "neutral" }
+      : null,
+    bm.is_acquired != null
+      ? { label: "Impr. Share", value: bm.is_acquired.toFixed(1) + "%", delta: bm.is_lost_budget ? bm.is_lost_budget.toFixed(1) + "% lost to budget" : "Last 30 days", trend: (bm.is_lost_budget || 0) > 15 ? "down" : "up" }
+      : null,
+  ].filter(Boolean);
+  if (!ACCOUNT.stats.length) {
+    // Fallback: keep existing stats unchanged (demo mode)
+    ACCOUNT.stats = ACCOUNT.stats;
+  }
 
   // Map a single issue object to the finding format
   function mapIssue(f) {
