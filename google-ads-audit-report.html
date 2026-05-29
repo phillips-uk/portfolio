@@ -1634,6 +1634,17 @@ function applyReportData(raw) {
   OVERALL      = raw.score || (CATEGORIES.length ? Math.round(CATEGORIES.reduce((s,c) => s+c.score, 0) / CATEGORIES.length) : 0);
   OVERALL_BAND = BAND[bandFor(OVERALL)];
 
+  // Scale per-category scores so their average equals the overall score.
+  // Without this, categories with no issues score 100 and the average
+  // (~95) wildly disagrees with the worker's account-level score (e.g. 68).
+  if (CATEGORIES.length && raw.score) {
+    const avgRaw = CATEGORIES.reduce((s, c) => s + c.score, 0) / CATEGORIES.length;
+    if (avgRaw > 0) {
+      const scale = raw.score / avgRaw;
+      CATEGORIES.forEach(c => { c.score = Math.round(Math.max(0, Math.min(100, c.score * scale))); });
+    }
+  }
+
   // N-gram data — metadata.ngrams.{performing, wasted}
   const ngramMeta = meta.ngrams;
   if (ngramMeta && (ngramMeta.performing || ngramMeta.wasted)) {
