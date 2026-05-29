@@ -946,7 +946,7 @@ function CategoryGrid() {
           const col = i % 3;
           const row = Math.floor(i / 3);
           return (
-            <div key={c.key} style={{
+            <div key={c.name || i} style={{
               padding: "12px 14px",
               borderLeft: col === 0 ? 0 : "1px solid #F0E5D2",
               borderTop: row === 0 ? 0 : "1px solid #F0E5D2",
@@ -954,7 +954,7 @@ function CategoryGrid() {
               <div style={{
                 fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
                 color: "#985830", marginBottom: 4, fontVariantNumeric: "tabular-nums",
-              }}>{String(c.n).padStart(2, "0")}</div>
+              }}>{String(i + 1).padStart(2, "0")}</div>
               <div style={{
                 fontSize: 13, fontWeight: 600, color: "#1A1A1A",
                 letterSpacing: "-0.005em", lineHeight: 1.3, marginBottom: 8,
@@ -966,7 +966,7 @@ function CategoryGrid() {
                   letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums",
                   lineHeight: 1,
                 }}>{c.score}</span>
-                <span style={{ fontSize: 11, color: "#6B6B6B" }}>/ {c.of}</span>
+                <span style={{ fontSize: 11, color: "#6B6B6B" }}>/ {c.of || 100}</span>
               </div>
             </div>
           );
@@ -1552,7 +1552,7 @@ function applyReportData(raw) {
   if (meta.currency) ACCOUNT.currency = meta.currency;
 
   // Stats bar — compute from campaign data + benchmarks
-  const sym = ACCOUNT.currency === "GBP" ? "£" : ACCOUNT.currency === "EUR" ? "€" : "$";
+  const sym = ACCOUNT.currency === "EUR" ? "€" : "£"; // Default GBP; worker rarely sends currency
   const bm  = meta.benchmarks || {};
 
   // Estimate total spend: scan all issues for campaign avg_daily_spend (avoids double-counting)
