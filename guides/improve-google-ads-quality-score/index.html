@@ -563,19 +563,19 @@
     .page-w  { padding: 0 20px; }
     .cards-2col { grid-template-columns: 1fr; }
     .mistakes-grid { grid-template-columns: 1fr; }
-    /* ── adrank-table: advertiser name + position on row 1, stat tiles on row 2 ── */
+    /* ── adrank-table: position top-left, advertiser below, stat tiles row 3 ── */
     .adrank-head { display: none !important; }
-    .adrank-row { display: flex !important; flex-wrap: wrap !important; align-items: center; min-width: 0 !important; padding: 14px 16px !important; gap: 0; row-gap: 10px; }
-    /* Advertiser: left of row 1 */
-    .adrank-row > span:nth-child(1) { flex: 1 1 auto; font-size: 14px !important; }
-    .adrank-row > span:nth-child(1)::before { display: none !important; }
-    /* Position badge: right of row 1 */
-    .adrank-row > span:nth-child(5) { flex: 0 0 auto; font-size: 12px !important; font-weight: 700 !important; background: #FDF6EE; border: 1px solid #E8D8C4; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em; }
+    .adrank-row { display: flex !important; flex-wrap: wrap !important; align-items: flex-start; min-width: 0 !important; padding: 14px 16px !important; gap: 0; row-gap: 6px; }
+    /* Position: row 1, amber indicator top-left */
+    .adrank-row > span:nth-child(5) { order: -2; flex: 0 0 100%; font-size: 13px !important; font-weight: 700 !important; color: #985830 !important; letter-spacing: 0.04em; }
     .adrank-row > span:nth-child(5)::before { display: none !important; }
-    /* Stat tiles (Max CPC, Ad Rank, Actual CPC): row 2, equal thirds, value big + label below */
+    /* Advertiser: row 2, full width */
+    .adrank-row > span:nth-child(1) { order: -1; flex: 1 1 100%; font-size: 15px !important; font-weight: 700 !important; margin-bottom: 4px; }
+    .adrank-row > span:nth-child(1)::before { display: none !important; }
+    /* Stat tiles (Max CPC, Ad Rank, Actual CPC): row 3, equal thirds, value big + label below */
     .adrank-row > span:nth-child(2),
     .adrank-row > span:nth-child(3),
-    .adrank-row > span:nth-child(4) { flex: 1 1 0; display: flex !important; flex-direction: column-reverse !important; align-items: flex-start; padding: 8px 10px; border-top: 1px solid #F0E5D2; font-size: 16px !important; font-weight: 700 !important; min-width: 0; }
+    .adrank-row > span:nth-child(4) { order: 0; flex: 1 1 0; display: flex !important; flex-direction: column-reverse !important; align-items: flex-start; padding: 8px 10px; border-top: 1px solid #F0E5D2; font-size: 16px !important; font-weight: 700 !important; min-width: 0; }
     .adrank-row > span:nth-child(2)[data-label]::before,
     .adrank-row > span:nth-child(3)[data-label]::before,
     .adrank-row > span:nth-child(4)[data-label]::before { content: attr(data-label) !important; display: block !important; font-size: 9px !important; font-weight: 400 !important; letter-spacing: 0.07em; text-transform: uppercase; color: #A0998E; margin-top: 3px; }
