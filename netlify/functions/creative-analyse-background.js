@@ -20,7 +20,7 @@ const Anthropic    = require('@anthropic-ai/sdk');
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const SCORING_MODEL = 'claude-opus-4-5-20250929';
+const SCORING_MODEL = 'claude-opus-4-7';
 const MAX_FILES     = 20;
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB in base64 terms (actual file ~15 MB)
 const TOKEN_TTL_MS  = 24 * 60 * 60 * 1000;
