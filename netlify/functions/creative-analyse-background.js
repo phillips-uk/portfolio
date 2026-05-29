@@ -101,7 +101,10 @@ DIMENSIONS — score each 1 to 10:
    Can the message be understood in under two seconds? Penalise ambiguous headlines, missing or vague CTAs, copy that requires context to understand, too much text for the format. Award high scores when the value proposition is immediately legible. For video frames, see the user message for sound-off legibility context.
 
 4. brand_consistency
-   Coherent colours, fonts, and tone consistent with a specific brand identity. A creative that could belong to any brand scores 1–4. Clear, consistent brand identity scores 7–10. Penalise mismatched palettes, inconsistent typography, or absence of any brand signals.
+   Does this creative have a coherent, recognisable visual identity — consistent palette, typography, and visual language? Consider the intent: a direct-response ad may deliberately minimise brand cues to reduce friction; that is not a flaw. Penalise mismatched colours, inconsistent fonts, or a creative so generic it could belong to any advertiser in any category. Do NOT penalise absence of a logo alone — score high if the overall creative feels distinctly "of" a brand even without a visible wordmark or colour mark. For video frames: brand signals typically appear mid or close — do not penalise an opening frame for absence of a logo if the hook-first format is intentional.
+   7–10 = strong coherent identity, OR clean DR creative with intentional minimal branding
+   4–6  = inconsistent brand signals, or unclear whether the creative belongs to a specific brand
+   1–3  = could belong to any advertiser — generic palette, mismatched fonts, no recognisable visual language
 
 5. fatigue_signals
    Score HIGH for original, fresh formats. Score LOW for saturated, overused formats. Penalise: plain white background product shots with no creative treatment, straight-to-camera UGC with no hook variant, generic "Shop Now" / "Learn More" CTAs, stock photography aesthetics, formats saturated 12+ months ago. Award high scores to formats that feel genuinely fresh or novel in the category.
