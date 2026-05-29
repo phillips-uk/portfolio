@@ -1057,7 +1057,7 @@ function FindingsByCategory() {
           sub="Nine categories, scored independently. Each finding names the paid media metric it moves."
         />
         <div style={{ display: "grid", gap: 16 }}>
-          {CATEGORIES.map((c, i) => <CategoryBlock key={c.key} {...c} defaultOpen={i < 2}/>)}
+          {CATEGORIES.map((c, i) => <CategoryBlock key={c.name || i} {...c} n={i + 1} of={c.of || 100} defaultOpen={i < 2}/>)}
         </div>
       </div>
     </section>
