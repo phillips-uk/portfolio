@@ -278,6 +278,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span>Trouble signing in?</span>
             <a href="#" id="manual-cid-link" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
           </div>
+          <div style="margin-top:10px;text-align:center;">
+            <a href="#" id="use-manager-link-btn" style="font-size:11px;color:#6B6B6B;text-decoration:none;">Seeing a security warning? Use Manager Link instead &rarr;</a>
+          </div>
         </div>
       </div>
     </div>
@@ -800,6 +803,243 @@ document.getElementById('manual-cid-link')?.addEventListener('click', function(e
     history.replaceState(null, "", window.location.pathname);
   }
 })();
+
+// ── Manager Link flow ──────────────────────────────────────────────────────
+const MCC_ID = "4956184074";      // Lewis's MCC — displayed in invite instructions
+const MCC_ID_FMT = "495-618-4074"; // formatted for readability
+
+let _mccPollTimer  = null;
+let _mccPollCount  = 0;
+const MCC_POLL_MAX = 36;           // 3 min at 5s intervals
+const MCC_POLL_MS  = 5000;
+
+function showManagerLinkEntry() {
+  setCardStep(1, "Step 1 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <p style="font-size:14px;font-weight:700;color:#1A1A1A;margin:18px 0 4px;">Connect via Manager Link</p>
+    <p style="font-size:12px;line-height:1.55;color:#6B6B6B;margin:0 0 16px;">No sign-in warning. You add our account directly in Google Ads and we remove it the moment the audit finishes.</p>
+    <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your Customer ID</label>
+    <input id="mcc-cid-input" type="text" placeholder="e.g. 287-441-9032"
+      style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
+    <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your email <span style="font-weight:400;color:#6B6B6B;">(for your report)</span></label>
+    <input id="mcc-email-input" type="email" placeholder="you@yourcompany.com"
+      style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
+    <div id="mcc-entry-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:8px;"></div>
+    <button id="mcc-cid-submit" style="width:100%;background:#985830;color:#fff;border:0;padding:11px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Continue &rarr;</button>
+    <div style="margin-top:14px;text-align:center;font-size:12px;">
+      <a href="#" id="mcc-back-to-oauth" style="color:#6B6B6B;text-decoration:none;">&larr; Back to Google sign-in</a>
+    </div>`;
+
+  document.getElementById('mcc-cid-input').focus();
+
+  document.getElementById('mcc-cid-submit').addEventListener('click', function() {
+    const raw = document.getElementById('mcc-cid-input').value.replace(/[-\s]/g,'').trim();
+    if (!/^\d{10}$/.test(raw)) {
+      const err = document.getElementById('mcc-entry-error');
+      err.textContent = "Please enter a valid 10-digit Customer ID (e.g. 287-441-9032).";
+      err.style.display = 'block'; return;
+    }
+    const email = document.getElementById('mcc-email-input').value.trim();
+    showManagerLinkInstructions(raw, email);
+  });
+
+  document.getElementById('mcc-cid-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('mcc-cid-submit').click();
+  });
+
+  document.getElementById('mcc-back-to-oauth')?.addEventListener('click', function(e) {
+    e.preventDefault(); resetToDefaultCard();
+  });
+}
+
+function showManagerLinkInstructions(cid, email) {
+  setCardStep(2, "Step 2 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <p style="font-size:14px;font-weight:700;color:#1A1A1A;margin:18px 0 4px;">Add our account as a manager</p>
+    <p style="font-size:12px;line-height:1.55;color:#6B6B6B;margin:0 0 14px;">Takes about 60 seconds. Do this in a new tab, then come back here.</p>
+    <div style="background:#F5EBD9;border-radius:6px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:6px;">Manager account ID to enter</div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:0.05em;color:#1A1A1A;font-variant-numeric:tabular-nums;">${MCC_ID_FMT}</div>
+    </div>
+    <ol style="margin:0 0 14px;padding-left:18px;display:flex;flex-direction:column;gap:7px;">
+      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Open <a href="https://ads.google.com/aw/accountaccess/managers" target="_blank" rel="noopener" style="color:#985830;text-decoration:none;font-weight:600;">Google Ads → Admin → Managers &nearr;</a></li>
+      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Click the <strong>+</strong> button to add a manager</li>
+      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Enter <strong>${MCC_ID_FMT}</strong></li>
+      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Select <strong>Read only</strong> access</li>
+      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Click <strong>Send invitation</strong></li>
+    </ol>
+    <div id="mcc-instr-error" style="display:none;background:#F8E4DC;border:1px solid #EBC4B5;border-radius:4px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#B83A1F;line-height:1.5;"></div>
+    <button id="mcc-sent-btn" style="width:100%;background:#985830;color:#fff;border:0;padding:11px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">I've sent the invitation &rarr;</button>
+    <div style="margin-top:10px;text-align:center;font-size:12px;">
+      <a href="#" id="mcc-back-to-entry" style="color:#6B6B6B;text-decoration:none;">&larr; Change Customer ID</a>
+    </div>`;
+
+  document.getElementById('mcc-sent-btn').addEventListener('click', function() {
+    startMccPolling(cid, email);
+  });
+
+  document.getElementById('mcc-back-to-entry')?.addEventListener('click', function(e) {
+    e.preventDefault(); showManagerLinkEntry();
+  });
+}
+
+function startMccPolling(cid, email) {
+  clearMccPoll();
+  _mccPollCount = 0;
+  setCardStep(2, "Step 2 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <div style="text-align:center;padding:28px 0 8px;">
+      <div style="width:32px;height:32px;border:3px solid #F5EBD9;border-top-color:#985830;border-radius:50%;animation:ph-spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+      <div style="font-size:14px;font-weight:600;color:#1A1A1A;margin-bottom:6px;">Waiting for your invitation&hellip;</div>
+      <div id="mcc-poll-msg" style="font-size:12px;color:#6B6B6B;margin-bottom:20px;">Checking Google Ads every 5 seconds</div>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#6B6B6B;">
+      <a href="#" id="mcc-poll-back" style="color:#6B6B6B;text-decoration:none;">&larr; Back to instructions</a>
+    </div>`;
+
+  document.getElementById('mcc-poll-back')?.addEventListener('click', function(e) {
+    e.preventDefault(); clearMccPoll(); showManagerLinkInstructions(cid, email);
+  });
+
+  _mccPollTimer = setInterval(async function() {
+    _mccPollCount++;
+    const msg = document.getElementById('mcc-poll-msg');
+
+    if (_mccPollCount >= MCC_POLL_MAX) {
+      clearMccPoll();
+      // Timed out — go back to instructions with a message
+      showManagerLinkInstructions(cid, email);
+      const errEl = document.getElementById('mcc-instr-error');
+      if (errEl) {
+        errEl.textContent = "We didn't detect the invitation yet. Please check you used the correct manager ID (" + MCC_ID_FMT + ") and selected Read only access, then click the button again.";
+        errEl.style.display = 'block';
+      }
+      return;
+    }
+
+    try {
+      const res = await fetch("/.netlify/functions/mcc-check", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ customer_id: cid }),
+      });
+      const data = await res.json();
+
+      if (data.found && data.manager_link_id) {
+        clearMccPoll();
+        runMccAudit(cid, data.manager_link_id, email);
+      } else if (msg) {
+        const elapsed = _mccPollCount * (MCC_POLL_MS / 1000);
+        msg.textContent = `Checking Google Ads… (${elapsed}s)`;
+      }
+    } catch {
+      if (msg) msg.textContent = "Connection issue — retrying…";
+    }
+  }, MCC_POLL_MS);
+}
+
+function clearMccPoll() {
+  if (_mccPollTimer) { clearInterval(_mccPollTimer); _mccPollTimer = null; }
+}
+
+async function runMccAudit(cid, managerLinkId, email) {
+  setCardStep(3, "Running audit…");
+  document.getElementById('connect-card-body').innerHTML = `
+    <div style="text-align:center;padding:24px 0 8px;">
+      <div style="width:36px;height:36px;border:3px solid #F5EBD9;border-top-color:#985830;border-radius:50%;animation:ph-spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+      <div style="font-size:15px;font-weight:600;color:#1A1A1A;margin-bottom:6px;">Analysing your account&hellip;</div>
+      <div id="audit-progress-msg" style="font-size:13px;color:#6B6B6B;">Accepting manager access</div>
+    </div>`;
+
+  const steps = ["Fetching campaign data…","Running diagnostics…","Generating your report…"];
+  let i = 0;
+  const delays = [4000, 10000, 16000];
+  function advance() {
+    const el = document.getElementById('audit-progress-msg');
+    if (!el || i >= steps.length) return;
+    el.textContent = steps[i];
+    setTimeout(advance, delays[i++]);
+  }
+  setTimeout(advance, 2500);
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: 'audit_started_mcc', account_id: formatCid(cid) });
+
+  try {
+    const res = await fetch("/.netlify/functions/mcc-audit", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({
+        customer_id:     cid,
+        manager_link_id: managerLinkId,
+        user_email:      email || "",
+        user_name:       "",
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (res.status === 429 || data.error === "already_audited") {
+        showCardError("This account has already received its free audit. Get in touch for an ongoing review.");
+      } else {
+        showCardError(data.detail || data.error || "Something went wrong. Please try again.");
+      }
+      return;
+    }
+
+    window.dataLayer.push({ event: 'audit_complete', score: data.score || 0, flow: 'mcc' });
+
+    if (data.audit_id) {
+      window.location.href = "/google-ads-audit-report?id=" + encodeURIComponent(data.audit_id);
+    } else {
+      try { sessionStorage.setItem('gaa_result_direct', JSON.stringify(data)); } catch(e) {}
+      window.location.href = "/google-ads-audit-report?direct=1";
+    }
+
+  } catch(err) {
+    showCardError("Could not reach the audit server. Please check your connection and try again.");
+  }
+}
+
+function resetToDefaultCard() {
+  clearMccPoll();
+  setCardStep(1, "Step 1 of 3");
+  document.getElementById('connect-card-body').innerHTML = `
+    <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:8px;">Free Google Ads audit</div>
+    <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 20px;">Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
+    <button id="google-signin-btn-new" class="google-signin-btn">
+      ${googleSvg()}<span>Connect Google Ads</span>
+    </button>
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+        <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span>Read-only access only</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+        <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span>No data stored after audit</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
+        <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span>No agency pitch</span>
+      </div>
+    </div>
+    <div style="margin-top:22px;padding-top:18px;border-top:1px solid #E8D8C4;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6B6B6B;">
+      <span>Trouble signing in?</span>
+      <a href="#" id="manual-cid-link-new" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
+    </div>
+    <div style="margin-top:10px;text-align:center;">
+      <a href="#" id="use-manager-link-btn-new" style="font-size:11px;color:#6B6B6B;text-decoration:none;">Seeing a security warning? Use Manager Link instead &rarr;</a>
+    </div>`;
+  document.getElementById('google-signin-btn-new')?.addEventListener('click', initiateOAuth);
+  document.getElementById('manual-cid-link-new')?.addEventListener('click', function(e){ e.preventDefault(); showManualCid(null); });
+  document.getElementById('use-manager-link-btn-new')?.addEventListener('click', function(e){ e.preventDefault(); showManagerLinkEntry(); });
+}
+
+// Wire up the initial manager link button
+document.getElementById('use-manager-link-btn')?.addEventListener('click', function(e) {
+  e.preventDefault(); showManagerLinkEntry();
+});
 
 // ── FAQ accordion ───────────────────────────────────────────────────────────
 document.querySelectorAll('.faq-btn').forEach(btn => {
