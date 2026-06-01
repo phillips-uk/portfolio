@@ -192,13 +192,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 </script>
 
-<!-- =============== HEADS UP BANNER =============== -->
-<div class="heads-up-banner" style="background:#F5EBD9;border-bottom:1px solid #E8D8C4;padding:12px 32px;">
-  <div style="max-width:1200px;margin:0 auto;font-size:13px;line-height:1.5;color:#1A1A1A;display:flex;gap:10px;align-items:flex-start;">
-    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#fff;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-top:1px;">Heads up</span>
-    <span>This tool is currently going through Google's OAuth app verification process. You may see a security warning when connecting your account - this is expected and temporary. Approval is expected within the next two weeks.</span>
-  </div>
-</div>
 
 <!-- =============== NAV =============== -->
 <header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:saturate(120%);border-bottom:1px solid #E8D8C4;height:64px;">
@@ -249,37 +242,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span id="card-step-pill" style="margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#F5EBD9;padding:4px 10px;border-radius:20px;">Step 1 of 3</span>
         </div>
         <div id="connect-card-body">
-          <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:8px;">Free Google Ads audit</div>
-          <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 20px;">Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
-          <button id="google-signin-btn" class="google-signin-btn">
-            <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/>
-              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/>
-              <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z"/>
-              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.167 6.656 3.58 9 3.58Z"/>
-            </svg>
-            <span>Connect Google Ads</span>
-          </button>
-          <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-              <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-              <span>Read-only access only</span>
+          <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:6px;">Free Google Ads audit</div>
+          <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 16px;">You connect directly in Google Ads — no sign-in prompts. We remove ourselves the moment your report is ready.</p>
+          <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your Customer ID</label>
+          <input id="mcc-cid-input" type="text" placeholder="e.g. 287-441-9032"
+            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
+          <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your email <span style="font-weight:400;color:#6B6B6B;">(report sent here)</span></label>
+          <input id="mcc-email-input" type="email" placeholder="you@yourcompany.com"
+            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
+          <div id="mcc-entry-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:8px;"></div>
+          <button id="mcc-cid-submit" style="width:100%;background:#985830;color:#fff;border:0;padding:12px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Get my audit &rarr;</button>
+          <div style="margin-top:16px;display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:#6B6B6B;">
+              <span style="width:15px;height:15px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">&#10003;</span>
+              <span>Read-only — we can view data, never change anything</span>
             </div>
-            <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-              <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-              <span>No data stored after audit</span>
+            <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:#6B6B6B;">
+              <span style="width:15px;height:15px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">&#10003;</span>
+              <span>Auto-removed from your account after the audit</span>
             </div>
-            <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-              <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-              <span>No agency pitch</span>
+            <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:#6B6B6B;">
+              <span style="width:15px;height:15px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">&#10003;</span>
+              <span>No data stored · No agency pitch</span>
             </div>
-          </div>
-          <div style="margin-top:22px;padding-top:18px;border-top:1px solid #E8D8C4;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6B6B6B;">
-            <span>Trouble signing in?</span>
-            <a href="#" id="manual-cid-link" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
-          </div>
-          <div style="margin-top:10px;text-align:center;">
-            <a href="#" id="use-manager-link-btn" style="font-size:11px;color:#6B6B6B;text-decoration:none;">Seeing a security warning? Use Manager Link instead &rarr;</a>
           </div>
         </div>
       </div>
@@ -447,7 +432,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span style="font-size:17px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1.3;">How does the audit access my Google Ads account?</span>
             <span class="faq-icon">+</span>
           </button>
-          <p class="faq-answer">Via Google's standard OAuth, the same &#8220;Sign in with Google&#8221; flow you use everywhere. You grant read-only access. The tool can't make changes, can't touch your budget, can't modify campaigns or bids. You can revoke access any time from your Google Account settings.</p>
+          <p class="faq-answer">You add our Google Ads manager ID directly in your Google Ads account — under Admin &rarr; Managers. You choose Read only access, send the invitation, and we accept it automatically. The audit runs immediately, and our account removes itself from your managers list the moment it finishes. You never share your Google login. You're granting access inside Google's own interface, not through any third-party sign-in. Read-only means we can view your data but cannot make any changes, touch your budget, or modify campaigns or bids.</p>
         </div>
         <div class="faq-item">
           <button class="faq-btn" aria-expanded="false">
@@ -813,42 +798,55 @@ let _mccPollCount  = 0;
 const MCC_POLL_MAX = 36;           // 3 min at 5s intervals
 const MCC_POLL_MS  = 5000;
 
-function showManagerLinkEntry() {
+function showManagerLinkEntry(prefillCid, prefillEmail) {
   setCardStep(1, "Step 1 of 3");
   document.getElementById('connect-card-body').innerHTML = `
-    <p style="font-size:14px;font-weight:700;color:#1A1A1A;margin:18px 0 4px;">Connect via Manager Link</p>
-    <p style="font-size:12px;line-height:1.55;color:#6B6B6B;margin:0 0 16px;">No sign-in warning. You add our account directly in Google Ads and we remove it the moment the audit finishes.</p>
+    <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:6px;">Free Google Ads audit</div>
+    <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 16px;">You connect directly in Google Ads — no sign-in prompts. We remove ourselves the moment your report is ready.</p>
     <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your Customer ID</label>
-    <input id="mcc-cid-input" type="text" placeholder="e.g. 287-441-9032"
+    <input id="mcc-cid-input" type="text" placeholder="e.g. 287-441-9032" value="${escHtml(prefillCid||'')}"
       style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
-    <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your email <span style="font-weight:400;color:#6B6B6B;">(for your report)</span></label>
-    <input id="mcc-email-input" type="email" placeholder="you@yourcompany.com"
+    <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your email <span style="font-weight:400;color:#6B6B6B;">(report sent here)</span></label>
+    <input id="mcc-email-input" type="email" placeholder="you@yourcompany.com" value="${escHtml(prefillEmail||'')}"
       style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
     <div id="mcc-entry-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:8px;"></div>
-    <button id="mcc-cid-submit" style="width:100%;background:#985830;color:#fff;border:0;padding:11px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Continue &rarr;</button>
-    <div style="margin-top:14px;text-align:center;font-size:12px;">
-      <a href="#" id="mcc-back-to-oauth" style="color:#6B6B6B;text-decoration:none;">&larr; Back to Google sign-in</a>
+    <button id="mcc-cid-submit" style="width:100%;background:#985830;color:#fff;border:0;padding:12px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Get my audit &rarr;</button>
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:7px;">
+      <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:#6B6B6B;">
+        <span style="width:15px;height:15px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span>Read-only — we can view data, never change anything</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:#6B6B6B;">
+        <span style="width:15px;height:15px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span>Auto-removed from your account after the audit</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;font-size:12px;color:#6B6B6B;">
+        <span style="width:15px;height:15px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">&#10003;</span>
+        <span>No data stored · No agency pitch</span>
+      </div>
     </div>`;
 
-  document.getElementById('mcc-cid-input').focus();
+  const cidInput   = document.getElementById('mcc-cid-input');
+  const emailInput = document.getElementById('mcc-email-input');
+  const submitBtn  = document.getElementById('mcc-cid-submit');
 
-  document.getElementById('mcc-cid-submit').addEventListener('click', function() {
-    const raw = document.getElementById('mcc-cid-input').value.replace(/[-\s]/g,'').trim();
+  if (!prefillCid) cidInput.focus();
+
+  submitBtn.addEventListener('click', function() {
+    const raw = cidInput.value.replace(/[-\s]/g,'').trim();
     if (!/^\d{10}$/.test(raw)) {
       const err = document.getElementById('mcc-entry-error');
       err.textContent = "Please enter a valid 10-digit Customer ID (e.g. 287-441-9032).";
       err.style.display = 'block'; return;
     }
-    const email = document.getElementById('mcc-email-input').value.trim();
-    showManagerLinkInstructions(raw, email);
+    showManagerLinkInstructions(raw, emailInput.value.trim());
   });
 
-  document.getElementById('mcc-cid-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') document.getElementById('mcc-cid-submit').click();
+  cidInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') emailInput.focus();
   });
-
-  document.getElementById('mcc-back-to-oauth')?.addEventListener('click', function(e) {
-    e.preventDefault(); resetToDefaultCard();
+  emailInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitBtn.click();
   });
 }
 
@@ -879,7 +877,7 @@ function showManagerLinkInstructions(cid, email) {
   });
 
   document.getElementById('mcc-back-to-entry')?.addEventListener('click', function(e) {
-    e.preventDefault(); showManagerLinkEntry();
+    e.preventDefault(); showManagerLinkEntry(cid, email);
   });
 }
 
@@ -1001,45 +999,30 @@ async function runMccAudit(cid, managerLinkId, email) {
   }
 }
 
-function resetToDefaultCard() {
-  clearMccPoll();
-  setCardStep(1, "Step 1 of 3");
-  document.getElementById('connect-card-body').innerHTML = `
-    <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:8px;">Free Google Ads audit</div>
-    <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 20px;">Sign in with Google and I'll find your account automatically - no IDs to look up.</p>
-    <button id="google-signin-btn-new" class="google-signin-btn">
-      ${googleSvg()}<span>Connect Google Ads</span>
-    </button>
-    <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-        <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-        <span>Read-only access only</span>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-        <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-        <span>No data stored after audit</span>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:#1A1A1A;">
-        <span style="width:16px;height:16px;border-radius:999px;background:#F5EBD9;color:#985830;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">&#10003;</span>
-        <span>No agency pitch</span>
-      </div>
-    </div>
-    <div style="margin-top:22px;padding-top:18px;border-top:1px solid #E8D8C4;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6B6B6B;">
-      <span>Trouble signing in?</span>
-      <a href="#" id="manual-cid-link-new" style="color:#985830;text-decoration:none;font-weight:600;">Use Customer ID &rarr;</a>
-    </div>
-    <div style="margin-top:10px;text-align:center;">
-      <a href="#" id="use-manager-link-btn-new" style="font-size:11px;color:#6B6B6B;text-decoration:none;">Seeing a security warning? Use Manager Link instead &rarr;</a>
-    </div>`;
-  document.getElementById('google-signin-btn-new')?.addEventListener('click', initiateOAuth);
-  document.getElementById('manual-cid-link-new')?.addEventListener('click', function(e){ e.preventDefault(); showManualCid(null); });
-  document.getElementById('use-manager-link-btn-new')?.addEventListener('click', function(e){ e.preventDefault(); showManagerLinkEntry(); });
-}
+// Wire up the initial card form (rendered directly in HTML, not via JS)
+(function wireDefaultCard() {
+  const submitBtn = document.getElementById('mcc-cid-submit');
+  const cidInput  = document.getElementById('mcc-cid-input');
+  const emailInput = document.getElementById('mcc-email-input');
+  if (!submitBtn) return;
 
-// Wire up the initial manager link button
-document.getElementById('use-manager-link-btn')?.addEventListener('click', function(e) {
-  e.preventDefault(); showManagerLinkEntry();
-});
+  submitBtn.addEventListener('click', function() {
+    const raw = cidInput.value.replace(/[-\s]/g,'').trim();
+    if (!/^\d{10}$/.test(raw)) {
+      const err = document.getElementById('mcc-entry-error');
+      err.textContent = "Please enter a valid 10-digit Customer ID (e.g. 287-441-9032).";
+      err.style.display = 'block'; return;
+    }
+    showManagerLinkInstructions(raw, emailInput.value.trim());
+  });
+
+  cidInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') emailInput.focus();
+  });
+  emailInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitBtn.click();
+  });
+})();
 
 // ── FAQ accordion ───────────────────────────────────────────────────────────
 document.querySelectorAll('.faq-btn').forEach(btn => {
