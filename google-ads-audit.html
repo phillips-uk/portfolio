@@ -853,24 +853,34 @@ function showManagerLinkEntry(prefillCid, prefillEmail) {
 function showManagerLinkInstructions(cid, email) {
   setCardStep(2, "Step 2 of 3");
   document.getElementById('connect-card-body').innerHTML = `
-    <p style="font-size:14px;font-weight:700;color:#1A1A1A;margin:18px 0 4px;">Add our account as a manager</p>
-    <p style="font-size:12px;line-height:1.55;color:#6B6B6B;margin:0 0 14px;">Takes about 60 seconds. Do this in a new tab, then come back here.</p>
-    <div style="background:#F5EBD9;border-radius:6px;padding:12px 14px;margin-bottom:14px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#985830;margin-bottom:6px;">Manager account ID to enter</div>
-      <div style="font-size:20px;font-weight:700;letter-spacing:0.05em;color:#1A1A1A;font-variant-numeric:tabular-nums;">${MCC_ID_FMT}</div>
+    <p style="font-size:14px;font-weight:700;color:#1A1A1A;margin:18px 0 8px;">One step in Google Ads</p>
+    <p style="font-size:13px;line-height:1.6;color:#555;margin:0 0 16px;">
+      Open <a href="https://ads.google.com/aw/accountaccess/managers" target="_blank" rel="noopener"
+        style="color:#985830;text-decoration:none;font-weight:600;">Admin &rarr; Managers &nearr;</a>,
+      click&nbsp;<strong>+</strong>, enter the ID below, select <strong>Read&nbsp;only</strong>, and send the invitation.
+    </p>
+    <div style="background:#F5EBD9;border-radius:6px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <span style="font-size:22px;font-weight:700;letter-spacing:0.06em;color:#1A1A1A;font-variant-numeric:tabular-nums;">${MCC_ID_FMT}</span>
+      <button id="mcc-copy-btn" style="background:#fff;border:1px solid #E8D8C4;border-radius:4px;padding:6px 12px;font-size:12px;font-weight:600;color:#985830;cursor:pointer;font-family:inherit;white-space:nowrap;">Copy</button>
     </div>
-    <ol style="margin:0 0 14px;padding-left:18px;display:flex;flex-direction:column;gap:7px;">
-      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Open <a href="https://ads.google.com/aw/accountaccess/managers" target="_blank" rel="noopener" style="color:#985830;text-decoration:none;font-weight:600;">Google Ads → Admin → Managers &nearr;</a></li>
-      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Click the <strong>+</strong> button to add a manager</li>
-      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Enter <strong>${MCC_ID_FMT}</strong></li>
-      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Select <strong>Read only</strong> access</li>
-      <li style="font-size:13px;line-height:1.5;color:#1A1A1A;">Click <strong>Send invitation</strong></li>
-    </ol>
+    <p style="font-size:11px;color:#999;margin:0 0 14px;line-height:1.5;">
+      Read&nbsp;only means we can view your data, not change anything. We remove ourselves automatically once your report is ready.
+    </p>
     <div id="mcc-instr-error" style="display:none;background:#F8E4DC;border:1px solid #EBC4B5;border-radius:4px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#B83A1F;line-height:1.5;"></div>
-    <button id="mcc-sent-btn" style="width:100%;background:#985830;color:#fff;border:0;padding:11px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">I've sent the invitation &rarr;</button>
+    <button id="mcc-sent-btn" style="width:100%;background:#985830;color:#fff;border:0;padding:12px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">I've sent the invitation &rarr;</button>
     <div style="margin-top:10px;text-align:center;font-size:12px;">
-      <a href="#" id="mcc-back-to-entry" style="color:#6B6B6B;text-decoration:none;">&larr; Change Customer ID</a>
+      <a href="#" id="mcc-back-to-entry" style="color:#6B6B6B;text-decoration:none;">&larr; Change details</a>
     </div>`;
+
+  // Copy button
+  document.getElementById('mcc-copy-btn').addEventListener('click', function() {
+    navigator.clipboard.writeText(MCC_ID).then(() => {
+      this.textContent = 'Copied!';
+      setTimeout(() => { this.textContent = 'Copy'; }, 2000);
+    }).catch(() => {
+      this.textContent = MCC_ID; // fallback: show raw ID
+    });
+  });
 
   document.getElementById('mcc-sent-btn').addEventListener('click', function() {
     startMccPolling(cid, email);
