@@ -939,6 +939,16 @@ function showReport(data) {
   renderSummaryTable(results);
   renderSummaryCards(results);
   renderCreatives(results);
+  // Notify GTM that scoring is complete
+  try {
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      event:          'creative_scoring_completed',
+      creative_count: results.length,
+      top_score:      results.length ? parseFloat((results[0].composite || 0).toFixed(1)) : 0,
+      job_id:         new URLSearchParams(window.location.search).get('id') || ''
+    });
+  } catch(e) {}
 }
 
 async function pollReport(jobId) {
