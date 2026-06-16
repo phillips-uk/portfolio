@@ -24,6 +24,12 @@ function getBlobsStore () {
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return;
 
+  // Reject requests not originating from the portfolio site
+  const origin = (event.headers || {})['origin'] || '';
+  if (!origin.includes('phillips-uk.com') && !origin.includes('localhost')) {
+    return { statusCode: 403, body: JSON.stringify({ error: 'Forbidden' }) };
+  }
+
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return; }
 
