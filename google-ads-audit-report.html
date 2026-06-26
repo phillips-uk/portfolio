@@ -92,6 +92,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @media (max-width: 400px) {
     .gaa-cat-grid { grid-template-columns: 1fr !important; }
   }
+
+  /* ── PDF capture mode ── */
+  body.pdf-mode header,
+  body.pdf-mode .mob-hamburger,
+  body.pdf-mode .mob-drawer,
+  body.pdf-mode .gaa-header-actions { display: none !important; }
+
+  body.pdf-mode .sec-white,
+  body.pdf-mode .sec-cream { padding: 36px 0 !important; }
+
+  body.pdf-mode .gaa-priority-card,
+  body.pdf-mode .gaa-cat-btn,
+  body.pdf-mode .rpt-pfi-row,
+  body.pdf-mode .gaa-insight-strip > * { break-inside: avoid !important; page-break-inside: avoid !important; }
+
+  body.pdf-mode section { break-inside: avoid !important; }
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -701,19 +717,31 @@ function PdfDownloadButton() {
   async function handleDownload() {
     if (busy || !window.html2pdf) return;
     setBusy(true);
+    // Expand all closed category blocks
+    const catBtns = Array.from(document.querySelectorAll('.gaa-cat-btn'));
+    const toExpand = catBtns.filter(btn => btn.parentElement.children.length === 1);
+    toExpand.forEach(btn => btn.click());
+    document.body.classList.add('pdf-mode');
+    // Let React render the newly expanded sections
+    await new Promise(r => setTimeout(r, 350));
     try {
       const el = document.getElementById('root');
       const filename = "google-ads-audit-" + (ACCOUNT.cid || "report") + "-" + new Date().toISOString().slice(0,10) + ".pdf";
       await html2pdf().set({
-        margin: [8,8,8,8],
+        margin: [10,8,10,8],
         filename,
-        image: { type:'jpeg', quality: 0.92 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
+        image: { type:'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1000 },
         jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
-        pagebreak: { mode: ['avoid-all','css','legacy'] },
+        pagebreak: { mode: ['css','legacy'] },
       }).from(el).save();
     } catch(e) { console.error(e); }
-    finally { setBusy(false); }
+    finally {
+      document.body.classList.remove('pdf-mode');
+      // Collapse back the ones we expanded
+      toExpand.forEach(btn => btn.click());
+      setBusy(false);
+    }
   }
   return (
     <BtnFilledSmall icon={busy ? <Spinner/> : <IconDownload/>} disabled={busy} onClick={handleDownload}>
