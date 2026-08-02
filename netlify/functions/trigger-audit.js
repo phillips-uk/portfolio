@@ -40,6 +40,14 @@ exports.handler = async function (event) {
     return json({ error: "Invalid or tampered token" }, 401);
   }
 
+  // Email allowlist — only Lewis's accounts can trigger audits
+  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-uk.com,lewisdp87@gmail.com')
+    .toLowerCase().split(',').map(e => e.trim()).filter(Boolean);
+  if (payload.userEmail && !allowedEmails.includes(payload.userEmail.toLowerCase())) {
+    console.warn(`Blocked audit attempt by: ${payload.userEmail}`);
+    return json({ error: 'Access restricted' }, 403);
+  }
+
   // Validate customer_id against the allowed accounts list (new flow)
   if (payload.accountIds && payload.accountIds.length > 0) {
     if (!payload.accountIds.includes(customer_id)) {

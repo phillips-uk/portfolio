@@ -204,6 +204,7 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
     .url-card-box { padding: 24px 20px; }
   }
 </style>
+<script src="https://accounts.google.com/gsi/client" async></script>
 </head>
 <body class="ph">
 <!-- Google Tag Manager (noscript) -->
@@ -252,27 +253,42 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 Built around Google Ads Landing Page Experience, but useful for any paid traffic where the landing page has to earn the next action.</p>
         </div>
         <div class="url-card-box">
-          <label for="url-card" class="url-card-lbl">Landing page URL</label>
-          <div class="url-input-wrap">
-            <span class="url-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-              </svg>
-            </span>
-            <input id="url-card" type="url" placeholder="https://example.com/landing-page" class="url-real-input">
+          <!-- Auth gate — shown until Google sign-in verified -->
+          <div id="audit-auth-gate">
+            <p style="font-size:13px;color:#6B6B6B;margin:0 0 20px;line-height:1.6">This audit tool is restricted to authorised accounts. Sign in with Google to continue.</p>
+            <div id="g_id_onload"
+              data-client_id="339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com"
+              data-callback="handleAuditCredential"
+              data-auto_select="true"
+              data-use_fedcm_for_prompt="true">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-size="large" data-width="100%"></div>
+            <p id="audit-auth-error" style="display:none;font-size:13px;color:#C0392B;margin:12px 0 0;line-height:1.4">Access restricted — this tool is for authorised accounts only.</p>
           </div>
-          <p class="url-note">Paste the final URL from your Google Ads, Meta or paid campaign.</p>
-          <div style="margin-bottom:14px">
-            <button class="btn-filled btn-filled-full" style="width:100%;padding:16px 32px;font-size:15px" onclick="if(window.startAudit)window.startAudit()">Run free landing page audit</button>
-          </div>
-          <div style="text-align:center;margin-bottom:22px">
-            <a href="/landing-page-audit?preview=report" class="btn-ghost-link">View example report →</a>
-          </div>
-          <div class="url-trust">
-            <div class="url-trust-item"><span class="url-trust-icon">&#x2713;</span><span>No account connection</span></div>
-            <div class="url-trust-item"><span class="url-trust-icon">&#x2713;</span><span>No email gate</span></div>
-            <div class="url-trust-item"><span class="url-trust-icon">&#x2713;</span><span>Real Core Web Vitals from Google</span></div>
+          <!-- Audit form — revealed after sign-in -->
+          <div id="audit-form-wrap" style="display:none">
+            <label for="url-card" class="url-card-lbl">Landing page URL</label>
+            <div class="url-input-wrap">
+              <span class="url-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+              </span>
+              <input id="url-card" type="url" placeholder="https://example.com/landing-page" class="url-real-input">
+            </div>
+            <p class="url-note">Paste the final URL from your Google Ads, Meta or paid campaign.</p>
+            <div style="margin-bottom:14px">
+              <button class="btn-filled btn-filled-full" style="width:100%;padding:16px 32px;font-size:15px" onclick="if(window.startAudit)window.startAudit()">Run landing page audit</button>
+            </div>
+            <div style="text-align:center;margin-bottom:22px">
+              <a href="/landing-page-audit?preview=report" class="btn-ghost-link">View example report →</a>
+            </div>
+            <div class="url-trust">
+              <div class="url-trust-item"><span class="url-trust-icon">&#x2713;</span><span>Real Core Web Vitals from Google</span></div>
+              <div class="url-trust-item"><span class="url-trust-icon">&#x2713;</span><span>AI-assisted findings</span></div>
+              <div class="url-trust-item"><span class="url-trust-icon">&#x2713;</span><span>Ready in ~60 seconds</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -633,6 +649,23 @@ Paste a URL, run the audit and use the report. If it finds something significant
     ]
   };
 
+  window.googleCredential = null;
+
+  window.handleAuditCredential = function(response) {
+    var allowed = ['lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
+    try {
+      var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      var payload = JSON.parse(atob(b64));
+      if (!allowed.includes((payload.email || '').toLowerCase())) {
+        document.getElementById('audit-auth-error').style.display = '';
+        return;
+      }
+    } catch(e) {}
+    window.googleCredential = response.credential;
+    document.getElementById('audit-auth-gate').style.display = 'none';
+    document.getElementById('audit-form-wrap').style.display = '';
+  };
+
   window.addEventListener('DOMContentLoaded', function () {
     // Preview mode — no audit token required
     var previewParam = new URLSearchParams(window.location.search).get('preview');
@@ -735,7 +768,7 @@ Paste a URL, run the audit and use the report. If it finds something significant
     fetch('/.netlify/functions/landing-audit-background', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ url: url, jobId: currentJobId })
+      body:    JSON.stringify({ url: url, jobId: currentJobId, googleToken: window.googleCredential })
     }).catch(function() {}); // 202 — ignore response
 
     // Animate progress steps

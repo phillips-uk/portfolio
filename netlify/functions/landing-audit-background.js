@@ -21,6 +21,21 @@ function getBlobsStore () {
   });
 }
 
+async function verifyGoogleToken(credential) {
+  if (!credential) return null;
+  try {
+    const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+    if (!res.ok) return null;
+    const payload = await res.json();
+    const validAuds = [
+      process.env.GOOGLE_OAUTH_CLIENT_ID,
+      '339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com'
+    ].filter(Boolean);
+    if (!validAuds.includes(payload.aud)) return null;
+    return (payload.email || '').toLowerCase();
+  } catch { return null; }
+}
+
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') return;
 
@@ -33,7 +48,16 @@ exports.handler = async function (event) {
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return; }
 
-  const { url, jobId } = body;
+  const { url, jobId, googleToken } = body;
+
+  // Email allowlist — verify Google Sign-In token and check against allowed emails
+  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-uk.com,lewisdp87@gmail.com')
+    .toLowerCase().split(',').map(e => e.trim()).filter(Boolean);
+  const verifiedEmail = await verifyGoogleToken(googleToken);
+  if (!verifiedEmail || !allowedEmails.includes(verifiedEmail)) {
+    console.warn(`Blocked audit attempt — token email: ${verifiedEmail || 'none'}`);
+    return { statusCode: 403, body: JSON.stringify({ error: 'Access restricted' }) };
+  }
   if (!url || !jobId) return;
 
   const clientIp = ((event.headers || {})['x-forwarded-for'] || (event.headers || {})['client-ip'] || 'unknown').split(',')[0].trim();
