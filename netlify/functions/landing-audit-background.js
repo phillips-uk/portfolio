@@ -60,8 +60,6 @@ exports.handler = async function (event) {
   }
   if (!url || !jobId) return;
 
-  const clientIp = ((event.headers || {})['x-forwarded-for'] || (event.headers || {})['client-ip'] || 'unknown').split(',')[0].trim();
-
   let store;
   try {
     store = getBlobsStore();
@@ -306,19 +304,7 @@ exports.handler = async function (event) {
       console.error('[audit] lead store error:', leadErr.message);
     }
 
-    // Fire-and-forget notification email
-    const _hostname = (() => {
-      try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
-    })();
-    if (!isBlockedIp(clientIp)) {
-      await sendNotificationEmail(
-        `Landing page audit — ${_hostname} (${report.health_score}/100)`,
-        buildEmailHtml({ url, jobId, report, clientIp }),
-        buildReportAttachment(report, url, jobId)
-      );
-    } else {
-      console.log('[audit] email skipped — blocked IP:', clientIp);
-    }
+
 
     console.log('[audit] complete');
 
@@ -1467,97 +1453,3 @@ function buildReport (url, parsed, psiMobile, psiDesktop, claude, isHttps, fetch
   };
 }
 
-function isBlockedIp(ip) {
-  const blocked = (process.env.EMAIL_SKIP_IPS || '').split(',').map(s => s.trim()).filter(Boolean);
-  return blocked.some(b => ip && ip.startsWith(b));
-}
-
-function buildEmailHtml({ url, jobId, report, clientIp }) {
-  const findings = (report.findings || []).filter(f => ['critical','high','medium'].includes((f.severity || '').toLowerCase())).slice(0, 8);
-  const rows = findings.map(f => {
-    const colour = { critical: '#C0392B', high: '#D4691B', medium: '#D97706' }[(f.severity || '').toLowerCase()] || '#6B6B6B';
-    return `<tr>
-      <td style="padding:6px 10px;border-bottom:1px solid #E8D8C4;vertical-align:top;">
-        <span style="display:inline-block;background:${colour};color:#fff;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 6px;border-radius:3px;text-transform:uppercase">${f.severity}</span>
-      </td>
-      <td style="padding:6px 10px;border-bottom:1px solid #E8D8C4;font-size:13px;color:#1A1A1A">${f.title || f.message || ''}</td>
-    </tr>`;
-  }).join('');
-
-  return `<div style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1A1A1A">
-    <div style="background:#985830;padding:20px 24px;border-radius:6px 6px 0 0">
-      <span style="color:#fff;font-size:18px;font-weight:700">Phillips. Audit Alert</span>
-    </div>
-    <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-top:none;padding:24px;border-radius:0 0 6px 6px">
-      <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
-        <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B;width:100px">URL</td><td style="padding:4px 0;font-size:13px"><a href="${url}" style="color:#985830">${url}</a></td></tr>
-        <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">Score</td><td style="padding:4px 0;font-size:13px;font-weight:700">${report.health_score}/100 — ${report.score_band}</td></tr>
-        <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">Keyword</td><td style="padding:4px 0;font-size:13px">${report.inferred_keyword || 'unknown'}</td></tr>
-        <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">IP</td><td style="padding:4px 0;font-size:13px;font-family:monospace">${clientIp}</td></tr>
-        <tr><td style="padding:4px 0;font-size:13px;color:#6B6B6B">Time</td><td style="padding:4px 0;font-size:13px">${report.audited_at}</td></tr>
-      </table>
-      ${findings.length ? `<p style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#985830;margin:0 0 8px">Top Issues</p>
-      <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #E8D8C4;border-radius:4px">${rows}</table>` : ''}
-      <div style="margin-top:20px">
-        <a href="https://www.phillips-uk.com/r/${jobId}" style="background:#985830;color:#fff;padding:10px 20px;border-radius:4px;text-decoration:none;font-size:13px;font-weight:700">View Full Report →</a>
-      </div>
-    </div>
-  </div>`;
-}
-
-function buildReportAttachment(report, url, jobId) {
-  const findings = report.findings || [];
-  const rows = findings.map(f => `<tr>
-    <td style="padding:5px 8px;border:1px solid #ddd;font-size:12px;text-transform:capitalize">${f.severity || ''}</td>
-    <td style="padding:5px 8px;border:1px solid #ddd;font-size:12px">${f.title || f.message || ''}</td>
-    <td style="padding:5px 8px;border:1px solid #ddd;font-size:12px">${f.recommendation || ''}</td>
-  </tr>`).join('');
-
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Audit Report — ${url}</title></head><body style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;color:#1A1A1A;padding:32px">
-    <h1 style="font-size:20px;margin-bottom:4px">Landing Page Audit</h1>
-    <p style="color:#6B6B6B;margin:0 0 24px">${url} — ${report.audited_at}</p>
-    <table style="border-collapse:collapse;margin-bottom:24px">
-      <tr><td style="padding:4px 12px 4px 0;font-size:13px;color:#6B6B6B">Score</td><td style="font-size:13px;font-weight:700">${report.health_score}/100 — ${report.score_band}</td></tr>
-      <tr><td style="padding:4px 12px 4px 0;font-size:13px;color:#6B6B6B">Keyword</td><td style="font-size:13px">${report.inferred_keyword || 'unknown'}</td></tr>
-      <tr><td style="padding:4px 12px 4px 0;font-size:13px;color:#6B6B6B">Report URL</td><td style="font-size:13px">https://www.phillips-uk.com/r/${jobId}</td></tr>
-    </table>
-    <h2 style="font-size:14px;margin-bottom:8px">Findings (${findings.length})</h2>
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr style="background:#985830;color:#fff">
-        <th style="padding:6px 8px;font-size:12px;text-align:left;border:1px solid #ccc">Severity</th>
-        <th style="padding:6px 8px;font-size:12px;text-align:left;border:1px solid #ccc">Issue</th>
-        <th style="padding:6px 8px;font-size:12px;text-align:left;border:1px solid #ccc">Recommendation</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  </body></html>`;
-
-  return {
-    filename: `audit-${new URL(url).hostname.replace(/^www\./,'')}-${report.audited_at.slice(0,10)}.html`,
-    content: Buffer.from(html).toString('base64'),
-  };
-}
-
-async function sendNotificationEmail(subject, html, attachment) {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return;
-  try {
-    const payload = {
-      from: 'audits@phillips-uk.com',
-      to: 'lewis@phillips-uk.com',
-      subject,
-      html,
-    };
-    if (attachment) payload.attachments = [attachment];
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-  } catch (e) {
-    console.error('Email notification failed:', e.message);
-  }
-}
