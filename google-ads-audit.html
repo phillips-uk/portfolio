@@ -20,6 +20,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta property="og:title" content="Free Google Ads Audit Tool — Run a Full Account Diagnostic | Phillips">
 <meta property="og:description" content="Connect your Google Ads account and get a full 9-point diagnostic in under 60 seconds.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+<script src="https://accounts.google.com/gsi/client" async></script>
 <style>
 :root {
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -241,14 +242,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span style="font-size:18px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;">Phillips<span style="color:#985830;">.</span></span>
           <span id="card-step-pill" style="margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;background:#F5EBD9;padding:4px 10px;border-radius:20px;">Step 1 of 3</span>
         </div>
-        <div id="connect-card-body">
+        <!-- GIS auth gate -->
+        <div id="gaa-auth-gate" style="padding:18px 0 4px;">
+          <p style="font-size:13px;color:#6B6B6B;margin:0 0 16px;line-height:1.5;">This tool is restricted to authorised accounts. Sign in with Google to continue.</p>
+          <div id="g_id_onload"
+            data-client_id="339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com"
+            data-callback="handleGAACredential"
+            data-auto_select="true"
+            data-use_fedcm_for_prompt="true">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-size="large" data-width="100%"></div>
+          <p id="gaa-auth-error" style="display:none;font-size:12px;color:#B83A1F;margin:10px 0 0;line-height:1.4;">Access restricted — this tool is for authorised accounts only.</p>
+        </div>
+        <div id="connect-card-body" style="display:none;">
           <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:6px;">Free Google Ads audit</div>
           <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 16px;">You connect directly in Google Ads — no sign-in prompts. We remove ourselves the moment your report is ready.</p>
           <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your Customer ID</label>
           <input id="mcc-cid-input" type="text" placeholder="e.g. 287-441-9032"
-            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
-          <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your email <span style="font-weight:400;color:#6B6B6B;">(report sent here)</span></label>
-          <input id="mcc-email-input" type="email" placeholder="you@yourcompany.com"
             style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
           <div id="mcc-entry-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:8px;"></div>
           <button id="mcc-cid-submit" style="width:100%;background:#985830;color:#fff;border:0;padding:12px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Get my audit &rarr;</button>
@@ -535,6 +545,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
 
 <script>
+// ── GIS gate ───────────────────────────────────────────────────────────────
+window.handleGAACredential = function(response) {
+  var allowed = ['lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
+  try {
+    var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    var payload = JSON.parse(atob(b64));
+    if (!allowed.includes((payload.email || '').toLowerCase())) {
+      var errEl = document.getElementById('gaa-auth-error');
+      if (errEl) errEl.style.display = '';
+      return;
+    }
+  } catch(e) {}
+  var gate = document.getElementById('gaa-auth-gate');
+  var body = document.getElementById('connect-card-body');
+  if (gate) gate.style.display = 'none';
+  if (body) body.style.display = '';
+};
+
 // ── OAuth constants ────────────────────────────────────────────────────────
 const GOOGLE_CLIENT_ID    = "339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com";
 const OAUTH_REDIRECT_URI  = "https://phillips-uk.com/.netlify/functions/auth-callback";
@@ -806,16 +834,13 @@ let _mccPollCount  = 0;
 const MCC_POLL_MAX = 36;           // 3 min at 5s intervals
 const MCC_POLL_MS  = 5000;
 
-function showManagerLinkEntry(prefillCid, prefillEmail) {
+function showManagerLinkEntry(prefillCid) {
   setCardStep(1, "Step 1 of 3");
   document.getElementById('connect-card-body').innerHTML = `
     <div style="font-size:18px;font-weight:700;letter-spacing:-0.015em;color:#1A1A1A;margin-top:18px;margin-bottom:6px;">Free Google Ads audit</div>
     <p style="font-size:13px;line-height:1.55;color:#6B6B6B;margin:0 0 16px;">You connect directly in Google Ads — no sign-in prompts. We remove ourselves the moment your report is ready.</p>
     <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your Customer ID</label>
     <input id="mcc-cid-input" type="text" placeholder="e.g. 287-441-9032" value="${escHtml(prefillCid||'')}"
-      style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
-    <label style="display:block;font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:4px;">Your email <span style="font-weight:400;color:#6B6B6B;">(report sent here)</span></label>
-    <input id="mcc-email-input" type="email" placeholder="you@yourcompany.com" value="${escHtml(prefillEmail||'')}"
       style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid #E8D8C4;border-radius:4px;outline:none;color:#1A1A1A;margin-bottom:10px;">
     <div id="mcc-entry-error" style="display:none;font-size:12px;color:#B83A1F;margin-bottom:8px;"></div>
     <button id="mcc-cid-submit" style="width:100%;background:#985830;color:#fff;border:0;padding:12px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;">Get my audit &rarr;</button>
@@ -834,9 +859,8 @@ function showManagerLinkEntry(prefillCid, prefillEmail) {
       </div>
     </div>`;
 
-  const cidInput   = document.getElementById('mcc-cid-input');
-  const emailInput = document.getElementById('mcc-email-input');
-  const submitBtn  = document.getElementById('mcc-cid-submit');
+  const cidInput  = document.getElementById('mcc-cid-input');
+  const submitBtn = document.getElementById('mcc-cid-submit');
 
   if (!prefillCid) cidInput.focus();
 
@@ -847,13 +871,10 @@ function showManagerLinkEntry(prefillCid, prefillEmail) {
       err.textContent = "Please enter a valid 10-digit Customer ID (e.g. 287-441-9032).";
       err.style.display = 'block'; return;
     }
-    showManagerLinkInstructions(raw, emailInput.value.trim());
+    showManagerLinkInstructions(raw, '');
   });
 
   cidInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') emailInput.focus();
-  });
-  emailInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') submitBtn.click();
   });
 }

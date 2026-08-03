@@ -23,6 +23,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:title" content="AI Ad Creative Scoring Tool — Score &amp; Analyse Paid Ad Creatives | Phillips.">
 <meta name="twitter:description" content="Score paid ad creatives with AI. Ranked report across six dimensions — hook quality, visual hierarchy, copy clarity, brand consistency, originality, and offer clarity. Audio transcript included.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+<script src="https://accounts.google.com/gsi/client" async></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -396,12 +397,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span id="auth-status" style="font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:#6B6B6B;">Loading&hellip;</span>
         </div>
 
-        <!-- Auth form — shown when not signed in -->
+        <!-- Auth gate — Google Sign-In -->
         <div id="auth-form" style="display:none;">
-          <div style="font-size:17px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;margin-bottom:16px;">Sign in to score</div>
-          <input type="password" id="pin-input" placeholder="Enter your PIN" autocomplete="off"
-            style="width:100%;padding:12px 16px;font-size:15px;font-family:inherit;border:1.5px solid #E8D8C4;border-radius:6px;color:#1A1A1A;background:#fff;outline:none;margin-bottom:12px;letter-spacing:0.12em;transition:border-color 150ms;">
-          <button id="auth-btn" style="width:100%;padding:13px;font-size:15px;font-weight:600;font-family:inherit;background:#985830;color:#fff;border:0;border-radius:6px;cursor:pointer;letter-spacing:-0.005em;">Sign in &rarr;</button>
+          <div style="font-size:17px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;margin-bottom:12px;">Sign in to score</div>
+          <p style="font-size:13px;color:#6B6B6B;margin:0 0 16px;line-height:1.5;">This tool is restricted to authorised accounts. Sign in with Google to continue.</p>
+          <div id="g_id_onload"
+            data-client_id="339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com"
+            data-callback="handleCreativeCredential"
+            data-auto_select="true"
+            data-use_fedcm_for_prompt="true">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-size="large" data-width="100%"></div>
           <div id="auth-error" style="display:none;font-size:13px;color:#C0392B;margin-top:10px;text-align:center;"></div>
         </div>
 
@@ -760,8 +766,6 @@ function clearToken() {
 const authStatus = document.getElementById('auth-status');
 const authForm   = document.getElementById('auth-form');
 const uploadForm = document.getElementById('upload-form');
-const pinInput   = document.getElementById('pin-input');
-const authBtn    = document.getElementById('auth-btn');
 const authError  = document.getElementById('auth-error');
 const caLoading  = document.getElementById('ca-loading');
 
@@ -781,6 +785,44 @@ function showAuthUI() {
   caLoading.style.display = 'none';
   document.body.style.overflow = '';
 }
+
+// GIS credential callback — exchanges Google token for HMAC session token
+window.handleCreativeCredential = async function(response) {
+  var allowed = ['lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
+  // Client-side pre-check before hitting the server
+  try {
+    var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    var payload = JSON.parse(atob(b64));
+    if (!allowed.includes((payload.email || '').toLowerCase())) {
+      authError.textContent   = 'Access restricted — this tool is for authorised accounts only.';
+      authError.style.display = 'block';
+      return;
+    }
+  } catch(e) {}
+  authError.style.display = 'none';
+  try {
+    var resp = await fetch('/.netlify/functions/creative-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ googleToken: response.credential })
+    });
+    if (!resp.ok) {
+      var errData = await resp.json().catch(() => ({}));
+      authError.textContent   = errData.error || 'Sign in failed';
+      authError.style.display = 'block';
+      return;
+    }
+    var data = await resp.json();
+    saveToken(data.token);
+    showUploadUI();
+  } catch(e) {
+    authError.textContent   = 'Sign in failed — please try again';
+    authError.style.display = 'block';
+  }
+};
+
+// Init
+if (getToken()) { showUploadUI(); } else { showAuthUI(); }
 
 // Loading overlay helpers
 function showLoadingOverlay() {
@@ -826,36 +868,6 @@ function setLoadingError(msg) {
     if (el && !el.classList.contains('done')) el.className = 'ca-step';
   }
 }
-
-// Init
-if (getToken()) { showUploadUI(); } else { showAuthUI(); }
-
-// Sign in
-authBtn.addEventListener('click', async () => {
-  const pin = pinInput.value.trim();
-  if (!pin) return;
-  authBtn.textContent = 'Signing in…';
-  authBtn.disabled    = true;
-  authError.style.display = 'none';
-  try {
-    const resp = await fetch('/.netlify/functions/creative-auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin })
-    });
-    if (!resp.ok) throw new Error('Incorrect PIN');
-    const data = await resp.json();
-    saveToken(data.token);
-    pinInput.value = '';
-    showUploadUI();
-  } catch (err) {
-    authError.textContent   = err.message || 'Sign in failed';
-    authError.style.display = 'block';
-    authBtn.textContent     = 'Sign in →';
-    authBtn.disabled        = false;
-  }
-});
-pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') authBtn.click(); });
 
 // =============== FILE HANDLING ===============
 const fileInput = document.getElementById('file-input');

@@ -1,19 +1,38 @@
 /**
  * creative-auth.js
- * Netlify Function — validates a PIN and returns a signed token.
+ * Netlify Function — verifies a Google Identity Services credential and returns
+ * a signed HMAC session token for use with creative-upload.js.
  *
- * POST { pin } → { token } on success
- *             → { error }  on failure
+ * POST { googleToken } → { token } on success
+ *                      → { error }  on failure
  *
  * Token format: base64url(timestamp:hmac-sha256(timestamp, pin+siteId))
- * Valid for 24 hours. Verified by creative-analyse-background.js.
+ * Valid for 24 hours. Verified by creative-upload.js / creative-analyse-background.js.
  *
- * Env vars: CREATIVE_UPLOAD_PIN, NETLIFY_SITE_ID
+ * Env vars: CREATIVE_UPLOAD_PIN (internal HMAC key), NETLIFY_SITE_ID,
+ *           ALLOWED_AUDIT_EMAILS, GOOGLE_OAUTH_CLIENT_ID
  */
 
 'use strict';
 
 const crypto = require('crypto');
+
+// ── Google token verification ─────────────────────────────────────────────────
+
+async function verifyGoogleToken(credential) {
+  if (!credential) return null;
+  try {
+    const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+    if (!res.ok) return null;
+    const payload = await res.json();
+    const validAuds = [
+      process.env.GOOGLE_OAUTH_CLIENT_ID,
+      '339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com'
+    ].filter(Boolean);
+    if (!validAuds.includes(payload.aud)) return null;
+    return (payload.email || '').toLowerCase();
+  } catch { return null; }
+}
 
 // ── Token construction ────────────────────────────────────────────────────────
 
@@ -41,32 +60,26 @@ exports.handler = async function (event) {
     return json({ error: 'Invalid request body' }, 400);
   }
 
-  const { pin } = body;
+  const { googleToken } = body;
 
-  if (!pin || typeof pin !== 'string') {
-    return json({ error: 'PIN is required' }, 400);
+  if (!googleToken || typeof googleToken !== 'string') {
+    return json({ error: 'Google token required' }, 400);
   }
 
-  const correctPin = process.env.CREATIVE_UPLOAD_PIN;
-  if (!correctPin) {
+  // Verify Google credential and check email allowlist
+  const verifiedEmail = await verifyGoogleToken(googleToken);
+  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-uk.com,lewisdp87@gmail.com')
+    .toLowerCase().split(',').map(e => e.trim()).filter(Boolean);
+
+  if (!verifiedEmail || !allowedEmails.includes(verifiedEmail)) {
+    console.warn(`[creative-auth] Blocked — token email: ${verifiedEmail || 'none'}`);
+    return json({ error: 'Access restricted' }, 403);
+  }
+
+  const pin = process.env.CREATIVE_UPLOAD_PIN;
+  if (!pin) {
     console.error('[creative-auth] CREATIVE_UPLOAD_PIN env var is not set');
     return json({ error: 'Service unavailable' }, 503);
-  }
-
-  // Constant-time comparison to prevent timing attacks
-  const pinMatch = (() => {
-    try {
-      const a = Buffer.from(pin);
-      const b = Buffer.from(correctPin);
-      if (a.length !== b.length) return false;
-      return crypto.timingSafeEqual(a, b);
-    } catch {
-      return false;
-    }
-  })();
-
-  if (!pinMatch) {
-    return json({ error: 'Invalid PIN' }, 401);
   }
 
   const siteId = process.env.NETLIFY_SITE_ID || 'phillips';
