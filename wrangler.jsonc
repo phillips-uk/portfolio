@@ -26,6 +26,10 @@
     "producers": [{ "binding": "JOBS", "queue": "phillips-jobs" }],
     "consumers": [{ "queue": "phillips-jobs", "max_batch_size": 1, "max_batch_timeout": 1, "max_retries": 0 }]
   },
-  "limits": { "cpu_ms": 300000 }
-  // Custom domains (www.phillips-uk.com, phillips-uk.com) are added once the zone is on Cloudflare.
+  "limits": { "cpu_ms": 300000 },
+  // Zone phillips-uk.com is on Cloudflare (nameservers kirk/nataly) since 2026-10-20. The Worker redirects the apex to www.
+  "routes": [
+    { "pattern": "www.phillips-uk.com", "custom_domain": true },
+    { "pattern": "phillips-uk.com", "custom_domain": true }
+  ]
 }
