@@ -67,9 +67,11 @@ globalThis.fetch = (input, init) => {
 async function route(request, env, ctx) {
   const url = new URL(request.url);
 
-  // Apex to www, as Netlify did (301, path and query kept).
-  if (url.hostname === 'phillips-uk.com') {
+  // Apex to www and http to https, as Netlify did (301, path and query kept).
+  const isSiteHost = url.hostname === 'phillips-uk.com' || url.hostname === CANONICAL_HOST;
+  if (isSiteHost && (url.hostname !== CANONICAL_HOST || url.protocol === 'http:')) {
     url.hostname = CANONICAL_HOST;
+    url.protocol = 'https:';
     return Response.redirect(url.href, 301);
   }
 
