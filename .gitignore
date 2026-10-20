@@ -4,3 +4,7 @@
 # Dependencies
 node_modules/
 package-lock.json
+
+# Cloudflare
+.wrangler/
+.dev.vars

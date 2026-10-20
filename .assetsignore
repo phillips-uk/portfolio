@@ -1,0 +1,15 @@
+.git
+.gitignore
+.netlify
+.wrangler
+.dev.vars
+node_modules
+netlify
+netlify.toml
+_redirects
+_design
+cloudflare
+package.json
+package-lock.json
+wrangler.jsonc
+*.md

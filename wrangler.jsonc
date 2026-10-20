@@ -1,0 +1,31 @@
+// Cloudflare Worker for phillips-uk.com (replaces Netlify). Deploy: npx wrangler deploy
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "phillips-uk",
+  "main": "cloudflare/src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+    // The Worker sees every request so it can redirect the apex to www and route the function URLs.
+    "run_worker_first": true
+  },
+  "alias": {
+    "@netlify/blobs": "./cloudflare/src/shims/netlify-blobs.cjs"
+  },
+  "r2_buckets": [
+    { "binding": "BLOBS", "bucket_name": "phillips-blobs" }
+  ],
+  "queues": {
+    "producers": [{ "binding": "JOBS", "queue": "phillips-jobs" }],
+    "consumers": [{ "queue": "phillips-jobs", "max_batch_size": 1, "max_batch_timeout": 1, "max_retries": 0 }]
+  },
+  "limits": { "cpu_ms": 300000 }
+  // Custom domains (www.phillips-uk.com, phillips-uk.com) are added once the zone is on Cloudflare.
+}
