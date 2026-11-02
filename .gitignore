@@ -1,6 +1,9 @@
 # Local Netlify folder
 .netlify
 
+# Raw Claude Design exports (pre-cleaning originals — not deployed)
+_design/
+
 # Dependencies
 node_modules/
 package-lock.json
