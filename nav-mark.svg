@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <text x="4" y="24" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1A1A1A">P</text>
-  <text x="18" y="24" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#985830">.</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 40 160 160" width="160" height="160" role="img" aria-label="Phillips. mark"><title>Phillips. mark</title><g transform="translate(40 40) scale(1) translate(-40 -40)"><g fill="none" stroke="#985830" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 124C88 140 88 156 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/></g><circle cx="88" cy="76" r="14" fill="#985830"/></g></svg>

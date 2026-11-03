@@ -150,7 +150,7 @@ a:hover{text-decoration:underline}
 </head>
 <body>
 <div class="box">
-  <a class="logo" href="https://www.phillips-uk.com">Phillips<span>.</span></a>
+  <a class="logo" href="https://www.phillips-uk.com"><img src="https://www.phillips-uk.com/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
   <div class="spinner"></div>
   <h1>Audit still running</h1>
   <p>This report is being generated — it takes around 60 seconds. Check back shortly or return to the audit tool.</p>
@@ -263,7 +263,7 @@ a{color:inherit;text-decoration:none}
 <!-- Nav -->
 <nav style="position:sticky;top:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid #E8D8C4;z-index:100;height:64px;display:flex;align-items:center">
   <div class="nav-inner" style="width:100%;max-width:720px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between">
-    <a href="https://www.phillips-uk.com" style="font-size:18px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A">Phillips<span style="color:#985830">.</span></a>
+    <a href="https://www.phillips-uk.com" style="font-size:18px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A"><img src="https://www.phillips-uk.com/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
     <a href="https://www.phillips-uk.com/landing-page-audit" style="font-size:13px;font-weight:600;letter-spacing:0.03em;color:#985830;border:1.5px solid #985830;padding:7px 16px;border-radius:4px">← Run an audit</a>
   </div>
 </nav>
@@ -317,7 +317,7 @@ a{color:inherit;text-decoration:none}
 
 <!-- Footer -->
 <footer style="border-top:1px solid #E8D8C4;padding:24px 32px;text-align:center;font-size:13px;color:#6B6B6B">
-  <a href="https://www.phillips-uk.com" style="font-weight:700;color:#1A1A1A">Phillips<span style="color:#985830">.</span></a> · <a href="https://www.phillips-uk.com" style="color:#6B6B6B">phillips-uk.com</a>
+  <a href="https://www.phillips-uk.com" style="font-weight:700;color:#1A1A1A"><img src="https://www.phillips-uk.com/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a> · <a href="https://www.phillips-uk.com" style="color:#6B6B6B">phillips-uk.com</a>
 </footer>
 
 </body>
