@@ -144,6 +144,15 @@ async function clientsSummary(env, origin) {
   return index;
 }
 
+// One document from the latest-files bundle the sync uploads (admin/docs.json).
+async function getDoc(env, id) {
+  const obj = await env.BLOBS.get('admin/docs.json');
+  if (!obj) return null;
+  const bundle = await obj.json();
+  const d = bundle.docs && bundle.docs[id];
+  return d ? { id, ...d, syncedAt: bundle.syncedAt } : null;
+}
+
 export function isAdminPath(path) {
   return path === '/admin' || path.startsWith('/admin/api/');
 }
@@ -177,6 +186,11 @@ export async function admin(request, url, env) {
   if (act && method === 'POST') return setRevoked(env, act[1], act[2] === 'revoke', url.origin);
   if (path === '/admin/api/site') return json(await siteSummary(env));
   if (path === '/admin/api/clients') return json(await clientsSummary(env, url.origin));
+  const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);
+  if (doc) {
+    const d = await getDoc(env, doc[1]);
+    return d ? json(d) : json({ error: 'That document is no longer in the latest sync. Open it in Obsidian instead.' }, 404);
+  }
 
   return json({ error: 'Not found' }, 404);
 }

@@ -2,21 +2,40 @@
 // Sends a summary of the Obsidian client and prospect folders to the phillips-uk.com admin page.
 //   node cloudflare/scripts/sync-clients.mjs            build and upload
 //   node cloudflare/scripts/sync-clients.mjs --dry-run  print the summary only
-// Only summaries go up (key facts, health scores, open tasks, note titles and dates). Full notes stay in the vault,
-// and every item links back to Obsidian with an obsidian:// address. Runs on a schedule from a launchd agent.
+// Summaries go up (key facts, health scores, open tasks, note titles and dates), plus the latest file of each report
+// type, each profile, brain dump and prospect note so the admin page can show them. Older files stay in the vault.
+// Every item also links back to Obsidian with an obsidian:// address. Runs on a schedule from a launchd agent.
 import { readFileSync, readdirSync, statSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { join, extname, basename, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 const VAULT = process.env.VAULT || `${process.env.HOME}/Library/Mobile Documents/iCloud~md~obsidian/Documents/My Brain`;
 const VAULT_NAME = 'My Brain';
 const CLIENTS = '03_Clients';
 const PROSPECTS = '00_Prospects';
 const R2_KEY = 'phillips-blobs/admin/clients-index.json';
+const R2_DOCS = 'phillips-blobs/admin/docs.json';
+const DOC_MAX = 400 * 1024;
+// Never upload a note that looks like it holds a credential.
+const SECRET = /shpat_[a-f0-9]{10}|shpss_|sk-ant-|sk-[A-Za-z0-9]{20}|GOCSPX-|AIza[0-9A-Za-z_-]{30}|\bre_[A-Za-z0-9]{20}|xox[bp]-|ghp_[A-Za-z0-9]{20}|-----BEGIN [A-Z ]*PRIVATE KEY/;
 const ACCOUNT_ID = '9cd423eee8986ecc6f22f6fa3a17878b';
 const LINKED = new Set(['.md', '.pdf']);
 const dryRun = process.argv.includes('--dry-run');
+
+// The latest file of each report type, each client profile and brain dump, and each prospect note are copied up so the
+// admin page can show them. Older files stay in the vault only.
+const docs = {};
+function addDoc(rel, docTitle, date) {
+  if (!rel.endsWith('.md')) return null;
+  const text = readText(join(VAULT, rel));
+  if (!text || text.length > DOC_MAX) return null;
+  if (SECRET.test(text)) { console.error(`Not uploading ${rel}: it looks like it contains a key or password.`); return null; }
+  const id = createHash('sha1').update(rel).digest('hex').slice(0, 16);
+  docs[id] = { title: docTitle, date: date || '', path: rel, obsidian: obsidian(rel), markdown: text };
+  return id;
+}
 // Weekly Google Ads, GA4 and Search Console numbers, written by google-ads-automation/client_metrics.py.
 const METRICS_FILE = process.env.METRICS_FILE || `${process.env.HOME}/Projects/google-ads-automation/reports/client-metrics.json`;
 
@@ -118,8 +137,10 @@ function client(folder) {
     const linked = list.filter(f => LINKED.has(extname(f.name).toLowerCase()) && !/^Invoices$/i.test(sub));
     const items = linked.map(f => {
       const fileRel = `${rel}/${f.dir === abs ? '' : f.dir.slice(abs.length + 1) + '/'}${f.name}`;
-      return { title: title(f.name), date: fileDate(f), link: obsidian(fileRel) };
+      return { title: title(f.name), date: fileDate(f), link: obsidian(fileRel), rel: fileRel };
     }).sort((a, b) => b.date.localeCompare(a.date));
+    if (items[0]) items[0].doc = addDoc(items[0].rel, items[0].title, items[0].date);
+    items.forEach(it => { delete it.rel; });
     return { name: sub, count: list.length, latestDate: items[0] ? items[0].date : (list.map(fileDate).sort().pop() || ''), items: items.slice(0, 5), private: /^Invoices$/i.test(sub) };
   }).sort((a, b) => (b.latestDate || '').localeCompare(a.latestDate || ''));
 
@@ -141,7 +162,9 @@ function client(folder) {
     fileCount: files.length,
     sections,
     profileLink: profile ? obsidian(profilePath) : null,
+    profileDoc: profile ? addDoc(profilePath, `${name}: client profile`, fm.updated || '') : null,
     brainDumpLink: files.some(f => f.dir === abs && f.name === 'Brain Dump.md') ? obsidian(`${rel}/Brain Dump.md`) : null,
+    brainDumpDoc: files.some(f => f.dir === abs && f.name === 'Brain Dump.md') ? addDoc(`${rel}/Brain Dump.md`, `${name}: brain dump`, '') : null,
   };
 }
 
@@ -166,6 +189,7 @@ function prospects() {
       nextDate: fm.next_date || '',
       updated: fm.updated || '',
       link: obsidian(`${rel}/${n}`),
+      doc: addDoc(`${rel}/${n}`, fm.name || basename(n, '.md'), fm.updated || ''),
     };
   }).filter(Boolean);
 }
@@ -190,20 +214,24 @@ const index = {
 };
 
 if (dryRun) {
-  console.log(JSON.stringify(index, null, 2));
+  console.log(JSON.stringify({ ...index, docs: Object.fromEntries(Object.entries(docs).map(([id, d]) => [id, { title: d.title, path: d.path, bytes: d.markdown.length }])) }, null, 2));
   process.exit(0);
 }
 
 const tmp = mkdtempSync(join(tmpdir(), 'ph-sync-'));
-const file = join(tmp, 'clients-index.json');
-writeFileSync(file, JSON.stringify(index));
-try {
-  execFileSync('npx', ['wrangler', 'r2', 'object', 'put', R2_KEY, '--file', file, '--content-type', 'application/json', '--remote'], {
+function upload(key, data) {
+  const file = join(tmp, basename(key));
+  writeFileSync(file, JSON.stringify(data));
+  execFileSync('npx', ['wrangler', 'r2', 'object', 'put', key, '--file', file, '--content-type', 'application/json', '--remote'], {
     cwd: join(dirname(new URL(import.meta.url).pathname), '..', '..'),
     env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: ACCOUNT_ID },
     stdio: ['ignore', 'ignore', 'pipe'],
   });
-  console.log(`Synced ${index.clients.length} clients and ${index.prospects.length} prospects at ${index.syncedAt}`);
+}
+try {
+  upload(R2_DOCS, { syncedAt: index.syncedAt, docs });
+  upload(R2_KEY, index);
+  console.log(`Synced ${index.clients.length} clients, ${index.prospects.length} prospects and ${Object.keys(docs).length} documents at ${index.syncedAt}`);
 } finally {
   rmSync(tmp, { recursive: true, force: true });
 }
