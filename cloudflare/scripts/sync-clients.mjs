@@ -204,6 +204,7 @@ try { metrics = JSON.parse(readFileSync(METRICS_FILE, 'utf8')); } catch { /* no 
 const index = {
   syncedAt: new Date().toISOString(),
   metricsAt: metrics ? metrics.generatedAt : null,
+  metricsPeriod: metrics ? metrics.period || null : null,
   clients: clientFolders.map(folder => {
     const c = client(folder);
     const m = metrics && metrics.clients && metrics.clients[folder];

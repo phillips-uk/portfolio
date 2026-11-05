@@ -292,7 +292,7 @@
       <div class="page-head"><div><h1>Clients</h1><p class="lede">From the client folders in Obsidian. Click a client for health, reports and tasks.</p></div></div>
       <div class="card scroll">
         <table class="table">
-          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th>Google Ads last week</th><th>Last report</th><th class="r">Open tasks</th><th></th></tr></thead>
+          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th id="ads-col">Google Ads this week</th><th>Last report</th><th class="r">Open tasks</th><th></th></tr></thead>
           <tbody id="clients-rows"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
         </table>
       </div>
@@ -518,7 +518,7 @@
       api('/admin/api/invites').catch(function () { return null; }),
       api('/admin/api/site').catch(function () { return null; })
     ]).then(function (r) {
-      if (r[0]) { state.clients = r[0].clients || []; state.prospects = r[0].prospects || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; }
+      if (r[0]) { state.clients = r[0].clients || []; state.prospects = r[0].prospects || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
       if (r[1]) state.invites = r[1].invites || [];
       if (r[2]) state.site = r[2];
       renderAll();
@@ -548,13 +548,17 @@
   // Each metric: label, how to read it from a week, how to show it, and whether up is good (1), bad (-1) or neither (0).
   function adsMetrics(cur, weeks) {
     var hasValue = (weeks || []).some(function (w) { return w.value > 0; });
+    var spend = { label: 'Spend', get: function (w) { return w.cost; }, show: function (v) { return money(v, cur); }, up: 0 };
+    var conv = { label: 'Conversions', get: function (w) { return w.conversions; }, show: function (v) { return Number(v || 0).toLocaleString('en-GB', { maximumFractionDigits: 1 }); }, up: 1 };
+    if (hasValue) return [
+      spend, conv,
+      { label: 'Conversion value', get: function (w) { return w.value; }, show: function (v) { return money(v, cur); }, up: 1 },
+      { label: 'Return on ad spend', get: function (w) { return w.cost ? w.value / w.cost : null; }, show: function (v) { return v == null ? '–' : v.toFixed(1) + '×'; }, up: 1 }
+    ];
     return [
-      { label: 'Spend', get: function (w) { return w.cost; }, show: function (v) { return money(v, cur); }, up: 0 },
-      { label: 'Conversions', get: function (w) { return w.conversions; }, show: function (v) { return whole(v); }, up: 1 },
+      spend, conv,
       { label: 'Cost per conversion', get: function (w) { return w.conversions ? w.cost / w.conversions : null; }, show: function (v) { return v == null ? 'None' : money(v, cur); }, up: -1 },
-      hasValue
-        ? { label: 'Return on ad spend', get: function (w) { return w.cost ? w.value / w.cost : null; }, show: function (v) { return v == null ? '–' : v.toFixed(1) + '×'; }, up: 1 }
-        : { label: 'Clicks', get: function (w) { return w.clicks; }, show: whole, up: 1 }
+      { label: 'Clicks', get: function (w) { return w.clicks; }, show: whole, up: 1 }
     ];
   }
   var GA4_METRICS = [
@@ -604,17 +608,22 @@
     box.appendChild(grid);
     return box;
   }
+  function day(s) { var d = toDate(s); return d ? d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) : ''; }
+  function weekday(s) { var d = toDate(s); return d ? d.toLocaleDateString('en-GB', { weekday: 'long' }) : ''; }
+  function span(w) { return day(w.w) + ' to ' + day(w.to); }
+  function periodTitle() { return state.period && state.period.fullWeek ? 'Performance, last week' : 'Performance, this week so far'; }
+  function vsText() { return state.period && state.period.fullWeek ? 'the week before' : 'the same days last week'; }
   function renderPerf(c) {
     var box = $('c-perf'); box.innerHTML = '';
     var m = c.metrics;
-    var head = el('div', 'card-head'); head.appendChild(el('h2', null, 'Performance, last week'));
+    var head = el('div', 'card-head'); head.appendChild(el('h2', null, periodTitle()));
     var wk = m && ((m.ads && m.ads.weeks) || (m.ga4 && m.ga4.weeks) || (m.gsc && m.gsc.weeks));
-    head.appendChild(el('span', 'meta', wk ? 'Week of ' + fmt(wk[wk.length - 1].w) + ', compared with the week before. Lines show 8 weeks.' : ''));
+    if (wk && wk.length > 1) head.appendChild(el('span', 'meta', span(wk[wk.length - 1]) + ', compared with ' + span(wk[wk.length - 2]) + '. Lines show the same days over 8 weeks.'));
     box.appendChild(head);
     if (!m) { var none = el('div', 'perf-src'); none.appendChild(el('div', 'perf-none', 'No accounts connected for this client yet.')); box.appendChild(none); return; }
-    if (m.ads) box.appendChild(perfSource('Google Ads', 'Conversions as counted in Google Ads', adsMetrics(m.ads.currency, m.ads.weeks), m.ads.weeks));
+    if (m.ads) box.appendChild(perfSource('Google Ads', 'Conversions and value by conversion time', adsMetrics(m.ads.currency, m.ads.weeks), m.ads.weeks));
     if (m.ga4) box.appendChild(perfSource('Google Analytics', 'All traffic, not just paid', GA4_METRICS, m.ga4.weeks));
-    if (m.gsc) box.appendChild(perfSource('Search Console', m.gsc.partialLast ? 'Last week may still be filling in' : 'Organic Google search', GSC_METRICS, m.gsc.weeks));
+    if (m.gsc) box.appendChild(perfSource('Search Console', m.gsc.noDataYet ? 'No data for this week yet' : m.gsc.trimmed ? 'Data runs a few days behind, so both weeks stop at ' + weekday(m.gsc.weeks[m.gsc.weeks.length - 1].to) : 'Organic Google search', GSC_METRICS, m.gsc.weeks));
     var missing = [!m.ads && 'Google Ads', !m.ga4 && 'Google Analytics', !m.gsc && 'Search Console'].filter(Boolean);
     if (missing.length || (m.errors && m.errors.length)) {
       var n = el('div', 'perf-src');
@@ -628,15 +637,15 @@
     if (m.ads) {
       var w = m.ads.weeks, n = 0, spent = 0;
       for (var i = w.length - 1; i >= 0 && !w[i].conversions && w[i].cost > 0; i--) { n++; spent += w[i].cost; }
-      if (n >= 2) out.push({ tone: 'bad', title: c.name + ': no Google Ads conversions for ' + n + ' weeks', sub: money(spent, m.ads.currency) + ' spent since. Check the tracking or the leads.' });
+      if (n >= 2) out.push({ tone: 'bad', title: c.name + ': no Google Ads conversions in ' + n + ' weeks running', sub: 'Counting ' + span(w[w.length - 1]).replace(/ \d+ \w+/g, '') + ' each week. ' + money(spent, m.ads.currency) + ' spent in those days. Check the tracking or the leads.' });
       else {
         var a = w[w.length - 1], b = w[w.length - 2];
-        if (b && b.conversions >= 5 && a.conversions <= b.conversions * 0.7) out.push({ tone: 'warn', title: c.name + ': conversions down ' + Math.round((1 - a.conversions / b.conversions) * 100) + '% on the week', sub: whole(b.conversions) + ' to ' + whole(a.conversions) + ' in Google Ads' });
+        if (b && b.conversions >= 5 && a.conversions <= b.conversions * 0.7) out.push({ tone: 'warn', title: c.name + ': conversions down ' + Math.round((1 - a.conversions / b.conversions) * 100) + '% on ' + vsText(), sub: whole(b.conversions) + ' to ' + whole(a.conversions) + ' in Google Ads' });
         if (b && a.conversions && b.conversions && (a.cost / a.conversions) >= (b.cost / b.conversions) * 1.3) out.push({ tone: 'warn', title: c.name + ': cost per conversion up ' + Math.round(((a.cost / a.conversions) / (b.cost / b.conversions) - 1) * 100) + '%', sub: money(b.cost / b.conversions, m.ads.currency) + ' to ' + money(a.cost / a.conversions, m.ads.currency) });
       }
     }
-    if (m.ga4) { var g = m.ga4.weeks, ga = g[g.length - 1], gb = g[g.length - 2]; if (gb && gb.sessions >= 100 && ga.sessions <= gb.sessions * 0.75) out.push({ tone: 'warn', title: c.name + ': sessions down ' + Math.round((1 - ga.sessions / gb.sessions) * 100) + '% on the week', sub: whole(gb.sessions) + ' to ' + whole(ga.sessions) + ' in Google Analytics' }); }
-    if (m.gsc && !m.gsc.partialLast) { var s = m.gsc.weeks, sa = s[s.length - 1], sb = s[s.length - 2]; if (sb && sb.clicks >= 50 && sa.clicks <= sb.clicks * 0.75) out.push({ tone: 'warn', title: c.name + ': search clicks down ' + Math.round((1 - sa.clicks / sb.clicks) * 100) + '% on the week', sub: whole(sb.clicks) + ' to ' + whole(sa.clicks) + ' in Search Console' }); }
+    if (m.ga4) { var g = m.ga4.weeks, ga = g[g.length - 1], gb = g[g.length - 2]; if (gb && gb.sessions >= 100 && ga.sessions <= gb.sessions * 0.75) out.push({ tone: 'warn', title: c.name + ': sessions down ' + Math.round((1 - ga.sessions / gb.sessions) * 100) + '% on ' + vsText(), sub: whole(gb.sessions) + ' to ' + whole(ga.sessions) + ' in Google Analytics' }); }
+    if (m.gsc && !m.gsc.noDataYet) { var s = m.gsc.weeks, sa = s[s.length - 1], sb = s[s.length - 2]; if (sb && sb.clicks >= 50 && sa.clicks <= sb.clicks * 0.75) out.push({ tone: 'warn', title: c.name + ': search clicks down ' + Math.round((1 - sa.clicks / sb.clicks) * 100) + '% on ' + vsText(), sub: whole(sb.clicks) + ' to ' + whole(sa.clicks) + ' in Search Console' }); }
     return out;
   }
   function lastWeekCell(c) {
@@ -647,9 +656,9 @@
     td.appendChild(el('b', null, money(x.cost, a.currency) + ' · ' + whole(x.conversions) + (x.conversions === 1 ? ' conversion' : ' conversions')));
     var streak = 0;
     for (var i = w.length - 1; i >= 0 && !w[i].conversions && w[i].cost > 0; i--) streak++;
-    if (streak >= 2) { td.appendChild(el('span', 'delta bad', 'No conversions for ' + streak + ' weeks')); return td; }
+    if (streak >= 2) { td.appendChild(el('span', 'delta bad', 'No conversions in ' + streak + ' weeks running')); return td; }
     var ch = change(adsMetrics(a.currency, w)[1], w);
-    if (ch) td.appendChild(el('span', 'delta ' + (ch.dir === 0 ? 'flat' : ch.dir > 0 ? 'good' : 'bad'), ch.dir === 0 ? 'Conversions level with the week before' : 'Conversions ' + ch.text + ' on the week'));
+    if (ch) td.appendChild(el('span', 'delta ' + (ch.dir === 0 ? 'flat' : ch.dir > 0 ? 'good' : 'bad'), ch.dir === 0 ? 'Conversions level with ' + vsText() : 'Conversions ' + ch.text + ' on ' + vsText()));
     return td;
   }
 
@@ -700,6 +709,7 @@
   /* ---------- clients ---------- */
   function renderClients() {
     var body = $('clients-rows'); body.innerHTML = '';
+    $('ads-col').textContent = state.period && state.period.fullWeek ? 'Google Ads last week' : 'Google Ads this week so far';
     if (!state.clients.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No clients synced yet.'); td0.colSpan = 7; tr0.appendChild(td0); body.appendChild(tr0); return; }
     state.clients.forEach(function (c) {
       var tr = el('tr', 'click'); tr.tabIndex = 0;
