@@ -27,6 +27,8 @@
     "consumers": [{ "queue": "phillips-jobs", "max_batch_size": 1, "max_batch_timeout": 1, "max_retries": 0 }]
   },
   "limits": { "cpu_ms": 300000 },
+  // Private /rate-card invite labels that no longer open (comma-separated). Signing key is the RATE_CARD_KEY secret.
+  "vars": { "RATE_CARD_REVOKED": "" },
   // Zone phillips-uk.com is on Cloudflare (nameservers kirk/nataly) since 2026-10-20. The Worker redirects the apex to www.
   "routes": [
     { "pattern": "www.phillips-uk.com", "custom_domain": true },

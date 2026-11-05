@@ -1,6 +1,7 @@
 // Cloudflare Worker entry for phillips-uk.com. Serves the static site from Workers Assets and runs the existing
 // netlify/functions/*.js handlers unchanged through the adapter (same approach as Before You Pay).
 import { toEvent, fromResult } from './netlify-adapter.js';
+import { isRateCardPath, rateCard } from './rate-card.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -83,6 +84,8 @@ async function route(request, env, ctx) {
   if (direct) return runFunction(direct[1], request, url, {}, env, ctx);
 
   if (path === '/auth/callback') return runFunction('auth-callback', request, url, {}, env, ctx);
+
+  if (isRateCardPath(path)) return rateCard(request, url, env);
 
   const share = path.match(/^\/r\/([^/]+)$/);
   if (share) return runFunction('audit-share', request, url, { id: decodeURIComponent(share[1]) }, env, ctx);

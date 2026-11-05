@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate card | Phillips.</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="description" content="Private rate card for Phillips. paid media, dashboards and tools.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+<style>
+  /* Private rate card. Served by the Worker only to invite-link holders, never from the public assets. */
+  :root {
+    --amber: #985830;
+    --amber-dark: #7A3F1F;
+    --amber-light: #F5EBD9;
+    --cream: #FDF6EE;
+    --border: #E8D8C4;
+    --ink: #1A1A1A;
+    --muted: #6B6B6B;
+    --white: #FFFFFF;
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--amber); color: #fff; }
+  a { color: var(--amber); }
+  .page-w { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+  .nav { border-bottom: 1px solid var(--border); height: 64px; }
+  .nav-inner { max-width: 1120px; margin: 0 auto; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+  .nav-logo { text-decoration: none; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); line-height: 1; }
+  .nav-logo span { color: var(--amber); }
+  .private { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+  .private svg { width: 14px; height: 14px; }
+
+  .head { background: linear-gradient(180deg, #FFFFFF 0%, var(--cream) 100%); border-bottom: 1px solid var(--border); padding: 72px 0 64px; }
+  .eyebrow { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; }
+  h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.02; margin: 0 0 20px; }
+  h1 em { font-style: italic; color: var(--amber); }
+  .lede { font-size: 19px; line-height: 1.55; max-width: 640px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 28px; font-size: 14px; color: var(--muted); }
+  .meta b { color: var(--ink); }
+
+  .packs { padding: 72px 0 24px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .pack { border: 1px solid var(--border); border-radius: 8px; background: #fff; display: flex; flex-direction: column; overflow: hidden; }
+  .pack.ongoing { border-color: var(--amber); box-shadow: 0 18px 40px -28px rgba(152, 88, 48, .55); }
+  .pack-top { padding: 28px 28px 24px; border-bottom: 1px solid var(--border); }
+  .pack.ongoing .pack-top { background: var(--cream); }
+  .pack-kind { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+  .pack h2 { font-size: 26px; letter-spacing: -0.025em; line-height: 1.15; margin: 10px 0 8px; }
+  .pack-for { font-size: 15px; line-height: 1.5; color: var(--muted); margin: 0; }
+  .price { display: flex; align-items: baseline; gap: 8px; margin-top: 22px; }
+  .price b { font-size: 44px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .price span { font-size: 15px; color: var(--muted); }
+  .terms { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .pack-body { padding: 24px 28px 28px; display: grid; gap: 18px; }
+  .group-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .pack ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .pack li { display: grid; grid-template-columns: 16px 1fr; gap: 10px; font-size: 15px; line-height: 1.45; }
+  .pack li::before { content: ""; width: 7px; height: 7px; background: var(--amber); margin-top: 7px; }
+
+  .band { padding: 56px 0; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+  .card { border: 1px solid var(--border); border-radius: 8px; padding: 28px; }
+  .card.cream { background: var(--cream); }
+  .card h3 { font-size: 20px; letter-spacing: -0.02em; margin: 0 0 14px; }
+  .card p { font-size: 15.5px; line-height: 1.6; margin: 0; color: var(--ink); }
+  .card p + p { margin-top: 10px; }
+  .rows { display: grid; gap: 0; }
+  .rows div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 15.5px; }
+  .rows div:last-child { border-bottom: 0; }
+  .rows b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+  .compare div { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+  .compare small { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .compare b { font-size: 26px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; counter-reset: step; }
+  .step { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .step span { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+  .step h3 { font-size: 19px; margin: 8px 0 6px; letter-spacing: -0.015em; }
+  .step p { font-size: 15px; line-height: 1.55; color: var(--muted); margin: 0; }
+
+  .contact { background: var(--ink); color: #fff; margin-top: 56px; padding: 56px 0; }
+  .contact-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 28px; }
+  .contact h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; margin: 0 0 10px; }
+  .contact h2 em { font-style: italic; color: #D9925E; }
+  .contact p { color: #CFC8BE; margin: 0; font-size: 16px; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 20px; border-radius: 6px; }
+  .btn-amber { background: var(--amber); color: #fff; }
+  .btn-amber:hover { background: var(--amber-dark); }
+  .btn-line { border: 1.5px solid #5A534A; color: #fff; }
+  .btn-line:hover { border-color: #D9925E; }
+  .foot { font-size: 13px; color: var(--muted); padding: 24px 0 40px; }
+
+  @media (max-width: 900px) {
+    .grid, .two, .steps { grid-template-columns: minmax(0, 1fr); }
+    .head { padding: 48px 0 44px; }
+    .packs { padding-top: 48px; }
+  }
+  @media (max-width: 520px) {
+    .page-w, .nav-inner { padding: 0 20px; }
+    .compare { grid-template-columns: minmax(0, 1fr); }
+    .pack-top, .pack-body, .card { padding-left: 22px; padding-right: 22px; }
+  }
+  @media print {
+    .nav, .contact-links { display: none; }
+    .head { background: none; padding: 24px 0; }
+    .pack, .card { break-inside: avoid; box-shadow: none; }
+    .contact { background: none; color: var(--ink); padding: 24px 0; }
+    .contact p { color: var(--muted); }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Phillips<span>.</span></a>
+    <span class="private">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+      Private rate card
+    </span>
+  </div>
+</header>
+
+<main>
+  <section class="head">
+    <div class="page-w">
+      <span class="eyebrow">Rate card</span>
+      <h1>Senior paid media, <em>with the data and tools built in.</em></h1>
+      <p class="lede">Three ways to work together. Every package includes something you keep after the work ends: a dashboard, a plan or a tool your team uses every day.</p>
+      <div class="meta">
+        <span><b>Day rate</b> £625</span>
+        <span><b>Prices</b> in pounds sterling, before VAT where it applies</span>
+        <span><b>Valid</b> from November 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="packs" aria-label="Packages">
+    <div class="page-w">
+      <div class="grid">
+
+        <article class="pack">
+          <div class="pack-top">
+            <span class="pack-kind">Fixed price · 3 to 4 weeks</span>
+            <h2>Audit and plan</h2>
+            <p class="pack-for">A clear starting point before you spend more or hire.</p>
+            <div class="price"><b>£5,000</b><span>one-off</span></div>
+            <p class="terms">About 8 days of senior time</p>
+          </div>
+          <div class="pack-body">
+            <div><p class="group-title">Paid media</p><ul><li>Tracking and account audit, every fix ranked by severity</li><li>Market and channel map, including the ad rules in each market</li></ul></div>
+            <div><p class="group-title">Revenue and data</p><ul><li>Which campaigns, products and locations make money, and where margin leaks</li><li>12-month channel and budget plan</li></ul></div>
+            <div><p class="group-title">You keep</p><ul><li>One live dashboard built on your own data</li></ul></div>
+          </div>
+        </article>
+
+        <article class="pack ongoing">
+          <div class="pack-top">
+            <span class="pack-kind">Monthly · 3-month minimum</span>
+            <h2>Senior lead, part-time</h2>
+            <p class="pack-for">Senior paid media without the cost or wait of a full-time hire.</p>
+            <div class="price"><b>£4,500</b><span>a month</span></div>
+            <p class="terms">About 7 days of senior time a month</p>
+          </div>
+          <div class="pack-body">
+            <div><p class="group-title">Paid media</p><ul><li>Search, Shopping, social and seasonal campaigns run for you</li><li>Monthly report and a quarterly plan</li></ul></div>
+            <div><p class="group-title">Revenue and data</p><ul><li>Hard problems solved: attribution, value-based bidding, location bid models, feed issues</li><li>Personalised dashboards across every campaign and market</li></ul></div>
+            <div><p class="group-title">You keep</p><ul><li>One tool or automation built each quarter to save your team time</li></ul></div>
+          </div>
+        </article>
+
+        <article class="pack">
+          <div class="pack-top">
+            <span class="pack-kind">Fixed price · 6 to 8 weeks</span>
+            <h2>Build the team</h2>
+            <p class="pack-for">An in-house team that is set up properly from day one.</p>
+            <div class="price"><b>£7,500</b><span>one-off</span></div>
+            <p class="terms">About 12 days of senior time</p>
+          </div>
+          <div class="pack-body">
+            <div><p class="group-title">Tools</p><ul><li>Automated reports, account checks, feed checks and AI workflows</li><li>Training so your team can run them without me</li></ul></div>
+            <div><p class="group-title">Dashboards</p><ul><li>One view for the team and one for leadership</li></ul></div>
+            <div><p class="group-title">Hiring</p><ul><li>Role brief, interview questions and a scoring sheet</li><li>Accounts and tracking set up, with a 90-day plan for the new hire</li></ul></div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-label="Extras and terms">
+    <div class="page-w two">
+      <div class="card">
+        <h3>Extras and terms</h3>
+        <div class="rows">
+          <div><span>Extra days on any package</span><b>£625 a day</b></div>
+          <div><span>Extra markets or languages</span><b>Quoted on scope</b></div>
+          <div><span>Ad spend</span><b>Paid by you, never marked up</b></div>
+          <div><span>Monthly work</span><b>Invoiced monthly in advance</b></div>
+          <div><span>Fixed-price work</span><b>Half at start, half on delivery</b></div>
+        </div>
+      </div>
+      <div class="card cream">
+        <h3>Compared with a full-time hire</h3>
+        <p>A senior paid media hire on £75,000 costs about £85,500 a year once employer National Insurance is added. That is before pension, benefits, a recruiter's fee and the months it takes to find them.</p>
+        <div class="compare">
+          <div><small>Full-time hire, salary plus employer NI</small><b>£85,500</b></div>
+          <div><small>Senior lead, part-time, 12 months</small><b>£54,000</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-label="How it starts" style="padding-top:8px">
+    <div class="page-w">
+      <div class="steps">
+        <div class="step"><span>Step 1</span><h3>A 30-minute call</h3><p>Your markets, your accounts and what you want to fix first.</p></div>
+        <div class="step"><span>Step 2</span><h3>A written scope</h3><p>What is included, what is not, the start date and a fixed quote.</p></div>
+        <div class="step"><span>Step 3</span><h3>Work starts</h3><p>Access set up in week one, so the first findings arrive fast.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="contact" aria-label="Contact">
+  <div class="page-w contact-inner">
+    <div>
+      <h2>Ready when <em>you are.</em></h2>
+      <p>contact@phillips-uk.com</p>
+    </div>
+    <div class="contact-links">
+      <a class="btn btn-amber" href="mailto:contact@phillips-uk.com?subject=Rate%20card">Email Lewis</a>
+      <a class="btn btn-line" href="/">See the work</a>
+    </div>
+  </div>
+</section>
+
+<div class="page-w foot">This rate card was shared with you privately. Please don't forward the link. · Phillips. Marketing services · <a href="https://phillips-group.uk">Part of Phillips Group</a></div>
+
+</body>
+</html>
