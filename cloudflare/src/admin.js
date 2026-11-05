@@ -1,4 +1,5 @@
-// Lewis's admin page at /admin: Google sign-in, rate card invite links and a short summary of the site.
+// Lewis's admin page at /admin: Google sign-in, clients and prospects (summaries synced from Obsidian),
+// rate card invite links and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, listInvites, inviteState, newToken } from './rate-card.js';
@@ -130,6 +131,19 @@ async function siteSummary(env) {
   };
 }
 
+// Client and prospect summaries, uploaded from the Obsidian vault by cloudflare/scripts/sync-clients.mjs.
+async function clientsSummary(env, origin) {
+  const obj = await env.BLOBS.get('admin/clients-index.json');
+  if (!obj) return { syncedAt: null, clients: [], prospects: [] };
+  const index = await obj.json();
+  for (const p of index.prospects || []) {
+    if (!p.rateCardInvite) continue;
+    const inv = await getInvite(env, p.rateCardInvite);
+    p.rateCard = inv ? publicInvite(inv, origin) : null;
+  }
+  return index;
+}
+
 export function isAdminPath(path) {
   return path === '/admin' || path.startsWith('/admin/api/');
 }
@@ -162,6 +176,7 @@ export async function admin(request, url, env) {
   const act = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/(revoke|restore)$/);
   if (act && method === 'POST') return setRevoked(env, act[1], act[2] === 'revoke', url.origin);
   if (path === '/admin/api/site') return json(await siteSummary(env));
+  if (path === '/admin/api/clients') return json(await clientsSummary(env, url.origin));
 
   return json({ error: 'Not found' }, 404);
 }

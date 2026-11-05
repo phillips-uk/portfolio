@@ -75,6 +75,47 @@
   .quick a { text-decoration: none; color: var(--ink); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 14px; font-weight: 700; background: #fff; }
   .quick a:hover { border-color: var(--amber); }
 
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); }
+  .tab { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 14px 12px; font-weight: 700; font-size: 15px; color: var(--muted); cursor: pointer; margin-bottom: -1px; }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--amber); }
+  .tab .count { font-size: 12px; font-weight: 700; color: var(--muted); margin-left: 6px; }
+  .synced { font-size: 13px; color: var(--muted); }
+  .cards { display: grid; gap: 16px; }
+  .ccard { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 24px; display: grid; gap: 18px; }
+  .ccard-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: start; }
+  .ccard h3 { font-size: 22px; letter-spacing: -.02em; margin: 0 0 6px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--muted); }
+  .facts a { color: var(--amber); font-weight: 700; text-decoration: none; }
+  .obs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .obs a { text-decoration: none; }
+  .health { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hchip { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 13px; display: grid; gap: 2px; min-width: 120px; }
+  .hchip b { font-size: 16px; font-variant-numeric: tabular-nums; }
+  .hchip.overall { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; }
+  .secs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .sec { border: 1px solid var(--border); border-radius: 6px; padding: 14px; min-width: 0; }
+  .sec-top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; margin-bottom: 8px; }
+  .sec-top b { font-size: 14px; }
+  .sec ul, .tasks ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .sec li { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; min-width: 0; }
+  .sec li a { color: var(--ink); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sec li a:hover { color: var(--amber); }
+  .sec li span { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tasks { background: var(--cream); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+  .tasks li { font-size: 13.5px; line-height: 1.45; padding-left: 14px; position: relative; }
+  .tasks li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; background: var(--amber); }
+  .stage { display: inline-block; font-size: 12px; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: var(--amber-light); color: var(--amber-dark); }
+  .stage.won { background: var(--ok-bg); color: var(--ok); }
+  .stage.lost { background: var(--off-bg); color: var(--off); }
+  .pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .pbox { border: 1px solid var(--border); border-radius: 6px; padding: 14px; font-size: 14px; min-width: 0; }
+  .pbox small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .pbox a { color: var(--amber); font-weight: 700; overflow-wrap: anywhere; }
+  .howto { font-size: 14px; color: var(--muted); line-height: 1.55; }
+  .howto code { background: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+
   .signin { min-height: calc(100vh - 65px); display: grid; place-items: center; padding: 24px; }
   .signin .panel { max-width: 420px; width: 100%; text-align: left; }
   .signin h1 { font-size: 28px; margin: 4px 0 10px; }
@@ -83,6 +124,7 @@
   @media (max-width: 900px) {
     .create { grid-template-columns: minmax(0, 1fr); }
     .stats { grid-template-columns: minmax(0, 1fr); }
+    .split, .secs, .pgrid { grid-template-columns: minmax(0, 1fr); }
     .wrap { padding: 0 18px; }
     .panel { padding: 20px; }
     .tag { display: none; }
@@ -109,11 +151,31 @@
 </section>
 
 <main class="wrap" id="app" hidden>
-  <div>
-    <h1>Admin</h1>
-    <p class="sub">Rate card links and a quick look at the site.</p>
+  <div class="panel-head" style="margin:0">
+    <div>
+      <h1>Admin</h1>
+      <p class="sub">Clients, prospects, rate card links and a quick look at the site.</p>
+    </div>
+    <span class="synced" id="synced"></span>
   </div>
 
+  <div class="tabs" role="tablist" aria-label="Admin sections">
+    <button type="button" class="tab" role="tab" id="tab-clients" aria-controls="pane-clients" aria-selected="true">Clients<span class="count" id="n-clients"></span></button>
+    <button type="button" class="tab" role="tab" id="tab-prospects" aria-controls="pane-prospects" aria-selected="false">Prospects<span class="count" id="n-prospects"></span></button>
+    <button type="button" class="tab" role="tab" id="tab-links" aria-controls="pane-links" aria-selected="false">Rate card links</button>
+    <button type="button" class="tab" role="tab" id="tab-site" aria-controls="pane-site" aria-selected="false">Site</button>
+  </div>
+
+  <section role="tabpanel" id="pane-clients" aria-labelledby="tab-clients">
+    <div class="cards" id="clients"><div class="panel empty">Loading clients…</div></div>
+  </section>
+
+  <section role="tabpanel" id="pane-prospects" aria-labelledby="tab-prospects" hidden>
+    <div class="cards" id="prospects"><div class="panel empty">Loading prospects…</div></div>
+    <p class="howto" style="margin-top:16px">Add a prospect: make a note in <code>03_Clients/00_Prospects</code> in Obsidian, using the details block from <a href="obsidian://open?vault=My%20Brain&amp;file=03_Clients%2F00_Prospects%2F00_How%20prospects%20work" style="color:var(--amber);font-weight:700">How prospects work</a>. It shows here after the next sync.</p>
+  </section>
+
+  <div role="tabpanel" id="pane-links" aria-labelledby="tab-links" hidden>
   <section class="panel" aria-labelledby="rc-h">
     <div class="panel-head">
       <div>
@@ -154,7 +216,9 @@
       </table>
     </div>
   </section>
+  </div>
 
+  <div role="tabpanel" id="pane-site" aria-labelledby="tab-site" hidden style="display:grid;gap:28px">
   <section class="panel" aria-labelledby="site-h">
     <div class="panel-head">
       <div>
@@ -188,6 +252,7 @@
       <a href="/" target="_blank" rel="noopener">Live site</a>
     </div>
   </section>
+  </div>
 </main>
 
 <script>
@@ -231,7 +296,127 @@
   function showApp(email) {
     $('signin').hidden = true; $('app').hidden = false; $('who').hidden = false;
     $('who-email').textContent = email;
-    loadInvites(); loadSite();
+    loadClients(); loadInvites(); loadSite();
+  }
+
+  /* Tabs, remembered in the address bar so a bookmark opens the right one */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function selectTab(id) {
+    tabs.forEach(function (t) {
+      var on = t.id === 'tab-' + id;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      $(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { selectTab(t.id.replace('tab-', '')); }); });
+  var start = (location.hash || '').replace('#', '');
+  if (['clients', 'prospects', 'links', 'site'].indexOf(start) !== -1) selectTab(start);
+
+  function a(href, text, cls) { var e = el('a', cls || null, text); e.href = href; if (/^https?:/.test(href)) { e.target = '_blank'; e.rel = 'noopener'; } return e; }
+  function shortDate(iso) { return iso ? new Date(iso + (iso.length === 10 ? 'T12:00:00' : '')).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '–'; }
+
+  function clientCard(c) {
+    var card = el('article', 'ccard');
+    var head = el('div', 'ccard-head');
+    var left = el('div');
+    left.appendChild(el('h3', null, c.name));
+    var facts = el('div', 'facts');
+    if (c.status) facts.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'active' : 'expired'), c.status));
+    if (c.website) facts.appendChild(a(/^https?:/.test(c.website) ? c.website : 'https://' + c.website, c.website.replace(/^https?:\/\//, '').replace(/\/$/, '')));
+    if (c.businessType) facts.appendChild(el('span', null, c.businessType));
+    if (c.lastActivity) facts.appendChild(el('span', null, 'Last activity ' + shortDate(c.lastActivity)));
+    left.appendChild(facts);
+    head.appendChild(left);
+    var obs = el('div', 'obs');
+    if (c.profileLink) obs.appendChild(a(c.profileLink, 'Open profile in Obsidian', 'btn btn-sm'));
+    if (c.brainDumpLink) obs.appendChild(a(c.brainDumpLink, 'Brain dump', 'btn btn-line btn-sm'));
+    head.appendChild(obs);
+    card.appendChild(head);
+
+    if (c.overall || (c.health && c.health.length)) {
+      var h = el('div', 'health');
+      if (c.overall) { var o = el('div', 'hchip overall'); o.appendChild(el('span', null, 'Overall health')); o.appendChild(el('b', null, c.overall)); h.appendChild(o); }
+      (c.health || []).forEach(function (x) { var hc = el('div', 'hchip'); hc.appendChild(el('span', 'muted', x.area)); hc.appendChild(el('b', null, x.score || x.status)); h.appendChild(hc); });
+      card.appendChild(h);
+    }
+
+    var split = el('div', 'split');
+    var secs = el('div', 'secs');
+    (c.sections || []).forEach(function (s) {
+      var box = el('div', 'sec');
+      var top = el('div', 'sec-top'); top.appendChild(el('b', null, s.name)); top.appendChild(el('span', 'muted', s.count + (s.count === 1 ? ' file' : ' files')));
+      box.appendChild(top);
+      if (s.private) box.appendChild(el('div', 'muted', 'Kept in Obsidian only'));
+      else if (!s.items.length) box.appendChild(el('div', 'muted', 'Spreadsheets only, open in Obsidian'));
+      else {
+        var ul = el('ul');
+        s.items.slice(0, 3).forEach(function (it) { var li = el('li'); li.appendChild(a(it.link, it.title)); li.appendChild(el('span', null, shortDate(it.date))); ul.appendChild(li); });
+        box.appendChild(ul);
+      }
+      secs.appendChild(box);
+    });
+    if (!(c.sections || []).length) secs.appendChild(el('div', 'muted', 'No reports yet.'));
+    split.appendChild(secs);
+
+    var tasks = el('div', 'tasks');
+    tasks.appendChild(el('div', 'sec-top')).appendChild(el('b', null, 'Open tasks' + (c.openTaskCount ? ' (' + c.openTaskCount + ')' : '')));
+    if (c.openTasks && c.openTasks.length) {
+      var tl = el('ul');
+      c.openTasks.forEach(function (t) { tl.appendChild(el('li', null, t.length > 150 ? t.slice(0, 147) + '…' : t)); });
+      tasks.appendChild(tl);
+      if (c.openTaskCount > c.openTasks.length && c.profileLink) { var more = a(c.profileLink, 'See all in Obsidian'); more.style.cssText = 'display:inline-block;margin-top:10px;color:var(--amber);font-weight:700;font-size:13px'; tasks.appendChild(more); }
+    } else tasks.appendChild(el('div', 'muted', 'None recorded.'));
+    split.appendChild(tasks);
+    card.appendChild(split);
+    return card;
+  }
+
+  function prospectCard(p) {
+    var card = el('article', 'ccard');
+    var head = el('div', 'ccard-head');
+    var left = el('div');
+    left.appendChild(el('h3', null, p.name));
+    var facts = el('div', 'facts');
+    facts.appendChild(el('span', 'stage' + (/won/i.test(p.stage) ? ' won' : /lost/i.test(p.stage) ? ' lost' : ''), p.stage));
+    if (p.markets) facts.appendChild(el('span', null, p.markets));
+    if (p.introducedBy) facts.appendChild(el('span', null, 'Via ' + p.introducedBy));
+    if (p.contact) facts.appendChild(el('span', null, p.contact));
+    left.appendChild(facts);
+    head.appendChild(left);
+    var obs = el('div', 'obs');
+    obs.appendChild(a(p.link, 'Open note in Obsidian', 'btn btn-sm'));
+    if (p.proposal) obs.appendChild(a(p.proposal, 'Proposal', 'btn btn-line btn-sm'));
+    head.appendChild(obs);
+    card.appendChild(head);
+
+    var grid = el('div', 'pgrid');
+    var nb = el('div', 'pbox'); nb.appendChild(el('small', null, 'Next step')); nb.appendChild(el('div', null, p.nextStep || 'Not set')); if (p.nextDate) nb.appendChild(el('div', 'muted', 'By ' + shortDate(p.nextDate))); grid.appendChild(nb);
+    var rb = el('div', 'pbox'); rb.appendChild(el('small', null, 'Rate card'));
+    if (p.rateCard) {
+      rb.appendChild(el('div', null, p.rateCard.views + (p.rateCard.views === 1 ? ' view' : ' views') + ' · ' + p.rateCard.browsers + (p.rateCard.browsers === 1 ? ' browser' : ' browsers')));
+      rb.appendChild(el('div', 'muted', p.rateCard.lastViewedAt ? 'Last opened ' + when(p.rateCard.lastViewedAt, true) : 'Not opened yet'));
+      var cb = el('button', 'btn btn-line btn-sm', 'Copy link'); cb.type = 'button'; cb.style.marginTop = '8px';
+      cb.addEventListener('click', function () { copy(p.rateCard.link, cb); });
+      rb.appendChild(cb);
+    } else rb.appendChild(el('div', 'muted', p.rateCardInvite ? 'Link not found. Check the token in the note.' : 'No link yet. Make one in Rate card links.'));
+    grid.appendChild(rb);
+    var ub = el('div', 'pbox'); ub.appendChild(el('small', null, 'Website')); if (p.website) ub.appendChild(a(/^https?:/.test(p.website) ? p.website : 'https://' + p.website, p.website)); else ub.appendChild(el('div', 'muted', 'Not recorded')); if (p.updated) ub.appendChild(el('div', 'muted', 'Note updated ' + shortDate(p.updated))); grid.appendChild(ub);
+    card.appendChild(grid);
+    return card;
+  }
+
+  function loadClients() {
+    return api('/admin/api/clients').then(function (d) {
+      $('synced').textContent = d.syncedAt ? 'Synced from Obsidian ' + when(d.syncedAt, true) : 'Not synced from Obsidian yet';
+      $('n-clients').textContent = d.clients.length; $('n-prospects').textContent = d.prospects.length;
+      var cl = $('clients'); cl.innerHTML = '';
+      if (!d.clients.length) cl.appendChild(el('div', 'panel empty', 'No clients synced yet.'));
+      d.clients.forEach(function (c) { cl.appendChild(clientCard(c)); });
+      var pr = $('prospects'); pr.innerHTML = '';
+      if (!d.prospects.length) pr.appendChild(el('div', 'panel empty', 'No prospects yet.'));
+      d.prospects.sort(function (x, y) { return (x.nextDate || '9999').localeCompare(y.nextDate || '9999'); }).forEach(function (p) { pr.appendChild(prospectCard(p)); });
+    }).catch(function () {});
   }
 
   var rendered = false;
