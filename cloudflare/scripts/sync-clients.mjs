@@ -17,6 +17,8 @@ const R2_KEY = 'phillips-blobs/admin/clients-index.json';
 const ACCOUNT_ID = '9cd423eee8986ecc6f22f6fa3a17878b';
 const LINKED = new Set(['.md', '.pdf']);
 const dryRun = process.argv.includes('--dry-run');
+// Weekly Google Ads, GA4 and Search Console numbers, written by google-ads-automation/client_metrics.py.
+const METRICS_FILE = process.env.METRICS_FILE || `${process.env.HOME}/Projects/google-ads-automation/reports/client-metrics.json`;
 
 const obsidian = rel => `obsidian://open?vault=${encodeURIComponent(VAULT_NAME)}&file=${encodeURIComponent(rel.replace(/\.md$/, ''))}`;
 const clean = s => s.replace(/\s+—\s+|\s+–\s+/g, ' · ').replace(/[*_`]/g, '').replace(/\[\[([^\]|]+)(\|[^\]]+)?\]\]/g, '$1').trim();
@@ -172,9 +174,18 @@ const clientFolders = readdirSync(join(VAULT, CLIENTS), { withFileTypes: true })
   .filter(d => d.isDirectory() && /^\d+_/.test(d.name) && !/^00_/.test(d.name))
   .map(d => d.name).sort();
 
+let metrics = null;
+try { metrics = JSON.parse(readFileSync(METRICS_FILE, 'utf8')); } catch { /* no numbers yet */ }
+
 const index = {
   syncedAt: new Date().toISOString(),
-  clients: clientFolders.map(client),
+  metricsAt: metrics ? metrics.generatedAt : null,
+  clients: clientFolders.map(folder => {
+    const c = client(folder);
+    const m = metrics && metrics.clients && metrics.clients[folder];
+    if (m) c.metrics = { ads: m.ads || null, ga4: m.ga4 || null, gsc: m.gsc || null, errors: m.errors || [] };
+    return c;
+  }),
   prospects: prospects(),
 };
 

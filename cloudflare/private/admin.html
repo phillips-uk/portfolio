@@ -134,6 +134,25 @@
   .reports li { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
   .reports .n { color: var(--faint); font-size: 12.5px; white-space: nowrap; }
 
+  /* Weekly performance */
+  .perf { margin-bottom: 20px; }
+  .perf-src { padding: 16px 20px 18px; border-top: 1px solid var(--line-2); }
+  .perf-src:first-of-type { border-top: 0; }
+  .perf-src-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .perf-src-head b { font-size: 13.5px; }
+  .perf-src-head span { font-size: 12.5px; color: var(--faint); }
+  .mtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .mtile { border: 1px solid var(--line-2); border-radius: 8px; padding: 12px 14px; min-width: 0; }
+  .mtile small { display: block; font-size: 12px; color: var(--muted); }
+  .mtile .v { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .mtile .v b { font-size: 22px; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .delta { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .delta.good { color: var(--good); } .delta.bad { color: var(--bad); } .delta.flat { color: var(--faint); }
+  .spark { display: block; width: 100%; height: 30px; margin-top: 8px; }
+  .perf-none { color: var(--faint); font-size: 13px; }
+  .lastwk b { display: block; font-variant-numeric: tabular-nums; }
+  .lastwk span { display: block; font-size: 12.5px; margin-top: 2px; }
+
   /* Prospects pipeline */
   .board { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 6px; }
   .col { background: #EFECE7; border-radius: var(--radius); padding: 12px; min-height: 160px; display: grid; gap: 10px; align-content: start; }
@@ -186,6 +205,7 @@
     .main { padding: 24px 16px 48px; }
     .create { grid-template-columns: minmax(0, 1fr); }
     .hrow { grid-template-columns: minmax(0, 1fr) 90px 40px; }
+    .mtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>
 </head>
@@ -242,7 +262,7 @@
       <div class="page-head"><div><h1>Clients</h1><p class="lede">From the client folders in Obsidian. Click a client for health, reports and tasks.</p></div></div>
       <div class="card scroll">
         <table class="table">
-          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th>Last report</th><th class="r">Open tasks</th><th class="r">Files</th><th></th></tr></thead>
+          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th>Google Ads last week</th><th>Last report</th><th class="r">Open tasks</th><th></th></tr></thead>
           <tbody id="clients-rows"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
         </table>
       </div>
@@ -258,6 +278,7 @@
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap" id="c-actions"></div>
       </div>
+      <div class="card perf" id="c-perf"></div>
       <div class="detail-grid">
         <div class="stack">
           <div class="card"><div class="card-head"><h2>Reports and audits</h2><span class="meta">Opens in Obsidian</span></div><div class="card-body"><ul class="list reports" id="c-reports"></ul></div></div>
@@ -450,7 +471,7 @@
       api('/admin/api/invites').catch(function () { return null; }),
       api('/admin/api/site').catch(function () { return null; })
     ]).then(function (r) {
-      if (r[0]) { state.clients = r[0].clients || []; state.prospects = r[0].prospects || []; state.syncedAt = r[0].syncedAt; }
+      if (r[0]) { state.clients = r[0].clients || []; state.prospects = r[0].prospects || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; }
       if (r[1]) state.invites = r[1].invites || [];
       if (r[2]) state.site = r[2];
       renderAll();
@@ -473,6 +494,118 @@
     return best;
   }
 
+  /* ---------- weekly performance ---------- */
+  var SYM = { GBP: '£', EUR: '€', USD: '$' };
+  function money(v, cur, dp) { var s = SYM[cur] || ''; return s + Number(v || 0).toLocaleString('en-GB', { minimumFractionDigits: dp || 0, maximumFractionDigits: dp || 0 }); }
+  function whole(v) { return Number(v || 0).toLocaleString('en-GB', { maximumFractionDigits: 0 }); }
+  // Each metric: label, how to read it from a week, how to show it, and whether up is good (1), bad (-1) or neither (0).
+  function adsMetrics(cur, weeks) {
+    var hasValue = (weeks || []).some(function (w) { return w.value > 0; });
+    return [
+      { label: 'Spend', get: function (w) { return w.cost; }, show: function (v) { return money(v, cur); }, up: 0 },
+      { label: 'Conversions', get: function (w) { return w.conversions; }, show: function (v) { return whole(v); }, up: 1 },
+      { label: 'Cost per conversion', get: function (w) { return w.conversions ? w.cost / w.conversions : null; }, show: function (v) { return v == null ? 'None' : money(v, cur); }, up: -1 },
+      hasValue
+        ? { label: 'Return on ad spend', get: function (w) { return w.cost ? w.value / w.cost : null; }, show: function (v) { return v == null ? '–' : v.toFixed(1) + '×'; }, up: 1 }
+        : { label: 'Clicks', get: function (w) { return w.clicks; }, show: whole, up: 1 }
+    ];
+  }
+  var GA4_METRICS = [
+    { label: 'Sessions', get: function (w) { return w.sessions; }, show: whole, up: 1 },
+    { label: 'Users', get: function (w) { return w.users; }, show: whole, up: 1 },
+    { label: 'Key events', get: function (w) { return w.keyEvents; }, show: whole, up: 1 },
+    { label: 'Revenue', get: function (w) { return w.revenue; }, show: function (v) { return money(v, 'GBP'); }, up: 1 }
+  ];
+  var GSC_METRICS = [
+    { label: 'Clicks', get: function (w) { return w.clicks; }, show: whole, up: 1 },
+    { label: 'Impressions', get: function (w) { return w.impressions; }, show: whole, up: 1 },
+    { label: 'Click-through rate', get: function (w) { return w.ctr; }, show: function (v) { return v.toFixed(1) + '%'; }, up: 1 },
+    { label: 'Average position', get: function (w) { return w.position; }, show: function (v) { return v == null ? '–' : v.toFixed(1); }, up: -1, absolute: true }
+  ];
+  function change(m, weeks) {
+    var a = m.get(weeks[weeks.length - 1]), b = m.get(weeks[weeks.length - 2] || {});
+    if (a == null || b == null) return null;
+    if (m.absolute) return { text: (a - b > 0 ? '+' : '') + (a - b).toFixed(1), dir: Math.abs(a - b) < 0.05 ? 0 : (a > b ? 1 : -1) };
+    if (!b) return a ? { text: 'New', dir: 1 } : { text: 'No change', dir: 0 };
+    var p = (a - b) / Math.abs(b) * 100;
+    return { text: (p > 0 ? '+' : '') + Math.round(p) + '%', dir: Math.abs(p) < 2 ? 0 : (p > 0 ? 1 : -1), pct: p };
+  }
+  function spark(values, cls) {
+    var pts = values.map(function (v) { return v == null ? 0 : v; });
+    var max = Math.max.apply(null, pts), min = Math.min.apply(null, pts);
+    var W = 120, H = 30, pad = 3;
+    var xy = pts.map(function (v, i) { return [pad + i * (W - pad * 2) / Math.max(1, pts.length - 1), H - pad - (max === min ? (H - pad * 2) / 2 : (v - min) / (max - min) * (H - pad * 2))]; });
+    var line = xy.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
+    var last = xy[xy.length - 1];
+    var colour = cls === 'good' ? 'var(--good)' : cls === 'bad' ? 'var(--bad)' : 'var(--amber)';
+    return '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + line + '" fill="none" stroke="' + colour + '" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="2.4" fill="' + colour + '"/></svg>';
+  }
+  function perfSource(title, note, metrics, weeks) {
+    var box = el('div', 'perf-src');
+    var head = el('div', 'perf-src-head'); head.appendChild(el('b', null, title)); head.appendChild(el('span', null, note)); box.appendChild(head);
+    var grid = el('div', 'mtiles');
+    metrics.forEach(function (m) {
+      var t = el('div', 'mtile');
+      t.appendChild(el('small', null, m.label));
+      var v = el('div', 'v'); v.appendChild(el('b', null, m.show(m.get(weeks[weeks.length - 1]))));
+      var ch = change(m, weeks), cls = 'flat';
+      if (ch) { cls = ch.dir === 0 || m.up === 0 ? 'flat' : (ch.dir === m.up ? 'good' : 'bad'); v.appendChild(el('span', 'delta ' + cls, ch.text)); }
+      t.appendChild(v);
+      t.insertAdjacentHTML('beforeend', spark(weeks.map(m.get), cls));
+      grid.appendChild(t);
+    });
+    box.appendChild(grid);
+    return box;
+  }
+  function renderPerf(c) {
+    var box = $('c-perf'); box.innerHTML = '';
+    var m = c.metrics;
+    var head = el('div', 'card-head'); head.appendChild(el('h2', null, 'Performance, last week'));
+    var wk = m && ((m.ads && m.ads.weeks) || (m.ga4 && m.ga4.weeks) || (m.gsc && m.gsc.weeks));
+    head.appendChild(el('span', 'meta', wk ? 'Week of ' + fmt(wk[wk.length - 1].w) + ', compared with the week before. Lines show 8 weeks.' : ''));
+    box.appendChild(head);
+    if (!m) { var none = el('div', 'perf-src'); none.appendChild(el('div', 'perf-none', 'No accounts connected for this client yet.')); box.appendChild(none); return; }
+    if (m.ads) box.appendChild(perfSource('Google Ads', 'Conversions as counted in Google Ads', adsMetrics(m.ads.currency, m.ads.weeks), m.ads.weeks));
+    if (m.ga4) box.appendChild(perfSource('Google Analytics', 'All traffic, not just paid', GA4_METRICS, m.ga4.weeks));
+    if (m.gsc) box.appendChild(perfSource('Search Console', m.gsc.partialLast ? 'Last week may still be filling in' : 'Organic Google search', GSC_METRICS, m.gsc.weeks));
+    var missing = [!m.ads && 'Google Ads', !m.ga4 && 'Google Analytics', !m.gsc && 'Search Console'].filter(Boolean);
+    if (missing.length || (m.errors && m.errors.length)) {
+      var n = el('div', 'perf-src');
+      n.appendChild(el('div', 'perf-none', (missing.length ? 'Not connected: ' + missing.join(', ') + '. ' : '') + (m.errors && m.errors.length ? 'Could not load: ' + m.errors.join(', ') + '.' : '')));
+      box.appendChild(n);
+    }
+  }
+  // Week-on-week warnings for the overview
+  function perfWarnings(c) {
+    var out = [], m = c.metrics; if (!m) return out;
+    if (m.ads) {
+      var w = m.ads.weeks, n = 0, spent = 0;
+      for (var i = w.length - 1; i >= 0 && !w[i].conversions && w[i].cost > 0; i--) { n++; spent += w[i].cost; }
+      if (n >= 2) out.push({ tone: 'bad', title: c.name + ': no Google Ads conversions for ' + n + ' weeks', sub: money(spent, m.ads.currency) + ' spent since. Check the tracking or the leads.' });
+      else {
+        var a = w[w.length - 1], b = w[w.length - 2];
+        if (b && b.conversions >= 5 && a.conversions <= b.conversions * 0.7) out.push({ tone: 'warn', title: c.name + ': conversions down ' + Math.round((1 - a.conversions / b.conversions) * 100) + '% on the week', sub: whole(b.conversions) + ' to ' + whole(a.conversions) + ' in Google Ads' });
+        if (b && a.conversions && b.conversions && (a.cost / a.conversions) >= (b.cost / b.conversions) * 1.3) out.push({ tone: 'warn', title: c.name + ': cost per conversion up ' + Math.round(((a.cost / a.conversions) / (b.cost / b.conversions) - 1) * 100) + '%', sub: money(b.cost / b.conversions, m.ads.currency) + ' to ' + money(a.cost / a.conversions, m.ads.currency) });
+      }
+    }
+    if (m.ga4) { var g = m.ga4.weeks, ga = g[g.length - 1], gb = g[g.length - 2]; if (gb && gb.sessions >= 100 && ga.sessions <= gb.sessions * 0.75) out.push({ tone: 'warn', title: c.name + ': sessions down ' + Math.round((1 - ga.sessions / gb.sessions) * 100) + '% on the week', sub: whole(gb.sessions) + ' to ' + whole(ga.sessions) + ' in Google Analytics' }); }
+    if (m.gsc && !m.gsc.partialLast) { var s = m.gsc.weeks, sa = s[s.length - 1], sb = s[s.length - 2]; if (sb && sb.clicks >= 50 && sa.clicks <= sb.clicks * 0.75) out.push({ tone: 'warn', title: c.name + ': search clicks down ' + Math.round((1 - sa.clicks / sb.clicks) * 100) + '% on the week', sub: whole(sb.clicks) + ' to ' + whole(sa.clicks) + ' in Search Console' }); }
+    return out;
+  }
+  function lastWeekCell(c) {
+    var td = el('td', 'lastwk');
+    var a = c.metrics && c.metrics.ads;
+    if (!a) { td.appendChild(el('span', null, 'Not connected')); td.lastChild.style.color = 'var(--faint)'; return td; }
+    var w = a.weeks, x = w[w.length - 1];
+    td.appendChild(el('b', null, money(x.cost, a.currency) + ' · ' + whole(x.conversions) + (x.conversions === 1 ? ' conversion' : ' conversions')));
+    var streak = 0;
+    for (var i = w.length - 1; i >= 0 && !w[i].conversions && w[i].cost > 0; i--) streak++;
+    if (streak >= 2) { td.appendChild(el('span', 'delta bad', 'No conversions for ' + streak + ' weeks')); return td; }
+    var ch = change(adsMetrics(a.currency, w)[1], w);
+    if (ch) td.appendChild(el('span', 'delta ' + (ch.dir === 0 ? 'flat' : ch.dir > 0 ? 'good' : 'bad'), ch.dir === 0 ? 'Conversions level with the week before' : 'Conversions ' + ch.text + ' on the week'));
+    return td;
+  }
+
   /* ---------- overview ---------- */
   function renderOverview() {
     var h = new Date().getHours();
@@ -491,6 +624,7 @@
     var att = $('attention'); att.innerHTML = ''; var n = 0;
     state.clients.forEach(function (c) {
       var slug = '#client/' + encodeURIComponent(c.slug);
+      perfWarnings(c).forEach(function (w) { n++; row(att, { icon: 'alert', tone: w.tone, title: w.title, sub: w.sub, href: slug }); });
       (c.health || []).forEach(function (x) {
         var s = scoreOf(x.score);
         if (s != null && s <= 5) { n++; row(att, { icon: 'alert', tone: 'bad', title: c.name + ': ' + x.area + ' ' + x.score, sub: 'Lowest health score on the account', href: slug }); }
@@ -530,11 +664,11 @@
       if (sc != null) { var w = el('div', 'score'); w.appendChild(el('b', null, c.overall.replace(/\s/g, ''))); var bar = el('div', 'bar'); var fill = el('i', tone(sc)); fill.style.width = (sc * 10) + '%'; bar.appendChild(fill); w.appendChild(bar); hs.appendChild(w); }
       else hs.appendChild(el('span', 'pill', 'Not scored'));
       tr.appendChild(hs);
+      tr.appendChild(lastWeekCell(c));
       var last = latestReport(c);
       var lr = el('td'); if (last) { lr.appendChild(el('div', null, ago(last.date))); lr.lastChild.style.fontWeight = '700'; lr.appendChild(el('div', 's', last.section)); lr.lastChild.style.cssText = 'color:var(--muted);font-size:13px;margin-top:2px'; } else lr.textContent = '–';
       tr.appendChild(lr);
       tr.appendChild(el('td', 'r num', String(c.openTaskCount || 0)));
-      tr.appendChild(el('td', 'r num', String(c.fileCount || 0)));
       var ch = el('td', 'r'); ch.innerHTML = ICON.chev; tr.appendChild(ch);
       body.appendChild(tr);
     });
@@ -551,6 +685,7 @@
     var a = $('c-actions'); a.innerHTML = '';
     if (c.profileLink) a.appendChild(link(c.profileLink, 'Open profile in Obsidian', 'btn primary'));
     if (c.brainDumpLink) a.appendChild(link(c.brainDumpLink, 'Brain dump', 'btn'));
+    renderPerf(c);
 
     var rep = $('c-reports'); rep.innerHTML = '';
     (c.sections || []).forEach(function (s) {
