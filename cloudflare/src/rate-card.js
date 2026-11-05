@@ -60,7 +60,7 @@ p{font-size:16px;line-height:1.6;color:#6B6B6B;margin:0 0 12px}
 a.btn{display:inline-block;margin-top:12px;background:#985830;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 18px;border-radius:6px}
 a.btn:hover{background:#7A3F1F}
 </style></head><body><main>
-<a class="logo" href="/">Phillips<span>.</span></a>
+<a class="logo" href="/"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:34px;width:auto;display:block"></a>
 <h1>This page is by invitation.</h1>
 <p>The rate card is shared one person at a time. If your link has expired or you would like a copy, ask and I'll send a new one.</p>
 <p><strong style="color:#1A1A1A">contact@phillips-uk.com</strong></p>
