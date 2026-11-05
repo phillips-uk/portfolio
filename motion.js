@@ -1,13 +1,14 @@
 // Scroll and depth effects for phillips-uk.com (styles in motion.css). Only runs when the head script has set
-// .motion-ready on <html>, which it skips for visitors who prefer reduced motion.
+// .motion-ready on <html>, which it skips for visitors who prefer reduced motion. Works on any page: the hero is
+// the element marked data-hero (or .hero on the homepage), and each page's own cards are listed below.
 (function () {
   var root = document.documentElement;
   if (!root.classList.contains('motion-ready')) return;
   window.__phMotion = true;
 
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var header = document.querySelector('.site-header');
-  var hero = document.querySelector('.hero');
+  var header = document.querySelector('header');
+  var hero = document.querySelector('[data-hero], .hero');
   var shot = document.querySelector('.headshot-wrap');
 
   // Progress bar
@@ -19,6 +20,7 @@
   // Hero glows
   var glows = [];
   if (hero) {
+    hero.classList.add('ph-hero');
     ['g1', 'g2'].forEach(function (name) {
       var g = document.createElement('div');
       g.className = 'hero-glow ' + name;
@@ -47,7 +49,7 @@
   window.addEventListener('resize', onScroll, { passive: true });
   update();
 
-  // Headshot tilts toward the pointer
+  // Homepage headshot tilts toward the pointer
   if (finePointer && hero && shot) {
     hero.addEventListener('pointermove', function (e) {
       var r = shot.getBoundingClientRect();
@@ -59,18 +61,19 @@
       shot.style.setProperty('--sy', (dy * -12).toFixed(1) + 'px');
     });
     hero.addEventListener('pointerleave', function () {
-      ['--rx', '--ry', '--sx', '--sy'].forEach(function (p) { shot.style.setProperty(p, p.indexOf('r') === 2 ? '0deg' : '0px'); });
+      shot.style.setProperty('--rx', '0deg'); shot.style.setProperty('--ry', '0deg');
+      shot.style.setProperty('--sx', '0px'); shot.style.setProperty('--sy', '0px');
     });
   }
 
-  // Tool cards tilt a little under the pointer
+  // Tool and package cards tilt a little under the pointer
   if (finePointer) {
-    document.querySelectorAll('.tool-card').forEach(function (card) {
+    document.querySelectorAll('.tool-card, .pack').forEach(function (card) {
       card.addEventListener('pointermove', function (e) {
         var r = card.getBoundingClientRect();
         var dx = (e.clientX - r.left) / r.width - 0.5;
         var dy = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transform = 'perspective(1000px) rotateX(' + (dy * -5).toFixed(2) + 'deg) rotateY(' + (dx * 6).toFixed(2) + 'deg) translateY(-4px)';
+        card.style.transform = 'perspective(1000px) rotateX(' + (dy * -4).toFixed(2) + 'deg) rotateY(' + (dx * 5).toFixed(2) + 'deg) translateY(-4px)';
       });
       card.addEventListener('pointerleave', function () { card.style.transform = ''; });
     });
@@ -79,8 +82,19 @@
   if (!('IntersectionObserver' in window)) return;
 
   // Rise into place. Only things below the fold are hidden first, so nothing on screen ever blinks.
-  var groups = ['.sec-rule', '.sec-heading', '.sec-subhead', '.work-card', '.analysis-card', '.logo-cell',
-    '.range-col', '.tool-card', '.guide-card', '.contact-header', '.contact-item'];
+  // Specific cards come first; the general section rules only pick up blocks that hold none of them.
+  var specific = [
+    '.sec-rule', '.sec-heading', '.sec-subhead', '.work-card', '.analysis-card', '.logo-cell', '.range-col',
+    '.tool-card', '.guide-card', '.contact-header', '.contact-item',
+    '.check-card', '.list-card', '.cs-list-card', '.cross-card', '.ca-step', '.faq-item', '.me-row', '.url-trust-item',
+    '.article-body', '.issue-block', '.priority-item', '.consent-step', '.trigger-step', '.arch-cell', '.symptoms-table', '.related-card',
+    '.pack', '.band .card', '.step'
+  ];
+  var general = [
+    '.sec-cream > .page-w > *', '.sec-white > .page-w > *', '.read-w > *', '.related-section .page-w > *',
+    '.end-cta > *', 'section > .page-w > *'
+  ];
+  var pending = [];
   var reveal = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
       if (!en.isIntersecting) return;
@@ -96,70 +110,77 @@
       };
       el.addEventListener('transitionend', done);
     });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
 
-  var pending = [];
   var fold = window.innerHeight;
-  groups.forEach(function (sel) {
-    var seen = new Map();
-    document.querySelectorAll(sel).forEach(function (el) {
-      if (el.closest('.hero')) return;
-      if (el.getBoundingClientRect().top < fold) return;
-      var parent = el.parentNode;
-      var i = seen.get(parent) || 0;
-      seen.set(parent, i + 1);
-      el.style.setProperty('--d', ((i % 4) * 0.08).toFixed(2) + 's');
-      el.classList.add('rv');
-      pending.push(el);
-      reveal.observe(el);
+  function mark(selectors, strict) {
+    selectors.forEach(function (sel) {
+      var seen = new Map();
+      document.querySelectorAll(sel).forEach(function (el) {
+        if (el.classList.contains('rv') || el.closest('.rv') || (hero && hero.contains(el)) || (header && header.contains(el))) return;
+        if (strict && el.querySelector('.rv')) return;
+        if (el.getBoundingClientRect().top < fold) return;
+        var parent = el.parentNode;
+        var i = seen.get(parent) || 0;
+        seen.set(parent, i + 1);
+        el.style.setProperty('--d', ((i % 4) * 0.08).toFixed(2) + 's');
+        el.classList.add('rv');
+        pending.push(el);
+        reveal.observe(el);
+      });
     });
-  });
+  }
+  mark(specific, false);
+  mark(general, true);
 
   // Anything jumped past (a menu link, a fast flick) shows at once instead of waiting to be scrolled back to.
+  var catchTick = false;
   function catchUp() {
+    catchTick = false;
     for (var i = pending.length - 1; i >= 0; i--) {
       var el = pending[i];
       if (el.getBoundingClientRect().bottom < 0) {
         reveal.unobserve(el);
         pending.splice(i, 1);
-        el.classList.add('now', 'in');
-        el.classList.remove('rv', 'now', 'in');
+        el.classList.remove('rv', 'in');
         el.style.removeProperty('--d');
       }
     }
     if (!pending.length) window.removeEventListener('scroll', onCatchUp);
   }
-  var catchTick = false;
-  function onCatchUp() { if (!catchTick) { catchTick = true; requestAnimationFrame(function () { catchTick = false; catchUp(); }); } }
+  function onCatchUp() { if (!catchTick) { catchTick = true; requestAnimationFrame(catchUp); } }
   window.addEventListener('scroll', onCatchUp, { passive: true });
 
   // Numbers count up the first time they are seen. The real figure is in the HTML, so search engines and
   // visitors without JavaScript always get it.
+  var NUM = /^(\D*?)(\d[\d,]*(?:\.\d+)?)(\D*)$/;
   var counter = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
       if (!en.isIntersecting) return;
       counter.unobserve(en.target);
       var el = en.target;
-      var m = el.getAttribute('data-final').match(/^(\D*?)(\d+(?:\.\d+)?)(.*)$/);
-      var to = parseFloat(m[2]);
+      var final = el.getAttribute('data-final');
+      var m = final.match(NUM);
+      var commas = m[2].indexOf(',') !== -1;
+      var to = parseFloat(m[2].replace(/,/g, ''));
       var decimals = (m[2].split('.')[1] || '').length;
-      var wait = el.closest('.hero') ? 450 : 120;
+      var wait = hero && hero.contains(el) ? 450 : 120;
       setTimeout(function () {
         var t0 = performance.now(), dur = 1300;
         (function tick(now) {
           var k = Math.min(1, (now - t0) / dur);
-          var eased = 1 - Math.pow(1 - k, 3);
-          el.textContent = m[1] + (to * eased).toFixed(decimals) + m[3];
-          if (k < 1) requestAnimationFrame(tick);
-          else el.textContent = el.getAttribute('data-final');
+          var v = to * (1 - Math.pow(1 - k, 3));
+          var shown = commas ? Math.round(v).toLocaleString('en-GB') : v.toFixed(decimals);
+          el.textContent = m[1] + shown + m[3];
+          if (k < 1) requestAnimationFrame(tick); else el.textContent = final;
         })(t0);
       }, wait);
     });
   }, { threshold: 0.6 });
 
-  document.querySelectorAll('.stat-n, .kpi-n, .analysis-result').forEach(function (el) {
+  document.querySelectorAll('.stat-n, .kpi-n, .analysis-result, .price b, .compare b').forEach(function (el) {
     var text = el.textContent.trim();
-    if (el.children.length || !/^\D*?\d+(?:\.\d+)?\D*$/.test(text)) return;
+    if (el.children.length || !NUM.test(text)) return;
     el.setAttribute('data-final', text);
     counter.observe(el);
   });

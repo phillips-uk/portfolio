@@ -1,8 +1,8 @@
 /* Scroll and depth effects for phillips-uk.com. Everything that hides or moves content only applies once <html> has
    .motion-ready, which the head script sets when the visitor has not asked for reduced motion. Without it the page
-   reads exactly as before. motion.js adds the moving parts. */
+   reads exactly as before. motion.js adds the moving parts. Mark a page's hero section with data-hero. */
 
-.stat-n, .kpi-n, .analysis-result { font-variant-numeric: tabular-nums; }
+.stat-n, .kpi-n, .analysis-result, .price b, .compare b { font-variant-numeric: tabular-nums; }
 
 /* Thin amber progress bar along the top edge */
 .scroll-progress {
@@ -12,26 +12,25 @@
 }
 
 /* Header turns frosted once the page has moved */
-html .site-header { transition: box-shadow .3s ease, background-color .3s ease; }
-.site-header.is-scrolled {
-  background: rgba(255, 255, 255, .82);
-  -webkit-backdrop-filter: saturate(150%) blur(14px); backdrop-filter: saturate(150%) blur(14px);
+html header { transition: box-shadow .3s ease, background-color .3s ease; }
+html header.is-scrolled {
+  background: rgba(255, 255, 255, .82) !important;
+  -webkit-backdrop-filter: saturate(150%) blur(14px) !important; backdrop-filter: saturate(150%) blur(14px) !important;
   box-shadow: 0 12px 30px -22px rgba(26, 26, 26, .45);
 }
 
 /* Hero depth: two soft warm glows that drift at different speeds */
-.motion-ready .hero { position: relative; overflow: hidden; isolation: isolate; }
-.motion-ready .hero-inner { position: relative; z-index: 1; }
-.hero-glow { position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; will-change: transform; }
+.ph-hero { position: relative; overflow: hidden; isolation: isolate; }
+.ph-hero > :not(.hero-glow) { position: relative; z-index: 1; }
+.ph-hero > .hero-glow { position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; will-change: transform; }
 .hero-glow.g1 { width: 640px; height: 640px; right: -180px; top: -220px; background: radial-gradient(circle, rgba(217, 146, 94, .28), rgba(217, 146, 94, 0) 68%); }
 .hero-glow.g2 { width: 520px; height: 520px; left: -220px; bottom: -260px; background: radial-gradient(circle, rgba(152, 88, 48, .14), rgba(152, 88, 48, 0) 70%); }
-
 @media (max-width: 700px) {
   .hero-glow.g1 { width: 380px; height: 380px; right: -160px; top: -120px; }
   .hero-glow.g2 { width: 320px; height: 320px; left: -180px; bottom: -160px; }
 }
 
-/* Headshot: floats slightly against the scroll and tilts toward the pointer */
+/* Homepage headshot: floats slightly against the scroll and tilts toward the pointer */
 .motion-ready .headshot-wrap { perspective: 1100px; }
 .motion-ready .headshot-surface {
   transform: translate3d(0, var(--py, 0px), 0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
@@ -43,8 +42,7 @@ html .site-header { transition: box-shadow .3s ease, background-color .3s ease; 
   transition: transform .6s cubic-bezier(.2, .7, .2, 1); will-change: transform;
 }
 
-/* Hero entrance */
-/* Starts half visible, so the hero is always readable even if a browser pauses animations */
+/* Hero entrance. Starts half visible, so the hero is always readable even if a browser pauses animations. */
 @keyframes ph-rise { from { opacity: .5; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @keyframes ph-fade { from { opacity: .5; transform: scale(.97); } to { opacity: 1; transform: none; } }
 .motion-ready .hero-h1 { animation: ph-rise .9s cubic-bezier(.2, .7, .2, 1) both; }
@@ -56,6 +54,10 @@ html .site-header { transition: box-shadow .3s ease, background-color .3s ease; 
 .motion-ready .stat-cell:nth-child(2) { animation-delay: .4s; }
 .motion-ready .stat-cell:nth-child(3) { animation-delay: .48s; }
 .motion-ready .stat-cell:nth-child(4) { animation-delay: .56s; }
+/* Other pages: the hero's headline, then what follows it, then the visual beside it */
+.motion-ready [data-hero] h1 { animation: ph-rise .9s cubic-bezier(.2, .7, .2, 1) both; }
+.motion-ready [data-hero] h1 ~ * { animation: ph-rise .9s .14s cubic-bezier(.2, .7, .2, 1) both; }
+.motion-ready [data-hero] :has(> h1) + * { animation: ph-fade 1.1s .22s ease both; }
 
 /* Sections and cards rise into place as they scroll in (motion.js only marks ones below the fold) */
 .motion-ready .rv {
@@ -64,23 +66,25 @@ html .site-header { transition: box-shadow .3s ease, background-color .3s ease; 
   transition-delay: var(--d, 0s);
 }
 .motion-ready .rv.in { opacity: 1; transform: none; }
-.motion-ready .rv.now { transition: none; }
 
 /* Cards lift on hover */
-html .work-card, html .analysis-card, html .range-col, html .contact-item, html .guide-card, html .tool-card {
+html .work-card, html .analysis-card, html .range-col, html .contact-item, html .guide-card, html .tool-card,
+html .check-card, html .list-card, html .cs-list-card, html .cross-card, html .pack, html .related-card {
   transition: transform .4s cubic-bezier(.2, .7, .2, 1), box-shadow .4s ease, border-color .2s ease, background-color .2s ease;
 }
 @media (hover: hover) and (pointer: fine) {
-  html .work-card:hover, html .analysis-card:hover, html .range-col:hover {
+  html .work-card:hover, html .analysis-card:hover, html .range-col:hover, html .check-card:hover,
+  html .list-card:hover, html .cs-list-card:hover, html .cross-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 26px 48px -30px rgba(122, 63, 31, .5);
   }
-  html .guide-card:hover, html .contact-item:hover { transform: translateY(-3px); }
-  .tool-card { transform-style: preserve-3d; }
-  html .tool-card:hover { box-shadow: 0 30px 56px -32px rgba(122, 63, 31, .55); }
+  html .guide-card:hover, html .contact-item:hover, html .related-card:hover { transform: translateY(-3px); }
+  html .tool-card, html .pack { transform-style: preserve-3d; }
+  html .tool-card:hover, html .pack:hover { box-shadow: 0 30px 56px -32px rgba(122, 63, 31, .55); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .scroll-progress, .hero-glow { display: none; }
-  html .work-card, html .analysis-card, html .range-col, html .contact-item, html .guide-card, html .tool-card { transition: none; }
+  html .work-card, html .analysis-card, html .range-col, html .contact-item, html .guide-card, html .tool-card,
+  html .check-card, html .list-card, html .cs-list-card, html .cross-card, html .pack, html .related-card { transition: none; }
 }
