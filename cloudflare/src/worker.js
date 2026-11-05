@@ -2,6 +2,7 @@
 // netlify/functions/*.js handlers unchanged through the adapter (same approach as Before You Pay).
 import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard } from './rate-card.js';
+import { isAdminPath, admin } from './admin.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -85,7 +86,8 @@ async function route(request, env, ctx) {
 
   if (path === '/auth/callback') return runFunction('auth-callback', request, url, {}, env, ctx);
 
-  if (isRateCardPath(path)) return rateCard(request, url, env);
+  if (isRateCardPath(path)) return rateCard(request, url, env, ctx);
+  if (isAdminPath(path)) return admin(request, url, env);
 
   const share = path.match(/^\/r\/([^/]+)$/);
   if (share) return runFunction('audit-share', request, url, { id: decodeURIComponent(share[1]) }, env, ctx);

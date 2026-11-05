@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Phillips.</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+  :root {
+    --amber: #985830; --amber-dark: #7A3F1F; --amber-light: #F5EBD9;
+    --cream: #FDF6EE; --border: #E8D8C4; --ink: #1A1A1A; --muted: #6B6B6B; --white: #FFFFFF;
+    --ok: #2E6B4A; --ok-bg: #E7F2EC; --off: #8A3A28; --off-bg: #F7E8E4; --wait: #7A5A12; --wait-bg: #F6EEDA;
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font); color: var(--ink); background: var(--cream); -webkit-font-smoothing: antialiased; }
+  button, input, select { font: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  header { background: #fff; border-bottom: 1px solid var(--border); }
+  .bar { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .bar-left { display: flex; align-items: center; gap: 14px; }
+  .bar-left img { height: 34px; width: auto; display: block; }
+  .tag { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); border-left: 1px solid var(--border); padding-left: 14px; }
+  .who { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); }
+  .link-btn { background: none; border: 0; color: var(--amber); font-weight: 700; cursor: pointer; padding: 6px 0; }
+  main { padding: 40px 0 72px; display: grid; gap: 28px; }
+  h1 { font-size: 34px; letter-spacing: -.03em; margin: 0; }
+  h2 { font-size: 22px; letter-spacing: -.02em; margin: 0; }
+  .sub { color: var(--muted); font-size: 15px; margin: 6px 0 0; }
+  .panel { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 28px; }
+  .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 20px; }
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 8px; }
+
+  .create { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) 170px auto; gap: 12px; align-items: end; padding: 20px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; }
+  label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; }
+  input[type=text], select { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 6px; background: #fff; color: var(--ink); font-size: 15px; }
+  input:focus, select:focus { outline: 2px solid var(--amber); outline-offset: 1px; }
+  .btn { background: var(--amber); color: #fff; border: 0; border-radius: 6px; padding: 12px 18px; font-weight: 700; font-size: 15px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { background: var(--amber-dark); }
+  .btn:disabled { opacity: .6; cursor: default; }
+  .btn-sm { padding: 7px 12px; font-size: 13px; }
+  .btn-line { background: #fff; color: var(--ink); border: 1px solid var(--border); }
+  .btn-line:hover { background: var(--cream); border-color: var(--amber); }
+  .made { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--amber); background: var(--amber-light); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .made code { font-size: 13.5px; overflow-wrap: anywhere; user-select: all; }
+  .msg { font-size: 14px; color: var(--off); margin: 10px 0 0; min-height: 1em; }
+
+  .table-box { overflow-x: auto; margin-top: 20px; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px; }
+  th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 12px 14px; background: #FBF8F4; border-bottom: 1px solid var(--border); }
+  td { padding: 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  th.num { text-align: right; }
+  .name { font-weight: 700; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 3px; }
+  .muted { color: var(--muted); }
+  .pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 4px 9px; border-radius: 999px; }
+  .pill.active { background: var(--ok-bg); color: var(--ok); }
+  .pill.revoked { background: var(--off-bg); color: var(--off); }
+  .pill.expired { background: var(--wait-bg); color: var(--wait); }
+  .actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .empty { padding: 28px; text-align: center; color: var(--muted); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .stat { border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+  .stat b { display: block; font-size: 36px; letter-spacing: -.04em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .stat span { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .score { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .quick { display: flex; flex-wrap: wrap; gap: 10px; }
+  .quick a { text-decoration: none; color: var(--ink); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 14px; font-weight: 700; background: #fff; }
+  .quick a:hover { border-color: var(--amber); }
+
+  .signin { min-height: calc(100vh - 65px); display: grid; place-items: center; padding: 24px; }
+  .signin .panel { max-width: 420px; width: 100%; text-align: left; }
+  .signin h1 { font-size: 28px; margin: 4px 0 10px; }
+  .signin p { color: var(--muted); font-size: 15px; line-height: 1.55; margin: 0 0 22px; }
+
+  @media (max-width: 900px) {
+    .create { grid-template-columns: minmax(0, 1fr); }
+    .stats { grid-template-columns: minmax(0, 1fr); }
+    .wrap { padding: 0 18px; }
+    .panel { padding: 20px; }
+    .tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="bar-left"><a href="/"><img src="/logo/phillips-lockup.svg" alt="Phillips."></a><span class="tag">Admin</span></div>
+    <div class="who" id="who" hidden><span id="who-email"></span><button type="button" class="link-btn" id="logout">Sign out</button></div>
+  </div>
+</header>
+
+<section class="signin" id="signin">
+  <div class="panel">
+    <span class="eyebrow">Phillips. admin</span>
+    <h1>Sign in</h1>
+    <p>Use your Google account. Only your own addresses can get in.</p>
+    <div id="gsi-btn"></div>
+    <p class="msg" id="signin-msg"></p>
+  </div>
+</section>
+
+<main class="wrap" id="app" hidden>
+  <div>
+    <h1>Admin</h1>
+    <p class="sub">Rate card links and a quick look at the site.</p>
+  </div>
+
+  <section class="panel" aria-labelledby="rc-h">
+    <div class="panel-head">
+      <div>
+        <span class="eyebrow">Rate card</span>
+        <h2 id="rc-h">Invite links</h2>
+        <p class="sub">Each link opens the private rate card. It can be forwarded, and you can switch it off at any time.</p>
+      </div>
+      <a class="btn btn-line btn-sm" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a>
+    </div>
+
+    <form class="create" id="create" autocomplete="off">
+      <label for="f-name">Who is it for
+        <input type="text" id="f-name" maxlength="80" placeholder="Company or person" required>
+      </label>
+      <label for="f-note">Note (only you see this)
+        <input type="text" id="f-note" maxlength="200" placeholder="How you know them, who introduced them">
+      </label>
+      <label for="f-days">Stops working
+        <select id="f-days">
+          <option value="30">After 30 days</option>
+          <option value="90" selected>After 90 days</option>
+          <option value="365">After a year</option>
+          <option value="0">Never</option>
+        </select>
+      </label>
+      <button class="btn" type="submit" id="f-go">Create link</button>
+    </form>
+    <div class="made" id="made" hidden>
+      <code id="made-link"></code>
+      <button type="button" class="btn btn-sm" id="made-copy">Copy link</button>
+    </div>
+    <p class="msg" id="create-msg"></p>
+
+    <div class="table-box">
+      <table>
+        <thead><tr><th>Who</th><th>Created</th><th>Stops working</th><th class="num">Views</th><th class="num">Browsers</th><th>Last opened</th><th>Status</th><th class="num">Actions</th></tr></thead>
+        <tbody id="invites"><tr><td colspan="8" class="empty">Loading links…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="site-h">
+    <div class="panel-head">
+      <div>
+        <span class="eyebrow">Site</span>
+        <h2 id="site-h">Landing page audits</h2>
+        <p class="sub">Every finished audit on the free tool. Traffic and search data live in Google Analytics and Search Console.</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="s-7">–</b><span>audits in the last 7 days</span></div>
+      <div class="stat"><b id="s-30">–</b><span>audits in the last 30 days</span></div>
+      <div class="stat"><b id="s-all">–</b><span>audits since launch</span></div>
+    </div>
+    <div class="table-box">
+      <table>
+        <thead><tr><th>Site audited</th><th>Keyword</th><th class="num">Score</th><th>Date</th><th class="num">Report</th></tr></thead>
+        <tbody id="audits"><tr><td colspan="5" class="empty">Loading audits…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="ql-h">
+    <span class="eyebrow">Shortcuts</span>
+    <h2 id="ql-h" style="margin-bottom:16px">Everything else</h2>
+    <div class="quick">
+      <a href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics</a>
+      <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a>
+      <a href="https://tagmanager.google.com/" target="_blank" rel="noopener">Tag Manager</a>
+      <a href="https://dash.cloudflare.com/9cd423eee8986ecc6f22f6fa3a17878b/workers/services/view/phillips-uk/production" target="_blank" rel="noopener">Cloudflare (hosting and logs)</a>
+      <a href="https://github.com/phillips-uk" target="_blank" rel="noopener">GitHub</a>
+      <a href="/" target="_blank" rel="noopener">Live site</a>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var CLIENT_ID = '339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function api(path, opts) {
+    opts = opts || {};
+    var init = { method: opts.method || 'GET', headers: { 'X-Admin': '1' }, credentials: 'same-origin' };
+    if (opts.body) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
+    return fetch(path, init).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (data) {
+        if (r.status === 401) { showSignin(); throw new Error('Signed out'); }
+        if (!r.ok) throw new Error(data.error || 'Something went wrong. Try again.');
+        return data;
+      });
+    });
+  }
+
+  function when(iso, withTime) {
+    if (!iso) return '–';
+    var d = new Date(iso);
+    var opts = { day: 'numeric', month: 'short', year: 'numeric' };
+    if (withTime) { opts.hour = '2-digit'; opts.minute = '2-digit'; }
+    return d.toLocaleString('en-GB', opts);
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function copy(text, btn) {
+    var done = function (label) { var old = btn.textContent; btn.textContent = label; setTimeout(function () { btn.textContent = old; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done('Copied'); }, function () { done('Copy failed'); });
+    else done('Copy failed');
+  }
+
+  function showSignin(msg) {
+    $('app').hidden = true; $('who').hidden = true; $('signin').hidden = false;
+    $('signin-msg').textContent = msg || '';
+    renderButton();
+  }
+  function showApp(email) {
+    $('signin').hidden = true; $('app').hidden = false; $('who').hidden = false;
+    $('who-email').textContent = email;
+    loadInvites(); loadSite();
+  }
+
+  var rendered = false;
+  function renderButton() {
+    if (rendered) return;
+    if (!window.google || !google.accounts || !google.accounts.id) { setTimeout(renderButton, 200); return; }
+    google.accounts.id.initialize({ client_id: CLIENT_ID, callback: onCredential, auto_select: false });
+    google.accounts.id.renderButton($('gsi-btn'), { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular', width: 300 });
+    rendered = true;
+  }
+  function onCredential(resp) {
+    $('signin-msg').textContent = 'Checking…';
+    api('/admin/api/login', { method: 'POST', body: { credential: resp.credential } })
+      .then(function (d) { showApp(d.email); })
+      .catch(function (e) { $('signin-msg').textContent = e.message; });
+  }
+
+  function inviteRow(inv) {
+    var tr = el('tr');
+    var who = el('td'); who.appendChild(el('div', 'name', inv.name)); if (inv.note) who.appendChild(el('div', 'note', inv.note));
+    tr.appendChild(who);
+    tr.appendChild(el('td', 'muted', when(inv.createdAt)));
+    tr.appendChild(el('td', 'muted', inv.expiresAt ? when(inv.expiresAt) : 'Never'));
+    tr.appendChild(el('td', 'num', String(inv.views)));
+    tr.appendChild(el('td', 'num', String(inv.browsers)));
+    tr.appendChild(el('td', 'muted', inv.lastViewedAt ? when(inv.lastViewedAt, true) + (inv.lastCountry ? ' · ' + inv.lastCountry : '') : 'Not yet'));
+    var st = el('td'); st.appendChild(el('span', 'pill ' + inv.state, { active: 'Active', revoked: 'Switched off', expired: 'Expired' }[inv.state] || inv.state)); tr.appendChild(st);
+    var act = el('td'); var box = el('div', 'actions');
+    var c = el('button', 'btn btn-line btn-sm', 'Copy link'); c.type = 'button';
+    c.addEventListener('click', function () { copy(inv.link, c); });
+    var t = el('button', 'btn btn-line btn-sm', inv.state === 'revoked' ? 'Switch on' : 'Switch off'); t.type = 'button';
+    t.addEventListener('click', function () {
+      t.disabled = true;
+      api('/admin/api/invites/' + encodeURIComponent(inv.token) + '/' + (inv.state === 'revoked' ? 'restore' : 'revoke'), { method: 'POST', body: {} })
+        .then(loadInvites).catch(function (e) { alert(e.message); t.disabled = false; });
+    });
+    box.appendChild(c); if (inv.state !== 'expired') box.appendChild(t);
+    act.appendChild(box); tr.appendChild(act);
+    return tr;
+  }
+
+  function loadInvites() {
+    return api('/admin/api/invites').then(function (d) {
+      var body = $('invites'); body.innerHTML = '';
+      if (!d.invites.length) { var tr = el('tr'); var td = el('td', 'empty', 'No links yet. Create the first one above.'); td.colSpan = 8; tr.appendChild(td); body.appendChild(tr); return; }
+      d.invites.forEach(function (inv) { body.appendChild(inviteRow(inv)); });
+    }).catch(function () {});
+  }
+
+  function loadSite() {
+    api('/admin/api/site').then(function (d) {
+      $('s-7').textContent = d.audits.last7; $('s-30').textContent = d.audits.last30; $('s-all').textContent = d.audits.total;
+      var body = $('audits'); body.innerHTML = '';
+      if (!d.recent.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No audits yet.'); td0.colSpan = 5; tr0.appendChild(td0); body.appendChild(tr0); return; }
+      d.recent.forEach(function (a) {
+        var tr = el('tr');
+        tr.appendChild(el('td', 'name', a.domain || '–'));
+        tr.appendChild(el('td', 'muted', a.keyword || '–'));
+        tr.appendChild(el('td', 'num score', a.score == null ? '–' : String(a.score)));
+        tr.appendChild(el('td', 'muted', when(a.auditedAt)));
+        var rep = el('td', 'num');
+        if (a.report) { var link = el('a', null, 'Open'); link.href = a.report; link.target = '_blank'; link.rel = 'noopener'; link.style.color = 'var(--amber)'; link.style.fontWeight = '700'; rep.appendChild(link); }
+        tr.appendChild(rep);
+        body.appendChild(tr);
+      });
+    }).catch(function () {});
+  }
+
+  $('create').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('f-name').value.trim();
+    $('create-msg').textContent = '';
+    if (!name) { $('create-msg').textContent = 'Add who the link is for.'; $('f-name').focus(); return; }
+    $('f-go').disabled = true;
+    api('/admin/api/invites', { method: 'POST', body: { name: name, note: $('f-note').value.trim(), days: Number($('f-days').value) } })
+      .then(function (inv) {
+        $('made-link').textContent = inv.link; $('made').hidden = false;
+        $('f-name').value = ''; $('f-note').value = '';
+        copy(inv.link, $('made-copy'));
+        return loadInvites();
+      })
+      .catch(function (err) { $('create-msg').textContent = err.message; })
+      .then(function () { $('f-go').disabled = false; });
+  });
+  $('made-copy').addEventListener('click', function () { copy($('made-link').textContent, $('made-copy')); });
+  $('logout').addEventListener('click', function () {
+    api('/admin/api/logout', { method: 'POST', body: {} }).catch(function () {}).then(function () {
+      if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
+      showSignin('Signed out.');
+    });
+  });
+
+  fetch('/admin/api/me', { credentials: 'same-origin' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && d.email) showApp(d.email); else showSignin(); })
+    .catch(function () { showSignin(); });
+})();
+</script>
+</body>
+</html>
