@@ -48,6 +48,7 @@
   .linkish { background: none; border: 0; padding: 0; color: var(--on-ink); font-weight: 700; cursor: pointer; font-size: 13px; }
 
   .main { padding: 36px 44px 64px; min-width: 0; }
+  .main > [data-pane] { max-width: 1320px; margin: 0 auto; }
   .page-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 28px; }
   .crumb { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
   .crumb a { color: var(--muted); text-decoration: none; }
@@ -713,7 +714,7 @@
       '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:' + colour + ';stop-opacity:.32"/><stop offset="1" style="stop-color:' + colour + ';stop-opacity:0"/></linearGradient></defs>' +
       '<path class="ar" d="' + area + '" fill="url(#' + id + ')"/>' +
       '<polyline class="ln" points="' + line + '" fill="none" style="stroke:' + colour + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
-      '<circle class="dt" cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="2.6" style="fill:' + colour + '"/></svg>';
+      '<path class="dt" d="M' + last[0].toFixed(1) + ',' + last[1].toFixed(1) + 'h0.01" fill="none" style="stroke:' + colour + '" stroke-width="6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>';
   }
   var SRC_ICON = {
     'Google Ads': ['ads', '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M2 11.5 5.5 7l2.5 2.5L12 4"/><path d="M9 4h3v3"/></svg>'],
