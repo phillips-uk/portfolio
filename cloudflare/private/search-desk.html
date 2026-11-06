@@ -180,6 +180,105 @@
   .feedbar { display: flex; height: 14px; border-radius: 8px; overflow: hidden; margin: 6px 0 12px; }
   .feedbar i { display: block; height: 100%; }
 
+  /* Hub page parts: switches, worth-a-look, show cards, grouped tables, detail panel */
+  .how { display: inline-flex; vertical-align: middle; margin-left: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+  .how:hover { border-color: var(--amber); color: var(--amber); }
+  .seg { display: inline-flex; background: var(--line-2); border-radius: 10px; padding: 3px; gap: 2px; box-shadow: inset 0 1px 2px rgba(21,19,15,.08); vertical-align: middle; }
+  .seg button { border: 0; background: transparent; padding: 6px 11px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: var(--muted); transition: background-color .2s, color .2s, box-shadow .2s; }
+  .seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(21,19,15,.18); }
+  .seg-label { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin-right: 8px; vertical-align: middle; }
+  .filterbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .find { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; min-width: 260px; background: var(--surface); }
+  .find:focus { outline: 2px solid var(--amber-hi); outline-offset: 1px; }
+  .worth { margin-bottom: 14px; }
+  .worth-btn { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 13px 16px; font-size: 13.5px; color: var(--text); }
+  .worth-btn:hover { border-color: var(--amber); }
+  .worth-btn .n { background: var(--amber); color: #fff; border-radius: 999px; padding: 2px 9px; font-size: 12px; font-weight: 700; flex: none; }
+  .worth-btn .chev { margin-left: auto; color: var(--muted); transition: transform .2s; flex: none; }
+  .worth.open .worth-btn { border-radius: 12px 12px 0 0; }
+  .worth.open .chev { transform: rotate(180deg); }
+  .worth-list { list-style: none; margin: 0; padding: 0 16px; background: var(--surface); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 12px 12px; }
+  .worth-list li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line-2); cursor: pointer; }
+  .worth-list li:last-child { border-bottom: 0; }
+  .worth-list li:hover .t { color: var(--amber); }
+  .worth-list .t { font-weight: 700; } .worth-list .s { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .worth-list .m { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .show-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .show-card { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; color: var(--text); transition: background-color .2s, border-color .2s; }
+  .show-card b { display: block; font-size: 21px; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .show-card small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .show-card:hover { border-color: var(--amber); }
+  .show-card.on { background: var(--amber); border-color: var(--amber); color: #fff; } .show-card.on small { color: rgba(255,255,255,.8); }
+  .tbar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line-2); }
+  .tbar .right { margin-left: auto; display: flex; gap: 8px; }
+  table.st th { background: #F6F1EA; }
+  table.st td { padding: 9px 12px; }
+  table.st tr.grp { cursor: pointer; }
+  table.st tr.grp:nth-of-type(odd) td { background: #FFFFFF; } table.st tr.grp:nth-of-type(even) td { background: #FCFAF7; }
+  table.st tr.grp:hover td { background: #F7F0E8; }
+  table.st tr.kid td { background: #FBF8F4; font-size: 13px; color: var(--text-2, #3A352D); }
+  table.st tr.kid td.term { padding-left: 42px; }
+  table.st td.term { min-width: 250px; }
+  table.st td.term b { display: inline; white-space: nowrap; }
+  .exp { width: 20px; height: 20px; border: 0; background: transparent; color: var(--muted); padding: 0; margin-right: 6px; vertical-align: -4px; transition: transform .2s; }
+  .exp.open { transform: rotate(90deg); }
+  .cb { display: grid; grid-template-columns: 110px auto; align-items: center; gap: 4px 8px; min-width: 190px; }
+  .cb i { display: block; height: 8px; border-radius: 4px; }
+  .cb i.th { background: var(--amber); } .cb i.be { background: repeating-linear-gradient(135deg, #CBC2B5 0 3px, #ECE6DD 3px 6px); }
+  .cb b { font-variant-numeric: tabular-nums; font-size: 13px; } .cb span { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .chg { display: block; font-size: 11.5px; color: var(--faint); margin-top: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .chg.up::before { content: "▲ "; font-size: 8px; } .chg.down::before { content: "▼ "; font-size: 8px; }
+  .chg.good::before { color: var(--good); } .chg.bad::before { color: var(--bad); } .chg.flat::before { color: var(--faint); }
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 5px; margin-left: 6px; vertical-align: 1px; }
+  .tag.new { background: var(--good-soft); color: var(--good); } .tag.stop { background: var(--line-2); color: var(--muted); }
+  .ban { color: var(--bad); font-weight: 700; margin-left: 6px; }
+  .dotl { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--good); margin-right: 7px; vertical-align: 1px; }
+  .dotl.off { background: var(--line); }
+  .flagkey { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 12px 16px; border-top: 1px solid var(--line-2); font-size: 12px; color: var(--muted); align-items: center; }
+  .flagkey .tag { margin-left: 0; margin-right: 4px; } .flagkey .ban { margin-left: 0; }
+  .sw { display: inline-block; width: 16px; height: 8px; border-radius: 4px; margin-right: 6px; vertical-align: 0; }
+  .sw.th { background: var(--amber); } .sw.be { background: repeating-linear-gradient(135deg, #CBC2B5 0 3px, #ECE6DD 3px 6px); }
+  .secmenu { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .secmenu button { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 14px; color: var(--text); min-width: 160px; }
+  .secmenu button b { display: block; font-size: 13.5px; } .secmenu button small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .secmenu button.on { background: var(--amber); border-color: var(--amber); color: #fff; } .secmenu button.on small { color: rgba(255,255,255,.82); }
+  .scrim { position: fixed; inset: 0; background: rgba(21,19,15,.35); z-index: 70; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(580px, 100vw); background: var(--bg); z-index: 71; box-shadow: -30px 0 60px -30px rgba(0,0,0,.5); transform: translateX(104%); transition: transform .32s cubic-bezier(.2,.7,.2,1); display: flex; flex-direction: column; visibility: hidden; }
+  .drawer.on { transform: none; visibility: visible; }
+  .d-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 20px 22px 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .d-kicker { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); }
+  .d-head h2 { font-size: 21px; letter-spacing: -.02em; margin-top: 4px; }
+  .d-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+  .d-close { border: 1px solid var(--line); background: var(--surface); width: 34px; height: 34px; border-radius: 8px; font-size: 19px; line-height: 1; color: var(--muted); flex: none; }
+  .d-close:hover { border-color: var(--amber); color: var(--text); }
+  .d-body { overflow-y: auto; overflow-x: hidden; padding: 18px 22px 30px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-content: start; }
+  .d-body > * { min-width: 0; }
+  .diag { border-radius: 12px; padding: 16px 18px; background: #FDF6EE; border: 1px solid #E8D8C4; }
+  .diag .k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); }
+  .diag h3 { margin: 6px 0 8px; font-size: 16px; letter-spacing: -.01em; }
+  .diag ul { margin: 0; padding-left: 18px; line-height: 1.55; font-size: 13.5px; } .diag li + li { margin-top: 4px; }
+  .diag .next { margin-top: 12px; display: flex; gap: 10px; align-items: baseline; font-size: 13.5px; line-height: 1.5; }
+  .diag .next .pill { flex: none; }
+  .diag .hedge { margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .d-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .d-tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .d-tile small { display: block; color: var(--muted); font-size: 11.5px; } .d-tile b { display: block; font-size: 17px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .d-sec h4 { margin: 0 0 8px; font-size: 13.5px; }
+  .d-sec .card table td, .d-sec .card table th { padding: 8px 10px; font-size: 12.5px; }
+  .d-sec td small { display: block; color: var(--faint); font-size: 11px; margin-top: 2px; }
+  .d-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .d-text { margin: 0; color: var(--text); font-size: 13.5px; line-height: 1.6; }
+  .src-status { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12.5px; }
+  .src-status.ok { color: var(--good); } .src-status.behind { color: var(--warn); } .src-status.bad { color: var(--bad); }
+  .feedchip { display: inline-block; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--line-2); color: var(--muted); margin: 0 4px 4px 0; text-decoration: none; }
+  .feedchip:hover { background: var(--amber-soft); color: var(--amber); }
+  @media (max-width: 820px) {
+    .show-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .find { min-width: 0; flex: 1; }
+    .drawer { top: auto; height: 88vh; width: 100vw; border-radius: 16px 16px 0 0; transform: translateY(104%); }
+    .d-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tbar .right { margin-left: 0; }
+  }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60; background: var(--ink); color: #fff; padding: 12px 16px; border-radius: 10px; font-size: 13.5px; box-shadow: 0 20px 40px -20px rgba(0,0,0,.6); transition: opacity .25s ease, transform .3s cubic-bezier(.2,.7,.2,1); max-width: calc(100vw - 32px); }
   .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
@@ -207,7 +306,7 @@
     .rec { grid-template-columns: minmax(0, 1fr); }
     .demo-bar { font-size: 12px; }
   }
-  @media (prefers-reduced-motion: reduce) { .enter > *, .spark { animation: none; } .ring .val, .toast { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .enter > *, .spark { animation: none; } .ring .val, .toast, .drawer { transition: none; } }
 </style>
 </head>
 <body>
@@ -217,20 +316,20 @@
     <div class="brand"><img src="/logo/phillips-lockup-reversed.svg" alt="Phillips."><span>Search Desk</span></div>
     <div class="account"><i>EO</i><div><b>Example Outdoor Co.</b><small>Google Ads · GA4 · Merchant Center</small></div></div>
     <nav class="nav" id="nav" aria-label="Search Desk">
-      <a href="#overview" data-view="overview"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg>Overview<span class="st live">Live</span></a>
-      <a href="#terms" data-view="terms"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg>Search terms<span class="st live">Live</span></a>
-      <a href="#visibility" data-view="visibility"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8S4 3.5 8 3.5 14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>Visibility<span class="st build">In build</span></a>
-      <a href="#ngrams" data-view="ngrams"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h5M9 4h5M2 8h3M7 8h7M2 12h8M12 12h2"/></svg>N-grams<span class="st build">In build</span></a>
-      <a href="#pacing" data-view="pacing"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 13.5h12M4 11V8.5M7 11V6M10 11V7.5M13 11V4"/></svg>Pacing<span class="st build">In build</span></a>
-      <a href="#bids" data-view="bids"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 12.5 7 8l2.5 2.5L13 6"/><path d="M10 6h3v3"/></svg>Bids &amp; budgets<span class="st build">In build</span></a>
-      <a href="#tracking" data-view="tracking"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.8 13.5 4v4c0 3.2-2.4 5.4-5.5 6.2C4.9 13.4 2.5 11.2 2.5 8V4z"/><path d="m5.6 8 1.7 1.7L10.6 6.4"/></svg>Tracking &amp; feed<span class="st live">Live</span></a>
+      <a href="#account" data-view="account"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg>Account health</a>
+      <a href="#terms" data-view="terms"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg>Search terms</a>
+      <a href="#negatives" data-view="negatives"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="5.8"/><path d="M3.9 3.9l8.2 8.2"/></svg>Negatives</a>
+      <a href="#bids" data-view="bids"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 12.5 7 8l2.5 2.5L13 6"/><path d="M10 6h3v3"/></svg>Bids &amp; budgets</a>
+      <a href="#pacing" data-view="pacing"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 13.5h12M4 11V8.5M7 11V6M10 11V7.5M13 11V4"/></svg>Pacing</a>
+      <a href="#tracking" data-view="tracking"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.8 13.5 4v4c0 3.2-2.4 5.4-5.5 6.2C4.9 13.4 2.5 11.2 2.5 8V4z"/><path d="m5.6 8 1.7 1.7L10.6 6.4"/></svg>Tracking &amp; feed</a>
+      <a href="#status" data-view="status"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8.5h3l2-5 3 9 2-4h3"/></svg>Data status<span class="st live" id="nav-fresh">Today</span></a>
     </nav>
     <div class="side-foot">Read-only until you approve. Nothing changes in an account without a yes from you.</div>
   </aside>
 
   <main class="main">
-    <!-- Overview -->
-    <section class="pane" data-pane="overview">
+    <!-- Account health -->
+    <section class="pane" data-pane="account">
       <div class="hero">
         <div class="crumb">Accounts /</div>
         <h1>Example Outdoor Co.</h1>
@@ -243,37 +342,40 @@
         <div class="card"><div class="card-head"><h2>This morning's summary</h2><span class="meta">Written from the checks</span></div><ol class="summary" id="o-summary"></ol></div>
       </div>
       <div class="card" style="margin-top:20px">
-        <div class="card-head"><h2>What Search Desk runs</h2><span class="meta">Live parts run for Phillips. clients today</span></div>
+        <div class="card-head"><h2>What Search Desk answers</h2><span class="meta">One page for each question</span></div>
         <div class="modules" id="o-modules"></div>
       </div>
     </section>
 
     <!-- Search terms -->
     <section class="pane" data-pane="terms" hidden>
-      <div class="page-head"><div><h1>Search terms</h1><p class="lede">Last 30 days. Every term with spend, with a suggestion and the reason for it. Queue what you agree with and it goes for approval as one change.</p></div></div>
-      <div class="chips" id="t-filters" style="margin-bottom:14px"></div>
-      <div class="card scroll"><table><thead><tr id="t-head"></tr></thead><tbody id="t-rows"></tbody></table></div>
-      <div class="queue" id="t-queue" hidden><span id="t-queue-text"></span><span style="display:flex;gap:8px"><button class="btn" type="button" id="t-clear">Clear</button><button class="btn primary" type="button" id="t-send">Send for approval</button></span></div>
-    </section>
-
-    <!-- Search term visibility -->
-    <section class="pane" data-pane="visibility" hidden>
-      <div class="page-head"><div><h1>Search term visibility</h1><p class="lede">Every search term this period against the last, split by the campaigns it showed in. Sorted by last period, high to low, so the terms that mattered most come first and you can see where they went. A term in more than one campaign is competing with itself.</p></div></div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:14px">
-        <div class="chips" id="v-period"></div><div class="chips" id="v-metric"></div>
+      <div class="page-head"><div><h1>Search terms <button class="how" type="button" id="s-how">How this page works</button></h1><p class="lede" id="s-dates"></p></div>
+        <div><span class="seg-label">Dates</span><span class="seg" id="s-period"></span></div></div>
+      <div class="filterbar"><input class="find" id="s-find" type="search" placeholder="Search term contains…" aria-label="Filter search terms"><button class="btn" type="button" id="s-export">Export CSV</button></div>
+      <div class="worth" id="s-worth"></div>
+      <div class="show-cards" id="s-show"></div>
+      <div class="card">
+        <div class="tbar"><span><span class="seg-label">Group by</span><span class="seg" id="s-group"></span></span><span><span class="seg-label">Columns</span><span class="seg" id="s-cols"></span></span>
+          <span class="right"><button class="btn" type="button" id="s-expand">Expand all</button><button class="btn" type="button" id="s-collapse">Collapse all</button></span></div>
+        <div class="scroll"><table class="st"><thead><tr id="s-head"></tr></thead><tbody id="s-rows"></tbody></table></div>
+        <div class="flagkey"><span><i class="dotl"></i>Campaign live</span><span><span class="tag new">New</span> First seen this period</span><span><span class="tag stop">Stopped</span> No impressions this period</span><span><span class="ban">⊘</span> Fully blocked by a negative</span><span><i class="sw th"></i>This period</span><span><i class="sw be"></i>Before</span></div>
       </div>
-      <div class="stat-row" id="v-stats"></div>
-      <div class="chips" id="v-filters" style="margin-bottom:14px"></div>
-      <div class="card scroll"><table class="vis"><thead><tr id="v-head"></tr></thead><tbody id="v-rows"></tbody></table></div>
-      <p class="lede" style="font-size:12.5px;margin-top:12px">Cells show this period, with last period underneath. The shading is each campaign's share of the term this period.</p>
     </section>
 
-    <!-- N-grams -->
-    <section class="pane" data-pane="ngrams" hidden>
-      <div class="page-head"><div><h1>N-grams</h1><p class="lede">The same 30 days of search terms, split into the words and phrases inside them. A phrase that costs money across many terms, without sales, is one negative instead of ten.</p></div>
-        <div class="chips" id="n-size"></div></div>
-      <div class="stat-row" id="n-stats"></div>
-      <div class="card scroll"><table><thead><tr id="n-head"></tr></thead><tbody id="n-rows"></tbody></table></div>
+    <!-- Negatives -->
+    <section class="pane" data-pane="negatives" hidden>
+      <div class="page-head"><div><h1>Negatives</h1><p class="lede">What to block, worked out from the last 30 days of search terms. Queue what you agree with and it goes for approval as one change.</p></div></div>
+      <div class="secmenu" id="g-sec"></div>
+      <div data-sec="candidates">
+        <div class="chips" id="t-filters" style="margin-bottom:14px"></div>
+        <div class="card scroll"><table><thead><tr id="t-head"></tr></thead><tbody id="t-rows"></tbody></table></div>
+        <div class="queue" id="t-queue" hidden><span id="t-queue-text"></span><span style="display:flex;gap:8px"><button class="btn" type="button" id="t-clear">Clear</button><button class="btn primary" type="button" id="t-send">Send for approval</button></span></div>
+      </div>
+      <div data-sec="ngrams" hidden>
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:end;margin-bottom:14px"><p class="lede" style="margin:0">Phrases inside search terms. A phrase that costs money across many terms, without sales, is one negative instead of ten.</p><div class="chips" id="n-size"></div></div>
+        <div class="stat-row" id="n-stats"></div>
+        <div class="card scroll"><table><thead><tr id="n-head"></tr></thead><tbody id="n-rows"></tbody></table></div>
+      </div>
     </section>
 
     <!-- Pacing -->
@@ -306,8 +408,20 @@
           <ul class="checks" id="f-issues" style="border-top:1px solid var(--line-2)"></ul></div>
       </div>
     </section>
+
+    <!-- Data status -->
+    <section class="pane" data-pane="status" hidden>
+      <div class="page-head"><div><h1>Data status</h1><p class="lede" id="ds-checked"></p></div></div>
+      <div class="card" style="margin-bottom:20px"><div class="card-body" id="ds-verdict"></div></div>
+      <div class="card scroll"><table><thead><tr><th>Source</th><th>Status</th><th>Last refresh</th><th class="r">Rows</th><th>Covers</th><th>Feeds</th></tr></thead><tbody id="ds-rows"></tbody></table></div>
+    </section>
   </main>
 </div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title" aria-hidden="true">
+  <div class="d-head"><div><div class="d-kicker" id="d-kicker"></div><h2 id="d-title"></h2><div class="d-pills" id="d-pills"></div></div><button class="d-close" id="d-close" type="button" aria-label="Close">×</button></div>
+  <div class="d-body" id="d-body"></div>
+</aside>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -493,12 +607,12 @@
     var waste = grams(2).concat(grams(1)).filter(function (x) { return signal(x)[1] === 'Waste'; }).sort(function (a, b) { return b.cost - a.cost; })[0];
     var need = [
       { tone: 'bad', n: '!', t: 'Search | Tents is on course to spend ' + pct(tents.ratio - 1) + ' over its ' + monthName + ' budget', s: 'Projected ' + gbp(tents.projected) + ' against ' + gbp(tents.budget) + ', at 4.4× return. Jackets returns more and is not capped.', go: 'pacing', label: 'Pacing' },
-      { tone: 'bad', n: '!', t: negs.length + ' search terms spent ' + gbp(negCost) + ' in 30 days for little or nothing back', s: 'Advice, repairs, hire, jobs and very small orders. Queue them as negatives in one go.', go: 'terms', label: 'Search terms' },
+      { tone: 'bad', n: '!', t: negs.length + ' search terms spent ' + gbp(negCost) + ' in 30 days for little or nothing back', s: 'Advice, repairs, hire, jobs and very small orders. Worth queuing as negatives in one go.', go: 'negatives', label: 'Negatives' },
       { tone: 'warn', n: '!', t: 'Search | Walking boots lost ' + pct(boots.lostBudget) + ' of its impressions to budget', s: 'Capped on 9 of the last 14 days, while returning 6.0×.', go: 'bids', label: 'Bids & budgets' },
       { tone: 'warn', n: '!', t: '7 products disapproved in Merchant Center', s: 'All for a missing GTIN, so they are not showing in Shopping.', go: 'tracking', label: 'Tracking & feed' }
     ];
-    need.splice(2, 0, { tone: 'amber', n: '"', t: 'PMax is taking brand searches from Search | Brand', s: 'It showed for 36% of "example outdoor" impressions this period, up from 14%. Add the brand as a negative in PMax.', go: 'visibility', label: 'Visibility' });
-    if (waste) need.splice(3, 0, { tone: 'amber', n: '"', t: 'The phrase "' + waste.g + '" cost ' + gbp(waste.cost) + ' across ' + waste.terms + ' search terms, with no sales', s: 'One negative covers all of them.', go: 'ngrams', label: 'N-grams' });
+    need.splice(2, 0, { tone: 'amber', n: '"', t: 'PMax is taking brand searches from Search | Brand', s: 'It showed for 36% of "example outdoor" impressions this period, up from 14%. Consider adding the brand as a negative in PMax.', go: 'terms', label: 'Search terms' });
+    if (waste) need.splice(3, 0, { tone: 'amber', n: '"', t: 'The phrase "' + waste.g + '" cost ' + gbp(waste.cost) + ' across ' + waste.terms + ' search terms, with no sales', s: 'One phrase negative would cover all of them.', go: 'ngrams', label: 'Negatives' });
     var list = $('o-need'); list.innerHTML = '';
     need.forEach(function (x) {
       var li = el('li'); li.appendChild(el('span', 'mark ' + x.tone, x.n));
@@ -518,19 +632,16 @@
 
     var mods = $('o-modules'); mods.innerHTML = '';
     [
-      ['Week so far', 'live', 'Spend, sales and return from Monday to yesterday, against the same days last week.', 'Every morning'],
-      ['Search term review', 'live', 'Every term with spend, sorted into keep, watch, add as keyword or add as negative, with the reason.', 'Weekly'],
-      ['Account audit', 'live', 'A nine-point check of the account: structure, bidding, match types, audiences and conversions.', 'On demand'],
-      ['Tracking checks', 'live', 'Tags, Enhanced Conversions, Consent Mode and Google Ads against GA4, before anyone reads a number.', 'Every morning'],
-      ['Feed health', 'live', 'Merchant Center approvals and product data quality, with the fix for each issue.', 'Weekly'],
-      ['Weekly report', 'live', 'Written up from the checks, with the actions for the week ahead.', 'Every Monday'],
-      ['Search term visibility', 'build', 'Each term this period against the last, by campaign, sorted by last period. Shows lost visibility and terms competing with themselves.', 'Weekly'],
-      ['N-grams', 'build', 'The words and phrases inside search terms, so one negative does the work of ten.', 'Weekly'],
-      ['Pacing', 'build', 'Each campaign against its monthly budget, and today hour by hour against a normal day.', 'Every hour'],
-      ['Bids & budgets', 'build', 'Where money should move between campaigns, with the numbers behind each suggestion.', 'Every morning']
+      ['Account health', 'How is paid search doing overall, and what changed?', 'account', 'Every morning'],
+      ['Search terms', 'Which searches cost money, where, and are they worth it? Shows terms competing across campaigns.', 'terms', 'Every morning'],
+      ['Negatives', 'What should we block? Candidates and n-grams, queued for approval.', 'negatives', 'Every morning'],
+      ['Bids & budgets', 'Which bid targets and budgets should change, and to what?', 'bids', 'Every morning'],
+      ['Pacing', 'Is today on track against a normal day, hour by hour?', 'pacing', 'Every 30 minutes'],
+      ['Tracking & feed', 'Can bidding trust the conversions it learns from?', 'tracking', 'Every morning']
     ].forEach(function (m) {
-      var d = el('div', 'module'); var top = el('div', 'module-top'); top.appendChild(el('b', null, m[0])); top.appendChild(el('span', 'st ' + m[1], m[1] === 'live' ? 'Live' : 'In build')); d.appendChild(top);
-      d.appendChild(el('p', null, m[2])); d.appendChild(el('small', null, m[3])); mods.appendChild(d);
+      var d = el('a', 'module'); d.href = '#' + m[2]; d.style.textDecoration = 'none'; d.style.color = 'inherit';
+      var top = el('div', 'module-top'); top.appendChild(el('b', null, m[0])); top.appendChild(el('span', 'golink', 'Open →')); d.appendChild(top);
+      d.appendChild(el('p', null, m[1])); d.appendChild(el('small', null, m[3])); mods.appendChild(d);
     });
   }
 
@@ -620,75 +731,338 @@
     var ctr = .035 + .045 * vr(), cur30 = t.clicks / ctr, prev30 = cur30 / g;
     return { term: t.term, ctr: ctr, cpc: t.cost / t.clicks, cvr: t.conv / t.clicks, prevSplit: prevSplit, curSplit: curSplit, prev30: prev30, cur30: cur30, n7a: .92 + .16 * vr(), n7b: .92 + .16 * vr() };
   });
-  var vPeriod = 7, vMetric = 'imp', vFilter = 'all', vState = { key: 'prev', asc: false };
-  var METRIC = {
-    imp: ['Impressions', function (x, v) { return v; }, whole],
-    clicks: ['Clicks', function (x, v) { return v * x.ctr; }, whole],
-    cost: ['Cost', function (x, v) { return v * x.ctr * x.cpc; }, function (v) { return gbp(v); }],
-    conv: ['Conversions', function (x, v) { return v * x.ctr * x.cvr; }, function (v) { return v < 10 ? v.toFixed(1) : whole(v); }]
+  /* ---------- detail panel ---------- */
+  var lastFocus = null;
+  function openDrawer(o) {
+    lastFocus = document.activeElement;
+    $('d-kicker').textContent = o.kicker || ''; $('d-title').textContent = o.title || '';
+    var pills = $('d-pills'); pills.innerHTML = ''; (o.pills || []).forEach(function (p) { pills.appendChild(el('span', 'pill ' + (p[0] || ''), p[1])); });
+    var body = $('d-body'); body.innerHTML = ''; o.build(body); body.scrollTop = 0;
+    $('scrim').hidden = false; var d = $('drawer'); d.classList.add('on'); d.setAttribute('aria-hidden', 'false');
+    setTimeout(function () { $('d-close').focus(); }, 50);
+  }
+  function closeDrawer() { $('scrim').hidden = true; var d = $('drawer'); d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); if (lastFocus) lastFocus.focus(); }
+  $('d-close').addEventListener('click', closeDrawer); $('scrim').addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('drawer').classList.contains('on')) closeDrawer(); });
+  // "What the data shows": facts plain, interpretation hedged, a next step to check, never a confirmed cause
+  function diagBox(head, points, next) {
+    var b = el('div', 'diag'); b.appendChild(el('div', 'k', 'What the data shows')); b.appendChild(el('h3', null, head));
+    var ul = el('ul'); points.forEach(function (t) { ul.appendChild(el('li', null, t)); }); b.appendChild(ul);
+    if (next) { var n = el('div', 'next'); n.appendChild(el('span', 'pill amber', 'Next step')); n.appendChild(el('span', null, next)); b.appendChild(n); }
+    b.appendChild(el('div', 'hedge', 'Leads from the data, not confirmed causes. Check in Google Ads before acting.'));
+    return b;
+  }
+  function tile(label, value, chgEl) { var t = el('div', 'd-tile'); t.appendChild(el('small', null, label)); t.appendChild(el('b', null, value)); if (chgEl) t.appendChild(chgEl); return t; }
+  function seg(id, opts, cur, set, after) {
+    var box = $(id); box.innerHTML = '';
+    opts.forEach(function (o) { var b = el('button', cur === o[0] ? 'on' : '', o[1]); b.type = 'button'; b.setAttribute('aria-pressed', cur === o[0]); b.addEventListener('click', function () { set(o[0]); after(); }); box.appendChild(b); });
+  }
+  function csv(name, rows) {
+    var text = rows.map(function (r) { return r.map(function (v) { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(','); }).join('\n');
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv' })); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  }
+  function iso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function ago(n) { var d = new Date(today); d.setDate(d.getDate() - n); return d; }
+  function short(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+
+  /* ---------- search terms (the hub's view: term › campaign, cost before, highest first) ---------- */
+  // Top of page and absolute top impression share by campaign, this period then before. PMax reports none.
+  var CAMP_IS = { 'Search | Brand': [[.95, .84], [.94, .83]], 'Search | Jackets': [[.62, .35], [.66, .38]], 'Search | Walking boots': [[.41, .21], [.57, .31]],
+    'Search | Tents': [[.69, .41], [.64, .37]], 'Shopping | All products': [[.56, .28], [.58, .29]], 'PMax | Best sellers': null };
+  var BIDS_NOW = {
+    'Search | Brand': ['Target impression share 95% top of page', 60, '£30 a day', 60, 60],
+    'Search | Jackets': ['Target ROAS 550%', 19, '£100 a day', 33, 19],
+    'Search | Walking boots': ['Target ROAS 500%', 41, '£65 a day', 24, 24],
+    'Search | Tents': ['Maximise conversion value', 12, '£72 a day', 12, 12],
+    'Shopping | All products': ['Target ROAS 450%', 47, '£86 a day', 60, 47],
+    'PMax | Best sellers': ['Target ROAS 450%', 9, '£118 a day', 30, 9]
   };
-  function visRows() {
-    var f = METRIC[vMetric][1];
-    return VIS.map(function (x) {
-      var prevImp = vPeriod === 30 ? x.prev30 : x.prev30 * 7 / 30 * x.n7a, curImp = vPeriod === 30 ? x.cur30 : x.cur30 * 7 / 30 * x.n7b;
-      var row = { term: x.term, prev: f(x, prevImp), cur: f(x, curImp), cells: {} };
-      Object.keys(SHORT).forEach(function (c) {
-        var a = (x.prevSplit[c] || 0) * prevImp, b = (x.curSplit[c] || 0) * curImp;
-        if (a || b) row.cells[c] = { prev: f(x, a), cur: f(x, b), share: x.curSplit[c] || 0 };
-        row['c_' + c] = b ? f(x, b) : null;
-      });
-      row.camps = Object.keys(row.cells).length;
-      row.change = row.prev ? row.cur / row.prev - 1 : 0;
-      // The campaign that gained the most share from the others this period
-      row.taker = null;
-      Object.keys(row.cells).forEach(function (c) { var d = (x.curSplit[c] || 0) - (x.prevSplit[c] || 0); if (d >= .1 && (!row.taker || d > row.taker.d)) row.taker = { c: c, d: d }; });
-      return row;
+  var STR = [], sr = rng(611);
+  function met(x, t, share, is, scale) {
+    var clicks = t.clicks * share * scale;
+    return { cost: t.cost * share * scale, clicks: clicks, imp: clicks / x.ctr, conv: t.conv * share * scale, value: t.value * share * scale, top: is ? is[0] : null, abs: is ? is[1] : null };
+  }
+  TERMS.forEach(function (t, i) {
+    var x = VIS[i], ratio = x.prev30 / x.cur30, camps = {};
+    Object.keys(x.prevSplit).concat(Object.keys(x.curSplit)).forEach(function (c) { camps[c] = 1; });
+    Object.keys(camps).forEach(function (c) {
+      var is = CAMP_IS[c], j = .97 + .06 * sr();
+      var th = met(x, t, x.curSplit[c] || 0, is && [is[0][0] * j, is[0][1] * j], 1), be = met(x, t, x.prevSplit[c] || 0, is && [is[1][0] * j, is[1][1] * j], ratio);
+      // The period before is not a scaled copy: clicks, conversions and value each move on their own
+      var kc = .9 + .2 * sr(), kv = .75 + .5 * sr(), ka = .92 + .16 * sr();
+      be.clicks *= kc; be.imp *= kc; be.conv *= kv; be.value *= kv * ka;
+      STR.push({ term: t.term, camp: c, th: th, be: be, live: true });
+    });
+  });
+  // Terms that started, stopped or were blocked this period
+  [['insulated jacket womens', 'Search | Jackets', 'new', 74, 66.9, 4, 516], ['waterproof trail shoes', 'Search | Walking boots', 'new', 61, 48.2, 3, 287],
+   ['festival tent bundle', 'Search | Tents', 'stopped', 52, 41.3, 1, 89], ['free tent', 'Search | Tents', 'blocked', 88, 52.6, 0, 0], ['camping jobs uk', 'Shopping | All products', 'blocked', 41, 24.9, 0, 0]]
+    .forEach(function (r) {
+      var is = CAMP_IS[r[1]], ctr = .05, base = { clicks: r[3], cost: r[4], conv: r[5], value: r[6] };
+      var full = { cost: base.cost, clicks: base.clicks, imp: base.clicks / ctr, conv: base.conv, value: base.value, top: is ? is[0][0] : null, abs: is ? is[0][1] : null };
+      var none = { cost: 0, clicks: 0, imp: 0, conv: 0, value: 0, top: null, abs: null };
+      STR.push({ term: r[0], camp: r[1], th: r[2] === 'new' ? full : none, be: r[2] === 'new' ? none : full, live: r[2] !== 'stopped', kind: r[2] });
+    });
+  var sDays = 30, sGroup = 'term', sCols = 'key', sShow = 'all', sFind = '', sOpen = {}, sSort = { key: 'cost_be', asc: false };
+  function sumRows(rows) {
+    var o = { th: { cost: 0, clicks: 0, imp: 0, conv: 0, value: 0 }, be: { cost: 0, clicks: 0, imp: 0, conv: 0, value: 0 } };
+    ['th', 'be'].forEach(function (p) {
+      var wi = 0, wt = 0, wa = 0;
+      rows.forEach(function (r) { var m = r[p]; ['cost', 'clicks', 'imp', 'conv', 'value'].forEach(function (k) { o[p][k] += m[k]; }); if (m.top != null && m.imp) { wi += m.imp; wt += m.top * m.imp; wa += m.abs * m.imp; } });
+      o[p].top = wi ? wt / wi : null; o[p].abs = wi ? wa / wi : null;
+    });
+    return o;
+  }
+  function scaled(m) { var k = sDays / 30, o = {}; Object.keys(m).forEach(function (key) { o[key] = m[key] == null ? null : (key === 'top' || key === 'abs' ? m[key] : m[key] * k); }); return o; }
+  function termGroups() {
+    var by = {};
+    STR.forEach(function (r) { (by[r.term] = by[r.term] || []).push(r); });
+    return Object.keys(by).map(function (k) {
+      var rows = by[k], agg = sumRows(rows), kind = rows[0].kind;
+      if (!kind) kind = agg.th.imp === 0 ? 'stopped' : agg.be.imp === 0 ? 'new' : 'live';
+      return { key: k, name: k, rows: rows, th: scaled(agg.th), be: scaled(agg.be), kind: kind, camps: rows.filter(function (r) { return r.th.imp > 0; }).length };
     });
   }
-  function renderVisibility() {
-    function chips(id, opts, cur, set) {
-      var box = $(id); box.innerHTML = '';
-      opts.forEach(function (o) { var b = el('button', 'chip' + (cur === o[0] ? ' on' : ''), o[1]); b.type = 'button'; b.addEventListener('click', function () { set(o[0]); renderVisibility(); }); box.appendChild(b); });
-    }
-    chips('v-period', [[7, 'Last 7 days vs the 7 before'], [30, 'Last 30 days vs the 30 before']], vPeriod, function (v) { vPeriod = v; });
-    chips('v-metric', [['imp', 'Impressions'], ['clicks', 'Clicks'], ['cost', 'Cost'], ['conv', 'Conversions']], vMetric, function (v) { vMetric = v; });
-    var all = visRows(), show = METRIC[vMetric][2];
-    var lost = all.filter(function (r) { return r.change <= -.2; }), gained = all.filter(function (r) { return r.change >= .2; }), multi = all.filter(function (r) { return r.camps > 1; });
-    var taken = all.filter(function (r) { return r.taker; }).sort(function (a, b) { return b.taker.d - a.taker.d; });
-    var st = $('v-stats'); st.innerHTML = '';
-    [['Search terms', whole(all.length), 'With spend in either period'], ['Lost visibility', whole(lost.length), 'Down 20% or more on last period'],
-     ['In two or more campaigns', whole(multi.length), 'Competing with themselves'],
-     ['Biggest shift', taken[0] ? '+' + Math.round(taken[0].taker.d * 100) + ' pts' : 'None', taken[0] ? SHORT[taken[0].taker.c] + ' on "' + taken[0].term + '"' : 'No campaign took share']]
-      .forEach(function (x) { var d = el('div', 'stat'); d.appendChild(el('small', null, x[0])); d.appendChild(el('b', null, x[1])); d.appendChild(el('span', null, x[2])); st.appendChild(d); });
-    st.querySelectorAll('b').forEach(countUp);
-    var fl = $('v-filters'); fl.innerHTML = '';
-    [['all', 'All terms', all.length], ['lost', 'Lost visibility', lost.length], ['gained', 'Gained', gained.length], ['multi', 'In 2+ campaigns', multi.length]].forEach(function (x) {
-      var b = el('button', 'chip' + (vFilter === x[0] ? ' on' : '')); b.type = 'button'; b.textContent = x[1]; b.appendChild(el('b', null, String(x[2])));
-      b.addEventListener('click', function () { vFilter = x[0]; renderVisibility(); }); fl.appendChild(b);
+  function campGroups() {
+    var by = {};
+    STR.forEach(function (r) { (by[r.camp] = by[r.camp] || []).push(r); });
+    return Object.keys(by).map(function (k) { var agg = sumRows(by[k]); return { key: k, name: k, rows: by[k], th: scaled(agg.th), be: scaled(agg.be), kind: 'camp' }; });
+  }
+  function roas(m) { return m.cost ? m.value / m.cost : null; }
+  function chgEl(a, b, upGood, pts) {
+    if (a == null || b == null) return el('span', 'chg', '');
+    if (pts) { var d = (a - b) * 100; var dir = Math.abs(d) < .5 ? 0 : d > 0 ? 1 : -1; return el('span', 'chg ' + (dir > 0 ? 'up ' : dir < 0 ? 'down ' : '') + (dir === 0 ? 'flat' : (dir === upGood ? 'good' : 'bad')), Math.abs(Math.round(d)) + ' pts'); }
+    if (!b) return el('span', 'chg', a ? 'New' : '');
+    var p = (a - b) / b, dr = Math.abs(p) < .02 ? 0 : p > 0 ? 1 : -1;
+    return el('span', 'chg ' + (dr > 0 ? 'up ' : dr < 0 ? 'down ' : '') + (dr === 0 || upGood === 0 ? 'flat' : (dr === upGood ? 'good' : 'bad')), Math.abs(Math.round(p * 100)) + '%');
+  }
+  function shareMove(T) {
+    // The campaign that gained the most share of this term's impressions, and the one it took it from
+    var thI = 0, beI = 0; T.rows.forEach(function (r) { thI += r.th.imp; beI += r.be.imp; });
+    if (!thI || !beI) return null;
+    var best = null, worst = null;
+    T.rows.forEach(function (r) { var d = r.th.imp / thI - r.be.imp / beI; if (!best || d > best.d) best = { c: r.camp, d: d, now: r.th.imp / thI, was: r.be.imp / beI }; if (!worst || d < worst.d) worst = { c: r.camp, d: d, now: r.th.imp / thI, was: r.be.imp / beI }; });
+    return best && best.d >= .1 && worst && worst.c !== best.c ? { to: best, from: worst } : null;
+  }
+  var BOOTS_NOTE = 'Search | Walking boots was limited by budget on 9 of the last 14 days, which can hold back impressions.';
+  function diagnose(T) {
+    var mv = shareMove(T), costDay = T.be.cost ? T.th.cost / T.be.cost - 1 : null, main = T.rows.slice().sort(function (a, b) { return b.be.cost - a.be.cost; })[0];
+    if (T.kind === 'blocked') return ['Fully blocked by a negative', ['A negative on ' + main.camp + ' has blocked it since ' + short(ago(23)) + '.', 'It cost ' + gbp(T.be.cost) + ' in the period before, with ' + whole(T.be.conv) + ' conversions.'], 'No action needed if blocking it was the intent.'];
+    if (T.kind === 'new') return ['New this period', ['First seen this period, in ' + main.camp + '.', 'It cost ' + gbp(T.th.cost) + ' and brought ' + whole(T.th.conv) + ' conversions worth ' + gbp(T.th.value) + '.'], T.th.conv ? 'Consider adding it as an exact keyword if it keeps converting.' : 'Worth watching for another week before deciding.'];
+    if (T.kind === 'stopped') return ['No impressions this period', ['It cost ' + gbp(T.be.cost) + ' in the period before, in ' + main.camp + '.', 'Not seen in the data: a negative blocking it.', 'One place to start is whether the keyword it matched was paused or changed.'], 'Check the keyword in ' + main.camp + '.'];
+    if (mv) return ['Showing in more than one campaign', [mv.to.c + ' showed for ' + pct(mv.to.now) + ' of its impressions this period, up from ' + pct(mv.to.was) + '.', mv.from.c + "’s share went from " + pct(mv.from.was) + ' to ' + pct(mv.from.now) + '.', 'When two campaigns bid on the same search they can compete with each other, which may raise the cost a click and split what each one learns.'], 'Consider an exact negative for this term in ' + mv.to.c + ', if ' + mv.from.c + ' is the campaign meant to own it.'];
+    if (T.th.top != null && T.be.top != null && T.be.top - T.th.top >= .1) return ['Showing less often than before', ['Cost a day went ' + (costDay < 0 ? 'down ' : 'up ') + pct(Math.abs(costDay)) + '.', 'Top of page share went from ' + pct(T.be.top) + ' to ' + pct(T.th.top) + ' (weighted estimate).', main.camp === 'Search | Walking boots' ? BOOTS_NOTE : 'That can point to lower bids or stronger competition in the auction.'], main.camp === 'Search | Walking boots' ? 'Worth checking the budget in Bids & budgets.' : 'Worth checking auction insights for ' + main.camp + '.'];
+    var rr = roas(T.th), rb = roas(T.be);
+    if (costDay != null && costDay > .25 && rr != null && rb != null && rr < rb * .8) return ['Spending more, returning less', ['Cost a day went up ' + pct(costDay) + '.', 'Return on ad spend went from ' + rb.toFixed(1) + '× to ' + rr.toFixed(1) + '×.'], 'Worth checking whether the extra spend is going on a new match or audience.'];
+    return ['In line with the period before', ['Cost a day went ' + (costDay == null ? 'flat' : (costDay < 0 ? 'down ' : 'up ') + pct(Math.abs(costDay))) + '.', 'Return on ad spend ' + (rr == null ? 'not available' : 'is ' + rr.toFixed(1) + '×' + (rb ? ', against ' + rb.toFixed(1) + '× before' : '')) + '.'], 'No action suggested.'];
+  }
+  function openTerm(T) {
+    var d = diagnose(T), mv = shareMove(T);
+    openDrawer({ kicker: 'Search term', title: T.name,
+      pills: [[T.kind === 'new' ? 'good' : T.kind === 'live' ? '' : 'bad', { live: 'Live', new: 'New', stopped: 'Stopped', blocked: 'Fully blocked' }[T.kind]], ['amber', 'In ' + T.rows.length + (T.rows.length === 1 ? ' campaign' : ' campaigns')]],
+      build: function (b) {
+        b.appendChild(diagBox(d[0], d[1], d[2]));
+        var tl = el('div', 'd-tiles');
+        tl.appendChild(tile('Cost', gbp(T.th.cost), chgEl(T.th.cost, T.be.cost, 0)));
+        tl.appendChild(tile('Conv. value', gbp(T.th.value), chgEl(T.th.value, T.be.value, 1)));
+        tl.appendChild(tile('Return', roas(T.th) == null ? 'None' : roas(T.th).toFixed(1) + '×', chgEl(roas(T.th), roas(T.be), 1)));
+        tl.appendChild(tile('Top IS (w)', T.th.top == null ? 'No data' : pct(T.th.top), chgEl(T.th.top, T.be.top, 1, true)));
+        b.appendChild(tl);
+        var sec = el('div', 'd-sec'); sec.appendChild(el('h4', null, 'Where it showed'));
+        var c = el('div', 'card scroll'), tb = el('table'), thd = el('thead'), hr = el('tr');
+        ['Campaign', 'Cost', 'Share of impressions', 'Top IS'].forEach(function (h, i) { hr.appendChild(el('th', i ? 'r' : '', h)); }); thd.appendChild(hr); tb.appendChild(thd);
+        var tbd = el('tbody'), ti = 0, bi = 0; T.rows.forEach(function (r) { ti += r.th.imp; bi += r.be.imp; });
+        T.rows.slice().sort(function (a, z) { return z.be.cost - a.be.cost; }).forEach(function (r) {
+          var tr = el('tr'), a = el('td'); a.appendChild(el('b', null, r.camp)); tr.appendChild(a);
+          var c1 = el('td', 'r num', gbp(r.th.cost * sDays / 30)); c1.appendChild(el('small', null, 'before ' + gbp(r.be.cost * sDays / 30))); tr.appendChild(c1);
+          var c2 = el('td', 'r num', ti ? pct(r.th.imp / ti) : '0%'); c2.appendChild(el('small', null, 'before ' + (bi ? pct(r.be.imp / bi) : '0%'))); tr.appendChild(c2);
+          var c3 = el('td', 'r num', r.th.top == null ? 'No data' : pct(r.th.top)); if (r.be.top != null) c3.appendChild(el('small', null, 'before ' + pct(r.be.top))); tr.appendChild(c3);
+          tbd.appendChild(tr);
+        });
+        tb.appendChild(tbd); c.appendChild(tb); sec.appendChild(c); b.appendChild(sec);
+        var s2 = el('div', 'd-sec'); s2.appendChild(el('h4', null, 'How its campaigns bid now'));
+        var c4 = el('div', 'card scroll'), t2 = el('table'), h2 = el('thead'), r2 = el('tr');
+        ['Last changed', 'Campaign', 'Bidding', 'Budget'].forEach(function (h) { r2.appendChild(el('th', null, h)); }); h2.appendChild(r2); t2.appendChild(h2);
+        var b2 = el('tbody');
+        T.rows.map(function (r) { return r.camp; }).sort(function (a, z) { return BIDS_NOW[a][4] - BIDS_NOW[z][4]; }).forEach(function (cn) {
+          var bn = BIDS_NOW[cn], tr = el('tr'), logStart = 60;
+          tr.appendChild(el('td', 'num', bn[4] >= logStart ? 'Before ' + short(ago(logStart)) : short(ago(bn[4]))));
+          tr.appendChild(el('td', null, cn));
+          var bd = el('td', null, bn[0]); bd.appendChild(el('small', null, bn[1] >= logStart ? 'before ' + short(ago(logStart)) : 'since ' + short(ago(bn[1])))); tr.appendChild(bd);
+          var bg = el('td', null, bn[2]); bg.appendChild(el('small', null, bn[3] >= logStart ? 'before ' + short(ago(logStart)) : 'since ' + short(ago(bn[3])))); tr.appendChild(bg);
+          b2.appendChild(tr);
+        });
+        t2.appendChild(b2); c4.appendChild(t2); s2.appendChild(c4); b.appendChild(s2);
+        var acts = el('div', 'd-acts');
+        var g = el('button', 'btn primary', 'Open in Google Ads'); g.type = 'button'; g.addEventListener('click', function () { toast('Demo only. In Search Desk this opens the term in Google Ads.'); }); acts.appendChild(g);
+        var n = el('a', 'btn', 'See in Negatives'); n.href = '#negatives'; n.addEventListener('click', closeDrawer); acts.appendChild(n);
+        b.appendChild(acts);
+      } });
+  }
+  function renderSearchTerms() {
+    var end = ago(1), start = ago(sDays), bEnd = ago(sDays + 1), bStart = ago(sDays * 2);
+    $('s-dates').textContent = 'Last ' + sDays + ' days (' + short(start) + ' to ' + short(end) + ') against the ' + sDays + ' days before (' + short(bStart) + ' to ' + short(bEnd) + '). Sorted by cost in the period before, highest first.';
+    seg('s-period', [[7, '7 days'], [14, '14 days'], [30, '30 days']], sDays, function (v) { sDays = v; }, renderSearchTerms);
+    seg('s-group', [['term', 'Search term › Campaign'], ['camp', 'Campaign › Search term']], sGroup, function (v) { sGroup = v; sOpen = {}; }, renderSearchTerms);
+    seg('s-cols', [['key', 'Key'], ['all', 'All']], sCols, function (v) { sCols = v; }, renderSearchTerms);
+    var terms = termGroups();
+    // N things worth a look, ranked by money at stake
+    var items = [];
+    terms.forEach(function (T) {
+      var mv = shareMove(T);
+      if (mv) items.push({ kind: 'overlap', T: T, money: T.th.cost * mv.to.d, t: mv.to.c + ' is taking "' + T.name + '" from ' + mv.from.c, s: Math.round(mv.to.d * 100) + ' pts of its impressions moved this period.' });
+      else if (T.th.top != null && T.be.top != null && T.be.top - T.th.top >= .1 && T.be.cost * sDays / 30 > 30) items.push({ kind: 'lost', T: T, money: Math.max(0, T.be.cost - T.th.cost), t: '"' + T.name + '" is showing less often', s: 'Top of page share ' + pct(T.be.top) + ' to ' + pct(T.th.top) + ', cost a day ' + pct(Math.abs(T.th.cost / T.be.cost - 1)) + (T.th.cost < T.be.cost ? ' lower' : ' higher') + '.' });
+      else if (T.kind === 'stopped') items.push({ kind: 'stopped', T: T, money: T.be.cost, t: '"' + T.name + '" stopped showing', s: 'It cost ' + gbp(T.be.cost) + ' in the period before.' });
+      else if (T.kind === 'new' && T.th.conv) items.push({ kind: 'new', T: T, money: T.th.value * .2, t: 'New term "' + T.name + '" is converting', s: whole(T.th.conv) + ' conversions worth ' + gbp(T.th.value) + ' in its first period.' });
     });
-    var cols = [{ label: 'Search term', key: 'term', sort: true }, { label: 'Last period', key: 'prev', sort: true, r: 1 }, { label: 'This period', key: 'cur', sort: true, r: 1 }, { label: 'Change', key: 'change', sort: true, r: 1 }, { label: 'Campaigns', key: 'camps', sort: true, r: 1 }]
-      .concat(Object.keys(SHORT).map(function (c) { return { label: SHORT[c], key: 'c_' + c, sort: true, r: 1 }; }));
-    table('v-head', 'v-rows', cols, function () {
-      return all.filter(function (r) { return vFilter === 'all' || (vFilter === 'lost' && r.change <= -.2) || (vFilter === 'gained' && r.change >= .2) || (vFilter === 'multi' && r.camps > 1); });
-    }, vState, function (r) {
-      var tr = el('tr');
-      var a = el('td', 'term'); a.appendChild(el('b', null, r.term));
-      a.appendChild(el('span', null, r.taker ? SHORT[r.taker.c] + ' took ' + Math.round(r.taker.d * 100) + ' pts of this term' : r.camps > 1 ? 'Shared across ' + r.camps + ' campaigns' : 'One campaign')); tr.appendChild(a);
-      tr.appendChild(el('td', 'r num prev', show(r.prev))); tr.appendChild(el('td', 'r num', show(r.cur)));
-      var ch = el('td', 'r num'); var dir = Math.abs(r.change) < .02 ? 0 : r.change > 0 ? 1 : -1;
-      var d = el('span', 'delta ' + (dir === 0 ? 'flat' : dir > 0 ? 'good' : 'bad'), Math.abs(Math.round(r.change * 100)) + '%'); d.setAttribute('data-dir', dir); ch.appendChild(d); tr.appendChild(ch);
-      var cc = el('td', 'r num'); cc.appendChild(el('span', 'pill ' + (r.camps > 1 ? 'amber' : ''), String(r.camps))); tr.appendChild(cc);
-      Object.keys(SHORT).forEach(function (c) {
-        var x = r.cells[c], td = el('td', 'cell' + (x ? '' : ' none'));
-        if (!x) td.textContent = '·';
-        else { td.appendChild(document.createTextNode(show(x.cur))); td.appendChild(el('small', null, 'was ' + show(x.prev))); td.style.background = 'rgba(217,146,94,' + (x.share * .32).toFixed(3) + ')'; }
+    var per = {}; items = items.sort(function (a, b) { return b.money - a.money; }).filter(function (x) { per[x.kind] = (per[x.kind] || 0) + 1; return per[x.kind] <= 3; }).slice(0, 10);
+    var w = $('s-worth'), wasOpen = w.classList.contains('open'); w.innerHTML = '';
+    if (items.length) {
+      var btn = el('button', 'worth-btn'); btn.type = 'button';
+      btn.appendChild(el('span', 'n', String(items.length))); var tx = el('span'); tx.appendChild(el('b', null, items.length + ' things worth a look. ')); tx.appendChild(document.createTextNode('The biggest: ' + items[0].t + ', about ' + gbp(items[0].money) + ' at stake.')); btn.appendChild(tx);
+      btn.appendChild(el('span', 'chev', '▾')); btn.addEventListener('click', function () { w.classList.toggle('open'); list.hidden = !w.classList.contains('open'); });
+      w.appendChild(btn);
+      var list = el('ul', 'worth-list'); list.hidden = !wasOpen; if (wasOpen) w.classList.add('open');
+      items.forEach(function (x) {
+        var li = el('li'); li.appendChild(el('span', 'mark ' + (x.kind === 'new' ? 'good' : x.kind === 'overlap' ? 'amber' : 'bad'), x.kind === 'new' ? '+' : '!'));
+        var b = el('div'); b.appendChild(el('div', 't', x.t)); b.appendChild(el('div', 's', x.s)); li.appendChild(b); li.appendChild(el('span', 'm', gbp(x.money)));
+        li.addEventListener('click', function () { openTerm(x.T); }); list.appendChild(li);
+      });
+      w.appendChild(list);
+    }
+    // Show cards
+    var count = function (k) { return terms.filter(function (T) { return k === 'all' || T.kind === k; }).length; };
+    var sc = $('s-show'); sc.innerHTML = '';
+    [['all', 'All search terms'], ['blocked', 'Fully blocked'], ['new', 'New'], ['stopped', 'Stopped']].forEach(function (x) {
+      var b = el('button', 'show-card' + (sShow === x[0] ? ' on' : '')); b.type = 'button'; b.appendChild(el('b', null, String(count(x[0])))); b.appendChild(el('small', null, x[1]));
+      b.addEventListener('click', function () { sShow = x[0]; renderSearchTerms(); }); sc.appendChild(b);
+    });
+    // Table
+    var groups = sGroup === 'term' ? terms : campGroups();
+    var visible = function (T) { return (sShow === 'all' || T.kind === sShow) && (!sFind || T.name.indexOf(sFind) !== -1); };
+    if (sGroup === 'term') groups = groups.filter(visible);
+    else groups = groups.map(function (G) { var kids = G.rows.filter(function (r) { var T = terms.filter(function (x) { return x.name === r.term; })[0]; return visible(T); }); return kids.length ? G : null; }).filter(Boolean);
+    var maxCost = Math.max.apply(null, groups.map(function (G) { return Math.max(G.th.cost, G.be.cost); }).concat([1]));
+    var cols = [['name', 'Search term'], ['cost_be', 'Cost'], ['pace', 'Pace'], ['clicks', 'Clicks'], ['conv', 'Conv.'], ['value', 'Conv. value'], ['roas', 'Return'], ['top', 'Top IS (w)'], ['abs', 'Abs. top IS (w)']];
+    if (sCols === 'all') cols = cols.concat([['imp', 'Impr.'], ['ctr', 'CTR'], ['cpc', 'Avg. CPC'], ['cpa', 'Cost / conv.']]);
+    if (sGroup === 'camp') cols[0] = ['name', 'Campaign'];
+    var val = function (G, k) { var a = G.th, b = G.be; return { cost_be: b.cost, cost_th: a.cost, pace: b.cost ? a.cost / b.cost - 1 : (a.cost ? 9 : 0), clicks: a.clicks, conv: a.conv, value: a.value, roas: roas(a) || 0, top: a.top == null ? -1 : a.top, abs: a.abs == null ? -1 : a.abs, imp: a.imp, ctr: a.imp ? a.clicks / a.imp : 0, cpc: a.clicks ? a.cost / a.clicks : 0, cpa: a.conv ? a.cost / a.conv : 0, name: G.name }[k]; };
+    groups.sort(function (A, B) { var x = val(A, sSort.key), y = val(B, sSort.key); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * (sSort.asc ? 1 : -1); });
+    var head = $('s-head'); head.innerHTML = '';
+    cols.forEach(function (c) {
+      var th = el('th', (c[0] === 'name' ? '' : 'r ') + 'sort' + (sSort.key === c[0] ? ' sorted' + (sSort.asc ? ' asc' : '') : ''), c[0] === 'cost_be' ? 'Cost (this period / before)' : c[1]);
+      if (c[0] === 'top' || c[0] === 'abs') th.title = 'Weighted estimate: each campaign’s impression share, weighted by the term’s impressions in it. Google has no per-term impression share.';
+      if (c[0] === 'pace') th.title = 'Cost a day against the period before.';
+      th.addEventListener('click', function () { sSort = { key: c[0], asc: sSort.key === c[0] ? !sSort.asc : c[0] === 'name' }; renderSearchTerms(); });
+      head.appendChild(th);
+    });
+    var body = $('s-rows'); body.innerHTML = '';
+    function cells(tr, G, kid) {
+      var a = G.th, b = G.be;
+      cols.slice(1).forEach(function (c) {
+        var k = c[0], td;
+        if (k === 'cost_be') {
+          td = el('td'); var cb = el('div', 'cb');
+          var i1 = el('i', 'th'); i1.style.width = Math.max(a.cost ? 2 : 0, a.cost / maxCost * 110) + 'px'; var i2 = el('i', 'be'); i2.style.width = Math.max(b.cost ? 2 : 0, b.cost / maxCost * 110) + 'px';
+          cb.appendChild(i1); cb.appendChild(el('b', null, gbp(a.cost))); cb.appendChild(i2); cb.appendChild(el('span', null, gbp(b.cost))); td.appendChild(cb);
+        } else if (k === 'pace') {
+          td = el('td', 'r num'); if (!b.cost) td.appendChild(el('span', 'tag new', 'New')); else if (!a.cost) td.textContent = 'None'; else { var p = a.cost / b.cost - 1; td.textContent = (p > 0 ? '+' : '') + Math.round(p * 100) + '%'; }
+        } else {
+          var map = { clicks: [a.clicks, b.clicks, 1, whole], conv: [a.conv, b.conv, 1, function (v) { return v < 10 ? v.toFixed(1) : whole(v); }], value: [a.value, b.value, 1, function (v) { return gbp(v); }],
+            roas: [roas(a), roas(b), 1, function (v) { return v.toFixed(1) + '×'; }], top: [a.top, b.top, 1, pct, true], abs: [a.abs, b.abs, 1, pct, true], imp: [a.imp, b.imp, 1, whole],
+            ctr: [a.imp ? a.clicks / a.imp : null, b.imp ? b.clicks / b.imp : null, 1, function (v) { return (v * 100).toFixed(1) + '%'; }, true], cpc: [a.clicks ? a.cost / a.clicks : null, b.clicks ? b.cost / b.clicks : null, -1, function (v) { return gbp(v, 2); }],
+            cpa: [a.conv ? a.cost / a.conv : null, b.conv ? b.cost / b.conv : null, -1, function (v) { return gbp(v, 2); }] }[k];
+          td = el('td', 'r num', map[0] == null ? (k === 'top' || k === 'abs' ? 'No data' : 'None') : map[3](map[0]));
+          td.appendChild(chgEl(map[0], map[1], map[2], map[4]));
+        }
         tr.appendChild(td);
       });
-      return tr;
+    }
+    groups.forEach(function (G) {
+      var tr = el('tr', 'grp'), nm = el('td', 'term'), open = !!sOpen[G.key];
+      var ex = el('button', 'exp' + (open ? ' open' : ''), '›'); ex.type = 'button'; ex.setAttribute('aria-label', (open ? 'Collapse ' : 'Expand ') + G.name);
+      ex.addEventListener('click', function (e) { e.stopPropagation(); sOpen[G.key] = !open; renderSearchTerms(); });
+      nm.appendChild(ex); var nb = el('b', null, G.name); nm.appendChild(nb);
+      if (G.kind === 'new') nm.appendChild(el('span', 'tag new', 'New')); if (G.kind === 'stopped') nm.appendChild(el('span', 'tag stop', 'Stopped')); if (G.kind === 'blocked') { var bn = el('span', 'ban', '⊘'); bn.title = 'Fully blocked by a negative'; nm.appendChild(bn); }
+      tr.appendChild(nm); cells(tr, G);
+      tr.addEventListener('click', function () { if (sGroup === 'term') openTerm(G); else { sOpen[G.key] = !open; renderSearchTerms(); } });
+      body.appendChild(tr);
+      if (open) {
+        var kids = G.rows.slice();
+        if (sGroup === 'camp') kids = kids.filter(function (r) { var T = terms.filter(function (x) { return x.name === r.term; })[0]; return visible(T); });
+        kids.map(function (r) { return { r: r, th: scaled(r.th), be: scaled(r.be) }; }).sort(function (x, y) { return y.be.cost - x.be.cost; }).forEach(function (k) {
+          var kt = el('tr', 'kid'), kn = el('td', 'term');
+          kn.appendChild(el('i', 'dotl' + (k.r.live ? '' : ' off'))); kn.appendChild(document.createTextNode(sGroup === 'term' ? k.r.camp : k.r.term));
+          kt.appendChild(kn); cells(kt, { th: k.th, be: k.be });
+          kt.addEventListener('click', function () { openTerm(terms.filter(function (x) { return x.name === k.r.term; })[0]); });
+          body.appendChild(kt);
+        });
+      }
+    });
+    if (!groups.length) { var tr0 = el('tr'), td0 = el('td', null, 'No search terms match.'); td0.colSpan = cols.length; td0.style.color = 'var(--muted)'; tr0.appendChild(td0); body.appendChild(tr0); }
+    $('s-export').onclick = function () {
+      var rows = [['Search term', 'Campaign', 'Cost', 'Cost before', 'Clicks', 'Clicks before', 'Conversions', 'Conversions before', 'Conv. value', 'Conv. value before', 'Top IS (w)', 'Abs. top IS (w)']];
+      terms.filter(visible).forEach(function (T) { T.rows.forEach(function (r) { var a = scaled(r.th), b = scaled(r.be); rows.push([T.name, r.camp, a.cost.toFixed(2), b.cost.toFixed(2), Math.round(a.clicks), Math.round(b.clicks), a.conv.toFixed(1), b.conv.toFixed(1), a.value.toFixed(2), b.value.toFixed(2), a.top == null ? '' : (a.top * 100).toFixed(1) + '%', a.abs == null ? '' : (a.abs * 100).toFixed(1) + '%']); }); });
+      csv('search-terms_' + iso(start) + '_to_' + iso(end) + '.csv', rows); toast('Exported ' + (rows.length - 1) + ' rows of made-up data.');
+    };
+  }
+  $('s-find').addEventListener('input', function () { sFind = this.value.trim().toLowerCase(); renderSearchTerms(); });
+  $('s-expand').addEventListener('click', function () { (sGroup === 'term' ? termGroups() : campGroups()).forEach(function (G) { sOpen[G.key] = true; }); renderSearchTerms(); });
+  $('s-collapse').addEventListener('click', function () { sOpen = {}; renderSearchTerms(); });
+  $('s-how').addEventListener('click', function () {
+    openDrawer({ kicker: 'Search terms', title: 'How this page works', build: function (b) {
+      ['Every search term with spend in either period, with the campaigns it showed in underneath. A term’s figures are the sum of its own campaign rows.',
+       'Sorted by cost in the period before, highest first, so the terms that mattered most come first and you can see what happened to them.',
+       'Cost shows this period (solid bar) against the period before (striped bar) on one scale, with pace: cost a day against before. Every other figure has its change underneath.',
+       'A term showing in more than one campaign is competing with itself. Search term › Campaign shows where each one went; Campaign › Search term shows what each campaign picked up.',
+       'Top IS and Abs. top IS are weighted estimates, because Google has no impression share for a single search term.',
+       'Click any term for what the data shows, where it showed and how its campaigns bid now.'].forEach(function (t) { b.appendChild(el('p', 'd-text', t)); });
+    } });
+  });
+
+  /* ---------- negatives: candidates and n-grams ---------- */
+  var gSec = 'candidates';
+  function renderNegatives() {
+    var box = $('g-sec'); box.innerHTML = '';
+    [['candidates', 'Candidates', 'Terms worth blocking'], ['ngrams', 'N-grams', 'Phrases across many terms']].forEach(function (x) {
+      var b = el('button', gSec === x[0] ? 'on' : ''); b.type = 'button'; b.appendChild(el('b', null, x[1])); b.appendChild(el('small', null, x[2]));
+      b.addEventListener('click', function () { gSec = x[0]; renderNegatives(); }); box.appendChild(b);
+    });
+    document.querySelectorAll('[data-pane="negatives"] [data-sec]').forEach(function (d) { d.hidden = d.getAttribute('data-sec') !== gSec; });
+    if (gSec === 'candidates') renderTerms(); else renderNgrams();
+  }
+
+  /* ---------- data status ---------- */
+  function renderStatus() {
+    var at = new Date(); var hm = function (h, m) { return 'Today, ' + ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2); };
+    var lastHalf = new Date(at); lastHalf.setMinutes(at.getMinutes() < 30 ? 0 : 30);
+    $('ds-checked').textContent = 'Checked ' + hm(at.getHours(), at.getMinutes()).toLowerCase() + '.';
+    var rows = [
+      ['Google Ads campaigns', 'ok', hm(7, 2), 1842, 'Last 400 days', ['account', 'bids']],
+      ['Google Ads search terms', 'ok', hm(7, 5), 14630, 'Last 60 days', ['terms', 'negatives']],
+      ['Negatives and shared lists', 'ok', hm(7, 6), 2214, 'Current', ['negatives']],
+      ['Bid strategies and budgets', 'ok', hm(7, 8), 96, 'Current, changes since ' + short(ago(60)), ['bids', 'terms']],
+      ['Hourly spend', 'ok', hm(lastHalf.getHours(), lastHalf.getMinutes()), 1104, 'Last 8 days, every 30 minutes', ['pacing']],
+      ['GA4', 'ok', hm(7, 10), 2730, 'Last 90 days', ['account', 'tracking']],
+      ['Merchant Center', 'behind', 'Yesterday', 418, 'Products as of yesterday', ['tracking']]
+    ];
+    var behind = rows.filter(function (r) { return r[1] !== 'ok'; });
+    var v = $('ds-verdict'); v.innerHTML = '';
+    var h = el('div', 'src-status ' + (behind.length ? 'behind' : 'ok'), (behind.length ? '⚠ ' : '✓ ') + (behind.length ? 'Everything refreshed today except ' + behind.map(function (r) { return r[0]; }).join(', ') + ', which is a day behind.' : 'Everything refreshed today.'));
+    h.style.fontSize = '15px'; v.appendChild(h);
+    v.appendChild(el('p', 'd-text', 'The daily pages refresh at about 07:00. Pacing refreshes every 30 minutes. A page built on a source that is behind says so on the page.')).style.cssText = 'margin-top:8px;color:var(--muted)';
+    var body = $('ds-rows'); body.innerHTML = '';
+    var NAMES = { account: 'Account health', terms: 'Search terms', negatives: 'Negatives', bids: 'Bids & budgets', pacing: 'Pacing', tracking: 'Tracking & feed' };
+    rows.forEach(function (r) {
+      var tr = el('tr'); var a = el('td'); a.appendChild(el('b', null, r[0])); tr.appendChild(a);
+      tr.appendChild(el('td')).appendChild(el('span', 'src-status ' + r[1], r[1] === 'ok' ? '✓ Up to date' : '⚠ Behind'));
+      tr.appendChild(el('td', 'num', r[2])); tr.appendChild(el('td', 'r num', whole(r[3]))); tr.appendChild(el('td', null, r[4]));
+      var f = el('td'); r[5].forEach(function (k) { var c = el('a', 'feedchip', NAMES[k]); c.href = '#' + k; f.appendChild(c); }); tr.appendChild(f);
+      body.appendChild(tr);
     });
   }
 
-  /* ---------- n-grams ---------- */
+  /* ---------- n-grams ---------- */  /* ---------- n-grams ---------- */
   var nSize = 2, nState = { key: 'cost', asc: false };
   function renderNgrams() {
     var s = $('n-size'); s.innerHTML = '';
@@ -858,10 +1232,11 @@
   }
 
   /* ---------- views ---------- */
-  var VIEWS = ['overview', 'terms', 'visibility', 'ngrams', 'pacing', 'bids', 'tracking'];
-  var RENDER = { overview: renderOverview, terms: renderTerms, visibility: renderVisibility, ngrams: renderNgrams, pacing: renderPacing, bids: renderBids, tracking: renderTracking };
+  var VIEWS = ['account', 'terms', 'negatives', 'bids', 'pacing', 'tracking', 'status'];
+  var OLD = { overview: 'account', visibility: 'terms', ngrams: 'negatives' };
+  var RENDER = { account: renderOverview, terms: renderSearchTerms, negatives: renderNegatives, status: renderStatus, pacing: renderPacing, bids: renderBids, tracking: renderTracking };
   function route() {
-    var v = (location.hash || '#overview').slice(1); if (VIEWS.indexOf(v) === -1) v = 'overview';
+    var v = (location.hash || '#account').slice(1); if (OLD[v]) { if (v === 'ngrams') gSec = 'ngrams'; v = OLD[v]; } if (VIEWS.indexOf(v) === -1) v = 'account';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== v; });
     document.querySelectorAll('#nav a').forEach(function (a) { if (a.getAttribute('data-view') === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     var nav = $('nav'), on = nav.querySelector('[aria-current]');
