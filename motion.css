@@ -83,8 +83,48 @@ html .check-card, html .list-card, html .cs-list-card, html .cross-card, html .p
   html .tool-card:hover, html .pack:hover { box-shadow: 0 30px 56px -32px rgba(122, 63, 31, .55); }
 }
 
+/* ── v3 (2026-11-06): in line with phillips-group.uk and thedirectorsoffice.uk ── */
+/* The hero light drifts on its own as well as with the scroll. It uses translate and scale, which add to the
+   transform motion.js sets, so the two never fight. */
+@keyframes ph-drift { from { translate: 0 0; scale: 1; } to { translate: -70px 54px; scale: 1.12; } }
+.motion-ready .hero-glow.g1 { animation: ph-drift 20s ease-in-out infinite alternate; }
+.motion-ready .hero-glow.g2 { animation: ph-drift 24s ease-in-out -8s infinite alternate-reverse; }
+
+/* Warm light in the dark contact band */
+.contact-sec { position: relative; overflow: hidden; isolation: isolate; }
+.contact-sec::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none; width: 820px; height: 820px; right: -240px; top: -360px;
+  border-radius: 50%; background: radial-gradient(closest-side, rgba(217, 146, 94, .2), rgba(217, 146, 94, 0));
+}
+.motion-ready .contact-sec::before { animation: ph-drift 22s ease-in-out infinite alternate; }
+
+/* The amber rule beside each section heading draws down as the section arrives */
+html.motion-ready .sec-rule { position: relative; border-left-color: transparent; }
+html.motion-ready .sec-rule::before {
+  content: ""; position: absolute; left: -3px; top: 0; bottom: 0; width: 3px; background: #985830;
+  transform-origin: 50% 0; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .15s;
+}
+.motion-ready .sec-rule.rv:not(.in)::before { transform: scaleY(0); }
+
+/* Inside a card, its rows follow it in one after another (motion.js marks them .sq with --i) */
+.motion-ready .sq { transition: opacity .55s ease, transform .7s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(var(--i, 0) * 70ms + 260ms); }
+.motion-ready .rv:not(.in) .sq { opacity: 0; transform: translateY(12px); }
+.motion-ready .rv:not(.in) .sq-bar { opacity: 1; transform: scaleX(0); }
+.motion-ready .sq-bar { transform-origin: 0 50%; }
+
+/* The audit mock's issues light up in turn while the card is on screen */
+.gam-row { transition: background-color .45s ease, border-color .45s ease, box-shadow .45s ease; }
+.motion-ready .gam-row.sq {
+  transition: opacity .55s ease, transform .7s cubic-bezier(.2, .7, .2, 1), background-color .45s ease, border-color .45s ease, box-shadow .45s ease;
+  transition-delay: calc(var(--i, 0) * 70ms + 260ms), calc(var(--i, 0) * 70ms + 260ms), 0s, 0s, 0s;
+}
+.gam-row.is-now { background: #FDF6EE; border-color: #E8D8C4; box-shadow: inset 2px 0 0 #985830; }
+.dot-live { animation: ph-pulse 2.6s ease-out infinite; }
+@keyframes ph-pulse { 0% { box-shadow: 0 0 0 0 rgba(152, 88, 48, .45); } 70%, 100% { box-shadow: 0 0 0 8px rgba(152, 88, 48, 0); } }
+
 @media (prefers-reduced-motion: reduce) {
-  .scroll-progress, .hero-glow { display: none; }
+  .scroll-progress, .hero-glow, .contact-sec::before { display: none; }
+  .dot-live { animation: none; }
   html .work-card, html .analysis-card, html .range-col, html .contact-item, html .guide-card, html .tool-card,
   html .check-card, html .list-card, html .cs-list-card, html .cross-card, html .pack, html .related-card { transition: none; }
 }

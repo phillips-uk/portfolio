@@ -81,6 +81,17 @@
 
   if (!('IntersectionObserver' in window)) return;
 
+  var gam = Array.prototype.slice.call(document.querySelectorAll('.gam-row'));
+  if (gam.length) {
+    var gi = -1, gt = null;
+    var step = function () { if (gi >= 0) gam[gi].classList.remove('is-now'); gi = (gi + 1) % gam.length; gam[gi].classList.add('is-now'); };
+    new IntersectionObserver(function (es) {
+      var on = es[0].isIntersecting;
+      if (on && !gt) { gt = setInterval(step, 2200); setTimeout(step, 900); }
+      if (!on && gt) { clearInterval(gt); gt = null; }
+    }, { threshold: 0.4 }).observe(gam[0].closest('.tool-card') || gam[0]);
+  }
+
   // Rise into place. Only things below the fold are hidden first, so nothing on screen ever blinks.
   // Specific cards come first; the general section rules only pick up blocks that hold none of them.
   var specific = [
@@ -133,6 +144,19 @@
   mark(specific, false);
   mark(general, true);
 
+  // Inside a card that rises in, its rows follow it one after another; the landing page mock builds itself.
+  var rows = '.range-item, .gam-row, .lpm-row, .crm-card, .crm-footer, .kpis > div, .analysis-tags > *, .tool-tag, .pack li';
+  pending.forEach(function (card) {
+    var seen = new Map();
+    card.querySelectorAll(rows + ', .lpm-page > div').forEach(function (el) {
+      var i = seen.get(el.parentNode) || 0;
+      seen.set(el.parentNode, i + 1);
+      el.classList.add('sq');
+      if (el.parentNode.classList.contains('lpm-page')) el.classList.add('sq-bar');
+      el.style.setProperty('--i', Math.min(i, 8));
+    });
+  });
+
   // Anything jumped past (a menu link, a fast flick) shows at once instead of waiting to be scrolled back to.
   var catchTick = false;
   function catchUp() {
@@ -178,7 +202,7 @@
     });
   }, { threshold: 0.6 });
 
-  document.querySelectorAll('.stat-n, .kpi-n, .analysis-result, .price b, .compare b').forEach(function (el) {
+  document.querySelectorAll('.stat-n, .kpi-n, .analysis-result, .price b, .compare b, .gam-score-n').forEach(function (el) {
     var text = el.textContent.trim();
     if (el.children.length || !NUM.test(text)) return;
     el.setAttribute('data-final', text);
