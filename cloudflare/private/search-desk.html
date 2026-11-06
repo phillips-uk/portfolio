@@ -140,6 +140,14 @@
   .bar i.good { background: var(--good); } .bar i.bad { background: var(--bad); } .bar i.warn { background: var(--warn); }
   .bar u { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text); border-radius: 2px; }
 
+  table.vis td.term { min-width: 230px; }
+  table.vis td.term b { white-space: nowrap; }
+  table.vis td.cell { text-align: right; min-width: 92px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.vis td.cell small { display: block; color: var(--faint); font-size: 11px; margin-top: 2px; }
+  table.vis td.cell.none { color: var(--line); }
+  table.vis th.camp { text-align: right; }
+  table.vis td.prev { font-weight: 700; }
+  .vis-legend { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
   .queue { position: sticky; bottom: 16px; margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-radius: 12px; background: var(--ink); color: var(--on-ink); box-shadow: 0 24px 50px -24px rgba(21,19,15,.7); }
   .queue b { color: #F2B98C; }
   .queue .btn { background: transparent; border-color: var(--ink-3); color: #fff; }
@@ -211,6 +219,7 @@
     <nav class="nav" id="nav" aria-label="Search Desk">
       <a href="#overview" data-view="overview"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg>Overview<span class="st live">Live</span></a>
       <a href="#terms" data-view="terms"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg>Search terms<span class="st live">Live</span></a>
+      <a href="#visibility" data-view="visibility"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8S4 3.5 8 3.5 14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>Visibility<span class="st build">In build</span></a>
       <a href="#ngrams" data-view="ngrams"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h5M9 4h5M2 8h3M7 8h7M2 12h8M12 12h2"/></svg>N-grams<span class="st build">In build</span></a>
       <a href="#pacing" data-view="pacing"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 13.5h12M4 11V8.5M7 11V6M10 11V7.5M13 11V4"/></svg>Pacing<span class="st build">In build</span></a>
       <a href="#bids" data-view="bids"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 12.5 7 8l2.5 2.5L13 6"/><path d="M10 6h3v3"/></svg>Bids &amp; budgets<span class="st build">In build</span></a>
@@ -247,6 +256,18 @@
       <div class="queue" id="t-queue" hidden><span id="t-queue-text"></span><span style="display:flex;gap:8px"><button class="btn" type="button" id="t-clear">Clear</button><button class="btn primary" type="button" id="t-send">Send for approval</button></span></div>
     </section>
 
+    <!-- Search term visibility -->
+    <section class="pane" data-pane="visibility" hidden>
+      <div class="page-head"><div><h1>Search term visibility</h1><p class="lede">Every search term this period against the last, split by the campaigns it showed in. Sorted by last period, high to low, so the terms that mattered most come first and you can see where they went. A term in more than one campaign is competing with itself.</p></div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:14px">
+        <div class="chips" id="v-period"></div><div class="chips" id="v-metric"></div>
+      </div>
+      <div class="stat-row" id="v-stats"></div>
+      <div class="chips" id="v-filters" style="margin-bottom:14px"></div>
+      <div class="card scroll"><table class="vis"><thead><tr id="v-head"></tr></thead><tbody id="v-rows"></tbody></table></div>
+      <p class="lede" style="font-size:12.5px;margin-top:12px">Cells show this period, with last period underneath. The shading is each campaign's share of the term this period.</p>
+    </section>
+
     <!-- N-grams -->
     <section class="pane" data-pane="ngrams" hidden>
       <div class="page-head"><div><h1>N-grams</h1><p class="lede">The same 30 days of search terms, split into the words and phrases inside them. A phrase that costs money across many terms, without sales, is one negative instead of ten.</p></div>
@@ -262,7 +283,10 @@
       <div class="card" style="margin-bottom:20px"><div class="card-head"><h2>Daily spend, all campaigns</h2><span class="meta" id="p-chart-meta"></span></div>
         <div class="chart"><svg id="p-chart" viewBox="0 0 600 190" preserveAspectRatio="none" aria-hidden="true"></svg><div class="axis" id="p-axis"></div>
           <div class="legend"><span><i style="background:var(--amber)"></i>Spent</span><span><i style="background:#E8D8C4"></i>Projected at the current rate</span><span><i style="background:var(--text);height:2px"></i>Daily rate that lands on budget</span></div></div></div>
-      <div class="card scroll"><table><thead><tr><th>Campaign</th><th class="r">Monthly budget</th><th class="r">Spent</th><th class="r">Projected</th><th>Pace</th><th>Status</th><th class="r">Daily budget to land on target</th></tr></thead><tbody id="p-rows"></tbody></table></div>
+      <div class="card" style="margin-bottom:20px"><div class="card-head"><h2>Today, hour by hour</h2><span class="meta" id="h-meta"></span></div>
+        <div class="chart"><svg id="h-chart" viewBox="0 0 600 150" preserveAspectRatio="none" aria-hidden="true" style="height:150px"></svg><div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span></div>
+          <div class="legend"><span><i style="background:var(--amber)"></i>Spent each hour today</span><span><i style="background:#E8D8C4"></i>Hours still to come</span><span><i style="background:var(--text);height:2px"></i>A normal <span id="h-day"></span></span></div></div></div>
+      <div class="card scroll"><table><thead><tr><th>Campaign</th><th class="r">Monthly budget</th><th class="r">Spent</th><th class="r">Projected</th><th>Pace</th><th>Month</th><th>Today so far</th><th class="r">Daily budget to land on target</th></tr></thead><tbody id="p-rows"></tbody></table></div>
     </section>
 
     <!-- Bids & budgets -->
@@ -473,7 +497,8 @@
       { tone: 'warn', n: '!', t: 'Search | Walking boots lost ' + pct(boots.lostBudget) + ' of its impressions to budget', s: 'Capped on 9 of the last 14 days, while returning 6.0×.', go: 'bids', label: 'Bids & budgets' },
       { tone: 'warn', n: '!', t: '7 products disapproved in Merchant Center', s: 'All for a missing GTIN, so they are not showing in Shopping.', go: 'tracking', label: 'Tracking & feed' }
     ];
-    if (waste) need.splice(2, 0, { tone: 'amber', n: '"', t: 'The phrase "' + waste.g + '" cost ' + gbp(waste.cost) + ' across ' + waste.terms + ' search terms, with no sales', s: 'One negative covers all of them.', go: 'ngrams', label: 'N-grams' });
+    need.splice(2, 0, { tone: 'amber', n: '"', t: 'PMax is taking brand searches from Search | Brand', s: 'It showed for 36% of "example outdoor" impressions this period, up from 14%. Add the brand as a negative in PMax.', go: 'visibility', label: 'Visibility' });
+    if (waste) need.splice(3, 0, { tone: 'amber', n: '"', t: 'The phrase "' + waste.g + '" cost ' + gbp(waste.cost) + ' across ' + waste.terms + ' search terms, with no sales', s: 'One negative covers all of them.', go: 'ngrams', label: 'N-grams' });
     var list = $('o-need'); list.innerHTML = '';
     need.forEach(function (x) {
       var li = el('li'); li.appendChild(el('span', 'mark ' + x.tone, x.n));
@@ -499,8 +524,9 @@
       ['Tracking checks', 'live', 'Tags, Enhanced Conversions, Consent Mode and Google Ads against GA4, before anyone reads a number.', 'Every morning'],
       ['Feed health', 'live', 'Merchant Center approvals and product data quality, with the fix for each issue.', 'Weekly'],
       ['Weekly report', 'live', 'Written up from the checks, with the actions for the week ahead.', 'Every Monday'],
+      ['Search term visibility', 'build', 'Each term this period against the last, by campaign, sorted by last period. Shows lost visibility and terms competing with themselves.', 'Weekly'],
       ['N-grams', 'build', 'The words and phrases inside search terms, so one negative does the work of ten.', 'Weekly'],
-      ['Budget pacing', 'build', 'Each campaign against its monthly budget, with the daily budget that lands on target.', 'Every morning'],
+      ['Pacing', 'build', 'Each campaign against its monthly budget, and today hour by hour against a normal day.', 'Every hour'],
       ['Bids & budgets', 'build', 'Where money should move between campaigns, with the numbers behind each suggestion.', 'Every morning']
     ].forEach(function (m) {
       var d = el('div', 'module'); var top = el('div', 'module-top'); top.appendChild(el('b', null, m[0])); top.appendChild(el('span', 'st ' + m[1], m[1] === 'live' ? 'Live' : 'In build')); d.appendChild(top);
@@ -568,6 +594,100 @@
   $('t-clear').addEventListener('click', function () { queued = {}; renderTerms(); });
   $('t-send').addEventListener('click', function () { toast(DEMO); });
 
+  /* ---------- search term visibility ---------- */
+  var SHORT = { 'Search | Brand': 'Brand', 'Search | Jackets': 'Jackets', 'Search | Walking boots': 'Walking boots', 'Search | Tents': 'Tents', 'Shopping | All products': 'Shopping', 'PMax | Best sellers': 'PMax' };
+  // Where a term showed last period and this period (shares of its impressions), and how its total moved.
+  var OVERLAP = {
+    'example outdoor': [{ 'Search | Brand': .86, 'PMax | Best sellers': .14 }, { 'Search | Brand': .64, 'PMax | Best sellers': .36 }, 1.02],
+    'waterproof jacket womens': [{ 'Search | Jackets': .88, 'PMax | Best sellers': .12 }, { 'Search | Jackets': .46, 'PMax | Best sellers': .54 }, 1.04],
+    'mens waterproof jacket': [{ 'Search | Jackets': .9, 'Shopping | All products': .1 }, { 'Search | Jackets': .82, 'Shopping | All products': .18 }, .97],
+    'rain jacket': [{ 'Shopping | All products': .7, 'PMax | Best sellers': .3 }, { 'Shopping | All products': .52, 'PMax | Best sellers': .48 }, 1.06],
+    'womens walking boots': [{ 'Search | Walking boots': .92, 'PMax | Best sellers': .08 }, { 'Search | Walking boots': .78, 'PMax | Best sellers': .22 }, .71],
+    'outdoor clothing': [{ 'PMax | Best sellers': .6, 'Search | Jackets': .4 }, { 'PMax | Best sellers': .74, 'Search | Jackets': .26 }, 1.08],
+    '2 man tent': [{ 'Search | Tents': .8, 'Shopping | All products': .2 }, { 'Search | Tents': .79, 'Shopping | All products': .21 }, 1.18],
+    'family tent 6 person': [{ 'Search | Tents': .85, 'Shopping | All products': .15 }, { 'Search | Tents': .83, 'Shopping | All products': .17 }, 1.22],
+    'cheap tents': [{ 'Shopping | All products': .7, 'Search | Tents': .3 }, { 'Shopping | All products': .62, 'Search | Tents': .38 }, 1.15],
+    'sleeping bag 3 season': [{ 'Shopping | All products': .75, 'PMax | Best sellers': .25 }, { 'Shopping | All products': .71, 'PMax | Best sellers': .29 }, 1.01]
+  };
+  var vr = rng(1106), VIS = TERMS.map(function (t) {
+    var o = OVERLAP[t.term], prevSplit = {}, curSplit = {}, g;
+    if (o) { prevSplit = o[0]; curSplit = o[1]; g = o[2]; }
+    else {
+      prevSplit[t.camp] = 1; curSplit[t.camp] = 1;
+      g = t.camp === 'Search | Walking boots' ? .55 + .25 * vr() : t.camp === 'Search | Tents' ? 1.08 + .2 * vr() : .86 + .26 * vr();
+      if (t.term === 'lightweight rain jacket') g = .62;
+    }
+    var ctr = .035 + .045 * vr(), cur30 = t.clicks / ctr, prev30 = cur30 / g;
+    return { term: t.term, ctr: ctr, cpc: t.cost / t.clicks, cvr: t.conv / t.clicks, prevSplit: prevSplit, curSplit: curSplit, prev30: prev30, cur30: cur30, n7a: .92 + .16 * vr(), n7b: .92 + .16 * vr() };
+  });
+  var vPeriod = 7, vMetric = 'imp', vFilter = 'all', vState = { key: 'prev', asc: false };
+  var METRIC = {
+    imp: ['Impressions', function (x, v) { return v; }, whole],
+    clicks: ['Clicks', function (x, v) { return v * x.ctr; }, whole],
+    cost: ['Cost', function (x, v) { return v * x.ctr * x.cpc; }, function (v) { return gbp(v); }],
+    conv: ['Conversions', function (x, v) { return v * x.ctr * x.cvr; }, function (v) { return v < 10 ? v.toFixed(1) : whole(v); }]
+  };
+  function visRows() {
+    var f = METRIC[vMetric][1];
+    return VIS.map(function (x) {
+      var prevImp = vPeriod === 30 ? x.prev30 : x.prev30 * 7 / 30 * x.n7a, curImp = vPeriod === 30 ? x.cur30 : x.cur30 * 7 / 30 * x.n7b;
+      var row = { term: x.term, prev: f(x, prevImp), cur: f(x, curImp), cells: {} };
+      Object.keys(SHORT).forEach(function (c) {
+        var a = (x.prevSplit[c] || 0) * prevImp, b = (x.curSplit[c] || 0) * curImp;
+        if (a || b) row.cells[c] = { prev: f(x, a), cur: f(x, b), share: x.curSplit[c] || 0 };
+        row['c_' + c] = b ? f(x, b) : null;
+      });
+      row.camps = Object.keys(row.cells).length;
+      row.change = row.prev ? row.cur / row.prev - 1 : 0;
+      // The campaign that gained the most share from the others this period
+      row.taker = null;
+      Object.keys(row.cells).forEach(function (c) { var d = (x.curSplit[c] || 0) - (x.prevSplit[c] || 0); if (d >= .1 && (!row.taker || d > row.taker.d)) row.taker = { c: c, d: d }; });
+      return row;
+    });
+  }
+  function renderVisibility() {
+    function chips(id, opts, cur, set) {
+      var box = $(id); box.innerHTML = '';
+      opts.forEach(function (o) { var b = el('button', 'chip' + (cur === o[0] ? ' on' : ''), o[1]); b.type = 'button'; b.addEventListener('click', function () { set(o[0]); renderVisibility(); }); box.appendChild(b); });
+    }
+    chips('v-period', [[7, 'Last 7 days vs the 7 before'], [30, 'Last 30 days vs the 30 before']], vPeriod, function (v) { vPeriod = v; });
+    chips('v-metric', [['imp', 'Impressions'], ['clicks', 'Clicks'], ['cost', 'Cost'], ['conv', 'Conversions']], vMetric, function (v) { vMetric = v; });
+    var all = visRows(), show = METRIC[vMetric][2];
+    var lost = all.filter(function (r) { return r.change <= -.2; }), gained = all.filter(function (r) { return r.change >= .2; }), multi = all.filter(function (r) { return r.camps > 1; });
+    var taken = all.filter(function (r) { return r.taker; }).sort(function (a, b) { return b.taker.d - a.taker.d; });
+    var st = $('v-stats'); st.innerHTML = '';
+    [['Search terms', whole(all.length), 'With spend in either period'], ['Lost visibility', whole(lost.length), 'Down 20% or more on last period'],
+     ['In two or more campaigns', whole(multi.length), 'Competing with themselves'],
+     ['Biggest shift', taken[0] ? '+' + Math.round(taken[0].taker.d * 100) + ' pts' : 'None', taken[0] ? SHORT[taken[0].taker.c] + ' on "' + taken[0].term + '"' : 'No campaign took share']]
+      .forEach(function (x) { var d = el('div', 'stat'); d.appendChild(el('small', null, x[0])); d.appendChild(el('b', null, x[1])); d.appendChild(el('span', null, x[2])); st.appendChild(d); });
+    st.querySelectorAll('b').forEach(countUp);
+    var fl = $('v-filters'); fl.innerHTML = '';
+    [['all', 'All terms', all.length], ['lost', 'Lost visibility', lost.length], ['gained', 'Gained', gained.length], ['multi', 'In 2+ campaigns', multi.length]].forEach(function (x) {
+      var b = el('button', 'chip' + (vFilter === x[0] ? ' on' : '')); b.type = 'button'; b.textContent = x[1]; b.appendChild(el('b', null, String(x[2])));
+      b.addEventListener('click', function () { vFilter = x[0]; renderVisibility(); }); fl.appendChild(b);
+    });
+    var cols = [{ label: 'Search term', key: 'term', sort: true }, { label: 'Last period', key: 'prev', sort: true, r: 1 }, { label: 'This period', key: 'cur', sort: true, r: 1 }, { label: 'Change', key: 'change', sort: true, r: 1 }, { label: 'Campaigns', key: 'camps', sort: true, r: 1 }]
+      .concat(Object.keys(SHORT).map(function (c) { return { label: SHORT[c], key: 'c_' + c, sort: true, r: 1 }; }));
+    table('v-head', 'v-rows', cols, function () {
+      return all.filter(function (r) { return vFilter === 'all' || (vFilter === 'lost' && r.change <= -.2) || (vFilter === 'gained' && r.change >= .2) || (vFilter === 'multi' && r.camps > 1); });
+    }, vState, function (r) {
+      var tr = el('tr');
+      var a = el('td', 'term'); a.appendChild(el('b', null, r.term));
+      a.appendChild(el('span', null, r.taker ? SHORT[r.taker.c] + ' took ' + Math.round(r.taker.d * 100) + ' pts of this term' : r.camps > 1 ? 'Shared across ' + r.camps + ' campaigns' : 'One campaign')); tr.appendChild(a);
+      tr.appendChild(el('td', 'r num prev', show(r.prev))); tr.appendChild(el('td', 'r num', show(r.cur)));
+      var ch = el('td', 'r num'); var dir = Math.abs(r.change) < .02 ? 0 : r.change > 0 ? 1 : -1;
+      var d = el('span', 'delta ' + (dir === 0 ? 'flat' : dir > 0 ? 'good' : 'bad'), Math.abs(Math.round(r.change * 100)) + '%'); d.setAttribute('data-dir', dir); ch.appendChild(d); tr.appendChild(ch);
+      var cc = el('td', 'r num'); cc.appendChild(el('span', 'pill ' + (r.camps > 1 ? 'amber' : ''), String(r.camps))); tr.appendChild(cc);
+      Object.keys(SHORT).forEach(function (c) {
+        var x = r.cells[c], td = el('td', 'cell' + (x ? '' : ' none'));
+        if (!x) td.textContent = '·';
+        else { td.appendChild(document.createTextNode(show(x.cur))); td.appendChild(el('small', null, 'was ' + show(x.prev))); td.style.background = 'rgba(217,146,94,' + (x.share * .32).toFixed(3) + ')'; }
+        tr.appendChild(td);
+      });
+      return tr;
+    });
+  }
+
   /* ---------- n-grams ---------- */
   var nSize = 2, nState = { key: 'cost', asc: false };
   function renderNgrams() {
@@ -600,9 +720,23 @@
   }
 
   /* ---------- pacing ---------- */
+  // Share of a normal day's spend in each hour, busiest at lunchtime and in the evening
+  var HOURLY = [12, 8, 6, 5, 5, 8, 16, 30, 45, 52, 55, 58, 62, 60, 56, 54, 55, 58, 64, 70, 72, 64, 48, 30];
+  var HSUM = HOURLY.reduce(function (a, b) { return a + b; }, 0);
+  var TODAY = { 'Search | Brand': 1, 'Search | Jackets': 1.02, 'Search | Walking boots': .9, 'Search | Tents': 1.24, 'Shopping | All products': .97, 'PMax | Best sellers': 1.1 };
+  var nowT = new Date(), nowH = nowT.getHours() + nowT.getMinutes() / 60;
+  function soFar(c, factor) {
+    // Spend from midnight to now; Walking boots runs out of budget at 17:40 on a normal day
+    var out = [], cap = c.name === 'Search | Walking boots' ? 17 + 40 / 60 : 24;
+    for (var h = 0; h < 24; h++) {
+      var part = Math.max(0, Math.min(1, Math.min(nowH, cap) - h));
+      out.push(c.rate * HOURLY[h] / HSUM * factor * part);
+    }
+    return out;
+  }
   function renderPacing() {
     var tb = CAMPAIGNS.reduce(function (a, c) { return a + c.budget; }, 0), ts = CAMPAIGNS.reduce(function (a, c) { return a + c.spent; }, 0), tp = CAMPAIGNS.reduce(function (a, c) { return a + c.projected; }, 0);
-    $('p-lede').textContent = monthName + ', day ' + dayN + ' of ' + dim + ' (' + pct(dayN / dim) + ' of the month gone). Spend up to the end of yesterday, projected forward at each campaign\'s rate over the last seven days.';
+    $('p-lede').textContent = monthName + ', day ' + dayN + ' of ' + dim + ' (' + pct(dayN / dim) + ' of the month gone). The month is spend up to the end of yesterday, projected forward at each campaign\'s rate over the last seven days. Today is checked every hour against a normal day.';
     var st = $('p-stats'); st.innerHTML = '';
     [['Monthly budget', gbp(tb), 'Six campaigns'], ['Spent so far', gbp(ts), pct(ts / tb) + ' of budget'], ['Projected', gbp(tp), (tp >= tb ? pct(tp / tb - 1) + ' over' : pct(1 - tp / tb) + ' under') + ' budget'],
      ['Needs a change', String(CAMPAIGNS.filter(function (c) { return c.status !== 'on'; }).length), 'Over or under by more than 5%']]
@@ -621,6 +755,24 @@
     $('p-chart-meta').textContent = 'Average so far ' + gbp(ts / dayN) + ' a day. To land on budget: ' + gbp(need) + ' a day.';
     var ax = $('p-axis'); ax.innerHTML = ''; [1, Math.round(dim / 2), dim].forEach(function (n) { ax.appendChild(el('span', null, n + ' ' + monthName.slice(0, 3))); });
 
+    // Today, hour by hour
+    var hours = [], normal = [];
+    for (var h = 0; h < 24; h++) { normal.push(CAMPAIGNS.reduce(function (a, c) { return a + c.rate * HOURLY[h] / HSUM; }, 0)); }
+    CAMPAIGNS.forEach(function (c) { c.today = soFar(c, TODAY[c.name]); c.todayNormal = soFar(c, 1).reduce(function (a, b) { return a + b; }, 0); c.todaySpent = c.today.reduce(function (a, b) { return a + b; }, 0); });
+    for (var h2 = 0; h2 < 24; h2++) hours.push(CAMPAIGNS.reduce(function (a, c) { return a + c.today[h2]; }, 0));
+    var hmax = Math.max.apply(null, normal.concat(hours)) * 1.15, hb = 600 / 24 - 4, hsvg = '';
+    for (var i = 0; i < 24; i++) {
+      var past = i < nowH, v = past ? hours[i] : normal[i], hh = v / hmax * 142;
+      hsvg += '<rect x="' + (i * 25 + 2).toFixed(1) + '" y="' + (150 - hh).toFixed(1) + '" width="' + hb.toFixed(1) + '" height="' + hh.toFixed(1) + '" rx="2" fill="' + (past ? '#985830' : '#E8D8C4') + '"/>';
+    }
+    hsvg += '<polyline points="' + normal.map(function (v, k) { return (k * 25 + 12.5).toFixed(1) + ',' + (150 - v / hmax * 142).toFixed(1); }).join(' ') + '" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>';
+    $('h-chart').innerHTML = hsvg;
+    var dayName = nowT.toLocaleDateString('en-GB', { weekday: 'long' });
+    $('h-day').textContent = dayName;
+    var spentToday = CAMPAIGNS.reduce(function (a, c) { return a + c.todaySpent; }, 0), normalToday = CAMPAIGNS.reduce(function (a, c) { return a + c.todayNormal; }, 0);
+    var ahead = normalToday ? spentToday / normalToday - 1 : 0, hm = ('0' + nowT.getHours()).slice(-2) + ':' + ('0' + nowT.getMinutes()).slice(-2);
+    $('h-meta').textContent = 'By ' + hm + ': ' + gbp(spentToday) + ' spent, ' + (Math.abs(ahead) < .02 ? 'in line with' : pct(Math.abs(ahead)) + (ahead > 0 ? ' more than' : ' less than')) + ' a normal ' + dayName + ' by this time.';
+
     var body = $('p-rows'); body.innerHTML = '';
     CAMPAIGNS.forEach(function (c) {
       var tr = el('tr'); var a = el('td', 'term'); a.appendChild(el('b', null, c.name)); tr.appendChild(a);
@@ -628,6 +780,10 @@
       var p = el('td'); var bar = el('div', 'bar'); var fill = el('i', c.status === 'over' ? 'bad' : c.status === 'under' ? 'warn' : 'good'); fill.style.width = Math.min(100, c.spent / c.budget * 100) + '%';
       var mk = el('u'); mk.style.left = (dayN / dim * 100) + '%'; mk.title = 'Where spend should be today'; bar.appendChild(fill); bar.appendChild(mk); p.appendChild(bar); tr.appendChild(p);
       var s = el('td'); s.appendChild(el('span', 'pill ' + { over: 'bad', under: 'warn', on: 'good' }[c.status], { over: pct(c.ratio - 1) + ' over', under: pct(1 - c.ratio) + ' under', on: 'On track' }[c.status])); tr.appendChild(s);
+      var td = el('td', 'term'), ta = c.todayNormal ? c.todaySpent / c.todayNormal - 1 : 0, capped = c.name === 'Search | Walking boots' && nowH > 17 + 40 / 60;
+      td.appendChild(el('b', null, gbp(c.todaySpent)));
+      td.appendChild(el('span', null, capped ? 'Out of budget since 17:40' : Math.abs(ta) < .05 ? 'On pace for a normal ' + dayName : pct(Math.abs(ta)) + (ta > 0 ? ' ahead of' : ' behind') + ' a normal ' + dayName));
+      tr.appendChild(td);
       tr.appendChild(el('td', 'r num', gbp(c.toLand) + ' a day' + (c.status === 'on' ? '' : ' (now ' + gbp(c.rate) + ')')));
       body.appendChild(tr);
     });
@@ -702,8 +858,8 @@
   }
 
   /* ---------- views ---------- */
-  var VIEWS = ['overview', 'terms', 'ngrams', 'pacing', 'bids', 'tracking'];
-  var RENDER = { overview: renderOverview, terms: renderTerms, ngrams: renderNgrams, pacing: renderPacing, bids: renderBids, tracking: renderTracking };
+  var VIEWS = ['overview', 'terms', 'visibility', 'ngrams', 'pacing', 'bids', 'tracking'];
+  var RENDER = { overview: renderOverview, terms: renderTerms, visibility: renderVisibility, ngrams: renderNgrams, pacing: renderPacing, bids: renderBids, tracking: renderTracking };
   function route() {
     var v = (location.hash || '#overview').slice(1); if (VIEWS.indexOf(v) === -1) v = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== v; });
