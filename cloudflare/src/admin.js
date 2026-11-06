@@ -2,7 +2,7 @@
 // rate card invite links and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import adminHtml from '../private/admin.html';
-import { getInvite, putInvite, listInvites, inviteState, newToken } from './rate-card.js';
+import { getInvite, putInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -73,7 +73,10 @@ function publicInvite(inv, origin) {
     browsers: (inv.visitors || []).length,
     lastViewedAt: inv.lastViewedAt || null,
     lastCountry: inv.lastCountry || '',
-    link: `${origin}/rate-card?invite=${inv.token}`,
+    pages: invitePages(inv),
+    pageViews: inv.pageViews || (inv.views ? { 'rate-card': inv.views } : {}),
+    links: Object.fromEntries(invitePages(inv).map(k => [k, `${origin}${PAGES[k].path}?invite=${inv.token}`])),
+    link: `${origin}${PAGES[invitePages(inv)[0]].path}?invite=${inv.token}`,
   };
 }
 
@@ -83,14 +86,17 @@ async function createInvite(request, env, origin) {
   const name = String(body.name || '').trim().slice(0, 80);
   const note = String(body.note || '').trim().slice(0, 200);
   const days = Number(body.days);
+  const pages = (Array.isArray(body.pages) ? body.pages : ['rate-card']).filter((k, i, a) => PAGES[k] && a.indexOf(k) === i);
   if (!name) return json({ error: 'Add who the link is for.' }, 400);
+  if (!pages.length) return json({ error: 'Choose what the link opens.' }, 400);
   const now = new Date();
   const inv = {
     token: newToken(),
     name, note,
     createdAt: now.toISOString(),
     expiresAt: days > 0 && days <= 3650 ? new Date(now.getTime() + days * 86400000).toISOString() : null,
-    revoked: false, views: 0, visitors: [], recent: [],
+    pages,
+    revoked: false, views: 0, pageViews: {}, visitors: [], recent: [],
   };
   await putInvite(env, inv);
   return json(publicInvite(inv, origin), 201);

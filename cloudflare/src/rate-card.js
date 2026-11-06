@@ -1,13 +1,18 @@
-// Private rate card at /rate-card. Opens with an invite link made in /admin:
-//   /rate-card?invite=<token>
+// Private pages that open with an invite link made in /admin: the rate card and the Search Desk demo.
+//   /rate-card?invite=<token>   /search-desk?invite=<token>
 // The link itself is meant to be forwarded, so the token stays in the address bar. A cookie also remembers it, so the
-// plain /rate-card address keeps working in the same browser. Invites live in R2 under rate-card-invites/<token>.json.
+// plain address keeps working in the same browser. Invites live in R2 under rate-card-invites/<token>.json and list the
+// pages they open in `pages` (invites made before the demo existed have none and open the rate card only).
 import rateCardHtml from '../private/rate-card.html';
+import searchDeskHtml from '../private/search-desk.html';
 import { adminEmail } from './admin.js';
 
-const COOKIE = 'ph_rc';
+export const PAGES = {
+  'rate-card': { path: '/rate-card', html: rateCardHtml, cookie: 'ph_rc', title: 'The rate card' },
+  'search-desk': { path: '/search-desk', html: searchDeskHtml, cookie: 'ph_sd', title: 'The Search Desk demo' },
+};
+const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid';
-const PATH = '/rate-card';
 const TOKEN = /^[A-Za-z0-9._-]{8,80}$/;
 const PREFIX = 'rate-card-invites/';
 
@@ -43,6 +48,11 @@ export async function listInvites(env) {
   return out.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 }
 
+export function invitePages(inv) {
+  const pages = Array.isArray(inv && inv.pages) ? inv.pages.filter(k => PAGES[k]) : [];
+  return pages.length ? pages : ['rate-card'];
+}
+
 export function inviteState(inv) {
   if (!inv) return 'missing';
   if (inv.revoked) return 'revoked';
@@ -60,19 +70,21 @@ function randomId(bytes) {
   return btoa(String.fromCharCode(...a)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-async function recordView(env, token, visitor, request) {
+async function recordView(env, token, visitor, request, key) {
   const inv = await getInvite(env, token);
   if (!inv) return;
   const now = new Date().toISOString();
   const country = (request.cf && request.cf.country) || '';
   inv.views = (inv.views || 0) + 1;
+  inv.pageViews = inv.pageViews || {};
+  inv.pageViews[key] = (inv.pageViews[key] || 0) + 1;
   inv.lastViewedAt = now;
   inv.lastCountry = country;
   inv.visitors = inv.visitors || [];
   if (visitor && !inv.visitors.includes(visitor) && inv.visitors.length < 200) inv.visitors.push(visitor);
-  inv.recent = [{ at: now, country }, ...(inv.recent || [])].slice(0, 25);
+  inv.recent = [{ at: now, country, page: key }, ...(inv.recent || [])].slice(0, 25);
   await putInvite(env, inv);
-  console.log('rate-card viewed', inv.name, inv.views);
+  console.log(key + ' viewed', inv.name, inv.views);
 }
 
 const LOCKED_HTML = `<!DOCTYPE html>
@@ -89,23 +101,29 @@ a.btn:hover{background:#7A3F1F}
 </style></head><body><main>
 <a href="/"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:34px;width:auto;display:block"></a>
 <h1>This page is by invitation.</h1>
-<p>The rate card is shared by link. If your link has stopped working or you would like a copy, ask and I'll send a new one.</p>
+<p>__TITLE__ is shared by link. If your link has stopped working or you would like a copy, ask and I'll send a new one.</p>
 <p><strong style="color:#1A1A1A">contact@phillips-uk.com</strong></p>
-<a class="btn" href="mailto:contact@phillips-uk.com?subject=Rate%20card%20access">Ask for access</a>
+<a class="btn" href="mailto:contact@phillips-uk.com?subject=__SUBJECT__">Ask for access</a>
 </main></body></html>`;
 
 export function isRateCardPath(path) {
-  return path === PATH;
+  return Object.prototype.hasOwnProperty.call(BY_PATH, path);
 }
 
 export async function rateCard(request, url, env, ctx) {
+  const key = BY_PATH[url.pathname.replace(/\/+$/, '')];
+  const page = PAGES[key];
+  const PATH = page.path;
   // Lewis signed in to /admin sees the page without it counting as a view.
-  if (await adminEmail(request, env)) return new Response(rateCardHtml, { status: 200, headers: PRIVATE_HEADERS });
+  if (await adminEmail(request, env)) return new Response(page.html, { status: 200, headers: PRIVATE_HEADERS });
 
   const fromUrl = url.searchParams.get('invite');
-  const token = fromUrl || readCookie(request, COOKIE);
+  const token = fromUrl || readCookie(request, page.cookie);
   const invite = await getInvite(env, token);
-  if (inviteState(invite) !== 'active') return new Response(LOCKED_HTML, { status: 403, headers: PRIVATE_HEADERS });
+  if (inviteState(invite) !== 'active' || !invitePages(invite).includes(key)) {
+    const locked = LOCKED_HTML.replace('__TITLE__', page.title).replace('__SUBJECT__', encodeURIComponent(page.title.replace(/^The /, '') + ' access'));
+    return new Response(locked, { status: 403, headers: PRIVATE_HEADERS });
+  }
 
   let visitor = readCookie(request, VISITOR);
   const headers = new Headers(PRIVATE_HEADERS);
@@ -114,10 +132,10 @@ export async function rateCard(request, url, env, ctx) {
     visitor = randomId(9);
     headers.append('Set-Cookie', `${VISITOR}=${visitor}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
   }
-  if (fromUrl) headers.append('Set-Cookie', `${COOKIE}=${encodeURIComponent(token)}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
+  if (fromUrl) headers.append('Set-Cookie', `${page.cookie}=${encodeURIComponent(token)}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
 
-  ctx.waitUntil(recordView(env, token, visitor, request).catch(err => console.error('rate-card view log failed', err && err.message)));
-  return new Response(rateCardHtml, { status: 200, headers });
+  ctx.waitUntil(recordView(env, token, visitor, request, key).catch(err => console.error(key + ' view log failed', err && err.message)));
+  return new Response(page.html, { status: 200, headers });
 }
 
 export function newToken() {
