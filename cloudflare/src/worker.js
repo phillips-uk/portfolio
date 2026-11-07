@@ -77,6 +77,9 @@ async function route(request, env, ctx) {
     return Response.redirect(url.href, 301);
   }
 
+  // Search Desk, the product: its own Worker (search-desk), reached through a service binding
+  if ((url.pathname === '/desk' || url.pathname.startsWith('/desk/')) && env.DESK) return env.DESK.fetch(request);
+
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : url.pathname;
 
   if (REDIRECTS[path]) return Response.redirect(new URL(REDIRECTS[path], url).href, 301);
