@@ -67,6 +67,7 @@ function publicInvite(inv, origin) {
     name: inv.name,
     note: inv.note || '',
     createdAt: inv.createdAt,
+    startsAt: inv.startsAt || null,
     expiresAt: inv.expiresAt || null,
     state: inviteState(inv),
     views: inv.views || 0,
@@ -80,26 +81,66 @@ function publicInvite(inv, origin) {
   };
 }
 
+// A UK calendar date (YYYY-MM-DD) as an ISO time: the start of that day, or its last second, in Europe/London.
+function londonDay(date, endOfDay) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) return null;
+  const [y, m, d] = date.split('-').map(Number);
+  const utc = Date.UTC(y, m - 1, d, endOfDay ? 23 : 0, endOfDay ? 59 : 0, endOfDay ? 59 : 0);
+  const londonHour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', hourCycle: 'h23' }).format(new Date(utc)));
+  const offset = (londonHour - new Date(utc).getUTCHours() + 24) % 24; // 0 in winter, 1 in summer
+  return new Date(utc - offset * 3600000).toISOString();
+}
+
+// The live window from a request body: { from, until } as dates, or the older { days } after today.
+function liveWindow(body, now) {
+  const startsAt = body.from ? londonDay(body.from, false) : null;
+  let expiresAt = body.until ? londonDay(body.until, true) : null;
+  if (body.from && !startsAt) return { error: 'The start date is not a date.' };
+  if (body.until && !expiresAt) return { error: 'The end date is not a date.' };
+  if (!body.until && !('from' in body || 'until' in body)) {
+    const days = Number(body.days);
+    expiresAt = days > 0 && days <= 3650 ? new Date(now.getTime() + days * 86400000).toISOString() : null;
+  }
+  if (startsAt && expiresAt && expiresAt <= startsAt) return { error: 'The end date has to be after the start date.' };
+  if (expiresAt && expiresAt < now.toISOString()) return { error: 'The end date has already passed.' };
+  return { startsAt, expiresAt };
+}
+
 async function createInvite(request, env, origin) {
   let body = {};
   try { body = await request.json(); } catch { /* empty body */ }
   const name = String(body.name || '').trim().slice(0, 80);
   const note = String(body.note || '').trim().slice(0, 200);
-  const days = Number(body.days);
   const pages = (Array.isArray(body.pages) ? body.pages : ['rate-card']).filter((k, i, a) => PAGES[k] && a.indexOf(k) === i);
   if (!name) return json({ error: 'Add who the link is for.' }, 400);
   if (!pages.length) return json({ error: 'Choose what the link opens.' }, 400);
   const now = new Date();
+  const win = liveWindow(body, now);
+  if (win.error) return json({ error: win.error }, 400);
   const inv = {
     token: newToken(),
     name, note,
     createdAt: now.toISOString(),
-    expiresAt: days > 0 && days <= 3650 ? new Date(now.getTime() + days * 86400000).toISOString() : null,
+    startsAt: win.startsAt,
+    expiresAt: win.expiresAt,
     pages,
     revoked: false, views: 0, pageViews: {}, visitors: [], recent: [],
   };
   await putInvite(env, inv);
   return json(publicInvite(inv, origin), 201);
+}
+
+async function setDates(request, env, token, origin) {
+  let body = {};
+  try { body = await request.json(); } catch { /* empty body */ }
+  const inv = await getInvite(env, token);
+  if (!inv) return json({ error: 'That link no longer exists.' }, 404);
+  const win = liveWindow({ from: body.from || '', until: body.until || '' }, new Date());
+  if (win.error) return json({ error: win.error }, 400);
+  inv.startsAt = win.startsAt;
+  inv.expiresAt = win.expiresAt;
+  await putInvite(env, inv);
+  return json(publicInvite(inv, origin));
 }
 
 async function setRevoked(env, token, revoked, origin) {
@@ -190,6 +231,8 @@ export async function admin(request, url, env) {
   if (path === '/admin/api/invites' && method === 'POST') return createInvite(request, env, url.origin);
   const act = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/(revoke|restore)$/);
   if (act && method === 'POST') return setRevoked(env, act[1], act[2] === 'revoke', url.origin);
+  const dates = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/dates$/);
+  if (dates && method === 'POST') return setDates(request, env, dates[1], url.origin);
   if (path === '/admin/api/site') return json(await siteSummary(env));
   if (path === '/admin/api/clients') return json(await clientsSummary(env, url.origin));
   const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);

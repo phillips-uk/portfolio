@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Loft | Phillips.</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="description" content="A private, working prototype of The Loft booking app.">
+<meta name="theme-color" content="#FBF9F6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Loft">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="/images/the-loft-icon.png">
+<link rel="icon" type="image/png" href="/images/the-loft-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* The Loft booking app prototype, served privately at /the-loft by invite link.
+   A gentlemen's barbershop: warm bone paper, black, and one brass accent. Manrope throughout: heavy for names, headings
+   and numbers, tracked capitals for labels. Lots of space.
+   Desktop and tablet: the app inside a phone frame, scaled to fit. Phones: the app full screen, like a native app. */
+:root {
+  color-scheme: light;
+  --stage: #ECE7DF;
+  --paper: #FBF9F6;
+  --mist: #F3EFE9;
+  --mist-2: #E8E2D8;
+  --ink: #151515;
+  --ink-2: #2E2E2E;
+  --muted: #6E6960;
+  --faint: #A29C92;
+  --line: #E4DDD2;
+  --stone: #B8AFA1;
+  --brass: #A6834C;        /* the one accent: hairlines, the active tab, the owner's ring, stars */
+  --brass-dk: #7A5C30;     /* brass for text */
+  --brass-soft: #F3EBDD;
+  --good: #3B6A4C; --good-soft: #E6EEE7;
+  --bad: #8E2E24; --bad-soft: #F4E3DF;
+  --f-display: 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --f-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --r: 12px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+* { -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: var(--stage); color: var(--ink); font-family: var(--f-sans); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+:focus-visible { outline: 1.5px solid var(--ink); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; font-family: var(--f-display); font-weight: 800; letter-spacing: -.03em; }
+p { margin: 0; }
+.lbl { font-family: var(--f-sans); font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); }
+.lbl.gold { color: var(--brass-dk); }
+
+/* The stage */
+.stage { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 28px 16px; box-sizing: border-box; }
+.device-wrap { width: 415px; height: 874px; flex: none; }
+.device { position: relative; width: 415px; height: 874px; padding: 11px; border-radius: 68px; background: #1C1C1E; box-shadow: inset 0 0 0 1.5px #3A3A3C, inset 0 0 0 4px #0E0E0F, 0 60px 100px -50px rgba(21,21,21,.55), 0 30px 60px -30px rgba(21,21,21,.3); transform-origin: top left; }
+.device .hw { position: absolute; width: 4px; background: #2C2C2E; border-radius: 2px; }
+.device .hw-action { left: -3px; top: 150px; height: 34px; } .device .hw-up { left: -3px; top: 212px; height: 64px; } .device .hw-down { left: -3px; top: 290px; height: 64px; } .device .hw-power { right: -3px; top: 246px; height: 104px; }
+.statusbar { flex: none; height: 54px; position: relative; z-index: 80; display: flex; align-items: center; justify-content: space-between; padding: 4px 32px 0 44px; background: var(--paper); font-size: 16px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.statusbar .island { position: absolute; left: 50%; top: 11px; width: 124px; height: 36px; margin-left: -62px; border-radius: 20px; background: #000; }
+.statusbar .sb-icons { display: flex; align-items: center; gap: 6px; } .statusbar svg { display: block; }
+.homebar { position: absolute; left: 50%; bottom: 8px; width: 136px; height: 5px; margin-left: -68px; border-radius: 3px; background: var(--ink); z-index: 70; pointer-events: none; }
+.caption { margin: 0; font-size: 12.5px; color: var(--muted); text-align: center; max-width: 64ch; }
+.caption b { color: var(--ink); }
+.brief { display: flex; flex-direction: column; gap: 22px; }
+.brief .by { font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.brief .by b { color: var(--ink); }
+.brief h1 { font-size: 46px; line-height: 1.02; letter-spacing: -.04em; }
+.brief .lede { color: var(--muted); font-size: 15.5px; max-width: 34ch; }
+.ways { display: grid; gap: 2px; }
+.way { display: flex; gap: 14px; align-items: center; text-align: left; border: 0; background: transparent; border-radius: 10px; padding: 10px 12px; margin: 0 -12px; transition: background-color .15s; }
+.way:hover { background: var(--mist-2); }
+.way.on { background: var(--paper); }
+.way b { display: block; font-size: 14.5px; font-weight: 700; }
+.way span.t { display: block; font-size: 13px; color: var(--muted); }
+.try { display: grid; gap: 10px; }
+.try ol { margin: 0; padding-left: 18px; display: grid; gap: 5px; font-size: 13.5px; }
+.try ol button { border: 0; background: none; padding: 0; color: var(--ink); font-weight: 700; text-decoration: underline; text-decoration-color: var(--brass); text-underline-offset: 4px; }
+.try ol button:hover { text-decoration-color: var(--ink); }
+.lists { display: grid; gap: 16px; }
+.lists ul { margin: 8px 0 0; padding: 0; list-style: none; columns: 2; column-gap: 20px; font-size: 13px; color: var(--muted); }
+.lists li { break-inside: avoid; margin-bottom: 4px; }
+.small { font-size: 12.5px; color: var(--faint); }
+
+/* The phone */
+.phone { --sab: 22px; --sat: 54px; position: relative; width: 100%; height: 100%; border-radius: 57px; overflow: hidden; background: var(--paper); display: flex; flex-direction: column; }
+.screen { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.screen::-webkit-scrollbar { display: none; }
+.topbar { position: relative; z-index: 20; background: var(--paper); padding: 6px 18px 10px; display: flex; align-items: center; gap: 10px; }
+.topbar .proto { display: none; font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); white-space: nowrap; }
+.topbar .about { display: inline-flex; border: 0; background: var(--mist); border-radius: 8px; padding: 8px 12px; font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.viewseg { margin-left: auto; display: inline-flex; background: var(--mist); border-radius: 9px; padding: 3px; gap: 2px; }
+.viewseg button { border: 0; background: transparent; color: var(--muted); border-radius: 6px; padding: 7px 12px; font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; transition: background-color .15s, color .15s; }
+.viewseg button.on { background: var(--ink); color: var(--paper); }
+.tabbar { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border-top: 1px solid var(--line); background: var(--paper); padding-bottom: var(--sab); }
+.tabbar button { border: 0; background: none; padding: 12px 2px 13px; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); position: relative; white-space: nowrap; }
+.tabbar button svg { width: 21px; height: 21px; }
+.tabbar button.on { color: var(--ink); }
+.tabbar button.on::after { content: ""; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 22px; height: 2px; background: var(--brass); }
+.pad { padding: 14px 22px 44px; display: flex; flex-direction: column; gap: 38px; }
+
+/* The wordmark */
+.mark { display: flex; flex-direction: column; gap: 12px; }
+.mark .wm { font-family: var(--f-display); font-weight: 800; font-size: 52px; line-height: .95; letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; }
+.mark .sub { display: flex; align-items: center; gap: 12px; font-size: 10px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+.mark .sub::before { content: ""; width: 28px; height: 1px; background: var(--brass); }
+
+/* Monograms: the barber's initial; the owner's has a brass ring */
+.ball { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--ink); color: var(--paper); }
+.ball i { font-style: normal; font-family: var(--f-display); font-weight: 800; font-size: 17px; line-height: 1; }
+.ball.own { outline: 1.25px solid var(--brass); outline-offset: 2.5px; }
+.ball.lg { width: 72px; height: 72px; } .ball.lg i { font-size: 26px; }
+.ball.sm { width: 34px; height: 34px; } .ball.sm i { font-size: 13px; } .ball.sm.own { outline-offset: 2px; }
+.ball.empty { background: transparent; color: var(--faint); box-shadow: inset 0 0 0 1px var(--stone); } .ball.empty i { font-size: 12px; }
+.ball.cust { background: var(--mist-2); color: var(--muted); } .ball.cust svg { width: 17px; height: 17px; }
+
+/* Buttons */
+.btn { border: 0; background: var(--mist); color: var(--ink); border-radius: 8px; padding: 11px 18px; font-weight: 700; font-size: 13.5px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background-color .15s, transform .1s; }
+.btn:hover { background: var(--mist-2); }
+.btn:active { transform: scale(.985); }
+.btn svg { width: 16px; height: 16px; }
+.btn.primary, .btn.ink { background: var(--ink); color: var(--paper); } .btn.primary:hover, .btn.ink:hover { background: var(--ink-2); }
+.btn.big { padding: 19px 22px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; width: 100%; }
+.btn.sm { padding: 7px 11px; font-size: 12.5px; border-radius: 6px; }
+.btn.ghost { background: transparent; box-shadow: inset 0 0 0 1px var(--line); } .btn.ghost:hover { background: var(--mist); }
+.btn.danger { background: var(--bad-soft); color: var(--bad); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.link { border: 0; background: none; padding: 0 0 2px; color: var(--ink); font-weight: 700; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; border-bottom: 1px solid var(--brass); white-space: nowrap; }
+
+/* Customer home */
+.hero { padding: 36px 22px 6px; display: flex; flex-direction: column; gap: 28px; }
+.hero .tag { font-size: 17px; font-weight: 600; line-height: 1.45; color: var(--ink-2); max-width: 28ch; }
+.nextfree { display: flex; align-items: center; gap: 12px; padding: 2px 0; }
+.nextfree .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brass); box-shadow: 0 0 0 4px var(--brass-soft); flex: none; }
+.nextfree div { flex: 1; min-width: 0; font-size: 13.5px; color: var(--muted); }
+.nextfree div b { color: var(--ink); font-weight: 600; }
+.sec { display: flex; flex-direction: column; gap: 16px; }
+.sec-h h2 { font-size: 24px; line-height: 1.15; }
+.sec-h p { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+.rail { display: grid; grid-auto-flow: column; grid-auto-columns: 76%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -22px; padding: 0 22px 4px; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.bcard { scroll-snap-align: start; text-align: left; border: 0; background: var(--mist); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 16px; transition: background-color .15s; }
+.bcard:hover { background: var(--mist-2); }
+.bhead { display: flex; align-items: center; gap: 14px; }
+.bhead b { display: block; font-family: var(--f-display); font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+.bhead small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.does { font-size: 13.5px; color: var(--muted); }
+.bfoot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 12.5px; color: var(--muted); padding-top: 14px; border-top: 1px solid var(--line); }
+.bfoot span { white-space: nowrap; }
+.bfoot b { color: var(--ink); font-weight: 600; }
+.perks { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 16px; }
+.perk { display: flex; gap: 12px; align-items: flex-start; }
+.perk .pi { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); }
+.perk .pi svg { width: 18px; height: 18px; }
+.perk b { display: block; font-size: 14px; font-weight: 700; } .perk small { display: block; font-size: 12.5px; color: var(--muted); }
+.events { display: grid; }
+.event { display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.event:first-child { padding-top: 0; }
+.event:last-child { border-bottom: 0; }
+.event .d { width: 54px; height: 58px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none; }
+.event .d small { font-size: 9.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--brass-dk); line-height: 1; }
+.event .d b { font-family: var(--f-display); font-weight: 800; font-size: 21px; letter-spacing: -.02em; line-height: 1; margin-top: 4px; }
+.event .t { display: block; font-weight: 700; font-size: 14.5px; } .event .n { font-size: 13.5px; color: var(--muted); }
+
+/* Alerts: a slot opened, rate your cut */
+.alert { background: var(--brass-soft); border-radius: var(--r); padding: 18px; display: grid; gap: 10px; }
+.alert b { font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+.alert p { font-size: 13.5px; color: var(--muted); }
+.stars { display: flex; gap: 6px; }
+.star { border: 0; background: var(--paper); width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: var(--stone); transition: color .12s; }
+.star svg { width: 22px; height: 22px; }
+.star.on, .star:hover { color: var(--brass); }
+
+/* Booking flow */
+.crumb { display: flex; align-items: center; gap: 16px; }
+.back { border: 0; background: var(--mist); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.back:hover { background: var(--mist-2); }
+.back svg { width: 18px; height: 18px; }
+.steps { display: flex; gap: 6px; flex: 1; }
+.steps i { flex: 1; height: 2px; background: var(--mist-2); }
+.steps i.on { background: var(--ink); }
+.profile { display: flex; gap: 20px; align-items: center; }
+.profile h1 { font-size: 38px; line-height: 1; letter-spacing: -.04em; }
+.profile p { margin-top: 6px; color: var(--muted); font-size: 13.5px; }
+.work { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.work div { aspect-ratio: 4 / 5; border-radius: 10px; background: var(--mist); display: flex; align-items: flex-end; padding: 10px; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+.svcs { display: flex; flex-direction: column; }
+.svc { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 16px 12px; margin: 0 -12px; transition: background-color .12s; }
+.svc:last-child { border-bottom: 0; }
+.svc:hover { background: var(--mist); border-radius: 10px; }
+.svc.on { background: var(--mist); border-radius: 10px; }
+.svc b { display: block; font-size: 15px; font-weight: 600; } .svc small { color: var(--muted); font-size: 12.5px; }
+.svc .p { font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -.01em; line-height: 1; }
+.days { display: grid; grid-auto-flow: column; grid-auto-columns: 60px; gap: 8px; overflow-x: auto; margin: 0 -22px; padding: 2px 22px 6px; scrollbar-width: none; }
+.days::-webkit-scrollbar { display: none; }
+.day { border: 0; background: var(--mist); border-radius: 10px; padding: 11px 4px 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: background-color .12s; }
+.day:hover { background: var(--mist-2); }
+.day small { font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.day b { font-family: var(--f-display); font-weight: 800; font-size: 20px; letter-spacing: -.02em; line-height: 1.2; }
+.day em { font-style: normal; font-size: 10.5px; color: var(--faint); font-weight: 600; white-space: nowrap; }
+.day em.md { color: var(--brass-dk); font-weight: 700; }
+.day.off b { color: var(--faint); }
+.day.on { background: var(--ink); color: var(--paper); } .day.on b { color: var(--paper); } .day.on small, .day.on em { color: rgba(251,249,246,.65); } .day.on em.md { color: #D9BE8E; }
+.slots h3 { font-family: var(--f-sans); font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
+.slotgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.slot { border: 0; background: var(--mist); border-radius: 8px; padding: 11px 0; font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; transition: background-color .12s; }
+.slot:hover { background: var(--mist-2); }
+.slot.on { background: var(--ink); color: var(--paper); }
+.none { background: var(--mist); border-radius: var(--r); padding: 26px 20px; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.none b { color: var(--ink); font-size: 15px; }
+.summary { display: grid; gap: 12px; }
+.summary .row { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.summary .row:last-child { border-bottom: 0; padding-bottom: 0; }
+.summary .row span { color: var(--muted); }
+.summary .row b { text-align: right; font-weight: 600; }
+.summary .row s { color: var(--faint); font-weight: 500; margin-right: 6px; }
+.pill { display: inline-flex; align-items: center; gap: 10px; background: var(--mist); border-radius: 10px; padding: 6px 14px 6px 6px; font-size: 13.5px; font-weight: 600; align-self: flex-start; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label, .field .fl { font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.inp { border: 0; background: var(--mist); border-radius: 8px; padding: 14px 15px; font-size: 15px; width: 100%; min-width: 0; }
+.inp:focus { outline: 1.5px solid var(--ink); outline-offset: 0; background: var(--paper); }
+textarea.inp { resize: vertical; min-height: 84px; line-height: 1.45; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--muted); cursor: pointer; }
+.check input { accent-color: var(--ink); width: 18px; height: 18px; margin: 1px 0 0; flex: none; }
+.paybox { border-radius: var(--r); padding: 16px; display: flex; gap: 14px; align-items: flex-start; background: var(--mist); }
+.paybox svg { width: 21px; height: 21px; flex: none; color: var(--muted); }
+.paybox.now { background: var(--brass-soft); } .paybox.now svg { color: var(--brass-dk); }
+.paybox b { display: block; font-weight: 700; }
+.paybox p { margin-top: 2px; font-size: 13.5px; color: var(--muted); }
+.paybox .link { margin-top: 8px; display: inline-block; }
+.pchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pchip { border: 0; background: var(--mist); border-radius: 8px; padding: 9px 12px; font-size: 13px; font-weight: 600; }
+.pchip.on { background: var(--ink); color: var(--paper); }
+.pchip[disabled] { opacity: .45; cursor: not-allowed; }
+.err { color: var(--bad); font-size: 13.5px; font-weight: 600; }
+
+/* The confirmation card */
+.done-head h1 { font-size: 36px; line-height: 1.05; letter-spacing: -.04em; }
+.done-head p { color: var(--muted); margin-top: 8px; }
+.ticket { border-radius: 14px; background: var(--mist); overflow: hidden; }
+.ticket .tt { padding: 22px 22px 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.ticket .tt .mark .wm { font-size: 18px; }
+.ticket .tt .mark .sub { display: none; }
+.ticket .tt .ref { font-size: 9.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); text-align: right; }
+.ticket .tt .ref b { display: block; color: var(--ink); font-size: 14px; letter-spacing: .06em; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.ticket .tb { padding: 28px 22px 22px; display: grid; gap: 18px; }
+.ticket .when { font-family: var(--f-display); font-weight: 800; font-size: 30px; letter-spacing: -.035em; line-height: 1.1; }
+.ticket .cut { height: 0; border-top: 1px dashed var(--stone); margin: 0 18px; position: relative; }
+.ticket .cut::before, .ticket .cut::after { content: ""; position: absolute; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); }
+.ticket .cut::before { left: -30px; } .ticket .cut::after { right: -30px; }
+.ticket .tf { padding: 18px 22px 22px; display: grid; gap: 6px; font-size: 13.5px; color: var(--muted); }
+.ticket .tf b { color: var(--ink); font-weight: 700; }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; font-size: 14px; }
+.kv span { color: var(--muted); } .kv b { text-align: right; font-weight: 600; }
+
+/* Lists */
+.list { display: flex; flex-direction: column; }
+.item { padding: 16px 0; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.item:last-child { border-bottom: 0; }
+.item .top { display: flex; gap: 14px; align-items: flex-start; }
+.item .time { font-family: var(--f-display); font-weight: 800; font-size: 18px; letter-spacing: -.02em; line-height: 1.1; min-width: 54px; font-variant-numeric: tabular-nums; }
+.item .time small { display: block; font-family: var(--f-sans); font-size: 11.5px; font-weight: 500; color: var(--faint); margin-top: 5px; letter-spacing: 0; }
+.item .what { flex: 1; min-width: 0; }
+.item .what b { display: block; font-weight: 600; } .item .what span { font-size: 13px; color: var(--muted); }
+.item .price { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.item .side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.item .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.ex { display: block; font-size: 12px; color: var(--brass-dk); font-weight: 600; margin-top: 3px; }
+.chip { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; white-space: nowrap; }
+.chip.booked { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); } .chip.done, .chip.paid { background: var(--good-soft); color: var(--good); }
+.chip.noshow { background: var(--bad-soft); color: var(--bad); } .chip.cancelled { background: var(--mist); color: var(--faint); }
+.chip.free, .chip.gold { background: var(--brass-soft); color: var(--brass-dk); } .chip.plain, .chip.src { background: var(--mist); color: var(--muted); }
+.confirm { background: var(--bad-soft); border-radius: 10px; padding: 12px 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--bad); }
+.rowbtns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.chipbtn { border: 0; background: none; padding: 0; }
+
+/* Barber and owner screens */
+.who { display: flex; align-items: center; gap: 16px; }
+.who .grow { flex: 1; min-width: 0; }
+.who small { display: block; font-size: 12.5px; color: var(--muted); }
+.who small.lbl { font-size: 9.5px; color: var(--faint); }
+.who select { border: 0; background: transparent; font-family: var(--f-display); font-weight: 800; font-size: 24px; letter-spacing: -.03em; line-height: 1.2; padding: 0; max-width: 100%; }
+.who .name { display: block; font-family: var(--f-display); font-weight: 800; font-size: 24px; letter-spacing: -.03em; line-height: 1.2; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { background: var(--mist); border-radius: var(--r); padding: 14px 14px 12px; }
+.stat small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.stat b { display: block; font-family: var(--f-display); font-weight: 800; font-size: 26px; letter-spacing: -.03em; line-height: 1.2; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.stat.hi { background: var(--paper); box-shadow: inset 0 0 0 1px var(--ink); }
+.lede2 { font-size: 14px; color: var(--muted); }
+.lede2 b { color: var(--ink); font-weight: 700; }
+.callout { display: flex; gap: 12px; align-items: center; background: var(--brass-soft); border-radius: var(--r); padding: 15px 16px; font-size: 14px; border: 0; text-align: left; width: 100%; }
+.callout b { font-weight: 700; }
+.callout svg { width: 17px; height: 17px; }
+.hours { display: flex; flex-direction: column; }
+.hrow { padding: 13px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 46px auto minmax(0, 1fr); gap: 12px; align-items: center; }
+.hrow:last-child { border-bottom: 0; }
+.hrow .dn { font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.hrow .times { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; font-size: 13px; color: var(--muted); }
+.hrow select, .orow2 select { border: 0; background: var(--mist); border-radius: 6px; padding: 7px 8px; font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hrow .brk { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
+.hrow .brk input { accent-color: var(--ink); }
+.hrow.closed { opacity: .55; }
+.sw { position: relative; width: 44px; height: 26px; flex: none; }
+.sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.sw span { position: absolute; inset: 0; border-radius: 999px; background: var(--mist-2); transition: background-color .15s; pointer-events: none; }
+.sw span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--paper); box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .15s; }
+.sw input:checked + span { background: var(--ink); } .sw input:checked + span::after { transform: translateX(18px); }
+.sw input:focus-visible + span { outline: 1.5px solid var(--ink); outline-offset: 2px; }
+.trow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 600; }
+.trow:last-child { border-bottom: 0; }
+.trow small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+.orow2 { padding: 15px 0; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.orow2:last-child { border-bottom: 0; }
+.orow2 .t { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.orow2 .t b { font-weight: 700; font-size: 14.5px; }
+.orow2 .d { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.orow2 .money { width: 92px; }
+.menu-row { padding: 12px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 32px; gap: 8px; align-items: center; }
+.menu-row:last-child { border-bottom: 0; }
+.menu-row .inp { padding: 10px 12px; font-size: 14px; }
+.menu-row .nm { grid-column: 1 / 3; font-weight: 600; }
+.menu-row .x { grid-column: 3; grid-row: 1; }
+.money { display: flex; align-items: center; gap: 4px; background: var(--mist); border-radius: 8px; padding: 0 12px; }
+.money span { color: var(--muted); font-weight: 600; font-size: 14px; }
+.money input { border: 0; background: transparent; padding: 10px 0; width: 100%; min-width: 0; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.money input:focus { outline: none; }
+.money:focus-within { outline: 1.5px solid var(--ink); background: var(--paper); }
+.x { border: 0; background: none; color: var(--faint); width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.x:hover { color: var(--bad); background: var(--bad-soft); }
+.x svg { width: 15px; height: 15px; }
+.share { display: flex; gap: 10px; align-items: center; background: var(--mist); border-radius: 10px; padding: 12px 12px 12px 16px; }
+.share svg { width: 17px; height: 17px; color: var(--muted); flex: none; }
+.share code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; flex: 1; min-width: 0; overflow-wrap: anywhere; color: var(--muted); }
+.floor { overflow-x: auto; }
+.floor .lane { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 10px; min-width: 280px; }
+.floor .lane b { font-size: 13.5px; font-weight: 600; display: block; }
+.floor .lane small { display: block; font-size: 11px; color: var(--faint); }
+.track { position: relative; height: 28px; background: var(--mist); border-radius: 6px; overflow: hidden; }
+.track .out { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--mist-2) 0 2px, transparent 2px 7px); }
+.track .bk { position: absolute; top: 5px; bottom: 5px; border-radius: 3px; background: var(--ink); box-shadow: 0 0 0 1.5px var(--mist); }
+.track .bk.done { background: var(--stone); } .track .bk.noshow { background: var(--bad); }
+.axis { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; min-width: 280px; }
+.axis div { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+.key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.util { display: grid; gap: 14px; }
+.util .u { display: grid; grid-template-columns: 70px minmax(0, 1fr) 44px; gap: 10px; align-items: center; font-size: 13.5px; }
+.util .bar { height: 4px; background: var(--mist-2); overflow: hidden; }
+.util .bar i { display: block; height: 100%; background: var(--ink); }
+.util .u b { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.chair { padding: 16px 0; border-bottom: 1px solid var(--line); display: grid; gap: 12px; }
+.chair:last-child { border-bottom: 0; }
+.chair .top { display: flex; align-items: center; gap: 14px; }
+.chair .grow { flex: 1; min-width: 0; }
+.chair .grow b { display: block; font-family: var(--f-display); font-weight: 800; font-size: 16.5px; letter-spacing: -.01em; line-height: 1.25; } .chair .grow small { color: var(--muted); font-size: 12.5px; }
+.invite { display: flex; gap: 8px; } .invite .inp { padding: 11px 13px; font-size: 14px; }
+.seg { display: flex; flex-direction: column; gap: 8px; }
+.opt { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; text-align: left; align-items: start; border: 0; background: var(--mist); border-radius: var(--r); padding: 15px 16px; transition: background-color .12s; }
+.opt:hover { background: var(--mist-2); }
+.opt .dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--faint); margin-top: 2px; background: var(--paper); }
+.opt.on { background: var(--paper); box-shadow: inset 0 0 0 1px var(--ink); } .opt.on .dot { border: 5.5px solid var(--ink); }
+.opt b { display: block; font-size: 14.5px; font-weight: 700; } .opt small { display: block; font-size: 13px; color: var(--muted); }
+.form2 { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 8px; }
+.mseg { display: inline-flex; background: var(--mist); border-radius: 9px; padding: 3px; gap: 2px; align-self: flex-start; }
+.mseg button { border: 0; background: transparent; color: var(--muted); border-radius: 6px; padding: 7px 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.mseg button.on { background: var(--ink); color: var(--paper); }
+.rev { padding: 14px 0; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.rev:last-child { border-bottom: 0; }
+.rs { display: inline-flex; gap: 2px; color: var(--brass); } .rs svg { width: 14px; height: 14px; } .rs .off { color: var(--mist-2); }
+.rev .rt { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.rev b { font-size: 13.5px; font-weight: 700; color: var(--ink); } .rev p { font-size: 13.5px; color: var(--muted); }
+.prod { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.prod:last-child { border-bottom: 0; }
+.prod b { display: block; font-weight: 700; } .prod span.m { display: block; font-size: 12.5px; color: var(--muted); }
+.prod .chip { margin-top: 4px; }
+.stepper { display: inline-flex; align-items: center; gap: 2px; background: var(--mist); border-radius: 8px; padding: 2px; }
+.stepper button { border: 0; background: transparent; width: 30px; height: 30px; border-radius: 6px; font-size: 16px; font-weight: 700; line-height: 1; }
+.stepper button:hover { background: var(--mist-2); }
+.stepper b { min-width: 22px; text-align: center; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+/* Wallet */
+.loyal, .offer { background: var(--mist); border-radius: var(--r); padding: 18px; display: grid; gap: 16px; }
+.stamps { display: grid; gap: 6px; }
+.stamp { aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--stone); display: grid; place-items: center; color: var(--paper); font-size: 7.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.stamp svg { width: 55%; height: 55%; }
+.stamp.on { background: var(--ink); box-shadow: none; }
+.stamp.free { color: var(--brass-dk); box-shadow: inset 0 0 0 1px var(--brass); }
+.stamp.free.on { background: var(--brass); color: var(--paper); box-shadow: none; }
+.orow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding-top: 14px; border-top: 1px solid var(--line); }
+.orow b { display: block; font-weight: 700; font-size: 14.5px; } .orow small { display: block; font-size: 12.5px; color: var(--muted); }
+.orow .op { font-weight: 800; font-size: 14px; white-space: nowrap; }
+.code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 700; letter-spacing: .12em; padding: 18px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--brass); text-align: center; }
+.amts { display: flex; gap: 8px; }
+.amt-chip { flex: 1; border: 0; background: var(--mist); border-radius: 8px; padding: 14px 0; font-weight: 800; font-size: 16px; }
+.amt-chip.on { background: var(--ink); color: var(--paper); }
+
+/* The website preview */
+.site-wrap { position: absolute; inset: 0; z-index: 46; background: var(--paper); display: flex; flex-direction: column; padding-top: var(--sat); }
+.site-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.site-body { flex: 1; overflow-y: auto; scrollbar-width: none; }
+.site-body::-webkit-scrollbar { display: none; }
+.srow { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.srow:last-child { border-bottom: 0; }
+.srow .grow { flex: 1; min-width: 0; } .srow b { display: block; font-weight: 800; font-size: 16px; } .srow small { font-size: 12.5px; color: var(--muted); }
+.plist .pr { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.plist .pr:last-child { border-bottom: 0; }
+.plist .pr span { display: block; color: var(--muted); font-size: 12.5px; } .plist .pr b { font-weight: 800; white-space: nowrap; }
+
+/* Toast and sheets */
+.toast { position: absolute; left: 18px; right: 18px; bottom: calc(66px + var(--sab)); z-index: 60; background: var(--ink); color: var(--paper); border-radius: 10px; padding: 13px 16px; font-size: 13.5px; font-weight: 600; transform: translateY(12px); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.toast.on { opacity: 1; transform: none; }
+.sheet-bg { position: absolute; inset: 0; z-index: 45; background: rgba(21,21,21,.32); display: flex; align-items: flex-end; }
+.sheet { width: 100%; max-height: 92%; overflow-y: auto; background: var(--paper); border-radius: 18px 18px 0 0; padding: 30px 22px calc(24px + var(--sab)); display: grid; gap: 14px; text-align: center; }
+.sheet.left { text-align: left; }
+.sheet h3 { font-size: 22px; }
+.sheet p { color: var(--muted); font-size: 13.5px; }
+.sheet .preview b { color: var(--ink); }
+.sheet .amt { font-family: var(--f-display); font-weight: 800; font-size: 56px; letter-spacing: -.04em; line-height: 1; }
+.sheet .acts { display: grid; gap: 8px; margin-top: 8px; }
+.tap-ico { justify-self: center; width: 64px; height: 64px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); display: grid; place-items: center; }
+.tap-ico svg { width: 30px; height: 30px; }
+.demo-tag { font-size: 9.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--brass-dk); background: var(--brass-soft); border-radius: 4px; padding: 5px 10px; justify-self: center; }
+.sheet.left .demo-tag { justify-self: start; }
+.brief-sheet { text-align: left; gap: 22px; }
+
+/* A real phone: no frame, the app fills the screen and behaves like a native app */
+@media (max-width: 600px), (pointer: coarse) and (max-height: 500px) {
+  html, body { overflow: hidden; overscroll-behavior: none; }
+  body { background: var(--paper); }
+  .stage { display: block; height: 100%; min-height: 0; padding: 0; }
+  .device-wrap { width: 100% !important; height: 100% !important; }
+  .device { width: 100%; height: 100vh; height: 100dvh; padding: 0; border-radius: 0; background: var(--paper); box-shadow: none; transform: none !important; }
+  .device .hw, .statusbar, .homebar, .caption { display: none; }
+  .phone { --sab: env(safe-area-inset-bottom, 0px); --sat: env(safe-area-inset-top, 0px); border-radius: 0; }
+  .phone .topbar { padding-top: max(12px, env(safe-area-inset-top, 0px)); padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+  .pad, .hero { padding-left: max(22px, env(safe-area-inset-left, 0px)); padding-right: max(22px, env(safe-area-inset-right, 0px)); }
+  .screen, .site-body, .sheet { overscroll-behavior: contain; }
+  button, .tabbar, .topbar, .day, .slot { -webkit-user-select: none; user-select: none; }
+  input, select, textarea { font-size: 16px !important; } /* stops iOS zooming into a field */
+}
+@media (max-width: 380px) {
+  .viewseg button { padding: 7px 9px; letter-spacing: .1em; }
+  .slotgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mark .wm { font-size: 46px; }
+  .tabbar button { font-size: 9px; letter-spacing: .06em; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="stage">
+  <div class="device-wrap" id="device-wrap">
+    <div class="device" id="device">
+      <i class="hw hw-action"></i><i class="hw hw-up"></i><i class="hw hw-down"></i><i class="hw hw-power"></i>
+      <div class="phone" id="phone">
+        <div class="statusbar" aria-hidden="true"><span id="sb-time">9:41</span><span class="island"></span><span class="sb-icons"><svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9.1a3.4 3.4 0 0 1 4.8 0z" fill="currentColor"/><path d="M3.4 6.9a6.5 6.5 0 0 1 9.2 0l-1.1 1.1a4.9 4.9 0 0 0-7 0z" fill="currentColor"/><path d="M1.2 4.7a9.6 9.6 0 0 1 13.6 0l-1.1 1.1a8 8 0 0 0-11.4 0z" fill="currentColor"/></svg><svg width="27" height="13" viewBox="0 0 27 13" aria-hidden="true"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="18" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity=".45"/></svg></span></div>
+        <div class="topbar">
+          <span class="proto">Prototype</span>
+          <button class="about" type="button" data-act="aboutOpen">About</button>
+          <div class="viewseg" id="viewseg" role="tablist" aria-label="See the app as"></div>
+        </div>
+        <div class="screen" id="screen"></div>
+        <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        <div id="layer"></div>
+        <span class="homebar"></span>
+      </div>
+    </div>
+  </div>
+  <p class="caption">A working prototype of The Loft app, by <b>Phillips.</b> Tap About in the app for a guided tour. Nothing here sends texts or takes money.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  /* ---------- icons ---------- */
+  var I = {
+    scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/>',
+    home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+    cal: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+    ticket: '<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    list: '<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>',
+    chair: '<path d="M7 3h10v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/><path d="M5 12h14M12 12v5M7 21l5-4 5 4"/>',
+    shop: '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8"/>',
+    star: '<path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    check: '<path d="m4 12.5 5 5 11-11"/>',
+    x: '<path d="M6 6l12 12M18 6 6 18"/>',
+    pool: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.6"/>',
+    glass: '<path d="M6 4h12l-1.2 13.4A2.8 2.8 0 0 1 14 20h-4a2.8 2.8 0 0 1-2.8-2.6z"/><path d="M6.6 11h10.8"/>',
+    pad: '<rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="16" cy="11.5" r="1"/><circle cx="18.5" cy="13.5" r="1"/>',
+    tv: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    card: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',
+    cash: '<rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    wallet: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/>',
+    gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2S10 8 12 8zm0 0c1.5-3 5-3.5 5-1.2S14 8 12 8z"/>',
+    megaphone: '<path d="M3 10v4a1 1 0 0 0 1 1h3l6 4V5L7 9H4a1 1 0 0 0-1 1z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/>',
+    bag: '<path d="M5 8h14l-1.2 12.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/>',
+    walk: '<circle cx="10" cy="7.5" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/>',
+    phone: '<path d="M5 3.5h3.5l1.8 4.6-2.3 1.4a11 11 0 0 0 5.5 5.5l1.4-2.3 4.6 1.8V18a2 2 0 0 1-2 2A16.5 16.5 0 0 1 3 5.5a2 2 0 0 1 2-2z"/>',
+    tap: '<path d="M8 8.5a5 5 0 0 1 0 7M11.5 6a8.5 8.5 0 0 1 0 12M15 3.5a12 12 0 0 1 0 17"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'
+  };
+  function ico(n, filled) { return '<svg viewBox="0 0 24 24" fill="' + (filled ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>'; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function mark() { return '<div class="mark" role="img" aria-label="The Loft, gentlemen’s barbers"><span class="wm">The Loft</span><span class="sub">Gentlemen’s barbers</span></div>'; }
+  function roman(n) { return ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n); }
+  function starsRow(n) { var o = ''; for (var i = 1; i <= 5; i++) o += '<span class="' + (i <= n ? '' : 'off') + '">' + ico('star', true) + '</span>'; return '<span class="rs" aria-label="' + n + ' out of 5">' + o + '</span>'; }
+  function uid(p) { return p + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36); }
+  function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+  /* ---------- dates and money ---------- */
+  var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], DAYS_L = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var WEEK = [1, 2, 3, 4, 5, 6, 0];   // Monday first
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function hm(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  function dk(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function fromDk(s) { var p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+  function today0() { var d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+  function addD(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  function nowM() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+  function TODAY() { return dk(today0()); }
+  function dayLabel(key, long) {
+    var t = TODAY(), d = fromDk(key);
+    if (key === t) return 'Today';
+    if (key === dk(addD(today0(), 1))) return 'Tomorrow';
+    if (key === dk(addD(today0(), -1))) return 'Yesterday';
+    return (long ? DAYS_L[d.getDay()] : DAYS[d.getDay()]) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
+  }
+  function dayIn(key) { var t = TODAY(); return key === t ? 'today' : key === dk(addD(today0(), 1)) ? 'tomorrow' : 'on ' + dayLabel(key, true); }
+  function matchOn(key) { return S.events.some(function (e) { return e.date === key && /match/i.test(e.title); }); }
+  function gbp(n) { n = Number(n) || 0; return '£' + (Math.round(n * 100) % 100 ? n.toFixed(2) : String(Math.round(n))); }
+  function mins(n) { return n >= 60 ? (Math.floor(n / 60) + ' hr' + (n % 60 ? ' ' + (n % 60) + ' min' : '')) : n + ' min'; }
+  function svcTime(s) { return s.range || mins(s.mins); }
+  function nextDow(dow) { var t = today0(); for (var i = 0; i < 8; i++) { var d = addD(t, i); if (d.getDay() === dow) return dk(d); } return dk(t); }
+  function satKey() { var t = today0(); for (var i = 1; i < 8; i++) { var d = addD(t, i); if (d.getDay() === 6) return dk(d); } return dk(t); }
+
+  /* ---------- sample data ----------
+     Services and prices match Nick's current shop's booking page (read 7 Nov 2026), as stand-ins until he sets his own.
+     Where a service takes a range of time, it books at the longer end. Everything else here (barbers, customers, bookings,
+     feedback, rent, offers, products and events) is made up for the demo. */
+  var MENU = [
+    ['haircut', 'Haircut', 45, 20, '30 to 45 min'], ['skinfade', 'Skin fade', 45, 22, '30 to 45 min'], ['senior', 'Senior citizen', 30, 17],
+    ['onelength', 'One-length clipper cut', 30, 13, '15 to 30 min'], ['cutbeard', 'Haircut and beard', 45, 30], ['fadebeard', 'Skin fade and beard', 60, 32, '45 min to 1 hr'],
+    ['clipbeard', 'Clipper cut and beard', 30, 24], ['clipper', 'Clipper cut', 15, 15], ['beard', 'Full beard trim and shape', 30, 12],
+    ['kids', 'Kids (under 12)', 30, 17], ['restyle', 'Restyle', 45, 25, null, 'Extra time for a big change']
+  ];
+  function menu() { return MENU.map(function (m) { return { id: m[0], name: m[1], mins: m[2], price: m[3], range: m[4] || null, note: m[5] || '' }; }); }
+  var KEY = 'the-loft-demo-v3', S, U;
+  function svc(id, name, m, price) { return { id: id, name: name, mins: m, price: price, range: null, note: '' }; }
+  function week(spec) { var h = {}; for (var d = 0; d < 7; d++) { var s = spec[d]; h[d] = s ? { on: true, from: s[0], to: s[1], brk: s[2] || null } : { on: false, from: 600, to: 1080, brk: null }; } return h; }
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function seed() {
+    var s = {
+      v: 3,
+      // Shop hours by day (Sunday first, as dates count them). Nick sets these; barbers work inside them.
+      shop: { hours: { 0: null, 1: [540, 1080], 2: [540, 1200], 3: [540, 1200], 4: [540, 1200], 5: [540, 1200], 6: [480, 1020] }, pay: 'chair', deposit: 5, notice: 30, keepDeposit: true },
+      barbers: [
+        { id: 'nick', name: 'Nick', owner: true, does: 'Haircuts, skin fades and beards',
+          hours: week({ 2: [570, 1110, [780, 810]], 3: [570, 1110, [780, 810]], 4: [570, 1200, [780, 810]], 5: [570, 1110, [780, 810]], 6: [480, 960] }), services: menu(), off: [],
+          loyalty: { on: true, n: 8 }, offers: { member: { on: true, price: 18 }, pack: { on: true, n: 5, price: 90 }, gift: true } },
+        { id: 'jay', name: 'Jay', does: 'Sample barber',
+          hours: week({ 1: [600, 1080], 3: [720, 1200], 4: [720, 1200], 5: [600, 1080] }), services: menu(), off: [],
+          loyalty: { on: true, n: 10 }, offers: { member: { on: false, price: 18 }, pack: { on: true, n: 5, price: 90 }, gift: true } },
+        { id: 'sam', name: 'Sam', does: 'Sample barber',
+          hours: week({ 1: [540, 1020, [750, 780]], 2: [540, 1020, [750, 780]], 6: [540, 1020, [750, 780]] }), services: menu(), off: [],
+          loyalty: { on: false, n: 8 }, offers: { member: { on: false, price: 16 }, pack: { on: false, n: 5, price: 85 }, gift: true } }
+      ],
+      // Chair 1 is Nick's own. Rent figures are examples for Nick to set.
+      chairs: [{ n: 1, who: 'nick', owner: true }, { n: 2, who: 'jay', rent: 150, paid: true }, { n: 3, who: 'sam', rent: 150, paid: false }, { n: 4, who: null, rent: 150 }, { n: 5, who: null, rent: 150 }],
+      events: [
+        { id: 'e1', date: satKey(), title: 'The match on the big screen', note: 'Kick-off 15:00. Book before, stay for the second half.' },
+        { id: 'e2', date: nextDow(4), title: 'Pool night', note: 'Winner stays on. Bar open from 18:00.' }
+      ],
+      // Example products and prices. Product money goes to the shop, not the barbers.
+      products: [
+        { id: 'clay', name: 'Matte clay', price: 14, stock: 9, low: 3 }, { id: 'oil', name: 'Beard oil', price: 12, stock: 2, low: 3 },
+        { id: 'salt', name: 'Sea salt spray', price: 11, stock: 6, low: 3 }, { id: 'wash', name: 'Hair and beard wash', price: 10, stock: 12, low: 4 }
+      ],
+      bookings: [], wait: [], people: [], reviews: [], campaigns: [], sales: [], vouchers: [], owned: [],
+      me: { name: '', phone: '', email: '', optin: false }, dismissed: [], site: { insta: true, fb: true, google: true }, ref: 4821
+    };
+    seedBookings(s);
+    return s;
+  }
+  var NAMES = ['Dan R.', 'Tom W.', 'Kieran B.', 'Josh M.', 'Alfie P.', 'Callum S.', 'Ryan D.', 'Ollie K.', 'Harvey L.', 'Luca F.', 'Ben T.', 'Charlie H.', 'Mason J.', 'Reece G.', 'Liam C.', 'Archie N.'];
+  var COMMENTS = ['Spot on as always.', 'Great fade and a good chat.', 'Quick and sharp.', 'Best beard trim I’ve had.', 'Bit of a wait, but worth it.', 'Booked in for next month already.', 'Proper job.', 'Good shout on the restyle.'];
+  function seedBookings(s) {
+    var r = rng(Number(TODAY().replace(/-/g, '')) % 100000), t0 = today0(), prev = S, sat = satKey(); S = s;
+    for (var i = 0; i < 8; i++) {
+      var key = dk(addD(t0, i));
+      s.barbers.forEach(function (b) {
+        if (b.id === 'nick' && key === sat) return;
+        var want = 2 + Math.floor(r() * 5);
+        for (var k = 0; k < 14 && want > 0; k++) {
+          var sv = b.services[Math.floor(r() * b.services.length)], free = slotsFor(b, sv.mins, key, true);
+          if (!free.length) break;
+          var t = free[Math.floor(r() * free.length)], past = i === 0 && t + sv.mins <= nowM();
+          s.bookings.push({ id: 'b' + (s.ref++), barber: b.id, svc: sv.id, name: sv.name, mins: sv.mins, price: sv.price, date: key, start: t, who: NAMES[Math.floor(r() * NAMES.length)],
+            status: past ? (r() < .08 ? 'noshow' : 'done') : 'booked', paidBy: past ? (r() < .55 ? 'card' : 'cash') : null, mine: false, pay: 'chair', source: r() < .15 ? 'phone' : 'online' });
+          want--;
+        }
+      });
+    }
+    // Nick's Saturday is fully booked, so the waitlist has something to do
+    var nick = s.barbers[0], w = windowFor(nick, sat);
+    if (w && !w.off) {
+      var t = w.from;
+      while (t < w.to) {
+        if (w.brk && t >= w.brk[0] && t < w.brk[1]) { t = w.brk[1]; continue; }
+        var lim = w.brk && t < w.brk[0] ? w.brk[0] : w.to, room = lim - t;
+        var m = room >= 75 ? (r() < .5 ? 45 : 30) : room >= 45 ? (room === 60 ? 60 : 45) : room;
+        var opts = nick.services.filter(function (x) { return x.mins === m; }); if (!opts.length) break;
+        var sv = opts[Math.floor(r() * opts.length)];
+        s.bookings.push({ id: 'b' + (s.ref++), barber: 'nick', svc: sv.id, name: sv.name, mins: m, price: sv.price, date: sat, start: t, who: NAMES[Math.floor(r() * NAMES.length)], status: 'booked', paidBy: null, mine: false, pay: 'chair', source: r() < .2 ? 'phone' : 'online' });
+        t += m;
+      }
+      s.wait.push({ id: 'w1', barber: 'nick', date: sat, svc: 'haircut', who: 'Tom W.', mine: false, notified: null }, { id: 'w2', barber: 'nick', date: sat, svc: 'skinfade', who: 'Reece G.', mine: false, notified: null });
+    }
+    // The demo customer's own history with Nick: six cuts, so their loyalty card has six stamps. The latest isn't rated yet.
+    var fade = nick.services.filter(function (x) { return x.id === 'skinfade'; })[0];
+    [3, 24, 45, 66, 87, 108].forEach(function (ago, j) {
+      s.bookings.push({ id: 'b' + (s.ref++), barber: 'nick', svc: fade.id, name: fade.name, mins: fade.mins, price: fade.price, date: dk(addD(t0, -ago)), start: 600 + 30 * (j % 3), who: '', status: 'done', paidBy: j % 2 ? 'cash' : 'card', mine: true, pay: 'chair', source: 'online', rating: j ? 5 : null, feedbackDone: j > 0 });
+    });
+    for (var p = 0; p < 184; p++) s.people.push({ optin: r() < .64, last: 1 + Math.floor(r() * 95), visits: 1 + Math.floor(r() * 14) });
+    [5, 5, 4, 5, 5, 5, 4, 5, 3, 5, 5, 4, 5, 5, 5, 4].forEach(function (n, j) {
+      s.reviews.push({ barber: ['nick', 'jay', 'sam'][j % 3], stars: n, comment: COMMENTS[Math.floor(r() * COMMENTS.length)], date: dk(addD(t0, -(j * 2 + 1))), who: NAMES[Math.floor(r() * NAMES.length)] });
+    });
+    for (var q = 0; q < 7; q++) { var pr = s.products[Math.floor(r() * s.products.length)]; s.sales.push({ id: 's' + q, pid: pr.id, qty: 1, date: dk(addD(t0, -Math.floor(r() * 6))), price: pr.price }); }
+    s.vouchers.push({ code: 'LOFT-S7Q4', barber: 'sam', amount: 30, balance: 30, to: 'You', from: 'a friend', mine: true, received: true });
+    S = prev;
+  }
+  function loadState() { try { var x = JSON.parse(localStorage.getItem(KEY) || 'null'); if (x && x.v === 3 && x.barbers) return x; } catch (e) { /* private window or blocked storage: start fresh */ } return seed(); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* the demo still works for this visit */ } }
+
+  /* ---------- lookups ---------- */
+  function barber(id) { return S.barbers.filter(function (b) { return b.id === id; })[0]; }
+  function svcOf(b, id) { return b && b.services.filter(function (x) { return x.id === id; })[0]; }
+  function byId(id) { return S.bookings.filter(function (y) { return y.id === id; })[0]; }
+  function product(id) { return S.products.filter(function (p) { return p.id === id; })[0]; }
+  function chairOf(id) { var c = S.chairs.filter(function (x) { return x.who === id; })[0]; return c ? c.n : null; }
+
+  /* ---------- availability ---------- */
+  function windowFor(b, key) {
+    var wd = fromDk(key).getDay(), sh = S.shop.hours[wd], h = b.hours[wd];
+    if (!sh || !h || !h.on) return null;
+    if ((b.off || []).some(function (o) { return o.date === key; })) return { off: true };
+    var from = Math.max(h.from, sh[0]), to = Math.min(h.to, sh[1]);
+    return to > from ? { from: from, to: to, brk: h.brk } : null;
+  }
+  function busy(bid, key) { return S.bookings.filter(function (x) { return x.barber === bid && x.date === key && x.status !== 'cancelled'; }); }
+  // Every start time, 15 minutes apart, where the whole service fits: inside their hours, clear of their break and other bookings.
+  // lead is how much notice to allow today (the shop's setting unless given; walk-ins use none).
+  function slotsFor(b, m, key, ignoreNow, lead) {
+    var w = windowFor(b, key); if (!w || w.off) return [];
+    var t0 = TODAY(); if (key < t0 && !ignoreNow) return [];
+    var cut = key === t0 && !ignoreNow ? nowM() + (lead == null ? S.shop.notice : lead) : -1, bs = busy(b.id, key), out = [];
+    for (var t = w.from; t + m <= w.to; t += 15) {
+      if (t < cut) continue;
+      if (w.brk && t < w.brk[1] && w.brk[0] < t + m) continue;
+      if (bs.some(function (x) { return x.start < t + m && t < x.start + x.mins; })) continue;
+      out.push(t);
+    }
+    return out;
+  }
+  function nextFree(b, days) {
+    var sv = b.services[0]; if (!sv) return null;
+    for (var i = 0; i < (days || 14); i++) { var key = dk(addD(today0(), i)), sl = slotsFor(b, sv.mins, key); if (sl.length) return { key: key, t: sl[0], svc: sv }; }
+    return null;
+  }
+  function freeThisWeek(b) { var n = 0; for (var i = 0; i < 7; i++) n += slotsFor(b, 30, dk(addD(today0(), i))).filter(function (t) { return t % 30 === 0; }).length; return n; }
+  function minsIn(b, key) { var w = windowFor(b, key); if (!w || w.off) return 0; var m = w.to - w.from; if (w.brk) m -= Math.max(0, Math.min(w.to, w.brk[1]) - Math.max(w.from, w.brk[0])); return m; }
+  // When a slot frees up, everyone waiting on that barber and day gets a text (here, a flag) with the first time that fits
+  function notifyWait(bid, date) {
+    var b = barber(bid), n = 0;
+    S.wait.forEach(function (w) {
+      if (w.barber !== bid || w.date !== date || w.notified) return;
+      var sv = svcOf(b, w.svc) || b.services[0], sl = slotsFor(b, sv.mins, date);
+      if (sl.length) { w.notified = { start: sl[0] }; n++; }
+    });
+    return n;
+  }
+
+  /* ---------- loyalty, offers and what a booking costs ---------- */
+  function loyaltyFor(b) {
+    var L = b && b.loyalty; if (!L || !L.on) return null;
+    var mine = S.bookings.filter(function (x) { return x.mine && x.barber === b.id && x.status !== 'cancelled'; });
+    var paid = mine.filter(function (x) { return x.status === 'done' && x.covered !== 'loyalty'; }).length;
+    var used = mine.filter(function (x) { return x.covered === 'loyalty'; }).length;
+    var st = Math.max(0, paid - used * L.n);
+    return { n: L.n, stamps: Math.min(st, L.n), free: st >= L.n };
+  }
+  function ownedFor(b, type) { return S.owned.filter(function (o) { return o.barber === b.id && o.type === type && o.left > 0; })[0]; }
+  function myVoucher(b) { return S.vouchers.filter(function (v) { return v.mine && v.received && v.barber === b.id && v.balance > 0; })[0]; }
+  function payNow(s) { return S.shop.pay === 'full' ? s.price : S.shop.pay === 'deposit' ? Math.min(S.shop.deposit, s.price) : 0; }
+  // In order: a full loyalty card, a cut club, a pack, a gift card, then the shop's deposit or pay-in-full setting
+  function quote(b, s) {
+    var q = { covered: null, voucher: 0, now: 0, chair: s.price };
+    var L = loyaltyFor(b);
+    if (L && L.free) q.covered = 'loyalty'; else if (ownedFor(b, 'member')) q.covered = 'member'; else if (ownedFor(b, 'pack')) q.covered = 'pack';
+    if (q.covered) { q.chair = 0; return q; }
+    var v = myVoucher(b);
+    if (v && U.f.useV !== false) q.voucher = Math.min(v.balance, s.price);
+    if (!q.voucher) q.now = payNow(s);
+    q.chair = Math.max(0, s.price - q.voucher - q.now);
+    return q;
+  }
+  function dueOf(x) { return x.covered ? 0 : Math.max(0, x.price - (x.paid || 0) - (x.voucherUsed || 0)); }
+
+  /* ---------- the view ---------- */
+  U = { view: 'customer', c: 'home', b: 'diary', o: 'shop', as: 'nick', f: null, bDay: null, oDay: null, cancel: null, bCancel: null, err: '', fb: null, sheet: null, mk: { aud: 'all', ch: 'sms', text: null } };
+  function go(patch) { for (var k in patch) U[k] = patch[k]; render(); var sc = document.getElementById('screen'); if (patch.c || patch.b || patch.o || patch.view) sc.scrollTop = 0; }
+  var toastT;
+  function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, Math.max(2800, msg.length * 60)); }
+  function ball(b, size) { return '<span class="ball' + (b && b.owner ? ' own' : '') + (size ? ' ' + size : '') + '" aria-hidden="true"><i>' + esc((b && b.name || '?').charAt(0).toUpperCase()) + '</i></span>'; }
+  function role(b) { var n = chairOf(b.id); return b.owner ? 'Owner, chair I' : (n ? 'Chair ' + roman(n) : 'Barber'); }
+  function head(title, sub) { return '<div class="sec-h"><h2>' + title + '</h2>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>'; }
+
+  function render() {
+    document.getElementById('viewseg').innerHTML = [['customer', 'Customer'], ['barber', 'Barber'], ['owner', 'Nick']].map(function (v) {
+      return '<button type="button" role="tab" aria-selected="' + (U.view === v[0]) + '" class="' + (U.view === v[0] ? 'on' : '') + '" data-act="view" data-v="' + v[0] + '">' + v[1] + '</button>';
+    }).join('');
+    var tabs = U.view === 'customer' ? [['home', 'home', 'Home'], ['book', 'scissors', 'Book'], ['wallet', 'wallet', 'Wallet'], ['mine', 'ticket', 'Bookings']]
+      : U.view === 'barber' ? [['diary', 'cal', 'Diary'], ['hours', 'clock', 'Hours'], ['menu', 'list', 'Menu'], ['offers', 'gift', 'Offers']]
+      : [['shop', 'shop', 'Shop'], ['chairs', 'chair', 'Chairs'], ['marketing', 'megaphone', 'Marketing'], ['products', 'bag', 'Products'], ['settings', 'gear', 'Settings']];
+    var cur = U.view === 'customer' ? (['home', 'mine', 'wallet'].indexOf(U.c) !== -1 ? U.c : 'book') : U.view === 'barber' ? U.b : U.o;
+    document.getElementById('tabbar').innerHTML = tabs.map(function (t) { return '<button type="button" class="' + (cur === t[0] ? 'on' : '') + '" data-act="tab" data-t="' + t[0] + '" aria-current="' + (cur === t[0] ? 'page' : 'false') + '">' + ico(t[1]) + t[2] + '</button>'; }).join('');
+    document.getElementById('screen').innerHTML = U.view === 'customer' ? customer() : U.view === 'barber' ? barberView() : owner();
+    renderBrief();
+  }
+
+  /* ---------- customer ---------- */
+  function customer() {
+    var v = { home: cHome, mine: cMine, wallet: cWallet, pick: cPick, barber: cBarber, time: cTime, details: cDetails, done: cDone }[U.c];
+    return (v || cHome)();
+  }
+  function soonest() {
+    var best = null;
+    S.barbers.forEach(function (b) { var n = nextFree(b, 7); if (n && (!best || n.key < best.n.key || (n.key === best.n.key && n.t < best.n.t))) best = { b: b, n: n }; });
+    return best;
+  }
+  function upcomingMine() { var t = TODAY(), now = nowM(); return S.bookings.filter(function (x) { return x.mine && x.status === 'booked' && (x.date > t || (x.date === t && x.start + x.mins > now)); }).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.start - b.start; }); }
+  function fromPrice(b) { return Math.min.apply(null, b.services.map(function (x) { return x.price; }).concat([999])); }
+  function bcard(b, full) {
+    var n = nextFree(b, 14), from = fromPrice(b);
+    return '<button type="button" class="bcard"' + (full ? ' style="width:100%"' : '') + ' data-act="openBarber" data-b="' + b.id + '"><div class="bhead">' + ball(b) + '<div><b>' + esc(b.name) + '</b><small>' + esc(role(b)) + '</small></div></div>'
+      + '<p class="does">' + esc(b.does) + '</p>'
+      + '<div class="bfoot"><span>From <b>' + (from < 999 ? gbp(from) : 'TBC') + '</b></span><span>' + (n ? 'Next <b>' + esc(dayLabel(n.key)) + ', ' + hm(n.t) + '</b>' : 'Fully booked') + '</span></div></button>';
+  }
+  function perksHtml() {
+    return '<div class="perks">'
+      + '<div class="perk"><span class="pi">' + ico('pool') + '</span><div><b>Pool table</b><small>Before or after your cut</small></div></div>'
+      + '<div class="perk"><span class="pi">' + ico('glass') + '</span><div><b>Whisky bar</b><small>Over 18s</small></div></div>'
+      + '<div class="perk"><span class="pi">' + ico('pad') + '</span><div><b>Games room</b><small>Something to do while you wait</small></div></div>'
+      + '<div class="perk"><span class="pi">' + ico('tv') + '</span><div><b>The football</b><small>On the big screen</small></div></div></div>';
+  }
+  function eventsHtml(removable) {
+    var ev = S.events.slice().filter(function (e) { return removable || e.date >= TODAY(); }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    if (!ev.length) return '<div class="none">Nothing on yet.</div>';
+    return '<div class="events">' + ev.map(function (e) { var d = fromDk(e.date); return '<div class="event"><div class="d"><small>' + DAYS[d.getDay()] + '</small><b>' + d.getDate() + '</b></div><div style="flex:1;min-width:0"><b class="t">' + esc(e.title) + '</b><span class="n">' + esc(e.note) + '</span></div>' + (removable ? '<button class="x" type="button" data-act="rmEv" data-id="' + e.id + '" aria-label="Remove ' + esc(e.title) + '">' + ico('x') + '</button>' : '') + '</div>'; }).join('') + '</div>';
+  }
+  function feedbackDue() {
+    if (U.fb && U.fb.stage === 'google') return byId(U.fb.id);
+    return S.bookings.filter(function (x) { return x.mine && x.status === 'done' && !x.feedbackDone && S.dismissed.indexOf(x.id) === -1; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
+  }
+  function feedbackHtml(x) {
+    var b = barber(x.barber) || { name: 'your barber' }, st = U.fb && U.fb.id === x.id ? U.fb.stage : 'rate', h = '<div class="alert">';
+    if (st === 'google') return h + '<span class="lbl gold">Thank you</span><b>Would you put that on Google too?</b><p>It helps a small shop more than anything. We ask everyone, whatever they rated.</p><div class="rowbtns"><button class="btn primary" type="button" data-act="google" data-id="' + x.id + '">Leave a Google review</button><button class="btn ghost" type="button" data-act="fbDismiss" data-id="' + x.id + '">Not now</button></div></div>';
+    h += '<span class="lbl gold">Your last cut</span><b>How was it with ' + esc(b.name) + '?</b><p>' + esc(x.name) + ', ' + esc(dayLabel(x.date, true)) + '. ' + (b.owner ? 'Only Nick sees this.' : 'Only ' + esc(b.name) + ' and Nick see this.') + '</p>';
+    h += '<div class="stars" role="group" aria-label="Rate your cut">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="star' + (x.rating >= n ? ' on' : '') + '" data-act="rate" data-id="' + x.id + '" data-n="' + n + '" aria-label="' + n + ' star' + (n > 1 ? 's' : '') + '">' + ico('star', x.rating >= n) + '</button>'; }).join('') + '</div>';
+    if (st === 'comment') h += '<textarea class="inp" id="fb-text" rows="3" placeholder="Anything to add? Optional" aria-label="Anything to add"></textarea><div class="rowbtns"><button class="btn primary" type="button" data-act="fbSend" data-id="' + x.id + '">Send</button><button class="btn ghost" type="button" data-act="fbDismiss" data-id="' + x.id + '">Skip</button></div>';
+    else h += '<div><button class="link" type="button" data-act="fbDismiss" data-id="' + x.id + '">Not now</button></div>';
+    return h + '</div>';
+  }
+  function alertsHtml() {
+    var out = '';
+    S.wait.filter(function (w) { return w.mine && w.notified; }).forEach(function (w) {
+      var b = barber(w.barber); if (!b) return;
+      var sv = svcOf(b, w.svc) || b.services[0], sl = slotsFor(b, sv.mins, w.date); if (!sl.length) return;
+      var t = sl.indexOf(w.notified.start) !== -1 ? w.notified.start : sl[0];
+      out += '<div class="alert"><span class="lbl gold">Waitlist</span><b>A slot just opened</b><p>' + esc(b.name) + ', ' + esc(dayLabel(w.date, true)) + ' at ' + hm(t) + '. ' + esc(sv.name) + ', ' + gbp(sv.price) + '.</p><div class="rowbtns"><button class="btn primary" type="button" data-act="quick" data-b="' + b.id + '" data-d="' + w.date + '" data-t="' + t + '" data-s="' + sv.id + '">Book it</button><button class="btn ghost" type="button" data-act="dropWait" data-id="' + w.id + '">No thanks</button></div></div>';
+    });
+    var fb = feedbackDue(); if (fb) out += feedbackHtml(fb);
+    return out ? '<div class="sec">' + out + '</div>' : '';
+  }
+  function cHome() {
+    var s = soonest(), up = upcomingMine()[0];
+    var h = '<div class="hero">' + mark() + '<p class="tag">Cuts, pool, a whisky bar and the football on.</p>'
+      + '<button class="btn primary big" type="button" data-act="startBook">Book a cut</button>';
+    if (s) h += '<div class="nextfree"><span class="dot"></span><div>Next free: <b>' + esc(s.b.name) + ', ' + esc(dayLabel(s.n.key)) + ' at ' + hm(s.n.t) + '</b></div><button class="link" type="button" data-act="quick" data-b="' + s.b.id + '" data-d="' + s.n.key + '" data-t="' + s.n.t + '" data-s="' + s.n.svc.id + '">Book it</button></div>';
+    h += '</div><div class="pad">' + alertsHtml();
+    if (up) { var ub = barber(up.barber); h += '<div class="sec">' + head('Your next cut') + '<button type="button" class="bcard" style="width:100%" data-act="tab" data-t="mine"><div class="bhead">' + ball(ub) + '<div><b>' + esc(dayLabel(up.date)) + ', ' + hm(up.start) + '</b><small>' + esc(up.name) + ' with ' + esc(ub ? ub.name : '') + '</small></div></div></button></div>'; }
+    var lb = S.barbers.filter(function (b) { var L = loyaltyFor(b); return L && (L.stamps || L.free); })[0];
+    if (lb) { var L = loyaltyFor(lb); h += '<button type="button" class="callout" data-act="tab" data-t="wallet"><span><b>' + (L.free ? 'Your next cut with ' + esc(lb.name) + ' is free' : 'Loyalty card with ' + esc(lb.name) + ': ' + L.stamps + ' of ' + L.n) + '</b></span><span style="margin-left:auto;display:grid">' + ico('arrow') + '</span></button>'; }
+    h += '<div class="sec">' + head('The barbers', 'Each sets their own days and hours') + '<div class="rail">' + S.barbers.map(function (b) { return bcard(b); }).join('') + '</div></div>';
+    if (S.events.some(function (e) { return e.date >= TODAY(); })) h += '<div class="sec">' + head('What’s on') + eventsHtml(false) + '</div>';
+    h += '<div class="sec">' + head('While you wait') + perksHtml() + '</div></div>';
+    return h;
+  }
+  function flowTop(step, backTo) {
+    return '<div class="crumb"><button class="back" type="button" data-act="cgo" data-c="' + backTo + '" aria-label="Back">' + ico('back') + '</button><div class="steps" aria-label="Step ' + step + ' of 4">' + [1, 2, 3, 4].map(function (i) { return '<i class="' + (i <= step ? 'on' : '') + '"></i>'; }).join('') + '</div></div>';
+  }
+  function cPick() {
+    return '<div class="pad">' + flowTop(1, 'home') + '<div class="sec">' + head('Who’s cutting?') + '<div style="display:grid;gap:12px">' + S.barbers.map(function (b) { return bcard(b, true); }).join('') + '</div></div></div>';
+  }
+  function cBarber() {
+    var b = barber(U.f.barber); if (!b) return cPick();
+    var h = '<div class="pad">' + flowTop(1, 'pick') + '<div class="profile">' + ball(b, 'lg') + '<div><h1>' + esc(b.name) + '</h1><p>' + esc(role(b)) + '. ' + esc(b.does) + '.</p></div></div>'
+      + '<div class="sec"><div class="work"><div>Photo</div><div>Photo</div><div>Photo</div></div><p class="small">' + esc(b.name) + '’s own photos and Instagram go here.</p></div>'
+      + '<div class="sec">' + head('Pick a service') + '<div class="svcs">';
+    h += b.services.map(function (s) { return '<button type="button" class="svc' + (U.f.svc === s.id ? ' on' : '') + '" data-act="pickSvc" data-s="' + s.id + '"><div><b>' + esc(s.name) + '</b><small>' + esc(svcTime(s)) + (s.note ? ' · ' + esc(s.note) : '') + '</small></div><span class="p">' + gbp(s.price) + '</span></button>'; }).join('');
+    if (!b.services.length) h += '<div class="none">No services listed yet.</div>';
+    return h + '</div></div></div>';
+  }
+  function cTime() {
+    var b = barber(U.f.barber), s = svcOf(b, U.f.svc); if (!s) return cBarber();
+    var t0 = today0(), days = [], h;
+    for (var i = 0; i < 14; i++) days.push(dk(addD(t0, i)));
+    if (!U.f.date) U.f.date = days.filter(function (k) { return slotsFor(b, s.mins, k).length; })[0] || days[0];
+    h = '<div class="pad">' + flowTop(2, 'barber') + '<div class="pill">' + ball(b, 'sm') + esc(s.name) + ' with ' + esc(b.name) + ' · ' + gbp(s.price) + '</div>'
+      + '<div class="sec">' + head('When?') + '<div class="days">' + days.map(function (k) {
+        var d = fromDk(k), w = windowFor(b, k), n = slotsFor(b, s.mins, k).length, md = matchOn(k);
+        var sub = !w ? 'Off' : w.off ? 'Away' : n ? n + ' free' : 'Full';
+        return '<button type="button" class="day' + (U.f.date === k ? ' on' : '') + (!n ? ' off' : '') + '" data-act="pickDay" data-d="' + k + '"><small>' + (k === TODAY() ? 'Today' : DAYS[d.getDay()]) + '</small><b>' + d.getDate() + '</b><em class="' + (md && n ? 'md' : '') + '">' + (md && n ? 'Match' : sub) + '</em></button>';
+      }).join('') + '</div></div>';
+    var sl = slotsFor(b, s.mins, U.f.date), w = windowFor(b, U.f.date);
+    if (!sl.length) {
+      var nx = days.filter(function (k) { return k > U.f.date && slotsFor(b, s.mins, k).length; })[0];
+      var full = w && !w.off && U.f.date >= TODAY(), onW = S.wait.some(function (x) { return x.mine && x.barber === b.id && x.date === U.f.date; });
+      h += '<div class="none"><b>' + (!w ? esc(b.name) + ' isn’t in ' + esc(dayIn(U.f.date)) + '.' : w.off ? esc(b.name) + ' is away ' + esc(dayIn(U.f.date)) + '.' : 'Fully booked ' + esc(dayIn(U.f.date)) + '.') + '</b>';
+      if (full) h += onW ? '<span>You’re on the waitlist. We’ll text you the moment a slot opens.</span>' : '<span>Join the waitlist and we’ll text you if a slot opens.</span><button class="btn primary" type="button" data-act="joinWait">Join the waitlist</button>';
+      h += (nx ? '<button class="btn' + (full ? ' ghost' : ' primary') + '" type="button" data-act="pickDay" data-d="' + nx + '">Next free: ' + esc(dayLabel(nx)) + '</button>' : '<span>Nothing free in the next two weeks.</span>') + '</div>';
+    } else {
+      [['Morning', 0, 720], ['Afternoon', 720, 1020], ['Evening', 1020, 1440]].forEach(function (g) {
+        var x = sl.filter(function (t) { return t >= g[1] && t < g[2]; }); if (!x.length) return;
+        h += '<div class="slots"><h3>' + g[0] + '</h3><div class="slotgrid">' + x.map(function (t) { return '<button type="button" class="slot' + (U.f.time === t ? ' on' : '') + '" data-act="pickTime" data-t="' + t + '">' + hm(t) + '</button>'; }).join('') + '</div></div>';
+      });
+    }
+    return h + '</div>';
+  }
+  function payboxHtml(b, s, q) {
+    function pb(icon, title, text, now) { return '<div class="paybox' + (now ? ' now' : '') + '">' + ico(icon) + '<div><b>' + title + '</b><p>' + text + '</p></div></div>'; }
+    var nm = esc(b.name);
+    if (q.covered === 'loyalty') return pb('star', 'Free with your loyalty card', 'You’ve filled your card with ' + nm + '. Nothing to pay.', true);
+    if (q.covered === 'member') return pb('gift', 'Covered by your cut club', 'One cut a month with ' + nm + '. Nothing to pay.', true);
+    if (q.covered === 'pack') { var o = ownedFor(b, 'pack'); return pb('gift', 'Covered by your pack', 'Uses 1 of your ' + o.left + ' cuts left with ' + nm + '.', true); }
+    if (q.voucher) return '<div class="paybox now">' + ico('gift') + '<div><b>' + gbp(q.voucher) + ' from your gift card</b><p>' + (q.chair ? gbp(q.chair) + ' left to pay ' + nm + ' in the chair.' : 'Nothing else to pay.') + '</p><button class="link" type="button" data-act="useV" data-v="0">Don’t use it</button></div></div>';
+    var v = myVoucher(b), vl = v ? '<button class="link" type="button" data-act="useV" data-v="1">Use your ' + gbp(v.balance) + ' gift card</button>' : '';
+    if (!q.now) return '<div class="paybox">' + ico('cash') + '<div><b>Pay ' + nm + ' in the chair</b><p>Cash or card, straight to ' + nm + ' after your cut. Nothing to pay now.</p>' + vl + '</div></div>';
+    return '<div class="paybox now">' + ico('card') + '<div><b>' + (S.shop.pay === 'full' ? 'Pay ' + gbp(q.now) + ' now' : gbp(q.now) + ' deposit now, the rest in the chair') + '</b><p>Paid straight to ' + nm + ', not the shop. ' + (S.shop.pay === 'deposit' ? 'It comes off the price, and holds the slot.' : 'Nothing to pay on the day.') + '</p>' + vl + '</div></div>';
+  }
+  function cDetails() {
+    var b = barber(U.f.barber), s = svcOf(b, U.f.svc); if (!s || U.f.time == null) return cTime();
+    var q = quote(b, s), ex = U.f.extras || {};
+    var h = '<div class="pad">' + flowTop(3, 'time')
+      + '<div class="sec">' + head('Nearly done') + '<div class="summary"><div class="row"><span>Barber</span><b>' + esc(b.name) + '</b></div><div class="row"><span>Service</span><b>' + esc(s.name) + '</b></div>'
+      + '<div class="row"><span>When</span><b>' + esc(dayLabel(U.f.date, true)) + ', ' + hm(U.f.time) + '</b></div><div class="row"><span>Price</span><b>' + (q.covered ? '<s>' + gbp(s.price) + '</s>' + (q.covered === 'loyalty' ? 'Free' : 'Covered') : gbp(s.price)) + '</b></div></div></div>'
+      + '<form id="bookform" class="sec" novalidate>'
+      + '<div class="field"><label for="f-name">Name</label><input class="inp" id="f-name" autocomplete="name" value="' + esc(S.me.name) + '" placeholder="First name and surname"></div>'
+      + '<div class="field"><label for="f-phone">Mobile</label><input class="inp" id="f-phone" type="tel" inputmode="tel" autocomplete="tel" value="' + esc(S.me.phone) + '" placeholder="For your reminder text"></div>'
+      + '<div class="field"><label for="f-email">Email (optional)</label><input class="inp" id="f-email" type="email" autocomplete="email" value="' + esc(S.me.email) + '" placeholder="For your confirmation"></div>'
+      + payboxHtml(b, s, q);
+    if (S.products.length) h += '<div class="field"><span class="fl">Add to your booking</span><div class="pchips">' + S.products.map(function (p) { return '<button type="button" class="pchip' + (ex[p.id] ? ' on' : '') + '" data-act="extra" data-p="' + p.id + '"' + (p.stock > 0 ? '' : ' disabled') + ' aria-pressed="' + !!ex[p.id] + '">' + esc(p.name) + ' · ' + (p.stock > 0 ? gbp(p.price) : 'Sold out') + '</button>'; }).join('') + '</div><p class="small">Pick it up and pay in the shop on the day.</p></div>';
+    h += '<label class="check"><input type="checkbox" id="f-optin"' + (S.me.optin ? ' checked' : '') + '><span>Send me news and offers from The Loft. You can stop them any time.</span></label>';
+    if (U.err) h += '<p class="err">' + esc(U.err) + '</p>';
+    h += '<button class="btn primary big" type="submit">' + (q.now ? 'Pay ' + gbp(q.now) + ' and book' : 'Confirm booking') + '</button>'
+      + '<p class="small" style="text-align:center">Free to cancel up to 2 hours before.</p></form></div>';
+    return h;
+  }
+  function payLine(x, b) {
+    var nm = b.name;
+    if (x.covered === 'loyalty') return 'Free cut with your loyalty card.';
+    if (x.covered === 'member') return 'Covered by your cut club.';
+    if (x.covered === 'pack') return 'Covered by your pack. ' + (x.ownedLeft || 0) + ' cut' + (x.ownedLeft === 1 ? '' : 's') + ' left.';
+    if (x.voucherUsed) { var rest = x.price - x.voucherUsed; return gbp(x.voucherUsed) + ' from your gift card. ' + (rest > 0 ? gbp(rest) + ' to ' + nm + ' in the chair.' : 'Nothing else to pay.'); }
+    if (x.pay === 'full') return 'Paid ' + gbp(x.price) + ' to ' + nm + '.';
+    if (x.pay === 'deposit') return gbp(x.paid) + ' deposit paid. ' + gbp(x.price - x.paid) + ' to ' + nm + ' in the chair.';
+    return 'Pay ' + nm + ' in the chair: ' + gbp(x.price) + '.';
+  }
+  function extrasLine(x) { var ex = (x.extras || []).map(product).filter(Boolean); return ex.length ? ex.map(function (p) { return p.name; }).join(', ') : ''; }
+  function cDone() {
+    var x = byId(U.last); if (!x) return cHome();
+    var b = barber(x.barber), ex = extrasLine(x);
+    return '<div class="pad"><div class="done-head"><h1>You’re booked in.</h1><p>Confirmation sent by text' + (x.email ? ' and email' : '') + '. A reminder goes out the day before.</p></div>'
+      + '<div class="ticket"><div class="tt">' + mark() + '<div class="ref">Booking<b>No. ' + esc(x.id.slice(1)) + '</b></div></div>'
+      + '<div class="tb"><div class="when">' + esc(dayLabel(x.date, true)) + '<br>' + hm(x.start) + '</div><div class="kv"><span>Barber</span><b>' + esc(b.name) + (chairOf(b.id) ? ', chair ' + roman(chairOf(b.id)) : '') + '</b><span>Service</span><b>' + esc(x.name) + '</b><span>Takes</span><b>' + mins(x.mins) + '</b>' + (ex ? '<span>Pick up</span><b>' + esc(ex) + '</b>' : '') + '</div></div>'
+      + '<div class="cut"></div><div class="tf"><b>' + esc(payLine(x, b)) + '</b>' + (ex ? '<span>Pay for ' + esc(ex) + ' in the shop.</span>' : '') + '<span>' + (matchOn(x.date) ? 'The match is on that afternoon.' : 'Come early for a game of pool.') + '</span></div></div>'
+      + '<div class="rowbtns"><button class="btn primary" type="button" data-act="tab" data-t="home">Done</button><button class="btn ghost" type="button" data-act="tab" data-t="mine">My bookings</button></div></div>';
+  }
+  function cMine() {
+    var all = S.bookings.filter(function (x) { return x.mine; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.start - a.start; });
+    var up = upcomingMine(), past = all.filter(function (x) { return up.indexOf(x) === -1; }), waits = S.wait.filter(function (w) { return w.mine; });
+    var h = '<div class="pad"><div class="sec">' + head('My bookings');
+    if (up.length) h += '<div class="list">' + up.map(function (x) { return mineItem(x, true); }).join('') + '</div>';
+    else h += '<div class="none"><b>Nothing coming up</b><span>Pick a barber and a time.</span><button class="btn primary" type="button" data-act="startBook">Book a cut</button></div>';
+    h += '</div>';
+    if (waits.length) h += '<div class="sec">' + head('Waitlists', 'We text you the moment a slot opens.') + '<div class="list">' + waits.map(function (w) { var b = barber(w.barber) || { name: '' }; return '<div class="item"><div class="top">' + ball(b, 'sm') + '<div class="what"><b>' + esc(b.name) + ', ' + esc(dayLabel(w.date, true)) + '</b><span>' + (w.notified ? 'A slot opened. Book it from Home.' : 'Waiting for a slot.') + '</span></div><button class="x" type="button" data-act="dropWait" data-id="' + w.id + '" aria-label="Leave the waitlist">' + ico('x') + '</button></div></div>'; }).join('') + '</div></div>';
+    if (past.length) h += '<div class="sec">' + head('Before') + '<div class="list">' + past.slice(0, 4).map(function (x) { return mineItem(x, false); }).join('') + '</div>' + (past.length > 4 ? '<p class="small">And ' + (past.length - 4) + ' more.</p>' : '') + '</div>';
+    return h + '</div>';
+  }
+  function mineItem(x, live) {
+    var b = barber(x.barber) || { name: 'Barber' };
+    var h = '<div class="item"><div class="top">' + ball(b, 'sm') + '<div class="what"><b>' + esc(dayLabel(x.date)) + ', ' + hm(x.start) + '</b><span>' + esc(x.name) + ' with ' + esc(b.name) + ' · ' + (x.covered ? (x.covered === 'loyalty' ? 'Free' : 'Covered') : gbp(x.price)) + '</span></div><span class="chip ' + x.status + '">' + ({ booked: 'Booked', done: 'Done', noshow: 'Missed', cancelled: 'Cancelled' })[x.status] + '</span></div>';
+    if (live) {
+      if (U.cancel === x.id) h += '<div class="confirm">Cancel this booking?<span class="rowbtns"><button class="btn sm" type="button" data-act="keep">Keep it</button><button class="btn sm danger" type="button" data-act="cancelMine" data-id="' + x.id + '">Cancel booking</button></span></div>';
+      else h += '<div class="acts"><button class="btn sm ghost" type="button" data-act="askCancel" data-id="' + x.id + '">Cancel</button><button class="btn sm" type="button" data-act="rebook" data-id="' + x.id + '">Move it</button></div>';
+    } else if (x.status === 'done' && b.id) h += '<div class="acts"><button class="btn sm" type="button" data-act="again" data-id="' + x.id + '">Book the same again</button></div>';
+    return h + '</div>';
+  }
+  function loyalCard(b) {
+    var L = loyaltyFor(b), k = L.stamps, st = '';
+    for (var i = 0; i < L.n; i++) st += '<span class="stamp' + (i < k ? ' on' : '') + '">' + (i < k ? ico('scissors') : '') + '</span>';
+    st += '<span class="stamp free' + (L.free ? ' on' : '') + '">Free</span>';
+    return '<div class="loyal"><div class="bhead">' + ball(b, 'sm') + '<div><b>' + esc(b.name) + '</b><small>' + (L.free ? 'Your next cut is free' : k ? (L.n - k) + ' more cut' + (L.n - k === 1 ? '' : 's') + ', then one free' : L.n + ' cuts, then one free') + '</small></div></div><div class="stamps" style="grid-template-columns:repeat(' + (L.n + 1) + ',minmax(0,1fr))">' + st + '</div></div>';
+  }
+  function offerCard(b) {
+    var o = b.offers, rows = [], base = (b.services[0] || { price: 0 }).price;
+    if (o.member.on) { var j = !!ownedFor(b, 'member'); rows.push(['member', 'Cut club', 'One cut a month', gbp(o.member.price) + ' a month', j ? 'Joined' : 'Join', j]); }
+    if (o.pack.on) { var save_ = base * o.pack.n - o.pack.price; rows.push(['pack', o.pack.n + '-cut pack', save_ > 0 ? 'Save ' + gbp(save_) + ' on haircuts' : o.pack.n + ' haircuts', gbp(o.pack.price), 'Buy', false]); }
+    if (o.gift) rows.push(['gift', 'Gift card', 'For a cut with ' + b.name, 'From £20', 'Buy', false]);
+    if (!rows.length) return '';
+    return '<div class="offer"><div class="bhead">' + ball(b, 'sm') + '<div><b>' + esc(b.name) + '</b><small>' + esc(role(b)) + '</small></div></div>' + rows.map(function (r) {
+      return '<div class="orow"><div><b>' + esc(r[1]) + '</b><small>' + esc(r[2]) + '</small></div><span class="op">' + r[3] + '</span><button class="btn sm primary" type="button" data-act="' + (r[0] === 'gift' ? 'giftOpen' : 'buyOffer') + '" data-b="' + b.id + '" data-t="' + r[0] + '"' + (r[5] ? ' disabled' : '') + '>' + r[4] + '</button></div>';
+    }).join('') + '</div>';
+  }
+  function cWallet() {
+    var h = '<div class="pad"><div class="sec">' + head('Wallet', 'Loyalty cards, cut clubs, packs and gift cards') + '</div>';
+    var cards = S.barbers.filter(function (b) { return b.loyalty && b.loyalty.on; });
+    if (cards.length) h += '<div class="sec">' + head('Loyalty cards', 'A stamp for every paid cut. Each barber sets their own.') + cards.map(loyalCard).join('') + '</div>';
+    var own = S.owned.filter(function (o) { return barber(o.barber); }), gifts = S.vouchers.filter(function (v) { return v.mine && v.received && v.balance > 0; });
+    if (own.length || gifts.length) h += '<div class="sec">' + head('Yours') + '<div class="list">'
+      + own.map(function (o) { var b = barber(o.barber); return '<div class="item"><div class="top">' + ball(b, 'sm') + '<div class="what"><b>' + (o.type === 'member' ? esc(b.name) + '’s cut club' : esc(b.name) + '’s ' + o.total + '-cut pack') + '</b><span>' + (o.type === 'member' ? (o.left ? '1 cut left this month' : 'Used this month') : o.left + ' of ' + o.total + ' cuts left') + '. Used automatically when you book.</span></div></div></div>'; }).join('')
+      + gifts.map(function (v) { var b = barber(v.barber); return '<div class="item"><div class="top">' + ball(b, 'sm') + '<div class="what"><b>' + gbp(v.balance) + ' gift card for ' + esc(b ? b.name : '') + '</b><span>From ' + esc(v.from) + '. Used automatically when you book with ' + esc(b ? b.name : '') + '.</span></div><span class="chip gold">' + esc(v.code) + '</span></div></div>'; }).join('')
+      + '</div></div>';
+    h += '<div class="sec">' + head('Offers from the barbers', 'Paid straight to the barber. Prices are examples.') + S.barbers.map(offerCard).join('') + '</div>';
+    h += '<div class="sec">' + head('In the shop', 'Add one when you book and pick it up on the day. Prices are examples.') + '<div class="list">' + S.products.map(function (p) { return '<div class="item"><div class="top"><div class="what"><b>' + esc(p.name) + '</b><span>' + (p.stock > 0 ? 'In stock' : 'Sold out') + '</span></div><div class="price">' + gbp(p.price) + '</div></div></div>'; }).join('') + '</div></div>';
+    var sent = S.vouchers.filter(function (v) { return v.mine && !v.received; });
+    if (sent.length) h += '<div class="sec">' + head('Gift cards you’ve sent') + '<div class="list">' + sent.map(function (v) { var b = barber(v.barber); return '<div class="item"><div class="top"><div class="what"><b>' + gbp(v.amount) + ' for ' + esc(v.to) + '</b><span>A cut with ' + esc(b ? b.name : '') + '</span></div><span class="chip gold">' + esc(v.code) + '</span></div></div>'; }).join('') + '</div></div>';
+    return h + '</div>';
+  }
+
+  /* ---------- barber ---------- */
+  function barberView() {
+    var b = barber(U.as) || S.barbers[0]; U.as = b.id;
+    var h = '<div class="pad"><div class="who">' + ball(b, 'lg') + '<div class="grow"><small class="lbl">Signed in as</small><select id="as" aria-label="Signed in as">' + S.barbers.map(function (x) { return '<option value="' + x.id + '"' + (x.id === b.id ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') + '</select><small>' + esc(role(b)) + '</small></div></div>';
+    var v = { hours: bHours, menu: bMenu, offers: bOffers }[U.b] || bDiary;
+    return h + v(b) + '</div>';
+  }
+  function bDiary(b) {
+    var t0 = today0(), days = []; for (var i = 0; i < 8; i++) days.push(dk(addD(t0, i)));
+    if (!U.bDay || days.indexOf(U.bDay) === -1) U.bDay = days[0];
+    var list = S.bookings.filter(function (x) { return x.barber === b.id && x.date === U.bDay; }).sort(function (x, y) { return x.start - y.start; });
+    var live = list.filter(function (x) { return x.status !== 'cancelled'; }), due = 0, taken = 0;
+    live.forEach(function (x) { if (x.status === 'done') taken += x.covered ? 0 : x.price - (x.voucherUsed || 0); else if (x.status === 'booked') { due += dueOf(x); taken += x.paid || 0; } });
+    var h = '<div class="days">' + days.map(function (k) { var d = fromDk(k), n = busy(b.id, k).length, w = windowFor(b, k); return '<button type="button" class="day' + (U.bDay === k ? ' on' : '') + (!w || w.off ? ' off' : '') + '" data-act="bDay" data-d="' + k + '"><small>' + (k === TODAY() ? 'Today' : DAYS[d.getDay()]) + '</small><b>' + d.getDate() + '</b><em>' + (!w ? 'Off' : w.off ? 'Away' : n + ' in') + '</em></button>'; }).join('') + '</div>';
+    h += '<div class="stats"><div class="stat"><small>Booked</small><b>' + live.length + '</b></div><div class="stat"><small>To take</small><b>' + gbp(due) + '</b></div><div class="stat hi"><small>Taken, yours</small><b>' + gbp(taken) + '</b></div></div>';
+    var w = windowFor(b, U.bDay), wl = S.wait.filter(function (x) { return x.barber === b.id && x.date === U.bDay && !x.notified; }).length;
+    if (!w) h += '<div class="none"><b>You’re not in ' + esc(dayIn(U.bDay)) + '</b><span>Customers can’t book you that day.</span><button class="btn" type="button" data-act="tab" data-t="hours">Change my hours</button></div>';
+    else if (w.off) h += '<div class="none"><b>You’re away ' + esc(dayIn(U.bDay)) + '</b></div>';
+    else {
+      h += '<div class="rowbtns">' + (U.bDay === TODAY() ? '<button class="btn" type="button" data-act="walkOpen">' + ico('walk') + 'Walk-in</button>' : '') + '<button class="btn" type="button" data-act="phoneOpen">' + ico('phone') + 'Add booking</button></div>';
+      h += '<p class="lede2">In ' + hm(w.from) + ' to ' + hm(w.to) + (w.brk ? ', break ' + hm(w.brk[0]) + ' to ' + hm(w.brk[1]) : '') + '. Payment comes straight to you; the shop never holds it.' + (wl ? ' <b>' + wl + ' on the waitlist</b> get a text if a slot frees up.' : '') + '</p>';
+    }
+    if (list.length) h += '<div class="list">' + list.map(function (x) {
+      var who = x.mine ? (S.me.name || 'You') : x.who, ex = extrasLine(x), d = dueOf(x), chips = [];
+      chips.push('<span class="chip ' + x.status + '">' + ({ booked: x.paid ? gbp(x.paid) + ' paid' : 'Booked', done: x.covered ? 'Covered' : x.paidBy === 'card' ? 'Paid card' : x.paidBy === 'online' ? 'Paid online' : 'Paid cash', noshow: 'No-show', cancelled: 'Cancelled' })[x.status] + '</span>');
+      if (x.source === 'walkin') chips.push('<span class="chip src">Walk-in</span>'); else if (x.source === 'phone') chips.push('<span class="chip src">Phone</span>');
+      if (x.status === 'booked' && x.covered) chips.push('<span class="chip gold">' + (x.covered === 'loyalty' ? 'Free cut' : 'Covered') + '</span>');
+      if (x.status === 'booked' && x.voucherUsed) chips.push('<span class="chip gold">Gift card</span>');
+      if (x.status === 'booked' && x.link) chips.push('<span class="chip gold">Deposit link sent</span>');
+      var o = '<div class="item"><div class="top"><div class="time">' + hm(x.start) + '<small>' + mins(x.mins) + '</small></div><div class="what"><b>' + esc(who) + '</b><span>' + esc(x.name) + '</span>' + (ex ? '<span class="ex">+ ' + esc(ex) + ', for the shop</span>' : '') + '</div><div class="side"><div class="price">' + gbp(x.price) + '</div>' + chips.join('') + '</div></div>';
+      if (x.status === 'booked') {
+        if (U.bCancel === x.id) o += '<div class="confirm">Cancel ' + esc(who) + ' at ' + hm(x.start) + '?' + (wl ? ' The waitlist gets a text.' : '') + '<span class="rowbtns"><button class="btn sm" type="button" data-act="bCancelNo">Keep it</button><button class="btn sm danger" type="button" data-act="bCancelGo" data-id="' + x.id + '">Cancel it</button></span></div>';
+        else o += '<div class="acts"><button class="btn sm ghost" type="button" data-act="noshow" data-id="' + x.id + '">No-show</button><button class="btn sm ghost" type="button" data-act="bCancelAsk" data-id="' + x.id + '">Cancel</button>'
+          + (d <= 0 ? '<button class="btn sm primary" type="button" data-act="paid" data-m="online" data-id="' + x.id + '">' + ico('check') + 'Done</button>' : '<button class="btn sm" type="button" data-act="paid" data-m="cash" data-id="' + x.id + '">Cash</button><button class="btn sm primary" type="button" data-act="tapOpen" data-id="' + x.id + '">Card ' + gbp(d) + '</button>') + '</div>';
+      }
+      return o + '</div>';
+    }).join('') + '</div>';
+    else if (w && !w.off) h += '<div class="none"><b>Nothing booked yet</b><span>Share your link and fill the day.</span></div>';
+    return h;
+  }
+  function timeOpts(from, to, sel) { var o = ''; for (var t = from; t <= to; t += 30) o += '<option value="' + t + '"' + (t === sel ? ' selected' : '') + '>' + hm(t) + '</option>'; return o; }
+  function bHours(b) {
+    var h = '<p class="lede2">The days and times you work. <b>Customers see a change straight away.</b> Nick sets the shop’s hours; you work any time inside them.</p><div class="hours">';
+    h += WEEK.map(function (d) {
+      var sh = S.shop.hours[d], x = b.hours[d];
+      if (!sh) return '<div class="hrow closed"><span class="dn">' + DAYS[d] + '</span><span></span><div class="times">Shop closed</div></div>';
+      var on = x.on, from = Math.max(x.from, sh[0]), to = Math.min(x.to, sh[1]);
+      return '<div class="hrow"><span class="dn">' + DAYS[d] + '</span><label class="sw" title="Working ' + DAYS_L[d] + '"><input type="checkbox" data-ch="dayOn" data-d="' + d + '"' + (on ? ' checked' : '') + ' aria-label="Working on ' + DAYS_L[d] + '"><span></span></label>'
+        + '<div class="times">' + (on ? '<select data-ch="from" data-d="' + d + '" aria-label="Start on ' + DAYS_L[d] + '">' + timeOpts(sh[0], sh[1] - 30, from) + '</select>to<select data-ch="to" data-d="' + d + '" aria-label="Finish on ' + DAYS_L[d] + '">' + timeOpts(sh[0] + 30, sh[1], to) + '</select>'
+          + '<label class="brk"><input type="checkbox" data-ch="brk" data-d="' + d + '"' + (x.brk ? ' checked' : '') + '>Lunch' + (x.brk ? ' ' + hm(x.brk[0]) : '') + '</label>' : 'Not working') + '</div></div>';
+    }).join('');
+    h += '</div><div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat hi"><small>Free half-hours this week</small><b>' + freeThisWeek(b) + '</b></div><div class="stat"><small>Hours in this week</small><b>' + (function () { var m = 0; for (var i = 0; i < 7; i++) m += minsIn(b, dk(addD(today0(), i))); return Math.round(m / 6) / 10; })() + '</b></div></div>';
+    h += '<div class="sec">' + head('Days away', 'Holidays and days off. No one can book you on them.') + '<div class="form2"><input class="inp" type="date" id="offdate" min="' + TODAY() + '" aria-label="Day away"><button class="btn" type="button" data-act="addOff">' + ico('plus') + 'Add day</button></div>';
+    var off = (b.off || []).filter(function (o) { return o.date >= TODAY(); }).sort(function (a, c) { return a.date < c.date ? -1 : 1; });
+    if (off.length) h += '<div class="list">' + off.map(function (o) { var n = busy(b.id, o.date).length; return '<div class="item"><div class="top"><div class="what"><b>' + esc(dayLabel(o.date, true)) + '</b><span>' + (n ? n + ' booking' + (n === 1 ? '' : 's') + ' already in: message them to move' : 'No bookings that day') + '</span></div><button class="x" type="button" data-act="rmOff" data-d="' + o.date + '" aria-label="Remove">' + ico('x') + '</button></div></div>'; }).join('') + '</div>';
+    return h + '</div>';
+  }
+  function bMenu(b) {
+    var h = '<p class="lede2">Your services and your prices. <b>You set them, not the shop.</b> For now everyone starts from the same menu.</p><div class="list">';
+    h += b.services.map(function (s, i) {
+      var mo = [15, 30, 45, 60, 75, 90].map(function (m) { return '<option value="' + m + '"' + (m === s.mins ? ' selected' : '') + '>' + mins(m) + '</option>'; }).join('');
+      return '<div class="menu-row"><input class="inp nm" value="' + esc(s.name) + '" data-ch="sName" data-i="' + i + '" aria-label="Service name"><button class="x" type="button" data-act="rmSvc" data-i="' + i + '" aria-label="Remove ' + esc(s.name) + '">' + ico('x') + '</button>'
+        + '<select class="inp" data-ch="sMins" data-i="' + i + '" aria-label="How long ' + esc(s.name) + ' takes">' + mo + '</select>'
+        + '<label class="money"><span>£</span><input type="number" min="0" step="1" inputmode="decimal" value="' + s.price + '" data-ch="sPrice" data-i="' + i + '" aria-label="Price of ' + esc(s.name) + ' in pounds"></label></div>';
+    }).join('');
+    h += '</div><button class="btn" type="button" data-act="addSvc" style="align-self:flex-start">' + ico('plus') + 'Add a service</button>';
+    h += '<div class="sec">' + head('Your booking link', 'For your Instagram and WhatsApp. It opens straight to you, so your clients book you, not the next free chair.') + '<div class="share">' + ico('link') + '<code>…/book/' + esc(b.id) + '</code><button class="btn sm ink" type="button" data-act="copyLink" data-b="' + b.id + '">Copy</button></div><p class="small">The real address is set up at launch.</p></div>';
+    return h;
+  }
+  function moneyIn(k, v) { return '<label class="money"><span>£</span><input type="number" min="0" step="1" inputmode="decimal" value="' + v + '" data-ch="of" data-k="' + k + '" aria-label="Price in pounds"></label>'; }
+  function selIn(k, opts, v, label) { return '<select data-ch="of" data-k="' + k + '" aria-label="' + label + '">' + opts.map(function (o) { return '<option value="' + o + '"' + (o === v ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>'; }
+  function swIn(k, on, label) { return '<label class="sw" title="' + label + '"><input type="checkbox" data-ch="ofOn" data-k="' + k + '"' + (on ? ' checked' : '') + ' aria-label="' + label + '"><span></span></label>'; }
+  function bOffers(b) {
+    var L = b.loyalty, o = b.offers;
+    var h = '<p class="lede2">Loyalty, a cut club, packs and gift cards. <b>The money goes straight to you.</b> Prices are examples.</p><div class="hours">'
+      + '<div class="orow2"><div class="t"><b>Loyalty card</b>' + swIn('loyalty', L.on, 'Loyalty card') + '</div><div class="d">' + (L.on ? 'A free cut after ' + selIn('loyalty.n', [6, 8, 10, 12], L.n, 'Stamps for a free cut') + ' paid cuts' : 'Off') + '</div></div>'
+      + '<div class="orow2"><div class="t"><b>Cut club</b>' + swIn('member', o.member.on, 'Cut club') + '</div><div class="d">' + (o.member.on ? 'One cut a month for ' + moneyIn('member.price', o.member.price) + ' a month' : 'Off') + '</div></div>'
+      + '<div class="orow2"><div class="t"><b>Cut pack</b>' + swIn('pack', o.pack.on, 'Cut pack') + '</div><div class="d">' + (o.pack.on ? selIn('pack.n', [3, 5, 10], o.pack.n, 'Cuts in the pack') + ' cuts for ' + moneyIn('pack.price', o.pack.price) : 'Off') + '</div></div>'
+      + '<div class="orow2"><div class="t"><b>Gift cards</b>' + swIn('gift', o.gift, 'Gift cards') + '</div><div class="d">' + (o.gift ? 'Customers buy them in the app, for £20, £30 or £50' : 'Off') + '</div></div></div>';
+    var rv = S.reviews.filter(function (r) { return r.barber === b.id; });
+    if (rv.length) {
+      var avg = rv.reduce(function (a, r) { return a + r.stars; }, 0) / rv.length;
+      h += '<div class="sec">' + head('Your feedback', rv.length + ' ratings. Only you and Nick see these.') + '<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat hi"><small>Average</small><b>' + avg.toFixed(1) + '</b></div><div class="stat"><small>Ratings</small><b>' + rv.length + '</b></div></div><div>' + rv.slice(0, 3).map(revHtml).join('') + '</div></div>';
+    }
+    return h;
+  }
+  function revHtml(r) { var b = barber(r.barber); return '<div class="rev"><div class="rt">' + starsRow(r.stars) + '<span>' + esc(dayLabel(r.date)) + '</span></div><b>' + esc(r.who) + (b ? ', with ' + esc(b.name) : '') + '</b>' + (r.comment ? '<p>' + esc(r.comment) + '</p>' : '') + '</div>'; }
+
+  /* ---------- owner ---------- */
+  function owner() {
+    var h = '<div class="pad"><div class="who">' + ball(barber('nick') || S.barbers[0], 'lg') + '<div class="grow"><small class="lbl">Signed in as</small><span class="name">Nick</span><small>Owner, The Loft</small></div></div>';
+    var v = { chairs: oChairs, marketing: oMarketing, products: oProducts, settings: oSettings }[U.o] || oShop;
+    return h + v() + '</div>';
+  }
+  function oShop() {
+    var t0 = today0(), days = [], chips = []; for (var i = 0; i < 8; i++) { chips.push(dk(addD(t0, i))); if (i < 7) days.push(chips[i]); }
+    if (!U.oDay || chips.indexOf(U.oDay) === -1) U.oDay = chips[0];
+    var live = S.bookings.filter(function (x) { return x.status !== 'cancelled'; }), wk = live.filter(function (x) { return days.indexOf(x.date) !== -1; });
+    var today = live.filter(function (x) { return x.date === U.oDay; }), filled = S.chairs.filter(function (c) { return c.who; }).length;
+    var due = S.chairs.filter(function (c) { return c.who && !c.owner && !c.paid; }).reduce(function (a, c) { return a + (c.rent || 0); }, 0);
+    var wl = S.wait.filter(function (w) { return !w.notified && chips.indexOf(w.date) !== -1; }).length;
+    var h = '<div class="stats"><div class="stat hi"><small>Booked ' + (U.oDay === TODAY() ? 'today' : esc(DAYS[fromDk(U.oDay).getDay()])) + '</small><b>' + today.length + '</b></div><div class="stat"><small>Next 7 days</small><b>' + wk.length + '</b></div><div class="stat"><small>Chairs filled</small><b>' + filled + '/' + S.chairs.length + '</b></div></div>';
+    if (due) h += '<button type="button" class="callout" data-act="tab" data-t="chairs"><span><b>' + gbp(due) + ' chair rent due</b> this week</span><span style="margin-left:auto;display:grid">' + ico('arrow') + '</span></button>';
+    if (wl) h += '<p class="lede2"><b>' + wl + ' on waitlists</b> for the coming days. They get a text the moment a slot frees up.</p>';
+    h += '<div class="days">' + chips.map(function (k) { var d = fromDk(k), n = live.filter(function (x) { return x.date === k; }).length, open = !!S.shop.hours[d.getDay()]; return '<button type="button" class="day' + (U.oDay === k ? ' on' : '') + (!open ? ' off' : '') + '" data-act="oDay" data-d="' + k + '"><small>' + (k === TODAY() ? 'Today' : DAYS[d.getDay()]) + '</small><b>' + d.getDate() + '</b><em>' + (open ? n + ' cuts' : 'Closed') + '</em></button>'; }).join('') + '</div>';
+    var sh = S.shop.hours[fromDk(U.oDay).getDay()];
+    h += '<div class="sec">' + head('On the floor', esc(dayLabel(U.oDay, true)));
+    if (!sh) h += '<div class="none"><b>The shop’s closed that day</b></div>';
+    else {
+      var span = sh[1] - sh[0];
+      h += '<div class="floor">' + S.barbers.map(function (b) {
+        var w = windowFor(b, U.oDay), list = busy(b.id, U.oDay), seg = '';
+        if (!w || w.off) seg += '<i class="out" style="left:0;width:100%"></i>';
+        else {
+          if (w.from > sh[0]) seg += '<i class="out" style="left:0;width:' + ((w.from - sh[0]) / span * 100) + '%"></i>';
+          if (w.to < sh[1]) seg += '<i class="out" style="left:' + ((w.to - sh[0]) / span * 100) + '%;width:' + ((sh[1] - w.to) / span * 100) + '%"></i>';
+          if (w.brk) seg += '<i class="out" style="left:' + ((w.brk[0] - sh[0]) / span * 100) + '%;width:' + ((w.brk[1] - w.brk[0]) / span * 100) + '%"></i>';
+        }
+        list.forEach(function (x) { seg += '<i class="bk ' + x.status + '" title="' + hm(x.start) + ' ' + esc(x.name) + '" style="left:' + ((x.start - sh[0]) / span * 100) + '%;width:' + (x.mins / span * 100) + '%"></i>'; });
+        return '<div class="lane"><div><b>' + esc(b.name) + '</b><small>' + (!w ? 'Off' : w.off ? 'Away' : list.length + ' booked') + '</small></div><div class="track">' + seg + '</div></div>';
+      }).join('') + '<div class="axis"><span></span><div><span>' + hm(sh[0]) + '</span><span>' + hm(sh[0] + Math.round(span / 2 / 30) * 30) + '</span><span>' + hm(sh[1]) + '</span></div></div>'
+        + '<div class="key"><span><i style="background:var(--ink)"></i>Booked</span><span><i style="background:var(--stone)"></i>Done</span><span><i style="background:var(--bad)"></i>No-show</span></div></div>';
+    }
+    h += '</div><div class="sec">' + head('How full each chair is', 'Next 7 days, against the hours each barber has set') + '<div class="util">' + S.barbers.map(function (b) {
+      var inn = 0, bk = 0; days.forEach(function (k) { inn += minsIn(b, k); busy(b.id, k).forEach(function (x) { bk += x.mins; }); });
+      var p = inn ? Math.min(1, bk / inn) : 0;
+      return '<div class="u"><span>' + esc(b.name) + '</span><div class="bar"><i style="width:' + Math.round(p * 100) + '%"></i></div><b>' + (inn ? Math.round(p * 100) + '%' : 'Off') + '</b></div>';
+    }).join('') + '</div></div>';
+    return h;
+  }
+  function oChairs() {
+    var h = '<p class="lede2">Barbers rent a chair and bring their own clients. <b>Each sets their own hours, menu and prices,</b> and takes payment themselves. Rent figures are examples.</p><div class="list">';
+    h += S.chairs.map(function (c) {
+      var b = c.who ? barber(c.who) : null;
+      if (!b) return '<div class="chair"><div class="top"><span class="ball empty" aria-hidden="true"><i>' + roman(c.n) + '</i></span><div class="grow"><b>Chair ' + roman(c.n) + ' is free</b><small>Example rent ' + gbp(c.rent) + ' a week</small></div><span class="chip free">Free</span></div>'
+        + '<div class="invite"><input class="inp" id="inv-' + c.n + '" placeholder="Barber’s first name" aria-label="Barber for chair ' + roman(c.n) + '"><button class="btn primary" type="button" data-act="invite" data-n="' + c.n + '">Add</button></div></div>';
+      return '<div class="chair"><div class="top">' + ball(b) + '<div class="grow"><b>' + esc(b.name) + '</b><small>' + (c.owner ? 'Chair I, your chair' : 'Chair ' + roman(c.n) + ', example rent ' + gbp(c.rent) + ' a week') + '</small></div>'
+        + (c.owner ? '<span class="chip plain">Owner</span>' : (c.paid ? '<button class="chipbtn" type="button" data-act="rent" data-n="' + c.n + '" data-p="0" title="Mark as due"><span class="chip paid">Rent paid</span></button>' : '<button class="btn sm primary" type="button" data-act="rent" data-n="' + c.n + '" data-p="1">Mark rent paid</button>')) + '</div></div>';
+    }).join('');
+    return h + '</div>';
+  }
+  var AUD = { all: 'Everyone who said yes', lapsed: 'Not been in for 6 weeks', regs: 'Regulars, 6+ visits' };
+  function audience(k) { var opt = S.people.filter(function (p) { return p.optin; }); return k === 'lapsed' ? opt.filter(function (p) { return p.last > 42; }) : k === 'regs' ? opt.filter(function (p) { return p.visits >= 6; }) : opt; }
+  function tpl(aud, ch) {
+    var base = { all: 'The Loft: the match is on Saturday. Book your cut before kick-off and stay for the second half.', lapsed: 'The Loft: it’s been a while. There are times free this week, so book in the app.', regs: 'The Loft: thanks for being a regular. Pool night is Thursday, bar open from 18:00.' }[aud];
+    return ch === 'sms' ? base + ' Reply STOP to opt out.' : base;
+  }
+  function oMarketing() {
+    var P = S.people, opt = audience('all'), rv = S.reviews, avg = rv.length ? rv.reduce(function (a, r) { return a + r.stars; }, 0) / rv.length : 0;
+    var n = audience(U.mk.aud).length, text = U.mk.text != null ? U.mk.text : tpl(U.mk.aud, U.mk.ch);
+    var h = '<div class="stats"><div class="stat"><small>Customers</small><b>' + P.length + '</b></div><div class="stat"><small>Said yes to news</small><b>' + opt.length + '</b></div><div class="stat hi"><small>Average rating</small><b>' + avg.toFixed(1) + '</b></div></div>';
+    h += '<div class="sec">' + head('Send a message', 'Only to customers who said yes to news when they booked.') + '<div class="seg">' + ['all', 'lapsed', 'regs'].map(function (k) { return '<button type="button" class="opt' + (U.mk.aud === k ? ' on' : '') + '" data-act="mkAud" data-a="' + k + '"><span class="dot"></span><span><b>' + AUD[k] + '</b><small>' + audience(k).length + ' people</small></span></button>'; }).join('') + '</div>'
+      + '<div class="mseg" role="tablist" aria-label="Send by">' + [['sms', 'Text'], ['email', 'Email']].map(function (c) { return '<button type="button" role="tab" aria-selected="' + (U.mk.ch === c[0]) + '" class="' + (U.mk.ch === c[0] ? 'on' : '') + '" data-act="mkCh" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>'
+      + '<textarea class="inp" id="mk-text" rows="4" aria-label="Message">' + esc(text) + '</textarea>'
+      + '<p class="small">' + (U.mk.ch === 'sms' ? 'Every text ends with a way to opt out.' : 'Every email has an unsubscribe link.') + '</p>'
+      + '<button class="btn primary big" type="button" data-act="mkSend">Send to ' + n + ' people</button>';
+    if (S.campaigns.length) h += '<div class="list">' + S.campaigns.slice(0, 3).map(function (c) { return '<div class="item"><div class="top"><div class="what"><b>' + esc(c.aud) + '</b><span>' + esc(dayLabel(c.date)) + ' · ' + (c.ch === 'sms' ? 'Text' : 'Email') + ' · ' + c.count + ' people</span></div><span class="chip plain">Demo</span></div></div>'; }).join('') + '</div>';
+    h += '</div>';
+    h += '<div class="sec">' + head('What’s on', 'Matches, pool nights and anything else. It shows on the customer home screen and the website.') + eventsHtml(true) + '</div>';
+    h += '<form class="sec" id="evform" novalidate><div class="field"><label for="ev-t">Add something</label><input class="inp" id="ev-t" placeholder="Darts night"></div><div class="form2"><div class="field"><label for="ev-n">Details</label><input class="inp" id="ev-n" placeholder="Time, prizes, drinks"></div><div class="field"><label for="ev-d">Date</label><input class="inp" id="ev-d" type="date" min="' + TODAY() + '" value="' + TODAY() + '"></div></div><button class="btn primary" type="submit" style="align-self:flex-start">' + ico('plus') + 'Add to What’s on</button></form>';
+    h += '<div class="sec">' + head('Feedback', 'Customers rate their cut after each visit. Everyone gets the same Google review link, whatever they rate.') + '<div>' + rv.slice(0, 5).map(revHtml).join('') + '</div></div>';
+    return h;
+  }
+  function oProducts() {
+    var from = dk(addD(today0(), -6)), wk = S.sales.filter(function (s) { return s.date >= from; });
+    var low = S.products.filter(function (p) { return p.stock <= p.low; }).length;
+    var h = '<div class="stats"><div class="stat"><small>Sold this week</small><b>' + wk.length + '</b></div><div class="stat hi"><small>Takings</small><b>' + gbp(wk.reduce(function (a, s) { return a + s.price * s.qty; }, 0)) + '</b></div><div class="stat"><small>Low stock</small><b>' + low + '</b></div></div>';
+    h += '<p class="lede2">What the shop sells. <b>Product money goes to the shop, not the barbers.</b> Customers can add one when they book. Example products and prices.</p>';
+    h += '<div class="list">' + S.products.map(function (p) {
+      var sold = wk.filter(function (s) { return s.pid === p.id; }).length;
+      return '<div class="prod"><div><b>' + esc(p.name) + '</b><span class="m">' + gbp(p.price) + ' · ' + sold + ' sold this week</span>' + (p.stock <= p.low ? '<span class="chip noshow">' + (p.stock ? 'Low stock' : 'Sold out') + '</span>' : '') + '</div>'
+        + '<div class="stepper" role="group" aria-label="Stock of ' + esc(p.name) + '"><button type="button" data-act="stock" data-p="' + p.id + '" data-d="-1" aria-label="One less">−</button><b>' + p.stock + '</b><button type="button" data-act="stock" data-p="' + p.id + '" data-d="1" aria-label="One more">+</button></div>'
+        + '<button class="btn sm primary" type="button" data-act="sellOpen" data-p="' + p.id + '">Sell</button></div>';
+    }).join('') + '</div>';
+    h += '<form class="sec" id="prform" novalidate><div class="form2"><div class="field"><label for="pr-n">Add a product</label><input class="inp" id="pr-n" placeholder="Pomade"></div><div class="field"><label for="pr-p">Price</label><label class="money" style="padding-block:4px"><span>£</span><input id="pr-p" type="number" min="0" step="1" inputmode="decimal" placeholder="12"></label></div></div><button class="btn" type="submit" style="align-self:flex-start">' + ico('plus') + 'Add product</button></form>';
+    return h;
+  }
+  function oSettings() {
+    var p = S.shop.pay;
+    var h = '<div class="sec">' + head('Payments', 'Online payments go straight to each barber’s own account, never through the shop.') + '<div class="seg">'
+      + [['chair', 'Pay in the chair', 'Cash or card to the barber after the cut. Nothing taken at booking.'], ['deposit', 'Deposit when they book', 'A small deposit holds the slot and cuts no-shows. It comes off the price.'], ['full', 'Pay in full when they book', 'Nothing to sort on the day.']].map(function (o) {
+        return '<button type="button" class="opt' + (p === o[0] ? ' on' : '') + '" data-act="pay" data-p="' + o[0] + '"><span class="dot"></span><span><b>' + o[1] + '</b><small>' + o[2] + '</small></span></button>';
+      }).join('') + '</div>';
+    if (p === 'deposit') h += '<div class="field"><label for="dep">Deposit</label><select class="inp" id="dep" data-ch="dep">' + [5, 10, 15].map(function (v) { return '<option value="' + v + '"' + (S.shop.deposit === v ? ' selected' : '') + '>' + gbp(v) + '</option>'; }).join('') + '</select></div>';
+    h += '<p class="small">Try it: switch this on, then book as a customer.</p></div>';
+    h += '<div class="sec">' + head('No-show protection') + '<div><div class="trow"><span>Keep the deposit on a no-show<small>The barber keeps it, not the shop.</small></span><label class="sw"><input type="checkbox" data-ch="keepDep"' + (S.shop.keepDeposit ? ' checked' : '') + ' aria-label="Keep the deposit on a no-show"><span></span></label></div></div><p class="small">For phone bookings, barbers can text a deposit link from their diary.</p></div>';
+    h += '<div class="sec">' + head('Booking rules') + '<div class="field"><label for="notice">Shortest notice</label><select class="inp" id="notice" data-ch="notice">' + [[15, '15 minutes'], [30, '30 minutes'], [60, '1 hour'], [120, '2 hours']].map(function (v) { return '<option value="' + v[0] + '"' + (S.shop.notice === v[0] ? ' selected' : '') + '>' + v[1] + '</option>'; }).join('') + '</select></div></div>';
+    h += '<div class="sec">' + head('Your website', 'The Loft’s own site, with booking built in. It updates itself from the app. The address is set up at launch.') + '<button class="btn primary" type="button" data-act="openSite" style="align-self:flex-start">' + ico('globe') + 'Preview the website</button></div>';
+    h += '<div class="sec">' + head('Book buttons', 'Customers book straight from your profiles.') + '<div>' + [['insta', 'Instagram'], ['fb', 'Facebook'], ['google', 'Google']].map(function (s) { return '<div class="trow"><span>' + s[1] + '<small>A “Book” button on The Loft’s profile</small></span><label class="sw"><input type="checkbox" data-ch="siteSw" data-k="' + s[0] + '"' + (S.site[s[0]] ? ' checked' : '') + ' aria-label="Book button on ' + s[1] + '"><span></span></label></div>'; }).join('') + '</div></div>';
+    h += '<div class="sec">' + head('The Loft app', 'At launch The Loft has its own app in the App Store and Google Play, with its own name and icon. Until then it runs from the home screen.') + '</div>';
+    h += '<div class="sec">' + head('Shop hours', 'Example hours. Barbers set their own days inside these.') + '<div class="hours">' + WEEK.map(function (d) { var s = S.shop.hours[d]; return '<div class="hrow' + (s ? '' : ' closed') + '"><span class="dn">' + DAYS[d] + '</span><span></span><div class="times">' + (s ? hm(s[0]) + ' to ' + hm(s[1]) : 'Closed') + '</div></div>'; }).join('') + '</div></div>';
+    h += '<div class="sec">' + head('The demo') + '<button class="btn danger" type="button" data-act="askReset" style="align-self:flex-start">Start the demo again</button>' + (U.reset ? '<div class="confirm">Clear everything you changed?<span class="rowbtns"><button class="btn sm" type="button" data-act="keepReset">Keep it</button><button class="btn sm danger" type="button" data-act="reset">Start again</button></span></div>' : '') + '</div>';
+    return h;
+  }
+
+  /* ---------- the website ---------- */
+  function siteHtml() {
+    var mins_ = {};
+    S.barbers.forEach(function (b) { b.services.forEach(function (s) { if (!(s.id in mins_) || s.price < mins_[s.id].price) mins_[s.id] = s; }); });
+    var prices = MENU.map(function (m) { return mins_[m[0]]; }).filter(Boolean);
+    var social = [S.site.insta && 'Instagram', S.site.fb && 'Facebook', S.site.google && 'Google'].filter(Boolean);
+    return '<div class="site-wrap" role="dialog" aria-label="Website preview"><div class="site-bar"><span class="lbl">Website preview</span><button class="x" type="button" data-act="closeLayer" aria-label="Close the website">' + ico('x') + '</button></div><div class="site-body">'
+      + '<div class="hero">' + mark() + '<p class="tag">Cuts, pool, a whisky bar and the football on.</p><button class="btn primary big" type="button" data-act="siteBook">Book a cut</button></div><div class="pad">'
+      + '<div class="sec">' + head('The barbers', 'Each runs their own chair. Book the one you want.') + '<div>' + S.barbers.map(function (b) { return '<div class="srow">' + ball(b) + '<div class="grow"><b>' + esc(b.name) + '</b><small>' + esc(role(b)) + '. ' + esc(b.does) + '.</small></div><button class="btn sm primary" type="button" data-act="siteBarber" data-b="' + b.id + '">Book</button></div>'; }).join('') + '</div></div>'
+      + '<div class="sec">' + head('Prices', 'From. Each barber sets their own.') + '<div class="plist">' + prices.map(function (s) { return '<div class="pr"><div>' + esc(s.name) + '<span>' + esc(svcTime(s)) + '</span></div><b>' + gbp(s.price) + '</b></div>'; }).join('') + '</div></div>'
+      + (S.events.some(function (e) { return e.date >= TODAY(); }) ? '<div class="sec">' + head('What’s on') + eventsHtml(false) + '</div>' : '')
+      + '<div class="sec">' + head('While you wait') + perksHtml() + '</div>'
+      + '<div class="sec">' + head('Opening hours') + '<div class="hours">' + WEEK.map(function (d) { var s = S.shop.hours[d]; return '<div class="hrow' + (s ? '' : ' closed') + '"><span class="dn">' + DAYS[d] + '</span><span></span><div class="times">' + (s ? hm(s[0]) + ' to ' + hm(s[1]) : 'Closed') + '</div></div>'; }).join('') + '</div></div>'
+      + '<div class="sec">' + head('Find us', 'Ely. The full address goes here once the premises are confirmed.') + '</div>'
+      + '<div class="sec">' + head('Get the app', 'Book, pay and keep your loyalty card in The Loft app. On the App Store and Google Play at launch.') + '</div>'
+      + (social.length ? '<p class="small">Book from ' + social.join(', ').replace(/, ([^,]*)$/, ' and $1') + ' too.</p>' : '')
+      + '</div></div></div>';
+  }
+
+  /* ---------- sheets ---------- */
+  var payCb = null;
+  function openLayer(h) { document.getElementById('layer').innerHTML = h; }
+  function closeLayer() { document.getElementById('layer').innerHTML = ''; U.sheet = null; }
+  function openPay(o, cb) {
+    payCb = cb;
+    openLayer('<div class="sheet-bg"><div class="sheet" role="dialog" aria-label="' + esc(o.title) + '"><span class="demo-tag">' + (o.tap ? 'Demo: tap to pay' : 'Demo: no money moves') + '</span>' + (o.tap ? '<span class="tap-ico">' + ico('tap') + '</span>' : '') + '<h3>' + esc(o.title) + '</h3><div class="amt">' + gbp(o.amount) + '</div><p>' + o.desc + '</p><div class="acts"><button class="btn primary big" type="button" data-act="payGo" data-keep="1">' + esc(o.cta || 'Pay ' + gbp(o.amount)) + '</button><button class="btn ghost" type="button" data-act="closeLayer">Not now</button></div></div></div>');
+  }
+  function field(label, inner) { return '<div class="field"><span class="fl">' + label + '</span>' + inner + '</div>'; }
+  function svcSelect(b, sel) { return '<select class="inp" data-sk="svc" data-ch="sh" aria-label="Service">' + b.services.map(function (s) { return '<option value="' + s.id + '"' + (s.id === sel ? ' selected' : '') + '>' + esc(s.name) + ' · ' + gbp(s.price) + '</option>'; }).join('') + '</select>'; }
+  function sheetActs(primary) { return '<div class="acts">' + primary + '<button class="btn ghost" type="button" data-act="closeLayer">Cancel</button></div>'; }
+  function sheetHtml() {
+    var k = U.sheet.kind, h = '', err = U.sheet.err ? '<p class="err">' + esc(U.sheet.err) + '</p>' : '';
+    if (k === 'walkin' || k === 'phone') {
+      var b = barber(U.as), sv = svcOf(b, U.sheet.svc) || b.services[0];
+      if (k === 'walkin') {
+        var sl = slotsFor(b, sv.mins, TODAY(), false, 0);
+        h = '<h3>Walk-in</h3><p>Puts them in your diary at the next gap today.</p>'
+          + field('Name', '<input class="inp" data-sk="name" value="' + esc(U.sheet.name || '') + '" placeholder="Optional" aria-label="Name">')
+          + field('Service', svcSelect(b, sv.id))
+          + '<p class="preview">' + (sl.length ? 'Starts at <b>' + hm(sl[0]) + '</b> · ' + mins(sv.mins) + ' · ' + gbp(sv.price) : 'No gap left today for this.') + '</p>'
+          + err + sheetActs('<button class="btn primary big" type="button" data-act="walkGo" data-keep="1"' + (sl.length ? '' : ' disabled') + '>Add walk-in</button>');
+      } else {
+        var ps = slotsFor(b, sv.mins, U.bDay), tsel = ps.indexOf(Number(U.sheet.time)) !== -1 ? Number(U.sheet.time) : ps[0];
+        h = '<h3>Add a booking</h3><p>For bookings by phone or in person, ' + esc(dayIn(U.bDay)) + '.</p>'
+          + field('Name', '<input class="inp" data-sk="name" value="' + esc(U.sheet.name || '') + '" aria-label="Name">')
+          + field('Mobile', '<input class="inp" type="tel" inputmode="tel" data-sk="phone" value="' + esc(U.sheet.phone || '') + '" aria-label="Mobile">')
+          + field('Service', svcSelect(b, sv.id))
+          + field('Time', ps.length ? '<select class="inp" data-sk="time" aria-label="Time">' + ps.map(function (t) { return '<option value="' + t + '"' + (t === tsel ? ' selected' : '') + '>' + hm(t) + '</option>'; }).join('') + '</select>' : '<p class="preview">No time free that day for this.</p>')
+          + '<label class="check"><input type="checkbox" data-sk="link"' + (U.sheet.link ? ' checked' : '') + '><span>Text them a ' + gbp(S.shop.deposit) + ' deposit link to hold the slot</span></label>'
+          + err + sheetActs('<button class="btn primary big" type="button" data-act="phoneGo" data-keep="1"' + (ps.length ? '' : ' disabled') + '>Add booking</button>');
+      }
+    } else if (k === 'gift') {
+      var gb = barber(U.sheet.barber);
+      h = '<h3>Gift card for a cut with ' + esc(gb.name) + '</h3><p>Paid straight to ' + esc(gb.name) + '. It lands in their app wallet, or they show the code in the chair.</p>'
+        + '<div class="amts">' + [20, 30, 50].map(function (a) { return '<button type="button" class="amt-chip' + (U.sheet.amt === a ? ' on' : '') + '" data-act="shSet" data-k="amt" data-v="' + a + '" data-keep="1" aria-pressed="' + (U.sheet.amt === a) + '">' + gbp(a) + '</button>'; }).join('') + '</div>'
+        + field('Who’s it for?', '<input class="inp" data-sk="to" value="' + esc(U.sheet.to || '') + '" placeholder="Their first name" aria-label="Who it’s for">')
+        + err + sheetActs('<button class="btn primary big" type="button" data-act="giftGo" data-keep="1">Buy ' + gbp(U.sheet.amt) + ' gift card</button>');
+    } else if (k === 'code') {
+      var cb = barber(U.sheet.barber);
+      h = '<span class="demo-tag">Demo</span><h3>Gift card ready</h3><div class="code">' + esc(U.sheet.code) + '</div><p>' + gbp(U.sheet.amt) + ' for a cut with ' + esc(cb.name) + ', for ' + esc(U.sheet.to) + '.</p>'
+        + '<div class="acts"><button class="btn primary big" type="button" data-act="textGift" data-keep="1">Text it to ' + esc(U.sheet.to) + '</button><button class="btn ghost" type="button" data-act="closeLayer">Done</button></div>';
+    }
+    return '<div class="sheet-bg"><div class="sheet left" role="dialog" aria-label="' + esc(k) + '">' + h + '</div></div>';
+  }
+  function renderSheet() { if (U.sheet) document.getElementById('layer').innerHTML = sheetHtml(); }
+  function grabSheet() { [].forEach.call(document.querySelectorAll('#layer [data-sk]'), function (e) { U.sheet[e.getAttribute('data-sk')] = e.type === 'checkbox' ? e.checked : e.value; }); }
+  function grabDetails() {
+    if (!document.getElementById('f-name')) return;
+    S.me.name = val('f-name'); S.me.phone = val('f-phone'); S.me.email = val('f-email');
+    var o = document.getElementById('f-optin'); if (o) S.me.optin = o.checked;
+  }
+
+  /* ---------- the brief beside the app ---------- */
+  function briefHtml() {
+    return '<span class="by">For Nick, by <b>Phillips.</b></span>'
+      + '<div style="display:grid;gap:14px"><h1>The Loft booking app</h1><p class="lede">A working first look. Book a cut, run a chair, and see the whole shop.</p></div>'
+      + '<div class="ways">' + [['customer', 'Customer', 'Book, pay, rate and collect stamps.'], ['barber', 'Barber', 'Their own diary, hours, prices and offers.'], ['owner', 'Nick', 'Chairs, marketing, products and payments.'], ['site', 'Website', 'The Loft’s own site, booking built in.']].map(function (w) {
+        var bb = w[0] === 'barber' ? barber('jay') : w[0] === 'owner' ? barber('nick') : null, icon = w[0] === 'site' ? 'globe' : 'user';
+        return '<button type="button" class="way' + (U.view === w[0] ? ' on' : '') + '" data-act="' + (w[0] === 'site' ? 'openSite' : 'view') + '" data-v="' + w[0] + '">' + (bb ? ball(bb, 'sm') : '<span class="ball sm cust" aria-hidden="true">' + ico(icon) + '</span>') + '<span><b>' + w[1] + '</b><span class="t">' + w[2] + '</span></span></button>';
+      }).join('') + '</div>'
+      + '<div class="try"><span class="lbl">Try this</span><ol>'
+      + '<li><button type="button" data-act="try1">As Jay</button>, switch Tuesday on.</li>'
+      + '<li><button type="button" data-act="try2">As a customer</button>, book Jay on Tuesday.</li>'
+      + '<li><button type="button" data-act="try3">As Nick</button>, turn on deposits, then book again.</li>'
+      + '<li>Nick’s Saturday is full. <button type="button" data-act="try4">Join the waitlist</button>, then <button type="button" data-act="try4b">as Nick</button> cancel a cut.</li>'
+      + '<li><button type="button" data-act="try5">Rate your last cut</button> and check your loyalty card.</li>'
+      + '<li><button type="button" data-act="openSite">Open the website</button>.</li></ol></div>'
+      + '<div class="lists"><div><span class="lbl">Works now</span><ul><li>Booking by barber and time</li><li>Each barber’s own hours and prices</li><li>A waitlist for cancellations</li><li>Walk-ins and phone bookings</li><li>Deposits and no-show cover</li><li>Tap to pay in the chair</li><li>Loyalty cards</li><li>Cut clubs, packs, gift cards</li><li>Feedback and Google reviews</li><li>Texts and emails</li><li>Products and stock</li><li>Chairs and rent</li><li>What’s on</li><li>The website</li></ul></div>'
+      + '<div><span class="lbl">At launch</span><ul><li>A login per barber</li><li>Live on everyone’s phone</li><li>Real texts and emails</li><li>Real payments to each barber</li><li>The app in both app stores</li><li>Booking from Google</li></ul></div></div>'
+      + '<p class="small">Services and prices match Nick’s current shop for now, as stand-ins for his own. Barbers, customers, bookings, feedback, rent, offers, products and events are made up. What you change stays in this browser.</p>';
+  }
+  function renderBrief() { var b = document.getElementById('brief'); if (b) b.innerHTML = briefHtml(); }
+
+  /* ---------- actions ---------- */
+  function startFlow(patch) { U.f = Object.assign({ barber: null, svc: null, date: null, time: null, extras: {}, useV: true }, patch || {}); U.err = ''; }
+  function markPaid(x, m) {
+    x.status = 'done'; x.paidBy = m;
+    (x.extras || []).forEach(function (pid) { var p = product(pid); if (p && p.stock > 0) { p.stock--; S.sales.push({ id: uid('s'), pid: pid, qty: 1, date: TODAY(), price: p.price }); } });
+    save();
+  }
+  var ACT = {
+    view: function (d) { go({ view: d.v, cancel: null, reset: false, bCancel: null }); },
+    tab: function (d) {
+      if (U.view === 'customer') { if (d.t === 'book') { startFlow(); go({ c: 'pick' }); } else go({ c: d.t, cancel: null }); }
+      else if (U.view === 'barber') go({ b: d.t, bCancel: null }); else go({ o: d.t, reset: false });
+    },
+    startBook: function () { startFlow(); go({ c: 'pick' }); },
+    cgo: function (d) { go({ c: d.c }); },
+    openBarber: function (d) { if (U.view !== 'customer') U.view = 'customer'; startFlow({ barber: d.b }); go({ c: 'barber' }); },
+    pickSvc: function (d) { U.f.svc = d.s; U.f.date = null; U.f.time = null; go({ c: 'time' }); },
+    pickDay: function (d) { U.f.date = d.d; U.f.time = null; render(); },
+    pickTime: function (d) { U.f.time = Number(d.t); U.err = ''; go({ c: 'details' }); },
+    quick: function (d) { startFlow({ barber: d.b, svc: d.s, date: d.d, time: Number(d.t) }); go({ view: 'customer', c: 'details' }); },
+    extra: function (d) { grabDetails(); U.f.extras[d.p] = !U.f.extras[d.p]; render(); },
+    useV: function (d) { grabDetails(); U.f.useV = d.v === '1'; render(); },
+    joinWait: function () {
+      var b = barber(U.f.barber);
+      S.wait.push({ id: uid('w'), barber: b.id, date: U.f.date, svc: U.f.svc, who: S.me.name || 'You', mine: true, notified: null }); save();
+      toast('You’re on ' + b.name + '’s waitlist for ' + dayLabel(U.f.date, true) + '. To see it work, cancel one of ' + b.name + '’s cuts that day as a barber.'); render();
+    },
+    dropWait: function (d) { S.wait = S.wait.filter(function (w) { return w.id !== d.id; }); save(); render(); },
+    askCancel: function (d) { go({ cancel: d.id }); },
+    keep: function () { go({ cancel: null }); },
+    cancelMine: function (d) { var x = byId(d.id); if (x) { x.status = 'cancelled'; var n = notifyWait(x.barber, x.date); save(); toast('Cancelled. ' + (barber(x.barber) || {}).name + '’s diary has the slot free again' + (n ? ', and the waitlist got a text.' : '.')); } go({ cancel: null }); },
+    rebook: function (d) { var x = byId(d.id); if (!x) return; x.status = 'cancelled'; notifyWait(x.barber, x.date); save(); startFlow({ barber: x.barber, svc: x.svc }); go({ c: 'time' }); toast('Pick a new time. The old one is freed up.'); },
+    again: function (d) { var x = byId(d.id); if (!x) return; startFlow({ barber: x.barber, svc: x.svc }); go({ c: 'time' }); },
+    rate: function (d) { var x = byId(d.id); if (!x) return; x.rating = Number(d.n); U.fb = { id: x.id, stage: 'comment' }; save(); render(); var t = document.getElementById('fb-text'); if (t) t.focus(); },
+    fbSend: function (d) {
+      var x = byId(d.id); if (!x) return;
+      x.comment = val('fb-text').slice(0, 280); x.feedbackDone = true;
+      S.reviews.unshift({ barber: x.barber, stars: x.rating || 5, comment: x.comment, date: x.date, who: S.me.name || 'You' });
+      U.fb = { id: x.id, stage: 'google' }; save(); render();
+    },
+    google: function (d) { var x = byId(d.id); if (x) x.reviewAsked = true; S.dismissed.push(d.id); U.fb = null; save(); toast('At launch this opens The Loft’s Google review page.'); render(); },
+    fbDismiss: function (d) { S.dismissed.push(d.id); U.fb = null; save(); render(); },
+    buyOffer: function (d) {
+      var b = barber(d.b), o = b.offers, mem = d.t === 'member', amt = mem ? o.member.price : o.pack.price;
+      openPay({ title: mem ? b.name + '’s cut club' : b.name + '’s ' + o.pack.n + '-cut pack', amount: amt, cta: mem ? 'Join for ' + gbp(amt) + ' a month' : 'Pay ' + gbp(amt), desc: mem ? 'One cut a month with ' + esc(b.name) + ', paid monthly, straight to ' + esc(b.name) + '.' : o.pack.n + ' cuts with ' + esc(b.name) + ', paid straight to ' + esc(b.name) + '. Use them whenever you like.' }, function () {
+        S.owned.push({ id: uid('o'), barber: b.id, type: d.t, left: mem ? 1 : o.pack.n, total: mem ? 1 : o.pack.n }); save();
+        toast(mem ? 'You’re in ' + b.name + '’s cut club. Your next cut with ' + b.name + ' is covered.' : 'Pack bought. Your next ' + o.pack.n + ' cuts with ' + b.name + ' are covered.'); render();
+      });
+    },
+    giftOpen: function (d) { U.sheet = { kind: 'gift', barber: d.b, amt: 30, to: '' }; renderSheet(); },
+    shSet: function (d) { grabSheet(); U.sheet[d.k] = isNaN(Number(d.v)) ? d.v : Number(d.v); renderSheet(); },
+    giftGo: function () {
+      grabSheet(); var b = barber(U.sheet.barber), to = String(U.sheet.to || '').trim().slice(0, 24), amt = U.sheet.amt;
+      if (!to) { U.sheet.err = 'Add their first name.'; renderSheet(); return; }
+      openPay({ title: 'Gift card for ' + to, amount: amt, desc: 'A ' + gbp(amt) + ' gift card for a cut with ' + esc(b.name) + '. Paid straight to ' + esc(b.name) + '.' }, function () {
+        var code = 'LOFT-' + b.name.charAt(0).toUpperCase() + Date.now().toString(36).slice(-3).toUpperCase();
+        S.vouchers.push({ code: code, barber: b.id, amount: amt, balance: amt, to: to, mine: true, received: false }); save();
+        U.sheet = { kind: 'code', code: code, to: to, amt: amt, barber: b.id }; renderSheet(); render();
+      });
+    },
+    textGift: function () { var to = U.sheet && U.sheet.to; closeLayer(); toast('Demo: nothing sent. At launch the gift card goes to ' + to + ' by text.'); },
+    payGo: function (d, el) { if (el.disabled) return; el.disabled = true; el.textContent = 'One moment…'; var cb = payCb; payCb = null; setTimeout(function () { closeLayer(); if (cb) cb(); }, 700); },
+    bDay: function (d) { U.bDay = d.d; U.bCancel = null; render(); },
+    oDay: function (d) { U.oDay = d.d; render(); },
+    noshow: function (d) { var x = byId(d.id); if (!x) return; x.status = 'noshow'; save(); toast(x.paid && S.shop.keepDeposit ? 'No-show. ' + barber(x.barber).name + ' keeps the ' + gbp(x.paid) + ' deposit.' : 'Marked as a no-show. A deposit would cover this.'); render(); },
+    bCancelAsk: function (d) { U.bCancel = d.id; render(); },
+    bCancelNo: function () { U.bCancel = null; render(); },
+    bCancelGo: function (d) { var x = byId(d.id); if (!x) return; x.status = 'cancelled'; var n = notifyWait(x.barber, x.date); U.bCancel = null; save(); toast(n ? 'Cancelled. ' + n + (n === 1 ? ' person' : ' people') + ' on the waitlist got a text.' : 'Cancelled. The slot is free to book again.'); render(); },
+    paid: function (d) { var x = byId(d.id); if (!x) return; var due = dueOf(x); markPaid(x, d.m); toast((due ? gbp(due) + ' taken. That goes to you, not the shop.' : 'Done.') + (x.mine ? ' The customer gets asked how it went.' : '')); render(); },
+    tapOpen: function (d) { var x = byId(d.id); if (!x) return; var due = dueOf(x); openPay({ tap: true, title: 'Take ' + gbp(due), amount: due, cta: 'Card tapped', desc: 'Hold their card or phone near the top of your phone. At launch this works on the barber’s own phone, no card machine.' }, function () { markPaid(x, 'card'); toast(gbp(due) + ' taken by card. That goes to you, not the shop.' + (x.mine ? ' The customer gets asked how it went.' : '')); render(); }); },
+    walkOpen: function () { var b = barber(U.as); U.sheet = { kind: 'walkin', svc: b.services[0].id, name: '' }; renderSheet(); },
+    walkGo: function () {
+      grabSheet(); var b = barber(U.as), sv = svcOf(b, U.sheet.svc) || b.services[0], sl = slotsFor(b, sv.mins, TODAY(), false, 0);
+      if (!sl.length) { U.sheet.err = 'No gap left today for this.'; renderSheet(); return; }
+      S.bookings.push({ id: 'b' + (S.ref++), barber: b.id, svc: sv.id, name: sv.name, mins: sv.mins, price: sv.price, date: TODAY(), start: sl[0], who: String(U.sheet.name || '').trim().slice(0, 24) || 'Walk-in', status: 'booked', paidBy: null, mine: false, pay: 'chair', source: 'walkin' });
+      save(); closeLayer(); U.bDay = TODAY(); toast('Walk-in added at ' + hm(sl[0]) + '. Online customers can’t book that time now.'); render();
+    },
+    phoneOpen: function () { var b = barber(U.as); U.sheet = { kind: 'phone', svc: b.services[0].id, name: '', phone: '', time: null, link: S.shop.pay !== 'chair' }; renderSheet(); },
+    phoneGo: function () {
+      grabSheet(); var b = barber(U.as), sv = svcOf(b, U.sheet.svc) || b.services[0], ps = slotsFor(b, sv.mins, U.bDay), name = String(U.sheet.name || '').trim().slice(0, 24);
+      var t = ps.indexOf(Number(U.sheet.time)) !== -1 ? Number(U.sheet.time) : ps[0];
+      if (!name) { U.sheet.err = 'Add their name.'; renderSheet(); return; }
+      if (t == null) { U.sheet.err = 'No time free that day for this.'; renderSheet(); return; }
+      var link = !!U.sheet.link;
+      S.bookings.push({ id: 'b' + (S.ref++), barber: b.id, svc: sv.id, name: sv.name, mins: sv.mins, price: sv.price, date: U.bDay, start: t, who: name, status: 'booked', paidBy: null, mine: false, pay: 'chair', source: 'phone', link: link });
+      save(); closeLayer(); toast('Booked in for ' + hm(t) + '.' + (link ? ' Demo: a deposit link would go to ' + name + ' by text.' : '')); render();
+    },
+    addOff: function () { var b = barber(U.as), v = val('offdate'); if (!v) { toast('Pick a date first.'); return; } b.off = b.off || []; if (!b.off.some(function (o) { return o.date === v; })) b.off.push({ date: v }); save(); toast(dayLabel(v, true) + ' blocked out. Customers can’t book it.'); render(); },
+    rmOff: function (d) { var b = barber(U.as); b.off = (b.off || []).filter(function (o) { return o.date !== d.d; }); save(); render(); },
+    rmSvc: function (d) { var b = barber(U.as); if (b.services.length <= 1) { toast('Keep at least one service.'); return; } b.services.splice(Number(d.i), 1); save(); render(); },
+    addSvc: function () { var b = barber(U.as); b.services.push(svc('s' + Date.now().toString(36), 'New service', 30, 15)); save(); render(); var ins = document.querySelectorAll('[data-ch="sName"]'); if (ins.length) { ins[ins.length - 1].focus(); ins[ins.length - 1].select(); } },
+    copyLink: function (d) { var t = '…/book/' + d.b; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast('Copied. The real link is set up at launch.'); }, function () { toast('Copy isn’t allowed here. The real link is set up at launch.'); }); else toast('The real link is set up at launch.'); },
+    invite: function (d) {
+      var n = Number(d.n), inp = document.getElementById('inv-' + n), name = inp ? inp.value.trim() : '';
+      if (!name) { toast('Type the barber’s first name.'); if (inp) inp.focus(); return; }
+      var id = name.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 16) || 'barber';
+      while (barber(id)) id += '2';
+      S.barbers.push({ id: id, name: name.slice(0, 20), does: 'New on chair ' + roman(n), hours: week({ 2: [600, 1080], 3: [600, 1080], 4: [600, 1080], 5: [600, 1080], 6: [540, 1020] }), services: menu(), off: [], loyalty: { on: false, n: 8 }, offers: { member: { on: false, price: 18 }, pack: { on: false, n: 5, price: 90 }, gift: true } });
+      S.chairs.forEach(function (c) { if (c.n === n) { c.who = id; c.paid = false; } });
+      save(); toast(name + ' is on chair ' + roman(n) + '. Customers can book them now.'); render();
+    },
+    rent: function (d) { S.chairs.forEach(function (c) { if (c.n === Number(d.n)) c.paid = d.p === '1'; }); save(); render(); },
+    rmEv: function (d) { S.events = S.events.filter(function (e) { return e.id !== d.id; }); save(); render(); },
+    mkAud: function (d) { U.mk.aud = d.a; U.mk.text = null; render(); },
+    mkCh: function (d) { var cur = val('mk-text'); U.mk.text = cur === tpl(U.mk.aud, U.mk.ch) ? null : cur; U.mk.ch = d.c; render(); },
+    mkSend: function () {
+      var text = val('mk-text'), n = audience(U.mk.aud).length;
+      if (!text) { toast('Write a message first.'); return; }
+      S.campaigns.unshift({ id: uid('c'), date: TODAY(), aud: AUD[U.mk.aud], ch: U.mk.ch, count: n, text: text }); U.mk.text = null; save();
+      toast('Demo: nothing sent. At launch this ' + (U.mk.ch === 'sms' ? 'texts ' : 'emails ') + n + ' people.'); render();
+    },
+    stock: function (d) { var p = product(d.p); if (!p) return; p.stock = Math.max(0, p.stock + Number(d.d)); save(); render(); },
+    sellOpen: function (d) {
+      var p = product(d.p); if (!p) return;
+      if (p.stock <= 0) { toast('Sold out. Add stock first.'); return; }
+      openPay({ tap: true, title: 'Sell ' + p.name, amount: p.price, cta: 'Card tapped', desc: 'Hold their card or phone near the top of your phone. This goes to the shop.' }, function () { p.stock--; S.sales.push({ id: uid('s'), pid: p.id, qty: 1, date: TODAY(), price: p.price }); save(); toast(p.name + ' sold. ' + p.stock + ' left.'); render(); });
+    },
+    pay: function (d) { S.shop.pay = d.p; save(); toast(d.p === 'chair' ? 'Back to paying in the chair.' : d.p === 'deposit' ? 'Deposits on. Book as a customer to see it.' : 'Full payment on. Book as a customer to see it.'); render(); },
+    openSite: function () { openLayer(siteHtml()); },
+    siteBook: function () { closeLayer(); startFlow(); go({ view: 'customer', c: 'pick' }); },
+    siteBarber: function (d) { closeLayer(); startFlow({ barber: d.b }); go({ view: 'customer', c: 'barber' }); },
+    askReset: function () { go({ reset: true }); },
+    keepReset: function () { go({ reset: false }); },
+    reset: function () { try { localStorage.removeItem(KEY); } catch (e) { /* nothing stored */ } S = seed(); save(); U.reset = false; U.fb = null; startFlow(); go({ view: 'customer', c: 'home', as: 'nick' }); toast('The demo is back to the start.'); },
+    try1: function () { U.as = 'jay'; go({ view: 'barber', b: 'hours' }); toast('This is Jay’s week. Switch Tuesday on.'); },
+    try2: function () { startFlow({ barber: 'jay' }); go({ view: 'customer', c: 'barber' }); },
+    try3: function () { go({ view: 'owner', o: 'settings' }); },
+    try4: function () { startFlow({ barber: 'nick', svc: 'haircut', date: satKey() }); go({ view: 'customer', c: 'time' }); },
+    try4b: function () { U.as = 'nick'; U.bDay = satKey(); go({ view: 'barber', b: 'diary' }); toast('Nick’s Saturday. Cancel any cut, then look at the customer’s Home.'); },
+    try5: function () { go({ view: 'customer', c: 'home' }); },
+    aboutOpen: function () { openLayer('<div class="sheet-bg" data-act="closeLayer"><div class="sheet brief-sheet" role="dialog" aria-label="About this prototype" data-stop="1">' + briefHtml() + '<button class="btn primary big" type="button" data-act="closeLayer">Back to the app</button></div></div>'); },
+    closeLayer: function (d, el, e) { if (e && e.target.closest('[data-stop]') && !e.target.closest('button')) return; closeLayer(); }
+  };
+
+  // Booking: check the details, take a pretend payment if one is due, then book
+  function book() {
+    var b = barber(U.f.barber), s = svcOf(b, U.f.svc);
+    grabDetails();
+    var name = S.me.name, phone = S.me.phone;
+    if (!name) { U.err = 'Add your name so ' + b.name + ' knows who’s in the chair.'; render(); document.getElementById('f-name').focus(); return; }
+    if (phone.replace(/\D/g, '').length < 10) { U.err = 'Add a mobile number with at least 10 digits, for your reminder text.'; render(); document.getElementById('f-phone').focus(); return; }
+    if (S.me.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(S.me.email)) { U.err = 'That email doesn’t look right. Check it, or leave it blank.'; render(); document.getElementById('f-email').focus(); return; }
+    if (slotsFor(b, s.mins, U.f.date).indexOf(U.f.time) === -1) { U.err = 'That time has just gone. Pick another.'; U.f.time = null; go({ c: 'time' }); return; }
+    U.err = '';
+    var q = quote(b, s);
+    function finish() {
+      var x = { id: 'b' + (S.ref++), barber: b.id, svc: s.id, name: s.name, mins: s.mins, price: s.price, date: U.f.date, start: U.f.time, who: name, status: 'booked', paidBy: null, mine: true,
+        pay: q.now ? S.shop.pay : 'chair', paid: q.now, covered: q.covered, voucherUsed: q.voucher, extras: Object.keys(U.f.extras || {}).filter(function (k) { return U.f.extras[k]; }), source: 'online', email: !!S.me.email };
+      if (q.covered === 'member' || q.covered === 'pack') { var o = ownedFor(b, q.covered); if (o) { o.left--; x.ownedLeft = o.left; } }
+      if (q.voucher) { var v = myVoucher(b); if (v) v.balance = Math.round((v.balance - q.voucher) * 100) / 100; }
+      if (S.me.optin && !S.me.counted) { S.people.push({ optin: true, last: 0, visits: 1 }); S.me.counted = true; }
+      S.wait = S.wait.filter(function (w) { return !(w.mine && w.barber === b.id && w.date === x.date); });
+      S.bookings.push(x); save(); U.last = x.id; go({ c: 'done' });
+    }
+    if (!q.now) { finish(); return; }
+    openPay({ title: 'Pay ' + b.name, amount: q.now, desc: (S.shop.pay === 'deposit' ? 'Deposit for ' + esc(s.name) + ', ' + esc(dayLabel(U.f.date)) + ' at ' + hm(U.f.time) + '. ' + gbp(s.price - q.now) + ' left to pay in the chair.' : esc(s.name) + ', ' + esc(dayLabel(U.f.date)) + ' at ' + hm(U.f.time) + '.') + ' At launch this is a card or phone payment that lands in ' + esc(b.name) + '’s own account.' }, finish);
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
+    var f = ACT[t.getAttribute('data-act')]; if (!f) return;
+    if (t.closest('#layer') && f !== ACT.closeLayer && !t.hasAttribute('data-keep')) closeLayer();
+    f(t.dataset, t, e);
+  });
+  document.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (e.target.id === 'bookform') book();
+    if (e.target.id === 'evform') {
+      var tt = val('ev-t'), nn = val('ev-n'), dd = val('ev-d');
+      if (!tt || !dd) { toast('Add what’s on and the date.'); return; }
+      S.events.push({ id: 'e' + Date.now().toString(36), date: dd, title: tt.slice(0, 60), note: nn.slice(0, 90) }); save(); toast('Added. It’s on the customer home screen and the website now.'); render();
+    }
+    if (e.target.id === 'prform') {
+      var pn = val('pr-n'), pp = Math.round(Number(val('pr-p')) * 100) / 100;
+      if (!pn || !(pp > 0)) { toast('Add a name and a price.'); return; }
+      S.products.push({ id: uid('p'), name: pn.slice(0, 32), price: pp, stock: 6, low: 3 }); save(); toast(pn + ' added. Customers can add it when they book.'); render();
+    }
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'as') { U.as = t.value; U.bDay = null; U.bCancel = null; render(); return; }
+    var ch = t.getAttribute('data-ch'); if (!ch) return;
+    if (ch === 'sh') { var prev = U.sheet && U.sheet.svc; grabSheet(); if (U.sheet.svc !== prev) U.sheet.time = null; renderSheet(); return; }
+    if (ch === 'keepDep') { S.shop.keepDeposit = t.checked; save(); return; }
+    if (ch === 'siteSw') { S.site[t.getAttribute('data-k')] = t.checked; save(); return; }
+    if (ch === 'dep') { S.shop.deposit = Number(t.value); save(); render(); return; }
+    if (ch === 'notice') { S.shop.notice = Number(t.value); save(); toast('Customers can book up to ' + t.options[t.selectedIndex].text + ' ahead of a slot.'); return; }
+    var b = barber(U.as), d = Number(t.getAttribute('data-d')), i = Number(t.getAttribute('data-i')), k = t.getAttribute('data-k');
+    if (ch === 'ofOn') { if (k === 'loyalty') b.loyalty.on = t.checked; else if (k === 'gift') b.offers.gift = t.checked; else b.offers[k].on = t.checked; save(); render(); return; }
+    if (ch === 'of') { var v = Math.max(0, Number(t.value) || 0), pth = k.split('.'); if (pth[0] === 'loyalty') b.loyalty.n = v || 8; else b.offers[pth[0]][pth[1]] = v; save(); if (pth[0] === 'loyalty' || pth[1] === 'n') render(); return; }
+    if (ch === 'dayOn') { var sh = S.shop.hours[d]; b.hours[d].on = t.checked; if (t.checked) { b.hours[d].from = Math.max(b.hours[d].from, sh[0]); b.hours[d].to = Math.min(b.hours[d].to, sh[1]); if (b.hours[d].to - b.hours[d].from < 60) { b.hours[d].from = sh[0]; b.hours[d].to = sh[1]; } } save(); toast(b.name + (t.checked ? ' is in on ' : ' is off on ') + DAYS_L[d] + 's. Customers see it now.'); render(); return; }
+    if (ch === 'from' || ch === 'to') { var hv = Number(t.value), hh = b.hours[d]; hh[ch] = hv; if (hh.to <= hh.from) { if (ch === 'from') hh.to = Math.min(hh.from + 60, S.shop.hours[d][1]); else hh.from = Math.max(hh.to - 60, S.shop.hours[d][0]); } save(); render(); return; }
+    if (ch === 'brk') { var h2 = b.hours[d]; if (t.checked) { var mid = Math.round((h2.from + h2.to) / 2 / 30) * 30; h2.brk = [mid, mid + 30]; } else h2.brk = null; save(); render(); return; }
+    if (ch === 'sName') { b.services[i].name = t.value.trim().slice(0, 40) || 'Service'; save(); return; }
+    if (ch === 'sMins') { b.services[i].mins = Number(t.value); b.services[i].range = null; save(); return; }
+    if (ch === 'sPrice') { var p = Math.max(0, Math.round(Number(t.value) * 100) / 100); b.services[i].price = isFinite(p) ? p : 0; save(); return; }
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLayer(); });
+
+  S = loadState();
+  render();
+
+  // Desktop and tablet: scale the phone to fit the window. A real phone gets the app full screen instead.
+  var PHONE_MQ = window.matchMedia('(max-width: 600px), (pointer: coarse) and (max-height: 500px)');
+  function fit() {
+    var wrap = document.getElementById('device-wrap'), dev = document.getElementById('device');
+    if (PHONE_MQ.matches) { dev.style.transform = ''; wrap.style.width = wrap.style.height = ''; return; }
+    var s = Math.max(.5, Math.min(1, (window.innerHeight - 128) / 874, (window.innerWidth - 32) / 415));
+    dev.style.transform = s < 1 ? 'scale(' + s + ')' : '';
+    wrap.style.width = (415 * s) + 'px'; wrap.style.height = (874 * s) + 'px';
+  }
+  function clock() { var d = new Date(), el = document.getElementById('sb-time'); if (el) el.textContent = d.getHours() + ':' + pad(d.getMinutes()); }
+  fit(); clock(); setInterval(clock, 20000);
+  window.addEventListener('resize', fit);
+  if (PHONE_MQ.addEventListener) PHONE_MQ.addEventListener('change', fit);
+})();
+</script>
+</body>
+</html>
+

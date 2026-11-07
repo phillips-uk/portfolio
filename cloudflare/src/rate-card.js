@@ -1,15 +1,19 @@
-// Private pages that open with an invite link made in /admin: the rate card and the Search Desk demo.
-//   /rate-card?invite=<token>   /search-desk?invite=<token>
+// Private pages that open with an invite link made in /admin: the rate card, the Search Desk demo and prospect prototypes.
+//   /rate-card?invite=<token>   /search-desk?invite=<token>   /the-loft?invite=<token>
 // The link itself is meant to be forwarded, so the token stays in the address bar. A cookie also remembers it, so the
 // plain address keeps working in the same browser. Invites live in R2 under rate-card-invites/<token>.json and list the
 // pages they open in `pages` (invites made before the demo existed have none and open the rate card only).
+// A link is live between `startsAt` (optional) and `expiresAt` (optional); outside that window it shows a locked page.
 import rateCardHtml from '../private/rate-card.html';
 import searchDeskHtml from '../private/search-desk.html';
+import theLoftHtml from '../private/the-loft.html';
 import { adminEmail } from './admin.js';
 
 export const PAGES = {
   'rate-card': { path: '/rate-card', html: rateCardHtml, cookie: 'ph_rc', title: 'The rate card' },
   'search-desk': { path: '/search-desk', html: searchDeskHtml, cookie: 'ph_sd', title: 'The Search Desk demo' },
+  // The Loft (Nick, Ely): the booking app prototype. Phone frame on desktop, full screen on a phone.
+  'the-loft': { path: '/the-loft', html: theLoftHtml, cookie: 'ph_tl', title: 'The Loft prototype' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid';
@@ -56,7 +60,9 @@ export function invitePages(inv) {
 export function inviteState(inv) {
   if (!inv) return 'missing';
   if (inv.revoked) return 'revoked';
-  if (inv.expiresAt && inv.expiresAt < new Date().toISOString()) return 'expired';
+  const now = new Date().toISOString();
+  if (inv.expiresAt && inv.expiresAt < now) return 'expired';
+  if (inv.startsAt && inv.startsAt > now) return 'scheduled';
   return 'active';
 }
 
@@ -100,8 +106,8 @@ a.btn{display:inline-block;margin-top:12px;background:#985830;color:#fff;text-de
 a.btn:hover{background:#7A3F1F}
 </style></head><body><main>
 <a href="/"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:34px;width:auto;display:block"></a>
-<h1>This page is by invitation.</h1>
-<p>__TITLE__ is shared by link. If your link has stopped working or you would like a copy, ask and I'll send a new one.</p>
+<h1>__HEADING__</h1>
+<p>__BODY__</p>
 <p><strong style="color:#1A1A1A">contact@phillips-uk.com</strong></p>
 <a class="btn" href="mailto:contact@phillips-uk.com?subject=__SUBJECT__">Ask for access</a>
 </main></body></html>`;
@@ -120,8 +126,14 @@ export async function rateCard(request, url, env, ctx) {
   const fromUrl = url.searchParams.get('invite');
   const token = fromUrl || readCookie(request, page.cookie);
   const invite = await getInvite(env, token);
-  if (inviteState(invite) !== 'active' || !invitePages(invite).includes(key)) {
-    const locked = LOCKED_HTML.replace('__TITLE__', page.title).replace('__SUBJECT__', encodeURIComponent(page.title.replace(/^The /, '') + ' access'));
+  const state = inviteState(invite);
+  if (state !== 'active' || !invitePages(invite).includes(key)) {
+    const early = state === 'scheduled' && invitePages(invite).includes(key);
+    const opens = early ? new Date(invite.startsAt).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/London' }) : '';
+    const locked = LOCKED_HTML
+      .replace('__HEADING__', early ? 'This link opens soon.' : 'This page is by invitation.')
+      .replace('__BODY__', early ? `${page.title} opens on ${opens}. Come back then, or ask if you need it sooner.` : `${page.title} is shared by link. If your link has stopped working or you would like a copy, ask and I'll send a new one.`)
+      .replace('__SUBJECT__', encodeURIComponent(page.title.replace(/^The /, '') + ' access'));
     return new Response(locked, { status: 403, headers: PRIVATE_HEADERS });
   }
 

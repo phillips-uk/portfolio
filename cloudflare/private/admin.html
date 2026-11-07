@@ -198,9 +198,11 @@
   .col .none { color: var(--faint); font-size: 13px; padding: 4px; }
 
   /* Rate card links */
-  .create { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) 170px 170px auto; gap: 12px; align-items: end; padding: 20px; }
+  .create { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 170px 150px 150px auto; gap: 12px; align-items: end; padding: 20px; }
+  .dates-edit { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .dates-edit input { width: 140px; padding: 6px 8px; font-size: 13px; }
   label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
-  input[type=text], select { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 14px; color: var(--text); }
+  input[type=text], input[type=date], select { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 14px; color: var(--text); }
   input:focus, select:focus, .btn:focus-visible, .nav a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   .made { margin: 0 20px 20px; padding: 12px 14px; border-radius: 8px; background: var(--amber-soft); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
   .made code { font-size: 13px; overflow-wrap: anywhere; user-select: all; white-space: pre-line; }
@@ -448,16 +450,17 @@
     <!-- Rate card links -->
     <section data-pane="links" hidden>
       <div class="page-head">
-        <div><h1>Invite links</h1><p class="lede">Links to the private rate card and the Search Desk demo. They can be forwarded, and you can switch any of them off.</p></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a><a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a></div>
+        <div><h1>Invite links</h1><p class="lede">Links to the private rate card, the Search Desk demo and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a><a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a><a class="btn" href="/the-loft" target="_blank" rel="noopener">Preview The Loft</a></div>
       </div>
       <div class="card" style="margin-bottom:20px">
         <div class="card-head"><h2>New link</h2></div>
         <form class="create" id="create" autocomplete="off">
           <label for="f-name">Who it's for<input type="text" id="f-name" maxlength="80" placeholder="Company or person" required></label>
           <label for="f-note">Private note<input type="text" id="f-note" maxlength="200" placeholder="Who introduced them, what they asked for"></label>
-          <label for="f-pages">Opens<select id="f-pages"><option value="rate-card" selected>Rate card</option><option value="search-desk">Search Desk demo</option><option value="rate-card,search-desk">Both</option></select></label>
-          <label for="f-days">Stops working<select id="f-days"><option value="30">After 30 days</option><option value="90" selected>After 90 days</option><option value="365">After a year</option><option value="0">Never</option></select></label>
+          <label for="f-pages">Opens<select id="f-pages"><option value="rate-card" selected>Rate card</option><option value="search-desk">Search Desk demo</option><option value="rate-card,search-desk">Rate card and Search Desk</option><option value="the-loft">The Loft prototype</option></select></label>
+          <label for="f-from">Live from<input type="date" id="f-from"></label>
+          <label for="f-until">Live until<input type="date" id="f-until" title="Leave empty to keep it live"></label>
           <button class="btn primary" type="submit" id="f-go">Create link</button>
         </form>
         <div class="made" id="made" hidden><code id="made-link"></code><button type="button" class="btn" id="made-copy">Copy link</button></div>
@@ -465,7 +468,7 @@
       </div>
       <div class="card scroll">
         <table class="table">
-          <thead><tr><th>Who</th><th>Status</th><th class="r">Views</th><th class="r">Browsers</th><th>Last opened</th><th>Stops working</th><th class="r"></th></tr></thead>
+          <thead><tr><th>Who</th><th>Status</th><th class="r">Views</th><th class="r">Browsers</th><th>Last opened</th><th>Live</th><th class="r"></th></tr></thead>
           <tbody id="invites"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
         </table>
       </div>
@@ -888,7 +891,7 @@
 
     var events = [];
     state.clients.forEach(function (c) { (c.sections || []).forEach(function (s) { (s.items || []).slice(0, 1).forEach(function (it) { events.push({ at: it.date, icon: 'doc', title: c.name + ': ' + it.title, sub: s.name, href: it.doc ? docLink(it.doc, c.slug) : it.link }); }); }); });
-    state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : i.pages[0] === 'search-desk' ? 'the Search Desk demo' : 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'browser', 'browsers') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
+    state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : ({ 'search-desk': 'the Search Desk demo', 'the-loft': 'The Loft prototype' })[i.pages[0]] || 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'browser', 'browsers') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
     state.prospects.forEach(function (p) { if (p.updated) events.push({ at: p.updated, icon: 'doc', tone: 'amber', title: p.name + ' note updated', sub: p.stage, href: p.doc ? docLink(p.doc, 'p') : p.link }); });
     events.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
     var act = $('activity'); act.innerHTML = '';
@@ -1085,25 +1088,44 @@
   }
 
   /* ---------- rate card links ---------- */
-  var PAGE_NAME = { 'rate-card': 'Rate card', 'search-desk': 'Search Desk' };
+  var PAGE_NAME = { 'rate-card': 'Rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft' };
+  var PAGE_COPY = { 'rate-card': 'rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft' };
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function isoDay(s) { return s ? ymd(new Date(s)) : ''; }
+  function liveText(inv) {
+    if (inv.startsAt && inv.expiresAt) return fmt(inv.startsAt) + ' to ' + fmt(inv.expiresAt);
+    if (inv.expiresAt) return 'Until ' + fmt(inv.expiresAt);
+    if (inv.startsAt) return 'From ' + fmt(inv.startsAt);
+    return 'Always';
+  }
+  var editing = null;
   function renderInvites() {
     var body = $('invites'); body.innerHTML = '';
     if (!state.invites.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No links yet. Create the first one above.'); td0.colSpan = 7; tr0.appendChild(td0); body.appendChild(tr0); return; }
     state.invites.forEach(function (inv) {
       var tr = el('tr');
       var who = el('td', 'who'); who.appendChild(el('b', null, inv.name)); who.appendChild(el('span', null, inv.pages.map(function (k) { return PAGE_NAME[k]; }).join(' and ') + ' · ' + (inv.note || 'Made ' + fmt(inv.createdAt)))); tr.appendChild(who);
-      var st = el('td'); st.appendChild(el('span', 'pill ' + ({ active: 'good', revoked: 'bad', expired: 'warn' }[inv.state] || ''), { active: 'Active', revoked: 'Switched off', expired: 'Expired' }[inv.state] || inv.state)); tr.appendChild(st);
+      var st = el('td'); st.appendChild(el('span', 'pill ' + ({ active: 'good', revoked: 'bad', expired: 'warn', scheduled: 'amber' }[inv.state] || ''), { active: 'Active', revoked: 'Switched off', expired: 'Expired', scheduled: 'Not live yet' }[inv.state] || inv.state)); tr.appendChild(st);
       var vw = el('td', 'r num', String(inv.views));
       if (inv.pages.length > 1) vw.title = inv.pages.map(function (k) { return PAGE_NAME[k] + ': ' + ((inv.pageViews || {})[k] || 0); }).join(', ');
       tr.appendChild(vw);
       tr.appendChild(el('td', 'r num', String(inv.browsers)));
       tr.appendChild(el('td', null, inv.lastViewedAt ? ago(inv.lastViewedAt) + (inv.lastCountry ? ', ' + inv.lastCountry : '') : 'Not yet'));
-      tr.appendChild(el('td', null, inv.expiresAt ? fmt(inv.expiresAt) : 'Never'));
+      var lv = el('td');
+      if (editing === inv.token) {
+        var ed = el('div', 'dates-edit'), f1 = el('input'), f2 = el('input'), sv = el('button', 'btn primary', 'Save'), cx = el('button', 'btn', 'Cancel');
+        f1.type = f2.type = 'date'; f1.value = isoDay(inv.startsAt); f2.value = isoDay(inv.expiresAt); f1.setAttribute('aria-label', 'Live from'); f2.setAttribute('aria-label', 'Live until'); sv.type = cx.type = 'button';
+        sv.addEventListener('click', function () { sv.disabled = true; api('/admin/api/invites/' + encodeURIComponent(inv.token) + '/dates', { method: 'POST', body: { from: f1.value, until: f2.value } }).then(function () { editing = null; return reloadInvites(); }).catch(function (e) { sv.disabled = false; $('create-msg').textContent = e.message; }); });
+        cx.addEventListener('click', function () { editing = null; renderInvites(); });
+        ed.appendChild(f1); ed.appendChild(f2); ed.appendChild(sv); ed.appendChild(cx); lv.appendChild(ed);
+      } else lv.textContent = liveText(inv);
+      tr.appendChild(lv);
       var act = el('td', 'r'); var box = el('div', 'actions');
       inv.pages.forEach(function (k) {
-        var c = el('button', 'btn', inv.pages.length > 1 ? 'Copy ' + PAGE_NAME[k].toLowerCase().replace('search desk', 'Search Desk') + ' link' : 'Copy link'); c.type = 'button';
+        var c = el('button', 'btn', inv.pages.length > 1 ? 'Copy ' + PAGE_COPY[k] + ' link' : 'Copy link'); c.type = 'button';
         c.addEventListener('click', function () { copy(inv.links[k], c); }); box.appendChild(c);
       });
+      if (editing !== inv.token) { var dt = el('button', 'btn', 'Dates'); dt.type = 'button'; dt.addEventListener('click', function () { editing = inv.token; renderInvites(); }); box.appendChild(dt); }
       if (inv.state !== 'expired') {
         var t = el('button', 'btn', inv.state === 'revoked' ? 'Switch on' : 'Switch off'); t.type = 'button';
         t.addEventListener('click', function () {
@@ -1124,12 +1146,14 @@
     $('create-msg').textContent = '';
     if (!name) { $('create-msg').textContent = 'Add who the link is for.'; $('f-name').focus(); return; }
     $('f-go').disabled = true;
-    api('/admin/api/invites', { method: 'POST', body: { name: name, note: $('f-note').value.trim(), days: Number($('f-days').value), pages: $('f-pages').value.split(',') } })
+    api('/admin/api/invites', { method: 'POST', body: { name: name, note: $('f-note').value.trim(), from: $('f-from').value, until: $('f-until').value, pages: $('f-pages').value.split(',') } })
       .then(function (inv) { $('made-link').textContent = inv.pages.map(function (k) { return inv.links[k]; }).join('\n'); $('made').hidden = false; $('f-name').value = ''; $('f-note').value = ''; copy($('made-link').textContent, $('made-copy')); return reloadInvites(); })
       .catch(function (err) { $('create-msg').textContent = err.message; })
       .then(function () { $('f-go').disabled = false; });
   });
   $('made-copy').addEventListener('click', function () { copy($('made-link').textContent, $('made-copy')); });
+  // New links: live from today for 30 days unless changed
+  (function () { var t = new Date(); $('f-from').value = ymd(t); $('f-until').value = ymd(new Date(t.getTime() + 30 * 86400000)); })();
 
   /* ---------- site ---------- */
   function renderSite() {
