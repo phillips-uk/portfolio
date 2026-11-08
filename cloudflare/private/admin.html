@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <script src="https://accounts.google.com/gsi/client" async></script>
 <style>
-  /* Layout: dark side menu, light working area. Overview first (what needs attention), then lists you click into. */
+  /* Layout: shared glass side menu (same as Before You Pay and the Control Room), light working area. Overview first (what needs attention), then lists you click into. */
   :root {
     --ink: #15130F; --ink-2: #221F1A; --ink-3: #3A352D; --on-ink: #F4F0EA; --on-ink-2: #A9A196;
     --bg: #F6F4F1; --surface: #FFFFFF; --line: #E7E2DA; --line-2: #F0ECE6;
@@ -27,25 +27,9 @@
   .num { font-variant-numeric: tabular-nums; }
 
   /* Shell */
-  .shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100%; }
-  .side { background: var(--ink); color: var(--on-ink); display: flex; flex-direction: column; padding: 24px 16px; position: sticky; top: 0; height: 100vh; }
-  .side-logo { display: flex; align-items: center; gap: 12px; padding: 0 10px 28px; text-decoration: none; }
-  .side-logo img { height: 30px; width: auto; display: block; }
-  .side-logo span { font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--on-ink-2); padding-left: 12px; border-left: 1px solid var(--ink-3); }
-  .nav { display: grid; gap: 2px; }
-  .nav a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 8px; color: var(--on-ink-2); text-decoration: none; font-weight: 500; font-size: 14.5px; }
-  .nav a:hover { background: var(--ink-2); color: var(--on-ink); }
-  .nav a[aria-current="page"] { background: var(--ink-2); color: var(--on-ink); box-shadow: inset 2px 0 0 var(--amber-2); }
-  .nav .ico { display: inline-flex; align-items: center; gap: 12px; }
-  .nav svg { width: 17px; height: 17px; flex: none; }
-  .nav .badge { font-size: 12px; color: var(--on-ink-2); font-variant-numeric: tabular-nums; }
-  .side-foot { margin-top: auto; padding: 16px 12px 0; border-top: 1px solid var(--ink-3); display: grid; gap: 10px; font-size: 13px; color: var(--on-ink-2); }
-  .side-foot .sync { display: flex; align-items: center; gap: 8px; }
+  .shell { display: grid; grid-template-columns: var(--gm-w) minmax(0, 1fr); min-height: 100%; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); flex: none; }
   .dot.stale { background: var(--warn); }
-  .side-foot .user { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
-  .side-foot .user span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .linkish { background: none; border: 0; padding: 0; color: var(--on-ink); font-weight: 700; cursor: pointer; font-size: 13px; }
 
   .main { padding: 36px 44px 64px; min-width: 0; }
   .main > [data-pane] { max-width: 1320px; margin: 0 auto; }
@@ -332,7 +316,7 @@
   .dates-edit input { width: 140px; padding: 6px 8px; font-size: 13px; }
   label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
   input[type=text], input[type=date], select { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 14px; color: var(--text); }
-  input:focus, select:focus, .btn:focus-visible, .nav a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  input:focus, select:focus, .btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   .made { margin: 0 20px 20px; padding: 12px 14px; border-radius: 8px; background: var(--amber-soft); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
   .made code { font-size: 13px; overflow-wrap: anywhere; user-select: all; white-space: pre-line; }
   .msg { color: var(--bad); font-size: 13px; margin: 0 20px 12px; min-height: 0; }
@@ -355,15 +339,8 @@
     .two, .detail-grid { grid-template-columns: minmax(0, 1fr); }
     .create { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   }
+  @media (max-width: 900px) { .shell { display: block; } }
   @media (max-width: 820px) {
-    .shell { grid-template-columns: minmax(0, 1fr); }
-    .side { position: static; height: auto; padding: 14px 16px; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; }
-    .side-logo { padding: 0; }
-    .nav { display: flex; overflow-x: auto; width: 100%; order: 3; gap: 4px; }
-    .nav a { padding: 8px 10px; font-size: 13.5px; }
-    .nav a .badge { display: none; }
-    .side-foot { margin: 0 0 0 auto; border: 0; padding: 0; }
-    .side-foot .sync { display: none; }
     .main { padding: 24px 16px 48px; }
     .create { grid-template-columns: minmax(0, 1fr); }
     .hrow { grid-template-columns: minmax(0, 1fr) 90px 40px; }
@@ -371,9 +348,6 @@
   }
 
   /* ---------- Visual layer: depth, colour and motion ---------- */
-  .main { background: radial-gradient(900px 520px at 100% -12%, rgba(217,146,94,.16), transparent 60%), radial-gradient(700px 420px at -8% 0%, rgba(152,88,48,.06), transparent 60%), var(--bg); }
-  .side { background: radial-gradient(420px 320px at 0% 0%, rgba(217,146,94,.16), transparent 70%), var(--ink); }
-  .nav a[aria-current="page"] { background: linear-gradient(90deg, rgba(217,146,94,.2), rgba(217,146,94,.03)); box-shadow: inset 2px 0 0 #D9925E; }
   .card { box-shadow: 0 1px 2px rgba(21,19,15,.04), 0 14px 34px -26px rgba(21,19,15,.28); }
 
   .hero-card { position: relative; overflow: hidden; border-radius: 16px; padding: 28px 30px; margin-bottom: 22px; color: var(--on-ink);
@@ -461,6 +435,119 @@
   }
   @media (max-width: 820px) { .perf .card-head, .perf-src-head { flex-direction: column; align-items: flex-start; gap: 4px; } .hero-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ring-box { grid-column: 1 / -1; } .hkpi b { font-size: 23px; } }
   @media (max-width: 820px) { .hero-card { padding: 22px 18px; border-radius: 12px; } .hero-card h1 { font-size: 26px; } }
+/* ===== Shared admin menu, liquid glass (Phillips Group, 2026-11-08). gm = group menu.
+   The same block is in all three admins; change all three together:
+   portfolio cloudflare/private/admin.html, before-you-pay admin/shell.css, tdo-app src/admin-views.js.
+   Each admin sets only --gm-accent, --gm-accent-rgb, --gm-hi-rgb, --gm-third-rgb and --gm-bg. ===== */
+:root{--gm-w:264px;--gm-text:#25211C;--gm-muted:#6E675D;--gm-faint:#9A9287;--gm-ink-rgb:37,33,28;
+  --gm-font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
+/* Light behind the glass: warm corners, a fine grid fading out, slow colour drifting. Fixed, behind everything. */
+.gm-sprite{position:absolute;width:0;height:0;overflow:hidden}
+.gm-amb{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:var(--gm-bg)}
+.gm-amb::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 560px at 100% -10%,rgba(var(--gm-hi-rgb),.24),transparent 60%),radial-gradient(760px 560px at -10% 110%,rgba(var(--gm-third-rgb),.2),transparent 60%)}
+.gm-amb::after{content:"";position:absolute;inset:0;opacity:.55;background-image:linear-gradient(rgba(var(--gm-ink-rgb),.035) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--gm-ink-rgb),.035) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 60% 0%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse 80% 60% at 60% 0%,#000 25%,transparent 75%)}
+.gm-amb i{position:absolute;border-radius:50%;filter:blur(64px)}
+.gm-amb .o1{width:560px;height:400px;right:-140px;top:-120px;background:rgba(var(--gm-hi-rgb),.4)}
+.gm-amb .o2{width:480px;height:340px;left:30%;top:46%;background:rgba(var(--gm-accent-rgb),.12)}
+.gm-amb .o3{width:460px;height:380px;left:-160px;top:-80px;background:rgba(var(--gm-third-rgb),.3)}
+@media (prefers-reduced-motion:no-preference){.gm-amb .o1{animation:gmDrift1 28s ease-in-out infinite alternate}.gm-amb .o2{animation:gmDrift2 34s ease-in-out infinite alternate}.gm-amb .o3{animation:gmDrift3 30s ease-in-out infinite alternate}}
+@keyframes gmDrift1{to{transform:translate3d(-90px,60px,0) scale(1.12)}}@keyframes gmDrift2{to{transform:translate3d(120px,-50px,0) scale(.9)}}@keyframes gmDrift3{to{transform:translate3d(80px,140px,0) scale(1.1)}}
+/* The sidebar: frosted glass with a lit edge */
+.gm{width:var(--gm-w);flex:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:30;font-family:var(--gm-font);font-size:14px;line-height:1.4;color:var(--gm-text);-webkit-font-smoothing:antialiased;text-align:left;
+  background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.5));-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);
+  border-right:1px solid rgba(255,255,255,.8);box-shadow:inset -1px 0 0 rgba(var(--gm-ink-rgb),.06),12px 0 40px -36px rgba(var(--gm-ink-rgb),.4)}
+.gm *,.gm *::before,.gm *::after{box-sizing:border-box}
+.gm a{text-decoration:none}
+.gm-toggle{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0}
+.gm-top{display:flex;align-items:center;gap:8px;padding:18px 12px 12px}
+.gm-tile{display:block;flex:none;filter:drop-shadow(0 6px 7px rgba(var(--gm-ink-rgb),.22))}
+/* Switcher: the logo opens the three admins. A details element, so it needs no JavaScript. */
+.gm-switch{position:relative;flex:1;min-width:0}
+.gm-switch>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:8px;border-radius:14px;cursor:pointer;user-select:none;transition:background .2s,box-shadow .2s}
+.gm-switch>summary::-webkit-details-marker{display:none}
+.gm-switch>summary:hover,.gm-switch[open]>summary{background:linear-gradient(180deg,#fff,rgba(255,255,255,.62));box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.09),0 8px 18px -14px rgba(var(--gm-ink-rgb),.45)}
+.gm-switch>summary:focus-visible,.gm-menu a:focus-visible,.gm-item:focus-visible,.gm-out:focus-visible,.gm-search:focus-visible{outline:2px solid rgba(var(--gm-accent-rgb),.6);outline-offset:1px}
+.gm-id{display:grid;min-width:0;flex:1;line-height:1.15}
+.gm-id b{font-size:14.5px;font-weight:760;letter-spacing:-.015em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.gm-id small{font-size:11.5px;font-weight:600;color:var(--gm-faint);margin-top:3px}
+.gm-updown{width:16px;height:16px;flex:none;color:var(--gm-faint)}
+.gm-menu{position:absolute;left:0;top:calc(100% + 8px);width:290px;max-width:calc(100vw - 24px);padding:6px;z-index:60;border-radius:18px;
+  background:linear-gradient(180deg,#fff,#FCFBF9);   /* solid: glass nested in the glass sidebar would not blur */
+  border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.1),0 30px 60px -30px rgba(var(--gm-ink-rgb),.5)}
+.gm-eyebrow{display:flex;align-items:center;gap:8px;margin:8px 10px 6px;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gm-faint)}
+.gm-eyebrow .gm-tile{filter:none}
+.gm-menu a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:12px;color:var(--gm-text);transition:background .2s}
+.gm-menu a:hover{color:var(--gm-text);background:rgba(var(--gm-ink-rgb),.04)}
+.gm-menu a>span{display:grid;flex:1;min-width:0;line-height:1.2}
+.gm-menu a b{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.gm-menu a small{font-size:12px;color:var(--gm-muted);margin-top:2px}
+.gm-tick{width:16px;height:16px;flex:none;color:var(--gm-accent);visibility:hidden}
+.gm-menu a[aria-current] .gm-tick{visibility:visible}
+.gm-burger{display:none}
+/* The menu */
+.gm-panel{display:flex;flex-direction:column;flex:1;min-height:0}
+.gm-nav{flex:1;overflow-y:auto;padding:6px 14px 14px;display:flex;flex-direction:column;gap:2px}
+.gm-label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gm-faint);padding:18px 12px 6px}
+.gm-item{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;margin:0;padding:0 12px;border:0;border-radius:12px;background:none;color:var(--gm-muted);font:600 14px/1.3 var(--gm-font);text-align:left;cursor:pointer;transition:background .2s,color .2s}
+.gm-item svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.gm-item:hover{color:var(--gm-text);background:rgba(255,255,255,.6)}
+.gm-item[aria-current=page]{color:var(--gm-text);background:linear-gradient(180deg,#fff,rgba(255,255,255,.72));box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.1),0 8px 18px -12px rgba(var(--gm-ink-rgb),.45)}
+.gm-item[aria-current=page] svg{color:var(--gm-accent)}
+.gm-item>span:not([class]){flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gm-count{flex:none;margin-left:auto;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--gm-faint)}
+.gm-count:empty{display:none}
+.gm-count.hot,.gm-count.red{color:#fff;border-radius:999px;padding:1px 8px;font-weight:700;font-size:11.5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.gm-count.hot{background:linear-gradient(180deg,rgba(var(--gm-accent-rgb),.82),var(--gm-accent))}
+.gm-count.red{background:linear-gradient(180deg,#C25A40,#A23B2A)}
+.gm-dot{width:8px;height:8px;border-radius:50%;flex:none;margin:0 4px;background:#9AA39A;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
+.gm-dot.green{background:#3F8A5A}.gm-dot.amber{background:#C98A1E}.gm-dot.red{background:#B4472F}
+.gm-ext{width:13px!important;height:13px!important;margin-left:auto;opacity:.6}
+/* Groups that open and close (Before You Pay): the header is a button, .open shows its pages */
+.gm-chev{width:14px;height:14px;flex:none;color:var(--gm-faint);transition:transform .15s}
+.gm-grp.open>.gm-item .gm-chev{transform:rotate(90deg)}
+.gm-grp.mine>.gm-item{color:var(--gm-text)}
+.gm-grp.open>.gm-item .gm-count{display:none}
+.gm-sub{display:none;flex-direction:column;gap:1px;padding:2px 0 6px}
+.gm-grp.open>.gm-sub{display:flex}
+.gm-sub .gm-item{min-height:34px;padding-left:39px;font-size:13.5px}
+/* Search (Before You Pay) */
+.gm-search{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;margin:0 0 8px;padding:0 12px;border:0;border-radius:12px;color:var(--gm-faint);font:500 13.5px var(--gm-font);cursor:pointer;text-align:left;
+  background:rgba(255,255,255,.55);box-shadow:inset 0 1px 2px rgba(var(--gm-ink-rgb),.05),0 0 0 .5px rgba(var(--gm-ink-rgb),.1)}
+.gm-search svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.gm-search kbd{margin-left:auto;font:600 11px var(--gm-font);color:var(--gm-faint);border:0;border-radius:6px;padding:2px 6px;background:rgba(255,255,255,.8);box-shadow:0 0 0 .5px rgba(var(--gm-ink-rgb),.12)}
+/* Foot: who is signed in */
+.gm-foot{padding:10px 14px 16px;display:grid;gap:8px}
+.gm-status{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--gm-muted);padding:0 12px}
+.gm-user{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;border-radius:14px;background:rgba(255,255,255,.5);box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.08)}
+.gm-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;color:var(--gm-accent);
+  background:linear-gradient(180deg,#fff,rgba(255,255,255,.6));box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.14),0 6px 14px -10px rgba(var(--gm-ink-rgb),.5)}
+.gm-who{display:grid;flex:1;min-width:0;line-height:1.25}
+.gm-who b{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gm-who small{font-size:12px;color:var(--gm-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gm-out{display:grid;place-items:center;width:32px;height:32px;margin:0;padding:0;border-radius:10px;border:0;background:none;color:var(--gm-faint);cursor:pointer;flex:none}
+.gm-out:hover{background:rgba(255,255,255,.8);color:var(--gm-text)}
+.gm-out svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* Phones and tablets: a glass bar across the top; the hamburger opens the same list below it (a checkbox, so no JavaScript) */
+@media (max-width:900px){
+  .gm{width:auto;height:auto;border-right:0;border-bottom:1px solid rgba(var(--gm-ink-rgb),.07);box-shadow:0 10px 30px -26px rgba(var(--gm-ink-rgb),.5)}
+  .gm-top{padding:8px 12px}
+  .gm-switch{flex:0 1 auto}
+  .gm-burger{display:grid;place-items:center;width:42px;height:42px;margin-left:auto;border-radius:12px;color:var(--gm-text);cursor:pointer;user-select:none;background:rgba(255,255,255,.6);box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.1)}
+  .gm-burger svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+  .gm-burger .gm-x{display:none}
+  .gm-toggle:checked~.gm-top .gm-burger{background:#fff}
+  .gm-toggle:checked~.gm-top .gm-burger .gm-bars{display:none}
+  .gm-toggle:checked~.gm-top .gm-burger .gm-x{display:block}
+  .gm-toggle:focus-visible~.gm-top .gm-burger{outline:2px solid rgba(var(--gm-accent-rgb),.6);outline-offset:1px}
+  .gm-panel{display:none;position:absolute;left:8px;right:8px;top:calc(100% + 6px);max-height:calc(100vh - 76px);border-radius:18px;background:linear-gradient(180deg,#fff,#FCFBF9);
+    border:1px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 0 0 .5px rgba(var(--gm-ink-rgb),.1),0 30px 60px -30px rgba(var(--gm-ink-rgb),.5)}
+  .gm-toggle:checked~.gm-panel{display:flex}
+  .gm-nav{padding-top:10px}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.gm{background:rgba(255,255,255,.95)}}
+@media (prefers-reduced-motion:reduce){.gm *{transition:none!important}}
+/* ===== end of shared admin menu ===== */
+  :root { --gm-accent: #985830; --gm-accent-rgb: 152,88,48; --gm-hi-rgb: 217,146,94; --gm-third-rgb: 205,178,140; --gm-bg: #F6F4F1; }
 </style>
 </head>
 <body>
@@ -478,18 +565,22 @@
 </section>
 
 <div class="shell" id="app" hidden>
-  <aside class="side">
-    <a class="side-logo" href="/" aria-label="Phillips. website"><img src="/logo/phillips-lockup-reversed.svg" alt="Phillips."><span>Admin</span></a>
-    <nav class="nav" aria-label="Admin">
-      <a href="#overview" data-view="overview"><span class="ico"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="2" width="5.5" height="5.5" rx="1.2"/><rect x="10.5" y="2" width="5.5" height="5.5" rx="1.2"/><rect x="2" y="10.5" width="5.5" height="5.5" rx="1.2"/><rect x="10.5" y="10.5" width="5.5" height="5.5" rx="1.2"/></svg>Overview</span></a>
-      <a href="#clients" data-view="clients"><span class="ico"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="5" width="13" height="10" rx="1.6"/><path d="M6.5 5V3.6c0-.6.4-1.1 1-1.1h3c.6 0 1 .5 1 1.1V5"/></svg>Clients</span><span class="badge" id="b-clients"></span></a>
-      <a href="#prospects" data-view="prospects"><span class="ico"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 4h12M5 9h8M7.5 14h3"/></svg>Prospects</span><span class="badge" id="b-prospects"></span></a>
-      <a href="#links" data-view="links"><span class="ico"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7.5 10.5l3-3"/><path d="M8.2 4.8 9.6 3.4a3 3 0 0 1 4.2 4.2l-1.4 1.4"/><path d="M9.8 13.2 8.4 14.6a3 3 0 0 1-4.2-4.2l1.4-1.4"/></svg>Invite links</span><span class="badge" id="b-links"></span></a>
-      <a href="#site" data-view="site"><span class="ico"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="9" cy="9" r="6.5"/><path d="M2.5 9h13M9 2.5c1.8 1.9 2.6 4 2.6 6.5S10.8 13.6 9 15.5C7.2 13.6 6.4 11.5 6.4 9S7.2 4.4 9 2.5Z"/></svg>Site</span></a>
-    </nav>
-    <div class="side-foot">
-      <div class="sync"><span class="dot" id="sync-dot"></span><span id="sync-text">Not synced yet</span></div>
-      <div class="user"><span id="who-email"></span><button type="button" class="linkish" id="logout">Sign out</button></div>
+  <div class="gm-amb" aria-hidden="true"><i class="o1"></i><i class="o2"></i><i class="o3"></i></div>
+  <aside class="gm" aria-label="Admin menu">
+    <svg class="gm-sprite" aria-hidden="true" focusable="false"><defs><symbol id="gm-sq" viewBox="0 0 240 240"><path d="M240.0 120.0L239.9 160.3L239.6 173.1L239.1 182.4L238.3 189.9L237.4 196.2L236.3 201.7L234.9 206.6L233.3 210.9L231.5 214.9L229.4 218.4L227.1 221.6L224.5 224.5L221.6 227.1L218.4 229.4L214.9 231.5L210.9 233.3L206.6 234.9L201.7 236.3L196.2 237.4L189.9 238.3L182.4 239.1L173.1 239.6L160.3 239.9L120.0 240.0L79.7 239.9L66.9 239.6L57.6 239.1L50.1 238.3L43.8 237.4L38.3 236.3L33.4 234.9L29.1 233.3L25.1 231.5L21.6 229.4L18.4 227.1L15.5 224.5L12.9 221.6L10.6 218.4L8.5 214.9L6.7 210.9L5.1 206.6L3.7 201.7L2.6 196.2L1.7 189.9L0.9 182.4L0.4 173.1L0.1 160.3L0.0 120.0L0.1 79.7L0.4 66.9L0.9 57.6L1.7 50.1L2.6 43.8L3.7 38.3L5.1 33.4L6.7 29.1L8.5 25.1L10.6 21.6L12.9 18.4L15.5 15.5L18.4 12.9L21.6 10.6L25.1 8.5L29.1 6.7L33.4 5.1L38.3 3.7L43.8 2.6L50.1 1.7L57.6 0.9L66.9 0.4L79.7 0.1L120.0 0.0L160.3 0.1L173.1 0.4L182.4 0.9L189.9 1.7L196.2 2.6L201.7 3.7L206.6 5.1L210.9 6.7L214.9 8.5L218.4 10.6L221.6 12.9L224.5 15.5L227.1 18.4L229.4 21.6L231.5 25.1L233.3 29.1L234.9 33.4L236.3 38.3L237.4 43.8L238.3 50.1L239.1 57.6L239.6 66.9L239.9 79.7Z"/></symbol><radialGradient id="gm-sheen" cx="30%" cy="0%" r="90%"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs></svg>
+    <input class="gm-toggle" type="checkbox" id="gm-open" aria-label="Menu"><div class="gm-top"><details class="gm-switch"><summary aria-label="Switch admin"><svg class="gm-tile" width="36" height="36" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#985830"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 124C88 140 88 156 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/><path d="M88 76C88 76 88 76 88 76"/></g></svg><span class="gm-id"><b>Phillips.</b><small>Admin</small></span><svg class="gm-updown" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 9 4-4 4 4M8 15l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="gm-menu"><div class="gm-eyebrow"><svg class="gm-tile" width="16" height="16" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#15130F"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 68C88 102.67 88 137.33 88 172"/><path d="M88 68C98.67 68 109.33 68 120 68C137.67 68 152 82.33 152 100C152 117.67 137.67 132 120 132C109.33 132 98.67 132 88 132"/></g></svg>Phillips Group</div><a href="https://www.phillips-uk.com/admin" aria-current="true"><svg class="gm-tile" width="30" height="30" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#985830"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 124C88 140 88 156 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/><path d="M88 76C88 76 88 76 88 76"/></g></svg><span><b>Phillips.</b><small>Admin</small></span><svg class="gm-tick" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="https://beforeyoupay.uk/admin/home"><svg class="gm-tile" width="30" height="30" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#0A7A55"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 68C88 102.67 88 137.33 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/></g></svg><span><b>Before You Pay</b><small>Admin</small></span><svg class="gm-tick" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="https://app.thedirectorsoffice.uk/control"><svg class="gm-tile" width="30" height="30" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#6B6256"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M76 172C76 152 76 132 76 112C76 87.7 95.7 68 120 68"/><path d="M164 172C164 152 164 132 164 112C164 87.7 144.3 68 120 68"/><path d="M120 172C120 172 120 172 120 172"/></g></svg><span><b>The Director&#39;s Office</b><small>Control Room</small></span><svg class="gm-tick" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></details><label class="gm-burger" for="gm-open" aria-hidden="true"><svg class="gm-bars" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="gm-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></label></div>
+    <div class="gm-panel">
+      <nav class="gm-nav" aria-label="Admin">
+        <a class="gm-item" href="#overview" data-view="overview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg><span>Overview</span></a>
+        <a class="gm-item" href="#clients" data-view="clients"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="13" rx="2"/><path d="M8.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5V7"/></svg><span>Clients</span><span class="gm-count" id="b-clients"></span></a>
+        <a class="gm-item" href="#prospects" data-view="prospects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg><span>Prospects</span><span class="gm-count" id="b-prospects"></span></a>
+        <a class="gm-item" href="#links" data-view="links"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14l4-4"/><path d="M11 6.5l1.8-1.8a4 4 0 0 1 5.6 5.6L16.6 12"/><path d="M13 17.5l-1.8 1.8a4 4 0 0 1-5.6-5.6L7.4 12"/></svg><span>Invite links</span><span class="gm-count" id="b-links"></span></a>
+        <a class="gm-item" href="#site" data-view="site"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5Z"/></svg><span>Site</span></a>
+      </nav>
+      <div class="gm-foot">
+        <div class="gm-status"><span class="dot" id="sync-dot"></span><span id="sync-text">Not synced yet</span></div>
+        <div class="gm-user"><span class="gm-avatar" id="who-avatar"></span><span class="gm-who"><b id="who-email"></b><small>Signed in with Google</small></span><button type="button" class="gm-out" id="logout" aria-label="Sign out" title="Sign out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2M10 12h11m0 0-3-3m3 3-3 3"/></svg></button></div>
+      </div>
     </div>
   </aside>
 
@@ -807,7 +898,7 @@
 
   /* ---------- sign in ---------- */
   function showSignin(msg) { $('app').hidden = true; $('signin').hidden = false; $('signin-msg').textContent = msg || ''; renderButton(); }
-  function showApp(email) { $('signin').hidden = true; $('app').hidden = false; $('who-email').textContent = email; loadAll(); route(); }
+  function showApp(email) { $('signin').hidden = true; $('app').hidden = false; $('who-email').textContent = email; $('who-avatar').textContent = (email || '?').charAt(0).toUpperCase(); loadAll(); route(); }
   var rendered = false;
   function renderButton() {
     if (rendered) return;
@@ -829,13 +920,22 @@
     });
   });
 
+  /* ---------- shared menu: the phone menu and the admin switcher close on navigation, Escape or a click elsewhere ---------- */
+  function closeMenus() { var t = $('gm-open'); if (t) t.checked = false; var sw = document.querySelector('.gm-switch[open]'); if (sw) sw.open = false; }
+  document.addEventListener('click', function (e) {
+    var sw = document.querySelector('.gm-switch[open]'); if (sw && !e.target.closest('.gm-switch')) sw.open = false;
+    var t = $('gm-open'); if (t && t.checked && !e.target.closest('.gm')) t.checked = false;
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenus(); });
+
   /* ---------- routing ---------- */
   function route() {
     var h = (location.hash || '#overview').slice(1);
     var view = h.split('/')[0] || 'overview';
     if (['overview', 'clients', 'client', 'doc', 'prospects', 'links', 'site'].indexOf(view) === -1) view = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== view; });
-    document.querySelectorAll('.nav a').forEach(function (a) {
+    closeMenus();
+    document.querySelectorAll('.gm-nav a[data-view]').forEach(function (a) {
       var v = a.getAttribute('data-view');
       var docOf = view === 'doc' && /^#doc\/[a-f0-9]+\/p$/.test(location.hash) ? 'prospects' : 'clients';
       if (v === view || (view === 'client' && v === 'clients') || (view === 'doc' && v === docOf)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
