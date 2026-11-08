@@ -1,5 +1,7 @@
 // Private pages that open with an invite link made in /admin: the rate card, the Search Desk demo and prospect prototypes.
-//   /rate-card?invite=<token>   /search-desk?invite=<token>   /the-loft?invite=<token>
+//   /rate-card?invite=<token>   /search-desk?invite=<token>   /the-loft?invite=<token>   /monument?invite=<token>
+// A page can ride on another page's invite (`access`) and share its cookie path (`cookiePath`), so one link opens a
+// small multi-page proposal: /monument and /monument/calculators both open with a "monument" invite.
 // The link itself is meant to be forwarded, so the token stays in the address bar. A cookie also remembers it, so the
 // plain address keeps working in the same browser. Invites live in R2 under rate-card-invites/<token>.json and list the
 // pages they open in `pages` (invites made before the demo existed have none and open the rate card only).
@@ -7,6 +9,8 @@
 import rateCardHtml from '../private/rate-card.html';
 import searchDeskHtml from '../private/search-desk.html';
 import theLoftHtml from '../private/the-loft.html';
+import monumentHtml from '../private/monument.html';
+import monumentCalculatorsHtml from '../private/monument-calculators.html';
 import { adminEmail } from './admin.js';
 
 export const PAGES = {
@@ -14,6 +18,9 @@ export const PAGES = {
   'search-desk': { path: '/search-desk', html: searchDeskHtml, cookie: 'ph_sd', title: 'The Search Desk demo' },
   // The Loft (Nick, Ely): the booking app prototype. Phone frame on desktop, full screen on a phone.
   'the-loft': { path: '/the-loft', html: theLoftHtml, cookie: 'ph_tl', title: 'The Loft prototype' },
+  // Monument Corporate Finance (Ben Boateng): the website draft, a homepage plus its calculators page. One invite opens both.
+  'monument': { path: '/monument', html: monumentHtml, cookie: 'ph_mcf', cookiePath: '/monument', title: 'The Monument website draft' },
+  'monument-calculators': { path: '/monument/calculators', html: monumentCalculatorsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid';
@@ -119,7 +126,8 @@ export function isRateCardPath(path) {
 export async function rateCard(request, url, env, ctx) {
   const key = BY_PATH[url.pathname.replace(/\/+$/, '')];
   const page = PAGES[key];
-  const PATH = page.path;
+  const PATH = page.cookiePath || page.path;
+  const ACCESS = page.access || key;
   // Lewis signed in to /admin sees the page without it counting as a view.
   if (await adminEmail(request, env)) return new Response(page.html, { status: 200, headers: PRIVATE_HEADERS });
 
@@ -127,8 +135,8 @@ export async function rateCard(request, url, env, ctx) {
   const token = fromUrl || readCookie(request, page.cookie);
   const invite = await getInvite(env, token);
   const state = inviteState(invite);
-  if (state !== 'active' || !invitePages(invite).includes(key)) {
-    const early = state === 'scheduled' && invitePages(invite).includes(key);
+  if (state !== 'active' || !invitePages(invite).includes(ACCESS)) {
+    const early = state === 'scheduled' && invitePages(invite).includes(ACCESS);
     const opens = early ? new Date(invite.startsAt).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/London' }) : '';
     const locked = LOCKED_HTML
       .replace('__HEADING__', early ? 'This link opens soon.' : 'This page is by invitation.')

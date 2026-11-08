@@ -681,14 +681,14 @@
     <section data-pane="links" hidden>
       <div class="page-head">
         <div><h1>Invite links</h1><p class="lede">Links to the private rate card, the Search Desk demo and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a><a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a><a class="btn" href="/the-loft" target="_blank" rel="noopener">Preview The Loft</a></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a><a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a><a class="btn" href="/the-loft" target="_blank" rel="noopener">Preview The Loft</a><a class="btn" href="/monument" target="_blank" rel="noopener">Preview Monument</a></div>
       </div>
       <div class="card" style="margin-bottom:20px">
         <div class="card-head"><h2>New link</h2></div>
         <form class="create" id="create" autocomplete="off">
           <label for="f-name">Who it's for<input type="text" id="f-name" maxlength="80" placeholder="Company or person" required></label>
           <label for="f-note">Private note<input type="text" id="f-note" maxlength="200" placeholder="Who introduced them, what they asked for"></label>
-          <label for="f-pages">Opens<select id="f-pages"><option value="rate-card" selected>Rate card</option><option value="search-desk">Search Desk demo</option><option value="rate-card,search-desk">Rate card and Search Desk</option><option value="the-loft">The Loft prototype</option></select></label>
+          <label for="f-pages">Opens<select id="f-pages"><option value="rate-card" selected>Rate card</option><option value="search-desk">Search Desk demo</option><option value="rate-card,search-desk">Rate card and Search Desk</option><option value="the-loft">The Loft prototype</option><option value="monument">Monument website draft</option></select></label>
           <label for="f-from">Live from<input type="date" id="f-from"></label>
           <label for="f-until">Live until<input type="date" id="f-until" title="Leave empty to keep it live"></label>
           <button class="btn primary" type="submit" id="f-go">Create link</button>
@@ -1236,7 +1236,7 @@
 
     var events = [];
     state.clients.forEach(function (c) { (c.sections || []).forEach(function (s) { (s.items || []).slice(0, 1).forEach(function (it) { events.push({ at: it.date, icon: 'doc', title: c.name + ': ' + it.title, sub: s.name, href: it.doc ? docLink(it.doc, c.slug) : it.link }); }); }); });
-    state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : ({ 'search-desk': 'the Search Desk demo', 'the-loft': 'The Loft prototype' })[i.pages[0]] || 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'browser', 'browsers') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
+    state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : ({ 'search-desk': 'the Search Desk demo', 'the-loft': 'The Loft prototype', 'monument': 'the Monument website draft' })[i.pages[0]] || 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'browser', 'browsers') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
     state.prospects.forEach(function (p) {
       var noteAt = p.note && p.note.updated || '', cardAt = p.updatedAt || '';
       if (cardAt && cardAt >= noteAt) events.push({ at: cardAt, icon: 'doc', tone: 'amber', title: p.name + ' card updated', sub: stageOf(p.stage), href: '#prospects/' + p.id });
@@ -1860,8 +1860,8 @@
   }
 
   /* ---------- rate card links ---------- */
-  var PAGE_NAME = { 'rate-card': 'Rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft' };
-  var PAGE_COPY = { 'rate-card': 'rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft' };
+  var PAGE_NAME = { 'rate-card': 'Rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft', 'monument': 'Monument website draft', 'monument-calculators': 'Monument calculators' };
+  var PAGE_COPY = { 'rate-card': 'rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft', 'monument': 'Monument', 'monument-calculators': 'Monument calculators' };
   function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function isoDay(s) { return s ? ymd(new Date(s)) : ''; }
   function liveText(inv) {
