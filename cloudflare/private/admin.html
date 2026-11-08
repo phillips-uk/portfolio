@@ -22,7 +22,7 @@
   [hidden] { display: none !important; }
   html, body { margin: 0; padding: 0; height: 100%; }
   body { font-family: var(--font); color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; font-size: 14px; }
-  button, input, select { font: inherit; color: inherit; }
+  button, input, select, textarea { font: inherit; color: inherit; }
   a { color: inherit; }
   .num { font-variant-numeric: tabular-nums; }
 
@@ -184,18 +184,147 @@
   .doc-loading { padding: 40px 44px; color: var(--muted); }
   @media (max-width: 820px) { .doc, .doc-loading { padding: 22px 18px 28px; } }
 
-  /* Prospects pipeline */
-  .board { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 6px; }
-  .col { background: #EFECE7; border-radius: var(--radius); padding: 12px; min-height: 160px; display: grid; gap: 10px; align-content: start; }
-  .col-head { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px 4px; font-size: 12.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 10px; }
-  .pcard h3 { font-size: 15px; margin: 0; letter-spacing: -.01em; }
-  .pcard .s { color: var(--muted); font-size: 12.5px; }
-  .pcard .next { font-size: 13px; border-top: 1px solid var(--line-2); padding-top: 10px; }
-  .pcard .next small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); margin-bottom: 3px; }
-  .pcard .row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .pcard .btn { padding: 6px 10px; font-size: 12.5px; }
-  .col .none { color: var(--faint); font-size: 13px; padding: 4px; }
+  /* Prospects funnel */
+  .ph-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .ph-tools input[type=search] { width: 250px; }
+  .btn[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); background: var(--amber-soft); }
+  .p-kpis { margin-bottom: 22px; }
+  .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(204px, 1fr); gap: 14px; overflow-x: auto; padding: 2px 2px 12px; align-items: start; scroll-snap-type: x proximity; }
+  .col { background: #EFECE7; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 10px; min-height: 240px; scroll-snap-align: start; transition: background .15s ease, box-shadow .15s ease; }
+  .col.over { background: var(--amber-soft); box-shadow: inset 0 0 0 2px rgba(152,88,48,.32); }
+  .col.lost-col { background: #ECE9E5; }
+  .col-head { display: grid; grid-template-columns: minmax(0, 1fr) auto 28px; grid-template-rows: 22px 18px; gap: 2px 8px; align-items: center; padding: 4px 4px 4px 6px; }
+  .col-head .t { font-size: 13.5px; font-weight: 700; color: var(--text); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .col-head .n { font-size: 12.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .col-head .sum { grid-column: 1 / -1; font-size: 12.5px; color: var(--faint); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .col-add { width: 28px; height: 28px; border-radius: 7px; border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer; }
+  .col-add:hover { background: rgba(255,255,255,.7); color: var(--amber); }
+  .col-add svg { width: 14px; height: 14px; }
+  .col-list { display: flex; flex-direction: column; gap: 10px; min-height: 60px; flex: 1; }
+  .col-list .col-empty { color: var(--faint); font-size: 13px; text-align: center; padding: 18px 6px; border: 1px dashed #DCD5CB; border-radius: 9px; }
+  .col-list.has-slot .col-empty { display: none; }
+  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-rows: 22px 18px 20px auto; row-gap: 3px; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; box-shadow: 0 1px 2px rgba(21,19,15,.04); transition: border-color .15s ease, box-shadow .2s ease; outline: none; }
+  .pcard:hover { border-color: #E2CDB8; box-shadow: 0 12px 26px -20px rgba(122,63,31,.6); }
+  .pcard:focus-visible { box-shadow: 0 0 0 2px var(--amber); }
+  .pc-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .pc-top h3 { font-size: 14.5px; margin: 0; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
+  .pc-ico { display: inline-flex; align-items: center; gap: 6px; color: var(--faint); flex: none; font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pc-ico span { display: inline-flex; align-items: center; gap: 3px; }
+  .pc-ico span.good { color: var(--good); }
+  .pc-ico svg { width: 13px; height: 13px; }
+  .pc-who, .pc-val { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 18px; }
+  .pc-who { color: var(--muted); }
+  .pc-val { font-weight: 700; font-variant-numeric: tabular-nums; line-height: 20px; }
+  .pc-val.none, .pc-who.none { color: var(--faint); font-weight: 400; }
+  .pc-next { margin-top: 7px; padding-top: 8px; border-top: 1px solid var(--line-2); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; font-size: 12.5px; line-height: 18px; }
+  .pc-next .step { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pc-next .step.none { color: var(--faint); }
+  .pc-next .due { color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pc-next .due.late { color: var(--bad); font-weight: 700; }
+  .pcard.ghost { position: fixed; z-index: 60; pointer-events: none; margin: 0; cursor: grabbing; box-shadow: 0 26px 44px -22px rgba(21,19,15,.55); border-color: #E2CDB8; will-change: transform; }
+  .pcard.lifted { display: none; }
+  .slot { border: 2px dashed rgba(152,88,48,.38); border-radius: 10px; background: rgba(255,255,255,.55); flex: none; }
+  body.dragging, body.dragging * { cursor: grabbing !important; }
+  body.dragging { user-select: none; -webkit-user-select: none; }
+  body.dragging .board { scroll-snap-type: none; }
+  .lost-drop { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 55; display: flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 999px; background: var(--ink); color: var(--on-ink); font-weight: 700; font-size: 14px; box-shadow: 0 20px 40px -18px rgba(21,19,15,.7); transition: background .15s ease, transform .15s ease; }
+  .lost-drop svg { width: 16px; height: 16px; }
+  .lost-drop.over { background: var(--bad); transform: translateX(-50%) scale(1.04); }
+  .p-foot { margin-top: 14px; font-size: 13.5px; }
+  .p-foot a { color: var(--amber); font-weight: 700; text-decoration: none; }
+
+  /* Card editor (side drawer) */
+  .drawer-wrap { position: fixed; inset: 0; z-index: 70; }
+  .scrim { position: absolute; inset: 0; background: rgba(21,19,15,.4); animation: fadein .2s ease both; }
+  .drawer { position: absolute; top: 0; right: 0; bottom: 0; width: min(580px, 100%); background: var(--surface); display: flex; flex-direction: column; box-shadow: -30px 0 60px -34px rgba(21,19,15,.7); animation: slidein .3s cubic-bezier(.2, .7, .2, 1) both; }
+  @keyframes slidein { from { transform: translateX(48px); opacity: .3; } to { transform: none; opacity: 1; } }
+  .dw-head { padding: 22px 26px 18px; border-bottom: 1px solid var(--line-2); }
+  .dw-top { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+  .dw-kicker { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); }
+  .dw-head h2 { font-size: 23px; letter-spacing: -.02em; margin-top: 4px; overflow-wrap: anywhere; }
+  .dw-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .dw-links:empty { display: none; }
+  .dw-links .btn { padding: 6px 10px; font-size: 12.5px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; cursor: pointer; flex: none; color: var(--muted); }
+  .icon-btn:hover { border-color: var(--amber); color: var(--text); }
+  .icon-btn svg { width: 15px; height: 15px; }
+  .dw-body { flex: 1; overflow-y: auto; padding: 4px 26px 26px; overscroll-behavior: contain; }
+  .dw-sec { padding: 20px 0; border-bottom: 1px solid var(--line-2); display: grid; gap: 14px; }
+  .dw-sec:last-child { border-bottom: 0; }
+  .dw-sec h3 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .09em; color: var(--faint); margin: 0; }
+  .dw-sec .hint { font-size: 12.5px; color: var(--faint); font-weight: 400; margin-top: -6px; }
+  .g2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .g2 .wide { grid-column: 1 / -1; }
+  textarea { width: 100%; min-height: 130px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: 14px; color: var(--text); background: var(--surface); resize: vertical; line-height: 1.55; }
+  textarea:focus, input[type=email]:focus, input[type=tel]:focus, input[type=url]:focus, input[type=number]:focus, input[type=search]:focus { outline: 2px solid var(--amber); outline-offset: 2px; }
+  input[type=email], input[type=tel], input[type=url], input[type=number], input[type=search] { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 14px; color: var(--text); }
+  .req { color: var(--amber); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; padding: 3px; gap: 3px; background: var(--bg); justify-self: start; flex-wrap: wrap; }
+  .seg button { border: 0; background: none; padding: 7px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; color: var(--muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(21,19,15,.1); }
+  .fees { display: grid; gap: 8px; }
+  .fees:empty { display: none; }
+  .fee { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 96px 36px; grid-template-areas: "label label label x" "amount basis qty qty"; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--line-2); border-radius: 10px; background: #FCFBF9; }
+  .fees.choose .fee { grid-template-columns: 24px minmax(0, 1fr) minmax(0, 1fr) 96px 36px; grid-template-areas: "exp label label label x" ". amount basis qty qty"; }
+  .fee .f-exp { grid-area: exp; display: none; justify-self: center; accent-color: var(--amber); width: 16px; height: 16px; margin: 0; }
+  .fees.choose .fee .f-exp { display: block; }
+  .fee .f-label { grid-area: label; } .fee .f-amount { grid-area: amount; } .fee .f-basis { grid-area: basis; } .fee .f-qty { grid-area: qty; } .fee .x { grid-area: x; }
+  .fee input, .fee select { padding: 8px 10px; font-size: 13.5px; }
+  .fee .f-qty input[hidden] { display: block !important; visibility: hidden; }
+  .f-qty { position: relative; display: block; }
+  .f-qty::after { content: attr(data-unit); position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
+  .f-qty input { padding-right: 58px; }
+  .money { position: relative; display: block; }
+  .money::before { content: "£"; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13.5px; pointer-events: none; }
+  .money input { padding-left: 22px; }
+  .fee .x { width: 34px; height: 34px; }
+  .fee-add { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .fee-add select { width: auto; padding: 8px 10px; font-size: 13px; font-weight: 700; color: var(--text); }
+  .fee-add .btn { padding: 8px 12px; font-size: 13px; }
+  .fee-total { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .fee-total b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .fee-total:empty { display: none; }
+  .link-note { font-size: 13px; color: var(--muted); background: var(--bg); border-radius: 9px; padding: 12px 14px; line-height: 1.55; }
+  .link-note a { color: var(--amber); font-weight: 700; }
+  .hist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
+  .hist li { display: flex; justify-content: space-between; gap: 12px; }
+  .hist li span:last-child { color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .dw-foot { padding: 14px 26px; border-top: 1px solid var(--line); display: flex; gap: 8px; align-items: center; background: #FBFAF8; }
+  .dw-foot .msg { margin: 0; flex: 1; }
+  .dw-foot .grow { flex: 1; }
+  .btn.danger { color: var(--bad); }
+  .btn.danger:hover { border-color: var(--bad); }
+
+  /* Centred prompt for choices (delete, unsaved changes) */
+  .confirm-wrap { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 16px; }
+  .confirm { position: relative; width: min(420px, 100%); background: var(--surface); border-radius: 16px; padding: 30px 28px 26px; text-align: center; box-shadow: 0 30px 70px -30px rgba(21,19,15,.7); animation: rise .3s cubic-bezier(.2, .7, .2, 1) both; }
+  .confirm h2 { font-size: 19px; letter-spacing: -.02em; }
+  .confirm p { margin: 10px 0 0; color: var(--muted); line-height: 1.55; }
+  .cf-btns { margin-top: 26px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .cf-btns .btn { min-width: 128px; }
+  .btn.red { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .btn.red:hover { background: #8F3722; }
+
+  .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); z-index: 95; background: var(--ink); color: var(--on-ink); padding: 12px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; box-shadow: 0 18px 40px -20px rgba(21,19,15,.7); opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; max-width: calc(100% - 32px); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.bad { background: var(--bad); }
+
+  @media (max-width: 820px) {
+    .ph-tools { width: 100%; }
+    .ph-tools input[type=search] { width: auto; flex: 1 1 100%; }
+    .p-kpis { gap: 10px; margin-bottom: 16px; }
+    .p-kpis .kpi { padding: 12px 14px; }
+    .p-kpis .kpi b { font-size: 22px; margin-top: 6px; }
+    .p-kpis .kpi span { font-size: 12px; margin-top: 4px; }
+    .board { grid-auto-columns: min(82%, 300px); margin: 0 -16px; padding: 2px 16px 12px; scroll-padding: 0 16px; scroll-snap-type: x mandatory; }
+    .drawer { width: 100%; }
+    .dw-head { padding: 18px 18px 14px; }
+    .dw-body { padding: 0 18px 22px; }
+    .dw-foot { padding: 12px 18px; }
+    .g2 { grid-template-columns: minmax(0, 1fr); }
+    .fee { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 64px 36px; }
+    .fees.choose .fee { grid-template-columns: 20px minmax(0, 1fr) minmax(0, 1fr) 64px 36px; }
+  }
 
   /* Rate card links */
   .create { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 170px 150px 150px auto; gap: 12px; align-items: end; padding: 20px; }
@@ -437,14 +566,24 @@
       </div>
     </section>
 
-    <!-- Prospects -->
+    <!-- Prospects: the sales funnel -->
     <section data-pane="prospects" hidden>
       <div class="page-head">
-        <div><h1>Prospects</h1><p class="lede">One note each in <b>03_Clients/00_Prospects</b>. Change the stage in the note and it moves here at the next sync.</p></div>
-        <a class="btn" href="obsidian://open?vault=My%20Brain&amp;file=03_Clients%2F00_Prospects%2F00_How%20prospects%20work">How to add a prospect</a>
+        <div><h1>Prospects</h1><p class="lede">Your sales funnel. Drag a card to the next stage, or click it to edit.</p></div>
+        <div class="ph-tools">
+          <input type="search" id="p-find" placeholder="Find a company or contact" aria-label="Find a company or contact" autocomplete="off">
+          <button type="button" class="btn" id="p-lost" aria-pressed="false">Show lost</button>
+          <button type="button" class="btn primary" id="p-new"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>New lead</button>
+        </div>
+      </div>
+      <div class="kpis p-kpis">
+        <div class="kpi"><small>Open deals</small><b id="pk-n">–</b><span id="pk-n-s">&nbsp;</span></div>
+        <div class="kpi"><small>Open one-off fees</small><b id="pk-one">–</b><span id="pk-one-s">&nbsp;</span></div>
+        <div class="kpi"><small>Open monthly fees</small><b id="pk-mo">–</b><span id="pk-mo-s">&nbsp;</span></div>
+        <div class="kpi"><small>Won</small><b id="pk-won">–</b><span id="pk-won-s">&nbsp;</span></div>
       </div>
       <div class="board" id="board"></div>
-      <p class="lede" id="lost-note"></p>
+      <p class="lede p-foot">Cards with the note mark come from <b>03_Clients/00_Prospects</b> in Obsidian and stay linked both ways. <a href="obsidian://open?vault=My%20Brain&amp;file=03_Clients%2F00_Prospects%2F00_How%20prospects%20work">How the notes work</a></p>
     </section>
 
     <!-- Rate card links -->
@@ -502,6 +641,98 @@
     </section>
   </main>
 </div>
+
+<div class="lost-drop" id="lost-drop" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>Drop here to mark as lost</div>
+
+<div class="drawer-wrap" id="dw" hidden>
+  <div class="scrim" data-close></div>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="dw-title">
+    <header class="dw-head">
+      <div class="dw-top">
+        <div><div class="dw-kicker" id="dw-kicker">New lead</div><h2 id="dw-title">New lead</h2></div>
+        <button type="button" class="icon-btn" data-close aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </div>
+      <div class="dw-links" id="dw-links"></div>
+    </header>
+    <form class="dw-body" id="dw-form" autocomplete="off" novalidate>
+      <div class="dw-sec">
+        <h3>Company</h3>
+        <div class="g2">
+          <label for="dw-name"><span>Company or person <span class="req">*</span></span><input type="text" id="dw-name" maxlength="120" required></label>
+          <label for="dw-website">Website<input type="text" id="dw-website" maxlength="200" placeholder="example.co.uk"></label>
+          <label for="dw-source">Where they came from<input type="text" id="dw-source" maxlength="120" placeholder="LinkedIn, website, a referral" list="dw-sources"></label>
+          <label for="dw-markets">Markets or location<input type="text" id="dw-markets" maxlength="160" placeholder="UK, Ely, Cambridgeshire"></label>
+        </div>
+        <datalist id="dw-sources"></datalist>
+      </div>
+      <div class="dw-sec">
+        <h3>Contact</h3>
+        <div class="g2">
+          <label for="dw-contact">Name<input type="text" id="dw-contact" maxlength="120"></label>
+          <label for="dw-role">Role<input type="text" id="dw-role" maxlength="80" placeholder="Founder, marketing manager"></label>
+          <label for="dw-email">Email<input type="email" id="dw-email" maxlength="160" inputmode="email"></label>
+          <label for="dw-phone">Phone<input type="tel" id="dw-phone" maxlength="40" inputmode="tel"></label>
+        </div>
+      </div>
+      <div class="dw-sec">
+        <h3>About the project</h3>
+        <textarea id="dw-about" maxlength="6000" aria-label="About the project" placeholder="What they need, what they have now, budget and timings"></textarea>
+      </div>
+      <div class="dw-sec">
+        <h3>Value</h3>
+        <div class="seg" id="dw-pricing" role="group" aria-label="How the fees work">
+          <button type="button" data-v="all" aria-pressed="true">They pay all of these</button>
+          <button type="button" data-v="choose" aria-pressed="false">They choose one</button>
+        </div>
+        <div class="fees" id="dw-fees"></div>
+        <div class="fee-add">
+          <button type="button" class="btn" id="dw-add-fee"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add a fee</button>
+          <select id="dw-preset" aria-label="Add a fee from the rate card">
+            <option value="">From the rate card</option>
+            <option value="audit">Audit and plan, £5,000 one-off</option>
+            <option value="lead">Senior lead, part-time, £4,500 a month</option>
+            <option value="team">Build the team, £7,500 one-off</option>
+            <option value="day">Extra days, £625 a day</option>
+          </select>
+        </div>
+        <div class="fee-total" id="dw-total"></div>
+      </div>
+      <div class="dw-sec">
+        <h3>Stage and next step</h3>
+        <div class="g2">
+          <label for="dw-stage">Stage<select id="dw-stage"></select></label>
+          <label for="dw-date">Next step date<input type="date" id="dw-date"></label>
+          <label for="dw-next" class="wide">Next step<input type="text" id="dw-next" maxlength="200" placeholder="Send the proposal, book a call"></label>
+          <label for="dw-proposal">Proposal link<input type="url" id="dw-proposal" maxlength="500" placeholder="https://"></label>
+          <label for="dw-invite">Invite link<select id="dw-invite"></select></label>
+        </div>
+      </div>
+      <div class="dw-sec" id="dw-meta-sec">
+        <h3>Record</h3>
+        <div class="link-note" id="dw-linknote" hidden></div>
+        <ul class="hist" id="dw-hist"></ul>
+      </div>
+    </form>
+    <footer class="dw-foot">
+      <button type="button" class="btn danger" id="dw-delete" hidden>Delete</button>
+      <p class="msg" id="dw-msg"></p>
+      <span class="grow"></span>
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="button" class="btn primary" id="dw-save">Save</button>
+    </footer>
+  </aside>
+</div>
+
+<div class="confirm-wrap" id="cf" hidden>
+  <div class="scrim"></div>
+  <div class="confirm" role="alertdialog" aria-modal="true" aria-labelledby="cf-t" aria-describedby="cf-s">
+    <h2 id="cf-t"></h2>
+    <p id="cf-s"></p>
+    <div class="cf-btns"><button type="button" class="btn" id="cf-no"></button><button type="button" class="btn" id="cf-yes"></button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function () {
@@ -611,6 +842,11 @@
     });
     if (view === 'client') renderClient(decodeURIComponent(h.split('/')[1] || ''));
     if (view === 'doc') renderDoc(h.split('/')[1] || '', h.split('/')[2] || '');
+    if (view === 'prospects' && /^[a-z]_[a-f0-9]{16}$/.test(h.split('/')[1] || '')) {
+      var want = h.split('/')[1];
+      history.replaceState(null, '', '#prospects');
+      if (state.prospects.length) setTimeout(function () { openDrawer(want); }, 0); else pendingOpen = want;
+    }
     var pane = document.querySelector('[data-pane="' + view + '"]');
     pane.classList.remove('enter'); void pane.offsetWidth; pane.classList.add('enter');
     countPane();
@@ -627,12 +863,16 @@
     Promise.all([
       api('/admin/api/clients').catch(function () { return null; }),
       api('/admin/api/invites').catch(function () { return null; }),
-      api('/admin/api/site').catch(function () { return null; })
+      api('/admin/api/site').catch(function () { return null; }),
+      api('/admin/api/deals').catch(function () { return null; })
     ]).then(function (r) {
-      if (r[0]) { state.clients = r[0].clients || []; state.prospects = r[0].prospects || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
+      if (r[0]) { state.clients = r[0].clients || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
       if (r[1]) state.invites = r[1].invites || [];
       if (r[2]) state.site = r[2];
+      if (r[3]) state.prospects = r[3].deals || [];
+      else toast('The funnel did not load. Refresh to try again.', true);
       renderAll();
+      if (pendingOpen) { var id = pendingOpen; pendingOpen = null; openDrawer(id); }
     });
   }
   function renderAll() {
@@ -862,7 +1102,8 @@
     $('k-clients-s').textContent = plural(state.clients.length, 'client folder', 'client folders');
     var op = openProspects();
     $('k-prospects').textContent = op.length;
-    $('k-prospects-s').textContent = op.length ? op.map(function (p) { return p.stage; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(', ') : 'None open';
+    var opv = valueLine(sumOf(op), false);
+    $('k-prospects-s').textContent = op.length ? (opv || op.map(function (p) { return p.stage; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(', ')) : 'None open';
     var views = state.invites.reduce(function (n, i) { return n + (i.views || 0); }, 0);
     $('k-views').textContent = views;
     $('k-views-s').textContent = plural(state.invites.filter(function (i) { return i.state === 'active'; }).length, 'active link', 'active links');
@@ -881,18 +1122,26 @@
       var last = latestReport(c);
       if (/active/i.test(c.status) && last && daysSince(last.date) > 10) { n++; row(att, { icon: 'clock', tone: 'warn', title: c.name + ': no new report for ' + daysSince(last.date) + ' days', sub: 'Last was ' + last.section.toLowerCase() + ', ' + fmt(last.date), href: slug }); }
     });
+    var undated = [];
     op.forEach(function (p) {
-      if (p.nextDate && daysSince(p.nextDate) >= 0) { n++; row(att, { icon: 'clock', tone: 'warn', title: p.name + ': next step due', sub: p.nextStep || 'No next step written', href: '#prospects', when: fmt(p.nextDate) }); }
-      else if (!p.nextDate) { n++; row(att, { icon: 'clock', tone: 'amber', title: p.name + ': no date on the next step', sub: p.nextStep || 'Add a next step and date in the note', href: '#prospects' }); }
-      if (p.rateCard && p.rateCard.views === 0) { n++; row(att, { icon: 'eye', tone: 'amber', title: p.name + ': rate card not opened yet', sub: 'Link made ' + fmt(p.rateCard.createdAt), href: '#links' }); }
+      var at = '#prospects/' + p.id;
+      if (p.nextDate && daysSince(p.nextDate) >= 0) { n++; row(att, { icon: 'clock', tone: 'warn', title: p.name + ': next step due', sub: p.nextStep || 'No next step written', href: at, when: fmt(p.nextDate) }); }
+      else if (!p.nextDate) undated.push(p);
+      if (p.rateCard && p.rateCard.views === 0) { n++; row(att, { icon: 'eye', tone: 'amber', title: p.name + ': invite link not opened yet', sub: 'Link made ' + fmt(p.rateCard.createdAt), href: '#links' }); }
     });
+    if (undated.length > 3) { n++; row(att, { icon: 'clock', tone: 'amber', title: plural(undated.length, 'open deal has', 'open deals have') + ' no date on the next step', sub: undated.slice(0, 3).map(function (p) { return p.name; }).join(', ') + ' and more', href: '#prospects' }); }
+    else undated.forEach(function (p) { n++; row(att, { icon: 'clock', tone: 'amber', title: p.name + ': no date on the next step', sub: p.nextStep || 'Add a next step and a date', href: '#prospects/' + p.id }); });
     $('att-n').textContent = n ? plural(n, 'item', 'items') : '';
     if (!n) { var li = el('li'); li.appendChild(mark('check', 'good')); li.appendChild(el('div', 't', 'Nothing needs you right now.')); li.appendChild(el('span')); att.appendChild(li); }
 
     var events = [];
     state.clients.forEach(function (c) { (c.sections || []).forEach(function (s) { (s.items || []).slice(0, 1).forEach(function (it) { events.push({ at: it.date, icon: 'doc', title: c.name + ': ' + it.title, sub: s.name, href: it.doc ? docLink(it.doc, c.slug) : it.link }); }); }); });
     state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : ({ 'search-desk': 'the Search Desk demo', 'the-loft': 'The Loft prototype' })[i.pages[0]] || 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'browser', 'browsers') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
-    state.prospects.forEach(function (p) { if (p.updated) events.push({ at: p.updated, icon: 'doc', tone: 'amber', title: p.name + ' note updated', sub: p.stage, href: p.doc ? docLink(p.doc, 'p') : p.link }); });
+    state.prospects.forEach(function (p) {
+      var noteAt = p.note && p.note.updated || '', cardAt = p.updatedAt || '';
+      if (cardAt && cardAt >= noteAt) events.push({ at: cardAt, icon: 'doc', tone: 'amber', title: p.name + ' card updated', sub: stageOf(p.stage), href: '#prospects/' + p.id });
+      else if (noteAt) events.push({ at: noteAt, icon: 'doc', tone: 'amber', title: p.name + ' note updated', sub: stageOf(p.stage), href: p.note.doc ? docLink(p.note.doc, 'p') : p.note.link });
+    });
     events.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
     var act = $('activity'); act.innerHTML = '';
     events.slice(0, 8).forEach(function (e) { row(act, { icon: e.icon, tone: e.tone, title: e.title, sub: e.sub, href: e.href, when: ago(e.at) }); });
@@ -1052,39 +1301,462 @@
     });
   }
 
-  /* ---------- prospects ---------- */
-  var STAGES = ['Lead', 'Talking', 'Proposal drafted', 'Proposal sent', 'Won'];
+  /* ---------- prospects: the sales funnel ---------- */
+  var STAGES = ['Lead', 'Talking', 'Proposal drafted', 'Proposal sent', 'Won', 'Lost'];
+  var BASIS = { 'one-off': 'one-off', monthly: 'a month', daily: 'a day' };
+  // Keep in step with cloudflare/private/rate-card.html
+  var PRESETS = {
+    audit: { label: 'Audit and plan', amount: 5000, basis: 'one-off' },
+    lead: { label: 'Senior lead, part-time', amount: 4500, basis: 'monthly', qty: 3 },
+    team: { label: 'Build the team', amount: 7500, basis: 'one-off' },
+    day: { label: 'Extra days', amount: 625, basis: 'daily' }
+  };
+  var PICO = {
+    note: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 1.8h4.6L11 4.7v7.5H3.5Z"/><path d="M8 1.8v3h3M5.3 7.4h3.4M5.3 9.6h3.4"/></svg>',
+    eye: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 7S3.5 3 7 3s5.5 4 5.5 4-2 4-5.5 4S1.5 7 1.5 7Z"/><circle cx="7" cy="7" r="1.6"/></svg>',
+    plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>',
+    x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>'
+  };
+  var showLost = false, findText = '', pendingOpen = null;
+  try { showLost = localStorage.getItem('ph_admin_lost') === '1'; } catch (e) { /* private window */ }
+
+  function isOpenStage(s) { return !/^(won|lost)$/i.test(s || ''); }
+  function stageOf(s) { var t = String(s || '').toLowerCase(); for (var i = 0; i < STAGES.length; i++) if (STAGES[i].toLowerCase() === t) return STAGES[i]; return 'Lead'; }
+  function dealById(id) { return state.prospects.filter(function (d) { return d.id === id; })[0] || null; }
+  function gbp(v) { return '£' + Number(v || 0).toLocaleString('en-GB', { maximumFractionDigits: 2 }); }
+  function gbpShort(v) {
+    v = Number(v || 0);
+    if (v >= 1e6) return '£' + (v / 1e6).toFixed(v >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'm';
+    if (v >= 1e4) return '£' + Math.round(v / 1e3) + 'k';
+    if (v >= 1e3) return '£' + (v / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+    return '£' + Math.round(v);
+  }
+  // Same rules as cloudflare/src/pipeline-core.mjs: all fees count, or only the expected one when they choose.
+  function countedFees(d) {
+    var fees = (d.values || []).filter(function (v) { return Number(v.amount) > 0; });
+    if (d.pricing !== 'choose' || fees.length < 2) return fees;
+    return [fees.filter(function (v) { return v.expected; })[0] || fees[0]];
+  }
+  function totals(d) {
+    var t = { oneOff: 0, monthly: 0, openDays: 0 };
+    countedFees(d).forEach(function (v) {
+      var a = Number(v.amount) || 0, q = Number(v.qty) || 0;
+      if (v.basis === 'monthly') t.monthly += a;
+      else if (v.basis === 'daily') { if (q > 0) t.oneOff += a * q; else t.openDays++; }
+      else t.oneOff += a;
+    });
+    return t;
+  }
+  function sumOf(list) { return list.reduce(function (t, d) { var x = totals(d); t.oneOff += x.oneOff; t.monthly += x.monthly; t.openDays += x.openDays; return t; }, { oneOff: 0, monthly: 0, openDays: 0 }); }
+  function valueLine(t, short) {
+    var m = short ? gbpShort : gbp, parts = [];
+    if (t.oneOff) parts.push(m(t.oneOff) + (short ? '' : ' one-off'));
+    if (t.monthly) parts.push(m(t.monthly) + (short ? '/mo' : ' a month'));
+    if (!parts.length && t.openDays) parts.push('Day rate');
+    return parts.join(' + ');
+  }
+  function cardValue(d) {
+    var fees = (d.values || []).filter(function (v) { return Number(v.amount) > 0; });
+    if (!fees.length) return '';
+    var t = valueLine(totals(d), false).replace(' one-off', '').replace(' a month', '/mo');
+    if (d.pricing === 'choose' && fees.length > 1) t += ' · ' + fees.length + ' options';
+    return t;
+  }
+  function effRank(list) {
+    list.sort(function (a, b) {
+      var ra = typeof a.rank === 'number' ? a.rank : 1e6, rb = typeof b.rank === 'number' ? b.rank : 1e6;
+      return ra - rb || String(a.name).localeCompare(String(b.name));
+    });
+    list.forEach(function (d, i) { d._r = typeof d.rank === 'number' ? d.rank : 1e6 + i; });
+    return list;
+  }
+  function matches(d) {
+    if (!findText) return true;
+    return [d.name, d.contact, d.email, d.phone, d.role, d.source, d.markets, d.website].join(' ').toLowerCase().indexOf(findText) !== -1;
+  }
+  function dueTone(d) { return d.nextDate && isOpenStage(d.stage) && daysSince(d.nextDate) >= 0 ? 'late' : ''; }
+
   function renderBoard() {
-    var board = $('board'); board.innerHTML = '';
-    var lost = state.prospects.filter(function (p) { return /lost/i.test(p.stage); });
-    STAGES.forEach(function (stage) {
-      var col = el('div', 'col');
-      var items = state.prospects.filter(function (p) { return (p.stage || 'Lead').toLowerCase() === stage.toLowerCase(); });
-      var head = el('div', 'col-head'); head.appendChild(el('span', null, stage)); head.appendChild(el('span', 'num', String(items.length))); col.appendChild(head);
-      items.forEach(function (p) { col.appendChild(prospectCard(p)); });
-      if (!items.length) col.appendChild(el('div', 'none', 'None'));
+    var board = $('board'), keep = board.scrollLeft; board.innerHTML = '';
+    var stages = STAGES.filter(function (s) { return s !== 'Lost' || showLost; });
+    var lostN = state.prospects.filter(function (d) { return stageOf(d.stage) === 'Lost'; }).length;
+    $('p-lost').textContent = showLost ? 'Hide lost' : 'Show lost' + (lostN ? ' (' + lostN + ')' : '');
+    $('p-lost').setAttribute('aria-pressed', showLost ? 'true' : 'false');
+    stages.forEach(function (stage) {
+      var all = effRank(state.prospects.filter(function (d) { return stageOf(d.stage) === stage; }));
+      var items = all.filter(matches);
+      var col = el('div', 'col' + (stage === 'Lost' ? ' lost-col' : '')); col.setAttribute('data-stage', stage);
+      var head = el('div', 'col-head');
+      head.appendChild(el('span', 't', stage));
+      head.appendChild(el('span', 'n', String(items.length)));
+      var add = el('button', 'col-add'); add.type = 'button'; add.innerHTML = PICO.plus; add.setAttribute('aria-label', 'Add a card to ' + stage); add.title = 'Add a card here';
+      add.addEventListener('click', function () { openDrawer(null, stage); });
+      head.appendChild(add);
+      var sum = valueLine(sumOf(items), true);
+      head.appendChild(el('span', 'sum', items.length ? (sum || 'No fees yet') : ' '));
+      col.appendChild(head);
+      var list = el('div', 'col-list');
+      items.forEach(function (d) { list.appendChild(prospectCard(d)); });
+      if (!items.length) list.appendChild(el('div', 'col-empty', findText && all.length ? 'No matches' : 'Drop a card here'));
+      col.appendChild(list);
       board.appendChild(col);
     });
-    $('lost-note').textContent = lost.length ? plural(lost.length, 'lost prospect', 'lost prospects') + ' hidden from the board.' : '';
+    board.scrollLeft = keep;
+    renderFunnelKpis();
   }
-  function prospectCard(p) {
-    var card = el('article', 'pcard');
-    var top = el('div'); top.appendChild(el('h3', null, p.name));
-    var sub = [p.markets, p.introducedBy ? 'via ' + p.introducedBy.toLowerCase().replace(/^a /, 'a ') : ''].filter(Boolean).join(' · ');
-    if (sub) top.appendChild(el('div', 's', sub));
-    card.appendChild(top);
-    if (p.rateCard) {
-      var rc = el('div', 'row');
-      rc.appendChild(el('span', 'pill ' + (p.rateCard.views ? 'good' : 'amber'), p.rateCard.views ? plural(p.rateCard.views, 'rate card view', 'rate card views') : 'Rate card not opened'));
-      card.appendChild(rc);
-    }
-    var nx = el('div', 'next'); nx.appendChild(el('small', null, 'Next step' + (p.nextDate ? ', ' + fmt(p.nextDate) : ''))); nx.appendChild(el('div', null, p.nextStep || 'Not set')); card.appendChild(nx);
-    var btns = el('div', 'row');
-    btns.appendChild(link(p.doc ? docLink(p.doc, 'p') : p.link, 'Note', 'btn'));
-    if (p.proposal) btns.appendChild(link(p.proposal, 'Proposal', 'btn'));
-    if (p.rateCard) { var cb = el('button', 'btn', 'Copy rate card link'); cb.type = 'button'; cb.addEventListener('click', function () { copy(p.rateCard.link, cb); }); btns.appendChild(cb); }
-    card.appendChild(btns);
+  function renderFunnelKpis() {
+    var open = state.prospects.filter(function (d) { return isOpenStage(d.stage); });
+    var won = state.prospects.filter(function (d) { return stageOf(d.stage) === 'Won'; });
+    var t = sumOf(open), w = sumOf(won);
+    var due = open.filter(function (d) { return dueTone(d); }).length;
+    $('pk-n').textContent = String(open.length);
+    $('pk-n-s').textContent = due ? plural(due, 'next step due', 'next steps due') : open.length ? 'Nothing due today' : 'Add your first lead';
+    $('pk-one').textContent = gbp(t.oneOff);
+    $('pk-one-s').textContent = 'Fixed fees and day rates';
+    $('pk-mo').textContent = gbp(t.monthly);
+    $('pk-mo-s').textContent = t.monthly ? gbp(t.monthly * 12) + ' over a year' : 'Retainers';
+    $('pk-won').textContent = String(won.length);
+    $('pk-won-s').textContent = valueLine(w, false) || (won.length ? 'No fees on them yet' : 'None yet');
+  }
+  function prospectCard(d) {
+    var card = el('article', 'pcard'); card.setAttribute('data-id', d.id); card.tabIndex = 0; card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', d.name + ', ' + stageOf(d.stage) + '. Open to edit.');
+    var top = el('div', 'pc-top'); top.appendChild(el('h3', null, d.name || 'No name'));
+    var ico = el('span', 'pc-ico');
+    if (d.rateCard) { var rv = el('span', d.rateCard.views ? 'good' : ''); rv.innerHTML = PICO.eye; rv.appendChild(document.createTextNode(String(d.rateCard.views || 0))); rv.title = d.rateCard.views ? plural(d.rateCard.views, 'invite link view', 'invite link views') : 'Invite link not opened yet'; ico.appendChild(rv); }
+    if (d.note) { var nt = el('span'); nt.innerHTML = PICO.note; nt.title = 'Linked to an Obsidian note'; ico.appendChild(nt); }
+    top.appendChild(ico); card.appendChild(top);
+    var who = [d.contact, d.role].filter(Boolean).join(', ');
+    card.appendChild(el('div', 'pc-who' + (who ? '' : ' none'), who || (d.email || d.phone || 'No contact yet')));
+    var val = cardValue(d);
+    card.appendChild(el('div', 'pc-val' + (val ? '' : ' none'), val || 'No value yet'));
+    var nx = el('div', 'pc-next');
+    nx.appendChild(el('span', 'step' + (d.nextStep ? '' : ' none'), d.nextStep || 'No next step'));
+    nx.appendChild(el('span', 'due ' + dueTone(d), d.nextDate ? fmt(d.nextDate) : ''));
+    card.appendChild(nx);
+    card.addEventListener('pointerdown', onCardDown);
+    card.addEventListener('click', function () { if (Date.now() - dragEndedAt < 350) return; openDrawer(d.id); });
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrawer(d.id); } });
+    card.addEventListener('contextmenu', function (e) { if (pend || drag) e.preventDefault(); });
     return card;
+  }
+
+  $('p-find').addEventListener('input', function () { findText = this.value.trim().toLowerCase(); renderBoard(); });
+  $('p-lost').addEventListener('click', function () { showLost = !showLost; try { localStorage.setItem('ph_admin_lost', showLost ? '1' : '0'); } catch (e) { /* ignore */ } renderBoard(); });
+  $('p-new').addEventListener('click', function () { openDrawer(null, 'Lead'); });
+
+  var toastTimer = null;
+  function toast(text, bad) {
+    var t = $('toast'); t.textContent = text; t.className = 'toast show' + (bad ? ' bad' : '');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.className = 'toast' + (bad ? ' bad' : ''); }, bad ? 4200 : 2200);
+  }
+  // Swap a deal in the list (a note card gets a new id the first time it is saved).
+  function putDeal(oldId, deal) {
+    var i = -1; state.prospects.forEach(function (d, k) { if (d.id === oldId || d.id === deal.id) i = k; });
+    if (i === -1) state.prospects.push(deal); else state.prospects[i] = deal;
+  }
+  function afterChange() { renderBoard(); renderOverview(); $('b-prospects').textContent = openProspects().length || ''; }
+
+  /* drag and drop: mouse drags at once, touch after a short hold so the page still scrolls */
+  var pend = null, drag = null, dragEndedAt = 0;
+  function onCardDown(e) {
+    if (e.button !== 0 || drag) return;
+    var card = e.currentTarget;
+    pend = { card: card, id: card.getAttribute('data-id'), x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY, pid: e.pointerId, type: e.pointerType };
+    if (e.pointerType !== 'mouse') {
+      var p = pend;
+      p.timer = setTimeout(function () { if (pend === p) beginDrag(p); }, 260);
+    }
+  }
+  document.addEventListener('pointermove', function (e) {
+    if (pend && e.pointerId === pend.pid) {
+      pend.lx = e.clientX; pend.ly = e.clientY;
+      var dist = Math.abs(e.clientX - pend.x) + Math.abs(e.clientY - pend.y);
+      if (pend.type === 'mouse' && dist > 6) beginDrag(pend);
+      else if (pend.type !== 'mouse' && dist > 12) { clearTimeout(pend.timer); pend = null; }
+    }
+    if (drag && e.pointerId === drag.pid) { drag.x = e.clientX; drag.y = e.clientY; placeGhost(); hitTest(); }
+  });
+  document.addEventListener('pointerup', function (e) {
+    if (drag && e.pointerId === drag.pid) { e.preventDefault(); endDrag(true); }
+    if (pend) { clearTimeout(pend.timer); pend = null; }
+  });
+  document.addEventListener('pointercancel', function () { if (drag) endDrag(false); if (pend) { clearTimeout(pend.timer); pend = null; } });
+  document.addEventListener('touchmove', function (e) { if (drag) e.preventDefault(); }, { passive: false });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drag) endDrag(false); });
+
+  function beginDrag(p) {
+    pend = null;
+    var card = p.card, r = card.getBoundingClientRect();
+    var ghost = card.cloneNode(true); ghost.classList.add('ghost'); ghost.removeAttribute('tabindex');
+    ghost.style.width = r.width + 'px'; ghost.style.left = r.left + 'px'; ghost.style.top = r.top + 'px';
+    document.body.appendChild(ghost);
+    var slot = el('div', 'slot'); slot.style.height = r.height + 'px';
+    card.parentNode.insertBefore(slot, card); card.parentNode.classList.add('has-slot');
+    card.classList.add('lifted');
+    drag = { id: p.id, card: card, ghost: ghost, slot: slot, pid: p.pid, ox: p.x - r.left, oy: p.y - r.top, left: r.left, top: r.top, x: p.lx, y: p.ly, lost: false, from: stageOf((dealById(p.id) || {}).stage) };
+    document.body.classList.add('dragging');
+    if (!showLost) $('lost-drop').hidden = false;
+    if (navigator.vibrate && p.type !== 'mouse') { try { navigator.vibrate(8); } catch (err) { /* ignore */ } }
+    placeGhost(); hitTest();
+    drag.raf = requestAnimationFrame(autoScroll);
+  }
+  function placeGhost() {
+    drag.ghost.style.transform = 'translate(' + (drag.x - drag.ox - drag.left) + 'px,' + (drag.y - drag.oy - drag.top) + 'px) rotate(1.5deg)';
+  }
+  function hitTest() {
+    var target = document.elementFromPoint(drag.x, drag.y);
+    var lostEl = $('lost-drop');
+    drag.lost = !!(target && !lostEl.hidden && lostEl.contains(target));
+    lostEl.classList.toggle('over', drag.lost);
+    document.querySelectorAll('.col.over').forEach(function (c) { c.classList.remove('over'); });
+    if (drag.lost) return;
+    var col = target && target.closest && target.closest('.col');
+    if (!col) return;
+    col.classList.add('over');
+    var list = col.querySelector('.col-list');
+    var cards = Array.prototype.filter.call(list.querySelectorAll('.pcard'), function (c) { return !c.classList.contains('lifted'); });
+    var before = null;
+    for (var i = 0; i < cards.length; i++) { var r = cards[i].getBoundingClientRect(); if (drag.y < r.top + r.height / 2) { before = cards[i]; break; } }
+    if (drag.slot.parentNode !== list || drag.slot.nextSibling !== before) {
+      list.insertBefore(drag.slot, before);
+      document.querySelectorAll('.col-list').forEach(function (l) { l.classList.toggle('has-slot', l.contains(drag.slot)); });
+    }
+  }
+  function autoScroll() {
+    if (!drag) return;
+    var board = $('board'), br = board.getBoundingClientRect(), edge = 70, dx = 0, dy = 0;
+    if (drag.y > br.top - 40 && drag.y < br.bottom + 40) {
+      if (drag.x < br.left + edge) dx = -Math.ceil((br.left + edge - drag.x) / 4);
+      else if (drag.x > br.right - edge) dx = Math.ceil((drag.x - (br.right - edge)) / 4);
+    }
+    if (drag.y < edge) dy = -Math.ceil((edge - drag.y) / 4);
+    else if (drag.y > window.innerHeight - edge) dy = Math.ceil((drag.y - (window.innerHeight - edge)) / 4);
+    if (dx) board.scrollLeft += Math.max(-24, Math.min(24, dx));
+    if (dy) window.scrollBy(0, Math.max(-24, Math.min(24, dy)));
+    if (dx || dy) hitTest();
+    drag.raf = requestAnimationFrame(autoScroll);
+  }
+  function neighbour(node, dir) {
+    var n = node && node[dir];
+    while (n && (!n.classList || !n.classList.contains('pcard') || n.classList.contains('lifted'))) n = n[dir];
+    return n ? dealById(n.getAttribute('data-id')) : null;
+  }
+  function endDrag(commit) {
+    var g = drag; drag = null; dragEndedAt = Date.now();
+    cancelAnimationFrame(g.raf);
+    g.ghost.remove();
+    document.body.classList.remove('dragging');
+    $('lost-drop').hidden = true; $('lost-drop').classList.remove('over');
+    document.querySelectorAll('.col.over').forEach(function (c) { c.classList.remove('over'); });
+    var d = dealById(g.id);
+    var stage = null, rank = null;
+    if (commit && d && g.lost) {
+      stage = 'Lost';
+      var lost = effRank(state.prospects.filter(function (x) { return stageOf(x.stage) === 'Lost' && x !== d; }));
+      rank = lost.length ? lost[0]._r - 1 : 0;
+    } else if (commit && d && g.slot.parentNode) {
+      stage = g.slot.closest('.col').getAttribute('data-stage');
+      var prev = neighbour(g.slot, 'previousSibling'), next = neighbour(g.slot, 'nextSibling');
+      if (prev && next) rank = (prev._r + next._r) / 2;
+      else if (prev) rank = prev._r + 1;
+      else if (next) rank = next._r - 1;
+      else rank = 0;
+      var unchanged = stage === stageOf(d.stage) && neighbour(g.card, 'previousSibling') === prev && neighbour(g.card, 'nextSibling') === next;
+      if (unchanged) stage = null;
+    }
+    g.slot.remove(); g.card.classList.remove('lifted');
+    if (!stage) { renderBoard(); return; }
+    moveDeal(d, stage, rank);
+  }
+  function moveDeal(d, stage, rank) {
+    var before = { stage: d.stage, rank: d.rank };
+    var moved = stage !== stageOf(d.stage);
+    d.stage = stage; d.rank = rank;
+    afterChange();
+    api('/admin/api/deals/' + encodeURIComponent(d.id), { method: 'POST', body: { stage: stage, rank: rank } })
+      .then(function (saved) {
+        putDeal(d.id, saved); afterChange();
+        if (moved) toast(d.name + ' moved to ' + stage + (stage === 'Won' && d.note ? '. Make its client folder in Obsidian when the work starts.' : ''));
+      })
+      .catch(function (err) { d.stage = before.stage; d.rank = before.rank; afterChange(); toast(err.message === 'Signed out' ? 'Signed out. Sign in and try again.' : 'Not moved: ' + err.message, true); });
+  }
+
+  /* card editor */
+  var editing = null, snapshot = '', fees = [];
+  function stageOptions() {
+    var s = $('dw-stage'); s.innerHTML = '';
+    STAGES.forEach(function (st) { var o = el('option', null, st); o.value = st; s.appendChild(o); });
+  }
+  stageOptions();
+  function inviteOptions(current) {
+    var s = $('dw-invite'); s.innerHTML = '';
+    var none = el('option', null, 'None'); none.value = ''; s.appendChild(none);
+    var known = false;
+    state.invites.forEach(function (inv) {
+      var o = el('option', null, inv.name + ' · ' + inv.pages.map(function (k) { return PAGE_NAME[k]; }).join(' and ') + (inv.state !== 'active' ? ' (' + ({ revoked: 'switched off', expired: 'expired', scheduled: 'not live yet' }[inv.state] || inv.state) + ')' : ''));
+      o.value = inv.token; s.appendChild(o); if (inv.token === current) known = true;
+    });
+    if (current && !known) { var o = el('option', null, 'A link that no longer exists'); o.value = current; s.appendChild(o); }
+    s.value = current || '';
+  }
+  function sourceOptions() {
+    var dl = $('dw-sources'); dl.innerHTML = '';
+    var seen = {};
+    ['LinkedIn', 'Website', 'Referral', 'Event', 'Cold outreach'].concat(state.prospects.map(function (d) { return d.source; })).forEach(function (v) {
+      v = String(v || '').trim(); if (!v || seen[v.toLowerCase()]) return; seen[v.toLowerCase()] = 1;
+      var o = el('option'); o.value = v; dl.appendChild(o);
+    });
+  }
+  var FIELD_IDS = { name: 'dw-name', website: 'dw-website', source: 'dw-source', markets: 'dw-markets', contact: 'dw-contact', role: 'dw-role', email: 'dw-email', phone: 'dw-phone', about: 'dw-about', stage: 'dw-stage', nextDate: 'dw-date', nextStep: 'dw-next', proposal: 'dw-proposal', invite: 'dw-invite' };
+  function pricing() { return $('dw-pricing').querySelector('[aria-pressed="true"]').getAttribute('data-v'); }
+  function setPricing(v) { $('dw-pricing').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-v') === v ? 'true' : 'false'); }); $('dw-fees').classList.toggle('choose', v === 'choose'); }
+  $('dw-pricing').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; setPricing(b.getAttribute('data-v')); drawFees(); });
+  function newFeeId() { return 'f' + Math.random().toString(36).slice(2, 9); }
+  function drawFees() {
+    var box = $('dw-fees'); box.innerHTML = '';
+    var choose = pricing() === 'choose';
+    if (choose && fees.length && !fees.some(function (f) { return f.expected; })) fees[0].expected = true;
+    fees.forEach(function (f, i) {
+      var row = el('div', 'fee');
+      var exp = el('input', 'f-exp'); exp.type = 'radio'; exp.name = 'dw-exp'; exp.checked = !!f.expected; exp.title = 'The option they are most likely to choose. It counts in the totals.'; exp.setAttribute('aria-label', 'Most likely option');
+      exp.addEventListener('change', function () { fees.forEach(function (x) { x.expected = x === f; }); feeTotal(); });
+      var label = el('input', 'f-label'); label.type = 'text'; label.maxLength = 120; label.placeholder = choose ? 'Option ' + (i + 1) : 'What it is for'; label.value = f.label || ''; label.setAttribute('aria-label', 'What the fee is for');
+      label.addEventListener('input', function () { f.label = label.value; });
+      var money = el('span', 'money f-amount'); var amt = el('input'); amt.type = 'number'; amt.min = '0'; amt.step = '0.01'; amt.inputMode = 'decimal'; amt.value = f.amount ? String(f.amount) : ''; amt.placeholder = '0'; amt.setAttribute('aria-label', 'Amount in pounds'); money.appendChild(amt);
+      amt.addEventListener('input', function () { f.amount = Number(amt.value) || 0; feeTotal(); });
+      var basis = el('select', 'f-basis'); [['one-off', 'One-off'], ['monthly', 'Monthly'], ['daily', 'Day rate']].forEach(function (b) { var o = el('option', null, b[1]); o.value = b[0]; basis.appendChild(o); }); basis.value = f.basis || 'one-off'; basis.setAttribute('aria-label', 'How it is charged');
+      var qtyBox = el('span', 'f-qty'); var qty = el('input'); qty.type = 'number'; qty.min = '0'; qty.step = '1'; qty.inputMode = 'numeric'; qtyBox.appendChild(qty);
+      function qtyLook() { qty.hidden = basis.value === 'one-off'; qtyBox.setAttribute('data-unit', basis.value === 'one-off' ? '' : basis.value === 'monthly' ? 'months' : 'days'); qty.placeholder = basis.value === 'monthly' ? 'Term' : '0'; qty.setAttribute('aria-label', basis.value === 'monthly' ? 'Number of months (optional)' : 'Number of days'); qty.title = basis.value === 'monthly' ? 'Minimum term in months (optional)' : 'Number of days, so it counts in the totals'; }
+      qty.value = f.qty ? String(f.qty) : ''; qtyLook();
+      basis.addEventListener('change', function () { f.basis = basis.value; qtyLook(); feeTotal(); });
+      qty.addEventListener('input', function () { f.qty = Number(qty.value) || null; feeTotal(); });
+      var x = el('button', 'icon-btn x'); x.type = 'button'; x.innerHTML = PICO.x; x.setAttribute('aria-label', 'Remove this fee'); x.title = 'Remove';
+      x.addEventListener('click', function () { fees.splice(fees.indexOf(f), 1); drawFees(); });
+      [exp, label, money, basis, qtyBox, x].forEach(function (n) { row.appendChild(n); });
+      box.appendChild(row);
+    });
+    feeTotal();
+  }
+  function feeTotal() {
+    var d = { pricing: pricing(), values: fees };
+    var real = fees.filter(function (f) { return Number(f.amount) > 0; });
+    var box = $('dw-total'); box.innerHTML = '';
+    if (!real.length) { if (fees.length) box.textContent = 'Add an amount to count it.'; return; }
+    var t = totals(d), parts = [], said = [];
+    if (t.oneOff) parts.push('<b>' + gbp(t.oneOff) + '</b> one-off');
+    if (t.monthly) parts.push('<b>' + gbp(t.monthly) + '</b> a month');
+    said.push((d.pricing === 'choose' && real.length > 1 ? 'Counts the most likely option: ' : 'Counts ') + (parts.join(' and ') || 'nothing yet'));
+    var mo = countedFees(d).filter(function (f) { return f.basis === 'monthly' && Number(f.qty) > 0; });
+    if (mo.length) said.push('Over the minimum term: <b>' + gbp(mo.reduce(function (n, f) { return n + f.amount * f.qty; }, 0)) + '</b>');
+    if (t.openDays) said.push('Add the number of days to count a day rate');
+    box.innerHTML = said.join('. ') + '.';
+  }
+  $('dw-add-fee').addEventListener('click', function () { fees.push({ id: newFeeId(), label: '', amount: 0, basis: 'one-off', qty: null, expected: false }); drawFees(); var rows = $('dw-fees').querySelectorAll('.f-label'); if (rows.length) rows[rows.length - 1].focus(); });
+  $('dw-preset').addEventListener('change', function () {
+    var p = PRESETS[this.value]; this.value = '';
+    if (!p) return;
+    fees.push({ id: newFeeId(), label: p.label, amount: p.amount, basis: p.basis, qty: p.qty || null, expected: false }); drawFees();
+  });
+  function formValues() {
+    var out = {};
+    Object.keys(FIELD_IDS).forEach(function (f) { out[f] = $(FIELD_IDS[f]).value.trim(); });
+    out.pricing = pricing();
+    out.values = fees.filter(function (f) { return (f.label || '').trim() || Number(f.amount) > 0; }).map(function (f) { return { id: f.id, label: (f.label || '').trim(), amount: Number(f.amount) || 0, basis: f.basis || 'one-off', qty: Number(f.qty) || null, expected: !!f.expected }; });
+    return out;
+  }
+  function openDrawer(id, stage) {
+    var d = id ? dealById(id) : null;
+    if (id && !d) { toast('That card is no longer on the board.', true); return; }
+    editing = d;
+    sourceOptions(); inviteOptions(d ? d.invite : '');
+    Object.keys(FIELD_IDS).forEach(function (f) { if (f !== 'invite') $(FIELD_IDS[f]).value = d ? (d[f] || '') : ''; });
+    $('dw-stage').value = d ? stageOf(d.stage) : (stage || 'Lead');
+    fees = d ? (d.values || []).map(function (v) { return { id: v.id || newFeeId(), label: v.label, amount: v.amount, basis: v.basis, qty: v.qty, expected: v.expected }; }) : [];
+    setPricing(d && d.pricing === 'choose' ? 'choose' : 'all');
+    drawFees();
+    $('dw-kicker').textContent = d ? stageOf(d.stage) : 'New ' + ((stage || 'Lead') === 'Lead' ? 'lead' : 'card in ' + stage);
+    $('dw-title').textContent = d ? d.name : 'New lead';
+    var links = $('dw-links'); links.innerHTML = '';
+    if (d && d.note) {
+      if (d.note.doc) links.appendChild(link(docLink(d.note.doc, 'p'), 'Read the note', 'btn'));
+      if (d.note.link) links.appendChild(link(d.note.link, 'Open in Obsidian', 'btn'));
+    }
+    if (d && /^https?:\/\//i.test(d.proposal || '')) links.appendChild(link(d.proposal, 'Proposal', 'btn'));
+    if (d && d.email) links.appendChild(link('mailto:' + d.email, 'Email', 'btn'));
+    if (d && d.phone) links.appendChild(link('tel:' + d.phone.replace(/[^\d+]/g, ''), 'Call', 'btn'));
+    if (d && d.rateCard) { var cb = el('button', 'btn', 'Copy invite link'); cb.type = 'button'; cb.addEventListener('click', function () { copy(d.rateCard.link, cb); }); links.appendChild(cb); }
+    var ln = $('dw-linknote');
+    if (d && d.note) {
+      ln.hidden = false; ln.innerHTML = '';
+      ln.appendChild(document.createTextNode('Linked to the Obsidian note '));
+      ln.appendChild(link(d.note.doc ? docLink(d.note.doc, 'p') : d.note.link, d.note.title || d.name));
+      ln.appendChild(document.createTextNode('. What you change here is copied into the note’s details at the next sync, within two hours, and changes made in the note come back the same way. The value and the project notes stay here; the rest of the note stays in Obsidian.'));
+    } else ln.hidden = true;
+    var hist = $('dw-hist'); hist.innerHTML = '';
+    if (d) {
+      (d.history || []).slice().reverse().forEach(function (h) {
+        var li = el('li'); li.appendChild(el('span', null, h.from ? h.from + ' to ' + h.to : 'Added in ' + h.to)); li.appendChild(el('span', null, fmt(h.at, true))); hist.appendChild(li);
+      });
+      if (d.note && !d.saved) { var li = el('li'); li.appendChild(el('span', null, 'From the note, not changed here yet')); li.appendChild(el('span', null, d.note.updated ? fmt(d.note.updated) : '')); hist.appendChild(li); }
+    }
+    $('dw-meta-sec').hidden = !d;
+    $('dw-delete').hidden = !(d && d.saved && !d.note);
+    $('dw-msg').textContent = '';
+    $('dw-save').disabled = false; $('dw-save').textContent = d ? 'Save' : 'Add to the funnel';
+    $('dw').hidden = false; document.body.style.overflow = 'hidden';
+    $('dw-form').scrollTop = 0;
+    snapshot = JSON.stringify(formValues());
+    setTimeout(function () { (d ? $('dw-save') : $('dw-name')).focus({ preventScroll: true }); }, 60);
+  }
+  function closeDrawer(force) {
+    if (!force && JSON.stringify(formValues()) !== snapshot) {
+      ask('Leave without saving?', 'The changes to this card have not been saved.', 'Keep editing', 'Discard changes', false).then(function (yes) { if (yes) closeDrawer(true); });
+      return;
+    }
+    $('dw').hidden = true; document.body.style.overflow = ''; editing = null;
+  }
+  $('dw').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeDrawer(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('dw').hidden && $('cf').hidden) closeDrawer(false); });
+  $('dw-form').addEventListener('submit', function (e) { e.preventDefault(); save(); });
+  $('dw-save').addEventListener('click', save);
+  function save() {
+    var v = formValues(), msg = $('dw-msg');
+    msg.textContent = '';
+    if (!v.name) { msg.textContent = 'Add the company or person.'; $('dw-name').focus(); return; }
+    if (v.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) { msg.textContent = 'That email address does not look right.'; $('dw-email').focus(); return; }
+    if (v.proposal && !/^https?:\/\//i.test(v.proposal)) { msg.textContent = 'The proposal link has to start with https://'; $('dw-proposal').focus(); return; }
+    var d = editing, btn = $('dw-save'); btn.disabled = true; btn.textContent = 'Saving…';
+    if (!d) {
+      var inStage = effRank(state.prospects.filter(function (x) { return stageOf(x.stage) === v.stage; }));
+      v.rank = inStage.length ? inStage[0]._r - 1 : 0;
+    }
+    api(d ? '/admin/api/deals/' + encodeURIComponent(d.id) : '/admin/api/deals', { method: 'POST', body: v })
+      .then(function (saved) { putDeal(d ? d.id : saved.id, saved); afterChange(); closeDrawer(true); toast(d ? 'Saved' : saved.name + ' added to ' + stageOf(saved.stage)); })
+      .catch(function (err) { msg.textContent = err.message; btn.disabled = false; btn.textContent = d ? 'Save' : 'Add to the funnel'; });
+  }
+  $('dw-delete').addEventListener('click', function () {
+    var d = editing; if (!d) return;
+    ask('Delete ' + d.name + '?', 'This removes the card, its contact details, fees and history. It cannot be undone.' + (stageOf(d.stage) === 'Lost' ? '' : ' To keep a record, move it to Lost instead.'), 'Keep it', 'Delete', true).then(function (yes) {
+      if (!yes) return;
+      api('/admin/api/deals/' + encodeURIComponent(d.id) + '/delete', { method: 'POST', body: {} })
+        .then(function () { state.prospects = state.prospects.filter(function (x) { return x.id !== d.id; }); afterChange(); closeDrawer(true); toast(d.name + ' deleted'); })
+        .catch(function (err) { $('dw-msg').textContent = err.message; });
+    });
+  });
+
+  // A centred prompt with the choice underneath. Resolves true for the second (action) button.
+  function ask(title, text, noLabel, yesLabel, danger) {
+    return new Promise(function (resolve) {
+      $('cf-t').textContent = title; $('cf-s').textContent = text;
+      var no = $('cf-no'), yes = $('cf-yes');
+      no.textContent = noLabel; yes.textContent = yesLabel; yes.className = 'btn ' + (danger ? 'red' : 'primary');
+      $('cf').hidden = false; setTimeout(function () { no.focus(); }, 30);
+      function done(v) { $('cf').hidden = true; no.onclick = yes.onclick = null; document.removeEventListener('keydown', esc, true); resolve(v); }
+      function esc(e) { if (e.key === 'Escape') { e.stopPropagation(); done(false); } }
+      no.onclick = function () { done(false); }; yes.onclick = function () { done(true); };
+      document.addEventListener('keydown', esc, true);
+    });
   }
 
   /* ---------- rate card links ---------- */

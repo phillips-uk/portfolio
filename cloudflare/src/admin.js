@@ -1,8 +1,10 @@
-// Lewis's admin page at /admin: Google sign-in, clients and prospects (summaries synced from Obsidian),
+// Lewis's admin page at /admin: Google sign-in, clients (summaries synced from Obsidian), the prospects funnel
+// (pipeline.js: deals made here plus the prospect notes),
 // rate card invite links and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
+import { deals } from './pipeline.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -182,13 +184,8 @@ async function siteSummary(env) {
 async function clientsSummary(env, origin) {
   const obj = await env.BLOBS.get('admin/clients-index.json');
   if (!obj) return { syncedAt: null, clients: [], prospects: [] };
-  const index = await obj.json();
-  for (const p of index.prospects || []) {
-    if (!p.rateCardInvite) continue;
-    const inv = await getInvite(env, p.rateCardInvite);
-    p.rateCard = inv ? publicInvite(inv, origin) : null;
-  }
-  return index;
+  // Prospects are served merged with the saved funnel by /admin/api/deals.
+  return obj.json();
 }
 
 // One document from the latest-files bundle the sync uploads (admin/docs.json).
@@ -235,6 +232,12 @@ export async function admin(request, url, env) {
   if (dates && method === 'POST') return setDates(request, env, dates[1], url.origin);
   if (path === '/admin/api/site') return json(await siteSummary(env));
   if (path === '/admin/api/clients') return json(await clientsSummary(env, url.origin));
+  if (path === '/admin/api/deals' || path.startsWith('/admin/api/deals/')) {
+    return deals(request, path, env, { 'Content-Type': 'application/json', ...NO_INDEX }, async token => {
+      const inv = await getInvite(env, token);
+      return inv ? publicInvite(inv, url.origin) : null;
+    });
+  }
   const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);
   if (doc) {
     const d = await getDoc(env, doc[1]);
