@@ -1,6 +1,12 @@
 # phillips-uk.com — project rules
 
-Lewis Phillips's portfolio and tools site. Full history, standards and design workflow live in Obsidian: `01_Brand/03_Portfolio/phillips-uk.com — Web Build.md` (read it before larger changes) and `01_Brand/Phillips. Design System.md`.
+Lewis Phillips's portfolio and tools site. Full history, standards and design workflow live in Obsidian: `01_Phillips/03_Portfolio/phillips-uk.com — Web Build.md` (read it before larger changes) and `01_Phillips/Phillips. Design System.md`.
+
+## Scope
+
+This repo is the main Phillips. business: phillips-uk.com, the admin (`/admin`: clients, the prospects sales funnel, invite links) and the private pages (rate card, Search Desk demo, prospect prototypes). Its notes are in the vault under `01_Phillips/`. Search Desk itself, Before You Pay, The Director's Office and Phillips Group are separate repos with their own sessions: don't edit them from here. The `/desk` route only forwards to the Search Desk Worker. Rules for every project: `~/.claude/CLAUDE.md`.
+
+Lewis reviews changes on the live site, so after a change: commit, push `main`, then deploy (below).
 
 ## Cost rule (hard limit)
 
