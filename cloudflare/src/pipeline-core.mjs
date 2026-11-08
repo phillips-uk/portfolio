@@ -5,8 +5,11 @@
 // 03_Clients/00_Prospects. A note-linked deal is saved to R2 the first time it is edited or moved in the admin.
 // From then on each field goes both ways: the side that changed it last wins. The admin stamps every field it changes
 // (deal.at[field]); the sync stamps every note field when it first sees a new value (note.fieldAt[field]).
+// Comments and files (deal.comments, deal.files) live on the saved deal only; a note card is saved the first time one
+// is added. File bytes are in R2 under admin/deal-files/<deal id>/.
 
-export const STAGES = ['Lead', 'Talking', 'Proposal drafted', 'Proposal sent', 'Won', 'Lost'];
+// Refining proposal: they have seen it and come back with changes, so it is being reworked before they sign.
+export const STAGES = ['Lead', 'Talking', 'Proposal drafted', 'Proposal sent', 'Refining proposal', 'Won', 'Lost'];
 
 // Deal field -> key in the prospect note's details block (frontmatter)
 export const NOTE_FIELDS = {

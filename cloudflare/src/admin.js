@@ -1,5 +1,5 @@
 // Lewis's admin page at /admin: Google sign-in, clients (summaries synced from Obsidian), the prospects funnel
-// (pipeline.js: deals made here plus the prospect notes),
+// (pipeline.js: deals made here plus the prospect notes, with comments and files on each card),
 // rate card invite links and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import adminHtml from '../private/admin.html';
@@ -236,7 +236,7 @@ export async function admin(request, url, env) {
     return deals(request, path, env, { 'Content-Type': 'application/json', ...NO_INDEX }, async token => {
       const inv = await getInvite(env, token);
       return inv ? publicInvite(inv, url.origin) : null;
-    });
+    }, email);
   }
   const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);
   if (doc) {

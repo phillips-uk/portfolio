@@ -173,7 +173,10 @@
   .ph-tools input[type=search] { width: 250px; }
   .btn[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); background: var(--amber-soft); }
   .p-kpis { margin-bottom: 22px; }
-  .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(204px, 1fr); gap: 14px; overflow-x: auto; padding: 2px 2px 12px; align-items: start; scroll-snap-type: x proximity; }
+  .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(204px, 1fr); gap: 14px; overflow-x: auto; padding: 2px 2px 12px; align-items: start; scroll-snap-type: x proximity; --fl: 0px; --fr: 0px; -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%); }
+  /* Faded edges say there are more columns that way (macOS hides the scrollbar until you scroll). */
+  .board.more-l { --fl: 36px; }
+  .board.more-r { --fr: 48px; }
   .col { background: #EFECE7; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 10px; min-height: 240px; scroll-snap-align: start; transition: background .15s ease, box-shadow .15s ease; }
   .col.over { background: var(--amber-soft); box-shadow: inset 0 0 0 2px rgba(152,88,48,.32); }
   .col.lost-col { background: #ECE9E5; }
@@ -198,8 +201,12 @@
   .pc-ico svg { width: 13px; height: 13px; }
   .pc-who, .pc-val { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 18px; }
   .pc-who { color: var(--muted); }
-  .pc-val { font-weight: 700; font-variant-numeric: tabular-nums; line-height: 20px; }
+  .pc-val { font-weight: 700; font-variant-numeric: tabular-nums; line-height: 20px; display: flex; align-items: center; gap: 8px; }
+  .pc-val .v { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .pc-val.none, .pc-who.none { color: var(--faint); font-weight: 400; }
+  .pc-cnt { display: inline-flex; gap: 8px; flex: none; color: var(--faint); font-size: 11.5px; font-weight: 700; }
+  .pc-cnt span { display: inline-flex; align-items: center; gap: 3px; }
+  .pc-cnt svg { width: 12px; height: 12px; }
   .pc-next { margin-top: 7px; padding-top: 8px; border-top: 1px solid var(--line-2); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; font-size: 12.5px; line-height: 18px; }
   .pc-next .step { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pc-next .step.none { color: var(--faint); }
@@ -273,6 +280,39 @@
   .hist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
   .hist li { display: flex; justify-content: space-between; gap: 12px; }
   .hist li span:last-child { color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  /* Comments and files on a card */
+  .cm-new { display: grid; gap: 8px; }
+  .cm-new textarea { min-height: 84px; }
+  .cm-new-foot { display: flex; justify-content: flex-end; }
+  .cm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .cm-list:empty { display: none; }
+  .cm { border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px 12px 14px; background: #FCFBF9; }
+  .cm-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; min-height: 26px; }
+  .cm-acts { display: inline-flex; gap: 2px; }
+  .lnk { border: 0; background: none; padding: 5px 8px; border-radius: 6px; font: inherit; font-size: 12px; font-weight: 700; color: var(--muted); cursor: pointer; }
+  .lnk:hover { color: var(--amber); background: var(--amber-soft); }
+  .lnk.danger:hover { color: var(--bad); background: var(--bad-soft); }
+  .cm-text { margin-top: 4px; font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .cm-text a { color: var(--amber); }
+  .cm-edit { display: grid; gap: 8px; margin-top: 6px; }
+  .cm-edit textarea { min-height: 96px; }
+  .cm-edit div { display: flex; gap: 8px; justify-content: flex-end; }
+  .att { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .att:empty { display: none; }
+  .att li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 8px 8px 10px; border: 1px solid var(--line-2); border-radius: 10px; background: #FCFBF9; }
+  .att li.busy { opacity: .6; }
+  .att .ai { width: 34px; height: 34px; border-radius: 8px; background: var(--amber-soft); color: var(--amber); display: grid; place-items: center; }
+  .att .ai svg { width: 15px; height: 15px; }
+  .att .an { min-width: 0; display: grid; gap: 1px; }
+  .att .an a, .att .an b { font-size: 13.5px; font-weight: 700; color: var(--text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .att .an a:hover { color: var(--amber); text-decoration: underline; }
+  .att .an span { font-size: 12px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .att .x { width: 32px; height: 32px; }
+  .att-add { display: flex; gap: 8px; flex-wrap: wrap; }
+  .att-add .btn { padding: 8px 12px; font-size: 13px; }
+  .att-link { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 8px; }
+  .att-link .row { grid-column: 1 / -1; display: flex; gap: 8px; justify-content: flex-end; }
+  .drawer.drop::after { content: "Drop to attach to this card"; position: absolute; inset: 12px; z-index: 5; display: grid; place-items: center; border: 2px dashed var(--amber); border-radius: 14px; background: rgba(251,247,243,.9); color: var(--amber); font-weight: 700; font-size: 15px; pointer-events: none; }
   .dw-foot { padding: 14px 26px; border-top: 1px solid var(--line); display: flex; gap: 8px; align-items: center; background: #FBFAF8; }
   .dw-foot .msg { margin: 0; flex: 1; }
   .dw-foot .grow { flex: 1; }
@@ -306,6 +346,7 @@
     .dw-body { padding: 0 18px 22px; }
     .dw-foot { padding: 12px 18px; }
     .g2 { grid-template-columns: minmax(0, 1fr); }
+    .att-link { grid-template-columns: minmax(0, 1fr); }
     .fee { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 64px 36px; }
     .fees.choose .fee { grid-template-columns: 20px minmax(0, 1fr) minmax(0, 1fr) 64px 36px; }
   }
@@ -799,6 +840,29 @@
           <label for="dw-invite">Invite link<select id="dw-invite"></select></label>
         </div>
       </div>
+      <div class="dw-sec" id="dw-cm-sec">
+        <h3>Comments</h3>
+        <div class="cm-new">
+          <textarea id="dw-comment" maxlength="4000" aria-label="New comment" placeholder="What they said, where you have got to, what happens next"></textarea>
+          <div class="cm-new-foot"><button type="button" class="btn primary" id="dw-comment-go">Add comment</button></div>
+        </div>
+        <ol class="cm-list" id="dw-comments"></ol>
+      </div>
+      <div class="dw-sec" id="dw-att-sec">
+        <h3>Files and links</h3>
+        <ul class="att" id="dw-files"></ul>
+        <div class="att-add">
+          <button type="button" class="btn" id="dw-attach"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.6 6.6 7.2 11a3 3 0 0 1-4.2-4.2l4.6-4.6a2 2 0 0 1 2.8 2.8L5.8 9.6a1 1 0 0 1-1.4-1.4l4-4"/></svg>Attach a file</button>
+          <button type="button" class="btn" id="dw-addlink"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6.8 9.2a2.8 2.8 0 0 0 4 0l2-2a2.8 2.8 0 0 0-4-4l-.9.9"/><path d="M9.2 6.8a2.8 2.8 0 0 0-4 0l-2 2a2.8 2.8 0 0 0 4 4l.9-.9"/></svg>Add a link</button>
+          <input type="file" id="dw-file" multiple hidden>
+        </div>
+        <div class="att-link" id="dw-linkform" hidden>
+          <input type="url" id="dw-link-url" maxlength="500" placeholder="https://" aria-label="Link address" inputmode="url">
+          <input type="text" id="dw-link-name" maxlength="120" placeholder="What it is (optional)" aria-label="What the link is">
+          <div class="row"><button type="button" class="btn" id="dw-link-x">Cancel</button><button type="button" class="btn primary" id="dw-link-go">Add link</button></div>
+        </div>
+        <p class="hint">Up to 20 MB a file. You can also drop files onto the card.</p>
+      </div>
       <div class="dw-sec" id="dw-meta-sec">
         <h3>Record</h3>
         <div class="link-note" id="dw-linknote" hidden></div>
@@ -836,7 +900,8 @@
   function api(path, opts) {
     opts = opts || {};
     var init = { method: opts.method || 'GET', headers: { 'X-Admin': '1' }, credentials: 'same-origin' };
-    if (opts.body) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
+    if (opts.raw) { init.body = opts.raw; Object.keys(opts.headers || {}).forEach(function (k) { init.headers[k] = opts.headers[k]; }); }
+    else if (opts.body) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
     return fetch(path, init).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (data) {
         if (r.status === 401) { showSignin(); throw new Error('Signed out'); }
@@ -950,6 +1015,7 @@
     }
     var pane = document.querySelector('[data-pane="' + view + '"]');
     pane.classList.remove('enter'); void pane.offsetWidth; pane.classList.add('enter');
+    if (view === 'prospects') boardEdges();
     countPane();
     window.scrollTo(0, 0);
   }
@@ -1403,7 +1469,8 @@
   }
 
   /* ---------- prospects: the sales funnel ---------- */
-  var STAGES = ['Lead', 'Talking', 'Proposal drafted', 'Proposal sent', 'Won', 'Lost'];
+  var STAGES = ['Lead', 'Talking', 'Proposal drafted', 'Proposal sent', 'Refining proposal', 'Won', 'Lost']; // as in pipeline-core.mjs
+  var FILE_MAX = 20 * 1024 * 1024; // keep in step with cloudflare/src/pipeline.js
   var BASIS = { 'one-off': 'one-off', monthly: 'a month', daily: 'a day' };
   // Keep in step with cloudflare/private/rate-card.html
   var PRESETS = {
@@ -1416,7 +1483,10 @@
     note: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 1.8h4.6L11 4.7v7.5H3.5Z"/><path d="M8 1.8v3h3M5.3 7.4h3.4M5.3 9.6h3.4"/></svg>',
     eye: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 7S3.5 3 7 3s5.5 4 5.5 4-2 4-5.5 4S1.5 7 1.5 7Z"/><circle cx="7" cy="7" r="1.6"/></svg>',
     plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>',
-    x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>'
+    x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>',
+    comment: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M2 3.2c0-.7.5-1.2 1.2-1.2h7.6c.7 0 1.2.5 1.2 1.2v5.1c0 .7-.5 1.2-1.2 1.2H6.2L3.6 11.8V9.5h-.4C2.5 9.5 2 9 2 8.3Z"/></svg>',
+    clip: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.6 6.6 7.2 11a3 3 0 0 1-4.2-4.2l4.6-4.6a2 2 0 0 1 2.8 2.8L5.8 9.6a1 1 0 0 1-1.4-1.4l4-4"/></svg>',
+    link: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6.8 9.2a2.8 2.8 0 0 0 4 0l2-2a2.8 2.8 0 0 0-4-4l-.9.9"/><path d="M9.2 6.8a2.8 2.8 0 0 0-4 0l-2 2a2.8 2.8 0 0 0 4 4l.9-.9"/></svg>'
   };
   var showLost = false, findText = '', pendingOpen = null;
   try { showLost = localStorage.getItem('ph_admin_lost') === '1'; } catch (e) { /* private window */ }
@@ -1503,8 +1573,16 @@
       board.appendChild(col);
     });
     board.scrollLeft = keep;
+    boardEdges();
     renderFunnelKpis();
   }
+  function boardEdges() {
+    var b = $('board'); if (!b) return;
+    b.classList.toggle('more-l', b.scrollLeft > 4);
+    b.classList.toggle('more-r', b.scrollLeft + b.clientWidth < b.scrollWidth - 4);
+  }
+  $('board').addEventListener('scroll', boardEdges, { passive: true });
+  window.addEventListener('resize', boardEdges);
   function renderFunnelKpis() {
     var open = state.prospects.filter(function (d) { return isOpenStage(d.stage); });
     var won = state.prospects.filter(function (d) { return stageOf(d.stage) === 'Won'; });
@@ -1521,16 +1599,29 @@
   }
   function prospectCard(d) {
     var card = el('article', 'pcard'); card.setAttribute('data-id', d.id); card.tabIndex = 0; card.setAttribute('role', 'button');
-    card.setAttribute('aria-label', d.name + ', ' + stageOf(d.stage) + '. Open to edit.');
     var top = el('div', 'pc-top'); top.appendChild(el('h3', null, d.name || 'No name'));
     var ico = el('span', 'pc-ico');
+    card.setAttribute('aria-label', d.name + ', ' + stageOf(d.stage) + ((d.comments || []).length ? ', ' + plural(d.comments.length, 'comment', 'comments') : '') + '. Open to edit.');
     if (d.rateCard) { var rv = el('span', d.rateCard.views ? 'good' : ''); rv.innerHTML = PICO.eye; rv.appendChild(document.createTextNode(String(d.rateCard.views || 0))); rv.title = d.rateCard.views ? plural(d.rateCard.views, 'invite link view', 'invite link views') : 'Invite link not opened yet'; ico.appendChild(rv); }
     if (d.note) { var nt = el('span'); nt.innerHTML = PICO.note; nt.title = 'Linked to an Obsidian note'; ico.appendChild(nt); }
     top.appendChild(ico); card.appendChild(top);
     var who = [d.contact, d.role].filter(Boolean).join(', ');
     card.appendChild(el('div', 'pc-who' + (who ? '' : ' none'), who || (d.email || d.phone || 'No contact yet')));
     var val = cardValue(d);
-    card.appendChild(el('div', 'pc-val' + (val ? '' : ' none'), val || 'No value yet'));
+    var vrow = el('div', 'pc-val' + (val ? '' : ' none'));
+    vrow.appendChild(el('span', 'v', val || 'No value yet'));
+    var nc = (d.comments || []).length, nf = (d.files || []).length;
+    if (nc || nf) {
+      var cnt = el('span', 'pc-cnt');
+      if (nc) {
+        var cs = el('span'); cs.innerHTML = PICO.comment; cs.appendChild(document.createTextNode(String(nc)));
+        var last = latestComment(d); cs.title = plural(nc, 'comment', 'comments') + (last ? '. Latest: ' + last.text.slice(0, 160) : '');
+        cnt.appendChild(cs);
+      }
+      if (nf) { var fs = el('span'); fs.innerHTML = PICO.clip; fs.appendChild(document.createTextNode(String(nf))); fs.title = plural(nf, 'file or link', 'files and links'); cnt.appendChild(fs); }
+      vrow.appendChild(cnt);
+    }
+    card.appendChild(vrow);
     var nx = el('div', 'pc-next');
     nx.appendChild(el('span', 'step' + (d.nextStep ? '' : ' none'), d.nextStep || 'No next step'));
     nx.appendChild(el('span', 'due ' + dueTone(d), d.nextDate ? fmt(d.nextDate) : ''));
@@ -1787,12 +1878,23 @@
     if (d && d.email) links.appendChild(link('mailto:' + d.email, 'Email', 'btn'));
     if (d && d.phone) links.appendChild(link('tel:' + d.phone.replace(/[^\d+]/g, ''), 'Call', 'btn'));
     if (d && d.rateCard) { var cb = el('button', 'btn', 'Copy invite link'); cb.type = 'button'; cb.addEventListener('click', function () { copy(d.rateCard.link, cb); }); links.appendChild(cb); }
+    if (d) {
+      var jump = el('button', 'btn'); jump.type = 'button'; jump.id = 'dw-jump';
+      jump.addEventListener('click', function () {
+        $('dw-cm-sec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!(editing && (editing.comments || []).length)) setTimeout(function () { $('dw-comment').focus({ preventScroll: true }); }, 350);
+      });
+      links.appendChild(jump);
+    }
+    $('dw-cm-sec').hidden = $('dw-att-sec').hidden = !d;
+    $('dw-comment').value = ''; closeLinkForm();
+    drawCardExtras();
     var ln = $('dw-linknote');
     if (d && d.note) {
       ln.hidden = false; ln.innerHTML = '';
       ln.appendChild(document.createTextNode('Linked to the Obsidian note '));
       ln.appendChild(link(d.note.doc ? docLink(d.note.doc, 'p') : d.note.link, d.note.title || d.name));
-      ln.appendChild(document.createTextNode('. What you change here is copied into the note’s details at the next sync, within two hours, and changes made in the note come back the same way. The value and the project notes stay here; the rest of the note stays in Obsidian.'));
+      ln.appendChild(document.createTextNode('. What you change here is copied into the note’s details at the next sync, within two hours, and changes made in the note come back the same way. The value, project notes, comments and files stay here (the sync lists them in 00_Pipeline); the rest of the note stays in Obsidian.'));
     } else ln.hidden = true;
     var hist = $('dw-hist'); hist.innerHTML = '';
     if (d) {
@@ -1810,12 +1912,15 @@
     snapshot = JSON.stringify(formValues());
     setTimeout(function () { (d ? $('dw-save') : $('dw-name')).focus({ preventScroll: true }); }, 60);
   }
+  // A comment or link typed but not added yet, or a comment being edited.
+  function draftOpen() { return !!($('dw-comment').value.trim() || $('dw-link-url').value.trim() || document.querySelector('#dw-comments .cm-edit')); }
   function closeDrawer(force) {
-    if (!force && JSON.stringify(formValues()) !== snapshot) {
-      ask('Leave without saving?', 'The changes to this card have not been saved.', 'Keep editing', 'Discard changes', false).then(function (yes) { if (yes) closeDrawer(true); });
+    var changed = JSON.stringify(formValues()) !== snapshot;
+    if (!force && (changed || draftOpen())) {
+      ask('Leave without saving?', changed ? 'The changes to this card have not been saved.' : 'Your comment or link has not been added yet.', 'Keep editing', changed ? 'Discard changes' : 'Discard it', false).then(function (yes) { if (yes) closeDrawer(true); });
       return;
     }
-    $('dw').hidden = true; document.body.style.overflow = ''; editing = null;
+    $('dw').hidden = true; $('dw').querySelector('.drawer').classList.remove('drop'); document.body.style.overflow = ''; editing = null;
   }
   $('dw').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeDrawer(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('dw').hidden && $('cf').hidden) closeDrawer(false); });
@@ -1832,19 +1937,209 @@
       var inStage = effRank(state.prospects.filter(function (x) { return stageOf(x.stage) === v.stage; }));
       v.rank = inStage.length ? inStage[0]._r - 1 : 0;
     }
+    var pending = d ? $('dw-comment').value.trim() : '';
     api(d ? '/admin/api/deals/' + encodeURIComponent(d.id) : '/admin/api/deals', { method: 'POST', body: v })
-      .then(function (saved) { putDeal(d ? d.id : saved.id, saved); afterChange(); closeDrawer(true); toast(d ? 'Saved' : saved.name + ' added to ' + stageOf(saved.stage)); })
+      .then(function (saved) {
+        putDeal(d ? d.id : saved.id, saved); afterChange();
+        // Save also adds a comment that was typed but not added yet.
+        if (!pending) return saved;
+        return api(cardPath(saved, '/comments'), { method: 'POST', body: { text: pending } }).then(function (s2) { putDeal(saved.id, s2); afterChange(); return s2; });
+      })
+      .then(function (saved) { closeDrawer(true); toast(d ? (pending ? 'Saved, with your comment' : 'Saved') : saved.name + ' added to ' + stageOf(saved.stage)); })
       .catch(function (err) { msg.textContent = err.message; btn.disabled = false; btn.textContent = d ? 'Save' : 'Add to the funnel'; });
   }
   $('dw-delete').addEventListener('click', function () {
     var d = editing; if (!d) return;
-    ask('Delete ' + d.name + '?', 'This removes the card, its contact details, fees and history. It cannot be undone.' + (stageOf(d.stage) === 'Lost' ? '' : ' To keep a record, move it to Lost instead.'), 'Keep it', 'Delete', true).then(function (yes) {
+    ask('Delete ' + d.name + '?', 'This removes the card, its contact details, fees, comments, files and history. It cannot be undone.' + (stageOf(d.stage) === 'Lost' ? '' : ' To keep a record, move it to Lost instead.'), 'Keep it', 'Delete', true).then(function (yes) {
       if (!yes) return;
       api('/admin/api/deals/' + encodeURIComponent(d.id) + '/delete', { method: 'POST', body: {} })
         .then(function () { state.prospects = state.prospects.filter(function (x) { return x.id !== d.id; }); afterChange(); closeDrawer(true); toast(d.name + ' deleted'); })
         .catch(function (err) { $('dw-msg').textContent = err.message; });
     });
   });
+
+  /* comments and files on the open card: these save at once, apart from the form */
+  function cardPath(d, rest) { return '/admin/api/deals/' + encodeURIComponent(d.id) + (rest || ''); }
+  function errText(err) { return err && err.message === 'Signed out' ? 'Signed out. Sign in and try again.' : (err && err.message) || 'Something went wrong. Try again.'; }
+  function newestFirst(list) { return (list || []).slice().sort(function (a, b) { return a.at < b.at ? 1 : a.at > b.at ? -1 : 0; }); }
+  function latestComment(d) { return newestFirst(d.comments)[0] || null; }
+  // The card came back from the server: swap it in, keep the form as typed, redraw the comments and files.
+  function cardSaved(forId, saved) {
+    if (!saved) return;
+    putDeal(forId, saved);
+    if (editing && editing.id === forId) { editing = saved; drawCardExtras(); }
+    afterChange();
+  }
+  function drawCardExtras() { drawComments(); drawFiles(); drawJump(); }
+  function drawJump() {
+    var j = $('dw-jump'); if (!j || !editing) return;
+    var nc = (editing.comments || []).length, nf = (editing.files || []).length;
+    j.textContent = nc || nf ? [nc ? plural(nc, 'comment', 'comments') : '', nf ? plural(nf, 'file', 'files') : ''].filter(Boolean).join(', ') : 'Add a comment';
+  }
+  // Text with any web addresses as links. Built from text nodes, never HTML.
+  function richText(box, text) {
+    String(text || '').split(/(https?:\/\/[^\s<>"]+)/).forEach(function (part, i) {
+      if (!part) return;
+      if (i % 2) {
+        var url = part.replace(/[.,;:!?)\]’”']+$/, ''), tail = part.slice(url.length);
+        box.appendChild(link(url, url)); if (tail) box.appendChild(document.createTextNode(tail));
+      } else box.appendChild(document.createTextNode(part));
+    });
+  }
+
+  function drawComments() {
+    var box = $('dw-comments'); box.innerHTML = '';
+    var d = editing; if (!d) return;
+    newestFirst(d.comments).forEach(function (c) {
+      var li = el('li', 'cm'), head = el('div', 'cm-head');
+      head.appendChild(el('span', null, fmt(c.at, true) + (c.editedAt ? ', edited' : '')));
+      var acts = el('span', 'cm-acts'), ed = el('button', 'lnk', 'Edit'), del = el('button', 'lnk danger', 'Delete');
+      ed.type = del.type = 'button'; ed.setAttribute('aria-label', 'Edit this comment'); del.setAttribute('aria-label', 'Delete this comment');
+      acts.appendChild(ed); acts.appendChild(del); head.appendChild(acts); li.appendChild(head);
+      var txt = el('div', 'cm-text'); richText(txt, c.text); li.appendChild(txt);
+      ed.addEventListener('click', function () { editComment(li, c); });
+      del.addEventListener('click', function () { deleteComment(c); });
+      box.appendChild(li);
+    });
+  }
+  function addComment() {
+    var d = editing, ta = $('dw-comment'), v = ta.value.trim(), btn = $('dw-comment-go');
+    if (!d || btn.disabled) return;
+    if (!v) { ta.focus(); return; }
+    btn.disabled = true; btn.textContent = 'Adding…';
+    api(cardPath(d, '/comments'), { method: 'POST', body: { text: v } })
+      .then(function (saved) { ta.value = ''; cardSaved(d.id, saved); toast('Comment added'); })
+      .catch(function (err) { toast(errText(err), true); })
+      .then(function () { btn.disabled = false; btn.textContent = 'Add comment'; });
+  }
+  $('dw-comment-go').addEventListener('click', addComment);
+  $('dw-comment').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); addComment(); } });
+  function editComment(li, c) {
+    var txt = li.querySelector('.cm-text'); if (!txt) return;
+    var wrap = el('div', 'cm-edit'), ta = el('textarea'), row = el('div'), cx = el('button', 'btn', 'Cancel'), sv = el('button', 'btn primary', 'Save comment');
+    ta.maxLength = 4000; ta.value = c.text; ta.setAttribute('aria-label', 'Edit the comment'); cx.type = sv.type = 'button';
+    row.appendChild(cx); row.appendChild(sv); wrap.appendChild(ta); wrap.appendChild(row);
+    li.replaceChild(wrap, txt); li.querySelector('.cm-acts').hidden = true;
+    ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    function go() {
+      var v = ta.value.trim(), d = editing;
+      if (!v) { toast('Write the comment, or delete it instead.', true); return; }
+      if (v === c.text || !d) { drawComments(); return; }
+      sv.disabled = true;
+      api(cardPath(d, '/comments/' + c.id), { method: 'POST', body: { text: v } })
+        .then(function (saved) { cardSaved(d.id, saved); toast('Comment saved'); })
+        .catch(function (err) { sv.disabled = false; toast(errText(err), true); });
+    }
+    cx.addEventListener('click', drawComments);
+    sv.addEventListener('click', go);
+    ta.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); go(); }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); drawComments(); }
+    });
+  }
+  function deleteComment(c) {
+    var d = editing; if (!d) return;
+    ask('Delete this comment?', 'It is removed from the card for good.', 'Keep it', 'Delete', true).then(function (yes) {
+      if (!yes) return;
+      api(cardPath(d, '/comments/' + c.id + '/delete'), { method: 'POST', body: {} })
+        .then(function (saved) { cardSaved(d.id, saved); toast('Comment deleted'); })
+        .catch(function (err) { toast(errText(err), true); });
+    });
+  }
+
+  function fileKind(f) {
+    var t = (f.type || '') + ' ' + (f.name || '').toLowerCase();
+    if (/application\/pdf|\.pdf$/.test(t)) return 'PDF';
+    if (/^image\//.test(t)) return 'Image';
+    if (/word|\.docx?$/.test(t)) return 'Word';
+    if (/sheet|excel|\.xlsx?$|\.csv$/.test(t)) return 'Spreadsheet';
+    if (/presentation|powerpoint|\.pptx?$|\.key$/.test(t)) return 'Slides';
+    var ext = ((f.name || '').toLowerCase().match(/\.([a-z0-9]{1,6})$/) || [])[1];
+    return ext ? ext.toUpperCase() : 'File';
+  }
+  function bytes(n) { n = Number(n) || 0; return n >= 1048576 ? (n / 1048576).toFixed(1).replace(/\.0$/, '') + ' MB' : n >= 1024 ? Math.round(n / 1024) + ' KB' : n + ' bytes'; }
+  function hostOf(u) { try { return new URL(u).host.replace(/^www\./, ''); } catch (e) { return ''; } }
+  var uploading = [];
+  function drawFiles() {
+    var box = $('dw-files'); box.innerHTML = '';
+    var d = editing; if (!d) return;
+    newestFirst(d.files).forEach(function (f) {
+      var li = el('li'), ic = el('span', 'ai'); ic.innerHTML = f.kind === 'link' ? PICO.link : PICO.note; li.appendChild(ic);
+      var nm = el('span', 'an'), a = link(f.kind === 'link' ? f.url : cardPath(d, '/files/' + f.id), f.name);
+      a.target = '_blank'; a.rel = 'noopener'; a.title = f.kind === 'link' ? f.url : 'Open ' + f.name;
+      nm.appendChild(a);
+      nm.appendChild(el('span', null, (f.kind === 'link' ? 'Link, ' + hostOf(f.url) : fileKind(f) + ', ' + bytes(f.size)) + ' · ' + fmt(f.at)));
+      li.appendChild(nm);
+      var x = el('button', 'icon-btn x'); x.type = 'button'; x.innerHTML = PICO.x; x.setAttribute('aria-label', 'Remove ' + f.name); x.title = 'Remove';
+      x.addEventListener('click', function () { removeFile(f); });
+      li.appendChild(x);
+      box.appendChild(li);
+    });
+    uploading.filter(function (u) { return u.target.id === d.id; }).forEach(function (u) {
+      var li = el('li', 'busy'), ic = el('span', 'ai'); ic.innerHTML = PICO.clip; li.appendChild(ic);
+      var nm = el('span', 'an'); nm.appendChild(el('b', null, u.name)); nm.appendChild(el('span', null, 'Uploading, ' + bytes(u.size) + '…'));
+      li.appendChild(nm); li.appendChild(el('span')); box.appendChild(li);
+    });
+  }
+  function uploadFiles(list) {
+    var files = Array.prototype.slice.call(list || []);
+    if (!files.length) return;
+    if (!editing) { toast('Add the card first, then attach files.', true); return; }
+    var target = { id: editing.id }, chain = Promise.resolve();
+    files.forEach(function (f) {
+      if (f.size > FILE_MAX) { toast(f.name + ' is over 20 MB. Add a link to it instead.', true); return; }
+      if (!f.size) { toast(f.name + ' is empty.', true); return; }
+      var item = { name: f.name, size: f.size, target: target };
+      uploading.push(item);
+      chain = chain.then(function () {
+        var was = target.id;
+        return api('/admin/api/deals/' + encodeURIComponent(was) + '/files', { method: 'POST', raw: f, headers: { 'Content-Type': f.type || 'application/octet-stream', 'X-File-Name': encodeURIComponent(f.name) } })
+          .then(function (saved) { uploading.splice(uploading.indexOf(item), 1); target.id = saved.id; cardSaved(was, saved); toast(f.name + ' attached'); })
+          .catch(function (err) { uploading.splice(uploading.indexOf(item), 1); if (editing) drawFiles(); toast('Not attached: ' + errText(err), true); });
+      });
+    });
+    drawFiles();
+  }
+  $('dw-attach').addEventListener('click', function () { $('dw-file').click(); });
+  $('dw-file').addEventListener('change', function () { uploadFiles(this.files); this.value = ''; });
+  function removeFile(f) {
+    var d = editing; if (!d) return;
+    ask('Remove ' + f.name + '?', f.kind === 'link' ? 'The link comes off this card.' : 'The file is deleted from this card for good.', 'Keep it', 'Remove', true).then(function (yes) {
+      if (!yes) return;
+      api(cardPath(d, '/files/' + f.id + '/delete'), { method: 'POST', body: {} })
+        .then(function (saved) { cardSaved(d.id, saved); toast(f.kind === 'link' ? 'Link removed' : f.name + ' removed'); })
+        .catch(function (err) { toast(errText(err), true); });
+    });
+  }
+  function closeLinkForm() { $('dw-linkform').hidden = true; $('dw-link-url').value = ''; $('dw-link-name').value = ''; }
+  function addLink() {
+    var d = editing, btn = $('dw-link-go'), url = $('dw-link-url').value.trim(), name = $('dw-link-name').value.trim();
+    if (!d || btn.disabled) return;
+    if (url && !/^[a-z]+:/i.test(url) && /^[^\s/]+\.[^\s]+$/.test(url)) url = 'https://' + url;
+    if (!/^https?:\/\/[^\s/]+\.[^\s]+$/i.test(url)) { toast('The link has to start with https://', true); $('dw-link-url').focus(); return; }
+    btn.disabled = true;
+    api(cardPath(d, '/links'), { method: 'POST', body: { url: url, name: name } })
+      .then(function (saved) { closeLinkForm(); cardSaved(d.id, saved); toast('Link added'); })
+      .catch(function (err) { toast(errText(err), true); })
+      .then(function () { btn.disabled = false; });
+  }
+  $('dw-addlink').addEventListener('click', function () { $('dw-linkform').hidden = false; $('dw-link-url').focus(); });
+  $('dw-link-x').addEventListener('click', closeLinkForm);
+  $('dw-link-go').addEventListener('click', addLink);
+  ['dw-link-url', 'dw-link-name'].forEach(function (id) {
+    $(id).addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); addLink(); }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeLinkForm(); }
+    });
+  });
+  // Files dropped anywhere on the open card are attached to it (and never open in the tab instead).
+  (function () {
+    var drawer = $('dw').querySelector('.drawer');
+    function hasFiles(e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') !== -1; }
+    drawer.addEventListener('dragover', function (e) { if (!hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = editing ? 'copy' : 'none'; if (editing) drawer.classList.add('drop'); });
+    drawer.addEventListener('dragleave', function (e) { if (!e.relatedTarget || !drawer.contains(e.relatedTarget)) drawer.classList.remove('drop'); });
+    drawer.addEventListener('drop', function (e) { if (!hasFiles(e)) return; e.preventDefault(); drawer.classList.remove('drop'); uploadFiles(e.dataTransfer.files); });
+  })();
 
   // A centred prompt with the choice underneath. Resolves true for the second (action) button.
   function ask(title, text, noLabel, yesLabel, danger) {
@@ -1871,7 +2166,7 @@
     if (inv.startsAt) return 'From ' + fmt(inv.startsAt);
     return 'Always';
   }
-  var editing = null;
+  var datesFor = null; // the invite whose dates are being changed
   function renderInvites() {
     var body = $('invites'); body.innerHTML = '';
     if (!state.invites.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No links yet. Create the first one above.'); td0.colSpan = 7; tr0.appendChild(td0); body.appendChild(tr0); return; }
@@ -1885,11 +2180,11 @@
       tr.appendChild(el('td', 'r num', String(inv.browsers)));
       tr.appendChild(el('td', null, inv.lastViewedAt ? ago(inv.lastViewedAt) + (inv.lastCountry ? ', ' + inv.lastCountry : '') : 'Not yet'));
       var lv = el('td');
-      if (editing === inv.token) {
+      if (datesFor === inv.token) {
         var ed = el('div', 'dates-edit'), f1 = el('input'), f2 = el('input'), sv = el('button', 'btn primary', 'Save'), cx = el('button', 'btn', 'Cancel');
         f1.type = f2.type = 'date'; f1.value = isoDay(inv.startsAt); f2.value = isoDay(inv.expiresAt); f1.setAttribute('aria-label', 'Live from'); f2.setAttribute('aria-label', 'Live until'); sv.type = cx.type = 'button';
-        sv.addEventListener('click', function () { sv.disabled = true; api('/admin/api/invites/' + encodeURIComponent(inv.token) + '/dates', { method: 'POST', body: { from: f1.value, until: f2.value } }).then(function () { editing = null; return reloadInvites(); }).catch(function (e) { sv.disabled = false; $('create-msg').textContent = e.message; }); });
-        cx.addEventListener('click', function () { editing = null; renderInvites(); });
+        sv.addEventListener('click', function () { sv.disabled = true; api('/admin/api/invites/' + encodeURIComponent(inv.token) + '/dates', { method: 'POST', body: { from: f1.value, until: f2.value } }).then(function () { datesFor = null; return reloadInvites(); }).catch(function (e) { sv.disabled = false; $('create-msg').textContent = e.message; }); });
+        cx.addEventListener('click', function () { datesFor = null; renderInvites(); });
         ed.appendChild(f1); ed.appendChild(f2); ed.appendChild(sv); ed.appendChild(cx); lv.appendChild(ed);
       } else lv.textContent = liveText(inv);
       tr.appendChild(lv);
@@ -1898,7 +2193,7 @@
         var c = el('button', 'btn', inv.pages.length > 1 ? 'Copy ' + PAGE_COPY[k] + ' link' : 'Copy link'); c.type = 'button';
         c.addEventListener('click', function () { copy(inv.links[k], c); }); box.appendChild(c);
       });
-      if (editing !== inv.token) { var dt = el('button', 'btn', 'Dates'); dt.type = 'button'; dt.addEventListener('click', function () { editing = inv.token; renderInvites(); }); box.appendChild(dt); }
+      if (datesFor !== inv.token) { var dt = el('button', 'btn', 'Dates'); dt.type = 'button'; dt.addEventListener('click', function () { datesFor = inv.token; renderInvites(); }); box.appendChild(dt); }
       if (inv.state !== 'expired') {
         var t = el('button', 'btn', inv.state === 'revoked' ? 'Switch on' : 'Switch off'); t.type = 'button';
         t.addEventListener('click', function () {

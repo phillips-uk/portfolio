@@ -336,6 +336,10 @@ function valueText(d) {
   return parts.join(' + ') || 'No value yet';
 }
 const cell = v => String(v || '').replace(/\|/g, '/').replace(/\s+/g, ' ').trim() || ' ';
+const newestFirst = list => (Array.isArray(list) ? list.slice() : []).sort((a, b) => String(b.at).localeCompare(String(a.at)));
+const londonDate = iso => (iso ? new Date(iso).toLocaleDateString('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric' }) : '');
+const fileSize = n => (n >= 1048576 ? (n / 1048576).toFixed(1).replace(/\.0$/, '') + ' MB' : Math.max(1, Math.round((n || 0) / 1024)) + ' KB');
+const mdText = s => String(s || '').replace(/[\[\]]/g, '').replace(/\s+/g, ' ').trim();
 function pipelineNote(deals) {
   const out = ['---', 'tags: [prospects, pipeline]', 'generated: true', '---', '', '# Pipeline', '',
     'Written by the admin sync from phillips-uk.com/admin (Prospects). Edit deals there, or in each prospect note\'s details block. Changes to this page are overwritten.', ''];
@@ -351,7 +355,7 @@ function pipelineNote(deals) {
     }
     out.push('');
   }
-  const detailed = deals.filter(d => d.about || (d.values || []).length);
+  const detailed = deals.filter(d => d.about || (d.values || []).length || (d.comments || []).length || (d.files || []).length);
   if (detailed.length) {
     out.push('## Details', '');
     for (const d of detailed) {
@@ -364,6 +368,23 @@ function pipelineNote(deals) {
         for (const v of fees) out.push(`  - ${feeText(v)}${d.pricing === 'choose' && fees.length > 1 && counted[0] === v ? ' (expected)' : ''}`);
       }
       if (d.about) out.push('', ...d.about.split('\n').map(l => l.trim() ? l : ''));
+      const files = newestFirst(d.files);
+      if (files.length) {
+        out.push('', '**Files and links** (files open from the card in the admin)', '');
+        for (const f of files) {
+          out.push(f.kind === 'link'
+            ? `- [${mdText(f.name)}](${String(f.url).replace(/[()\s]/g, encodeURIComponent)}), added ${londonDate(f.at)}`
+            : `- ${mdText(f.name)} (${fileSize(f.size)}), added ${londonDate(f.at)}`);
+        }
+      }
+      const comments = newestFirst(d.comments);
+      if (comments.length) {
+        out.push('', '**Comments** (newest first)', '');
+        for (const c of comments) {
+          const [first, ...rest] = String(c.text || '').split('\n');
+          out.push(`- ${londonDate(c.at)}: ${first}`, ...rest.map(l => (l.trim() ? '  ' + l : '')));
+        }
+      }
       out.push('');
     }
   }
