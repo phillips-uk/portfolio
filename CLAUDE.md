@@ -33,7 +33,7 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` returns 301.
 - **New public file:** fine as is. **New non-public file at the repo root:** add it to `.assetsignore`, or it is served to the world.
 - `_redirects` must contain only relative URLs; Cloudflare rejects the deploy otherwise. `netlify.toml` is no longer used for serving.
 - Secrets live on the Worker (`npx wrangler secret list` / `secret put NAME`). Never print or commit them, never copy them into Obsidian.
-- Local test: `npx wrangler dev --port 8787 --local --persist-to <folder outside the repo>` with test-only values in `.dev.vars` (git-ignored). Without `--persist-to` the dev server reloads in a loop.
+- Local test: `npx wrangler dev --port 8787 --local --local-upstream localhost:8787 --persist-to <folder outside the repo>` with test-only values in `.dev.vars` (git-ignored). Without `--persist-to` the dev server reloads in a loop; without `--local-upstream` every request 301s to `https://www.phillips-uk.com`. The `phillips-uk-dev` preview in `.claude/launch.json` (local, not committed) runs exactly this. The admin needs `ADMIN_SESSION_KEY` in `.dev.vars`; sign-in is Google, so test the admin API with a locally minted test cookie and delete `.dev.vars` afterwards.
 - DNS is on Cloudflare (Free plan). Email is Google Workspace plus Resend, so never delete MX or TXT records. DNS changes are made by Lewis in the dashboard.
 
 ## Page standards (summary, full detail in the Obsidian note)
