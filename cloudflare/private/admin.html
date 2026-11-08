@@ -899,7 +899,7 @@
 
   /* ---------- sign in ---------- */
   function showSignin(msg) { $('app').hidden = true; $('signin').hidden = false; $('signin-msg').textContent = msg || ''; renderButton(); }
-  function showApp(email) { $('signin').hidden = true; $('app').hidden = false; $('who-email').textContent = email; $('who-avatar').innerHTML = '<img src="/images/lewis-avatar.jpg" alt="">';   // only Lewis's own addresses can sign in here loadAll(); route(); }
+  function showApp(email) { $('signin').hidden = true; $('app').hidden = false; $('who-email').textContent = email; $('who-avatar').innerHTML = '<img src="/images/lewis-avatar.jpg" alt="">'; /* only Lewis's own addresses can sign in here */ loadAll(); route(); }
   var rendered = false;
   function renderButton() {
     if (rendered) return;
