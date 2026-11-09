@@ -26,6 +26,34 @@ const isBackground = name => name.endsWith('-background');
 
 const CANONICAL_HOST = 'www.phillips-uk.com';
 
+// Google Tag Manager on every public page, so a new page can never go untracked: any HTML page served from the site's
+// files (or a /r/ share page) that does not already load the container gets it added on the way out. Pages that carry
+// it already are left as they are. Invite pages (rate-card.js adds gtag.js itself), /admin and Search Desk (/desk)
+// never come through here. Analytics notes: vault 01_Phillips/07_Analytics.
+const GTM_ID = 'GTM-WS5CP6NW';
+const GTM_HEAD = `<!-- Google Tag Manager (added by the Worker) --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');</script>`;
+const GTM_BODY = `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`;
+
+function withGtm(res) {
+  const type = res.headers.get('Content-Type') || '';
+  if (res.status !== 200 || !type.includes('text/html')) return res;
+  let has = false;
+  let tail = '';
+  return new HTMLRewriter()
+    .on('script', {
+      element(el) { if ((el.getAttribute('src') || '').includes(GTM_ID)) has = true; },
+      // Inline script text can arrive in pieces, so look across the joins too.
+      text(t) { tail = (tail + t.text).slice(-64); if (tail.includes(GTM_ID)) has = true; if (t.lastInTextNode) tail = ''; },
+    })
+    .on('head', { element(el) { el.onEndTag(end => { if (!has) end.before(GTM_HEAD, { html: true }); }); } })
+    .on('body', { element(el) { if (!has) el.prepend(GTM_BODY, { html: true }); } })
+    .transform(res);
+}
+
 // Mirrors netlify.toml and _redirects.
 const REDIRECTS = {
   '/audit': '/google-ads-audit',
@@ -93,9 +121,9 @@ async function route(request, env, ctx) {
   if (isAdminPath(path)) return admin(request, url, env);
 
   const share = path.match(/^\/r\/([^/]+)$/);
-  if (share) return runFunction('audit-share', request, url, { id: decodeURIComponent(share[1]) }, env, ctx);
+  if (share) return withGtm(await runFunction('audit-share', request, url, { id: decodeURIComponent(share[1]) }, env, ctx));
 
-  return env.ASSETS.fetch(request);
+  return withGtm(await env.ASSETS.fetch(request));
 }
 
 export default {

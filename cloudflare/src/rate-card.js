@@ -102,7 +102,8 @@ async function recordView(env, token, visitor, request, key) {
 
 // Google Analytics on the invite pages, so a prospect reading a proposal shows in GA4 (Realtime included). Same property
 // as the public site, but loaded straight from gtag.js rather than GTM so only the path is sent: the invite token in the
-// address never reaches Google. GA groups these pages as "Proposals". A click on a Phillips. email address counts as
+// address never reaches Google. GA groups these pages as "Proposals", and each open also sends proposal_view (a Key
+// Event) with the page's path. A click on a Phillips. email address counts as
 // contact_click, like the public site (Monument's own addresses on its draft do not). Never added to Lewis's previews
 // from /admin, nor to the locked page.
 const GA_ID = 'G-P8648KZWNP';
@@ -113,6 +114,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('set', { page_location: location.origin + location.pathname, content_group: 'Proposals' });
 gtag('config', '${GA_ID}', { page_location: location.origin + location.pathname, content_group: 'Proposals' });
+gtag('event', 'proposal_view', { proposal_page: location.pathname });
 document.addEventListener('click', function (e) {
   var a = e.target && e.target.closest ? e.target.closest('a[href^="mailto:"]') : null;
   if (a && /@phillips-uk\\.com/i.test(a.getAttribute('href'))) gtag('event', 'contact_click', { link_url: a.getAttribute('href').split('?')[0] });

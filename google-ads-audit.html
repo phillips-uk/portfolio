@@ -739,7 +739,7 @@ async function runAudit(token, cid) {
       return;
     }
 
-    window.dataLayer.push({ event: 'audit_complete', score: data.score || 0 });
+    window.dataLayer.push({ event: 'audit_complete', score: data.score || 0, audit_score: data.score || 0 });
 
     // Redirect to report page with the audit ID
     if (data.audit_id) {
@@ -1030,7 +1030,7 @@ async function runMccAudit(cid, managerLinkId, email) {
       return;
     }
 
-    window.dataLayer.push({ event: 'audit_complete', score: data.score || 0, flow: 'mcc' });
+    window.dataLayer.push({ event: 'audit_complete', score: data.score || 0, audit_score: data.score || 0, flow: 'mcc' });
 
     if (data.audit_id) {
       window.location.href = "/google-ads-audit-report?id=" + encodeURIComponent(data.audit_id);

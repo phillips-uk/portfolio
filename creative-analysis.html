@@ -1115,6 +1115,9 @@ scoreBtn.addEventListener('click', async () => {
       throw new Error(`Upload failed (${uploadResp.status}). Try fewer files or contact Lewis.`);
     }
 
+    // Analytics: the run is under way (files uploaded). GTM sends it to GA4 as creative_scoring_started.
+    try { window.dataLayer = window.dataLayer || []; dataLayer.push({ event: 'creative_scoring_started', creative_count: frameCount }); } catch (e) {}
+
     // Step 2b: trigger background scoring (tiny payload — just jobId + token)
     const resp = await fetch('/.netlify/functions/creative-analyse-background', {
       method: 'POST',
