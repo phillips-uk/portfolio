@@ -364,6 +364,13 @@
   .msg:empty { display: none; }
   .actions { display: flex; gap: 6px; justify-content: flex-end; }
   .actions .btn { padding: 6px 10px; font-size: 12.5px; }
+  /* The Search Desk share link behind demo invites */
+  .desk-card .card-head { align-items: flex-start; }
+  .desk-sub { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+  .desk-status { margin: 16px 20px 0; font-size: 14px; line-height: 1.5; }
+  .desk-form { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto auto; gap: 12px; align-items: end; padding: 16px 20px 20px; }
+  @media (max-width: 1100px) { .desk-form { grid-template-columns: 150px auto auto minmax(0, 1fr); } .desk-form label:first-child { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .desk-form { grid-template-columns: minmax(0, 1fr); } }
 
   .shortcuts { display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 20px; }
 
@@ -760,7 +767,7 @@
 
     <section data-pane="links" hidden>
       <div class="page-head">
-        <div><h1>Invite links</h1><p class="lede">Links to the private rate card, the Search Desk demo and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
+        <div><h1>Invite links</h1><p class="lede">Links to the private rate card, the Search Desk demo (Example Car Hire Co. in the real product) and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a><a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a><a class="btn" href="/the-loft" target="_blank" rel="noopener">Preview The Loft</a><a class="btn" href="/monument" target="_blank" rel="noopener">Preview Monument</a></div>
       </div>
       <div class="card" style="margin-bottom:20px">
@@ -775,6 +782,17 @@
         </form>
         <div class="made" id="made" hidden><code id="made-link"></code><button type="button" class="btn" id="made-copy">Copy link</button></div>
         <p class="msg" id="create-msg"></p>
+      </div>
+      <div class="card desk-card" style="margin-bottom:20px">
+        <div class="card-head"><div><h2>Search Desk demo link</h2><p class="desk-sub">Every invite that opens the Search Desk demo goes through this one share link to Example Car Hire Co. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
+        <p class="desk-status" id="desk-status"></p>
+        <form class="desk-form" id="desk-form" autocomplete="off">
+          <label for="d-link">Share link<input type="text" id="d-link" placeholder="https://www.phillips-uk.com/desk/demo/…" spellcheck="false" autocapitalize="off"></label>
+          <label for="d-days">Made for<select id="d-days"><option value="90" selected>90 days</option><option value="30">30 days</option><option value="7">7 days</option></select></label>
+          <button class="btn primary" type="submit" id="d-go">Save link</button>
+          <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Make one in Search Desk</a>
+        </form>
+        <p class="msg" id="desk-msg"></p>
       </div>
       <div class="card scroll">
         <table class="table">
@@ -1072,7 +1090,7 @@
       api('/admin/api/deals').catch(function () { return null; })
     ]).then(function (r) {
       if (r[0]) { state.clients = r[0].clients || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
-      if (r[1]) state.invites = r[1].invites || [];
+      if (r[1]) { state.invites = r[1].invites || []; state.deskDemo = r[1].deskDemo || null; }
       if (r[2]) state.site = r[2];
       if (r[3]) state.prospects = r[3].deals || [];
       else toast('The funnel did not load. Refresh to try again.', true);
@@ -1087,7 +1105,7 @@
     $('b-clients').textContent = state.clients.length || '';
     $('b-prospects').textContent = openProspects().length || '';
     $('b-links').textContent = state.invites.filter(function (i) { return i.state === 'active'; }).length || '';
-    renderOverview(); renderClients(); renderBoard(); renderInvites(); renderSite();
+    renderOverview(); renderClients(); renderBoard(); renderInvites(); renderDeskDemo(); renderSite();
     if ((location.hash || '').indexOf('#client/') === 0) route(); else countPane();
   }
   function openProspects() { return state.prospects.filter(function (p) { return !/won|lost/i.test(p.stage); }); }
@@ -1334,6 +1352,8 @@
       else if (!p.nextDate) undated.push(p);
       if (p.rateCard && p.rateCard.views === 0) { n++; row(att, { icon: 'eye', tone: 'amber', title: p.name + ': invite link not opened yet', sub: 'Link made ' + fmt(p.rateCard.createdAt), href: '#links' }); }
     });
+    var dk = deskIssue();
+    if (dk && dk.attention) { n++; row(att, { icon: 'alert', tone: dk.tone, title: 'Search Desk demo link: ' + dk.label.toLowerCase(), sub: dk.short, href: '#links' }); }
     if (undated.length > 3) { n++; row(att, { icon: 'clock', tone: 'amber', title: plural(undated.length, 'open deal has', 'open deals have') + ' no date on the next step', sub: undated.slice(0, 3).map(function (p) { return p.name; }).join(', ') + ' and more', href: '#prospects' }); }
     else undated.forEach(function (p) { n++; row(att, { icon: 'clock', tone: 'amber', title: p.name + ': no date on the next step', sub: p.nextStep || 'Add a next step and a date', href: '#prospects/' + p.id }); });
     $('att-n').textContent = n ? plural(n, 'item', 'items') : '';
@@ -2194,7 +2214,7 @@
   }
 
   /* ---------- rate card links ---------- */
-  var PAGE_NAME = { 'rate-card': 'Rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft', 'monument': 'Monument website draft', 'monument-calculators': 'Monument calculators' };
+  var PAGE_NAME = { 'rate-card': 'Rate card', 'search-desk': 'Search Desk demo', 'the-loft': 'The Loft', 'monument': 'Monument website draft', 'monument-calculators': 'Monument calculators' };
   var PAGE_COPY = { 'rate-card': 'rate card', 'search-desk': 'Search Desk', 'the-loft': 'The Loft', 'monument': 'Monument', 'monument-calculators': 'Monument calculators' };
   function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function isoDay(s) { return s ? ymd(new Date(s)) : ''; }
@@ -2245,7 +2265,7 @@
       body.appendChild(tr);
     });
   }
-  function reloadInvites() { return api('/admin/api/invites').then(function (d) { state.invites = d.invites; renderAll(); }); }
+  function reloadInvites() { return api('/admin/api/invites').then(function (d) { state.invites = d.invites; state.deskDemo = d.deskDemo || null; renderAll(); }); }
   $('create').addEventListener('submit', function (e) {
     e.preventDefault();
     var name = $('f-name').value.trim();
@@ -2258,6 +2278,42 @@
       .then(function () { $('f-go').disabled = false; });
   });
   $('made-copy').addEventListener('click', function () { copy($('made-link').textContent, $('made-copy')); });
+
+  /* ---------- the Search Desk share link behind demo invites ---------- */
+  var DESK_HOW = 'Make one in Search Desk under Workspaces, Example Car Hire Co., Share links (90 days), then paste it here.';
+  function deskIssue() {
+    var d = state.deskDemo; if (!d) return null;
+    var inUse = state.invites.some(function (i) { return i.state === 'active' && i.pages.indexOf('search-desk') !== -1; });
+    var left = d.expiresAt ? Math.ceil((new Date(d.expiresAt) - new Date()) / 86400000) : null;
+    if (d.problem && d.problem.why !== 'missing') {
+      var down = d.problem.why === 'unreachable' ? 'Search Desk has not answered' : 'Search Desk has turned this link down (run out, switched off or mistyped)';
+      return { tone: 'bad', label: 'Not working', attention: true, short: 'Demo invites show a holding page. Paste a new share link.',
+        text: 'Since ' + fmt(d.problem.at, true) + ', ' + down + ', so demo invites show a holding page. ' + DESK_HOW };
+    }
+    if (!d.set) return { tone: 'bad', label: 'Not set', attention: inUse, short: 'Demo invites show a holding page until one is saved.',
+      text: 'No share link saved yet, so demo invites show a holding page. ' + DESK_HOW };
+    var saved = 'Link ' + d.hint + ' saved ' + fmt(d.savedAt) + (d.expiresAt ? ', runs out about ' + fmt(d.expiresAt) : '') + '.';
+    if (left != null && left <= 0) return { tone: 'bad', label: 'Run out', attention: true, short: 'Paste a new share link from Search Desk.', text: saved + ' It has probably run out. ' + DESK_HOW };
+    if (left != null && left <= 10) return { tone: 'warn', label: 'Runs out soon', attention: true, short: 'Runs out about ' + fmt(d.expiresAt) + '. Paste a new share link before then.', text: saved + ' ' + DESK_HOW };
+    return { tone: 'good', label: 'Live', attention: false, short: '', text: saved + ' Preview Search Desk to check it opens.' };
+  }
+  function renderDeskDemo() {
+    var k = deskIssue(); if (!k) return;
+    $('desk-pill').className = 'pill ' + k.tone; $('desk-pill').textContent = k.label;
+    $('desk-status').textContent = k.text;
+    $('d-go').textContent = state.deskDemo.set ? 'Replace link' : 'Save link';
+  }
+  $('desk-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('d-link').value.trim();
+    $('desk-msg').textContent = '';
+    if (!v) { $('desk-msg').textContent = 'Paste the share link from Search Desk first.'; $('d-link').focus(); return; }
+    $('d-go').disabled = true;
+    api('/admin/api/desk-demo', { method: 'POST', body: { link: v, days: Number($('d-days').value) } })
+      .then(function (d) { state.deskDemo = d; $('d-link').value = ''; renderAll(); toast('Saved. Preview Search Desk to check it opens.'); })
+      .catch(function (err) { $('desk-msg').textContent = err.message; })
+      .then(function () { $('d-go').disabled = false; });
+  });
   // New links: live from today for 30 days unless changed
   (function () { var t = new Date(); $('f-from').value = ymd(t); $('f-until').value = ymd(new Date(t.getTime() + 30 * 86400000)); })();
 
