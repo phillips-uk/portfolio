@@ -3,7 +3,7 @@
 // rate card invite links (Search Desk demo invites each get their own Search Desk share link, desk-demo.js) and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import adminHtml from '../private/admin.html';
-import { getInvite, putInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
+import { getInvite, putInvite, updateInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
 import { deals } from './pipeline.js';
 import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
 
@@ -73,7 +73,10 @@ function publicInvite(inv, origin) {
     startsAt: inv.startsAt || null,
     expiresAt: inv.expiresAt || null,
     state: inviteState(inv),
+    archived: !!inv.archived,
+    archivedAt: inv.archivedAt || null,
     views: inv.views || 0,
+    previews: inv.previews || 0,
     browsers: (inv.visitors || []).length,
     lastViewedAt: inv.lastViewedAt || null,
     lastCountry: inv.lastCountry || '',
@@ -136,21 +139,30 @@ async function createInvite(request, env, origin) {
 async function setDates(request, env, token, origin) {
   let body = {};
   try { body = await request.json(); } catch { /* empty body */ }
-  const inv = await getInvite(env, token);
-  if (!inv) return json({ error: 'That link no longer exists.' }, 404);
   const win = liveWindow({ from: body.from || '', until: body.until || '' }, new Date());
   if (win.error) return json({ error: win.error }, 400);
-  inv.startsAt = win.startsAt;
-  inv.expiresAt = win.expiresAt;
-  await putInvite(env, inv);
+  const inv = await updateInvite(env, token, i => { i.startsAt = win.startsAt; i.expiresAt = win.expiresAt; });
+  if (!inv) return json({ error: 'That link no longer exists.' }, 404);
   return json(publicInvite(inv, origin));
 }
 
-async function setRevoked(env, token, revoked, origin) {
+// Archiving only tidies the admin list: the link keeps working until it is switched off or runs out.
+async function setArchived(env, token, archived, origin) {
+  const inv = await updateInvite(env, token, i => { i.archived = archived; i.archivedAt = archived ? new Date().toISOString() : null; });
+  if (!inv) return json({ error: 'That link no longer exists.' }, 404);
+  return json(publicInvite(inv, origin));
+}
+
+// One link with every visit kept, for its detail panel.
+async function inviteDetail(env, token, origin) {
   const inv = await getInvite(env, token);
   if (!inv) return json({ error: 'That link no longer exists.' }, 404);
-  inv.revoked = revoked;
-  await putInvite(env, inv);
+  return json({ ...publicInvite(inv, origin), visits: Array.isArray(inv.visits) ? inv.visits : [], recent: Array.isArray(inv.recent) ? inv.recent : [] });
+}
+
+async function setRevoked(env, token, revoked, origin) {
+  const inv = await updateInvite(env, token, i => { i.revoked = revoked; });
+  if (!inv) return json({ error: 'That link no longer exists.' }, 404);
   // Its Search Desk share link goes too, signing its guests out at once; switching it back on makes a new one on the next open
   if (revoked && invitePages(inv).includes('search-desk')) await revokeDeskDemo(env, inv);
   return json(publicInvite(inv, origin));
@@ -232,6 +244,10 @@ export async function admin(request, url, env) {
   if (path === '/admin/api/invites' && method === 'POST') return createInvite(request, env, url.origin);
   const act = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/(revoke|restore)$/);
   if (act && method === 'POST') return setRevoked(env, act[1], act[2] === 'revoke', url.origin);
+  const arch = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/(archive|unarchive)$/);
+  if (arch && method === 'POST') return setArchived(env, arch[1], arch[2] === 'archive', url.origin);
+  const one = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})$/);
+  if (one && method === 'GET') return inviteDetail(env, one[1], url.origin);
   const dates = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/dates$/);
   if (dates && method === 'POST') return setDates(request, env, dates[1], url.origin);
   if (path === '/admin/api/site') return json(await siteSummary(env));

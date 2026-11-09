@@ -6,6 +6,8 @@
 // plain address keeps working in the same browser. Invites live in R2 under rate-card-invites/<token>.json and list the
 // pages they open in `pages` (invites made before the demo existed have none and open the rate card only).
 // A link is live between `startsAt` (optional) and `expiresAt` (optional); outside that window it shows a locked page.
+// Every open is kept in `visits` (place, device, page, time read; link previews by chat apps and mail scanners kept
+// apart and not counted), shown per link in /admin. `archived` only hides a link in the admin; it keeps working.
 // /search-desk has no page of its own since 2026-11-09: it opens the real Search Desk demo at /desk (desk-demo.js).
 import rateCardHtml from '../private/rate-card.html';
 import theLoftHtml from '../private/the-loft.html';
@@ -85,21 +87,133 @@ function randomId(bytes) {
   return btoa(String.fromCharCode(...a)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-async function recordView(env, token, visitor, request, key) {
-  const inv = await getInvite(env, token);
-  if (!inv) return;
+// Read, change and save one invite, retrying if a view, a ping or the admin saved it in between. `change` returns false
+// when there is nothing to write. Returns the saved invite, or null if it no longer exists.
+export async function updateInvite(env, token, change) {
+  if (!token || !TOKEN.test(token)) return null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const obj = await env.BLOBS.get(PREFIX + token + '.json');
+    if (!obj) return null;
+    const inv = await obj.json();
+    if (change(inv) === false) return inv;
+    const put = await env.BLOBS.put(PREFIX + token + '.json', JSON.stringify(inv), {
+      httpMetadata: { contentType: 'application/json' },
+      onlyIf: { etagMatches: obj.etag },
+    });
+    if (put) return inv;
+  }
+  throw new Error('The link was saved somewhere else at the same moment. Try again.');
+}
+
+// Each open is kept as a visit (newest first, the last MAX_VISITS) so the admin can show who opened what, where, on
+// what, and for how long. Place is the city Cloudflare gives for the connection; no IP address is stored.
+const MAX_VISITS = 300;
+
+// Chat apps, social sites and mail scanners fetch a link to build a preview or check it. Those are kept as previews
+// and never count as views or browsers. Matched on the fetcher's own name, so in-app browsers (LinkedIn's, Gmail's)
+// still count as people.
+const PREVIEWERS = [
+  ['iMessage', /Facebot.*Twitterbot|Twitterbot.*Facebot/i],
+  ['Slack', /Slackbot|Slack-ImgProxy/i],
+  ['WhatsApp', /^WhatsApp\//i],
+  ['Facebook', /facebookexternalhit|Facebot/i],
+  ['LinkedIn', /LinkedInBot/i],
+  ['X', /Twitterbot/i],
+  ['Teams or Skype', /SkypeUriPreview|MicrosoftPreview/i],
+  ['Microsoft Office', /Microsoft Office|MSOffice|ms-office|Microsoft Outlook|BingPreview|bingbot/i],
+  ['Telegram', /TelegramBot/i],
+  ['Discord', /Discordbot/i],
+  ['Google', /Googlebot|Google-InspectionTool|GoogleOther|Google-Safety|AdsBot-Google|Google Web Preview|FeedFetcher-Google/i],
+  ['Apple', /Applebot/i],
+  ['a mail scanner', /Proofpoint|Mimecast|Barracuda|safelinks|urlscan|Symantec|TrendMicro|Trend Micro|Forcepoint|Sophos|Cisco/i],
+  ['a script', /^(curl|Wget|python|Go-http-client|okhttp|axios|node-fetch|undici|Java\/|libwww|Apache-HttpClient)|HeadlessChrome|PhantomJS/i],
+  ['a crawler', /(bot|crawler|spider)\b|bot\//i],
+];
+function previewBy(ua) {
+  if (!ua) return 'an unnamed client';
+  const hit = PREVIEWERS.find(([, re]) => re.test(ua));
+  return hit ? hit[0] : null;
+}
+function deviceOf(ua) {
+  if (/iPad|Tablet|PlayBook|Silk|Android(?!.*Mobile)/i.test(ua)) return 'Tablet';
+  if (/Mobi|iPhone|iPod|Android.*Mobile|Windows Phone/i.test(ua)) return 'Phone';
+  return 'Computer';
+}
+function browserOf(ua) {
+  if (/LinkedInApp/i.test(ua)) return 'LinkedIn app';
+  if (/FBAN|FBAV/i.test(ua)) return 'Facebook app';
+  if (/Instagram/i.test(ua)) return 'Instagram app';
+  if (/GSA\//.test(ua)) return 'Google app';
+  if (/Edg(A|iOS)?\//.test(ua)) return 'Edge';
+  if (/SamsungBrowser/i.test(ua)) return 'Samsung Internet';
+  if (/OPR\/|Opera/.test(ua)) return 'Opera';
+  if (/Firefox|FxiOS/.test(ua)) return 'Firefox';
+  if (/Chrome|CriOS/.test(ua)) return 'Chrome';
+  if (/Safari/.test(ua)) return 'Safari';
+  return 'Another browser';
+}
+function osOf(ua) {
+  if (/iPhone|iPad|iPod/.test(ua)) return 'iOS';
+  if (/Android/.test(ua)) return 'Android';
+  if (/CrOS/.test(ua)) return 'ChromeOS';
+  if (/Mac OS X|Macintosh/.test(ua)) return 'Mac';
+  if (/Windows/.test(ua)) return 'Windows';
+  if (/Linux/.test(ua)) return 'Linux';
+  return '';
+}
+// Where the link was opened from, when the app passes it on (often it does not): the referring site's host only.
+function referrerHost(request) {
+  try {
+    const host = new URL(request.headers.get('Referer') || '').host.replace(/^www\./, '');
+    return host && !/(^|\.)phillips-uk\.com$/.test(host) ? host.slice(0, 80) : '';
+  } catch { return ''; }
+}
+
+async function recordView(env, token, visitor, request, key, viewId) {
+  const ua = request.headers.get('User-Agent') || '';
+  const preview = previewBy(ua);
+  const cf = request.cf || {};
   const now = new Date().toISOString();
-  const country = (request.cf && request.cf.country) || '';
-  inv.views = (inv.views || 0) + 1;
-  inv.pageViews = inv.pageViews || {};
-  inv.pageViews[key] = (inv.pageViews[key] || 0) + 1;
-  inv.lastViewedAt = now;
-  inv.lastCountry = country;
-  inv.visitors = inv.visitors || [];
-  if (visitor && !inv.visitors.includes(visitor) && inv.visitors.length < 200) inv.visitors.push(visitor);
-  inv.recent = [{ at: now, country, page: key }, ...(inv.recent || [])].slice(0, 25);
-  await putInvite(env, inv);
-  console.log(key + ' viewed', inv.name, inv.views);
+  const visit = {
+    id: viewId, at: now, page: key, visitor: preview ? null : visitor,
+    city: String(cf.city || '').slice(0, 60), region: String(cf.region || '').slice(0, 60), country: String(cf.country || '').slice(0, 4),
+    device: deviceOf(ua), browser: browserOf(ua), os: osOf(ua), from: referrerHost(request),
+    preview: preview || null, secs: 0, scroll: 0,
+  };
+  const inv = await updateInvite(env, token, inv => {
+    inv.visits = [visit, ...(Array.isArray(inv.visits) ? inv.visits : [])].slice(0, MAX_VISITS);
+    if (preview) { inv.previews = (inv.previews || 0) + 1; return; }
+    inv.views = (inv.views || 0) + 1;
+    inv.pageViews = inv.pageViews || {};
+    inv.pageViews[key] = (inv.pageViews[key] || 0) + 1;
+    inv.lastViewedAt = now;
+    inv.lastCountry = visit.country;
+    inv.visitors = inv.visitors || [];
+    if (visitor && !inv.visitors.includes(visitor) && inv.visitors.length < 200) inv.visitors.push(visitor);
+    inv.recent = [{ at: now, country: visit.country, page: key }, ...(inv.recent || [])].slice(0, 25);
+  });
+  if (inv) console.log(key + (preview ? ' preview by ' + preview : ' viewed'), inv.name, inv.views);
+}
+
+// Time on the page and how far down it was read, sent by the page itself (engagementTag). Only ever raises the numbers
+// on a visit that exists, so a repeat or late ping changes nothing.
+export async function invitePing(request, env) {
+  const done = new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
+  let b = {};
+  try { b = JSON.parse((await request.text()).slice(0, 500)); } catch { return done; }
+  const token = String(b.t || ''), id = String(b.v || '');
+  if (!TOKEN.test(token) || !/^[A-Za-z0-9_-]{8,16}$/.test(id)) return done;
+  const secs = Math.max(0, Math.min(4 * 3600, Math.round(Number(b.s) || 0)));
+  const scroll = Math.max(0, Math.min(100, Math.round(Number(b.d) || 0)));
+  try {
+    await updateInvite(env, token, inv => {
+      const v = (Array.isArray(inv.visits) ? inv.visits : []).find(x => x.id === id);
+      if (!v || v.preview || (secs <= (v.secs || 0) && scroll <= (v.scroll || 0))) return false;
+      v.secs = Math.max(v.secs || 0, secs);
+      v.scroll = Math.max(v.scroll || 0, scroll);
+    });
+  } catch (err) { console.error('invite ping failed', err && err.message); }
+  return done;
 }
 
 // Google Analytics on the invite pages, so a prospect reading a proposal shows in GA4 (Realtime included). Same property
@@ -123,8 +237,35 @@ document.addEventListener('click', function (e) {
 }, true);
 </script>`;
 
-function withAnalytics(html) {
-  return html.includes('</head>') ? html.replace('</head>', GA_TAG + '\n</head>') : GA_TAG + html;
+// Time the page is on screen and how far down it was scrolled, sent back to /invite-ping at 15 s, 1 and 3 minutes and
+// whenever the page is hidden or closed, so the admin can show how long each visit was read.
+function engagementTag(token, viewId) {
+  return `<script>
+(function () {
+  var ref = ${jsString(token)}, view = ${jsString(viewId)}, shown = 0, since = document.visibilityState === 'visible' ? Date.now() : 0, deep = 0;
+  function depth() {
+    var h = document.documentElement, room = h.scrollHeight - innerHeight;
+    deep = Math.max(deep, room <= 4 ? 100 : Math.min(100, Math.round(scrollY / room * 100)));
+  }
+  function send() {
+    depth();
+    var body = JSON.stringify({ t: ref, v: view, s: Math.round((shown + (since ? Date.now() - since : 0)) / 1000), d: deep });
+    if (!(navigator.sendBeacon && navigator.sendBeacon('/invite-ping', body))) fetch('/invite-ping', { method: 'POST', body: body, keepalive: true }).catch(function () {});
+  }
+  addEventListener('scroll', depth, { passive: true });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') { if (since) { shown += Date.now() - since; since = 0; } send(); }
+    else since = Date.now();
+  });
+  addEventListener('pagehide', send);
+  [15, 60, 180].forEach(function (s) { setTimeout(function () { if (document.visibilityState === 'visible') send(); }, s * 1000); });
+})();
+</script>`;
+}
+
+function withAnalytics(html, token, viewId) {
+  const tags = GA_TAG + (token && viewId ? '\n' + engagementTag(token, viewId) : '');
+  return html.includes('</head>') ? html.replace('</head>', tags + '\n</head>') : tags + html;
 }
 
 // One small card page on the site's own look: the locked page, the Search Desk hand-off and its notices.
@@ -249,8 +390,9 @@ export async function rateCard(request, url, env, ctx) {
   }
   if (fromUrl) headers.append('Set-Cookie', `${page.cookie}=${encodeURIComponent(token)}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
 
-  ctx.waitUntil(recordView(env, token, visitor, request, key).catch(err => console.error(key + ' view log failed', err && err.message)));
-  if (!page.desk) return new Response(withAnalytics(page.html), { status: 200, headers });
+  const viewId = randomId(9);
+  ctx.waitUntil(recordView(env, token, visitor, request, key, viewId).catch(err => console.error(key + ' view log failed', err && err.message)));
+  if (!page.desk) return new Response(withAnalytics(page.html, token, viewId), { status: 200, headers });
 
   // The Search Desk demo, on this invite's own share link. The view is counted above either way, so the admin still
   // shows the prospect tried it.

@@ -353,6 +353,32 @@
 
   /* Rate card links */
   .create { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 170px 150px 150px auto; gap: 12px; align-items: end; padding: 20px; }
+  /* Invite links: archive toggle and the detail panel */
+  .lk-card-head { padding: 14px 20px; }
+  .lk-card-head h2 { font-size: 15px; }
+  .lk-card-head .btn { padding: 6px 12px; font-size: 12.5px; }
+  .lk-name { border: 0; background: none; padding: 0; font: inherit; font-size: 14.5px; font-weight: 700; color: var(--text); cursor: pointer; text-align: left; display: block; }
+  .lk-name:hover { color: var(--amber); }
+  .lk-who { min-width: 200px; }
+  .actions .lk-arch-btn { width: 32px; height: 32px; }
+  .actions .lk-arch-btn svg { width: 15px; height: 15px; }
+  .lk-sub { margin: 6px 0 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .lk-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .lk-kpis div { border: 1px solid var(--line-2); border-radius: 10px; padding: 12px 14px; background: #FCFBF9; min-width: 0; }
+  .lk-kpis small { display: block; font-size: 12px; color: var(--muted); }
+  .lk-kpis b { display: block; font-size: 22px; letter-spacing: -.03em; margin-top: 4px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lk-read { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--amber-soft); border-radius: 10px; padding: 12px 14px; }
+  .lk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .lk-list li { border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; background: #FCFBF9; display: grid; gap: 3px; min-width: 0; }
+  .lk-list .t { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13.5px; font-weight: 700; }
+  .lk-list .t > span:last-child { font-weight: 400; color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .lk-list .s { font-size: 12.5px; color: var(--muted); line-height: 1.5; overflow-wrap: anywhere; }
+  .lk-list li.muted { background: transparent; }
+  .lk-list li.muted .t { font-weight: 400; color: var(--muted); }
+  .lk-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--line-2); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+  .lk-more { justify-self: start; padding: 7px 12px; font-size: 12.5px; }
+  .lk-loading { color: var(--muted); font-size: 14px; padding: 24px 0; }
+  @media (max-width: 820px) { .lk-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .dates-edit { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .dates-edit input { width: 140px; padding: 6px 8px; font-size: 13px; }
   label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
@@ -790,11 +816,14 @@
           <a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a>
         </div>
       </div>
-      <div class="card scroll">
-        <table class="table">
-          <thead><tr><th>Who</th><th>Status</th><th class="r">Views</th><th class="r">Browsers</th><th>Last opened</th><th>Live</th><th class="r"></th></tr></thead>
-          <tbody id="invites"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
-        </table>
+      <div class="card">
+        <div class="card-head lk-card-head"><h2 id="lk-title">Links</h2><button type="button" class="btn" id="lk-arch" aria-pressed="false" hidden>Archived</button></div>
+        <div class="scroll">
+          <table class="table">
+            <thead><tr><th>Who</th><th>Status</th><th class="r">Views</th><th class="r">Browsers</th><th>Last opened</th><th>Live</th><th class="r"></th></tr></thead>
+            <tbody id="invites"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -828,6 +857,26 @@
 </div>
 
 <div class="lost-drop" id="lost-drop" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>Drop here to mark as lost</div>
+
+<div class="drawer-wrap" id="lk" hidden>
+  <div class="scrim" data-lkclose></div>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="lk-name">
+    <header class="dw-head">
+      <div class="dw-top">
+        <div><div class="dw-kicker" id="lk-kicker">Invite link</div><h2 id="lk-name">Invite link</h2><p class="lk-sub" id="lk-sub"></p></div>
+        <button type="button" class="icon-btn" data-lkclose aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </div>
+      <div class="dw-links" id="lk-links"></div>
+    </header>
+    <div class="dw-body" id="lk-body"></div>
+    <footer class="dw-foot">
+      <button type="button" class="btn" id="lk-archive">Archive</button>
+      <button type="button" class="btn" id="lk-switch">Switch off</button>
+      <span class="grow"></span>
+      <button type="button" class="btn primary" data-lkclose>Done</button>
+    </footer>
+  </aside>
+</div>
 
 <div class="drawer-wrap" id="dw" hidden>
   <div class="scrim" data-close></div>
@@ -1100,7 +1149,7 @@
     $('sync-text').textContent = state.syncedAt ? 'Synced from Obsidian ' + fmt(state.syncedAt, true) : 'Not synced yet';
     $('b-clients').textContent = state.clients.length || '';
     $('b-prospects').textContent = openProspects().length || '';
-    $('b-links').textContent = state.invites.filter(function (i) { return i.state === 'active'; }).length || '';
+    $('b-links').textContent = state.invites.filter(function (i) { return i.state === 'active' && !i.archived; }).length || '';
     renderOverview(); renderClients(); renderBoard(); renderInvites(); renderDeskDemo(); renderSite();
     if ((location.hash || '').indexOf('#client/') === 0) route(); else countPane();
   }
@@ -1325,7 +1374,7 @@
     $('k-prospects-s').textContent = op.length ? (opv || op.map(function (p) { return p.stage; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(', ')) : 'None open';
     var views = state.invites.reduce(function (n, i) { return n + (i.views || 0); }, 0);
     $('k-views').textContent = views;
-    $('k-views-s').textContent = plural(state.invites.filter(function (i) { return i.state === 'active'; }).length, 'active link', 'active links');
+    $('k-views-s').textContent = plural(state.invites.filter(function (i) { return i.state === 'active' && !i.archived; }).length, 'active link', 'active links');
     if (state.site) { $('k-audits').textContent = state.site.audits.last7; $('k-audits-s').textContent = state.site.audits.last30 + ' in 30 days'; }
 
     renderWeekLine();
@@ -1840,6 +1889,7 @@
     var none = el('option', null, 'None'); none.value = ''; s.appendChild(none);
     var known = false;
     state.invites.forEach(function (inv) {
+      if (inv.archived && inv.token !== current) return; // archived links stay out of the list unless this card uses one
       var o = el('option', null, inv.name + ' · ' + inv.pages.map(function (k) { return PAGE_NAME[k]; }).join(' and ') + (inv.state !== 'active' ? ' (' + ({ revoked: 'switched off', expired: 'expired', scheduled: 'not live yet' }[inv.state] || inv.state) + ')' : ''));
       o.value = inv.token; s.appendChild(o); if (inv.token === current) known = true;
     });
@@ -2221,12 +2271,32 @@
     return 'Always';
   }
   var datesFor = null; // the invite whose dates are being changed
+  var showArchived = false; // the list shows archived links instead of current ones
+  var ARCH_ICO = {
+    archive: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="3" rx="1"/><path d="M3 6v6.5c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V6M8 8v3.5M6.5 10 8 11.5 9.5 10"/></svg>',
+    restore: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="3" rx="1"/><path d="M3 6v6.5c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V6M8 11.5V8M6.5 9.5 8 8l1.5 1.5"/></svg>'
+  };
   function renderInvites() {
     var body = $('invites'); body.innerHTML = '';
-    if (!state.invites.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No links yet. Create the first one above.'); td0.colSpan = 7; tr0.appendChild(td0); body.appendChild(tr0); return; }
-    state.invites.forEach(function (inv) {
-      var tr = el('tr');
-      var who = el('td', 'who'); who.appendChild(el('b', null, inv.name)); who.appendChild(el('span', null, inv.pages.map(function (k) { return PAGE_NAME[k]; }).join(' and ') + ' · ' + (inv.note || 'Made ' + fmt(inv.createdAt)))); tr.appendChild(who);
+    var archivedN = state.invites.filter(function (i) { return i.archived; }).length;
+    var arch = $('lk-arch');
+    if (showArchived && !archivedN) showArchived = false;
+    arch.hidden = !archivedN;
+    arch.textContent = showArchived ? 'Back to links' : 'Archived (' + archivedN + ')';
+    arch.setAttribute('aria-pressed', showArchived ? 'true' : 'false');
+    $('lk-title').textContent = showArchived ? 'Archived links' : 'Links';
+    var list = state.invites.filter(function (i) { return !!i.archived === showArchived; });
+    if (!list.length) {
+      var tr0 = el('tr'); var td0 = el('td', 'empty', state.invites.length ? 'Every link is archived. Open Archived to see them.' : 'No links yet. Create the first one above.');
+      td0.colSpan = 7; tr0.appendChild(td0); body.appendChild(tr0); return;
+    }
+    list.forEach(function (inv) {
+      var tr = el('tr', 'click'); tr.title = 'Open who viewed it';
+      tr.addEventListener('click', function (e) { if (e.target.closest('button, a, input, .dates-edit')) return; openLink(inv.token); });
+      var who = el('td', 'who lk-who');
+      var nb = el('button', 'lk-name', inv.name); nb.type = 'button'; nb.setAttribute('aria-label', inv.name + ': open who viewed it');
+      nb.addEventListener('click', function () { openLink(inv.token); });
+      who.appendChild(nb); who.appendChild(el('span', null, inv.pages.map(function (k) { return PAGE_NAME[k]; }).join(' and ') + ' · ' + (inv.note || 'Made ' + fmt(inv.createdAt)))); tr.appendChild(who);
       var st = el('td'); st.appendChild(el('span', 'pill ' + ({ active: 'good', revoked: 'bad', expired: 'warn', scheduled: 'amber' }[inv.state] || ''), { active: 'Active', revoked: 'Switched off', expired: 'Expired', scheduled: 'Not live yet' }[inv.state] || inv.state)); tr.appendChild(st);
       var vw = el('td', 'r num', String(inv.views));
       if (inv.pages.length > 1) vw.title = inv.pages.map(function (k) { return PAGE_NAME[k] + ': ' + ((inv.pageViews || {})[k] || 0); }).join(', ');
@@ -2243,10 +2313,10 @@
       } else lv.textContent = liveText(inv);
       tr.appendChild(lv);
       var act = el('td', 'r'); var box = el('div', 'actions');
-      inv.pages.forEach(function (k) {
-        var c = el('button', 'btn', inv.pages.length > 1 ? 'Copy ' + PAGE_COPY[k] + ' link' : 'Copy link'); c.type = 'button';
-        c.addEventListener('click', function () { copy(inv.links[k], c); }); box.appendChild(c);
-      });
+      // One copy button keeps the row short; a link that opens several pages has the others in its detail panel
+      var c = el('button', 'btn', 'Copy link'); c.type = 'button';
+      if (inv.pages.length > 1) c.title = 'Copies the ' + PAGE_COPY[inv.pages[0]] + ' link. The others are in the details.';
+      c.addEventListener('click', function () { copy(inv.links[inv.pages[0]], c); }); box.appendChild(c);
       if (datesFor !== inv.token) { var dt = el('button', 'btn', 'Dates'); dt.type = 'button'; dt.addEventListener('click', function () { datesFor = inv.token; renderInvites(); }); box.appendChild(dt); }
       if (inv.state !== 'expired') {
         var t = el('button', 'btn', inv.state === 'revoked' ? 'Switch on' : 'Switch off'); t.type = 'button';
@@ -2257,11 +2327,201 @@
         });
         box.appendChild(t);
       }
+      var ar = el('button', 'icon-btn lk-arch-btn'); ar.type = 'button';
+      ar.innerHTML = inv.archived ? ARCH_ICO.restore : ARCH_ICO.archive;
+      ar.title = inv.archived ? 'Restore: put it back in your links' : 'Archive: hide it from this list (the link keeps working)';
+      ar.setAttribute('aria-label', (inv.archived ? 'Restore ' : 'Archive ') + inv.name);
+      ar.addEventListener('click', function () { setArchived(inv, !inv.archived, ar); });
+      box.appendChild(ar);
       act.appendChild(box); tr.appendChild(act);
       body.appendChild(tr);
     });
   }
   function reloadInvites() { return api('/admin/api/invites').then(function (d) { state.invites = d.invites; state.deskDemo = d.deskDemo || null; renderAll(); }); }
+  $('lk-arch').addEventListener('click', function () { showArchived = !showArchived; renderInvites(); });
+  function swapInvite(saved) {
+    var i = -1; state.invites.forEach(function (x, k) { if (x.token === saved.token) i = k; });
+    if (i === -1) state.invites.unshift(saved); else state.invites[i] = saved;
+  }
+  // Archiving only tidies the list: the link keeps working until it is switched off or runs out.
+  function setArchived(inv, on, btn) {
+    if (btn) btn.disabled = true;
+    return api('/admin/api/invites/' + encodeURIComponent(inv.token) + '/' + (on ? 'archive' : 'unarchive'), { method: 'POST', body: {} })
+      .then(function (saved) {
+        swapInvite(saved); renderAll();
+        if (openToken === saved.token) fillLinkHead(saved);
+        toast(on ? (saved.state === 'active' ? 'Archived. The link still works until you switch it off.' : 'Archived') : 'Back in your links');
+      })
+      .catch(function (e) { if (btn) btn.disabled = false; toast(errText(e), true); });
+  }
+
+  /* the detail panel: who opened a link, where, on what, and for how long */
+  var openToken = null;
+  var STATE_NAME = { active: 'Active', revoked: 'Switched off', expired: 'Expired', scheduled: 'Not live yet' };
+  var DETAIL_FROM = '9 Nov 2026'; // visits have kept place, device and time read since this deploy
+  var REGION = null;
+  try { REGION = new Intl.DisplayNames(['en-GB'], { type: 'region' }); } catch (e) { /* older browser: codes */ }
+  function countryName(c) { if (!c) return ''; try { return (REGION && REGION.of(c)) || c; } catch (e) { return c; } }
+  function placeOf(v) {
+    if (!v.city) return countryName(v.country);
+    return v.city + ', ' + (v.country === 'GB' ? (v.region || 'UK') : countryName(v.country));
+  }
+  function deviceLabel(v) {
+    var d = v.device === 'Phone' ? (v.os === 'iOS' ? 'iPhone' : v.os === 'Android' ? 'Android phone' : 'Phone')
+      : v.device === 'Tablet' ? (v.os === 'iOS' ? 'iPad' : 'Tablet')
+      : (v.os === 'Mac' ? 'Mac' : v.os === 'Windows' ? 'Windows PC' : v.os === 'ChromeOS' ? 'Chromebook' : 'Computer');
+    return d + (v.browser && v.browser !== 'Another browser' ? ', ' + v.browser : '');
+  }
+  function dur(s) {
+    s = Math.round(s || 0);
+    if (s < 60) return s + ' s';
+    var m = Math.round(s / 60);
+    return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + (m % 60) + ' min';
+  }
+  var FROM = { 'mail.google.com': 'Gmail', 'outlook.live.com': 'Outlook', 'outlook.office.com': 'Outlook', 'outlook.office365.com': 'Outlook', 'teams.microsoft.com': 'Teams', 'linkedin.com': 'LinkedIn', 'lnkd.in': 'LinkedIn', 'l.facebook.com': 'Facebook', 'lm.facebook.com': 'Facebook', 't.co': 'X', 'web.whatsapp.com': 'WhatsApp Web', 'app.slack.com': 'Slack', 'google.com': 'Google' };
+  function currentLink() { return state.invites.filter(function (i) { return i.token === openToken; })[0] || null; }
+  function fillLinkHead(inv) {
+    $('lk-kicker').textContent = 'Invite link · ' + (STATE_NAME[inv.state] || inv.state) + (inv.archived ? ' · archived' : '');
+    $('lk-name').textContent = inv.name;
+    $('lk-sub').textContent = inv.pages.map(function (k) { return PAGE_NAME[k]; }).join(' and ') + ' · Live ' + liveText(inv).replace(/^Always$/, 'with no end date').replace(/^(Until|From)/, function (w) { return w.toLowerCase(); }) + ' · Made ' + fmt(inv.createdAt) + (inv.note ? ' · ' + inv.note : '');
+    var links = $('lk-links'); links.innerHTML = '';
+    inv.pages.forEach(function (k) {
+      var c = el('button', 'btn', inv.pages.length > 1 ? 'Copy ' + PAGE_COPY[k] + ' link' : 'Copy link'); c.type = 'button';
+      c.addEventListener('click', function () { copy(inv.links[k], c); }); links.appendChild(c);
+    });
+    links.appendChild(link((PAGES_PATH[inv.pages[0]] || '/rate-card'), 'Preview', 'btn'));
+    var ab = $('lk-archive'); ab.textContent = inv.archived ? 'Restore' : 'Archive'; ab.disabled = false;
+    var sw = $('lk-switch'); sw.hidden = inv.state === 'expired'; sw.textContent = inv.state === 'revoked' ? 'Switch on' : 'Switch off'; sw.disabled = false;
+  }
+  var PAGES_PATH = { 'rate-card': '/rate-card', 'search-desk': '/search-desk', 'the-loft': '/the-loft', 'monument': '/monument', 'monument-calculators': '/monument/calculators' };
+  function openLink(token) {
+    var inv = state.invites.filter(function (i) { return i.token === token; })[0];
+    if (!inv) return;
+    openToken = token;
+    fillLinkHead(inv);
+    var body = $('lk-body'); body.innerHTML = ''; body.appendChild(el('p', 'lk-loading', 'Loading the visits…'));
+    $('lk').hidden = false; document.body.style.overflow = 'hidden'; body.scrollTop = 0;
+    api('/admin/api/invites/' + encodeURIComponent(token))
+      .then(function (d) { if (openToken === token) renderLinkDetail(d); })
+      .catch(function (e) { if (openToken !== token) return; body.innerHTML = ''; body.appendChild(el('p', 'lk-loading', errText(e))); });
+  }
+  function closeLink() { $('lk').hidden = true; document.body.style.overflow = ''; openToken = null; }
+  $('lk').addEventListener('click', function (e) { if (e.target.closest('[data-lkclose]')) closeLink(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('lk').hidden && $('cf').hidden) closeLink(); });
+  $('lk-archive').addEventListener('click', function () { var inv = currentLink(); if (inv) setArchived(inv, !inv.archived, this); });
+  $('lk-switch').addEventListener('click', function () {
+    var inv = currentLink(), b = this; if (!inv) return;
+    b.disabled = true;
+    api('/admin/api/invites/' + encodeURIComponent(inv.token) + '/' + (inv.state === 'revoked' ? 'restore' : 'revoke'), { method: 'POST', body: {} })
+      .then(function (saved) { toast(saved.state === 'revoked' ? 'Switched off. The link shows a locked page now.' : 'Switched on'); return reloadInvites(); })
+      .then(function () { var now = currentLink(); if (now) fillLinkHead(now); })
+      .catch(function (e) { b.disabled = false; toast(errText(e), true); });
+  });
+
+  function lkSection(body, title) { var s = el('div', 'dw-sec'); s.appendChild(el('h3', null, title)); body.appendChild(s); return s; }
+  function lkItem(list, top, right, sub, cls) {
+    var li = el('li', cls || null), t = el('div', 't'), l = el('span');
+    if (typeof top === 'string') l.textContent = top; else l.appendChild(top);
+    t.appendChild(l); t.appendChild(el('span', null, right || ''));
+    li.appendChild(t); if (sub) li.appendChild(el('div', 's', sub)); list.appendChild(li); return li;
+  }
+  function renderLinkDetail(d) {
+    var body = $('lk-body'); body.innerHTML = '';
+    var visits = Array.isArray(d.visits) ? d.visits : [];
+    var people = visits.filter(function (v) { return !v.preview; });
+    var previews = visits.filter(function (v) { return v.preview; });
+    // Browsers, numbered in the order they first opened the link
+    var groups = [], byKey = {};
+    people.slice().reverse().forEach(function (v) {
+      var k = v.visitor || 'unknown';
+      if (!byKey[k]) { byKey[k] = { n: groups.length + 1, visits: [] }; groups.push(byKey[k]); }
+      byKey[k].visits.unshift(v);
+    });
+    var places = [];
+    people.forEach(function (v) { var p = placeOf(v); if (p && places.indexOf(p) === -1) places.push(p); });
+    var total = people.reduce(function (n, v) { return n + (v.secs || 0); }, 0);
+    var earlier = Math.max(0, (d.views || 0) - people.length);
+
+    var sum = lkSection(body, 'Summary');
+    var k = el('div', 'lk-kpis');
+    [['Views', String(d.views || 0)], ['Browsers', String(d.browsers || 0)], ['Places', people.length ? String(places.length) : '–'], ['Time reading', total ? dur(total) : '–']].forEach(function (x) {
+      var t = el('div'); t.appendChild(el('small', null, x[0])); t.appendChild(el('b', null, x[1])); k.appendChild(t);
+    });
+    sum.appendChild(k);
+    var read = [];
+    var previewNames = previews.map(function (v) { return v.preview; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+    var andList = previewNames.length > 1 ? previewNames.slice(0, -1).join(', ') + ' and ' + previewNames[previewNames.length - 1] : previewNames.join('');
+    var previewLine = previews.length ? plural(previews.length, 'link preview', 'link previews') + ' by ' + andList : '';
+    if (!d.views) read.push(previews.length ? 'Not opened by a person yet, only ' + previewLine + '.' : 'Not opened yet.');
+    else if (!people.length) read.push('Opened ' + plural(d.views, 'time', 'times') + ', all before visit details began on ' + DETAIL_FROM + ', when only the country was kept. New visits will show the place, device and time read.');
+    else {
+      var first = groups[0].visits[0];
+      if (groups.length === 1) read.push((earlier ? 'Every visit since details began' : 'Every visit') + ' came from one browser (' + deviceLabel(first) + (places[0] ? ' in ' + places[0] : '') + '), so most likely one person.');
+      else if (places.length > 1) read.push('Opened in ' + groups.length + ' browsers from ' + places.length + ' places (' + places.slice(0, 4).join('; ') + (places.length > 4 ? ' and more' : '') + '), so it has most likely been passed on.');
+      else read.push('Opened in ' + groups.length + ' browsers' + (places[0] ? ', all in ' + places[0] : '') + ': a second device, or someone nearby such as a colleague.');
+      if (total) {
+        var longest = Math.max.apply(null, people.map(function (v) { return v.secs || 0; }));
+        read.push('Read for ' + dur(total) + ' in all; the longest visit was ' + dur(longest) + '.');
+      }
+      if (earlier) read.push(plural(earlier, 'earlier view', 'earlier views') + ' from before visit details began count in the totals only.');
+      if (previews.length) read.push('Also ' + previewLine + ', not counted as views.');
+    }
+    sum.appendChild(el('p', 'lk-read', read.join(' ')));
+
+    if (d.pages.length > 1 || people.length) {
+      var ps = lkSection(body, 'Pages'), pl = el('ul', 'lk-list');
+      d.pages.forEach(function (key) {
+        var vs = people.filter(function (v) { return v.page === key; });
+        var secs = vs.reduce(function (n, v) { return n + (v.secs || 0); }, 0);
+        var deep = vs.reduce(function (n, v) { return Math.max(n, v.scroll || 0); }, 0);
+        var n = (d.pageViews || {})[key] || 0;
+        lkItem(pl, PAGE_NAME[key] || key, plural(n, 'view', 'views'), n ? [secs ? dur(secs) + ' reading' : '', deep ? 'read ' + deep + '% of the way down at most' : ''].filter(Boolean).join(' · ') || (vs.length ? 'No reading time yet' : 'Earlier views only, before visit details began') : 'Not opened yet');
+      });
+      ps.appendChild(pl);
+    }
+
+    if (groups.length) {
+      var bs = lkSection(body, groups.length === 1 ? 'The browser' : 'Browsers'), bl = el('ul', 'lk-list');
+      groups.forEach(function (g) {
+        var gp = [], pages = [], secs = 0;
+        g.visits.forEach(function (v) { var p = placeOf(v); if (p && gp.indexOf(p) === -1) gp.push(p); var pn = PAGE_NAME[v.page] || v.page; if (pages.indexOf(pn) === -1) pages.push(pn); secs += v.secs || 0; });
+        var top = el('span'); top.appendChild(document.createTextNode(deviceLabel(g.visits[0]))); top.appendChild(el('span', 'lk-tag', 'Browser ' + g.n));
+        lkItem(bl, top, ago(g.visits[0].at),
+          [gp.join('; ') || 'Place unknown', plural(g.visits.length, 'visit', 'visits'), secs ? dur(secs) + ' reading' : '', pages.join(', '), 'first ' + fmt(g.visits[g.visits.length - 1].at)].filter(Boolean).join(' · '));
+      });
+      bs.appendChild(bl);
+    }
+
+    if (visits.length) {
+      var vsec = lkSection(body, 'Every visit'), vl = el('ul', 'lk-list'), shown = 0, LIMIT = 40;
+      var more = function (n) {
+        visits.slice(shown, shown + n).forEach(function (v) {
+          if (v.preview) { lkItem(vl, fmt(v.at, true) + ' · Link preview by ' + v.preview, 'not counted', placeOf(v), 'muted'); return; }
+          var top = el('span'); top.appendChild(document.createTextNode(fmt(v.at, true) + ' · ' + (PAGE_NAME[v.page] || v.page)));
+          var g = byKey[v.visitor || 'unknown']; if (g && groups.length > 1) top.appendChild(el('span', 'lk-tag', 'Browser ' + g.n));
+          lkItem(vl, top, v.secs ? dur(v.secs) : '',
+            [placeOf(v) || 'Place unknown', deviceLabel(v), v.scroll ? 'read ' + v.scroll + '% down' : '', v.from ? 'from ' + (FROM[v.from] || v.from) : ''].filter(Boolean).join(' · '));
+        });
+        shown = Math.min(visits.length, shown + n);
+      };
+      more(LIMIT);
+      vsec.appendChild(vl);
+      if (visits.length > shown) {
+        var mb = el('button', 'btn lk-more', 'Show all ' + visits.length); mb.type = 'button';
+        mb.addEventListener('click', function () { more(visits.length); mb.remove(); });
+        vsec.appendChild(mb);
+      }
+    }
+
+    var legacy = (Array.isArray(d.recent) ? d.recent : []).filter(function (r) { return !people.some(function (v) { return v.at === r.at; }); });
+    if (legacy.length) {
+      var ls = lkSection(body, 'Earlier views (country only)');
+      ls.appendChild(el('p', 'hint', 'Only the page and country were kept then.'));
+      var ll = el('ul', 'lk-list');
+      legacy.forEach(function (r) { lkItem(ll, fmt(r.at, true) + ' · ' + (PAGE_NAME[r.page] || r.page || 'Rate card'), countryName(r.country) || ''); });
+      ls.appendChild(ll);
+    }
+  }
   $('create').addEventListener('submit', function (e) {
     e.preventDefault();
     var name = $('f-name').value.trim();
