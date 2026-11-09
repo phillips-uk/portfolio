@@ -367,6 +367,19 @@
 
   .shortcuts { display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 20px; }
 
+  /* Products */
+  .prods { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+  .prod { padding: 22px 22px 20px; display: grid; gap: 18px; align-content: start; }
+  .prod-top { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+  .prod-tile { width: 48px; height: 48px; display: block; }
+  .prod-top h2 { font-size: 19px; letter-spacing: -.02em; margin: 2px 0 0; }
+  .prod-top .where { font-size: 13px; color: var(--faint); margin-top: 2px; }
+  .prod p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+  .prod-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .prod-more { display: flex; flex-wrap: wrap; gap: 4px 16px; padding-top: 14px; border-top: 1px solid var(--line-2); font-size: 13px; }
+  .prod-more a { color: var(--amber); font-weight: 700; text-decoration: none; }
+  .prod-more a:hover { text-decoration: underline; }
+
   /* Sign in */
   .signin { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--ink); }
   .signin-box { width: 100%; max-width: 380px; background: var(--surface); border-radius: 14px; padding: 36px 32px; display: grid; gap: 18px; }
@@ -616,6 +629,7 @@
         <a class="gm-item" href="#overview" data-view="overview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg><span>Overview</span></a>
         <a class="gm-item" href="#clients" data-view="clients"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="13" rx="2"/><path d="M8.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5V7"/></svg><span>Clients</span><span class="gm-count" id="b-clients"></span></a>
         <a class="gm-item" href="#prospects" data-view="prospects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg><span>Prospects</span><span class="gm-count" id="b-prospects"></span></a>
+        <a class="gm-item" href="#products" data-view="products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 20 7.6v8.8L12 20.5 4 16.4V7.6Z"/><path d="M4 7.6 12 11.8l8-4.2M12 11.8v8.7"/></svg><span>Products</span></a>
         <a class="gm-item" href="#links" data-view="links"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14l4-4"/><path d="M11 6.5l1.8-1.8a4 4 0 0 1 5.6 5.6L16.6 12"/><path d="M13 17.5l-1.8 1.8a4 4 0 0 1-5.6-5.6L7.4 12"/></svg><span>Invite links</span><span class="gm-count" id="b-links"></span></a>
         <a class="gm-item" href="#site" data-view="site"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5Z"/></svg><span>Site</span></a>
       </nav>
@@ -720,6 +734,30 @@
     </section>
 
     <!-- Rate card links -->
+    <!-- Products: Phillips. marketing service tools only (Search Desk). Other Phillips Group businesses stay in the admin switcher. -->
+    <section data-pane="products" hidden>
+      <div class="page-head"><div><h1>Products</h1><p class="lede">The tools Phillips. builds for its marketing services. Each one has its own sign-in.</p></div></div>
+      <div class="prods">
+        <article class="card prod">
+          <div class="prod-top">
+            <svg class="prod-tile" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#985830"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round"><circle cx="106" cy="106" r="44"/><path d="M139 139l37 37"/></g></svg>
+            <div><h2>Search Desk</h2><div class="where">phillips-uk.com/desk</div></div>
+            <span class="pill good">Live</span>
+          </div>
+          <p>The checks a senior paid search lead runs every morning, run across a company’s own Google Ads account: account health, search terms, negatives, pacing and AI Max. Read-only until the client approves a change.</p>
+          <div class="prod-acts">
+            <a class="btn primary" href="/desk" target="_blank" rel="noopener">Open Search Desk</a>
+            <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Workspaces</a>
+          </div>
+          <div class="prod-more">
+            <a href="/search-desk" target="_blank" rel="noopener">Preview the demo</a>
+            <a href="#links">Demo invite links</a>
+            <a href="obsidian://open?vault=My%20Brain&amp;file=04_Projects%2FSearch%20Desk%2F00_Overview">Notes in Obsidian</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section data-pane="links" hidden>
       <div class="page-head">
         <div><h1>Invite links</h1><p class="lede">Links to the private rate card, the Search Desk demo and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
@@ -998,7 +1036,7 @@
   function route() {
     var h = (location.hash || '#overview').slice(1);
     var view = h.split('/')[0] || 'overview';
-    if (['overview', 'clients', 'client', 'doc', 'prospects', 'links', 'site'].indexOf(view) === -1) view = 'overview';
+    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'site'].indexOf(view) === -1) view = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== view; });
     closeMenus();
     document.querySelectorAll('.gm-nav a[data-view]').forEach(function (a) {
