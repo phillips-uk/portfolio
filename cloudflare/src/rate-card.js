@@ -16,7 +16,7 @@ import { openDeskDemo } from './desk-demo.js';
 
 export const PAGES = {
   'rate-card': { path: '/rate-card', html: rateCardHtml, cookie: 'ph_rc', title: 'The rate card' },
-  // Search Desk: Example Car Hire Co. inside the real product at /desk, opened through one share link (desk-demo.js)
+  // Search Desk: Example Car Hire Co. inside the real product at /desk, each invite through its own share link (desk-demo.js)
   'search-desk': { path: '/search-desk', desk: true, cookie: 'ph_sd', title: 'The Search Desk demo' },
   // The Loft (Nick, Ely): the booking app prototype. Phone frame on desktop, full screen on a phone.
   'the-loft': { path: '/the-loft', html: theLoftHtml, cookie: 'ph_tl', title: 'The Loft prototype' },
@@ -191,21 +191,17 @@ function handoffPage(dest) {
   });
 }
 
-// What Lewis sees on /search-desk when the share link behind the demo isn't working
+// What Lewis sees on /search-desk when Search Desk can't give or open a demo link
 const DESK_WHY = {
-  missing: 'No Search Desk share link has been saved yet, so invites to the demo show a holding page.',
-  refused: 'Search Desk turned the saved share link down: it has run out, been switched off, or was mistyped. Invites to the demo show a holding page until it is replaced.',
-  unreachable: 'Search Desk did not answer, so invites to the demo show a holding page. If a new share link does not fix it, check the search-desk Worker.',
+  unavailable: 'Search Desk did not give a demo link, so demo invites show a holding page. Check that the search-desk Worker is up and still exports its DemoLinks entrypoint (the DESK_LINKS binding on this site).',
+  refused: 'Search Desk gave a demo link but would not open it, so demo invites show a holding page. Check that Example Car Hire Co. is still active in Search Desk Workspaces.',
 };
 function renewPage(why) {
   return noticePage({
     title: 'Search Desk demo',
-    heading: 'The Search Desk demo link needs renewing.',
-    body: DESK_WHY[why] || DESK_WHY.refused,
-    after: `<ol><li>In Search Desk, open Workspaces, then Example Car Hire Co., then Share links.</li>
-<li>Make a share link for 90 days and copy it.</li>
-<li>Paste it in the admin under Links, Search Desk demo.</li></ol>
-<div class="acts"><a class="btn" href="/desk#admin">Open Search Desk</a><a class="btn quiet" href="/admin#links">Paste it in the admin</a></div>`,
+    heading: 'The Search Desk demo is not opening.',
+    body: DESK_WHY[why] || DESK_WHY.unavailable,
+    after: `<div class="acts"><a class="btn" href="/desk#admin">Open Search Desk</a><a class="btn quiet" href="/admin#links">Back to the admin</a></div>`,
   });
 }
 
@@ -222,7 +218,7 @@ export async function rateCard(request, url, env, ctx) {
   // to /desk: signed in to Search Desk as staff he is switched to the demo company, otherwise he gets a guest session.
   if (await adminEmail(request, env)) {
     if (!page.desk) return new Response(page.html, { status: 200, headers: PRIVATE_HEADERS });
-    const open = await openDeskDemo(request, url, env, ctx);
+    const open = await openDeskDemo(request, url, env, ctx, null);
     if (!open.location) return new Response(renewPage(open.why), { status: 200, headers: PRIVATE_HEADERS });
     const go = new Headers({ Location: open.location, 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' });
     open.cookies.forEach(c => go.append('Set-Cookie', c));
@@ -256,8 +252,9 @@ export async function rateCard(request, url, env, ctx) {
   ctx.waitUntil(recordView(env, token, visitor, request, key).catch(err => console.error(key + ' view log failed', err && err.message)));
   if (!page.desk) return new Response(withAnalytics(page.html), { status: 200, headers });
 
-  // The Search Desk demo: the view is counted above either way, so the admin still shows the prospect tried it
-  const open = await openDeskDemo(request, url, env, ctx);
+  // The Search Desk demo, on this invite's own share link. The view is counted above either way, so the admin still
+  // shows the prospect tried it.
+  const open = await openDeskDemo(request, url, env, ctx, invite);
   if (!open.location) {
     const held = noticePage({
       title: 'Search Desk demo',

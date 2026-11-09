@@ -19,9 +19,11 @@
   "alias": {
     "@netlify/blobs": "./cloudflare/src/shims/netlify-blobs.cjs"
   },
-  // Search Desk (the product) lives in its own Worker and private repo; /desk is forwarded to it
+  // Search Desk (the product) lives in its own Worker and private repo; /desk is forwarded to it. DESK_LINKS is its
+  // DemoLinks entrypoint (RPC only, never reachable over HTTP): one demo share link per invite (cloudflare/src/desk-demo.js)
   "services": [
-    { "binding": "DESK", "service": "search-desk" }
+    { "binding": "DESK", "service": "search-desk" },
+    { "binding": "DESK_LINKS", "service": "search-desk", "entrypoint": "DemoLinks" }
   ],
   "r2_buckets": [
     { "binding": "BLOBS", "bucket_name": "phillips-blobs" }

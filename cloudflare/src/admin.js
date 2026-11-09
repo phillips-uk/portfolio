@@ -1,11 +1,11 @@
 // Lewis's admin page at /admin: Google sign-in, clients (summaries synced from Obsidian), the prospects funnel
 // (pipeline.js: deals made here plus the prospect notes, with comments and files on each card),
-// rate card invite links (plus the Search Desk share link behind the demo invites, desk-demo.js) and a short summary of the site.
+// rate card invite links (Search Desk demo invites each get their own Search Desk share link, desk-demo.js) and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
 import { deals } from './pipeline.js';
-import { getDeskDemo, saveDeskDemo, deskDemoSummary } from './desk-demo.js';
+import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -151,6 +151,8 @@ async function setRevoked(env, token, revoked, origin) {
   if (!inv) return json({ error: 'That link no longer exists.' }, 404);
   inv.revoked = revoked;
   await putInvite(env, inv);
+  // Its Search Desk share link goes too, signing its guests out at once; switching it back on makes a new one on the next open
+  if (revoked && invitePages(inv).includes('search-desk')) await revokeDeskDemo(env, inv);
   return json(publicInvite(inv, origin));
 }
 
@@ -226,13 +228,6 @@ export async function admin(request, url, env) {
   if (path === '/admin/api/invites' && method === 'GET') {
     const [invites, desk] = await Promise.all([listInvites(env), getDeskDemo(env)]);
     return json({ invites: invites.map(inv => publicInvite(inv, url.origin)), deskDemo: deskDemoSummary(desk) });
-  }
-  // The Search Desk share link every demo invite goes through (desk-demo.js)
-  if (path === '/admin/api/desk-demo' && method === 'POST') {
-    let body = {};
-    try { body = await request.json(); } catch { /* empty body */ }
-    const saved = await saveDeskDemo(env, body, email);
-    return saved.error ? json(saved, 400) : json(saved);
   }
   if (path === '/admin/api/invites' && method === 'POST') return createInvite(request, env, url.origin);
   const act = path.match(/^\/admin\/api\/invites\/([A-Za-z0-9._-]{8,80})\/(revoke|restore)$/);

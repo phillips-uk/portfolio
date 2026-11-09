@@ -364,13 +364,12 @@
   .msg:empty { display: none; }
   .actions { display: flex; gap: 6px; justify-content: flex-end; }
   .actions .btn { padding: 6px 10px; font-size: 12.5px; }
-  /* The Search Desk share link behind demo invites */
+  /* Search Desk demo links: one per invite, made by Search Desk */
   .desk-card .card-head { align-items: flex-start; }
   .desk-sub { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
   .desk-status { margin: 16px 20px 0; font-size: 14px; line-height: 1.5; }
-  .desk-form { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto auto; gap: 12px; align-items: end; padding: 16px 20px 20px; }
-  @media (max-width: 1100px) { .desk-form { grid-template-columns: 150px auto auto minmax(0, 1fr); } .desk-form label:first-child { grid-column: 1 / -1; } }
-  @media (max-width: 560px) { .desk-form { grid-template-columns: minmax(0, 1fr); } }
+  .desk-acts { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 20px 20px; }
+  @media (max-width: 560px) { .desk-acts .btn { flex: 1 1 100%; } }
 
   .shortcuts { display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 20px; }
 
@@ -784,15 +783,12 @@
         <p class="msg" id="create-msg"></p>
       </div>
       <div class="card desk-card" style="margin-bottom:20px">
-        <div class="card-head"><div><h2>Search Desk demo link</h2><p class="desk-sub">Every invite that opens the Search Desk demo goes through this one share link to Example Car Hire Co. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
+        <div class="card-head"><div><h2>Search Desk demo links</h2><p class="desk-sub">Each invite that opens the Search Desk demo gets its own share link to Example Car Hire Co., labelled with the prospect's name. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
         <p class="desk-status" id="desk-status"></p>
-        <form class="desk-form" id="desk-form" autocomplete="off">
-          <label for="d-link">Share link<input type="text" id="d-link" placeholder="https://www.phillips-uk.com/desk/demo/…" spellcheck="false" autocapitalize="off"></label>
-          <label for="d-days">Made for<select id="d-days"><option value="90" selected>90 days</option><option value="30">30 days</option><option value="7">7 days</option></select></label>
-          <button class="btn primary" type="submit" id="d-go">Save link</button>
-          <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Make one in Search Desk</a>
-        </form>
-        <p class="msg" id="desk-msg"></p>
+        <div class="desk-acts">
+          <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Share links in Search Desk</a>
+          <a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a>
+        </div>
       </div>
       <div class="card scroll">
         <table class="table">
@@ -2279,41 +2275,22 @@
   });
   $('made-copy').addEventListener('click', function () { copy($('made-link').textContent, $('made-copy')); });
 
-  /* ---------- the Search Desk share link behind demo invites ---------- */
-  var DESK_HOW = 'Make one in Search Desk under Workspaces, Example Car Hire Co., Share links (90 days), then paste it here.';
+  /* ---------- Search Desk demo links (one per invite, made by Search Desk) ---------- */
   function deskIssue() {
     var d = state.deskDemo; if (!d) return null;
-    var inUse = state.invites.some(function (i) { return i.state === 'active' && i.pages.indexOf('search-desk') !== -1; });
-    var left = d.expiresAt ? Math.ceil((new Date(d.expiresAt) - new Date()) / 86400000) : null;
-    if (d.problem && d.problem.why !== 'missing') {
-      var down = d.problem.why === 'unreachable' ? 'Search Desk has not answered' : 'Search Desk has turned this link down (run out, switched off or mistyped)';
-      return { tone: 'bad', label: 'Not working', attention: true, short: 'Demo invites show a holding page. Paste a new share link.',
-        text: 'Since ' + fmt(d.problem.at, true) + ', ' + down + ', so demo invites show a holding page. ' + DESK_HOW };
+    if (d.problem) {
+      var down = d.problem.why === 'refused' ? 'Search Desk has not opened the demo links it gives, so demo invites show a holding page. Check that Example Car Hire Co. is still active in Search Desk Workspaces.'
+        : 'Search Desk has not given a demo link, so demo invites show a holding page. Check that the search-desk Worker is up and still has its DemoLinks entrypoint.';
+      return { tone: 'bad', label: 'Not opening', attention: true, short: 'Demo invites show a holding page. Preview Search Desk for details.', text: 'Since ' + fmt(d.problem.at, true) + ', ' + down };
     }
-    if (!d.set) return { tone: 'bad', label: 'Not set', attention: inUse, short: 'Demo invites show a holding page until one is saved.',
-      text: 'No share link saved yet, so demo invites show a holding page. ' + DESK_HOW };
-    var saved = 'Link ' + d.hint + ' saved ' + fmt(d.savedAt) + (d.expiresAt ? ', runs out about ' + fmt(d.expiresAt) : '') + '.';
-    if (left != null && left <= 0) return { tone: 'bad', label: 'Run out', attention: true, short: 'Paste a new share link from Search Desk.', text: saved + ' It has probably run out. ' + DESK_HOW };
-    if (left != null && left <= 10) return { tone: 'warn', label: 'Runs out soon', attention: true, short: 'Runs out about ' + fmt(d.expiresAt) + '. Paste a new share link before then.', text: saved + ' ' + DESK_HOW };
-    return { tone: 'good', label: 'Live', attention: false, short: '', text: saved + ' Preview Search Desk to check it opens.' };
+    return { tone: '', label: 'Automatic', attention: false, short: '',
+      text: 'Search Desk makes the link on the first open and a new one before it runs out, so there is nothing to renew. Opens show in Search Desk under Workspaces, Example Car Hire Co., Share links. Switching an invite off here switches its link off too.' };
   }
   function renderDeskDemo() {
     var k = deskIssue(); if (!k) return;
     $('desk-pill').className = 'pill ' + k.tone; $('desk-pill').textContent = k.label;
     $('desk-status').textContent = k.text;
-    $('d-go').textContent = state.deskDemo.set ? 'Replace link' : 'Save link';
   }
-  $('desk-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var v = $('d-link').value.trim();
-    $('desk-msg').textContent = '';
-    if (!v) { $('desk-msg').textContent = 'Paste the share link from Search Desk first.'; $('d-link').focus(); return; }
-    $('d-go').disabled = true;
-    api('/admin/api/desk-demo', { method: 'POST', body: { link: v, days: Number($('d-days').value) } })
-      .then(function (d) { state.deskDemo = d; $('d-link').value = ''; renderAll(); toast('Saved. Preview Search Desk to check it opens.'); })
-      .catch(function (err) { $('desk-msg').textContent = err.message; })
-      .then(function () { $('d-go').disabled = false; });
-  });
   // New links: live from today for 30 days unless changed
   (function () { var t = new Date(); $('f-from').value = ymd(t); $('f-until').value = ymd(new Date(t.getTime() + 30 * 86400000)); })();
 
