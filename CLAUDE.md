@@ -36,6 +36,13 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` returns 301.
 - Local test: `npx wrangler dev --port 8787 --local --local-upstream localhost:8787 --persist-to <folder outside the repo>` with test-only values in `.dev.vars` (git-ignored). Without `--persist-to` the dev server reloads in a loop; without `--local-upstream` every request 301s to `https://www.phillips-uk.com`. The `phillips-uk-dev` preview in `.claude/launch.json` (local, not committed) runs exactly this. The admin needs `ADMIN_SESSION_KEY` in `.dev.vars`; sign-in is Google, so test the admin API with a locally minted test cookie and delete `.dev.vars` afterwards.
 - DNS is on Cloudflare (Free plan). Email is Google Workspace plus Resend, so never delete MX or TXT records. DNS changes are made by Lewis in the dashboard.
 
+## Analytics (GA4 `G-P8648KZWNP`, GTM `GTM-WS5CP6NW`)
+
+- **Every public page is tagged automatically:** the Worker adds the GTM container to any HTML page it serves that lacks it (`withGtm` in `cloudflare/src/worker.js`). A new page needs nothing; never paste a second container into a page.
+- **Invite pages** (`rate-card.js`) load gtag.js directly with only the path as `page_location`, so invite tokens never reach Google, and send `proposal_view`. `/admin` and Search Desk (`/desk`) are not tagged.
+- **A new event:** push it from the page (`dataLayer.push({ event: 'name', ... })`), then Lewis or a browser session adds the name to the GTM trigger "Site events to GA4" and publishes. Key events and funnels: vault `01_Phillips/07_Analytics/03_Key Events & Conversions.md`. GTM and GA4 sign-in is lewisdp87@gmail.com.
+- Contact links must stay `mailto:contact@phillips-uk.com` or `mailto:lewis@phillips-uk.com`, or `contact_click` stops counting.
+
 ## Page standards (summary, full detail in the Obsidian note)
 
 - Static HTML and vanilla JS only. No new React/Babel pages.
