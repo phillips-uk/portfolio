@@ -100,6 +100,29 @@ async function recordView(env, token, visitor, request, key) {
   console.log(key + ' viewed', inv.name, inv.views);
 }
 
+// Google Analytics on the invite pages, so a prospect reading a proposal shows in GA4 (Realtime included). Same property
+// as the public site, but loaded straight from gtag.js rather than GTM so only the path is sent: the invite token in the
+// address never reaches Google. GA groups these pages as "Proposals". A click on a Phillips. email address counts as
+// contact_click, like the public site (Monument's own addresses on its draft do not). Never added to Lewis's previews
+// from /admin, nor to the locked page.
+const GA_ID = 'G-P8648KZWNP';
+const GA_TAG = `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('set', { page_location: location.origin + location.pathname, content_group: 'Proposals' });
+gtag('config', '${GA_ID}', { page_location: location.origin + location.pathname, content_group: 'Proposals' });
+document.addEventListener('click', function (e) {
+  var a = e.target && e.target.closest ? e.target.closest('a[href^="mailto:"]') : null;
+  if (a && /@phillips-uk\\.com/i.test(a.getAttribute('href'))) gtag('event', 'contact_click', { link_url: a.getAttribute('href').split('?')[0] });
+}, true);
+</script>`;
+
+function withAnalytics(html) {
+  return html.includes('</head>') ? html.replace('</head>', GA_TAG + '\n</head>') : GA_TAG + html;
+}
+
 const LOCKED_HTML = `<!DOCTYPE html>
 <html lang="en-GB"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Private page | Phillips.</title><meta name="robots" content="noindex, nofollow, noarchive">
@@ -155,7 +178,7 @@ export async function rateCard(request, url, env, ctx) {
   if (fromUrl) headers.append('Set-Cookie', `${page.cookie}=${encodeURIComponent(token)}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
 
   ctx.waitUntil(recordView(env, token, visitor, request, key).catch(err => console.error(key + ' view log failed', err && err.message)));
-  return new Response(page.html, { status: 200, headers });
+  return new Response(withAnalytics(page.html), { status: 200, headers });
 }
 
 export function newToken() {
