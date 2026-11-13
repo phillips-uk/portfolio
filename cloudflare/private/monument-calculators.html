@@ -753,6 +753,10 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
   .form-person strong{font-size:1.45rem}
 }
 
+
+/* ===== v7: the calculators match asset-based lending and trade finance ===== */
+.calc-intro{margin:0;max-width:52ch;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
+
 </style>
 </head>
 <body>
@@ -802,8 +806,8 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
     <div class="wrap page-hero-grid">
       <div class="page-hero-copy" data-stagger>
         <p class="crumbs"><a href="/monument">Home</a><span aria-hidden="true"> / </span>Calculators</p>
-        <h1 id="pageTitle">Model a facility</h1>
-        <p class="lede">Indicative figures for asset finance and invoice finance, for companies. No email needed. When the numbers look right, send them to us for real terms.</p>
+        <h1 id="pageTitle">See what your assets could support</h1>
+        <p class="lede">An indicative borrowing base for asset-based lending, and the cash your trade cycle ties up. No email needed. When the numbers look right, send them to us for real terms.</p>
       </div>
       <div class="page-hero-art" aria-hidden="true"><svg class="illo" viewBox="0 0 200 120" aria-hidden="true" focusable="false">
             <path d="M16 30 h32 l14 14 v48 h-46 z"/><path d="M48 30 v14 h14"/>
@@ -818,109 +822,39 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
     <div class="wrap">
 <div class="calc" data-rv>
         <div class="tabs" role="tablist" aria-label="Calculator">
-          <button type="button" class="tab" role="tab" id="tab-asset" aria-controls="panel-asset" aria-selected="true">Asset finance</button>
-          <button type="button" class="tab" role="tab" id="tab-invoice" aria-controls="panel-invoice" aria-selected="false" tabindex="-1">Invoice finance</button>
+          <button type="button" class="tab" role="tab" id="tab-abl" aria-controls="panel-abl" aria-selected="true">Asset-based lending</button>
+          <button type="button" class="tab" role="tab" id="tab-trade" aria-controls="panel-trade" aria-selected="false" tabindex="-1">Trade finance</button>
         </div>
 
-        <div class="calc-body" role="tabpanel" id="panel-asset" aria-labelledby="tab-asset">
+        <div class="calc-body" role="tabpanel" id="panel-abl" aria-labelledby="tab-abl">
           <div class="calc-inputs">
-            <div class="field">
-              <label for="afType">Asset</label>
-              <select class="input" id="afType">
-                <option value="vehicles and fleet">Vehicles and fleet</option>
-                <option value="plant and construction equipment">Plant and construction</option>
-                <option value="manufacturing and print equipment" selected>Manufacturing and print</option>
-                <option value="transport and logistics equipment">Transport and logistics</option>
-                <option value="aircraft or marine assets">Aviation and marine</option>
-                <option value="technology">Technology</option>
-                <option value="agricultural machinery">Agricultural machinery</option>
-                <option value="other assets">Other assets</option>
-              </select>
+            <p class="calc-intro">Enter what the business owns today. We estimate what lenders might advance against each asset.</p>
+            <div class="row2">
+              <div class="field">
+                <label for="ablDebtors">Trade debtors</label>
+                <div class="money"><input class="input" id="ablDebtors" type="text" inputmode="decimal" autocomplete="off" value="4,000,000" data-money></div>
+                <p class="hint">What customers owe you today, excluding VAT.</p>
+              </div>
+              <div class="field">
+                <label for="ablStock">Inventory</label>
+                <div class="money"><input class="input" id="ablStock" type="text" inputmode="decimal" autocomplete="off" value="2,500,000" data-money></div>
+                <p class="hint">Raw materials and finished goods, at cost.</p>
+              </div>
             </div>
             <div class="row2">
               <div class="field">
-                <label for="afPrice">Cost, excluding VAT</label>
-                <div class="money"><input class="input" id="afPrice" type="text" inputmode="decimal" autocomplete="off" value="1,250,000" data-money></div>
+                <label for="ablPlant">Plant and machinery</label>
+                <div class="money"><input class="input" id="ablPlant" type="text" inputmode="decimal" autocomplete="off" value="1,500,000" data-money></div>
+                <p class="hint">An estimate of what it would sell for.</p>
               </div>
               <div class="field">
-                <label for="afDeposit">Deposit or part-exchange</label>
-                <div class="money"><input class="input" id="afDeposit" type="text" inputmode="decimal" autocomplete="off" value="125,000" data-money></div>
+                <label for="ablProperty">Property <span class="optional">(optional)</span></label>
+                <div class="money"><input class="input" id="ablProperty" type="text" inputmode="decimal" autocomplete="off" value="0" data-money></div>
+                <p class="hint">Commercial property the business owns.</p>
               </div>
             </div>
-            <div class="field">
-              <div class="range-row"><label for="afTerm">Term</label><span class="range-out" id="afTermOut">60 months</span></div>
-              <input type="range" id="afTerm" min="12" max="84" step="12" value="60">
-            </div>
-            <div class="row2">
-              <div class="field">
-                <span class="label" id="afKindLabel">Structure</span>
-                <div class="toggle" role="radiogroup" aria-labelledby="afKindLabel">
-                  <label><input type="radio" name="afKind" value="hp" checked>Hire purchase</label>
-                  <label><input type="radio" name="afKind" value="lease">Lease</label>
-                </div>
-              </div>
-              <div class="field">
-                <label for="afFreq">Payments</label>
-                <select class="input" id="afFreq">
-                  <option value="12" selected>Monthly</option>
-                  <option value="4">Quarterly</option>
-                  <option value="1">Annually</option>
-                </select>
-              </div>
-            </div>
-            <div class="field">
-              <label for="afBalloon">Final balloon payment <span class="optional">(optional)</span></label>
-              <div class="money"><input class="input" id="afBalloon" type="text" inputmode="decimal" autocomplete="off" value="0" data-money></div>
-              <p class="hint">A larger final payment lowers the regular ones.</p>
-            </div>
           </div>
-          <div class="result" id="afResult" aria-live="polite">
-            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
-              <line x1="6" y1="114" x2="214" y2="114"/>
-              <rect x="24" y="92" width="96" height="18" rx="9"/>
-              <circle cx="36" cy="101" r="5"/><circle cx="54" cy="101" r="5"/><circle cx="72" cy="101" r="5"/><circle cx="90" cy="101" r="5"/><circle cx="108" cy="101" r="5"/>
-              <path d="M30 92 V72 h62 v20"/><path d="M30 76 h-6 v12 h6"/>
-              <path d="M62 72 V44 h24 l8 14 v14"/><path d="M67 50 h17 l5 9 h-22 z"/>
-              <path class="accent" d="M92 68 L136 24 L146 30 L102 76 Z"/><line class="accent" x1="98" y1="58" x2="126" y2="40"/>
-              <path class="accent" d="M140 27 L176 74 L168 80 L136 34 Z"/>
-              <path d="M170 76 L190 82 L186 100 L166 94 Z"/><path d="M186 100 l4 4 M179 98 l3 5 M172 96 l2 5"/>
-            </svg></div>
-            <p class="result-msg" id="afMsg" hidden></p>
-            <div class="result-body">
-              <p class="result-label">Indicative payment</p>
-              <p class="result-big" id="afPay">&nbsp;</p>
-              <p class="result-per" id="afPer">a month</p>
-              <dl class="result-list">
-                <div><dt>Amount financed</dt><dd id="afFinanced"></dd></div>
-                <div><dt>Payments</dt><dd id="afCount"></dd></div>
-                <div><dt>Total paid, with deposit</dt><dd id="afTotal"></dd></div>
-                <div><dt>Finance charges</dt><dd id="afCharges"></dd></div>
-              </dl>
-              <p class="result-note" id="afKindNote"></p>
-              <button type="button" class="btn btn-brass btn-block" id="afQuote">Request terms</button>
-              <p class="result-small">Example rates of 7% to 11% a year, for this draft only. Figures exclude VAT, are indicative and are for businesses. They are not an offer of finance.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="calc-body" role="tabpanel" id="panel-invoice" aria-labelledby="tab-invoice" hidden>
-          <div class="calc-inputs">
-            <div class="field">
-              <label for="ifSales">Sales on credit each month</label>
-              <div class="money"><input class="input" id="ifSales" type="text" inputmode="decimal" autocomplete="off" value="1,500,000" data-money></div>
-              <p class="hint">What you invoice each month on payment terms, excluding VAT.</p>
-            </div>
-            <div class="field">
-              <div class="range-row"><label for="ifDays">Average time customers take to pay</label><span class="range-out" id="ifDaysOut">60 days</span></div>
-              <input type="range" id="ifDays" min="15" max="120" step="5" value="60">
-            </div>
-            <div class="field">
-              <div class="range-row"><label for="ifB2B">Share of sales to business customers</label><span class="range-out" id="ifB2BOut">100%</span></div>
-              <input type="range" id="ifB2B" min="0" max="100" step="5" value="100">
-              <p class="hint">Invoice finance only funds invoices to other businesses.</p>
-            </div>
-          </div>
-          <div class="result" id="ifResult" aria-live="polite">
+          <div class="result" id="ablResult" aria-live="polite">
             <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
               <path d="M38 6 h56 v80 h-56 z"/>
               <path class="cover" d="M28 16 h56 v84 h-56 z"/>
@@ -932,18 +866,63 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
               <path d="M162 80 V104 M206 80 V104"/>
               <path d="M162 88 A22 7 0 0 0 206 88"/><path d="M162 96 A22 7 0 0 0 206 96"/><path d="M162 104 A22 7 0 0 0 206 104"/>
             </svg></div>
-            <p class="result-msg" id="ifMsg" hidden></p>
+            <p class="result-msg" id="ablMsg" hidden></p>
             <div class="result-body">
-              <p class="result-label">Cash that could be released</p>
-              <p class="result-big" id="ifRelease">&nbsp;</p>
-              <p class="result-per">as an advance against your invoices</p>
+              <p class="result-label">Indicative facility</p>
+              <p class="result-big" id="ablTotal">&nbsp;</p>
+              <p class="result-per">against the assets entered</p>
               <dl class="result-list">
-                <div><dt>Owed to you at any one time</dt><dd id="ifLedger"></dd></div>
-                <div><dt>Advance used here</dt><dd>80% to 90%</dd></div>
+                <div><dt>Trade debtors</dt><dd id="ablOutDebtors"></dd></div>
+                <div><dt>Inventory</dt><dd id="ablOutStock"></dd></div>
+                <div><dt>Plant and machinery</dt><dd id="ablOutPlant"></dd></div>
+                <div><dt>Property</dt><dd id="ablOutProperty"></dd></div>
               </dl>
-              <p class="result-note">Fees are usually a service charge on turnover plus a discount charge on funds drawn, which works like interest. We quote both for your business.</p>
-              <button type="button" class="btn btn-brass btn-block" id="ifQuote">Request terms</button>
-              <p class="result-small">Advances go up to 90% of eligible invoices. This draft uses 80% to 90% as an example. Figures are indicative and are not an offer of finance.</p>
+              <p class="result-note">Lenders value each asset and set their own advance rates once they have reviewed the business. Asset-based lending is usually priced as a margin over base rate on the funds drawn, plus fees.</p>
+              <button type="button" class="btn btn-brass btn-block" id="ablQuote">Request terms</button>
+              <p class="result-small">Example advance rates for this draft only: debtors 70% to 85%, inventory 20% to 50%, plant and machinery 40% to 70%, property 50% to 70%. Figures are indicative and are not an offer of finance.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-body" role="tabpanel" id="panel-trade" aria-labelledby="tab-trade" hidden>
+          <div class="calc-inputs">
+            <p class="calc-intro">See how much cash your trade cycle ties up, from paying a supplier to being paid by your customer.</p>
+            <div class="field">
+              <label for="trBuy">Annual purchases from suppliers</label>
+              <div class="money"><input class="input" id="trBuy" type="text" inputmode="decimal" autocomplete="off" value="12,000,000" data-money></div>
+              <p class="hint">Goods bought for resale or production, excluding VAT.</p>
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="trTransit">Days from paying the supplier to receiving the goods</label><span class="range-out" id="trTransitOut">45 days</span></div>
+              <input type="range" id="trTransit" min="0" max="120" step="5" value="45">
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="trStock">Days goods are held before sale</label><span class="range-out" id="trStockOut">60 days</span></div>
+              <input type="range" id="trStock" min="0" max="180" step="5" value="60">
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="trDebtor">Days customers take to pay</label><span class="range-out" id="trDebtorOut">60 days</span></div>
+              <input type="range" id="trDebtor" min="0" max="120" step="5" value="60">
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="trCredit">Days of credit from suppliers</label><span class="range-out" id="trCreditOut">30 days</span></div>
+              <input type="range" id="trCredit" min="0" max="120" step="5" value="30">
+            </div>
+          </div>
+          <div class="result" id="trResult" aria-live="polite">
+            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M10 110 c 8 -5 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0"/><path d="M18 86 H204 L190 102 H32 Z"/><path d="M26 86 V56 h24 v30"/><line x1="31" y1="64" x2="45" y2="64"/><line x1="31" y1="71" x2="45" y2="71"/><path class="accent" d="M34 56 V46 h8 v10"/><rect x="56" y="74" width="20" height="12"/><rect x="78" y="74" width="20" height="12"/><rect x="100" y="74" width="20" height="12"/><rect x="122" y="74" width="20" height="12"/><rect x="144" y="74" width="20" height="12"/><rect x="166" y="74" width="20" height="12"/><rect class="accent" x="67" y="62" width="20" height="12"/><rect class="accent" x="89" y="62" width="20" height="12"/><rect class="accent" x="111" y="62" width="20" height="12"/><rect class="accent" x="133" y="62" width="20" height="12"/><rect class="accent" x="155" y="62" width="20" height="12"/></svg></div>
+            <p class="result-msg" id="trMsg" hidden></p>
+            <div class="result-body">
+              <p class="result-label">Cash tied up in the trade cycle</p>
+              <p class="result-big" id="trTied">&nbsp;</p>
+              <p class="result-per" id="trPer">&nbsp;</p>
+              <dl class="result-list">
+                <div><dt>Purchases a day</dt><dd id="trDaily"></dd></div>
+                <div><dt>Days you fund yourself</dt><dd id="trDays"></dd></div>
+              </dl>
+              <p class="result-note">Trade finance can pay suppliers, fund goods in transit and in stock, and bridge the wait for customer payment. Lenders decide how much of the cycle to fund.</p>
+              <button type="button" class="btn btn-brass btn-block" id="trQuote">Request terms</button>
+              <p class="result-small">Measured at cost. Figures are indicative and are not an offer of finance.</p>
             </div>
           </div>
         </div>
@@ -983,7 +962,7 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
     <div class="foot-grid">
       <div>
         <div class="foot-brand"><span class="mono" aria-hidden="true">MCF</span><span class="brand-text"><span>Monument</span><span>Corporate Finance</span></span></div>
-        <p>Independent corporate finance advisers, working from London and Cambridgeshire.</p>
+        <p>Asset-based lending and trade finance advisers, working from London and Cambridgeshire.</p>
       </div>
       <div>
         <h4>Offices</h4>
@@ -997,11 +976,11 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
       <div>
         <h4>Services</h4>
         <ul>
+          <li><a href="/monument#services">Asset-based lending</a></li>
           <li><a href="/monument#services">Trade finance</a></li>
-          <li><a href="/monument#services">Invoice finance</a></li>
-          <li><a href="/monument#services">Asset finance</a></li>
-          <li><a href="/monument#services">Company sales</a></li>
-          <li><a href="/monument#services">Acquisitions</a></li>
+          <li><a href="/monument#services">Invoice discounting</a></li>
+          <li><a href="/monument#services">Acquisition finance</a></li>
+          <li><a href="/monument#services">Refinancing</a></li>
         </ul>
       </div>
       <div>
@@ -1077,94 +1056,72 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
     el.value = Math.round(num(el)).toLocaleString('en-GB');
   }));
 
-  /* Asset finance */
-  const RATE_LOW = 0.07, RATE_HIGH = 0.11;
-  const PERIOD = {
-    12: { per: 'a month', plural: 'monthly payments', single: 'monthly payment' },
-    4: { per: 'a quarter', plural: 'quarterly payments', single: 'quarterly payment' },
-    1: { per: 'a year', plural: 'annual payments', single: 'annual payment' }
-  };
-  const KIND_NOTE = {
-    hp: 'With hire purchase the business owns the asset once the last payment is made. VAT on the cost is usually paid at the start.',
-    lease: 'With a lease the business rents the asset and VAT is added to each rental. At the end it is returned, kept on a secondary rental, or sold.'
-  };
-  const payment = (principal, balloon, annualRate, perYear, n) => {
-    const r = annualRate / perYear;
-    const disc = Math.pow(1 + r, -n);
-    return (principal - balloon * disc) * r / (1 - disc);
-  };
-  let lastAsset = null;
-  function calcAsset() {
-    const price = num($('#afPrice'));
-    const deposit = num($('#afDeposit'));
-    const term = Number($('#afTerm').value);
-    const perYear = Number($('#afFreq').value);
-    const balloon = num($('#afBalloon'));
-    const kind = $('input[name="afKind"]:checked').value;
-    $('#afTermOut').textContent = term + ' months (' + (term / 12) + (term === 12 ? ' year)' : ' years)');
-    const financed = price - deposit;
-    let err = '';
-    if (price <= 0) err = 'Enter the cost of the asset to see the figures.';
-    else if (financed <= 0) err = 'The deposit covers the whole cost, so there is nothing to finance.';
-    else if (balloon >= financed) err = 'The final payment has to be less than the amount financed, which is ' + money(financed) + '.';
-    const box = $('#afResult'), msg = $('#afMsg');
-    if (err) { msg.textContent = err; msg.hidden = false; box.classList.add('is-empty'); lastAsset = null; return; }
+  /* Asset-based lending: an indicative borrowing base. Example advance rates, low and high. */
+  const ADVANCE = { debtors: [0.70, 0.85], stock: [0.20, 0.50], plant: [0.40, 0.70], property: [0.50, 0.70] };
+  const ABL_IN = { debtors: '#ablDebtors', stock: '#ablStock', plant: '#ablPlant', property: '#ablProperty' };
+  const ABL_OUT = { debtors: '#ablOutDebtors', stock: '#ablOutStock', plant: '#ablOutPlant', property: '#ablOutProperty' };
+  let lastAbl = null;
+  function calcAbl() {
+    const v = {};
+    Object.keys(ABL_IN).forEach(k => { v[k] = num($(ABL_IN[k])); });
+    const total = Object.values(v).reduce((a, b) => a + b, 0);
+    const box = $('#ablResult'), msg = $('#ablMsg');
+    if (total <= 0) {
+      msg.textContent = 'Enter the value of at least one asset to see the figures.';
+      msg.hidden = false; box.classList.add('is-empty'); lastAbl = null; return;
+    }
     msg.hidden = true; box.classList.remove('is-empty');
-    const n = term / (12 / perYear);
-    const lo = payment(financed, balloon, RATE_LOW, perYear, n);
-    const hi = payment(financed, balloon, RATE_HIGH, perYear, n);
-    $('#afPay').textContent = money(lo) + ' to ' + money(hi);
-    $('#afPer').textContent = PERIOD[perYear].per + (kind === 'lease' ? ', plus VAT' : '');
-    $('#afFinanced').textContent = money(financed);
-    $('#afCount').textContent = n + ' ' + (n === 1 ? PERIOD[perYear].single : PERIOD[perYear].plural) + (balloon > 0 ? ', then ' + money(balloon) : '');
-    const totalLo = deposit + lo * n + balloon, totalHi = deposit + hi * n + balloon;
-    $('#afTotal').textContent = money(totalLo) + ' to ' + money(totalHi);
-    $('#afCharges').textContent = money(totalLo - price) + ' to ' + money(totalHi - price);
-    $('#afKindNote').textContent = KIND_NOTE[kind];
-    lastAsset = { financed, term, kind, type: $('#afType').value };
+    let lo = 0, hi = 0;
+    Object.keys(ADVANCE).forEach(k => {
+      const l = nice(v[k] * ADVANCE[k][0]), h = nice(v[k] * ADVANCE[k][1]);
+      lo += l; hi += h;
+      $(ABL_OUT[k]).textContent = v[k] > 0 ? money(l) + ' to ' + money(h) : 'None entered';
+    });
+    $('#ablTotal').textContent = money(lo) + ' to ' + money(hi);
+    lastAbl = { lo, hi };
   }
-  $$('#panel-asset input, #panel-asset select').forEach(el => { el.addEventListener('input', calcAsset); el.addEventListener('change', calcAsset); });
+  $$('#panel-abl input').forEach(el => { el.addEventListener('input', calcAbl); el.addEventListener('change', calcAbl); });
 
-  /* Invoice finance */
-  const ADV_LOW = 0.8, ADV_HIGH = 0.9;
-  let lastInvoice = null;
-  function calcInvoice() {
-    const sales = num($('#ifSales'));
-    const days = Number($('#ifDays').value);
-    const b2b = Number($('#ifB2B').value);
-    $('#ifDaysOut').textContent = days + ' days';
-    $('#ifB2BOut').textContent = b2b + '%';
-    const ledger = sales * 12 / 365 * days * b2b / 100;
+  /* Trade finance: the cash a trade cycle ties up, measured at cost */
+  let lastTrade = null;
+  function calcTrade() {
+    const buy = num($('#trBuy'));
+    const d = { Transit: Number($('#trTransit').value), Stock: Number($('#trStock').value), Debtor: Number($('#trDebtor').value), Credit: Number($('#trCredit').value) };
+    Object.keys(d).forEach(k => { $('#tr' + k + 'Out').textContent = d[k] + ' days'; });
+    const cycle = d.Transit + d.Stock + d.Debtor;
+    const days = cycle - d.Credit;
+    const daily = buy / 365;
+    const box = $('#trResult'), msg = $('#trMsg');
     let err = '';
-    if (sales <= 0) err = 'Enter your monthly sales on credit to see the figures.';
-    else if (b2b === 0) err = 'Invoice finance only funds invoices to business customers. Move the slider above 0% to see the figures.';
-    const box = $('#ifResult'), msg = $('#ifMsg');
-    if (err) { msg.textContent = err; msg.hidden = false; box.classList.add('is-empty'); lastInvoice = null; return; }
+    if (buy <= 0) err = 'Enter your annual purchases to see the figures.';
+    else if (days <= 0) err = 'Your supplier credit covers the whole cycle, so no cash is tied up in it.';
+    if (err) { msg.textContent = err; msg.hidden = false; box.classList.add('is-empty'); lastTrade = null; return; }
     msg.hidden = true; box.classList.remove('is-empty');
-    const lo = nice(ledger * ADV_LOW), hi = nice(ledger * ADV_HIGH);
-    $('#ifRelease').textContent = money(lo) + ' to ' + money(hi);
-    $('#ifLedger').textContent = money(nice(ledger));
-    lastInvoice = { lo, hi };
+    const tied = nice(daily * days);
+    $('#trTied').textContent = money(tied);
+    $('#trPer').textContent = 'a ' + cycle + '-day cycle, less ' + d.Credit + ' days of supplier credit';
+    $('#trDaily').textContent = money(daily);
+    $('#trDays').textContent = days + ' days';
+    lastTrade = { tied, days };
   }
-  $$('#panel-invoice input').forEach(el => { el.addEventListener('input', calcInvoice); el.addEventListener('change', calcInvoice); });
+  $$('#panel-trade input').forEach(el => { el.addEventListener('input', calcTrade); el.addEventListener('change', calcTrade); });
 
-
-  /* "Request terms from Ben" opens the homepage form with the figures filled in */
+  /* "Request terms" opens the homepage form with the figures filled in */
   const HOME = '/monument';
   const sendToForm = (need, amount, ctx) => {
     location.href = HOME + '?need=' + encodeURIComponent(need) + '&amount=' + encodeURIComponent(amount) + '&ctx=' + encodeURIComponent(ctx) + '#enquiry';
   };
-  $('#afQuote').addEventListener('click', () => {
-    if (!lastAsset) return;
-    sendToForm('assets', band(lastAsset.financed), 'From the calculator: ' + money(lastAsset.financed) + ' of ' + lastAsset.type + ' on ' + (lastAsset.kind === 'hp' ? 'hire purchase' : 'a lease') + ' over ' + lastAsset.term + ' months.');
+  $('#ablQuote').addEventListener('click', () => {
+    if (!lastAbl) return;
+    sendToForm('abl', band(lastAbl.hi), 'From the calculator: an indicative facility of about ' + money(lastAbl.lo) + ' to ' + money(lastAbl.hi) + ' against the business’s assets.');
   });
-  $('#ifQuote').addEventListener('click', () => {
-    if (!lastInvoice) return;
-    sendToForm('working', band(lastInvoice.hi), 'From the calculator: about ' + money(lastInvoice.lo) + ' to ' + money(lastInvoice.hi) + ' released through invoice finance.');
+  $('#trQuote').addEventListener('click', () => {
+    if (!lastTrade) return;
+    sendToForm('trade', band(lastTrade.tied), 'From the calculator: about ' + money(lastTrade.tied) + ' tied up in a trade cycle of ' + lastTrade.days + ' days.');
   });
 
-  calcAsset();
-  calcInvoice();
+  calcAbl();
+  calcTrade();
 
   /* ===== Motion, shared by both pages ===== */
   $$('[data-stagger]').forEach(g => Array.from(g.children).forEach((c, i) => c.style.setProperty('--i', i)));
