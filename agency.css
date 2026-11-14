@@ -219,3 +219,50 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
   .kpis { grid-template-columns: 1fr 1fr; }
   .btn-row .btn-filled, .btn-row .btn-outline { width: 100%; justify-content: center; }
 }
+
+/* ── Service pages (2026-11-14) ── */
+.svc-hero .hero-inner { max-width: 1120px; }
+.svc-hero .hero-h1 { max-width: 900px; }
+.svc-hero .hero-body { max-width: 700px; }
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.feature { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 26px 24px; box-shadow: var(--shadow-card); position: relative; }
+.feature::before { content: ""; position: absolute; left: 24px; top: 0; width: 36px; height: 3px; background: var(--amber); border-radius: 0 0 3px 3px; }
+.feature h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0 8px; }
+.feature p { font-size: 15px; line-height: 1.6; color: #3A3A3A; margin: 0; }
+.steps.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.note { display: grid; grid-template-columns: 4px 1fr; gap: 20px; background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px 24px 24px; margin-top: 40px; }
+.note::before { content: ""; background: var(--amber); border-radius: 2px; }
+.note h3 { font-size: 18px; margin: 0 0 6px; letter-spacing: -0.015em; }
+.note p { margin: 0; font-size: 16px; line-height: 1.6; color: #3A3A3A; }
+.faq { border-top: 1px solid var(--border); max-width: 860px; }
+.faq details { border-bottom: 1px solid var(--border); padding: 20px 0; }
+.faq summary { cursor: pointer; list-style: none; font-size: 18px; font-weight: 700; letter-spacing: -0.015em; display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: var(--amber); font-size: 22px; font-weight: 400; line-height: 1; flex: none; }
+.faq details[open] summary::after { content: "\2212"; }
+.faq details p { margin: 12px 0 0; font-size: 16px; line-height: 1.65; color: #3A3A3A; max-width: 760px; }
+.faq details p a { color: var(--amber); }
+.related { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.related a { display: block; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; text-decoration: none; transition: border-color 150ms, box-shadow 150ms; }
+.related a:hover { border-color: var(--amber); box-shadow: var(--shadow-card); }
+.related b { display: block; font-size: 16px; letter-spacing: -0.01em; }
+.related span { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+.engage { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.engage .card h3 { font-size: 22px; }
+.engage .num { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: var(--amber); margin-bottom: 10px; }
+.stage-more { margin-top: 14px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.footer-services { max-width: 1200px; margin: 16px auto 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 12px; }
+.footer-services a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.footer-services a:hover { color: #fff; }
+@media (max-width: 1000px) {
+  .related, .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .engage { grid-template-columns: 1fr; }
+  .svc-hero { padding: 56px 20px 48px; }
+}
+@media (max-width: 560px) {
+  .related, .steps.four, .features { grid-template-columns: 1fr; }
+  .faq summary { font-size: 17px; }
+}
