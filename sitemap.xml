@@ -3,7 +3,17 @@
   <url>
     <loc>https://www.phillips-uk.com/</loc>
     <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.phillips-uk.com/work/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.phillips-uk.com/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.phillips-uk.com/google-ads-audit</loc>
