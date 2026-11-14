@@ -60,6 +60,21 @@ const REDIRECTS = {
   '/shopify-google-ads-audit': '/google-ads-audit?type=shopify',
 };
 
+// The three free tools (Google Ads audit, landing page audit, creative scoring) are paused until Lewis has reviewed
+// them again (2026-11-14). Their pages stay in the repo; each address sends visitors to the matching service page
+// with a temporary redirect. To bring a tool back, delete its lines here, then restore its links and sitemap entry.
+const PAUSED = {
+  '/audit': '/google-ads/',
+  '/shopify-google-ads-audit': '/google-ads/',
+  '/google-ads-audit': '/google-ads/',
+  '/google-ads-audit-report': '/google-ads/',
+  '/landing-page-audit': '/web-design/',
+  '/landing-page-audit-report': '/web-design/',
+  '/creative-analysis': '/',
+  '/creative-analysis-demo': '/',
+  '/creative-analysis-report': '/',
+};
+
 function getHandler(mod) {
   return mod.handler || (mod.default && mod.default.handler);
 }
@@ -109,6 +124,9 @@ async function route(request, env, ctx) {
   if ((url.pathname === '/desk' || url.pathname.startsWith('/desk/')) && env.DESK) return env.DESK.fetch(request);
 
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : url.pathname;
+
+  const pausedTo = PAUSED[path.replace(/\.html$/, '')];
+  if (pausedTo) return Response.redirect(new URL(pausedTo, url).href, 302);
 
   if (REDIRECTS[path]) return Response.redirect(new URL(REDIRECTS[path], url).href, 301);
 

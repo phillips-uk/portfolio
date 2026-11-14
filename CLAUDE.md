@@ -22,7 +22,7 @@ Pushing to GitHub does **not** deploy. After pushing `main`, deploy from the rep
 CLOUDFLARE_ACCOUNT_ID=9cd423eee8986ecc6f22f6fa3a17878b npx wrangler deploy
 ```
 
-Then check `https://www.phillips-uk.com/` returns 200 and `/audit` returns 301.
+Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (302 to `/google-ads/` while the free tools are paused, see `PAUSED` in `cloudflare/src/worker.js`; 301 to `/google-ads-audit` once they are back).
 
 - `wrangler.jsonc`: Worker config. `run_worker_first: true`, R2 binding `BLOBS` (bucket `phillips-blobs`), queue `phillips-jobs`, custom domains `www.phillips-uk.com` and `phillips-uk.com`.
 - `cloudflare/src/worker.js`: router. Apex to www and http to https redirects, `/audit` redirects, `/auth/callback`, `/r/:id`, `/.netlify/functions/<name>`, then static assets.

@@ -98,7 +98,7 @@
       "name": "Will turning off GA4 imports hurt my conversion reporting?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No — setting a GA4 import to Secondary (Include in Conversions OFF) does not delete the data. The import continues to record and the conversion count remains visible in your All Conversions column. The only change is that Smart Bidding stops using it as its primary target. You lose nothing from a reporting perspective; you gain a cleaner bidding signal."
+        "text": "No. Setting a GA4 import to Secondary (Include in Conversions OFF) does not delete the data. The import continues to record and the conversion count remains visible in your All Conversions column. The only change is that Smart Bidding stops using it as its primary target. You lose nothing from a reporting perspective; you gain a cleaner bidding signal."
       }
     },
     {
@@ -106,7 +106,7 @@
       "name": "How do I know if Smart Bidding is training on the right signal?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Go to Tools & Settings → Measurement → Conversions. Look at the Include in Conversions column. Every action showing ON is feeding Smart Bidding. If any of those are GA4 imports, engagement events (view_item, add_to_cart), or micro-conversions, that is the problem. The correct state is: one primary action showing ON — your native Google Ads purchase tag. Everything else OFF."
+        "text": "Go to Tools & Settings → Measurement → Conversions. Look at the Include in Conversions column. Every action showing ON is feeding Smart Bidding. If any of those are GA4 imports, engagement events (view_item, add_to_cart), or micro-conversions, that is the problem. The correct state is: one primary action showing ON: your native Google Ads purchase tag. Everything else OFF."
       }
     },
     {
@@ -114,12 +114,12 @@
       "name": "What is Enhanced Conversions and do I need it?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Enhanced Conversions is a feature that supplements your native Google Ads conversion tag by sending hashed first-party data (typically a hashed email address from the purchase confirmation page) alongside the conversion. When Google can match that hash to a signed-in Google account, it fills in attribution gaps caused by cookie restrictions and iOS privacy controls. It does not replace the native tag — it works alongside it. For most ecommerce accounts, enabling it is worth doing when you set up the native tag."
+        "text": "Enhanced Conversions is a feature that supplements your native Google Ads conversion tag by sending hashed first-party data (typically a hashed email address from the purchase confirmation page) alongside the conversion. When Google can match that hash to a signed-in Google account, it fills in attribution gaps caused by cookie restrictions and iOS privacy controls. It does not replace the native tag; it works alongside it. For most ecommerce accounts, enabling it is worth doing when you set up the native tag."
       }
     },
     {
       "@type": "Question",
-      "name": "My GA4 conversion count is much higher than my actual orders — why?",
+      "name": "My GA4 conversion count is much higher than my actual orders. Why?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "The most common cause is that non-purchase events have been imported from GA4 and set to Include in Conversions ON. Events like view_item, add_to_cart, or begin_checkout all count as conversions in the Conversions column if they are set to Primary. A browse event can outnumber actual purchases 10 to 1 or more. Go to Tools & Settings → Measurement → Conversions, check each action set to Include in Conversions ON, and turn off anything that is not a completed purchase."
@@ -571,9 +571,9 @@
   <div class="site-nav-inner">
     <a href="/" class="nav-logo"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
     <nav class="nav-links">
-      <a href="/landing-page-audit" class="nav-link">Landing Page Audit</a>
-      <a href="/google-ads-audit" class="nav-link">Google Ads Audit</a>
-      <a href="/creative-analysis" class="nav-link">Creative Scoring</a>
+      <a href="/#services" class="nav-link">Services</a>
+      <a href="/work/" class="nav-link">Work</a>
+      <a href="/about/" class="nav-link">About</a>
       <a href="/guides/" class="nav-link">Guides</a>
       <a href="/#contact" class="btn-nav">Get in touch</a>
     </nav>
@@ -586,9 +586,9 @@
   <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')"></div>
   <div class="ph-drawer-panel">
     <button class="ph-drawer-close" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')">&#x2715;</button>
-    <a href="/landing-page-audit" class="ph-drawer-link">Landing Page Audit</a>
-    <a href="/google-ads-audit" class="ph-drawer-link">Google Ads Audit</a>
-    <a href="/creative-analysis" class="ph-drawer-link">Creative Scoring</a>
+    <a href="/#services" class="ph-drawer-link">Services</a>
+    <a href="/work/" class="ph-drawer-link">Work</a>
+    <a href="/about/" class="ph-drawer-link">About</a>
     <a href="/guides/" class="ph-drawer-link active">Guides</a>
     <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
   </div>
@@ -608,12 +608,12 @@
     </div>
     <h1 class="article-h1">Why GA4 Imports Can Break Smart Bidding</h1>
     <div class="article-byline">Lewis Phillips &middot; 27 May 2026 &middot; 11 min read</div>
-    <p class="article-lede">GA4 conversion imports are not inherently wrong in Google Ads &mdash; the problem is how they are configured. Using a GA4 import as your only Primary conversion action, duplicating it alongside a native tag, or leaving micro-conversions set as Primary are the three most common measurement mistakes I audit. In each case, Smart Bidding trains toward a signal that does not cleanly reflect your actual business outcomes.</p>
+    <p class="article-lede">GA4 conversion imports are not inherently wrong in Google Ads: the problem is how they are configured. Using a GA4 import as your only Primary conversion action, duplicating it alongside a native tag, or leaving micro-conversions set as Primary are the three most common measurement mistakes I audit. In each case, Smart Bidding trains toward a signal that does not cleanly reflect your actual business outcomes.</p>
 
     <!-- Quick Answer -->
     <div style="margin-top:32px;background:#FDF6EE;border:1px solid #E8D8C4;border-radius:6px;padding:20px 24px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#985830;margin-bottom:10px;">Quick answer</div>
-      <p style="font-size:16px;line-height:1.6;color:#1A1A1A;margin:0;">For most accounts, GA4 imports should be <strong>Secondary</strong> (Include in Conversions OFF) when a native Google Ads conversion tag is available. Your primary Smart Bidding signal should be the cleanest macro-conversion you want campaigns to optimise toward &mdash; usually a <strong>native Google Ads purchase or lead tag</strong> implemented via GTM. GA4 imports are useful for reporting, attribution comparison, and audiences, but can distort bidding when used as the only Primary signal, duplicated alongside native tags, or mixed with micro-conversions.</p>
+      <p style="font-size:16px;line-height:1.6;color:#1A1A1A;margin:0;">For most accounts, GA4 imports should be <strong>Secondary</strong> (Include in Conversions OFF) when a native Google Ads conversion tag is available. Your primary Smart Bidding signal should be the cleanest macro-conversion you want campaigns to optimise toward, usually a <strong>native Google Ads purchase or lead tag</strong> implemented via GTM. GA4 imports are useful for reporting, attribution comparison, and audiences, but can distort bidding when used as the only Primary signal, duplicated alongside native tags, or mixed with micro-conversions.</p>
     </div>
   </div>
 </header>
@@ -624,8 +624,8 @@
 
     <div class="article-body">
       <h2>What Smart Bidding actually trains on</h2>
-      <p>Smart Bidding &mdash; Target CPA, Target ROAS, Maximise Conversions, Maximise Conversion Value &mdash; learns by identifying patterns in the auction signals that preceded conversions. It needs conversions to learn from. The accuracy of those conversions as a signal is the most important variable in whether the algorithm performs.</p>
-      <p>Every conversion action in Google Ads has one critical setting: <strong>Include in Conversions</strong>. When set to ON, the action is Primary &mdash; it feeds the Conversions column and Smart Bidding optimises toward it. When set to OFF, the action is Secondary: it records data and appears in your All Conversions column for attribution analysis, but Smart Bidding does not use it as a target.</p>
+      <p>Smart Bidding (Target CPA, Target ROAS, Maximise Conversions, Maximise Conversion Value) learns by identifying patterns in the auction signals that preceded conversions. It needs conversions to learn from. The accuracy of those conversions as a signal is the most important variable in whether the algorithm performs.</p>
+      <p>Every conversion action in Google Ads has one critical setting: <strong>Include in Conversions</strong>. When set to ON, the action is Primary: it feeds the Conversions column and Smart Bidding optimises toward it. When set to OFF, the action is Secondary: it records data and appears in your All Conversions column for attribution analysis, but Smart Bidding does not use it as a target.</p>
       <p>The default path when linking GA4 to Google Ads sets imported events to Include in Conversions ON. Many accounts that use this path end up with a GA4 import as their only Primary signal and no native Google Ads tag at all. If a native tag is never implemented, Smart Bidding trains entirely on GA4&rsquo;s output. That may be acceptable as a temporary setup, but the further GA4&rsquo;s modelled numbers diverge from actual business outcomes, the more the algorithm trains on the gap.</p>
     </div>
 
@@ -642,31 +642,31 @@
         <div class="signal-row highlight">
           <span class="signal-name">Native Google Ads tag (GTM)</span>
           <span class="signal-cell">Fires on purchase page in user&rsquo;s browser, on the actual click</span>
-          <span class="signal-cell">Click-based &mdash; observed directly</span>
-          <span><span class="signal-status-on">ON &mdash; Primary</span></span>
+          <span class="signal-cell">Click-based, observed directly</span>
+          <span><span class="signal-status-on">ON: Primary</span></span>
         </div>
         <div class="signal-row">
           <span class="signal-name">GA4 import</span>
           <span class="signal-cell">Pulled from GA4 property via linked account</span>
           <span class="signal-cell">GA4 event import, processed through GA4 attribution and modelling where applicable</span>
-          <span><span class="signal-status-off">OFF &mdash; Secondary</span></span>
+          <span><span class="signal-status-off">OFF: Secondary</span></span>
         </div>
-        <div class="signal-foot">For Google Ads bidding, the native Google Ads tag is usually the cleanest primary optimisation signal. The GA4 import remains useful for full-funnel reporting, attribution comparison and audience building &mdash; but not as the primary bidding signal when a native tag is available.</div>
+        <div class="signal-foot">For Google Ads bidding, the native Google Ads tag is usually the cleanest primary optimisation signal. The GA4 import remains useful for full-funnel reporting, attribution comparison and audience building, but not as the primary bidding signal when a native tag is available.</div>
       </div>
     </div>
 
     <!-- Exception callout -->
     <div style="background:#FDF6EE;border:1px solid #E8D8C4;border-left:3px solid #985830;border-radius:0 6px 6px 0;padding:20px 24px;margin:0 0 40px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#985830;margin-bottom:10px;">When can a GA4 import be Primary?</div>
-      <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0;">If no native Google Ads tag exists yet, a GA4 import may be better than having no conversion signal at all &mdash; Smart Bidding needs something to train on. Treat it as a transitional setup. Once a native tag or clean offline conversion import is in place, move the GA4 import to Secondary and use it for reporting and attribution comparison.</p>
+      <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0;">If no native Google Ads tag exists yet, a GA4 import may be better than having no conversion signal at all: Smart Bidding needs something to train on. Treat it as a transitional setup. Once a native tag or clean offline conversion import is in place, move the GA4 import to Secondary and use it for reporting and attribution comparison.</p>
     </div>
 
     <!-- Native tags vs GA4 imports -->
     <div class="article-body">
       <h2>Native tags vs GA4 imports: what the difference actually is</h2>
-      <p>A native Google Ads conversion tag fires in the user&rsquo;s browser, on the specific page you nominate &mdash; typically the order confirmation or thank-you page. It records a conversion within Google Ads&rsquo; own click-to-conversion measurement path, at the moment of the event. This keeps the conversion close to the ad click that preceded it.</p>
-      <p>GA4 imports take a different path. Before reaching Google Ads, the conversion passes through GA4&rsquo;s event collection, attribution, and modelling layer. GA4 uses cross-device joining, consent-state modelling, and data-driven attribution to reconstruct what it estimates happened across a user&rsquo;s full journey. That is a more complete picture of customer behaviour &mdash; but it is also further removed from the clean click-to-conversion signal that Smart Bidding is designed to train on.</p>
-      <p>Neither signal is inherently wrong. Under optimal conditions &mdash; full consent, single-device, clean implementation &mdash; GA4&rsquo;s numbers will be close to the native tag. Under real-world conditions &mdash; iOS privacy restrictions, consent mode modelling gaps, cross-device journeys &mdash; they can diverge. GA4 may over-count (modelling fills gaps generously), under-count (consent restrictions reduce what is directly observable), or attribute the same purchase differently than Google Ads&rsquo; own tracking.</p>
+      <p>A native Google Ads conversion tag fires in the user&rsquo;s browser, on the specific page you nominate, typically the order confirmation or thank-you page. It records a conversion within Google Ads&rsquo; own click-to-conversion measurement path, at the moment of the event. This keeps the conversion close to the ad click that preceded it.</p>
+      <p>GA4 imports take a different path. Before reaching Google Ads, the conversion passes through GA4&rsquo;s event collection, attribution, and modelling layer. GA4 uses cross-device joining, consent-state modelling, and data-driven attribution to reconstruct what it estimates happened across a user&rsquo;s full journey. That is a more complete picture of customer behaviour, but it is also further removed from the clean click-to-conversion signal that Smart Bidding is designed to train on.</p>
+      <p>Neither signal is inherently wrong. Under optimal conditions (full consent, single-device, clean implementation), GA4&rsquo;s numbers will be close to the native tag. Under real-world conditions (iOS privacy restrictions, consent mode modelling gaps, cross-device journeys), they can diverge. GA4 may over-count (modelling fills gaps generously), under-count (consent restrictions reduce what is directly observable), or attribute the same purchase differently than Google Ads&rsquo; own tracking.</p>
       <p>GA4 imports are valuable for full-funnel reporting, multi-touch attribution analysis, and building audiences. The practical limitation is as a Smart Bidding primary signal: the algorithm will train on whatever number GA4 reports, including the estimated components. A native Google Ads tag keeps that signal closer to Google Ads&rsquo; own measurement system.</p>
     </div>
 
@@ -685,7 +685,7 @@
       <div class="article-body">
         <p>The most common version. GA4 is linked to Google Ads, the purchase event is imported, it defaults to Include in Conversions ON, and nobody implements a native Google Ads tag. Smart Bidding trains entirely on GA4&rsquo;s modelled output.</p>
         <p>The account looks fine on paper in the short term. CPA holds, the bidding strategy stays in the learning phase briefly and then stabilises, conversions report consistently. What shifts, usually over weeks or months, is efficiency. ROAS softens. The new customer mix drifts toward people who were already likely to buy. Impression share on competitive terms drops without an obvious cause.</p>
-        <p>By the time the gap is identified, Smart Bidding has been training on a signal that does not perfectly reflect actual business outcomes. The model carries that history even after the conversion architecture is corrected &mdash; it takes time to retrain on the improved signal.</p>
+        <p>By the time the gap is identified, Smart Bidding has been training on a signal that does not perfectly reflect actual business outcomes. The model carries that history even after the conversion architecture is corrected; it takes time to retrain on the improved signal.</p>
       </div>
     </div>
 
@@ -699,7 +699,7 @@
         <div class="verdict-card-body">
           <div class="conv-list">
             <div class="conv-item">
-              <span class="conv-item-name">GA4 — Purchase (imported)</span>
+              <span class="conv-item-name">GA4: Purchase (imported)</span>
               <span class="conv-badge-bad">Primary &uarr;</span>
             </div>
           </div>
@@ -714,11 +714,11 @@
         <div class="verdict-card-body">
           <div class="conv-list">
             <div class="conv-item">
-              <span class="conv-item-name">Google Ads tag &mdash; Purchase (GTM)</span>
+              <span class="conv-item-name">Google Ads tag: Purchase (GTM)</span>
               <span class="conv-badge-on">Primary &uarr;</span>
             </div>
             <div class="conv-item">
-              <span class="conv-item-name">GA4 &mdash; Purchase (imported)</span>
+              <span class="conv-item-name">GA4: Purchase (imported)</span>
               <span class="conv-badge-off">Secondary</span>
             </div>
           </div>
@@ -736,7 +736,7 @@
       <div class="article-body">
         <p>A more fragile version. The account has a native Google Ads tag and a GA4 import, both set to Include in Conversions ON. Smart Bidding now sees two Primary conversions for some purchases: the observed tag and the GA4 model. Conversions are counted twice in the Conversions column for purchases that both signals capture.</p>
         <p>The effect on bidding: Smart Bidding interprets these double-counted events as a success signal. The algorithm over-optimises toward auction patterns that appear to produce two conversions, anchoring bid decisions to an artificially inflated CPA floor.</p>
-        <p>Identifying this: compare the Conversions column in Google Ads against actual order volume in your ecommerce platform for the same date range. Some natural variance exists &mdash; cross-device journeys, different attribution windows &mdash; but a ratio significantly above 1:1 is a signal of structural duplication. You can also check by looking at the Source column in your Conversions table: if you see both <code>Google Analytics</code> and <code>Website</code> for the same event category, both may be Primary.</p>
+        <p>Identifying this: compare the Conversions column in Google Ads against actual order volume in your ecommerce platform for the same date range. Some natural variance exists (cross-device journeys, different attribution windows), but a ratio significantly above 1:1 is a signal of structural duplication. You can also check by looking at the Source column in your Conversions table: if you see both <code>Google Analytics</code> and <code>Website</code> for the same event category, both may be Primary.</p>
       </div>
     </div>
 
@@ -747,8 +747,8 @@
         <h3 class="issue-title">Non-purchase events included as Primary conversions</h3>
       </div>
       <div class="article-body">
-        <p>The hardest to catch. A GA4 import includes engagement or browse events &mdash; <code>view_item</code>, <code>add_to_cart</code>, <code>begin_checkout</code> &mdash; set to Include in Conversions ON alongside the purchase event. Smart Bidding now treats a product view or add-to-cart as an equivalent success signal to a completed purchase. The Conversions column becomes a mix of real purchases and engagement events, and the algorithm optimises toward all of them equally.</p>
-        <p>In real account audits, the distortion can be severe. A <code>view_item</code> event on an ecommerce site can fire hundreds of times per session across multiple pages &mdash; if that event is set to Primary, it can represent 80&ndash;90% of the Conversions column, with actual purchases making up the remainder. Smart Bidding trained on this signal is effectively optimising for product browsing rather than purchase.</p>
+        <p>The hardest to catch. A GA4 import includes engagement or browse events (<code>view_item</code>, <code>add_to_cart</code>, <code>begin_checkout</code>) set to Include in Conversions ON alongside the purchase event. Smart Bidding now treats a product view or add-to-cart as an equivalent success signal to a completed purchase. The Conversions column becomes a mix of real purchases and engagement events, and the algorithm optimises toward all of them equally.</p>
+        <p>In real account audits, the distortion can be severe. A <code>view_item</code> event on an ecommerce site can fire hundreds of times per session across multiple pages. If that event is set to Primary, it can represent 80&ndash;90% of the Conversions column, with actual purchases making up the remainder. Smart Bidding trained on this signal is effectively optimising for product browsing rather than purchase.</p>
         <p>The fix is immediate: go to Tools &amp; Settings &rarr; Measurement &rarr; Conversions in Google Ads, and check every action showing Include in Conversions ON. Turn off anything that is not a completed purchase or the specific macro-conversion you want the campaign to drive. Engagement events and micro-conversions belong in the Secondary (All Conversions) column only.</p>
       </div>
     </div>
@@ -769,12 +769,12 @@
         </div>
         <div class="comp-row">
           <span class="comp-symptom">Only GA4 imports showing Include in Conversions ON, no native tag</span>
-          <span class="comp-cause">Smart Bidding has no native Google Ads tag as its primary signal &mdash; only GA4&rsquo;s processed output</span>
+          <span class="comp-cause">Smart Bidding has no native Google Ads tag as its primary signal, only GA4&rsquo;s processed output</span>
           <span class="comp-fix">Implement native GTM tag, then demote GA4 import to Secondary</span>
         </div>
         <div class="comp-row">
           <span class="comp-symptom">Both a native tag AND a GA4 import showing ON for the same event</span>
-          <span class="comp-cause">Duplicate counting &mdash; some conversions appearing twice in Smart Bidding target</span>
+          <span class="comp-cause">Duplicate counting: some conversions appearing twice in Smart Bidding target</span>
           <span class="comp-fix">Set the GA4 import to OFF (Secondary). Keep native tag ON.</span>
         </div>
         <div class="comp-row">
@@ -784,12 +784,12 @@
         </div>
         <div class="comp-row">
           <span class="comp-symptom">CPA holds but ROAS softening over several months</span>
-          <span class="comp-cause">Model drift &mdash; Smart Bidding trained on modelled signal, optimising for approximations</span>
+          <span class="comp-cause">Model drift: Smart Bidding trained on modelled signal, optimising for approximations</span>
           <span class="comp-fix">Audit conversion architecture, fix signal quality, allow 14+ days to retrain</span>
         </div>
         <div class="comp-row">
           <span class="comp-symptom">Conversion column shows only one GA4 import and no other actions</span>
-          <span class="comp-cause">No native tag in account &mdash; common post-GA4-link account setup</span>
+          <span class="comp-cause">No native tag in account: common post-GA4-link account setup</span>
           <span class="comp-fix">Add a native Google Ads purchase tag via GTM as a priority</span>
         </div>
       </div>
@@ -798,7 +798,7 @@
     <!-- The fix heading -->
     <div class="article-body">
       <h2>How to fix it</h2>
-      <p>Three steps. The first two are the critical path &mdash; do them in order. The third improves measurement coverage but is not a blocker.</p>
+      <p>Three steps. The first two are the critical path: do them in order. The third improves measurement coverage but is not a blocker.</p>
     </div>
 
     <!-- Fix 01 -->
@@ -809,7 +809,7 @@
       </div>
       <div class="article-body">
         <p>In Google Ads: <strong>Tools &amp; Settings &rarr; Measurement &rarr; Conversions</strong>. Click each GA4-imported conversion action, then <strong>Edit settings</strong>. Set Include in Conversions to OFF.</p>
-        <p>Do the same for any micro-conversion events &mdash; <code>add_to_cart</code>, <code>view_item</code>, <code>begin_checkout</code>, <code>sign_up</code> &mdash; that are currently set to ON. These events belong in the Secondary column. They still record and appear in All Conversions for reporting, but they are removed from the Smart Bidding signal.</p>
+        <p>Do the same for any micro-conversion events (<code>add_to_cart</code>, <code>view_item</code>, <code>begin_checkout</code>, <code>sign_up</code>) that are currently set to ON. These events belong in the Secondary column. They still record and appear in All Conversions for reporting, but they are removed from the Smart Bidding signal.</p>
         <p><strong>Important:</strong> if you demote all Primary actions before a native tag is in place, Smart Bidding will enter a learning phase with no conversion signal to optimise toward. If the GA4 import is currently your only Primary signal and you have no native tag yet, implement the native tag first (step 02), confirm it is recording correctly, then demote the GA4 import. Do not leave Smart Bidding without any Primary conversion action.</p>
       </div>
     </div>
@@ -822,9 +822,9 @@
       </div>
       <div class="article-body">
         <p>In Google Ads: <strong>Tools &amp; Settings &rarr; Measurement &rarr; Conversions &rarr; New conversion action &rarr; Website</strong>. Set the category to Purchase, enter a conversion name, and set the value to use a variable (dynamic conversion value). Note the Conversion ID and Conversion Label that are generated.</p>
-        <p>In GTM, create a new tag of type <strong>Google Ads Conversion Tracking</strong>. Enter the Conversion ID and Conversion Label from the step above. Set the Conversion Value to your transaction revenue data layer variable (e.g. <code>{{DLV - transaction_revenue}}</code>). Set the trigger to fire on your purchase confirmation or thank-you page &mdash; this should be a page that is only visible after a successful transaction.</p>
-        <p>Once published, this tag fires in the user&rsquo;s browser on the actual purchase page, on the actual click from Google Ads. In Google Ads, ensure this action is set to Include in Conversions ON. This is now your Primary signal &mdash; the one Smart Bidding trains toward.</p>
-        <p>For lead generation accounts, the same principle applies: optimise toward the deepest reliable macro-conversion available. A native form-submission tag is usually the right starting point. If CRM data is available and GCLID matching is reliable, a clean offline qualified-lead import can be a stronger Primary signal than a form-submit alone &mdash; because it reflects lead quality, not just lead volume. GA4 form-submit events should remain Secondary in the same way GA4 purchase events should for ecommerce.</p>
+        <p>In GTM, create a new tag of type <strong>Google Ads Conversion Tracking</strong>. Enter the Conversion ID and Conversion Label from the step above. Set the Conversion Value to your transaction revenue data layer variable (e.g. <code>{{DLV - transaction_revenue}}</code>). Set the trigger to fire on your purchase confirmation or thank-you page. This should be a page that is only visible after a successful transaction.</p>
+        <p>Once published, this tag fires in the user&rsquo;s browser on the actual purchase page, on the actual click from Google Ads. In Google Ads, ensure this action is set to Include in Conversions ON. This is now your Primary signal: the one Smart Bidding trains toward.</p>
+        <p>For lead generation accounts, the same principle applies: optimise toward the deepest reliable macro-conversion available. A native form-submission tag is usually the right starting point. If CRM data is available and GCLID matching is reliable, a clean offline qualified-lead import can be a stronger Primary signal than a form-submit alone, because it reflects lead quality, not just lead volume. GA4 form-submit events should remain Secondary in the same way GA4 purchase events should for ecommerce.</p>
         <p>For a step-by-step walkthrough of the full conversion tracking setup and common errors, see the <a href="/guides/fix-google-ads-conversion-tracking/">conversion tracking fix guide</a>.</p>
       </div>
     </div>
@@ -836,8 +836,8 @@
         <h3 class="issue-title">Enable Enhanced Conversions on the native tag</h3>
       </div>
       <div class="article-body">
-        <p>Enhanced Conversions supplements the native tag by sending a hashed first-party data signal &mdash; typically a hashed email address from the purchase confirmation page &mdash; alongside the conversion event. When Google can match that hash to a signed-in Google account, it can attribute conversions that would otherwise be missed due to cookie restrictions, ITP, or iOS privacy controls.</p>
-        <p>To enable it: in Google Ads, go to <strong>Tools &amp; Settings &rarr; Measurement &rarr; Conversions &rarr; select your primary purchase action &rarr; Enhanced conversions &rarr; Turn on</strong>. Choose the GTM setup method. In GTM, you will need to add the Enhanced Conversions variables &mdash; typically the customer&rsquo;s email address pulled from the confirmation page and hashed using SHA256 before sending.</p>
+        <p>Enhanced Conversions supplements the native tag by sending a hashed first-party data signal (typically a hashed email address from the purchase confirmation page) alongside the conversion event. When Google can match that hash to a signed-in Google account, it can attribute conversions that would otherwise be missed due to cookie restrictions, ITP, or iOS privacy controls.</p>
+        <p>To enable it: in Google Ads, go to <strong>Tools &amp; Settings &rarr; Measurement &rarr; Conversions &rarr; select your primary purchase action &rarr; Enhanced conversions &rarr; Turn on</strong>. Choose the GTM setup method. In GTM, you will need to add the Enhanced Conversions variables, typically the customer&rsquo;s email address pulled from the confirmation page and hashed using SHA256 before sending.</p>
         <p>Enhanced Conversions does not replace the observed tag. It extends the coverage of that tag into environments where cookies are restricted. The result is more complete conversion measurement without changing the fundamental architecture: native tag primary, GA4 import secondary.</p>
       </div>
     </div>
@@ -845,9 +845,9 @@
     <!-- What to expect -->
     <div class="article-body">
       <h2>What to expect after the fix</h2>
-      <p>Smart Bidding retrains when the conversion signal changes. After setting the GA4 import to Secondary and establishing the native tag as Primary, expect a learning phase. During this period, Smart Bidding is re-calibrating to the new signal &mdash; bids may fluctuate and conversion volume may look different from the previous baseline.</p>
+      <p>Smart Bidding retrains when the conversion signal changes. After setting the GA4 import to Secondary and establishing the native tag as Primary, expect a learning phase. During this period, Smart Bidding is re-calibrating to the new signal: bids may fluctuate and conversion volume may look different from the previous baseline.</p>
       <p>The Conversions column will likely report fewer conversions than before if you have removed micro-conversions from the Primary set. That is the number correcting to reflect actual purchases rather than a mix of purchases and engagement events. The All Conversions column will continue to show the full picture.</p>
-      <p>ROAS reporting may also shift. If the GA4 import was over-counting conversions (due to modelling), CPA will appear to increase once the observed signal replaces it. This is measurement accuracy, not performance decline &mdash; you are now seeing what was actually happening rather than the model&rsquo;s interpretation of it. Give the account 14 days before drawing conclusions.</p>
+      <p>ROAS reporting may also shift. If the GA4 import was over-counting conversions (due to modelling), CPA will appear to increase once the observed signal replaces it. This is measurement accuracy, not performance decline: you are now seeing what was actually happening rather than the model&rsquo;s interpretation of it. Give the account 14 days before drawing conclusions.</p>
     </div>
 
     <!-- 2026 context -->
@@ -858,8 +858,8 @@
           2026 Context
         </div>
         <h3>Consent Mode and the modelling gap</h3>
-        <p>With Consent Mode v2, Google models conversions for users who decline analytics or ad cookies. This modelling &mdash; sometimes called behavioural modelling &mdash; attempts to estimate the conversions that occur in the cookieless portion of your traffic based on patterns from users who did consent. The result is that your GA4 conversion totals include both directly observed events and Google&rsquo;s probabilistic estimates for users it cannot directly track.</p>
-        <p>This modelling is useful for understanding the true scale of your conversions. For Smart Bidding, a native Google Ads tag keeps the conversion event within Google Ads&rsquo; own measurement path &mdash; closer to the ad-click-to-conversion signal the algorithm is designed to train on. Consent Mode still matters: consent state can affect what tags observe directly versus what is estimated. Enhanced Conversions can improve coverage where consented first-party data is available, supplementing the native tag rather than replacing it. If you are relying on GA4&rsquo;s modelled output as your only Primary signal, each additional modelling layer &mdash; consent state, cross-device, attribution &mdash; adds further distance from the actual transaction. For more on tracking architecture and common gaps, the <a href="/guides/fix-google-ads-conversion-tracking/">conversion tracking guide</a> covers the full diagnostic.</p>
+        <p>With Consent Mode v2, Google models conversions for users who decline analytics or ad cookies. This modelling (sometimes called behavioural modelling) attempts to estimate the conversions that occur in the cookieless portion of your traffic based on patterns from users who did consent. The result is that your GA4 conversion totals include both directly observed events and Google&rsquo;s probabilistic estimates for users it cannot directly track.</p>
+        <p>This modelling is useful for understanding the true scale of your conversions. For Smart Bidding, a native Google Ads tag keeps the conversion event within Google Ads&rsquo; own measurement path, closer to the ad-click-to-conversion signal the algorithm is designed to train on. Consent Mode still matters: consent state can affect what tags observe directly versus what is estimated. Enhanced Conversions can improve coverage where consented first-party data is available, supplementing the native tag rather than replacing it. If you are relying on GA4&rsquo;s modelled output as your only Primary signal, each additional modelling layer (consent state, cross-device, attribution) adds further distance from the actual transaction. For more on tracking architecture and common gaps, the <a href="/guides/fix-google-ads-conversion-tracking/">conversion tracking guide</a> covers the full diagnostic.</p>
       </div>
     </div>
 
@@ -882,25 +882,25 @@
           <span class="faq-q">Will turning off GA4 imports hurt my conversion reporting?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">No &mdash; setting a GA4 import to Secondary (Include in Conversions OFF) does not delete the data. The import continues to record and the conversion count remains visible in your All Conversions column. The only change is that Smart Bidding stops using it as its primary target. You lose nothing from a reporting perspective; you gain a cleaner bidding signal.</div>
+        <div class="faq-answer">No. Setting a GA4 import to Secondary (Include in Conversions OFF) does not delete the data. The import continues to record and the conversion count remains visible in your All Conversions column. The only change is that Smart Bidding stops using it as its primary target. You lose nothing from a reporting perspective; you gain a cleaner bidding signal.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
           <span class="faq-q">How do I know if Smart Bidding is training on the right signal?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Go to Tools &amp; Settings &rarr; Measurement &rarr; Conversions. Look at the Include in Conversions column. Every action showing ON is feeding Smart Bidding. If any of those are GA4 imports, engagement events (<code>view_item</code>, <code>add_to_cart</code>), or micro-conversions, that is the problem. The correct state: one Primary action showing ON &mdash; your native Google Ads purchase tag. Everything else OFF.</div>
+        <div class="faq-answer">Go to Tools &amp; Settings &rarr; Measurement &rarr; Conversions. Look at the Include in Conversions column. Every action showing ON is feeding Smart Bidding. If any of those are GA4 imports, engagement events (<code>view_item</code>, <code>add_to_cart</code>), or micro-conversions, that is the problem. The correct state: one Primary action showing ON: your native Google Ads purchase tag. Everything else OFF.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
           <span class="faq-q">What is Enhanced Conversions and do I need it?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Enhanced Conversions supplements your native Google Ads tag by sending hashed first-party data (typically a hashed email from the purchase confirmation page) alongside the conversion. When Google can match that hash to a signed-in Google account, it fills in attribution gaps caused by cookie restrictions and iOS privacy controls. It does not replace the native tag &mdash; it works alongside it. For most ecommerce accounts, enabling it when you set up the native tag is worth doing.</div>
+        <div class="faq-answer">Enhanced Conversions supplements your native Google Ads tag by sending hashed first-party data (typically a hashed email from the purchase confirmation page) alongside the conversion. When Google can match that hash to a signed-in Google account, it fills in attribution gaps caused by cookie restrictions and iOS privacy controls. It does not replace the native tag; it works alongside it. For most ecommerce accounts, enabling it when you set up the native tag is worth doing.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">My GA4 conversion count is much higher than my actual orders &mdash; why?</span>
+          <span class="faq-q">My GA4 conversion count is much higher than my actual orders. Why?</span>
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">The most common cause is that non-purchase events have been imported from GA4 and set to Include in Conversions ON. Events like <code>view_item</code>, <code>add_to_cart</code>, or <code>begin_checkout</code> count as conversions in the Conversions column if they are set to Primary. Browse events can outnumber completed purchases many times over. Go to Tools &amp; Settings &rarr; Measurement &rarr; Conversions, check each action set to Include in Conversions ON, and turn off anything that is not a completed purchase.</div>
@@ -915,7 +915,7 @@
           <span class="author-name">Lewis Phillips</span>
           <span class="author-role">Performance marketer &middot; 11 years</span>
         </div>
-        <p class="author-bio">I audit Google Ads accounts across ecommerce and lead generation. GA4 imports sitting as the Primary conversion action &mdash; with no native tag &mdash; is the single most common measurement error I find. This guide reflects what that looks like in practice and what fixing it actually involves.</p>
+        <p class="author-bio">I audit Google Ads accounts across ecommerce and lead generation. GA4 imports sitting as the Primary conversion action, with no native tag, is the single most common measurement error I find. This guide reflects what that looks like in practice and what fixing it actually involves.</p>
         <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="author-link">LinkedIn &rarr;</a>
       </div>
     </div>
@@ -937,7 +937,7 @@
           <span class="related-card-readtime">12 min read</span>
         </div>
         <h3 class="related-card-title">How to Fix Google Ads Conversion Tracking</h3>
-        <p class="related-card-desc">The seven most common causes of broken conversion tracking &mdash; inactive actions, duplicate counting, wrong primary/secondary setup and more.</p>
+        <p class="related-card-desc">The seven most common causes of broken conversion tracking: inactive actions, duplicate counting, wrong primary/secondary setup and more.</p>
         <span class="related-card-cta">Read guide &rarr;</span>
       </a>
       <a href="/guides/improve-google-ads-quality-score/" class="related-card">
@@ -956,13 +956,13 @@
 <!-- ═══════════════════════════════════════════ END CTA -->
 <section class="end-cta">
   <div class="end-cta-inner">
-    <span class="eyebrow" style="color:#B87040;">Ready to check yours?</span>
-    <h2>Run the audit. <em>See what&rsquo;s actually going on.</em></h2>
+    <span class="eyebrow" style="color:#B87040;">Want a second pair of eyes?</span>
+    <h2>Talk it through <em>on a free 30-minute call.</em></h2>
     <div class="end-cta-btns">
-      <a href="/google-ads-audit" class="btn-cta-filled">Run the Google Ads Audit &rarr;</a>
-      <a href="/landing-page-audit" class="btn-cta-outline">Run the Landing Page Audit &rarr;</a>
+      <a href="mailto:contact@phillips-uk.com?subject=Free%2030-minute%20call" class="btn-cta-filled">Book a free 30-minute call &rarr;</a>
+      <a href="/google-ads/" class="btn-cta-outline">Google Ads management &rarr;</a>
     </div>
-    <div class="end-cta-note">Free &middot; Read-only &middot; No agency pitch</div>
+    <div class="end-cta-note">Free &middot; No obligation &middot; You work with me directly</div>
   </div>
 </section>
 
@@ -974,8 +974,8 @@
       <span>&copy; 2026 PHILLIPSGROUPUK LIMITED &middot; phillips-uk.com</span>
     </div>
     <div class="footer-right">
-      <a href="/landing-page-audit" class="footer-link">Landing Page Audit</a>
-      <a href="/google-ads-audit" class="footer-link">Google Ads Audit</a>
+      <a href="/#services" class="footer-link">Services</a>
+      <a href="/work/" class="footer-link">Work</a>
       <a href="/#contact" class="footer-link">Get in touch</a>
     </div>
   </div>
