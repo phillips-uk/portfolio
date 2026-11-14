@@ -794,7 +794,7 @@ function showAuthUI() {
 
 // GIS credential callback — exchanges Google token for HMAC session token
 window.handleCreativeCredential = async function(response) {
-  var allowed = ['lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
+  var allowed = ['lewis@phillips-group.uk', 'lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
   // Client-side pre-check before hitting the server
   try {
     var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');

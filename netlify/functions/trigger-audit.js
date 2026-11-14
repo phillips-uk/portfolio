@@ -40,7 +40,7 @@ exports.handler = async function (event) {
   }
 
   // Email allowlist — only Lewis's accounts can trigger audits
-  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-uk.com,lewisdp87@gmail.com')
+  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-group.uk,lewis@phillips-uk.com,lewisdp87@gmail.com')
     .toLowerCase().split(',').map(e => e.trim()).filter(Boolean);
   if (payload.userEmail && !allowedEmails.includes(payload.userEmail.toLowerCase())) {
     console.warn(`Blocked audit attempt by: ${payload.userEmail}`);

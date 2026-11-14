@@ -51,7 +51,7 @@ exports.handler = async function (event) {
   const { url, jobId, googleToken } = body;
 
   // Email allowlist — verify Google Sign-In token and check against allowed emails
-  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-uk.com,lewisdp87@gmail.com')
+  const allowedEmails = (process.env.ALLOWED_AUDIT_EMAILS || 'lewis@phillips-group.uk,lewis@phillips-uk.com,lewisdp87@gmail.com')
     .toLowerCase().split(',').map(e => e.trim()).filter(Boolean);
   const verifiedEmail = await verifyGoogleToken(googleToken);
   if (!verifiedEmail || !allowedEmails.includes(verifiedEmail)) {

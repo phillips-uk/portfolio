@@ -554,7 +554,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>
 // ── GIS gate ───────────────────────────────────────────────────────────────
 window.handleGAACredential = function(response) {
-  var allowed = ['lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
+  var allowed = ['lewis@phillips-group.uk', 'lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
   try {
     var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     var payload = JSON.parse(atob(b64));

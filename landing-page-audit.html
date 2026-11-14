@@ -658,7 +658,7 @@ Paste a URL, run the audit and use the report. If it finds something significant
   window.googleCredential = null;
 
   window.handleAuditCredential = function(response) {
-    var allowed = ['lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
+    var allowed = ['lewis@phillips-group.uk', 'lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
     try {
       var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
       var payload = JSON.parse(atob(b64));

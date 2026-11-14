@@ -10,7 +10,8 @@ import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
 const GOOGLE_CLIENT_IDS = ['339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com'];
-const DEFAULT_ALLOWED = 'lewis@phillips-uk.com,lewisdp87@gmail.com';
+// lewis@phillips-group.uk is the Google Workspace sign-in since 12 Nov 2026; lewis@phillips-uk.com is an alias now.
+const DEFAULT_ALLOWED = 'lewis@phillips-group.uk,lewis@phillips-uk.com,lewisdp87@gmail.com';
 
 const NO_INDEX = { 'X-Robots-Tag': 'noindex, nofollow, noarchive', 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' };
 
