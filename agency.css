@@ -342,3 +342,20 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
   .site-shot .phone { right: -4px; width: 26%; border-width: 3px; border-radius: 12px; }
 }
 #analysis .grid-2 > .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+/* ── Strengths cards: About and homepage (2026-11-14) ── */
+.features.usps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.usps .feature { display: flex; flex-direction: column; padding: 30px 26px; }
+.usp-n { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: var(--amber); }
+.usps .feature h3 { font-size: 22px; margin: 8px 0 10px; }
+.usps .feature p { font-size: 16px; }
+.usps .feature p:not(.usp-proof) { margin-bottom: 18px; }
+.usps .feature p:last-child { margin-bottom: 0; }
+.usps .usp-proof { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.55; color: var(--muted); }
+.usp-proof a { color: var(--amber); font-weight: 600; text-decoration: none; }
+.usp-proof a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.block-head { margin: 72px 0 28px; max-width: 760px; }
+.block-head .eyebrow { margin-bottom: 12px; }
+.block-head h3 { font-size: clamp(26px, 3vw, 32px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.12; margin: 0 0 10px; }
+.block-head p { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0; }
+@media (max-width: 900px) { .features.usps { grid-template-columns: 1fr; } .block-head { margin-top: 56px; } }
