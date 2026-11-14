@@ -267,3 +267,34 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
   .related, .steps.four, .features { grid-template-columns: 1fr; }
   .faq summary { font-size: 17px; }
 }
+
+/* ── Contact form (2026-11-14): "Ask me a question", posts to /enquiry ── */
+.enquiry { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 32px; }
+.enquiry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+.enquiry-field { display: block; }
+.enquiry-field > span { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D9925E; margin-bottom: 8px; }
+.enquiry-field > span em { font-style: normal; font-weight: 500; letter-spacing: 0.04em; text-transform: none; color: rgba(255,255,255,0.5); }
+.enquiry-wide { grid-column: 1 / -1; }
+.enquiry input, .enquiry textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; color: #fff; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 6px; padding: 12px 14px; transition: border-color 150ms, background 150ms; }
+.enquiry textarea { resize: vertical; min-height: 128px; line-height: 1.5; }
+.enquiry input:focus, .enquiry textarea:focus { outline: none; border-color: #D9925E; background: rgba(255,255,255,0.09); }
+.enquiry-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.enquiry-foot { display: flex; align-items: center; gap: 20px; margin-top: 24px; flex-wrap: wrap; }
+.enquiry-btn { font: inherit; font-size: 15px; font-weight: 600; color: #fff; background: #985830; border: 0; border-radius: 6px; padding: 14px 26px; cursor: pointer; transition: background 150ms; }
+.enquiry-btn:hover { background: #B87040; }
+.enquiry-btn:disabled { opacity: 0.6; cursor: default; }
+.enquiry-note { margin: 0; font-size: 13px; color: rgba(255,255,255,0.55); }
+.enquiry-status { margin: 14px 0 0; font-size: 14px; color: #F2B48A; min-height: 1em; }
+.enquiry-status:empty { display: none; }
+.enquiry-done { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 40px 32px; text-align: center; color: rgba(255,255,255,0.72); font-size: 16px; line-height: 1.6; }
+.enquiry-done p { margin: 0; }
+.enquiry-done-title { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px !important; }
+.contact-alt { text-align: center; margin: 22px 0 0; font-size: 14px; color: rgba(255,255,255,0.55); }
+.contact-alt a { color: #fff; font-weight: 600; text-decoration: none; }
+.contact-alt a:hover { color: #D9925E; }
+@media (max-width: 560px) {
+  .enquiry { padding: 22px 18px; }
+  .enquiry-grid { grid-template-columns: 1fr; }
+  .enquiry-foot { flex-direction: column; align-items: stretch; text-align: center; }
+  .enquiry-btn { width: 100%; }
+}

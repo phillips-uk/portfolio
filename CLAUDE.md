@@ -42,6 +42,7 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (30
 - **Invite pages** (`rate-card.js`) load gtag.js directly with only the path as `page_location`, so invite tokens never reach Google, and send `proposal_view`. `/admin` and Search Desk (`/desk`) are not tagged.
 - **A new event:** push it from the page (`dataLayer.push({ event: 'name', ... })`), then Lewis or a browser session adds the name to the GTM trigger "Site events to GA4" and publishes. Key events and funnels: vault `01_Phillips/07_Analytics/03_Key Events & Conversions.md`. GTM and GA4 sign-in is lewisdp87@gmail.com.
 - Contact links must stay `mailto:contact@phillips-uk.com` or `mailto:lewis@phillips-uk.com`, or `contact_click` stops counting.
+- **The contact form** ("Ask me a question", since 2026-11-14) is in the contact section of the homepage, Work and the five service pages (`contact-form.js`, styles in `agency.css`). It posts to `/enquiry` (`cloudflare/src/enquiry.js`): each question is saved to R2 under `admin/enquiries/`, added to the /admin funnel as a Lead card, and emailed to contact@ through Resend when the `RESEND_API_KEY` secret is set. Spam: hidden `company_url` trap, under 3 seconds on the page, more than 5 an hour from one connection. On success the page pushes `generate_lead` (with `form_location`); add it to the GTM trigger "Site events to GA4" and mark it a key event in GA4. CTAs link to `#contact` (guides and About to `/#contact`); never "Book a call".
 
 ## Page standards (summary, full detail in the Obsidian note)
 

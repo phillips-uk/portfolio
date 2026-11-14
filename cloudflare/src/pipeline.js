@@ -154,6 +154,11 @@ async function createDeal(env, input, invite) {
   return merged;
 }
 
+// A question sent through the website's contact form (cloudflare/src/enquiry.js) becomes a Lead card on the board.
+export async function addLead(env, input) {
+  return createDeal(env, { ...input, stage: 'Lead' }, async () => null);
+}
+
 // The saved deal behind a card, and the card as the board shows it. A note-only card is saved here for the first time,
 // keeping what the note says now.
 function recordFor(data, notes, id, now) {

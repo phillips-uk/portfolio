@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
-<link rel="stylesheet" href="/agency.css?v=5">
+<link rel="stylesheet" href="/agency.css?v=6">
 <link rel="stylesheet" href="/motion.css?v=3">
 
 <!-- Open Graph -->
@@ -174,7 +174,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <h1 class="hero-h1">Web design in Ely, for small businesses <span>that want enquiries.</span></h1>
     <p class="hero-body">Your website is usually the first thing a customer checks. I build sites that load fast, work properly on a phone, can be found in search and make it easy to get in touch, with the tracking in place to see what each visit is worth.</p>
     <div class="btn-row">
-      <a href="mailto:contact@phillips-uk.com?subject=Question" class="btn-filled">Ask me a question</a>
+      <a href="#contact" class="btn-filled">Ask me a question</a>
       <a href="/work/" class="btn-outline">See the work</a>
     </div>
   </div>
@@ -234,7 +234,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <h2 class="h2">The rest of the journey.</h2>
       <p class="lede">From getting found to growing the team: most businesses need more than one of these, in roughly this order.</p>
     </div>
-    <div class="related"><a href="/local-seo/"><b>Local SEO</b><span>Show up when people nearby search</span></a><a href="/google-ads/"><b>Google Ads</b><span>Judged on enquiries and sales</span></a><a href="/marketing-systems/"><b>Marketing systems</b><span>Tracking, CRM and automation</span></a><a href="/consultancy/"><b>Consultancy</b><span>For larger companies</span></a></div>
+    <div class="related"><a href="/local-seo/"><b>Local SEO</b><span>On Google and in AI answers</span></a><a href="/google-ads/"><b>Google Ads</b><span>Judged on enquiries and sales</span></a><a href="/marketing-systems/"><b>Marketing systems</b><span>Tracking, CRM and automation</span></a><a href="/consultancy/"><b>Consultancy</b><span>For larger companies</span></a></div>
   </div>
 </section>
 
@@ -244,18 +244,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div class="contact-header">
       <span class="contact-eyebrow">Ask me some questions</span>
       <h2 class="contact-h2">Tell me about your website.</h2>
-      <p class="contact-body">Email a few lines about the business, what you'd like to change and anything you want to ask. I'll reply by email.</p>
+      <p class="contact-body">Write a few lines about the business, what you'd like to change and anything you want to ask. I'll reply by email.</p>
     </div>
-    <div class="contact-grid">
-      <a href="mailto:contact@phillips-uk.com?subject=Question" class="contact-item">
-        <div class="contact-method">Email</div>
-        <div class="contact-value">contact@phillips-uk.com →</div>
-      </a>
-      <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="contact-item" target="_blank" rel="noopener noreferrer">
-        <div class="contact-method">LinkedIn</div>
-        <div class="contact-value">Lewis Phillips →</div>
-      </a>
-    </div>
+    <form class="enquiry" action="/enquiry" method="post" data-location="web-design" novalidate>
+      <div class="enquiry-grid">
+        <label class="enquiry-field"><span>Your name</span><input name="name" autocomplete="name" maxlength="120" required></label>
+        <label class="enquiry-field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="160" required></label>
+        <label class="enquiry-field enquiry-wide"><span>Business or website <em>(optional)</em></span><input name="business" autocomplete="organization" maxlength="160"></label>
+        <label class="enquiry-field enquiry-wide"><span>Your question</span><textarea name="message" rows="5" maxlength="4000" required></textarea></label>
+        <label class="enquiry-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <div class="enquiry-foot">
+        <button type="submit" class="enquiry-btn">Send my question</button>
+        <p class="enquiry-note">I use these details only to reply to you.</p>
+      </div>
+      <p class="enquiry-status" role="status" aria-live="polite"></p>
+    </form>
+    <p class="contact-alt">Prefer LinkedIn? <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" target="_blank" rel="noopener noreferrer">Message me there &rarr;</a></p>
   </div>
 </section>
 
@@ -292,6 +297,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     });
   });
 </script>
+<script src="/contact-form.js?v=1" defer></script>
 <script src="/motion.js?v=3" defer></script>
 </body>
 </html>

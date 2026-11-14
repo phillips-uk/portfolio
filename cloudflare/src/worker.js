@@ -3,6 +3,7 @@
 import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard, invitePing } from './rate-card.js';
 import { isAdminPath, admin } from './admin.js';
+import { enquiry } from './enquiry.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -134,6 +135,9 @@ async function route(request, env, ctx) {
   if (direct) return runFunction(direct[1], request, url, {}, env, ctx);
 
   if (path === '/auth/callback') return runFunction('auth-callback', request, url, {}, env, ctx);
+
+  // The "Ask me a question" form (cloudflare/src/enquiry.js)
+  if (path === '/enquiry') return request.method === 'POST' ? enquiry(request, env) : new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
 
   if (isRateCardPath(path)) return rateCard(request, url, env, ctx);
   if (path === '/invite-ping' && request.method === 'POST') return invitePing(request, env);
