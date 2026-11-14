@@ -11,6 +11,18 @@
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
 <link rel="stylesheet" href="/agency.css?v=7">
 <link rel="stylesheet" href="/motion.css?v=3">
+<style>
+  .features.usps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .usps .feature { display: flex; flex-direction: column; padding: 30px 26px; }
+  .usp-n { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: var(--amber); }
+  .usps .feature h3 { font-size: 22px; margin: 8px 0 10px; }
+  .usps .feature p { font-size: 16px; }
+  .usps .usp-proof { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.55; color: var(--muted); }
+  .usps .feature p:not(.usp-proof) { margin-bottom: 18px; }
+  .usp-proof a { color: var(--amber); font-weight: 600; text-decoration: none; }
+  .usp-proof a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 900px) { .features.usps { grid-template-columns: 1fr; } }
+</style>
 
 <!-- Open Graph -->
 <meta property="og:type" content="profile">
@@ -143,17 +155,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </section>
 
-<!-- ═══════════════════════════ WHY ═══════════════════════════ -->
-<section class="sec-cream">
+<!-- ═══════════════════════════ STRENGTHS ═══════════════════════════ -->
+<section class="sec-cream" id="strengths">
   <div class="page-w">
     <div class="sec-head">
-      <span class="eyebrow">For your business</span>
-      <h2 class="h2">What that background means for you.</h2>
+      <span class="eyebrow">What I bring</span>
+      <h2 class="h2">Strategist, optimiser and systems builder.</h2>
+      <p class="lede">I work out what your marketing needs, find what to improve and build the systems that keep it running.</p>
     </div>
-    <div class="features">
-      <div class="feature"><h3>Small business and big budgets</h3><p>I have run my own small business, The Pommier, and paid media across eight international markets. I know what each side needs.</p></div>
-      <div class="feature"><h3>I advise and I build</h3><p>I build websites and set up tracking myself. I write code too, so tracking, tools and workflows don't wait on a developer.</p></div>
-      <div class="feature"><h3>A plan, then the numbers</h3><p>Before anything starts, you get the plan in writing. Each month you see what changed and what it did, in plain English.</p></div>
+    <div class="features usps">
+      <div class="feature">
+        <span class="usp-n">01</span>
+        <h3>Strategic thinker</h3>
+        <p>I've solved problems for big companies, small businesses and my own businesses. I use that to work out what matters for yours and where to put the effort first.</p>
+        <p class="usp-proof">Bidding across eight markets at <a href="/work/#angi">Angi</a>, a tracking rebuild for <a href="/work/#engine-house">Engine House</a> and my own marketplace, <a href="/work/#pommier">The Pommier</a>.</p>
+      </div>
+      <div class="feature">
+        <span class="usp-n">02</span>
+        <h3>Optimiser</h3>
+        <p>I look at the full picture, then get into the detail: what your ads say, where the money goes and what happens after someone clicks. That's where I find what to improve.</p>
+        <p class="usp-proof">I tested 1,300 ad headlines to separate the ones that won clicks from the ones that led to sales and enquiries. <a href="/work/#analysis">See the analysis →</a></p>
+      </div>
+      <div class="feature">
+        <span class="usp-n">03</span>
+        <h3>Systems builder</h3>
+        <p>I build the tracking, reporting and tools that keep your marketing running and show what it achieves. I write the code myself, so improvements don't wait for a developer.</p>
+        <p class="usp-proof">I built <a href="/work/#search-desk">Search Desk</a>, which checks Google Ads accounts every morning and ranks what it finds by the money at stake.</p>
+      </div>
     </div>
   </div>
 </section>
