@@ -99,7 +99,8 @@
     '.tool-card', '.guide-card', '.contact-header', '.contact-item',
     '.check-card', '.list-card', '.cs-list-card', '.cross-card', '.ca-step', '.faq-item', '.me-row', '.url-trust-item',
     '.article-body', '.issue-block', '.priority-item', '.consent-step', '.trigger-step', '.arch-cell', '.symptoms-table', '.related-card',
-    '.pack', '.band .card', '.step'
+    '.pack', '.band .card', '.step',
+    '.bi', '.brief-card', '.brief-latest', '.brief-list li', '.brief-guide-inner', '.privacy h2'
   ];
   var general = [
     '.sec-cream > .page-w > *', '.sec-white > .page-w > *', '.read-w > *', '.related-section .page-w > *',
@@ -145,7 +146,7 @@
   mark(general, true);
 
   // Inside a card that rises in, its rows follow it one after another; the landing page mock builds itself.
-  var rows = '.range-item, .gam-row, .lpm-row, .crm-card, .crm-footer, .kpis > div, .analysis-tags > *, .tool-tag, .pack li';
+  var rows = '.range-item, .gam-row, .lpm-row, .crm-card, .crm-footer, .kpis > div, .analysis-tags > *, .tool-tag, .pack li, .bi-chip, .bi-tile, .bi-art';
   pending.forEach(function (card) {
     var seen = new Map();
     card.querySelectorAll(rows + ', .lpm-page > div').forEach(function (el) {

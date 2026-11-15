@@ -122,6 +122,10 @@ html.motion-ready .sec-rule::before {
 .dot-live { animation: ph-pulse 2.6s ease-out infinite; }
 @keyframes ph-pulse { 0% { box-shadow: 0 0 0 0 rgba(152, 88, 48, .45); } 70%, 100% { box-shadow: 0 0 0 8px rgba(152, 88, 48, 0); } }
 
+/* The Monday Brief: each item's illustration draws itself as its card arrives */
+.motion-ready .bi-art-svg * { stroke-dasharray: 420; stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s cubic-bezier(.2, .7, .2, 1) .35s; }
+.motion-ready .rv:not(.in) .bi-art-svg * { stroke-dashoffset: 420; }
+
 @media (prefers-reduced-motion: reduce) {
   .scroll-progress, .hero-glow, .contact-sec::before { display: none; }
   .dot-live { animation: none; }

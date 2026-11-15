@@ -217,6 +217,9 @@ export function checkIssue(c, date) {
     if (!Array.isArray(it.sources) || !it.sources.length) p.push(`${n}: needs at least one primary source.`);
     (it.sources || []).forEach(s => { if (!s || !/^https:\/\//.test(s.url || '') || !s.label) p.push(`${n}: each source needs a "label" and an https "url".`); });
     if (it.announced && !DATE.test(it.announced)) p.push(`${n}: "announced" should be YYYY-MM-DD.`);
+    if (it.effective && !DATE.test(it.effective)) p.push(`${n}: "effective" should be YYYY-MM-DD.`);
+    if (it.impact && !IMPACT[it.impact]) p.push(`${n}: "impact" should be action, watch or info.`);
+    if (it.tldr && String(it.tldr).length > 200) p.push(`${n}: "tldr" should be one short sentence.`);
   });
   const all = JSON.stringify(c);
   if (/\u2014/.test(all)) p.push('The issue contains an em dash. Use a comma, colon or full stop instead.');
@@ -263,27 +266,101 @@ function html(body, status = 200, extra = {}) {
 }
 const NOINDEX = { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' };
 
+// Each item is a card built for skimming: platform and dates up top, a plain illustration (drawn here, no platform
+// logos), the one-line "in short", an impact tag, then the four parts as tiles with icons.
+const PLATFORM_STYLE = [
+  [/search/i, 'search', '#2F6B66'],
+  [/merchant|shopping/i, 'merchant', '#6A4C93'],
+  [/analytics|ga4/i, 'analytics', '#9A6A12'],
+  [/microsoft|bing/i, 'microsoft', '#2E5E8C'],
+  [/meta|facebook|instagram/i, 'meta', '#3D5A98'],
+  [/apple/i, 'apple', '#4A4A4A'],
+  [/linkedin/i, 'linkedin', '#2A6496'],
+  [/google ads|ads/i, 'ads', '#985830'],
+];
+function platformStyle(name) {
+  for (const [re, key, colour] of PLATFORM_STYLE) if (re.test(name || '')) return { key, colour };
+  return { key: 'ads', colour: '#985830' };
+}
+// Simple line drawings, one per kind of platform. They use currentColor, so each takes its card's colour.
+const ART = {
+  search: '<circle cx="62" cy="52" r="26"/><path d="M81 71l22 22"/><path d="M50 52h24M50 44h16M50 60h20" opacity=".55"/><path d="M118 34h34M118 50h26M118 66h30" opacity=".35"/>',
+  ads: '<rect x="22" y="24" width="116" height="72" rx="8"/><path d="M36 82l22-22 16 12 26-30 22 18" /><circle cx="122" cy="60" r="4" fill="currentColor"/><path d="M36 40h40" opacity=".45"/>',
+  analytics: '<path d="M28 92V30"/><path d="M28 92h112"/><rect x="42" y="62" width="14" height="30" rx="2"/><rect x="66" y="48" width="14" height="44" rx="2"/><rect x="90" y="56" width="14" height="36" rx="2"/><rect x="114" y="36" width="14" height="56" rx="2"/>',
+  merchant: '<path d="M38 40h88l-8 48H46z"/><path d="M58 40c0-14 8-20 24-20s24 6 24 20"/><path d="M64 60h36" opacity=".5"/>',
+  microsoft: '<rect x="34" y="22" width="36" height="36" rx="4"/><rect x="78" y="22" width="36" height="36" rx="4" opacity=".6"/><rect x="34" y="64" width="36" height="36" rx="4" opacity=".6"/><rect x="78" y="64" width="36" height="36" rx="4"/><path d="M126 46h22M126 78h18" opacity=".4"/>',
+  meta: '<circle cx="54" cy="48" r="14"/><circle cx="104" cy="48" r="14"/><path d="M30 94c4-16 14-24 24-24s20 8 24 24M80 94c4-16 14-24 24-24s20 8 24 24"/>',
+  apple: '<rect x="58" y="16" width="48" height="88" rx="9"/><path d="M74 26h16" opacity=".5"/><rect x="66" y="40" width="32" height="20" rx="3" opacity=".6"/><path d="M66 70h32M66 80h22" opacity=".45"/>',
+  linkedin: '<rect x="34" y="40" width="92" height="56" rx="8"/><path d="M64 40v-8a6 6 0 0 1 6-6h20a6 6 0 0 1 6 6v8"/><path d="M34 62h92" opacity=".5"/>',
+  image: '<rect x="30" y="20" width="110" height="80" rx="8"/><circle cx="112" cy="42" r="9"/><path d="M30 88l34-32 24 22 16-14 36 30"/>',
+  policy: '<path d="M85 16l42 14v28c0 26-18 40-42 48-24-8-42-22-42-48V30z"/><path d="M68 60l12 12 24-26"/>',
+  target: '<circle cx="78" cy="60" r="38"/><circle cx="78" cy="60" r="24" opacity=".7"/><circle cx="78" cy="60" r="10"/><path d="M78 60l52-40M118 20h12v12"/>',
+  funnel: '<path d="M30 22h110l-42 44v30l-26 10V66z"/><path d="M52 40h66" opacity=".45"/><circle cx="150" cy="96" r="5" fill="currentColor"/>',
+  calendar: '<rect x="34" y="24" width="102" height="80" rx="8"/><path d="M34 46h102M60 16v16M110 16v16"/><path d="M52 62h12M80 62h12M108 62h12M52 82h12M80 82h12" opacity=".6"/><rect x="104" y="76" width="20" height="16" rx="3" fill="currentColor" opacity=".35"/>',
+  ranking: '<path d="M30 96h112"/><rect x="40" y="62" width="22" height="34" rx="3"/><rect x="74" y="36" width="22" height="60" rx="3"/><rect x="108" y="50" width="22" height="46" rx="3"/><path d="M50 40l34-22 30 14 26-12" opacity=".6"/>',
+};
+// Pick the drawing from what the change is about, falling back to the platform's own. An item can also set "art".
+const TOPIC_ART = [
+  [/core update|ranking|search result/i, 'ranking'],
+  [/image|photo|video|creative|asset/i, 'image'],
+  [/policy|policies|impersonat|prohibited|terms|privacy|consent/i, 'policy'],
+  [/invalid traffic|fraud|spam|brand safety/i, 'policy'],
+  [/conversion|tracking|measurement|attribution|api/i, 'funnel'],
+  [/targeting|audience|exclusion|bidding|bid strategy/i, 'target'],
+  [/deadline|sunset|from \d|retire|deprecat/i, 'calendar'],
+];
+function artFor(it, platformKey) {
+  if (it.art && ART[it.art]) return it.art;
+  const text = `${it.title || ''} ${it.tldr || ''}`;
+  for (const [re, key] of TOPIC_ART) if (re.test(text)) return key;
+  return platformKey;
+}
+const PART_ICON = {
+  new: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+  means: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
+  affects: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8" fill="currentColor"/>',
+  aware: '<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',
+};
+const IMPACT = { action: 'Action needed', watch: 'Worth watching', info: 'Good to know' };
+const svg = (inner, vb, cls) => `<svg class="${cls}" viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+function firstSentence(t) { const one = String(t || '').replace(/\s+/g, ' ').trim(); const m = one.match(/^.*?[.!?](\s|$)/); return (m ? m[0] : one).trim(); }
+
 function itemHtml(it, i) {
-  const meta = [esc(it.platform), it.announced ? 'Announced ' + esc(dayMonthYear(it.announced)) : null].filter(Boolean).join(' &middot; ');
-  return `<article class="brief-item" id="item-${i + 1}">
-  <p class="brief-tag">${meta}</p>
-  <h2>${esc(it.title)}</h2>
-  ${PARTS.map(([k, label]) => `<div class="brief-part"><h3>${esc(label)}</h3>${blocksHtml(it[k])}</div>`).join('\n  ')}
-  <p class="brief-src">${(it.sources || []).length > 1 ? 'Sources' : 'Source'}: ${(it.sources || []).map(s => `<a href="${esc(s.url)}" rel="noopener" target="_blank">${esc(s.label)}</a>`).join(', ')}</p>
+  const ps = platformStyle(it.platform);
+  const chips = [
+    it.announced ? `<span class="bi-chip">Announced ${esc(dayMonth(it.announced))}</span>` : '',
+    it.effective ? `<span class="bi-chip bi-chip-date">From ${esc(dayMonth(it.effective))}</span>` : '',
+    IMPACT[it.impact] ? `<span class="bi-chip bi-impact bi-${esc(it.impact)}">${IMPACT[it.impact]}</span>` : '',
+  ].join('');
+  const tiles = PARTS.map(([k, label]) => `<div class="bi-tile bi-tile-${k}">${svg(PART_ICON[k], '0 0 24 24', 'bi-ico')}<h3>${esc(label)}</h3>${blocksHtml(it[k])}</div>`).join('\n    ');
+  return `<article class="brief-item bi bi-${ps.key}" id="item-${i + 1}" style="--pc:${ps.colour}">
+  <div class="bi-head">
+    <div class="bi-headtext">
+      <p class="bi-meta"><span class="bi-num">${String(i + 1).padStart(2, '0')}</span><span class="bi-plat">${esc(it.platform)}</span></p>
+      <h2>${esc(it.title)}</h2>
+      <div class="bi-chips">${chips}</div>
+    </div>
+    <div class="bi-art">${svg(ART[artFor(it, ps.key)], '0 0 170 120', 'bi-art-svg')}</div>
+  </div>
+  <p class="bi-tldr"><b>In short:</b> ${esc(it.tldr || firstSentence(it.new))}</p>
+  <div class="bi-grid">
+    ${tiles}
+  </div>
+  <p class="brief-src bi-src">${(it.sources || []).length > 1 ? 'Sources' : 'Source'}: ${(it.sources || []).map(s => `<a href="${esc(s.url)}" rel="noopener" target="_blank">${esc(s.label)} <span aria-hidden="true">&#8599;</span></a>`).join(' ')}</p>
 </article>`;
 }
 
 export function issueMain(c, { preview = false } = {}) {
   const covers = coversText(c.covers);
   return `${preview ? '<div class="brief-preview">Preview. Not published' + (c.webOnly ? ' (web only: this issue is not emailed)' : '') + '.</div>' : ''}
-<section class="brief-hero">
+<section class="brief-hero" data-hero>
   <div class="brief-w">
     <p class="brief-crumb"><a href="/updates/">${esc(NAME)}</a> <span aria-hidden="true">/</span> ${esc(dayMonthYear(c.date))}</p>
     <h1 class="brief-h1">${esc(c.title)}</h1>
     <p class="brief-meta">${esc(longDate(c.date))}${covers ? ' &middot; Covers ' + esc(covers) : ''} &middot; By <a href="/about/">Lewis Phillips</a></p>
     <div class="brief-summary">${blocksHtml(c.summary)}</div>
     ${c.oneThing ? `<div class="brief-one"><h2>If you only do one thing this week</h2>${blocksHtml(c.oneThing)}</div>` : ''}
-    <nav class="brief-toc" aria-label="In this issue"><h2>In this issue</h2><ol>${c.items.map((it, i) => `<li><a href="#item-${i + 1}"><span class="brief-toc-p">${esc(it.platform)}</span><span class="brief-toc-t">${esc(it.title)}</span></a></li>`).join('')}</ol></nav>
+    <nav class="brief-toc" aria-label="In this issue"><h2>In this issue</h2><ol>${c.items.map((it, i) => `<li><a href="#item-${i + 1}"><span class="brief-toc-p">${esc(it.platform)}</span><span class="brief-toc-t">${esc(it.title)}${it.impact === 'action' ? ' <em class="brief-toc-act">Action needed</em>' : ''}</span></a></li>`).join('')}</ol></nav>
   </div>
 </section>
 <section class="brief-body">
@@ -338,7 +415,7 @@ function archivePage(index) {
   const issues = index.issues || [];
   const latest = issues[0];
   const list = issues.map(i => `<li><a href="/updates/${esc(i.date)}/"><span class="brief-date">${esc(dayMonthYear(i.date))}</span><b>${esc(i.title)}</b><span class="brief-plat">${esc((i.platforms || []).join(' · '))}</span></a></li>`).join('');
-  const main = `<section class="brief-hero brief-hero-top">
+  const main = `<section class="brief-hero brief-hero-top" data-hero>
   <div class="brief-w">
     <span class="eyebrow">${esc(NAME)}</span>
     <h1 class="brief-h1">What changed in marketing this week, <span>and what it means for your account.</span></h1>

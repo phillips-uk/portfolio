@@ -133,3 +133,53 @@
 
 /* Insights hub (/guides/): the latest issue sits above the sign-up */
 .brief-guide .brief-latest { background: #fff; margin: 4px 0 24px; }
+
+/* ── Issue items, v4 (2026-11-15): one card per change, built for skimming ── */
+.brief-body { background: #FDF6EE; border-top: 1px solid #E8D8C4; }
+.brief-body .brief-item.bi { padding: 0; border-bottom: 0; }
+.bi { --pc: #985830; background: #fff; border: 1px solid #E8D8C4; border-radius: 14px; margin: 0 0 32px; overflow: hidden; box-shadow: 0 1px 4px rgba(152,88,48,0.06); scroll-margin-top: 84px; }
+.bi-head { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 20px; align-items: center; padding: 26px 28px 20px; border-top: 5px solid var(--pc); background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 7%, #fff) 0%, #fff 100%); }
+.bi-meta { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
+.bi-num { font-size: 12px; font-weight: 700; color: #fff; background: var(--pc); border-radius: 999px; padding: 3px 9px; letter-spacing: .04em; }
+.bi-plat { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--pc); }
+.bi h2 { font-size: clamp(21px, 2.4vw, 26px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 14px; color: #1A1A1A; }
+.bi-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.bi-chip { font-size: 12.5px; font-weight: 600; color: #4A4A4A; background: #fff; border: 1px solid #E8D8C4; border-radius: 999px; padding: 4px 11px; }
+.bi-chip-date { color: #1A1A1A; border-color: var(--pc); }
+.bi-impact.bi-action { background: #985830; border-color: #985830; color: #fff; }
+.bi-impact.bi-watch { background: #F5EBD9; border-color: #E2C9A8; color: #7A3F1F; }
+.bi-impact.bi-info { background: #EEF3F1; border-color: #D3E0DB; color: #2F6B66; }
+.bi-art { color: var(--pc); background: color-mix(in srgb, var(--pc) 9%, #fff); border-radius: 12px; padding: 10px; display: flex; align-items: center; justify-content: center; aspect-ratio: 17 / 12; }
+.bi-art-svg { width: 100%; height: auto; stroke-width: 3; }
+.bi-tldr { margin: 0; padding: 16px 28px; font-size: 17px; line-height: 1.55; color: #1A1A1A; background: #FFFBF5; border-top: 1px solid #F0E5D2; border-bottom: 1px solid #F0E5D2; }
+.bi-tldr b { color: var(--pc); }
+.bi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #F0E5D2; }
+.bi-tile { background: #fff; padding: 20px 24px 14px 24px; position: relative; }
+.bi-tile h3 { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6B6B6B; margin: 0 0 8px; padding-left: 34px; min-height: 26px; }
+.bi-ico { position: absolute; left: 24px; top: 20px; width: 26px; height: 26px; padding: 4px; border-radius: 8px; color: var(--pc); background: color-mix(in srgb, var(--pc) 11%, #fff); stroke-width: 1.8; }
+.bi-tile p, .bi-tile li { font-size: 15.5px; line-height: 1.6; color: #2A2A2A; margin: 0 0 10px; }
+.bi-tile ul { margin: 0 0 10px; padding-left: 18px; }
+.bi-tile li::marker { color: var(--pc); }
+.bi-tile-aware { background: #FFF8EE; }
+.bi-tile-aware .bi-ico { color: #7A3F1F; background: #F5E2C8; }
+.bi-src { margin: 0; padding: 14px 28px 18px; font-size: 13.5px; border-top: 1px solid #F0E5D2; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.bi-src a { color: var(--pc); font-weight: 600; text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--pc) 35%, transparent); }
+.bi-src a:hover { border-bottom-color: var(--pc); }
+.brief-toc-act { font-style: normal; font-size: 11px; font-weight: 700; color: #fff; background: #985830; border-radius: 999px; padding: 2px 8px; margin-left: 6px; white-space: nowrap; vertical-align: 1px; }
+.brief-body .brief-how { margin-top: 8px; }
+@media (hover: hover) and (pointer: fine) {
+  .bi { transition: box-shadow .35s ease, transform .35s cubic-bezier(.2, .7, .2, 1); }
+  .bi:hover { box-shadow: 0 24px 48px -32px rgba(122, 63, 31, .45); }
+}
+@media (max-width: 760px) {
+  .bi-head { grid-template-columns: minmax(0, 1fr) 96px; padding: 20px 18px 16px; gap: 14px; align-items: start; }
+  .bi-art { padding: 6px; }
+  .bi-tldr { padding: 14px 18px; font-size: 16px; }
+  .bi-grid { grid-template-columns: 1fr; }
+  .bi-tile { padding: 18px 18px 10px; }
+  .bi-ico { left: 18px; top: 18px; }
+  .bi-src { padding: 12px 18px 16px; }
+}
+@media (max-width: 420px) {
+  .bi-head { grid-template-columns: minmax(0, 1fr) 72px; }
+}
