@@ -44,6 +44,14 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (30
 - Contact links must stay `mailto:contact@phillips-uk.com` or `mailto:lewis@phillips-uk.com`, or `contact_click` stops counting.
 - **The contact form** ("Ask me a question", since 2026-11-14) is in the contact section of the homepage, Work and the five service pages (`contact-form.js`, styles in `agency.css`). It posts to `/enquiry` (`cloudflare/src/enquiry.js`): each question is saved to R2 under `admin/enquiries/`, added to the /admin funnel as a Lead card, and emailed to contact@ through Resend when the `RESEND_API_KEY` secret is set. Spam: hidden `company_url` trap, under 3 seconds on the page, more than 5 an hour from one connection. On success the page pushes `generate_lead` (with `form_location`); add it to the GTM trigger "Site events to GA4" and mark it a key event in GA4. CTAs link to `#contact` (guides and About to `/#contact`); never "Book a call".
 
+## The Monday Brief (since 2026-11-15)
+
+- Weekly "what's changed in marketing" issue at `/updates/` and by email at 07:00 UK every Monday (`cloudflare/src/brief.js`, template `cloudflare/private/brief-page.html`, `brief.css`, `brief-form.js`). Sign-up is double opt-in; confirmed addresses go to the Resend segment "The Monday Brief". Privacy notice at `/privacy/`.
+- **Never approve, publish or send an issue for Lewis.** A draft is `brief/issues/<Monday>.json` in R2; Lewis approves it in `/admin#brief`; the Monday cron sends only an approved, unchanged issue, once. How to draft and the file format: vault `01_Phillips/02_Website/The Monday Brief/00_How to draft an issue.md`.
+- Cron triggers use day names (`MON`, `FRI`, `SUN`): Cloudflare numbers weekdays differently from standard cron. The code acts on the London day and hour.
+- Resend free plans: 3,000 transactional emails a month (shared with the contact form), 1,000 marketing contacts. Past 1,000 subscribers is Lewis's decision.
+- Events `newsletter_signup` and `newsletter_confirm` are in the GTM trigger "Site events to GA4" (version 10).
+
 ## Page standards (summary, full detail in the Obsidian note)
 
 - Static HTML and vanilla JS only. No new React/Babel pages.
