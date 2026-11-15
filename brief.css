@@ -44,7 +44,7 @@
 .brief-how { font-size: 14px; line-height: 1.6; color: #6B6B6B; margin: 0 0 32px; }
 
 /* End-of-issue sign-up */
-.brief-cta { padding: 8px 0 88px; background: #fff; }
+.brief-cta { padding: 72px 0 88px; background: #fff; }
 .brief-card { background: #FDF6EE; border: 1px solid #E8D8C4; border-radius: 10px; padding: 32px; }
 .brief-card > h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
 .brief-card > p { font-size: 16px; line-height: 1.6; color: #4A4A4A; margin: 0 0 20px; }
@@ -110,6 +110,7 @@
   .brief-hero-top { padding: 56px 0 48px; }
   .brief-body { padding: 40px 0 16px; }
   .brief-card { padding: 24px 20px; }
+  .brief-cta { padding-top: 48px; }
   .brief-guide { padding: 48px 20px; }
 }
 @media (max-width: 560px) {

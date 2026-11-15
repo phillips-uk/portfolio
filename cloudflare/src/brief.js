@@ -40,7 +40,7 @@ export const CONSENT = {
 };
 const CONSENT_NOW = 'v1';
 
-const PLATFORMS = 'Google Ads, GA4, Google Search, Merchant Center, Microsoft Ads, Meta, Apple Ads and LinkedIn Ads';
+const PLATFORMS = 'Google Ads, GA4, SEO, Merchant Center, Microsoft Ads, Meta, Apple Ads and LinkedIn Ads';
 
 // The EMAIL is paused until the first real subscriber confirms (Lewis, 15 Nov 2026: no point emailing with nobody
 // signed up; keep the writing on). Until then the weekly routine runs as normal but an approved issue is only published
@@ -269,7 +269,7 @@ const NOINDEX = { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' };
 // Each item is a card built for skimming: platform and dates up top, a plain illustration (drawn here, no platform
 // logos), the one-line "in short", an impact tag, then the four parts as tiles with icons.
 const PLATFORM_STYLE = [
-  [/search/i, 'search', '#2F6B66'],
+  [/\bseo\b|search/i, 'search', '#2F6B66'],
   [/merchant|shopping/i, 'merchant', '#6A4C93'],
   [/analytics|ga4/i, 'analytics', '#9A6A12'],
   [/microsoft|bing/i, 'microsoft', '#2E5E8C'],
@@ -434,7 +434,7 @@ function archivePage(index) {
 </section>`;
   return shell({
     title: `${NAME}: weekly marketing updates | Phillips.`,
-    description: `What changed in Google Ads, GA4, Search, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads this week, and what it means for your account. One email every Monday.`,
+    description: `What changed in Google Ads, GA4, SEO, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads this week, and what it means for your account. One email every Monday.`,
     path: '/updates/',
     jsonld: {
       '@context': 'https://schema.org',
