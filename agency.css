@@ -304,7 +304,7 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
    Each holds the same few real pages of the site; showcase.js cycles them and scrolls each one. ── */
 .showcase { position: relative; margin: 0; padding: 0 0 6px; }
 .showcase-stage { position: relative; padding: 0 0 7% 0; }
-.mbp { position: relative; width: 86%; }
+.mbp { position: relative; width: 80%; margin-left: 5.5%; } /* the base is wider than the lid: the margin keeps it inside the card */
 .mbp-lid { position: relative; background: #0c0c0d; border-radius: 16px 16px 4px 4px; padding: 2% 2% 2.4%; box-shadow: 0 0 0 1.5px #b9bac0, 0 30px 60px -34px rgba(26,26,26,.55); }
 .mbp-lid::before { content: ""; position: absolute; z-index: 3; top: 2%; left: 50%; transform: translateX(-50%); width: 11%; height: 3.2%; background: #0c0c0d; border-radius: 0 0 7px 7px; }
 .mbp-screen { position: relative; aspect-ratio: 16 / 10.2; border-radius: 3px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
@@ -323,11 +323,11 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
 .shot-view { position: relative; flex: 1 1 auto; overflow: hidden; background: #fff; }
 .shot-view .pg { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; opacity: 0; transition: opacity .7s ease; will-change: transform; }
 .shot-view .pg.is-on { opacity: 1; }
-.iphone { position: absolute; right: 0; bottom: 0; width: 21%; min-width: 96px; aspect-ratio: 390 / 820; padding: 1.6%; background: #1b1b1d; border-radius: 17% / 8%; box-shadow: 0 0 0 1.5px #9c9ca1, 0 0 0 3px #1b1b1d, 0 26px 50px -24px rgba(26,26,26,.6); z-index: 4; }
-.iphone::before, .iphone::after { content: ""; position: absolute; width: 3px; background: #9c9ca1; border-radius: 2px; }
-.iphone::before { left: -4px; top: 22%; height: 9%; box-shadow: 0 160% 0 #9c9ca1; }
-.iphone::after { right: -4px; top: 28%; height: 14%; }
-.iphone .shot-view { height: 100%; border-radius: 15% / 7.2%; }
+.iphone { position: absolute; right: 0; bottom: 0; width: 21%; min-width: 96px; aspect-ratio: 390 / 830; padding: 4px; background: #111113; border-radius: 15% / 7%; box-shadow: 0 0 0 1px #a7a7ac, 0 26px 50px -24px rgba(26,26,26,.6); z-index: 4; }
+.iphone::before, .iphone::after { content: ""; position: absolute; width: 2px; background: #a7a7ac; border-radius: 2px; }
+.iphone::before { left: -3px; top: 22%; height: 9%; box-shadow: 0 160% 0 #9c9ca1; }
+.iphone::after { right: -3px; top: 28%; height: 14%; }
+.iphone .shot-view { height: 100%; border-radius: 13.5% / 6.3%; }
 .iphone-island { position: absolute; z-index: 3; top: 3.2%; left: 50%; transform: translateX(-50%); width: 30%; height: 3.6%; background: #000; border-radius: 999px; }
 .showcase-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
 .showcase-tabs button { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
@@ -370,7 +370,7 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
 }
 @media (max-width: 640px) {
   .story-shots { grid-template-columns: 1fr; }
-  .mbp { width: 90%; }
+  .mbp { width: 84%; margin-left: 5.5%; }
   .iphone { width: 25%; }
 }
 #analysis .grid-2 > .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
