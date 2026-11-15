@@ -47,6 +47,7 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (30
 ## The Monday Brief (since 2026-11-15)
 
 - Weekly "what's changed in marketing" issue at `/updates/` and by email at 07:00 UK every Monday (`cloudflare/src/brief.js`, template `cloudflare/private/brief-page.html`, `brief.css`, `brief-form.js`). Sign-up is double opt-in; confirmed addresses go to the Resend segment "The Monday Brief". Privacy notice at `/privacy/`.
+- **Paused until the first real subscriber** (Lewis, 15 Nov 2026): no Friday or Sunday notes and no Monday send until someone other than Lewis's own addresses confirms. That sets `startedAt` in `brief/config.json` and emails Lewis. An issue Lewis approves himself still goes out.
 - **Never approve, publish or send an issue for Lewis.** A draft is `brief/issues/<Monday>.json` in R2; Lewis approves it in `/admin#brief`; the Monday cron sends only an approved, unchanged issue, once. How to draft and the file format: vault `01_Phillips/02_Website/The Monday Brief/00_How to draft an issue.md`.
 - Cron triggers use day names (`MON`, `FRI`, `SUN`): Cloudflare numbers weekdays differently from standard cron. The code acts on the London day and hour.
 - Resend free plans: 3,000 transactional emails a month (shared with the contact form), 1,000 marketing contacts. Past 1,000 subscribers is Lewis's decision.

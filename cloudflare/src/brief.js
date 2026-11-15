@@ -42,6 +42,11 @@ const CONSENT_NOW = 'v1';
 
 const PLATFORMS = 'Google Ads, GA4, Google Search, Merchant Center, Microsoft Ads, Meta, Apple Ads and LinkedIn Ads';
 
+// The weekly routine (Friday draft note, Sunday reminder, Monday send) is paused until the first real subscriber
+// confirms (Lewis, 15 Nov 2026: no point running it with nobody signed up). Lewis's own addresses don't count.
+// The moment someone else confirms, brief/config.json gets "startedAt" and Lewis gets an email saying it has started.
+const OWN = ['lewis@phillips-uk.com', 'lewis@phillips-group.uk', 'lewisdp87@gmail.com', 'contact@phillips-uk.com'];
+
 /* ---------------- small helpers ---------------- */
 
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -523,6 +528,7 @@ async function confirm(request, url, env) {
   if (!listed.ok) { rec.listError = listed.error || 'unknown'; console.error('brief list add failed', rec.listError); } else delete rec.listError;
   await putJson(env, t.sub, rec);
   await env.BLOBS.delete(tKey);
+  if (!OWN.includes(rec.email)) await markStarted(env).catch(err => console.error('brief start', err && err.message));
   return html(messagePage({
     title: 'Subscribed',
     heading: "You're in",
@@ -649,13 +655,34 @@ async function syncList(env) {
 }
 
 async function counts(env) {
-  let confirmed = 0, pending = 0, unsynced = 0;
+  let confirmed = 0, pending = 0, unsynced = 0, others = 0;
   for (const key of await listKeys(env, 'brief/subscribers/')) {
     const rec = await getJson(env, key);
     if (!rec) continue;
-    if (rec.status === 'confirmed') { confirmed++; if (!rec.listSyncedAt) unsynced++; } else pending++;
+    if (rec.status === 'confirmed') { confirmed++; if (!OWN.includes(rec.email)) others++; if (!rec.listSyncedAt) unsynced++; } else pending++;
   }
-  return { confirmed, pending, unsynced };
+  return { confirmed, pending, unsynced, others };
+}
+
+// Starts the weekly routine when the first real subscriber confirms, and tells Lewis when the first issue goes out.
+async function markStarted(env) {
+  const cfg = (await getJson(env, 'brief/config.json')) || {};
+  if (cfg.startedAt) return;
+  cfg.startedAt = new Date().toISOString();
+  await putJson(env, 'brief/config.json', cfg);
+  const now = londonNow();
+  // The drafting task runs on Fridays at 13:00: if that has already passed this week, the first draft is next Friday's.
+  let friday = now.date;
+  while (utcDate(friday).getUTCDay() !== 5 || (friday === now.date && now.hour >= 13)) friday = addDays(friday, 1);
+  const monday = addDays(friday, 3);
+  await note(env, 'your first subscriber, the weekly routine has started', [
+    'Someone other than you has confirmed their subscription, so the weekly routine starts now:',
+    '',
+    `- Friday ${dayMonth(friday)}: the drafting task writes the issue for Monday ${dayMonthYear(monday)}, and you get an email when it's ready.`,
+    `- Monday ${dayMonth(monday)} at 07:00: it goes to everyone who confirmed, once you've approved it.`,
+    '',
+    ADMIN_LINK,
+  ]);
 }
 
 // Sends (or, for a web-only issue, just publishes) an approved issue. Writes "sending" before calling Resend, so a
@@ -719,8 +746,11 @@ export async function scheduled(controller, env) {
   // Local testing only: with the dev outbox on, brief/dev-now.json ({"at": "<ISO time>"}) stands in for the clock.
   if (env.BRIEF_DEV_OUTBOX) { const fake = await getJson(env, 'brief/dev-now.json'); if (fake && fake.at) when = Date.parse(fake.at); }
   const now = londonNow(new Date(when));
+  const started = !!((await getJson(env, 'brief/config.json')) || {}).startedAt;
   try {
-    if (now.weekday === 'Mon') return now.hour === 7 ? await mondayRun(env, now.date) : undefined;
+    // Paused (nobody but Lewis has signed up): no notes, and Monday only sends an issue Lewis approved himself.
+    if (now.weekday === 'Mon') return now.hour === 7 ? await mondayRun(env, now.date, started) : undefined;
+    if (!started) return;
     if (now.weekday === 'Fri') return await fridayNote(env, nextMonday(now.date));
     if (now.weekday === 'Sun') return await sundayNote(env, nextMonday(now.date));
   } catch (err) {
@@ -731,10 +761,11 @@ export async function scheduled(controller, env) {
 
 const ADMIN_LINK = `${SITE}/admin#brief`;
 
-async function mondayRun(env, date) {
+async function mondayRun(env, date, started = true) {
   await cleanup(env).catch(err => console.error('brief cleanup', err && err.message));
   const c = await getIssue(env, date);
   const state = await getState(env, date);
+  if (!started && (!c || state.status !== 'approved')) return; // paused: nothing to say
   if (!c) return note(env, 'nothing sent today', [`There was no draft for ${longDate(date)}, so nothing went out.`]);
   if (state.status === 'sent') return;
   if (state.status !== 'approved') return note(env, 'not sent: not approved', [`"${c.title}" was not approved, so it did not go out this morning.`, '', `If you want it out today: approve it, then press "Send now" at ${ADMIN_LINK}`]);
@@ -815,7 +846,8 @@ export async function briefAdmin(request, path, env, email, headers) {
       });
     }
     const [n, seg] = await Promise.all([counts(env), segmentId(env)]);
-    return json({ issues, subscribers: n, list: seg.ok ? { ok: true } : { ok: false, error: seg.error, status: seg.status || null }, today });
+    const cfg = (await getJson(env, 'brief/config.json')) || {};
+    return json({ issues, subscribers: n, startedAt: cfg.startedAt || null, list: seg.ok ? { ok: true } : { ok: false, error: seg.error, status: seg.status || null }, today });
   }
 
   const m = path.match(/^\/admin\/api\/brief\/(\d{4}-\d{2}-\d{2})\/(page|email|test|approve|withdraw|send-now)$/);

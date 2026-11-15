@@ -853,6 +853,7 @@
       </div>
       <div class="card" style="margin-bottom:20px">
         <div class="card-head"><h2>Issues</h2><span class="pill" id="br-pill">Loading</span></div>
+        <p class="br-list" id="br-state"></p>
         <p class="br-list" id="br-list" hidden></p>
         <div class="scroll">
           <table class="table">
@@ -2610,6 +2611,9 @@
     if (!d) { rows.innerHTML = '<tr><td colspan="4" class="empty">The Brief did not load. Refresh to try again.</td></tr>'; $('br-pill').textContent = 'Not loaded'; return; }
     $('br-conf').textContent = d.subscribers.confirmed; $('br-pend').textContent = d.subscribers.pending;
     $('br-pub').textContent = d.issues.filter(function (i) { return i.publishedAt; }).length;
+    $('br-state').textContent = d.startedAt
+      ? 'Weekly routine running since ' + fmt(d.startedAt) + ': Friday draft, Monday 07:00 send once you approve.'
+      : 'Weekly routine paused until someone other than you confirms a sign-up (' + d.subscribers.others + ' so far). It starts by itself, and you get an email when it does. An issue you approve still goes out.';
     var waiting = d.issues.filter(function (i) { return i.status === 'draft' && !i.problems.length && i.date >= d.today; }).length;
     $('b-brief').textContent = waiting || '';
     var lst = $('br-list');
