@@ -300,15 +300,46 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
 }
 
 /* ── About page and work screenshots (2026-11-14) ── */
-.site-shot { position: relative; margin: 0; padding: 0 0 28px; }
-.site-shot .frame { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-raised); }
-.site-shot .bar { display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; background: var(--cream); border-bottom: 1px solid var(--border); }
-.site-shot .bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
-.site-shot .bar span { margin-left: 8px; font-size: 11px; color: var(--muted); letter-spacing: 0.01em; }
-.site-shot .desk { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-.site-shot .phone { position: absolute; right: -10px; bottom: 0; width: 24%; height: auto; min-width: 92px; border-radius: 16px; border: 4px solid #1A1A1A; box-shadow: 0 14px 34px rgba(26,26,26,0.22); background: #1A1A1A; aspect-ratio: 351 / 640; object-fit: cover; object-position: top; }
-.site-shot figcaption { font-size: 13px; color: var(--muted); margin-top: 14px; line-height: 1.45; padding-right: 26%; }
-.site-shot figcaption a { color: var(--amber); font-weight: 600; text-decoration: none; }
+/* ── Website showcases (2026-11-15): a MacBook Pro with a Safari window, and an iPhone, both drawn in CSS.
+   Each holds the same few real pages of the site; showcase.js cycles them and scrolls each one. ── */
+.showcase { position: relative; margin: 0; padding: 0 0 6px; }
+.showcase-stage { position: relative; padding: 0 0 7% 0; }
+.mbp { position: relative; width: 86%; }
+.mbp-lid { position: relative; background: #0c0c0d; border-radius: 16px 16px 4px 4px; padding: 2% 2% 2.4%; box-shadow: 0 0 0 1.5px #b9bac0, 0 30px 60px -34px rgba(26,26,26,.55); }
+.mbp-lid::before { content: ""; position: absolute; z-index: 3; top: 2%; left: 50%; transform: translateX(-50%); width: 11%; height: 3.2%; background: #0c0c0d; border-radius: 0 0 7px 7px; }
+.mbp-screen { position: relative; aspect-ratio: 16 / 10.2; border-radius: 3px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.mbp-screen::before { content: ""; flex: 0 0 auto; height: 3.4%; min-height: 6px; background: #ececef; border-bottom: 1px solid #dcdce0; } /* the macOS menu bar, where the notch sits */
+.mbp-screen .safari { flex: 1 1 auto; min-height: 0; }
+.mbp-base { position: relative; height: 0; padding-bottom: 2.4%; width: 112%; margin-left: -6%; background: linear-gradient(180deg, #e9e9ec 0%, #c6c7cc 60%, #a9aab0 100%); border-radius: 2px 2px 18px 18px / 2px 2px 10px 10px; box-shadow: 0 14px 24px -14px rgba(26,26,26,.5); }
+.mbp-base::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 14%; height: 40%; background: #b4b5ba; border-radius: 0 0 8px 8px; }
+.safari { display: flex; flex-direction: column; height: 100%; }
+.safari-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; height: clamp(18px, 2.6vw, 30px); padding: 0 10px; background: #f6f6f7; border-bottom: 1px solid #e2e2e5; }
+.safari-tl { display: flex; gap: 5px; flex: 0 0 auto; }
+.safari-tl i { width: clamp(6px, .75vw, 10px); height: clamp(6px, .75vw, 10px); border-radius: 50%; background: #ff5f57; }
+.safari-tl i:nth-child(2) { background: #febc2e; }
+.safari-tl i:nth-child(3) { background: #28c840; }
+.safari-url { margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 5px; width: 46%; height: 64%; background: #e8e8eb; border-radius: 6px; font-size: clamp(7px, .85vw, 11px); color: #3c3c43; letter-spacing: .01em; }
+.safari-url svg { width: 1em; height: 1em; flex: 0 0 auto; opacity: .6; }
+.shot-view { position: relative; flex: 1 1 auto; overflow: hidden; background: #fff; }
+.shot-view .pg { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; opacity: 0; transition: opacity .7s ease; will-change: transform; }
+.shot-view .pg.is-on { opacity: 1; }
+.iphone { position: absolute; right: 0; bottom: 0; width: 21%; min-width: 96px; aspect-ratio: 390 / 820; padding: 1.6%; background: #1b1b1d; border-radius: 17% / 8%; box-shadow: 0 0 0 1.5px #9c9ca1, 0 0 0 3px #1b1b1d, 0 26px 50px -24px rgba(26,26,26,.6); z-index: 4; }
+.iphone::before, .iphone::after { content: ""; position: absolute; width: 3px; background: #9c9ca1; border-radius: 2px; }
+.iphone::before { left: -4px; top: 22%; height: 9%; box-shadow: 0 160% 0 #9c9ca1; }
+.iphone::after { right: -4px; top: 28%; height: 14%; }
+.iphone .shot-view { height: 100%; border-radius: 15% / 7.2%; }
+.iphone-island { position: absolute; z-index: 3; top: 3.2%; left: 50%; transform: translateX(-50%); width: 30%; height: 3.6%; background: #000; border-radius: 999px; }
+.showcase-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.showcase-tabs button { font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
+.showcase-tabs button:hover { border-color: var(--amber); color: var(--ink); }
+.showcase-tabs button[aria-selected="true"] { background: var(--amber); border-color: var(--amber); color: #fff; }
+.showcase figcaption { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.45; }
+.showcase figcaption a { color: var(--amber); font-weight: 600; text-decoration: none; }
+/* Each page scrolls gently while it is on screen (showcase.js adds .run and sets --view-h) */
+@keyframes pg-scroll { from { transform: translateY(0); } to { transform: translateY(calc((var(--view-h, 400px) - 100%) * var(--depth, .75))); } }
+.shot-view .pg.run { animation: pg-scroll 6.4s cubic-bezier(.45, 0, .35, 1) .7s both; }
+.showcase:hover .shot-view .pg.run { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .shot-view .pg.run { animation: none; } .shot-view .pg { transition: none; } }
 .story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 64px; align-items: start; }
 .story-text p { font-size: 18px; line-height: 1.7; color: #2A2A2A; margin: 0 0 20px; max-width: 620px; }
 .story-text p:last-child { margin-bottom: 0; }
@@ -328,7 +359,7 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
 .analysis-l { font-size: 13px; color: var(--muted); margin: 6px 0 18px; }
 .analysis-tags { font-size: 12px; font-weight: 600; color: var(--amber-dark); margin: -4px 0 12px; }
 .case-shot { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--border); }
-.case-shot .site-shot { max-width: 720px; }
+.case-shot .showcase { max-width: 760px; }
 @media (max-width: 1000px) {
   .story { grid-template-columns: 1fr; gap: 48px; }
   .story-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
@@ -339,7 +370,8 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
 }
 @media (max-width: 640px) {
   .story-shots { grid-template-columns: 1fr; }
-  .site-shot .phone { right: -4px; width: 26%; border-width: 3px; border-radius: 12px; }
+  .mbp { width: 90%; }
+  .iphone { width: 25%; }
 }
 #analysis .grid-2 > .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
