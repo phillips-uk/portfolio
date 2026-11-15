@@ -4,7 +4,7 @@ import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard, invitePing } from './rate-card.js';
 import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
-import { isBriefPath, brief, sitemapWithIssues, scheduled as briefScheduled } from './brief.js';
+import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -146,6 +146,8 @@ async function route(request, env, ctx) {
     if (res) return withGtm(res);
   }
   if (path === '/sitemap.xml') return sitemapWithIssues(await env.ASSETS.fetch(request), env);
+  // The Insights hub shows the latest Monday Brief issue
+  if (path === '/guides') return withGtm(await withLatestIssue(await env.ASSETS.fetch(request), env));
 
   if (isRateCardPath(path)) return rateCard(request, url, env, ctx);
   if (path === '/invite-ping' && request.method === 'POST') return invitePing(request, env);

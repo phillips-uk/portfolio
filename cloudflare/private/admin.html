@@ -2612,8 +2612,8 @@
     $('br-conf').textContent = d.subscribers.confirmed; $('br-pend').textContent = d.subscribers.pending;
     $('br-pub').textContent = d.issues.filter(function (i) { return i.publishedAt; }).length;
     $('br-state').textContent = d.startedAt
-      ? 'Weekly routine running since ' + fmt(d.startedAt) + ': Friday draft, Monday 07:00 send once you approve.'
-      : 'Weekly routine paused until someone other than you confirms a sign-up (' + d.subscribers.others + ' so far). It starts by itself, and you get an email when it does. An issue you approve still goes out.';
+      ? 'Email on since ' + fmt(d.startedAt) + ': approved issues go to subscribers at 07:00 on their Monday.'
+      : 'Email paused until someone other than you confirms a sign-up (' + d.subscribers.others + ' so far). Approved issues go on the website only. The email starts by itself, and you get an email when it does.';
     var waiting = d.issues.filter(function (i) { return i.status === 'draft' && !i.problems.length && i.date >= d.today; }).length;
     $('b-brief').textContent = waiting || '';
     var lst = $('br-list');

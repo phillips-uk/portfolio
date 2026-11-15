@@ -130,3 +130,6 @@
 .privacy p { font-size: 16.5px; line-height: 1.65; margin: 0 0 14px; }
 .privacy a { color: #985830; }
 .privacy { padding-bottom: 72px; }
+
+/* Insights hub (/guides/): the latest issue sits above the sign-up */
+.brief-guide .brief-latest { background: #fff; margin: 4px 0 24px; }

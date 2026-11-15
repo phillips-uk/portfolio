@@ -42,9 +42,10 @@ const CONSENT_NOW = 'v1';
 
 const PLATFORMS = 'Google Ads, GA4, Google Search, Merchant Center, Microsoft Ads, Meta, Apple Ads and LinkedIn Ads';
 
-// The weekly routine (Friday draft note, Sunday reminder, Monday send) is paused until the first real subscriber
-// confirms (Lewis, 15 Nov 2026: no point running it with nobody signed up). Lewis's own addresses don't count.
-// The moment someone else confirms, brief/config.json gets "startedAt" and Lewis gets an email saying it has started.
+// The EMAIL is paused until the first real subscriber confirms (Lewis, 15 Nov 2026: no point emailing with nobody
+// signed up; keep the writing on). Until then the weekly routine runs as normal but an approved issue is only published
+// on the website. Lewis's own addresses don't count. The moment someone else confirms, brief/config.json gets
+// "startedAt", Lewis gets an email, and approved issues are emailed from then on.
 const OWN = ['lewis@phillips-uk.com', 'lewis@phillips-group.uk', 'lewisdp87@gmail.com', 'contact@phillips-uk.com'];
 
 /* ---------------- small helpers ---------------- */
@@ -388,6 +389,15 @@ function feed(index) {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>${esc(NAME)} | Phillips.</title><link>${SITE}/updates/</link><atom:link href="${SITE}/updates/feed.xml" rel="self" type="application/rss+xml"/><description>What changed in marketing platforms this week and what it means for your account.</description><language>en-gb</language>${items}</channel></rss>`;
 }
 
+// The Insights hub (/guides/): fills its Monday Brief slot with the latest published issue.
+export async function withLatestIssue(res, env) {
+  if (res.status !== 200 || !(res.headers.get('Content-Type') || '').includes('text/html')) return res;
+  const latest = ((await getIndex(env).catch(() => ({ issues: [] }))).issues || [])[0];
+  if (!latest) return res;
+  const card = `<a class="brief-latest" href="/updates/${esc(latest.date)}/"><span class="brief-date">Latest issue &middot; ${esc(longDate(latest.date))}</span><b>${esc(latest.title)}</b><span class="brief-sum">${esc(latest.summary)}</span><span class="brief-more">Read this week's Brief &rarr;</span></a>`;
+  return new HTMLRewriter().on('[data-brief-latest]', { element(el) { el.setInnerContent(card, { html: true }); } }).transform(res);
+}
+
 // Adds published issues to the static sitemap.
 export async function sitemapWithIssues(res, env) {
   if (res.status !== 200) return res;
@@ -675,11 +685,11 @@ async function markStarted(env) {
   let friday = now.date;
   while (utcDate(friday).getUTCDay() !== 5 || (friday === now.date && now.hour >= 13)) friday = addDays(friday, 1);
   const monday = addDays(friday, 3);
-  await note(env, 'your first subscriber, the weekly routine has started', [
-    'Someone other than you has confirmed their subscription, so the weekly routine starts now:',
+  await note(env, 'your first subscriber, the email starts now', [
+    'Someone other than you has confirmed their subscription, so the email is switched on:',
     '',
     `- Friday ${dayMonth(friday)}: the drafting task writes the issue for Monday ${dayMonthYear(monday)}, and you get an email when it's ready.`,
-    `- Monday ${dayMonth(monday)} at 07:00: it goes to everyone who confirmed, once you've approved it.`,
+    `- Monday ${dayMonth(monday)} at 07:00: once you've approved it, it goes to everyone who confirmed, as well as onto the website.`,
     '',
     ADMIN_LINK,
   ]);
@@ -687,6 +697,8 @@ async function markStarted(env) {
 
 // Sends (or, for a web-only issue, just publishes) an approved issue. Writes "sending" before calling Resend, so a
 // second run can never send it twice.
+async function emailOn(env) { return !!((await getJson(env, 'brief/config.json')) || {}).startedAt; }
+
 async function sendIssue(env, date, by) {
   const c = await getIssue(env, date);
   const state = await getState(env, date);
@@ -697,9 +709,10 @@ async function sendIssue(env, date, by) {
   if (state.status !== 'approved') return { ok: false, error: 'This issue is not approved.' };
   if (state.approvedHash !== await contentHash(c)) return { ok: false, error: 'The issue changed after it was approved. Approve it again first.' };
 
-  if (c.webOnly) {
+  if (c.webOnly || !(await emailOn(env))) {
     await publish(env, date, c, state);
     state.status = 'sent'; state.sentAt = new Date().toISOString(); state.sentBy = by; state.webOnly = true;
+    if (!c.webOnly) state.emailPaused = true;
     await putState(env, date, state);
     return { ok: true, webOnly: true };
   }
@@ -746,11 +759,8 @@ export async function scheduled(controller, env) {
   // Local testing only: with the dev outbox on, brief/dev-now.json ({"at": "<ISO time>"}) stands in for the clock.
   if (env.BRIEF_DEV_OUTBOX) { const fake = await getJson(env, 'brief/dev-now.json'); if (fake && fake.at) when = Date.parse(fake.at); }
   const now = londonNow(new Date(when));
-  const started = !!((await getJson(env, 'brief/config.json')) || {}).startedAt;
   try {
-    // Paused (nobody but Lewis has signed up): no notes, and Monday only sends an issue Lewis approved himself.
-    if (now.weekday === 'Mon') return now.hour === 7 ? await mondayRun(env, now.date, started) : undefined;
-    if (!started) return;
+    if (now.weekday === 'Mon') return now.hour === 7 ? await mondayRun(env, now.date) : undefined;
     if (now.weekday === 'Fri') return await fridayNote(env, nextMonday(now.date));
     if (now.weekday === 'Sun') return await sundayNote(env, nextMonday(now.date));
   } catch (err) {
@@ -761,18 +771,17 @@ export async function scheduled(controller, env) {
 
 const ADMIN_LINK = `${SITE}/admin#brief`;
 
-async function mondayRun(env, date, started = true) {
+async function mondayRun(env, date) {
   await cleanup(env).catch(err => console.error('brief cleanup', err && err.message));
   const c = await getIssue(env, date);
   const state = await getState(env, date);
-  if (!started && (!c || state.status !== 'approved')) return; // paused: nothing to say
   if (!c) return note(env, 'nothing sent today', [`There was no draft for ${longDate(date)}, so nothing went out.`]);
   if (state.status === 'sent') return;
   if (state.status !== 'approved') return note(env, 'not sent: not approved', [`"${c.title}" was not approved, so it did not go out this morning.`, '', `If you want it out today: approve it, then press "Send now" at ${ADMIN_LINK}`]);
   const r = await sendIssue(env, date, 'Monday 07:00 send');
   if (!r.ok) return note(env, 'not sent', [`"${c.title}" did not go out: ${r.error}`, '', `Fix it, then press "Send now" at ${ADMIN_LINK}`]);
   const n = await counts(env);
-  return note(env, 'sent', [`"${c.title}" went out at 07:00${r.webOnly ? ' (web only, no email)' : ` to the mailing list (${n.confirmed} confirmed sign-ups on record).`}`, '', `Page: ${SITE}/updates/${date}/`]);
+  return note(env, r.webOnly ? 'published' : 'sent', [`"${c.title}" ${r.webOnly ? 'is on the website now. No email: the email starts when the first subscriber confirms.' : `went out at 07:00 to the mailing list (${n.confirmed} confirmed sign-ups on record).`}`, '', `Page: ${SITE}/updates/${date}/`, `LinkedIn post draft: vault 01_Phillips/02_Website/The Monday Brief/${date}/linkedin.md`]);
 }
 
 async function fridayNote(env, monday) {
@@ -784,7 +793,8 @@ async function fridayNote(env, monday) {
     problems.length ? `\nIt has problems to fix before it can be approved:\n- ${problems.join('\n- ')}` : null,
     '',
     `Review it, send yourself a test and approve it at ${ADMIN_LINK}`,
-    'It goes out at 07:00 on Monday only if you approve it.',
+    (await emailOn(env)) ? 'It goes out at 07:00 on Monday only if you approve it.' : 'Once approved it goes on the website at 07:00 on Monday. No email yet: that starts when the first subscriber confirms.',
+    `LinkedIn post draft: vault 01_Phillips/02_Website/The Monday Brief/${monday}/linkedin.md`,
   ]);
 }
 
@@ -792,7 +802,7 @@ async function sundayNote(env, monday) {
   const c = await getIssue(env, monday);
   const state = await getState(env, monday);
   if (!c || state.status === 'approved' || state.status === 'sent') return;
-  return note(env, 'waiting for your approval', [`"${c.title}" goes out at 07:00 tomorrow only if you approve it.`, '', ADMIN_LINK]);
+  return note(env, 'waiting for your approval', [`"${c.title}" ${(await emailOn(env)) ? 'goes out' : 'goes on the website'} at 07:00 tomorrow only if you approve it.`, '', ADMIN_LINK]);
 }
 
 /* ---------------- routing ---------------- */
