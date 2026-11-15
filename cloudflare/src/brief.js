@@ -25,9 +25,9 @@ const NOTE_TO = 'lewis@phillips-uk.com';
 const INDEXNOW_KEY = 'c16543d0048f2c95ad3738e0c5b0a2a7';
 const LEGAL = 'Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX.';
 
-export const CRON_FRIDAY = '0 16 * * 5';   // tell Lewis whether Monday's draft is ready
-export const CRON_SUNDAY = '0 18 * * 0';   // remind him if it isn't approved yet
-// Monday: 06:00 and 07:00 UTC both fire; only the one that is 07:00 in London acts (BST and GMT).
+// Cron triggers (wrangler.jsonc), told apart by the London day and hour, not by the cron string:
+// Monday 06:00 and 07:00 UTC both fire and only the one that is 07:00 in London sends (BST and GMT);
+// the Friday one tells Lewis whether Monday's draft is ready; the Sunday one reminds him if it isn't approved.
 
 const TOKEN_DAYS = 7;          // confirmation links expire, and unconfirmed sign-ups are deleted, after this
 const MIN_MS = 2000;           // a person needs longer than this to type an email address
@@ -720,9 +720,9 @@ export async function scheduled(controller, env) {
   if (env.BRIEF_DEV_OUTBOX) { const fake = await getJson(env, 'brief/dev-now.json'); if (fake && fake.at) when = Date.parse(fake.at); }
   const now = londonNow(new Date(when));
   try {
-    if (now.weekday === 'Mon' && now.hour === 7) return await mondayRun(env, now.date);
-    if (controller.cron === CRON_FRIDAY) return await fridayNote(env, nextMonday(now.date));
-    if (controller.cron === CRON_SUNDAY) return await sundayNote(env, nextMonday(now.date));
+    if (now.weekday === 'Mon') return now.hour === 7 ? await mondayRun(env, now.date) : undefined;
+    if (now.weekday === 'Fri') return await fridayNote(env, nextMonday(now.date));
+    if (now.weekday === 'Sun') return await sundayNote(env, nextMonday(now.date));
   } catch (err) {
     console.error('brief scheduled', err && err.stack);
     await note(env, 'something went wrong', [`The ${controller.cron} run failed: ${err && err.message}`, '', 'Check the Worker logs in Cloudflare.']);
