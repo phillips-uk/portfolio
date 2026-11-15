@@ -34,7 +34,13 @@ Key facts:
 - [Google Ads Bidding Strategy: Which to Use and When](https://www.phillips-uk.com/guides/google-ads-bidding-strategy/)
 - [Target CPA With Few Conversions: How to Tell If It's Working](https://www.phillips-uk.com/guides/target-cpa-few-conversions/)
 
+## The Monday Brief
+
+- [The Monday Brief](https://www.phillips-uk.com/updates/): a weekly email and web page, every Monday at 7am UK time, on what changed in Google Ads, GA4, Google Search, Merchant Center, Microsoft Ads, Meta, Apple Ads and LinkedIn Ads, and what each change could affect in an account. Every item links to the platform's own announcement. Free, with double opt-in sign-up.
+
 ## Optional
+
+- [Privacy notice](https://www.phillips-uk.com/privacy/): what the site collects, why, and who it goes to.
 
 - [Phillips Group](https://phillips-group.uk/): the holding company and its businesses (The Director's Office, Phillips., Before You Pay, Search Desk).
 - [LinkedIn](https://www.linkedin.com/in/lewis-p-153b2119a/)

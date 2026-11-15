@@ -6,6 +6,7 @@ import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, updateInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
 import { deals } from './pipeline.js';
 import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
+import { briefAdmin } from './brief.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -259,6 +260,8 @@ export async function admin(request, url, env) {
       return inv ? publicInvite(inv, url.origin) : null;
     }, email);
   }
+  // The Monday Brief: drafts, previews, test sends and Lewis's approval (cloudflare/src/brief.js)
+  if (path === '/admin/api/brief' || path.startsWith('/admin/api/brief/')) return briefAdmin(request, path, env, email, { 'Content-Type': 'application/json', ...NO_INDEX });
   const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);
   if (doc) {
     const d = await getDoc(env, doc[1]);

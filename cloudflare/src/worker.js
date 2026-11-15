@@ -4,6 +4,7 @@ import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard, invitePing } from './rate-card.js';
 import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
+import { isBriefPath, brief, sitemapWithIssues, scheduled as briefScheduled } from './brief.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -139,6 +140,13 @@ async function route(request, env, ctx) {
   // The "Ask me a question" form (cloudflare/src/enquiry.js)
   if (path === '/enquiry') return request.method === 'POST' ? enquiry(request, env) : new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
 
+  // The Monday Brief: sign-up, confirmation, issue pages and archive (cloudflare/src/brief.js)
+  if (isBriefPath(url.pathname)) {
+    const res = await brief(request, url, env);
+    if (res) return withGtm(res);
+  }
+  if (path === '/sitemap.xml') return sitemapWithIssues(await env.ASSETS.fetch(request), env);
+
   if (isRateCardPath(path)) return rateCard(request, url, env, ctx);
   if (path === '/invite-ping' && request.method === 'POST') return invitePing(request, env);
   if (isAdminPath(path)) return admin(request, url, env);
@@ -159,6 +167,12 @@ export default {
       res.headers.set('X-Robots-Tag', 'noindex, nofollow');
     }
     return res;
+  },
+
+  // Cron triggers (wrangler.jsonc): the Monday Brief send at 07:00 UK time and Lewis's Friday and Sunday notes.
+  async scheduled(controller, env, ctx) {
+    globalThis.__phEnv = env; globalThis.__phCtx = ctx;
+    ctx.waitUntil(briefScheduled(controller, env));
   },
 
   async queue(batch, env, ctx) {

@@ -20,6 +20,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},3000)}</script>
 <link rel="stylesheet" href="/motion.css?v=3">
+<link rel="stylesheet" href="/brief.css?v=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -966,6 +967,22 @@
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════ THE MONDAY BRIEF -->
+<section class="brief-guide" aria-labelledby="brief-guide-h">
+  <div class="brief-guide-inner">
+    <span class="brief-eyebrow">The Monday Brief</span>
+    <h2 id="brief-guide-h">What changed in marketing last week, every Monday.</h2>
+    <p class="brief-guide-body">One email at 7am on the week's changes to Google Ads, GA4, Search, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads, and what each one could affect in your account. <a href="/updates/">See past issues</a>.</p>
+    <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate>
+      <label class="brief-label" for="brief-email-guide">Your email address</label>
+      <div class="brief-row"><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required placeholder="you@yourbusiness.co.uk"><button type="submit" class="brief-btn">Get the Brief</button></div>
+      <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
+      <p class="brief-note">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account. I email you first to confirm. Unsubscribe any time. <a href="/privacy/">Privacy notice</a>.</p>
+      <p class="brief-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════════════════ FOOTER -->
 <footer class="site-footer">
   <div class="site-footer-inner">
@@ -977,6 +994,8 @@
       <a href="/#services" class="footer-link">Services</a>
       <a href="/work/" class="footer-link">Work</a>
       <a href="/#contact" class="footer-link">Get in touch</a>
+      <a href="/updates/" class="footer-link">The Monday Brief</a>
+      <a href="/privacy/" class="footer-link">Privacy</a>
     </div>
   </div>
   <nav class="group-links" aria-label="Phillips Group of Companies" style="max-width:1200px;margin:14px auto 0;font-size:12px;line-height:1.55;color:rgba(255,255,255,0.4)"><a href="https://phillips-group.uk/" style="color:inherit;text-decoration:underline">Phillips Group</a> of Companies: <span style="white-space:nowrap"><a href="https://thedirectorsoffice.uk/" style="color:inherit;text-decoration:underline">The Director's Office</a> &middot;</span> <span style="white-space:nowrap">Phillips. &middot;</span> <span style="white-space:nowrap"><a href="https://beforeyoupay.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Before You Pay</a> &middot;</span> <a href="https://searchdesk.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Search Desk</a></nav>
@@ -1019,6 +1038,7 @@ document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
   });
 })();
 </script>
+<script src="/brief-form.js?v=1" defer></script>
 <script src="/motion.js?v=3" defer></script>
 </body>
 </html>
