@@ -51,6 +51,7 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (30
 - Mobile-first: every multi-column grid collapses at 900px; use the shared hamburger drawer pattern.
 - Every public page: title `Page | Phillips.`, meta description, canonical and OG tags on `https://www.phillips-uk.com/...`, one `<h1>`, GTM `GTM-WS5CP6NW` (Search Console is verified through it, never remove it).
 - Raw Claude Design exports go in `_design/` (git-ignored), never deployed.
+- **AI search (local LLM strategy, since 2026-11-15):** the business and Lewis are single entities in JSON-LD (`https://www.phillips-uk.com/#business`, `https://www.phillips-uk.com/about/#lewis`); new pages point `provider`/`author` at those `@id`s instead of repeating details. Keep `llms.txt` in step when a service page, guide or key fact changes. After a deploy that changes pages, ping IndexNow (key file `c16543d0048f2c95ad3738e0c5b0a2a7.txt` at the root) with the changed URLs. Answers in FAQs open with one sentence that stands on its own. Strategy: vault `01_Phillips/02_Website/04_Local LLM Strategy.md`.
 
 ## End of session
 
