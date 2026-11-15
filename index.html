@@ -23,20 +23,198 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "name": "Phillips.",
-  "url": "https://www.phillips-uk.com/",
-  "logo": "https://www.phillips-uk.com/logo/phillips-lockup.svg",
-  "image": "https://www.phillips-uk.com/images/og-agency.png",
-  "email": "contact@phillips-uk.com",
-  "description": "Marketing consultant for businesses in Ely and Cambridgeshire: senior marketing without the commitment of an employee, or support for an in-house team with strategy and execution. Websites, local SEO, Google Ads, tracking and marketing systems. Consultancy for larger companies.",
-  "areaServed": [
-    { "@type": "City", "name": "Ely" },
-    { "@type": "AdministrativeArea", "name": "Cambridgeshire" }
-  ],
-  "founder": { "@type": "Person", "name": "Lewis Phillips", "url": "https://www.phillips-uk.com/about/" },
-  "parentOrganization": { "@type": "Organization", "name": "PHILLIPSGROUPUK LIMITED", "url": "https://phillips-group.uk/" },
-  "sameAs": ["https://www.linkedin.com/in/lewis-p-153b2119a/"]
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.phillips-uk.com/#business",
+      "name": "Phillips.",
+      "url": "https://www.phillips-uk.com/",
+      "logo": "https://www.phillips-uk.com/logo/phillips-lockup.svg",
+      "image": "https://www.phillips-uk.com/images/og-agency.png",
+      "email": "contact@phillips-uk.com",
+      "description": "Marketing consultant for businesses in Ely and Cambridgeshire: senior marketing without the commitment of an employee, or support for an in-house team with strategy and execution. Websites, local SEO and AI search, Google Ads, tracking and marketing systems. Consultancy for larger companies.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ely",
+        "addressRegion": "Cambridgeshire",
+        "addressCountry": "GB"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Ely"
+        },
+        {
+          "@type": "City",
+          "name": "Soham"
+        },
+        {
+          "@type": "City",
+          "name": "Littleport"
+        },
+        {
+          "@type": "City",
+          "name": "Cambridge"
+        },
+        {
+          "@type": "City",
+          "name": "Newmarket"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Cambridgeshire"
+        }
+      ],
+      "founder": {
+        "@id": "https://www.phillips-uk.com/about/#lewis"
+      },
+      "knowsAbout": [
+        "Web design",
+        "Local SEO",
+        "AI search optimisation",
+        "Google Ads",
+        "Paid media",
+        "Conversion tracking",
+        "Google Analytics 4",
+        "Google Tag Manager",
+        "Marketing systems"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Marketing services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web design",
+              "url": "https://www.phillips-uk.com/web-design/"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Local SEO and AI search",
+              "url": "https://www.phillips-uk.com/local-seo/"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Google Ads",
+              "url": "https://www.phillips-uk.com/google-ads/"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Marketing systems",
+              "url": "https://www.phillips-uk.com/marketing-systems/"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Consultancy for larger companies",
+              "url": "https://www.phillips-uk.com/consultancy/"
+            }
+          }
+        ]
+      },
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "PHILLIPSGROUPUK LIMITED",
+        "url": "https://phillips-group.uk/"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/lewis-p-153b2119a/"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.phillips-uk.com/about/#lewis",
+      "name": "Lewis Phillips",
+      "jobTitle": "Marketing consultant",
+      "url": "https://www.phillips-uk.com/about/",
+      "image": "https://www.phillips-uk.com/images/profile.jpg",
+      "homeLocation": {
+        "@type": "Place",
+        "name": "Ely, Cambridgeshire"
+      },
+      "worksFor": {
+        "@id": "https://www.phillips-uk.com/#business"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/lewis-p-153b2119a/"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.phillips-uk.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who can help with marketing for a small business in Ely?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lewis Phillips is a marketing consultant based in Ely who helps small businesses across Ely and Cambridgeshire. That's me: I plan the marketing and do the work, from websites, local search and Google Ads to the tracking and systems behind them."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does a marketing consultant do for a small business?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A marketing consultant helps a small business decide what to do about its marketing, then helps get it done. I look at the full picture, decide what needs attention first and do the work: websites, advertising, tracking and systems."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I use a marketing consultant or an agency?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A consultant suits a business that wants to work directly with one senior person; an agency gives you a team. With Phillips. you work with me, Lewis Phillips, throughout: instead of a marketing hire, or alongside the people you already have."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which areas do you cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Phillips. works with businesses in Ely, Soham, Littleport, Cambridge, Newmarket and the villages between, and across Cambridgeshire. Consultancy for larger and international companies isn't limited by area."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does it cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There are no set prices: every piece of work is scoped and priced in writing before it starts. You see what I'd do first, what it involves and what it costs, and decide before anything begins. Asking a question puts you under no obligation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you help my business show up in ChatGPT and Google's AI answers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes: I make sure your business is described clearly and consistently wherever search engines and AI tools look, so they can use it in their answers. That means clear answers on your site, matching details across listings and review sites, structured data and a monthly check of what AI assistants say. Nobody controls AI answers, so there are no guarantees."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I get started?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Send a question through the “Ask me a question” form on any page of phillips-uk.com. I reply by email, and if it makes sense to work together, you get a plain plan in writing before anything starts. No preparation needed, and no obligation."
+          }
+        }
+      ]
+    }
+  ]
 }
 </script>
 
@@ -261,7 +439,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </ol>
 
     <div class="after-stages">
-      <p>Not sure where to start? Email me and ask.</p>
+      <p>Not sure where to start? Just ask.</p>
       <a href="#contact" class="text-link">Ask me a question →</a>
     </div>
   </div>
@@ -381,7 +559,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div class="steps">
       <div class="step">
         <div class="step-n">01</div>
-        <h3>Start with an email</h3>
+        <h3>Start with a question</h3>
         <p>Tell me about the business and what you want to change, and ask whatever you need to. No preparation needed.</p>
       </div>
       <div class="step">
@@ -396,6 +574,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
     </div>
     <div class="after-stages"><p>Prefer to read first?</p><a href="/guides/" class="text-link">Read the guides →</a></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FAQ ═══════════════════════════ -->
+<section class="sec-white" id="faq">
+  <div class="page-w">
+    <div class="sec-head">
+      <span class="eyebrow">Questions</span>
+      <h2 class="h2">Common questions.</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Who can help with marketing for a small business in Ely?</summary><p>Lewis Phillips is a marketing consultant based in Ely who helps small businesses across Ely and Cambridgeshire. That's me: I plan the marketing and do the work, from websites, local search and Google Ads to the tracking and systems behind them.</p></details>
+      <details><summary>What does a marketing consultant do for a small business?</summary><p>A marketing consultant helps a small business decide what to do about its marketing, then helps get it done. I look at the full picture, decide what needs attention first and do the work: websites, advertising, tracking and systems.</p></details>
+      <details><summary>Should I use a marketing consultant or an agency?</summary><p>A consultant suits a business that wants to work directly with one senior person; an agency gives you a team. With Phillips. you work with me, Lewis Phillips, throughout: instead of a marketing hire, or alongside the people you already have.</p></details>
+      <details><summary>Which areas do you cover?</summary><p>Phillips. works with businesses in Ely, Soham, Littleport, Cambridge, Newmarket and the villages between, and across Cambridgeshire. Consultancy for larger and international companies isn't limited by area.</p></details>
+      <details><summary>How much does it cost?</summary><p>There are no set prices: every piece of work is scoped and priced in writing before it starts. You see what I'd do first, what it involves and what it costs, and decide before anything begins. Asking a question puts you under no obligation.</p></details>
+      <details><summary>Can you help my business show up in ChatGPT and Google's AI answers?</summary><p>Yes: I make sure your business is described clearly and consistently wherever search engines and AI tools look, so they can use it in their answers. That means clear answers on your site, matching details across listings and review sites, structured data and a monthly check of what AI assistants say. Nobody controls AI answers, so there are no guarantees.</p></details>
+      <details><summary>How do I get started?</summary><p>Send a question through the “Ask me a question” form on any page of phillips-uk.com. I reply by email, and if it makes sense to work together, you get a plain plan in writing before anything starts. No preparation needed, and no obligation.</p></details>
+    </div>
   </div>
 </section>
 
