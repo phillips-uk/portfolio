@@ -109,7 +109,8 @@ async function run(request, env) {
   const body = await readBody(request);
   const customerId = cleanId(body.customerId);
   if (!/^\d{10}$/.test(customerId)) return jsonResponse({ error: 'Enter your 10-digit Google Ads customer ID.' }, 400);
-  if (!(await turnstileOk(env, request, body.token, 'ads_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Run again.' }, 400);
+  // Lewis's own preview is already signed in to /admin, so it skips the bot check; visitors always get it.
+  if (!access.admin && !(await turnstileOk(env, request, body.token, 'ads_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Run again.' }, 400);
 
   const pricing = await getPricing(env);
   const L = pricing.settings.limits;

@@ -167,7 +167,8 @@ async function run(request, env) {
   try { body = await request.json(); } catch { /* empty */ }
   const n = normaliseUrl(body.url);
   if (n.error) return jsonResponse({ error: n.error }, 400);
-  if (!(await turnstileOk(env, request, body.token, 'website_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Check again.' }, 400);
+  // Lewis's own preview is already signed in to /admin, so it skips the bot check; visitors always get it.
+  if (!access.admin && !(await turnstileOk(env, request, body.token, 'website_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Check again.' }, 400);
 
   const { settings } = await getPricing(env);
   const L = settings.limits;

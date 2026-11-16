@@ -36,7 +36,7 @@
     });
   };
   function loadTurnstile() {
-    if (loading) return;
+    if (loading || preview) return; // Lewis's preview is signed in, so no bot check
     loading = true;
     var s = document.createElement('script');
     s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=phAdsTurnstile';
@@ -45,10 +45,11 @@
   }
   function withToken() {
     return new Promise(function (resolve, reject) {
+      if (preview) return resolve('');
       loadTurnstile();
       if (token) return resolve(token);
       waiting = function () { resolve(token); };
-      setTimeout(function () { if (waiting) { waiting = null; reject(new Error('The spam check didn’t load. Please press the button again.')); } }, 20000);
+      setTimeout(function () { if (waiting) { waiting = null; reject(new Error('Please tick the box to show you’re not a bot, then press the button again.')); } }, 20000);
     });
   }
 
