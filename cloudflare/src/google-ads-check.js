@@ -27,7 +27,9 @@ import { getPricing, quote } from './pricing.js';
 
 // Built but switched off until Lewis's set-up is done. Nothing here holds a credential.
 export const FLAGS = {
-  googleSignIn: false,   // false: Google sign-in for Lewis only (signed in to /admin), until Google verifies the app (google-signin.js)
+  googleSignIn: false,   // true once Google verifies the app: Google sign-in for everyone (google-signin.js)
+  googleSignInPreview: false, // true: Google sign-in for Lewis only (signed in to /admin), e.g. to record the review video.
+                              // Off since 16 Nov 2026 (Lewis: hide it until we're ready)
   checkout: false,       // needs the Phillips. Stripe account (inside the Phillips Group Stripe account)
   applyFixes: false,     // needs Google sign-in with the customer's approval of the exact changes
 };
@@ -222,7 +224,7 @@ export async function adsCheck(request, url, env) {
     const access = await toolAccessFor('google-ads-check', request, env);
     if (!access.allowed) return null;
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
-    const signIn = FLAGS.googleSignIn ? access.allowed : !!access.admin;
+    const signIn = FLAGS.googleSignIn ? access.allowed : !!(access.admin && FLAGS.googleSignInPreview);
     const attrs = (access.admin ? ' data-preview="1"' : '') + (signIn ? ' data-signin="1"' : '');
     const html = attrs ? pageHtml.replace('<body>', '<body' + attrs + '>') : pageHtml;
     return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'private, no-store', ...((path !== '/google-ads-audit' || access.admin) ? NO_INDEX : {}) } });

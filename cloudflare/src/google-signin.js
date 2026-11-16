@@ -1,8 +1,9 @@
 // "Sign in with Google" for the Google Ads Check (plan section 2; verification pack:
 // vault 01_Phillips/04_Products/Google Sign-in Verification Pack.md). Built 16 Nov 2026.
 //
-// Until Google verifies the app (the adwords scope is sensitive), only Lewis signed in to /admin can use it:
-// FLAGS.googleSignIn in google-ads-check.js turns it on for everyone once Google approves.
+// Until Google verifies the app (the adwords scope is sensitive), it is off for visitors. FLAGS.googleSignInPreview in
+// google-ads-check.js shows it to Lewis signed in to /admin (off since 16 Nov 2026 until he records the review video);
+// FLAGS.googleSignIn turns it on for everyone once Google approves.
 //
 // How the permission is held: Google's sign-in uses the Phillips Tools OAuth client ("Phillips. free tools") with
 // access_type=online, so Google issues no refresh token. The short-lived access token (about an hour from Google, kept
@@ -66,7 +67,7 @@ const redirectUri = url => url.origin + BASE + '/callback';
 
 async function allowed(request, env) {
   const access = await toolAccessFor('google-ads-check', request, env);
-  return { ...access, signIn: !!(FLAGS.googleSignIn ? access.allowed : access.admin) };
+  return { ...access, signIn: !!(FLAGS.googleSignIn ? access.allowed : access.admin && FLAGS.googleSignInPreview) };
 }
 
 async function start(request, url, env) {

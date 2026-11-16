@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { googleSignIn } from '../src/google-signin.js';
-import { adsCheck } from '../src/google-ads-check.js';
+import { adsCheck, FLAGS } from '../src/google-ads-check.js';
 import { QUERIES } from '../src/ads-check/queries.js';
 import { SAMPLE_DATA } from '../src/ads-check/sample.js';
 
@@ -56,6 +56,13 @@ const env = { BLOBS: bucket(), ADMIN_SESSION_KEY: 'test-key', ALLOWED_AUDIT_EMAI
 const admin = await adminCookie(env.ADMIN_SESSION_KEY, 'tester@example.test');
 const go = (path, init = {}) => { const url = new URL('https://www.phillips-uk.com' + path); return googleSignIn(new Request(url, init), url, env, url.pathname); };
 const cookieOf = (res, name) => (res.headers.getSetCookie().find(c => c.startsWith(name + '=')) || '').split(';')[0];
+
+// 0. With the preview switch off (as now), not even Lewis gets it.
+const off = await go('/tools/google-ads-check/oauth/start', { headers: { Cookie: admin } });
+assert.equal(off.status, 404);
+{ const u = new URL('https://www.phillips-uk.com/google-ads-audit'); assert.doesNotMatch(await (await adsCheck(new Request(u, { headers: { Cookie: admin } }), u, env)).text(), /data-signin/); }
+console.log('preview switch off: hidden from Lewis too');
+FLAGS.googleSignInPreview = true;
 
 // 1. A visitor can't start it while it's Lewis-only.
 let r = await go('/tools/google-ads-check/oauth/start');
