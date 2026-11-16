@@ -364,6 +364,30 @@
   }
 
   /* Rate card links */
+  /* Pricing calculator */
+  .pr-ver { color: var(--muted); margin: -12px 0 18px; font-size: 13.5px; }
+  .pr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+  .pr-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 18px 20px 4px; }
+  .pr-fields.four { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pr-note { color: var(--faint); font-size: 12.5px; line-height: 1.5; margin: 10px 20px 16px; }
+  .pr-check { display: flex; gap: 8px; align-items: center; font-weight: 400; color: var(--text); font-size: 13.5px; margin: 12px 20px 0; }
+  .pr-check input { width: auto; }
+  .pr-table input { width: 100%; max-width: 110px; text-align: right; }
+  .pr-table input.item { max-width: none; text-align: left; }
+  .pr-table td { padding: 10px 20px; }
+  .pr-prev-bar { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; padding: 18px 20px; }
+  .pr-prev-bar label { min-width: 260px; }
+  .pr-quote { padding: 0 20px 18px; }
+  .pr-quote:empty { display: none; }
+  .pr-quote table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .pr-quote td, .pr-quote th { padding: 8px 0; border-bottom: 1px solid var(--line-2); text-align: left; }
+  .pr-quote .r { text-align: right; white-space: nowrap; padding-left: 12px; }
+  .pr-quote tfoot td { font-weight: 700; border-bottom: 0; }
+  .pr-quote p { margin: 12px 0 0; color: var(--muted); font-size: 13px; }
+  .pr-save { display: flex; gap: 12px; align-items: end; padding: 18px 20px; flex-wrap: wrap; }
+  .pr-save label { flex: 1 1 320px; }
+  @media (max-width: 1100px) { .pr-grid { grid-template-columns: minmax(0, 1fr); } .pr-fields.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .pr-fields, .pr-fields.four { grid-template-columns: minmax(0, 1fr); } .pr-prev-bar label { min-width: 0; flex: 1 1 100%; } }
   .create { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 170px 150px 150px auto; gap: 12px; align-items: end; padding: 20px; }
   /* Invite links: archive toggle and the detail panel */
   .lk-card-head { padding: 14px 20px; }
@@ -676,6 +700,7 @@
         <a class="gm-item" href="#products" data-view="products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 20 7.6v8.8L12 20.5 4 16.4V7.6Z"/><path d="M4 7.6 12 11.8l8-4.2M12 11.8v8.7"/></svg><span>Products</span></a>
         <a class="gm-item" href="#links" data-view="links"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14l4-4"/><path d="M11 6.5l1.8-1.8a4 4 0 0 1 5.6 5.6L16.6 12"/><path d="M13 17.5l-1.8 1.8a4 4 0 0 1-5.6-5.6L7.4 12"/></svg><span>Invite links</span><span class="gm-count" id="b-links"></span></a>
         <a class="gm-item" href="#brief" data-view="brief"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg><span>Monday Brief</span><span class="gm-count" id="b-brief"></span></a>
+        <a class="gm-item" href="#pricing" data-view="pricing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 11.5h2M13.5 11.5h2M8.5 15h2M13.5 15h2"/></svg><span>Pricing</span></a>
         <a class="gm-item" href="#site" data-view="site"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5Z"/></svg><span>Site</span></a>
       </nav>
       <div class="gm-foot">
@@ -869,6 +894,71 @@
           <li>Preview the page and the email, send yourself a test, then press Approve. Changes: ask a Claude session to edit the draft, then approve again.</li>
           <li>Monday 07:00: it goes to everyone who confirmed, and the page goes live. You get a note when it's sent, or if it wasn't approved.</li>
         </ol></div>
+      </div>
+    </section>
+
+    <!-- Pricing: the calculator behind the free tools' reports (cloudflare/src/pricing.js) -->
+    <section data-pane="pricing" hidden>
+      <div class="page-head">
+        <div><h1>Pricing</h1><p class="lede">Every rate and limit the free tools use. Prices only ever appear inside a private report. Each save is a new version, and a report keeps the version it was priced with.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/website-check/" target="_blank" rel="noopener">Open the Website Check</a><a class="btn" href="/google-ads-audit" target="_blank" rel="noopener">Open the Google Ads Check</a></div>
+      </div>
+      <p class="pr-ver" id="pr-ver">Loading…</p>
+      <form id="pr-form" autocomplete="off">
+        <div class="pr-grid">
+          <div class="card">
+            <div class="card-head"><h2>Hourly rate</h2><span class="pill amber" id="pr-hourly">£–</span></div>
+            <div class="pr-fields">
+              <label>Day rate (£)<input type="number" name="dayRate" min="1" step="1" required></label>
+              <label>Hours in a day<input type="number" name="hoursPerDay" min="1" max="24" step="0.5" required></label>
+              <label>Round time up to (minutes)<input type="number" name="roundToMinutes" min="1" step="1" required></label>
+              <label>Minimum per fix (minutes)<input type="number" name="minMinutesPerFix" min="0" step="5" required></label>
+            </div>
+            <p class="pr-note">Hourly rate is the day rate divided by the hours. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Small business monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
+            <div class="pr-fields">
+              <label>Monthly fee (£)<input type="number" name="retainerFee" min="1" step="1" placeholder="Not set yet"></label>
+              <label>Minimum term (months)<input type="number" name="retainerMinMonths" min="1" step="1" required></label>
+              <label>Suggest it when one-off fixes cost more than (months of the fee)<input type="number" name="suggestRetainerMonths" min="0" step="0.5" required></label>
+              <label>Quotes hold their price for (days)<input type="number" name="quoteValidDays" min="1" step="1" required></label>
+            </div>
+            <label class="pr-check"><input type="checkbox" name="holdForReview"> Hold quotes for my check (customers see “Lewis will confirm this within one working day”)</label>
+            <p class="pr-note">While the monthly fee is empty, reports show only the one-off option.</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-head"><h2>Time per fix</h2><span class="meta">set-up + minutes per item, from the account's own counts</span></div>
+          <div class="scroll"><table class="table pr-table"><thead><tr><th>Fix type</th><th>What counts as an item</th><th class="r">Set-up (min)</th><th class="r">Per item (min)</th></tr></thead><tbody id="pr-fix"></tbody></table></div>
+          <p class="pr-note">Starting minutes are estimates made at build on 16 Nov 2026. Tune them against the time real jobs take.</p>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-head"><h2>Free-use limits</h2></div>
+          <div class="pr-fields four">
+            <label>Website Checks per connection a day<input type="number" name="l.websiteChecksPerIpPerDay" min="0" step="1" required></label>
+            <label>Same website reuses its result for (hours)<input type="number" name="l.websiteCacheHours" min="0" step="1" required></label>
+            <label>One Google Ads Check per account every (days)<input type="number" name="l.adsChecksPerAccountDays" min="0" step="1" required></label>
+            <label>Accounts per login or company, per 30 days<input type="number" name="l.adsAccountsPerLogin" min="0" step="1" required></label>
+            <label>Treat as an agency above (accounts under a manager)<input type="number" name="l.agencyAccountThreshold" min="0" step="1" required></label>
+            <label>Google Ads Checks a day, at most<input type="number" name="l.adsChecksPerDay" min="0" step="1" required></label>
+          </div>
+          <p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved.</p>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-head"><h2>Preview</h2><span class="meta">uses the numbers above, before you save</span></div>
+          <div class="pr-prev-bar"><label>Price this<select id="pr-sample"></select></label><button type="button" class="btn" id="pr-preview">Preview the quote</button></div>
+          <div id="pr-quote" class="pr-quote"></div>
+        </div>
+        <div class="card pr-save" style="margin-top:20px">
+          <label>What changed (for the log)<input type="text" id="pr-note" maxlength="200" placeholder="For example: raised the per-item time for negatives"></label>
+          <button class="btn primary" type="submit" id="pr-go">Save as a new version</button>
+        </div>
+        <p class="msg" id="pr-msg" style="margin:12px 0"></p>
+      </form>
+      <div class="card" style="margin-top:20px">
+        <div class="card-head"><h2>Versions</h2></div>
+        <div class="scroll"><table class="table"><thead><tr><th>Version</th><th>Saved</th><th>By</th><th>What changed</th></tr></thead><tbody id="pr-versions"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table></div>
       </div>
     </section>
 
@@ -1144,7 +1234,7 @@
   function route() {
     var h = (location.hash || '#overview').slice(1);
     var view = h.split('/')[0] || 'overview';
-    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'site'].indexOf(view) === -1) view = 'overview';
+    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'pricing', 'site'].indexOf(view) === -1) view = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== view; });
     closeMenus();
     document.querySelectorAll('.gm-nav a[data-view]').forEach(function (a) {
@@ -2690,6 +2780,130 @@
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) { if (d && d.email) showApp(d.email); else showSignin(); })
     .catch(function () { showSignin(); });
+})();
+</script>
+<script>
+/* Pricing calculator (/admin#pricing). Talks to /admin/api/pricing (cloudflare/src/admin.js and pricing.js). */
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('pr-form');
+  if (!form) return;
+  var data = null, loaded = false;
+  var GBP = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+  var GBP2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2 });
+  var WHEN = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' });
+  function api(path, body) {
+    var init = { method: body ? 'POST' : 'GET', credentials: 'same-origin', headers: { 'X-Admin': '1' } };
+    if (body) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(body); }
+    return fetch(path, init).then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(d.error || 'Something went wrong.'); return d; }); });
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function field(name) { return form.querySelector('[name="' + name + '"]'); }
+
+  function fill(s) {
+    ['dayRate', 'hoursPerDay', 'roundToMinutes', 'minMinutesPerFix', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { field(k).value = s[k]; });
+    field('retainerFee').value = s.retainerFee == null ? '' : s.retainerFee;
+    field('holdForReview').checked = !!s.holdForReview;
+    Object.keys(s.limits).forEach(function (k) { var f = field('l.' + k); if (f) f.value = s.limits[k]; });
+    var tb = $('pr-fix'); tb.textContent = '';
+    Object.keys(s.fixTypes).forEach(function (id) {
+      var ft = s.fixTypes[id], tr = el('tr');
+      tr.appendChild(el('td', null, ft.label));
+      var td1 = el('td'), i1 = el('input', 'item'); i1.type = 'text'; i1.value = ft.item; i1.setAttribute('data-ft', id); i1.setAttribute('data-k', 'item'); i1.maxLength = 60; td1.appendChild(i1); tr.appendChild(td1);
+      ['setup', 'perItem'].forEach(function (k) {
+        var td = el('td', 'r'), i = el('input'); i.type = 'number'; i.min = '0'; i.step = k === 'perItem' ? '0.5' : '5'; i.value = ft[k]; i.setAttribute('data-ft', id); i.setAttribute('data-k', k); td.appendChild(i); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    refresh();
+  }
+  function read() {
+    var s = { limits: {}, fixTypes: {} };
+    ['dayRate', 'hoursPerDay', 'roundToMinutes', 'minMinutesPerFix', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { s[k] = field(k).value; });
+    s.retainerFee = field('retainerFee').value.trim() === '' ? null : field('retainerFee').value;
+    s.holdForReview = field('holdForReview').checked;
+    form.querySelectorAll('[name^="l."]').forEach(function (f) { s.limits[f.name.slice(2)] = f.value; });
+    form.querySelectorAll('[data-ft]').forEach(function (f) { var id = f.getAttribute('data-ft'); s.fixTypes[id] = s.fixTypes[id] || {}; s.fixTypes[id][f.getAttribute('data-k')] = f.value; });
+    return s;
+  }
+  function refresh() {
+    var d = Number(field('dayRate').value), h = Number(field('hoursPerDay').value);
+    $('pr-hourly').textContent = d > 0 && h > 0 ? GBP2.format(d / h) + ' an hour' : '£–';
+    var fee = field('retainerFee').value.trim();
+    $('pr-ret-state').textContent = fee ? GBP.format(Number(fee)) + ' a month' : 'Not set: hidden in reports';
+    $('pr-ret-state').className = 'pill ' + (fee ? 'good' : 'warn');
+  }
+  form.addEventListener('input', refresh);
+
+  function versions(list) {
+    var tb = $('pr-versions'); tb.textContent = '';
+    if (!list.length) { var tr = el('tr'), td = el('td', 'empty', 'Nothing saved yet: the starting values are in use (version 0).'); td.colSpan = 4; tr.appendChild(td); tb.appendChild(tr); return; }
+    list.forEach(function (v) {
+      var tr = el('tr');
+      tr.appendChild(el('td', null, 'Version ' + v.version + (data && data.current.version === v.version ? ' (live)' : '')));
+      tr.appendChild(el('td', null, v.savedAt ? WHEN.format(new Date(v.savedAt)) : ''));
+      tr.appendChild(el('td', null, v.savedBy || ''));
+      tr.appendChild(el('td', null, v.note || ''));
+      tb.appendChild(tr);
+    });
+  }
+  function header() {
+    var c = data.current;
+    $('pr-ver').textContent = c.version ? 'Live: version ' + c.version + ', saved ' + WHEN.format(new Date(c.savedAt)) + (c.savedBy ? ' by ' + c.savedBy : '') + '.' : 'Live: the starting values (version 0). Nothing has been saved yet.';
+  }
+  function samples() {
+    var sel = $('pr-sample'); sel.textContent = '';
+    Object.keys(data.samples).forEach(function (k) { var o = el('option', null, data.samples[k]); o.value = k; sel.appendChild(o); });
+    (data.reports || []).forEach(function (r) { var o = el('option', null, r.name + ' (' + WHEN.format(new Date(r.at)) + ')'); o.value = 'report:' + r.id; sel.appendChild(o); });
+  }
+  function load() {
+    api('/admin/api/pricing').then(function (d) { data = d; loaded = true; fill(d.current.settings); header(); versions(d.versions); samples(); })
+      .catch(function (e) { $('pr-ver').textContent = e.message; });
+  }
+
+  $('pr-preview').addEventListener('click', function () {
+    var box = $('pr-quote'); box.textContent = 'Working…';
+    api('/admin/api/pricing/preview', { settings: read(), sample: $('pr-sample').value }).then(function (d) {
+      var q = d.quote; box.textContent = '';
+      var t = el('table'), th = el('thead'), hr = el('tr');
+      ['Fix', 'Items', 'Time', 'Price'].forEach(function (h, i) { hr.appendChild(el('th', i ? 'r' : null, h)); });
+      th.appendChild(hr); t.appendChild(th);
+      var tb = el('tbody');
+      q.lines.forEach(function (l) {
+        var tr = el('tr');
+        tr.appendChild(el('td', null, l.title + ' (' + l.fixLabel + ')'));
+        tr.appendChild(el('td', 'r', l.itemLabel + ': ' + l.items));
+        tr.appendChild(el('td', 'r', (l.hours % 1 ? l.hours.toFixed(1) : l.hours) + ' h'));
+        tr.appendChild(el('td', 'r', (l.fromPrice ? 'from ' : '') + GBP.format(l.price)));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      var tf = el('tfoot'), fr = el('tr');
+      fr.appendChild(el('td', null, 'Total for all fixes')); fr.appendChild(el('td')); fr.appendChild(el('td', 'r', q.totalHours + ' h')); fr.appendChild(el('td', 'r', GBP.format(q.total)));
+      tf.appendChild(fr); t.appendChild(tf);
+      box.appendChild(t);
+      box.appendChild(el('p', null, d.label + ' at ' + GBP2.format(d.hourlyRate) + ' an hour. Quote holds until ' + q.validUntil + '.' +
+        (q.retainer ? ' Monthly option: ' + GBP.format(q.retainer.fee) + ' a month, ' + q.retainer.minMonths + '-month minimum' + (q.retainer.suggested ? ', shown as the better choice for this account.' : '.') : ' The monthly option is hidden until its fee is set.') +
+        (q.holdForReview ? ' Quotes are held for your check.' : '')));
+    }).catch(function (e) { box.textContent = e.message; });
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    $('pr-msg').textContent = '';
+    $('pr-go').disabled = true;
+    api('/admin/api/pricing', { settings: read(), note: $('pr-note').value }).then(function (d) {
+      data.current = d.current; data.versions = d.versions;
+      fill(d.current.settings); header(); versions(d.versions); $('pr-note').value = '';
+      $('pr-msg').style.color = 'var(--good)'; $('pr-msg').textContent = 'Saved as version ' + d.current.version + '. New reports use it from now on.';
+    }).catch(function (err) { $('pr-msg').style.color = ''; $('pr-msg').textContent = err.message; })
+      .then(function () { $('pr-go').disabled = false; });
+  });
+
+  function maybe() { if (!loaded && location.hash.indexOf('#pricing') === 0) load(); }
+  window.addEventListener('hashchange', maybe);
+  // Wait until the main script has shown the app (signed in)
+  var t = setInterval(function () { if (!document.getElementById('app').hidden) { clearInterval(t); maybe(); } }, 300);
 })();
 </script>
 </body>

@@ -7,6 +7,7 @@ import { getInvite, putInvite, updateInvite, listInvites, inviteState, invitePag
 import { deals } from './pipeline.js';
 import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
 import { briefAdmin } from './brief.js';
+import { getPricing, getVersion, listVersions, savePricing, validate, quote, hourlyRate, SAMPLES } from './pricing.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -263,6 +264,8 @@ export async function admin(request, url, env) {
   }
   // The Monday Brief: drafts, previews, test sends and Lewis's approval (cloudflare/src/brief.js)
   if (path === '/admin/api/brief' || path.startsWith('/admin/api/brief/')) return briefAdmin(request, path, env, email, { 'Content-Type': 'application/json', ...NO_INDEX });
+  // The pricing calculator behind the free tools' reports (cloudflare/src/pricing.js)
+  if (path === '/admin/api/pricing' || path.startsWith('/admin/api/pricing/')) return pricingAdmin(request, path, env, email);
   const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);
   if (doc) {
     const d = await getDoc(env, doc[1]);
@@ -270,4 +273,54 @@ export async function admin(request, url, env) {
   }
 
   return json({ error: 'Not found' }, 404);
+}
+
+// /admin#pricing: every rate and limit the free tools use. Each save is a new version; reports keep the version they used.
+async function pricingAdmin(request, path, env, email) {
+  const method = request.method;
+  let body = {};
+  if (method === 'POST') { try { body = await request.json(); } catch { /* empty */ } }
+  if (path === '/admin/api/pricing' && method === 'GET') {
+    const [current, versions, reports] = await Promise.all([getPricing(env), listVersions(env), recentAdsReports(env)]);
+    return json({
+      current, versions, hourlyRate: Math.round(hourlyRate(current.settings) * 100) / 100,
+      samples: Object.fromEntries(Object.entries(SAMPLES).map(([k, v]) => [k, v.label])),
+      reports,
+    });
+  }
+  if (path === '/admin/api/pricing' && method === 'POST') {
+    const v = validate(body.settings || {});
+    if (v.error) return json({ error: v.error }, 400);
+    const saved = await savePricing(env, v.settings, email, body.note);
+    return json({ current: saved, versions: await listVersions(env) });
+  }
+  if (path === '/admin/api/pricing/preview' && method === 'POST') {
+    const v = validate(body.settings || {});
+    if (v.error) return json({ error: v.error }, 400);
+    let weaknesses = null, label = '';
+    const sample = String(body.sample || 'small');
+    if (SAMPLES[sample]) { weaknesses = SAMPLES[sample].weaknesses; label = SAMPLES[sample].label; }
+    const rep = sample.match(/^report:([a-f0-9]{32})$/);
+    if (rep) {
+      const obj = await env.BLOBS.get('tools/google-ads-check/reports/' + rep[1] + '.json');
+      if (obj) { const r = await obj.json(); weaknesses = r.weaknesses || []; label = 'Report for ' + (r.accountName || r.customerId || 'an account'); }
+    }
+    if (!weaknesses) return json({ error: 'Choose a sample account or a report.' }, 400);
+    return json({ label, quote: quote({ version: 'preview', settings: v.settings }, weaknesses), hourlyRate: Math.round(hourlyRate(v.settings) * 100) / 100 });
+  }
+  const one = path.match(/^\/admin\/api\/pricing\/versions\/(\d{1,6})$/);
+  if (one && method === 'GET') {
+    const v = await getVersion(env, one[1]);
+    return v ? json(v) : json({ error: 'That version does not exist.' }, 404);
+  }
+  return json({ error: 'Not found' }, 404);
+}
+
+// The latest Google Ads Check reports, for the pricing preview ("see what this report would cost with these numbers").
+async function recentAdsReports(env) {
+  const page = await env.BLOBS.list({ prefix: 'tools/google-ads-check/reports/', include: ['customMetadata'] });
+  return page.objects
+    .sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded))
+    .slice(0, 20)
+    .map(o => ({ id: o.key.split('/').pop().replace('.json', ''), name: (o.customMetadata && o.customMetadata.name) || 'Google Ads Check', at: o.uploaded }));
 }
