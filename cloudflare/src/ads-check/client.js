@@ -8,10 +8,11 @@
 //   GOOGLE_ADS_DEVELOPER_TOKEN (optional)       since Sep 2026 API access sits on the Cloud project that owns the client
 //   GOOGLE_ADS_LOGIN_CUSTOMER_ID (optional)     defaults to the Phillips. manager account
 //   GOOGLE_ADS_API_VERSION (optional)           defaults to v24, as Search Desk uses
-// For the private preview (Lewis, 16 Nov 2026: "Yes, copy for now") these are the Google Ads automation's credentials
-// (google-ads-automation/google-ads.yaml), a login that is Admin on 495-618-4074. That login can change accounts, so this
-// code stays read-only apart from the manager-link accept and unlink. When the "Phillips. Tools" Cloud project exists,
-// its own OAuth client and refresh token replace them.
+// Since 16 Nov 2026 these come from the "Phillips Tools" Cloud project (phillips-tools-uk, Basic access): its OAuth
+// client "Phillips. free tools" and a refresh token from Lewis's own sign-in (lewisdp87@gmail.com, which manages
+// 495-618-4074), set with cloudflare/scripts/google-ads-connect.mjs. No developer token is needed. The login can change
+// accounts, so this code stays read-only apart from the manager-link accept and unlink. (Earlier the same day the
+// preview briefly used the Google Ads automation's credentials.)
 
 export const MANAGER_ID = '4956184074';
 export const MANAGER_ID_SHOWN = '495-618-4074';
