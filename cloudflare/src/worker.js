@@ -8,6 +8,7 @@ import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
 import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks } from './website-check.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
+import { isSignInPath, googleSignIn } from './google-signin.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -145,6 +146,8 @@ async function route(request, env, ctx) {
     return Response.redirect(new URL('/web-design/', url).href, 302);
   }
 
+  // "Sign in with Google" for the Google Ads Check (cloudflare/src/google-signin.js): Lewis only until Google verifies the app
+  if (isSignInPath(path)) return googleSignIn(request, url, env, path);
   // The Google Ads Check, the same way (keeps /google-ads-audit, which has the search impressions history)
   if (isAdsCheckPath(path)) {
     const res = await adsCheck(request, url, env);

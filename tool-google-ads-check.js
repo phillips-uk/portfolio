@@ -54,10 +54,13 @@
   }
 
   // ---------- steps ----------
+  // Google sign-in: offered when the page says so (Lewis only until Google verifies the app; google-signin.js)
+  var signIn = document.body.getAttribute('data-signin') === '1';
   function step(name) {
     $('step-id').hidden = name !== 'id';
     $('step-invite').hidden = name !== 'invite';
-    $('step-google').hidden = !(preview && name === 'id');
+    $('step-google').hidden = !(signIn && name === 'id');
+    $('step-pick').hidden = name !== 'pick';
   }
   $('id-form').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -256,6 +259,66 @@
     if (msg && !msg.value) msg.value = 'About my Google Ads Check report: ' + location.origin + '/google-ads-audit/r/' + current.id + '\n\n';
   });
 
+  // ---------- after Google sign-in: pick an account, run the check ----------
+  var SIGNIN_MSG = {
+    cancelled: 'Google sign-in was cancelled. You can try again, or use your customer ID instead.',
+    expired: 'That sign-in took too long. Please sign in again.',
+    failed: 'Google sign-in didn’t work this time. Please try again, or use your customer ID instead.',
+    noscope: 'To check the account, tick the Google Ads permission on Google’s screen. Please sign in again.'
+  };
+  function signedIn() {
+    step('pick');
+    var list = $('pick-list'); list.textContent = '';
+    say('Finding your Google Ads accounts…');
+    fetch('/tools/google-ads-check/oauth/accounts', { credentials: 'same-origin' })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) { if (res.d.signin) step('id'); throw new Error(res.d.error || 'I couldn’t list your accounts.'); }
+        var accts = res.d.accounts || [];
+        if (!accts.length) { say('That Google account can’t open any Google Ads accounts. Try a different Google account, or use your customer ID.', true); return; }
+        say(res.d.agency && !preview ? 'This login reaches many accounts. The free check is for one business at a time: for client accounts, ask me about a paid audit below.' : '');
+        accts.forEach(function (a) {
+          var b = el('button'); b.type = 'button';
+          var left = el('span');
+          left.appendChild(el('b', null, a.name || 'Unnamed account'));
+          left.appendChild(el('small', null, shown(a.id) + (a.test ? ' · test account' : '') + (a.via ? ' · through manager ' + shown(a.via) : '')));
+          b.appendChild(left);
+          b.appendChild(el('span', 'go', 'Check this one →'));
+          b.addEventListener('click', function () { pick(a, b); });
+          list.appendChild(b);
+        });
+      })
+      .catch(function (err) { say(err.message, true); });
+  }
+  function pick(a, btn) {
+    Array.prototype.forEach.call(document.querySelectorAll('#pick-list button'), function (x) { x.disabled = true; });
+    track('ads_check_start', { connection: 'google' });
+    say('Running the check: this takes about half a minute.');
+    var items = $('progress').querySelectorAll('li');
+    if (items[0]) items[0].textContent = 'Opening the account';
+    progress(true);
+    post('/tools/google-ads-check/oauth/run', { customerId: a.id, via: a.via || '' }).then(function (res) {
+      if (!res.ok || !res.d.report) {
+        track('ads_check_error', { error_type: res.status === 429 ? 'limit' : res.d.agency ? 'agency' : res.status === 401 ? 'signin' : 'other' });
+        throw new Error(res.d.error || 'Something went wrong. Please try again.');
+      }
+      say('');
+      track('ads_check_complete', { weaknesses: res.d.report.weaknesses.length, connection: 'google' });
+      $('step-pick').hidden = true;
+      show(res.d.report, true);
+    }).catch(function (err) {
+      say(err.message, true);
+      Array.prototype.forEach.call(document.querySelectorAll('#pick-list button'), function (x) { x.disabled = false; });
+    }).then(function () { progress(false); });
+  }
+  $('pick-other').addEventListener('click', function () {
+    post('/tools/google-ads-check/oauth/signout').then(function () { location.href = '/tools/google-ads-check/oauth/start'; });
+  });
+  $('pick-cancel').addEventListener('click', function () {
+    post('/tools/google-ads-check/oauth/signout');
+    history.replaceState(null, '', '/google-ads-audit'); say(''); step('id');
+  });
+
   step('id');
   var m = location.pathname.match(/^\/google-ads-audit\/r\/([a-f0-9]{32})\/?$/);
   if (m) {
@@ -263,6 +326,11 @@
     fetch('/tools/google-ads-check/report/' + m[1], { credentials: 'same-origin' }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) { if (!res.ok) throw new Error(res.d.error || 'That report could not be loaded.'); say(''); show(res.d.report, 'jump'); })
       .catch(function (err) { say(err.message, true); });
+  } else if (signIn && /[?&]signin=1(&|$)/.test(location.search)) {
+    signedIn();
+  } else if (signIn && /[?&]signin=([a-z]+)/.test(location.search)) {
+    say(SIGNIN_MSG[location.search.match(/[?&]signin=([a-z]+)/)[1]] || '', true);
+    history.replaceState(null, '', '/google-ads-audit');
   } else if (preview && /[?&]sample=1/.test(location.search)) {
     post('/tools/google-ads-check/sample').then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
   }

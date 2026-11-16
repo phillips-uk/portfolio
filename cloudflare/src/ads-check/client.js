@@ -63,8 +63,17 @@ function errorOf(body) {
 // Every call is counted, so a report can say how many operations it used (Explorer allows 2,880 a day).
 export function meter() { return { ops: 0 }; }
 
+// A read as a signed-in visitor (Google sign-in, admin-only until Google verifies the app): the visitor's own short-lived
+// access token, and the manager account they reach the account through, if any. Never stored (google-ads-check.js).
+export function asVisitor(env, token, login) {
+  return { ...env, __visitorToken: token, __visitorLogin: login ? String(login).replace(/\D/g, '') : '' };
+}
+
 async function call(env, m, path, body, login) {
-  const headers = { Authorization: 'Bearer ' + await accessToken(env), 'Content-Type': 'application/json', 'login-customer-id': login || manager(env) };
+  const visitor = !!env.__visitorToken;
+  const headers = { Authorization: 'Bearer ' + (visitor ? env.__visitorToken : await accessToken(env)), 'Content-Type': 'application/json' };
+  const loginId = visitor ? env.__visitorLogin : (login || manager(env));
+  if (loginId) headers['login-customer-id'] = loginId;
   if (env.GOOGLE_ADS_DEVELOPER_TOKEN) headers['developer-token'] = env.GOOGLE_ADS_DEVELOPER_TOKEN;
   let res, text;
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -135,4 +144,38 @@ export async function endLink(env, m, customerId, managerLinkId) {
     console.error('ads-check: UNLINK FAILED, remove by hand', customerId, err.code || err.message);
     return false;
   }
+}
+
+// The accounts a signed-in visitor's login can reach: those it can open directly, plus the accounts one level under any
+// manager account among them. [{ id, name, manager, test, via }] where via is the manager to read it through.
+export async function accessibleAccounts(env, m) {
+  if (m) m.ops++;
+  const res = await fetch(`https://googleads.googleapis.com/${version(env)}/customers:listAccessibleCustomers`, {
+    headers: { Authorization: 'Bearer ' + env.__visitorToken },
+  });
+  const text = await res.text();
+  if (!res.ok) { const e = errorOf(text); throw new AdsError((e && e.text) || `Google Ads API error (HTTP ${res.status})`, 'api', res.status, e && e.code); }
+  const ids = ((JSON.parse(text || '{}').resourceNames) || []).map(r => String(r).split('/')[1]).filter(id => /^\d{10}$/.test(id)).slice(0, 25);
+  const out = [];
+  const seen = new Set();
+  for (const id of ids) {
+    let row;
+    try { row = (await gaql({ ...env, __visitorLogin: '' }, m, id, 'SELECT customer.id, customer.descriptive_name, customer.manager, customer.test_account FROM customer'))[0]; }
+    catch { continue; } // e.g. a cancelled account
+    const c = (row && row.customer) || {};
+    if (!seen.has(id)) { out.push({ id, name: c.descriptiveName || '', manager: !!c.manager, test: !!c.testAccount, via: '' }); seen.add(id); }
+    if (c.manager) {
+      let kids = [];
+      try { kids = await gaql({ ...env, __visitorLogin: id }, m, id, 'SELECT customer_client.id, customer_client.descriptive_name, customer_client.manager, customer_client.test_account, customer_client.status FROM customer_client WHERE customer_client.level = 1'); }
+      catch { kids = []; }
+      for (const k of kids) {
+        const cc = k.customerClient || {};
+        const kid = String(cc.id || '');
+        if (!/^\d{10}$/.test(kid) || seen.has(kid) || cc.manager || cc.status !== 'ENABLED') continue;
+        out.push({ id: kid, name: cc.descriptiveName || '', manager: false, test: !!cc.testAccount, via: id });
+        seen.add(kid);
+      }
+    }
+  }
+  return out;
 }

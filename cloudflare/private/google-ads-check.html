@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="stylesheet" href="/agency.css?v=11">
-<link rel="stylesheet" href="/tools.css?v=2">
+<link rel="stylesheet" href="/tools.css?v=3">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
@@ -39,7 +39,7 @@
   "@type": "FAQPage",
   "mainEntity": [
     { "@type": "Question", "name": "Is the Google Ads Check free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, for small and medium businesses: one free check per Google Ads account every 30 days. Agencies checking clients' accounts can ask me about a paid audit." } },
-    { "@type": "Question", "name": "Can you change anything in my account?", "acceptedAnswer": { "@type": "Answer", "text": "The check only reads. You invite my manager account from inside Google Ads, the check reads the account, and the link is removed as soon as it finishes. Nothing in your account is changed." } },
+    { "@type": "Question", "name": "Can you change anything in my account?", "acceptedAnswer": { "@type": "Answer", "text": "The check itself only reads. If you sign in with Google, Google’s permission screen says the app can see and change your Google Ads data, because Google offers no read-only version of that permission. The check uses it only to read, and forgets the sign-in as soon as the check runs. If you invite my manager account instead, the link is removed as soon as the check finishes. Nothing in your account changes unless you buy a fix and approve the exact list of changes first." } },
     { "@type": "Question", "name": "What does it look at?", "acceptedAnswer": { "@type": "Answer", "text": "Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them." } },
     { "@type": "Question", "name": "What happens to my data?", "acceptedAnswer": { "@type": "Answer", "text": "The report is saved for 30 days so its link works, then deleted. I keep a scrambled version of the account ID to allow one free check every 30 days." } },
     { "@type": "Question", "name": "Does it use AI?", "acceptedAnswer": { "@type": "Answer", "text": "No. Every result comes from fixed, written rules, the checks I would run by hand." } }
@@ -83,6 +83,21 @@
     <h1 class="hero-h1">Free Google Ads check <span>for small businesses.</span></h1>
     <p class="hero-body">See what's set up well in your account, what's wasting budget, and where to start on each. It reads your account through Google's own manager access, changes nothing, and removes itself when it's done.</p>
 
+    <div class="steps-card signin-card" id="step-google" hidden>
+      <a class="gsi-btn" id="gsi-btn" href="/tools/google-ads-check/oauth/start">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>Sign in with Google</span>
+      </a>
+      <p class="hero-note">Sign in with the Google account you use for Google Ads, then pick the account to check. The check only reads it; the sign-in is forgotten as soon as the check runs.</p>
+      <p class="or-line"><span>or use your customer ID</span></p>
+    </div>
+
+    <div class="steps-card" id="step-pick" hidden>
+      <h2 class="step-h">Which account should I check?</h2>
+      <div class="pick-list" id="pick-list"></div>
+      <p class="hero-note"><button type="button" class="linkish" id="pick-other">Use a different Google account</button> &middot; <button type="button" class="linkish" id="pick-cancel">Use a customer ID instead</button></p>
+    </div>
+
     <div class="steps-card" id="step-id">
       <form class="check-form" id="id-form" novalidate>
         <label for="cid" style="position:absolute;left:-9999px">Your Google Ads customer ID</label>
@@ -104,11 +119,6 @@
       <p class="hero-note">The check accepts the invitation, reads the account and removes the link straight away. Nothing in your account is changed.</p>
     </div>
 
-    <div class="steps-card soon" id="step-google" hidden>
-      <h2 class="step-h">Or sign in with Google</h2>
-      <p class="hero-note" style="margin-top:0">Coming once Google has verified the app: sign in, pick the account, and skip the invitation. Switched off for now.</p>
-      <button type="button" class="btn-outline" disabled>Sign in with Google</button>
-    </div>
 
     <p class="check-status" id="check-status" role="status" aria-live="polite"></p>
     <ol class="progress" id="progress" hidden>
@@ -188,7 +198,7 @@
       <span class="eyebrow">Questions</span>
       <h2 class="h2">Questions about the check.</h2>
     </div>
-    <div class="faq"><details><summary>Is the Google Ads Check free?</summary><p>Yes, for small and medium businesses: one free check per Google Ads account every 30 days. Agencies checking clients' accounts can ask me about a paid audit.</p></details><details><summary>Can you change anything in my account?</summary><p>The check only reads. You invite my manager account from inside Google Ads, the check reads the account, and the link is removed as soon as it finishes. Nothing in your account is changed.</p></details><details><summary>What does it look at?</summary><p>Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them.</p></details><details><summary>What happens to my data?</summary><p>The report is saved for 30 days so its link works, then deleted. I keep a scrambled version of the account ID to allow one free check every 30 days.</p></details><details><summary>Does it use AI?</summary><p>No. Every result comes from fixed, written rules, the checks I would run by hand.</p></details><details><summary>How is it different from Search Desk?</summary><p>The check looks at how the account is set up and built, once. <a href="https://searchdesk.uk/" target="_blank" rel="noopener">Search Desk</a> watches performance every day and shows what changed and what needs fixing.</p></details></div>
+    <div class="faq"><details><summary>Is the Google Ads Check free?</summary><p>Yes, for small and medium businesses: one free check per Google Ads account every 30 days. Agencies checking clients' accounts can ask me about a paid audit.</p></details><details><summary>Can you change anything in my account?</summary><p>The check itself only reads. If you sign in with Google, Google’s permission screen says the app can see and change your Google Ads data, because Google offers no read-only version of that permission. The check uses it only to read, and forgets the sign-in as soon as the check runs. If you invite my manager account instead, the link is removed as soon as the check finishes. Nothing in your account changes unless you buy a fix and approve the exact list of changes first.</p></details><details><summary>What does it look at?</summary><p>Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them.</p></details><details><summary>What happens to my data?</summary><p>The report is saved for 30 days so its link works, then deleted. I keep a scrambled version of the account ID to allow one free check every 30 days.</p></details><details><summary>Does it use AI?</summary><p>No. Every result comes from fixed, written rules, the checks I would run by hand.</p></details><details><summary>How is it different from Search Desk?</summary><p>The check looks at how the account is set up and built, once. <a href="https://searchdesk.uk/" target="_blank" rel="noopener">Search Desk</a> watches performance every day and shows what changed and what needs fixing.</p></details></div>
   </div>
 </section>
 
@@ -248,7 +258,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-google-ads-check.js?v=2" defer></script>
+<script src="/tool-google-ads-check.js?v=3" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>

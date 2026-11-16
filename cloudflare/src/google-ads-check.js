@@ -27,7 +27,7 @@ import { getPricing, quote } from './pricing.js';
 
 // Built but switched off until Lewis's set-up is done. Nothing here holds a credential.
 export const FLAGS = {
-  googleSignIn: false,   // needs the "Phillips. Tools" Cloud project and Google's app verification
+  googleSignIn: false,   // false: Google sign-in for Lewis only (signed in to /admin), until Google verifies the app (google-signin.js)
   checkout: false,       // needs the Phillips. Stripe account (inside the Phillips Group Stripe account)
   applyFixes: false,     // needs Google sign-in with the customer's approval of the exact changes
 };
@@ -88,6 +88,52 @@ function publicReport(r, admin) {
   };
 }
 
+// The free-use limits (from the calculator) for a visitor: one free check per account every N days, and a daily ceiling.
+// Lewis's own runs are never counted. Returns { error } (a response) or the keys to mark once a report is saved.
+export async function freeLimits(env, access, customerId, pricing) {
+  const L = pricing.settings.limits;
+  const accountKey = PREFIX + 'account/' + await sha(customerId + '|' + (env.WORKER_SECRET || 'phillips')) + '.json';
+  const dayKey = PREFIX + 'day/' + londonDay() + '.json';
+  if (!access.admin) {
+    const last = await getJson(env, accountKey);
+    if (last && Date.now() - Date.parse(last.at) < L.adsChecksPerAccountDays * 86400000) {
+      return { error: jsonResponse({ error: `This account had its free check on ${new Date(last.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. Each account gets one every ${L.adsChecksPerAccountDays} days. Ask me a question below if you’d like another look.`, limit: true }, 429) };
+    }
+    const day = (await getJson(env, dayKey)) || { n: 0 };
+    if (day.n >= L.adsChecksPerDay) return { error: jsonResponse({ error: 'I’m busy today: the free checks for today have all been used. Please try again tomorrow, or ask me a question below.', limit: true }, 429) };
+  }
+  return { accountKey, dayKey };
+}
+
+// Reads one account, applies the rules, prices the weaknesses and saves the report. readEnv decides whose access the
+// reads use: the manager account's (env) or a signed-in visitor's (asVisitor). Returns { report } or { error } (a response).
+export async function buildReport(readEnv, env, m, customerId, access, pricing, limit, route) {
+  const head = (await gaql(readEnv, m, customerId, 'SELECT customer.id, customer.descriptive_name, customer.currency_code, customer.manager, customer.time_zone FROM customer'))[0] || {};
+  const c = head.customer || {};
+  if (c.manager) {
+    // A manager account: that is an agency, or a business with several accounts. One account at a time, by hand.
+    return { error: jsonResponse({ error: 'That’s a manager account. Checking accounts for clients? Ask me about a paid audit below. If it’s your own business, choose the advertising account itself.', agency: true }, 409) };
+  }
+  const data = await readAccount(readEnv, m, customerId);
+  const result = runRules(data, { currency: c.currencyCode || 'GBP', today: londonDay() });
+  const q = quote(pricing, result.weaknesses);
+  const id = crypto.randomUUID().replace(/-/g, '');
+  const report = {
+    id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
+    currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
+    quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin, route,
+  };
+  await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
+  if (!access.admin) {
+    await put(env, limit.accountKey, { at: report.checkedAt });
+    const day = (await getJson(env, limit.dayKey)) || { n: 0 };
+    await put(env, limit.dayKey, { n: day.n + 1 });
+  }
+  return { report };
+}
+
+export { publicReport };
+
 async function link(request, env) {
   if (!sameOrigin(request)) return jsonResponse({ error: 'Forbidden' }, 403);
   const access = await toolAccessFor('google-ads-check', request, env);
@@ -118,17 +164,8 @@ async function run(request, env) {
   if (!access.admin && !(await turnstileOk(env, request, body.token, 'ads_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Run again.' }, 400);
 
   const pricing = await getPricing(env);
-  const L = pricing.settings.limits;
-  const accountKey = PREFIX + 'account/' + await sha(customerId + '|' + (env.WORKER_SECRET || 'phillips')) + '.json';
-  const dayKey = PREFIX + 'day/' + londonDay() + '.json';
-  if (!access.admin) {
-    const last = await getJson(env, accountKey);
-    if (last && Date.now() - Date.parse(last.at) < L.adsChecksPerAccountDays * 86400000) {
-      return jsonResponse({ error: `This account had its free check on ${new Date(last.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. Each account gets one every ${L.adsChecksPerAccountDays} days. Ask me a question below if you’d like another look.`, limit: true }, 429);
-    }
-    const day = (await getJson(env, dayKey)) || { n: 0 };
-    if (day.n >= L.adsChecksPerDay) return jsonResponse({ error: 'I’m busy today: the free checks for today have all been used. Please try again tomorrow, or ask me a question below.', limit: true }, 429);
-  }
+  const limit = await freeLimits(env, access, customerId, pricing);
+  if (limit.error) return limit.error;
 
   const m = meter();
   let s;
@@ -142,29 +179,8 @@ async function run(request, env) {
   try {
     if (s.status === 'PENDING') { await acceptLink(env, m, customerId, s.managerLinkId); accepted = true; }
 
-    const head = (await gaql(env, m, customerId, 'SELECT customer.id, customer.descriptive_name, customer.currency_code, customer.manager, customer.time_zone FROM customer'))[0] || {};
-    const c = head.customer || {};
-    if (c.manager) {
-      // A manager account: that is an agency, or a business with several accounts. One account at a time, by hand.
-      return jsonResponse({ error: 'That’s a manager account. Checking accounts for clients? Ask me about a paid audit below. If it’s your own business, invite me from the advertising account itself.', agency: true }, 409);
-    }
-    const data = await readAccount(env, m, customerId);
-    const result = runRules(data, { currency: c.currencyCode || 'GBP', today: londonDay() });
-    const q = quote(pricing, result.weaknesses);
-    const id = crypto.randomUUID().replace(/-/g, '');
-    const report = {
-      id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
-      currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
-      quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin,
-      route: accepted ? 'manager-link' : 'already-linked',
-    };
-    await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
-    if (!access.admin) {
-      await put(env, accountKey, { at: report.checkedAt });
-      const day = (await getJson(env, dayKey)) || { n: 0 };
-      await put(env, dayKey, { n: day.n + 1 });
-    }
-    return jsonResponse({ report: publicReport(report, access.admin) });
+    const out = await buildReport(env, env, m, customerId, access, pricing, limit, accepted ? 'manager-link' : 'already-linked');
+    return out.error || jsonResponse({ report: publicReport(out.report, access.admin) });
   } catch (err) {
     console.error('ads-check: run failed', err && (err.code || err.message));
     const msg = err instanceof AdsError && err.kind === 'link' ? err.message : 'Something went wrong while reading the account. Nothing was changed. Please try again, or ask me a question below.';
@@ -206,7 +222,9 @@ export async function adsCheck(request, url, env) {
     const access = await toolAccessFor('google-ads-check', request, env);
     if (!access.allowed) return null;
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
-    const html = access.admin ? pageHtml.replace('<body>', '<body data-preview="1">') : pageHtml;
+    const signIn = FLAGS.googleSignIn ? access.allowed : !!access.admin;
+    const attrs = (access.admin ? ' data-preview="1"' : '') + (signIn ? ' data-signin="1"' : '');
+    const html = attrs ? pageHtml.replace('<body>', '<body' + attrs + '>') : pageHtml;
     return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'private, no-store', ...((path !== '/google-ads-audit' || access.admin) ? NO_INDEX : {}) } });
   }
   return jsonResponse({ error: 'Not found' }, 404);

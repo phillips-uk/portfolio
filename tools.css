@@ -141,3 +141,19 @@
   .report { padding: 0; }
   .find, .tile, .fixes, .option { break-inside: avoid; }
 }
+
+/* Google Ads Check: "Sign in with Google" (Google's own button style: white, grey outline, the G mark) and the account picker */
+.signin-card { margin-bottom: 18px; }
+.gsi-btn { display: inline-flex; align-items: center; gap: 12px; height: 44px; padding: 0 16px 0 12px; background: #fff; color: #1F1F1F; border: 1px solid #747775; border-radius: 4px; font: 500 15px/1 Roboto, "Helvetica Neue", Arial, sans-serif; text-decoration: none; letter-spacing: .1px; }
+.gsi-btn:hover { background: #F8F9FA; box-shadow: 0 1px 2px rgba(60,64,67,.3); }
+.gsi-btn svg { width: 20px; height: 20px; flex: none; }
+.or-line { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 22px 0 14px; max-width: 640px; }
+.or-line::before, .or-line::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.pick-list { display: grid; gap: 10px; margin-bottom: 16px; }
+.pick-list button { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; padding: 14px 16px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; color: var(--ink); }
+.pick-list button:hover { border-color: var(--amber); }
+.pick-list button:disabled { opacity: .55; cursor: default; }
+.pick-list b { font-size: 15px; overflow-wrap: anywhere; }
+.pick-list small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+.pick-list .go { color: var(--amber); font-weight: 700; white-space: nowrap; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--amber); font-weight: 600; cursor: pointer; text-decoration: underline; }
