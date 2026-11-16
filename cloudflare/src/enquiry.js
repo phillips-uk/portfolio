@@ -8,7 +8,7 @@
 // asks the person to try again, as a real person can fail it too. No IP address is stored.
 // Local dev (localhost) uses Cloudflare's always-pass test secret; every other host needs the real one.
 import { addLead } from './pipeline.js';
-import { BRANDS, renderEnquiryEmail } from './enquiry-email.js';
+import { BRANDS, renderEnquiryEmail, mailtoAddress } from './enquiry-email.js';
 
 const LIMITS = { name: 120, email: 160, business: 160, message: 4000, page: 200, location: 40 };
 const MIN_MS = 3000;       // a person needs longer than this to fill in the form
@@ -69,9 +69,8 @@ async function humanCheck(env, request, url, token) {
   }
 }
 
-// A mailto: address with anything that would start a query (?, &, #, %) encoded, so a visitor's address can't add a
-// cc, bcc or body to the reply.
-const mailto = (email, subject) => 'mailto:' + encodeURIComponent(email).replace(/%40/g, '@') + (subject ? '?subject=' + encodeURIComponent(subject) : '');
+// A mailto: link whose address can't add its own cc, bcc or body (mailtoAddress encodes ?, &, # and %).
+const mailto = (email, subject) => 'mailto:' + mailtoAddress(email) + (subject ? '?subject=' + encodeURIComponent(subject) : '');
 
 const LONDON_DATE = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'long', year: 'numeric' });
 const LONDON_TIME = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
@@ -87,10 +86,10 @@ export function enquiryEmail(q, { cardId, at }) {
   const fields = [
     ['Name', q.name],
     ['Email', q.email, mailto(q.email)],
-    // Gmail turns anything that looks like a web address into a link in its own blue, so these two are links already,
-    // in the brand colour.
+    // Gmail would link a web address in its own blue, so the email links it: the visitor's website in the brand accent
+    // (any address inside other text is handled by the renderer), and the page, which the site writes, as a quiet link.
     q.business ? ['Business or website', q.business, WEBSITE.test(q.business) ? (/^https?:\/\//i.test(q.business) ? '' : 'https://') + q.business : undefined] : null,
-    ['Sent from', sentFrom, q.page && q.page.startsWith('/') ? 'https://www.phillips-uk.com' + q.page : 'https://www.phillips-uk.com/'],
+    ['Sent from', sentFrom, undefined, true],
   ].filter(Boolean);
   const { html, text } = renderEnquiryEmail(BRANDS.phillips, {
     kind: 'Website question',
