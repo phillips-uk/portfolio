@@ -61,6 +61,9 @@ function withGtm(res) {
 const REDIRECTS = {
   '/audit': '/google-ads-audit',
   '/shopify-google-ads-audit': '/google-ads-audit?type=shopify',
+  // The old CV (it carries Lewis's personal address) is no longer served (2026-11-16): the file stays in the repo but is
+  // in .assetsignore, and old links land on /about/.
+  '/lewis-phillips-cv.pdf': '/about/',
 };
 
 // The three free tools (Google Ads audit, landing page audit, creative scoring) are paused until Lewis has reviewed
