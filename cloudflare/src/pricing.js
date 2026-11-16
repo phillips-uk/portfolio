@@ -1,0 +1,214 @@
+// The pricing calculator behind the free tools' reports (plan: vault 01_Phillips/04_Products/Free Tools Relaunch Plan.md,
+// sections 3a, 3b and 5). Every rate, rounding rule and free-use limit lives here as data in R2, never in a report or
+// a page, so Lewis can change them in /admin#pricing as he learns.
+//
+// Storage (R2 BLOBS):
+//   admin/pricing/current.json          the live settings, with their version number
+//   admin/pricing/versions/<n>.json     every saved version, kept for good (a report records the version it used)
+// A version is never edited after it is saved: a change is a new version, logged with who and when.
+//
+// The retainer fee is not set yet (Lewis, 16 Nov 2026). While it is empty, reports hide the monthly option.
+
+const CURRENT = 'admin/pricing/current.json';
+const VERSIONS = 'admin/pricing/versions/';
+
+// Fix types: what each weakness in a Google Ads report is priced as. The minutes are starting estimates made at build
+// (16 Nov 2026) for Lewis to tune against real jobs; they are not prices.
+export const FIX_TYPES = {
+  settings:  { label: 'Campaign settings',               item: 'campaigns',             setup: 15, perItem: 10 },
+  negatives: { label: 'Search term negatives',           item: 'search terms',          setup: 30, perItem: 0.5 },
+  keywords:  { label: 'Keywords',                        item: 'keywords',              setup: 20, perItem: 1 },
+  ad_copy:   { label: 'Ads and assets',                  item: 'ad groups or assets',   setup: 20, perItem: 15 },
+  tracking:  { label: 'Conversion tracking',             item: 'conversion actions',    setup: 60, perItem: 20 },
+  structure: { label: 'Account structure',               item: 'campaigns or ad groups', setup: 60, perItem: 30 },
+  bidding:   { label: 'Bidding and budgets',             item: 'campaigns',             setup: 20, perItem: 15 },
+  shopping:  { label: 'Shopping and Performance Max',    item: 'campaigns or asset groups', setup: 30, perItem: 20 },
+};
+
+export const DEFAULTS = {
+  dayRate: 625,               // £, from the rate card
+  hoursPerDay: 7,             // hourly rate = day rate / hours (£89.29)
+  roundToMinutes: 30,         // time rounds up to the next half hour
+  minMinutesPerFix: 60,       // at least one hour per fix
+  retainerFee: null,          // £ a month. Not set yet: the report hides the monthly option until it is
+  retainerMinMonths: 3,
+  suggestRetainerMonths: 2,   // suggest the retainer when the one-off total is more than this many months of the fee
+  quoteValidDays: 14,
+  holdForReview: false,       // when on, customers see "Lewis will confirm this within one working day"
+  fixTypes: FIX_TYPES,
+  limits: {
+    websiteChecksPerIpPerDay: 5,
+    websiteCacheHours: 24,        // the same domain reuses its last result for this long
+    adsChecksPerAccountDays: 30,  // one free check per Google Ads account in this many days
+    adsAccountsPerLogin: 3,       // accounts per Google login or company domain, per 30 days
+    agencyAccountThreshold: 5,    // a manager account with more than this many accounts is treated as an agency
+    adsChecksPerDay: 40,          // daily ceiling. Explorer access allows 2,880 operations a day and a check uses about 25 to 60
+  },
+};
+
+const num = (v, min, max) => {
+  if (v === null || v === undefined || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= min && n <= max ? n : NaN;
+};
+
+// Checks a settings object from the admin form. Returns { settings } or { error }.
+export function validate(input) {
+  const s = JSON.parse(JSON.stringify(DEFAULTS));
+  const errors = [];
+  const set = (key, min, max, { optional = false, target = s, from = input } = {}) => {
+    if (!(key in from)) return;
+    const v = num(from[key], min, max);
+    if (v === null && optional) { target[key] = null; return; }
+    if (v === null || Number.isNaN(v)) { errors.push(key); return; }
+    target[key] = v;
+  };
+  set('dayRate', 1, 100000);
+  set('hoursPerDay', 1, 24);
+  set('roundToMinutes', 1, 240);
+  set('minMinutesPerFix', 0, 2400);
+  set('retainerFee', 1, 100000, { optional: true });
+  set('retainerMinMonths', 1, 36);
+  set('suggestRetainerMonths', 0, 36);
+  set('quoteValidDays', 1, 365);
+  if ('holdForReview' in input) s.holdForReview = !!input.holdForReview;
+  if (input.limits && typeof input.limits === 'object') {
+    for (const k of Object.keys(DEFAULTS.limits)) set(k, 0, 100000, { target: s.limits, from: input.limits });
+  }
+  if (input.fixTypes && typeof input.fixTypes === 'object') {
+    for (const [id, ft] of Object.entries(DEFAULTS.fixTypes)) {
+      const f = input.fixTypes[id];
+      if (!f) continue;
+      s.fixTypes[id] = { ...ft };
+      set('setup', 0, 6000, { target: s.fixTypes[id], from: f });
+      set('perItem', 0, 600, { target: s.fixTypes[id], from: f });
+      if (typeof f.item === 'string' && f.item.trim()) s.fixTypes[id].item = f.item.trim().slice(0, 60);
+    }
+  }
+  if (errors.length) return { error: 'Check these numbers: ' + errors.join(', ') + '.' };
+  return { settings: s };
+}
+
+export const hourlyRate = s => s.dayRate / s.hoursPerDay;
+
+// Merges saved settings over the defaults, so a setting added in code later always has a value.
+function withDefaults(saved) {
+  const s = { ...JSON.parse(JSON.stringify(DEFAULTS)), ...saved };
+  s.limits = { ...DEFAULTS.limits, ...(saved && saved.limits) };
+  s.fixTypes = {};
+  for (const [id, ft] of Object.entries(DEFAULTS.fixTypes)) s.fixTypes[id] = { ...ft, ...(saved && saved.fixTypes && saved.fixTypes[id]) };
+  return s;
+}
+
+// The live settings: { version, savedAt, savedBy, settings }. Version 0 is the built-in starting values.
+export async function getPricing(env) {
+  const obj = env.BLOBS ? await env.BLOBS.get(CURRENT) : null;
+  if (!obj) return { version: 0, savedAt: null, savedBy: null, note: 'Starting values', settings: withDefaults({}) };
+  try {
+    const cur = await obj.json();
+    return { ...cur, settings: withDefaults(cur.settings) };
+  } catch {
+    return { version: 0, savedAt: null, savedBy: null, note: 'Starting values', settings: withDefaults({}) };
+  }
+}
+
+export async function getVersion(env, n) {
+  if (!Number(n)) return { version: 0, savedAt: null, savedBy: null, note: 'Starting values', settings: withDefaults({}) };
+  const obj = await env.BLOBS.get(VERSIONS + Number(n) + '.json');
+  if (!obj) return null;
+  const v = await obj.json();
+  return { ...v, settings: withDefaults(v.settings) };
+}
+
+export async function listVersions(env) {
+  const out = [];
+  let cursor;
+  do {
+    const page = await env.BLOBS.list({ prefix: VERSIONS, cursor, include: ['customMetadata'] });
+    for (const o of page.objects) {
+      const m = o.customMetadata || {};
+      out.push({ version: Number(m.version || o.key.slice(VERSIONS.length).replace('.json', '')), savedAt: m.savedAt || o.uploaded, savedBy: m.savedBy || '', note: m.note || '' });
+    }
+    cursor = page.truncated ? page.cursor : undefined;
+  } while (cursor);
+  return out.sort((a, b) => b.version - a.version);
+}
+
+export async function savePricing(env, settings, email, note) {
+  const cur = await getPricing(env);
+  const version = (cur.version || 0) + 1;
+  const record = { version, savedAt: new Date().toISOString(), savedBy: email, note: String(note || '').slice(0, 200), settings };
+  const meta = { version: String(version), savedAt: record.savedAt, savedBy: email, note: record.note };
+  await env.BLOBS.put(VERSIONS + version + '.json', JSON.stringify(record), { httpMetadata: { contentType: 'application/json' }, customMetadata: meta });
+  await env.BLOBS.put(CURRENT, JSON.stringify(record), { httpMetadata: { contentType: 'application/json' } });
+  return record;
+}
+
+// Minutes for one weakness: set-up plus minutes per item, rounded up, with the minimum per fix.
+export function fixMinutes(s, fixType, items) {
+  const ft = s.fixTypes[fixType];
+  if (!ft) return null;
+  const raw = ft.setup + ft.perItem * Math.max(1, Math.round(Number(items) || 1));
+  const step = s.roundToMinutes || 1;
+  return Math.max(s.minMinutesPerFix, Math.ceil(raw / step) * step);
+}
+
+// Prices a list of weaknesses: [{ id, title, fixType, items, fromPrice, priority }].
+// Returns the lines, the total, and whether to show and suggest the monthly option.
+export function quote(pricing, weaknesses, now = new Date()) {
+  const s = pricing.settings;
+  const rate = hourlyRate(s);
+  const lines = [];
+  for (const w of weaknesses) {
+    const minutes = fixMinutes(s, w.fixType, w.items);
+    if (minutes == null) continue;
+    const hours = minutes / 60;
+    lines.push({
+      id: w.id, title: w.title, fixType: w.fixType, fixLabel: s.fixTypes[w.fixType].label,
+      items: Math.max(1, Math.round(Number(w.items) || 1)), itemLabel: w.itemLabel || s.fixTypes[w.fixType].item,
+      minutes, hours, price: Math.round(hours * rate), fromPrice: !!w.fromPrice,
+      ticked: w.priority === 'high',
+    });
+  }
+  const total = lines.reduce((a, l) => a + l.price, 0);
+  const fee = s.retainerFee;
+  const retainer = fee ? {
+    fee, minMonths: s.retainerMinMonths,
+    suggested: total > fee * s.suggestRetainerMonths,
+  } : null;
+  return {
+    version: pricing.version || 0,
+    hourlyRate: Math.round(rate * 100) / 100,
+    lines, total,
+    totalHours: lines.reduce((a, l) => a + l.hours, 0),
+    retainer,
+    holdForReview: !!s.holdForReview,
+    validUntil: new Date(now.getTime() + s.quoteValidDays * 86400000).toISOString().slice(0, 10),
+  };
+}
+
+// Sample account sizes for the preview in /admin, so a change can be seen before it is saved. These are made-up
+// accounts for the preview only, never shown to a customer.
+export const SAMPLES = {
+  small: {
+    label: 'Small account (sample)',
+    weaknesses: [
+      { id: 'sample-location', title: 'Location targeting reaches people outside your area', fixType: 'settings', items: 2, priority: 'high' },
+      { id: 'sample-negatives', title: 'Search terms that never turn into enquiries', fixType: 'negatives', items: 60, priority: 'high' },
+      { id: 'sample-ads', title: 'Ad groups with only one ad', fixType: 'ad_copy', items: 3, priority: 'medium' },
+      { id: 'sample-tracking', title: 'Enquiries are not recorded as conversions', fixType: 'tracking', items: 1, priority: 'high', fromPrice: true },
+    ],
+  },
+  medium: {
+    label: 'Medium account (sample)',
+    weaknesses: [
+      { id: 'sample-location', title: 'Location targeting reaches people outside your area', fixType: 'settings', items: 6, priority: 'high' },
+      { id: 'sample-negatives', title: 'Search terms that never turn into enquiries', fixType: 'negatives', items: 300, priority: 'high' },
+      { id: 'sample-keywords', title: 'Keywords with a low Quality Score', fixType: 'keywords', items: 80, priority: 'medium' },
+      { id: 'sample-ads', title: 'Ad groups with only one ad', fixType: 'ad_copy', items: 12, priority: 'medium' },
+      { id: 'sample-tracking', title: 'Micro conversions counted as primary', fixType: 'tracking', items: 4, priority: 'high' },
+      { id: 'sample-structure', title: 'Campaigns mixing unrelated services', fixType: 'structure', items: 4, priority: 'medium' },
+      { id: 'sample-bidding', title: 'Smart bidding with too few conversions', fixType: 'bidding', items: 3, priority: 'medium' },
+    ],
+  },
+};

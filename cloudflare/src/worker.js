@@ -6,6 +6,7 @@ import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
+import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks } from './website-check.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -15,8 +16,6 @@ const loaders = {
   'creative-status':            () => import('../../netlify/functions/creative-status.js'),
   'creative-upload':            () => import('../../netlify/functions/creative-upload.js'),
   'get-report':                 () => import('../../netlify/functions/get-report.js'),
-  'landing-audit-background':   () => import('../../netlify/functions/landing-audit-background.js'),
-  'landing-audit-status':       () => import('../../netlify/functions/landing-audit-status.js'),
   'mcc-audit':                  () => import('../../netlify/functions/mcc-audit.js'),
   'mcc-check':                  () => import('../../netlify/functions/mcc-check.js'),
   'og-image':                   () => import('../../netlify/functions/og-image.js'),
@@ -131,6 +130,13 @@ async function route(request, env, ctx) {
 
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : url.pathname;
 
+  // The Website Check: served to Lewis (signed in to /admin) while it is a private preview, otherwise paused below.
+  if (isWebsiteCheckPath(path)) {
+    const res = await websiteCheck(request, url, env);
+    if (res) return path.startsWith('/tools/') ? res : withGtm(res);
+    return Response.redirect(new URL('/web-design/', url).href, 302);
+  }
+
   const pausedTo = PAUSED[path.replace(/\.html$/, '')];
   if (pausedTo) return Response.redirect(new URL(pausedTo, url).href, 302);
 
@@ -199,6 +205,8 @@ export default {
   async scheduled(controller, env, ctx) {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
     ctx.waitUntil(briefScheduled(controller, env));
+    // Weekly tidy of the free tools' saved reports and counters (Monday's early run only)
+    if (controller.cron === '0 6 * * MON') ctx.waitUntil(cleanupWebsiteChecks(env).catch(err => console.error('website-check cleanup', err && err.message)));
   },
 
   async queue(batch, env, ctx) {
