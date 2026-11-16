@@ -173,7 +173,7 @@ export function quote(pricing, weaknesses, now = new Date()) {
   const total = lines.reduce((a, l) => a + l.price, 0);
   const fee = s.retainerFee;
   const retainer = fee ? {
-    fee, minMonths: s.retainerMinMonths,
+    fee, minMonths: s.retainerMinMonths, suggestMonths: s.suggestRetainerMonths,
     suggested: total > fee * s.suggestRetainerMonths,
   } : null;
   return {

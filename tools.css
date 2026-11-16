@@ -118,3 +118,26 @@
   .fix-row { grid-template-columns: 24px minmax(0, 1fr) auto; }
   .fix-row .h { grid-column: 2; grid-row: 2; }
 }
+
+/* Google Ads Check: the connection steps */
+.steps-card { max-width: 640px; }
+.steps-card[hidden], .checkout-preview[hidden] { display: none; }
+.steps-card + .steps-card { margin-top: 18px; }
+.steps-card.soon { border: 1px dashed var(--border); border-radius: 8px; padding: 18px 20px; background: rgba(255,255,255,0.6); }
+.steps-card.soon button:disabled { opacity: .55; cursor: default; }
+.step-h { font-size: 20px; letter-spacing: -0.02em; margin: 0 0 12px; }
+.invite-steps { margin: 0 0 22px; padding-left: 22px; line-height: 1.7; font-size: 16px; }
+.invite-steps a { color: var(--amber); font-weight: 600; }
+.invite-steps .mgr { font-variant-numeric: tabular-nums; background: var(--amber-light); padding: 1px 6px; border-radius: 4px; }
+.steps-card .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.steps-card button.btn-filled, .steps-card button.btn-outline { font: inherit; font-weight: 600; font-size: 15px; cursor: pointer; }
+.find .cost { margin-top: 8px; font-size: 13.5px; color: var(--muted); }
+.find .cost b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.checkout-preview { margin-top: 20px; border: 1px dashed var(--amber); border-radius: 10px; padding: 20px; background: #FFFCF8; font-size: 14px; line-height: 1.6; }
+.checkout-preview h4 { margin: 0 0 8px; font-size: 15px; }
+.checkout-preview ol { margin: 8px 0 0; padding-left: 20px; }
+@media print {
+  .site-header, .nav-drawer, .tool-hero, #what, .sec-cream, .contact-sec, .site-footer, .rep-acts, .options button, .rep-cta .btn-row, .rep-more, .checkout-preview { display: none !important; }
+  .report { padding: 0; }
+  .find, .tile, .fixes, .option { break-inside: avoid; }
+}

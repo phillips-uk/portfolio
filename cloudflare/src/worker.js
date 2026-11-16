@@ -7,6 +7,7 @@ import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
 import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks } from './website-check.js';
+import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -137,6 +138,13 @@ async function route(request, env, ctx) {
     return Response.redirect(new URL('/web-design/', url).href, 302);
   }
 
+  // The Google Ads Check, the same way (keeps /google-ads-audit, which has the impressions history)
+  if (isAdsCheckPath(path)) {
+    const res = await adsCheck(request, url, env);
+    if (res) return path.startsWith('/tools/') ? res : withGtm(res);
+    return Response.redirect(new URL('/google-ads/', url).href, 302);
+  }
+
   const pausedTo = PAUSED[path.replace(/\.html$/, '')];
   if (pausedTo) return Response.redirect(new URL(pausedTo, url).href, 302);
 
@@ -206,7 +214,7 @@ export default {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
     ctx.waitUntil(briefScheduled(controller, env));
     // Weekly tidy of the free tools' saved reports and counters (Monday's early run only)
-    if (controller.cron === '0 6 * * MON') ctx.waitUntil(cleanupWebsiteChecks(env).catch(err => console.error('website-check cleanup', err && err.message)));
+    if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env)]).catch(err => console.error('tools cleanup', err && err.message)));
   },
 
   async queue(batch, env, ctx) {
