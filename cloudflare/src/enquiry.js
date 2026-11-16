@@ -21,6 +21,7 @@ const NOTIFY_FROM = 'Phillips. website <website@phillips-uk.com>';
 const clean = (v, max) => String(v == null ? '' : v).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').trim().slice(0, max);
 const oneLine = (v, max) => clean(v, max).replace(/\s+/g, ' ');
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const WEBSITE = /^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i;
 
 async function readBody(request) {
   const type = request.headers.get('Content-Type') || '';
@@ -86,8 +87,10 @@ export function enquiryEmail(q, { cardId, at }) {
   const fields = [
     ['Name', q.name],
     ['Email', q.email, mailto(q.email)],
-    q.business ? ['Business or website', q.business] : null,
-    ['Sent from', sentFrom],
+    // Gmail turns anything that looks like a web address into a link in its own blue, so these two are links already,
+    // in the brand colour.
+    q.business ? ['Business or website', q.business, WEBSITE.test(q.business) ? (/^https?:\/\//i.test(q.business) ? '' : 'https://') + q.business : undefined] : null,
+    ['Sent from', sentFrom, q.page && q.page.startsWith('/') ? 'https://www.phillips-uk.com' + q.page : 'https://www.phillips-uk.com/'],
   ].filter(Boolean);
   const { html, text } = renderEnquiryEmail(BRANDS.phillips, {
     kind: 'Website question',
@@ -172,7 +175,7 @@ export async function enquiry(request, env) {
   await env.BLOBS.put('admin/enquiries/' + id + '.json', JSON.stringify(record), { httpMetadata: { contentType: 'application/json' } });
 
   try {
-    const website = /^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(q.business) ? q.business : '';
+    const website = WEBSITE.test(q.business) ? q.business : '';
     const card = await addLead(env, {
       name: (website ? '' : q.business) || q.name,
       contact: q.name,
