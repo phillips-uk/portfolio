@@ -51,6 +51,7 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` 301s to `/goo
 - `TOOLS_PUBLIC` in `cloudflare/src/tools-gate.js` switches each tool between public and private (private: only someone signed in to /admin). Old tool addresses 301 to the new ones (`MOVED` in `worker.js`); creative scoring is retired.
 - Google Ads reads go through the Phillips. manager account (495-618-4074) with the **Phillips Tools** Cloud project's OAuth client (`phillips-tools-uk`, Basic access): Worker secrets `GOOGLE_ADS_CLIENT_ID`, `_CLIENT_SECRET`, `_REFRESH_TOKEN`, set with `cloudflare/scripts/google-ads-connect.mjs`. Read-only apart from accepting and ending the visitor's manager link. Speed: `PAGESPEED_API_KEY` from the same project.
 - Prices appear only inside private reports, from the calculator at `/admin#pricing` (`cloudflare/src/pricing.js`). Site pages stay price-free. Google sign-in, Stripe checkout and applying fixes are behind `FLAGS` in `google-ads-check.js`, switched off.
+- GA4 events (in the GTM trigger "Site events to GA4" since version 11): `website_check_start`, `website_check_complete`, `website_check_error`, `ads_check_start`, `ads_check_complete`, `ads_check_error`, `ads_check_fix_select`. Never an address, customer ID, account name or price in an event.
 - Tests: `node cloudflare/src/ads-check/rules.test.mjs` and `node --import ./cloudflare/test/html-loader.mjs cloudflare/test/ads-check-flow.test.mjs`.
 
 ## The Monday Brief (since 2026-11-15)
