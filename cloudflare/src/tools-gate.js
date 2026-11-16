@@ -1,12 +1,12 @@
-// Private preview for the relaunched free tools (Website Check, Google Ads Check), 16 Nov 2026.
-// Until Lewis says go, the tools are only for someone signed in to /admin: everyone else gets the PAUSED redirects in
-// worker.js, and their APIs answer 404. To open a tool to the public, set its flag below to true (and restore its links,
-// sitemap entry and llms.txt line), never before Lewis's yes.
+// Who may use the relaunched free tools (Website Check, Google Ads Check). Built as a private preview on 16 Nov 2026 and
+// opened to the public the same day (Lewis: "make the tools public now"). Setting a flag back to false makes that tool
+// private again: only someone signed in to /admin can open it, everyone else is redirected (worker.js) and its APIs
+// answer 404.
 import { adminEmail } from './admin.js';
 
 export const TOOLS_PUBLIC = {
-  'website-check': false,
-  'google-ads-check': false,
+  'website-check': true,
+  'google-ads-check': true,
 };
 
 // Who may use a tool right now: { allowed, admin } where admin is the signed-in admin email or null.

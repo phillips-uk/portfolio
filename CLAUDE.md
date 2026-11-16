@@ -22,7 +22,7 @@ Pushing to GitHub does **not** deploy. After pushing `main`, deploy from the rep
 CLOUDFLARE_ACCOUNT_ID=9cd423eee8986ecc6f22f6fa3a17878b npx wrangler deploy
 ```
 
-Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (302 to `/google-ads/` while the free tools are paused, see `PAUSED` in `cloudflare/src/worker.js`; 301 to `/google-ads-audit` once they are back).
+Then check `https://www.phillips-uk.com/` returns 200 and `/audit` 301s to `/google-ads-audit` (the free tools are public again since 16 Nov 2026).
 
 - `wrangler.jsonc`: Worker config. `run_worker_first: true`, R2 binding `BLOBS` (bucket `phillips-blobs`), queue `phillips-jobs`, custom domains `www.phillips-uk.com` and `phillips-uk.com`.
 - `cloudflare/src/worker.js`: router. Apex to www and http to https redirects, `/audit` redirects, `/auth/callback`, `/r/:id`, `/.netlify/functions/<name>`, then static assets.
@@ -44,6 +44,14 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` redirects (30
 - **No email addresses on pages** (Lewis, 16 Nov 2026). Every contact route is the "Ask me a question" form: `#contact` on pages that have it, `/#contact` elsewhere, `https://www.phillips-uk.com/#contact` on invite pages. Never add a `mailto:` link or a written-out address to a page, a button, JSON-LD, `llms.txt` or an error message. The one address left (the legal minimum, "option A") is in the footer legal line and on /privacy, written in by `email.js` from an `<a data-email>contact at phillips-uk dot com</a>` placeholder (the page loads `/email.js?v=1`), so it is never in the served HTML. JSON-LD uses a `contactPoint` with the form URL, never `email`. `generate_lead` is the lead key event; `contact_click` (a click on that legal-line address) is an ordinary event, not a key event.
 - **The contact form** ("Ask me a question", since 2026-11-14) is in the contact section of the homepage, Work, About and the five service pages (`contact-form.js`, styles in `agency.css`). It posts to `/enquiry` (`cloudflare/src/enquiry.js`): each question is saved to R2 under `admin/enquiries/`, added to the /admin funnel as a Lead card, and emailed to contact@ (Reply-To the sender) through Resend when the `RESEND_API_KEY` secret is set. Spam: Cloudflare Turnstile checked on the server (widget "Phillips. contact form (phillips-uk.com)", managed, shown as interaction-only; secret `TURNSTILE_SECRET`; localhost uses Cloudflare's test keys), hidden `company_url` trap, under 3 seconds on the page, more than 5 an hour from one connection. Trap and timer get a fake "sent". On success the page pushes `generate_lead` (only `form_location`, never what was typed), which is in the GTM trigger "Site events to GA4" and is the key event. CTAs link to `#contact` (guides and About to `/#contact`); never "Book a call".
 - **The paused tools' sign-in gate** asks `/tool-access` (`cloudflare/src/tool-access.js`) whether a Google account may use them, so no page holds a list of allowed addresses.
+
+## The free tools (public since 2026-11-16)
+
+- **Google Ads Check** at `/google-ads-audit` (`cloudflare/src/google-ads-check.js`, rules in `cloudflare/src/ads-check/`) and **Website Check** at `/website-check/` (`cloudflare/src/website-check.js`, rules in `website-check-rules.js`). Fixed written rules, no AI. Plan and history: vault `01_Phillips/04_Products/Free Tools Relaunch Plan.md`.
+- `TOOLS_PUBLIC` in `cloudflare/src/tools-gate.js` switches each tool between public and private (private: only someone signed in to /admin). Old tool addresses 301 to the new ones (`MOVED` in `worker.js`); creative scoring is retired.
+- Google Ads reads go through the Phillips. manager account (495-618-4074) with the **Phillips Tools** Cloud project's OAuth client (`phillips-tools-uk`, Basic access): Worker secrets `GOOGLE_ADS_CLIENT_ID`, `_CLIENT_SECRET`, `_REFRESH_TOKEN`, set with `cloudflare/scripts/google-ads-connect.mjs`. Read-only apart from accepting and ending the visitor's manager link. Speed: `PAGESPEED_API_KEY` from the same project.
+- Prices appear only inside private reports, from the calculator at `/admin#pricing` (`cloudflare/src/pricing.js`). Site pages stay price-free. Google sign-in, Stripe checkout and applying fixes are behind `FLAGS` in `google-ads-check.js`, switched off.
+- Tests: `node cloudflare/src/ads-check/rules.test.mjs` and `node --import ./cloudflare/test/html-loader.mjs cloudflare/test/ads-check-flow.test.mjs`.
 
 ## The Monday Brief (since 2026-11-15)
 

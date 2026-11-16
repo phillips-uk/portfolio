@@ -66,19 +66,20 @@ const REDIRECTS = {
   '/lewis-phillips-cv.pdf': '/about/',
 };
 
-// The three free tools (Google Ads audit, landing page audit, creative scoring) are paused until Lewis has reviewed
-// them again (2026-11-14). Their pages stay in the repo; each address sends visitors to the matching service page
-// with a temporary redirect. To bring a tool back, delete its lines here, then restore its links and sitemap entry.
+// Creative scoring was retired with the free tools' relaunch (16 Nov 2026); its pages stay in the repo and its addresses
+// send visitors to the homepage with a temporary redirect.
 const PAUSED = {
-  '/audit': '/google-ads/',
-  '/shopify-google-ads-audit': '/google-ads/',
-  '/google-ads-audit': '/google-ads/',
-  '/google-ads-audit-report': '/google-ads/',
-  '/landing-page-audit': '/web-design/',
-  '/landing-page-audit-report': '/web-design/',
   '/creative-analysis': '/',
   '/creative-analysis-demo': '/',
   '/creative-analysis-report': '/',
+};
+
+// The old tool addresses, since the relaunch (16 Nov 2026): permanent redirects to the Website Check and the Google Ads
+// Check. The old .html files are redirected too, so the retired pages are never served.
+const MOVED = {
+  '/google-ads-audit-report': '/google-ads-audit',
+  '/landing-page-audit': '/website-check/',
+  '/landing-page-audit-report': '/website-check/',
 };
 
 function getHandler(mod) {
@@ -131,21 +132,27 @@ async function route(request, env, ctx) {
 
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : url.pathname;
 
-  // The Website Check: served to Lewis (signed in to /admin) while it is a private preview, otherwise paused below.
+  const bare = path.replace(/\.html$/, '');
+  if (MOVED[bare]) return Response.redirect(new URL(MOVED[bare], url).href, 301);
+  // One address per tool page: /website-check/ (with the slash) and /google-ads-audit (without), no .html
+  if (bare === '/website-check' && url.pathname !== '/website-check/') return Response.redirect(new URL('/website-check/' + url.search, url).href, 301);
+  if (bare === '/google-ads-audit' && url.pathname !== '/google-ads-audit') return Response.redirect(new URL('/google-ads-audit' + url.search, url).href, 301);
+
+  // The Website Check (tools-gate.js says who may use it; while private, everyone else is redirected)
   if (isWebsiteCheckPath(path)) {
     const res = await websiteCheck(request, url, env);
     if (res) return path.startsWith('/tools/') ? res : withGtm(res);
     return Response.redirect(new URL('/web-design/', url).href, 302);
   }
 
-  // The Google Ads Check, the same way (keeps /google-ads-audit, which has the impressions history)
+  // The Google Ads Check, the same way (keeps /google-ads-audit, which has the search impressions history)
   if (isAdsCheckPath(path)) {
     const res = await adsCheck(request, url, env);
     if (res) return path.startsWith('/tools/') ? res : withGtm(res);
     return Response.redirect(new URL('/google-ads/', url).href, 302);
   }
 
-  const pausedTo = PAUSED[path.replace(/\.html$/, '')];
+  const pausedTo = PAUSED[bare];
   if (pausedTo) return Response.redirect(new URL(pausedTo, url).href, 302);
 
   if (REDIRECTS[path]) return Response.redirect(new URL(REDIRECTS[path], url).href, 301);
