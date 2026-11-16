@@ -1,0 +1,36 @@
+/* Layer 2, system (Design Spec v3 sections 1b, 1d, 1e). The same for every brand and every mode: type, space, radii,
+   sizes, motion, and the brand shades worked out from --brand. Never put a colour here that changes with the mode. */
+:root {
+  /* type */
+  --display: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --fs-hero: clamp(56px, 9vw, 148px);
+  --fs-hero-long: clamp(46px, 6.4vw, 100px);
+  --fs-statement: clamp(48px, 8vw, 124px);
+  --fs-h2: clamp(36px, 4.4vw, 64px);
+  --fs-h3: 24px;
+  --fs-lede: 21px;
+  --fs-body: 18px;
+  --fs-small: 15.5px;
+  --fs-label: 12.5px;
+  /* space: website sections, and the 4px steps the app uses */
+  --sec: 150px; --sec-tight: 96px; --gutter: 24px; --maxw: 1240px;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px;
+  /* radii: 12 inputs and small things, 16 cards inside cards, 22 cards, 28 big panels, pills */
+  --r-sm: 12px; --r-nest: 16px; --r-md: 22px; --r-lg: 28px; --r-pill: 999px;
+  /* sizes */
+  --control-h: 44px; --control-h-sm: 36px; --side-w: 264px; --content: 1240px;
+  /* motion (section 1e): durations, curves, the gap between blocks arriving in turn */
+  --d1: 120ms; --d2: 200ms; --d3: 320ms; --d4: 560ms; --d5: 900ms;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  --stagger: 45ms;
+  /* brand shades worked out from --brand (brand.css may pin them) */
+  --brand-hover: var(--brand-hover-pin, color-mix(in oklab, var(--brand), #000 16%));
+  --brand-top: color-mix(in oklab, var(--brand), #fff 12%);
+  --brand-glow: color-mix(in oklab, var(--brand) 55%, transparent);
+  --brand-on-ink: var(--brand-on-ink-pin, color-mix(in oklab, var(--brand) 42%, #fff));
+  --brand-ink: #FFFFFF;   /* text on the brand colour */
+}

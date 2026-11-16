@@ -1,0 +1,11 @@
+/* Layer 1, brand (Design Spec v3 section 1b, Obsidian 04_Projects/Before You Pay/Brand Assets/Web Design/BYP-DESIGN-SPEC.md).
+   The ONLY layer that differs between brands. system.css and modes.css are copied unchanged from Before You Pay, the
+   reference build; Phillips. writes this file and keeps its own mark, name, favicons and share images.
+   Rule: white text on --brand must reach 4.5:1 contrast. Phillips. amber #985830: 5.56:1.
+   Pins: the shades phillips-uk.com has always used for its amber, so buttons, links and washes keep their colour. */
+:root {
+  --brand: #985830;              /* Phillips. amber, the logo's colour: primary buttons, links, active states, eyebrows */
+  --brand-hover-pin: #7A3F1F;    /* amber dark: button and link hover */
+  --brand-wash-pin: #F5EBD9;     /* amber surface: brand-tinted fills, selected options, light mode only */
+  --brand-on-ink-pin: #D9925E;   /* light amber: accents on ink (eyebrows, the full stop, the focus edge) */
+}

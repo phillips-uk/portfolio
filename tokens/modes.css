@@ -1,0 +1,47 @@
+/* Layer 3, modes (Design Spec v3 section 1c). Every colour, surface, line and shadow, by mode. Components ask for these
+   names and never for a hex value, so a new mode is a new block here and nothing else.
+   This file is light, the default, and the only mode the website (byp.css) gets. Dark and liquid glass are in
+   modes-dark.css and modes-glass.css, copied into app.css only. Nothing turns them on yet: they wait for Lewis to
+   update the global "Light only" rule, then the Appearance setting (spec 1c) sets data-theme on <html>. */
+:root, [data-theme="light"] {
+  color-scheme: light;
+  /* ink: the dark moments (heroes, statements, sidebars, the email header) */
+  --ink: #12171D; --ink-2: #1C242D; --ink-line: #2C3744; --ink-text: #B7C0CA; --ink-muted: #8995A2;
+  /* the desk, surfaces, text and lines */
+  --bg: #F6F4EE; --surface: #FFFFFF; --surface-2: #FBFAF6; --sunk: #EFEEE8;
+  --text: #14191F; --text-2: #3A434E; --muted: #6E746C;
+  --line: #E2DFD5; --line-2: #CFCBBF; --line-soft: #F0EEE7;
+  /* the brand in this mode */
+  --brand-text: var(--brand);
+  --brand-wash: var(--brand-wash-pin, color-mix(in oklab, var(--brand) 9%, #fff));
+  --brand-ring: color-mix(in oklab, var(--brand) 32%, transparent);
+  /* status tones (spec section 2): the same jobs in every mode. Source labels are named uses of these. */
+  --ok: #0B7E58; --ok-wash: #E9F6F0; --ok-dot: #10A877; --ok-on-ink: #5FD0AA;
+  --info: #4E6683; --info-wash: #ECF0F5; --info-dot: #4E6683; --info-on-ink: #A9BBD3;
+  --attn: #835B03; --attn-wash: #FBF3E0; --attn-dot: #E0A11A;
+  --bad: #A8321F; --bad-wash: #FBEDEA; --bad-dot: #C8432F;
+  --party: #7A4F68; --party-wash: #F3ECF0; --party-dot: #9C6A87; --party-on-ink: #D4A9C2;
+  --off: #4A4F49; --off-wash: #EFEEE8; --off-dot: #8B9088;
+  /* depth (section 1d): resting, raised, floating, over everything */
+  --e1: 0 1px 2px rgba(20, 25, 31, .04), 0 6px 16px -10px rgba(20, 25, 31, .14);
+  --e2: 0 2px 4px rgba(20, 25, 31, .05), 0 22px 40px -24px rgba(20, 25, 31, .38);
+  --e3: 0 4px 10px rgba(20, 25, 31, .06), 0 30px 60px -28px rgba(20, 25, 31, .5);
+  --e4: 0 10px 24px rgba(20, 25, 31, .08), 0 50px 100px -40px rgba(20, 25, 31, .6);
+  /* the surface recipe (.surf, section 1d): fill, rim, blur, the highlight that follows the pointer */
+  --card-fill: linear-gradient(180deg, #FFFFFF, #FEFDFB);
+  --card-rim: linear-gradient(#E2DFD5, #E2DFD5);
+  --card-blur: none;
+  --card-glint: color-mix(in oklab, var(--brand) 6%, transparent);
+  --scrim: rgba(18, 23, 29, .42);
+  /* the app (Part B): the desk's light, table heads, fields, the sidebar frame, the top bar, the ink panel */
+  --bg-art: radial-gradient(1200px 520px at 100% -10%, color-mix(in oklab, var(--brand) 7%, transparent), transparent 70%);
+  --head: #FBFAF6;
+  --field: #FFFFFF; --field-line: var(--line-2); --field-shadow: inset 0 1px 2px rgba(20, 25, 31, .04);
+  --side-bg: radial-gradient(420px 320px at 0% 0%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 70%), #12171D;
+  --side-line: #2C3744; --side-2: #1C242D; --side-text: #C9D1DA; --side-muted: #8995A2; --side-lbl: #5E6B78;
+  --side-pill: #FFFFFF; --side-pill-text: #14191F; --side-pill-shadow: 0 6px 16px -8px rgba(0, 0, 0, .6);
+  --top-bg: color-mix(in oklab, #F6F4EE 82%, transparent);
+  --ink-panel: radial-gradient(520px 260px at 0% 0%, color-mix(in oklab, var(--brand) 30%, transparent), transparent 70%), linear-gradient(#12171D, #12171D);
+  --ink-rim: linear-gradient(180deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, .02));
+  --orbs: 0;   /* the slow lights behind liquid glass, off */
+}

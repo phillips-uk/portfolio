@@ -9,18 +9,19 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
-<link rel="stylesheet" href="/agency.css?v=11">
-<link rel="stylesheet" href="/motion.css?v=4">
+<link rel="stylesheet" href="/agency.css?v=12">
+<link rel="stylesheet" href="/motion.css?v=5">
 <style>
   .work-hero { padding: 88px 32px 64px; }
   .work-hero .hero-inner { max-width: 1120px; }
   .work-hero .hero-h1 { max-width: 860px; }
   .stages-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
-  .stages-tags span { font-size: 11px; font-weight: 600; color: var(--amber-dark); background: var(--amber-light); border-radius: 999px; padding: 4px 10px; }
+  .stages-tags span { display: inline-flex; align-items: center; gap: 6px; font: 500 10.5px/1 var(--mono); letter-spacing: .09em; text-transform: uppercase; color: var(--brand-text); background: var(--brand-wash); border-radius: var(--r-pill); padding: 5px 9px; }
+  .stages-tags span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex: none; }
   .case { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
   .case .kpis { margin-bottom: 0; }
   .case-side { display: grid; gap: 16px; }
-  .case-side .quote { margin: 0; background: #fff; border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0; padding: 18px 20px; }
+  .case-side .quote { margin: 0; background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(var(--line), var(--line)) border-box; border: 1px solid transparent; border-left: 3px solid var(--brand); border-radius: 0 var(--r-nest) var(--r-nest) 0; padding: 18px 20px; box-shadow: var(--e1); }
   .source { font-size: 12px; color: var(--muted); margin: 12px 0 0; }
   @media (max-width: 900px) {
     .work-hero { padding: 56px 20px 48px; }
@@ -368,7 +369,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/showcase.js?v=1" defer></script>
-<script src="/motion.js?v=4" defer></script>
+<script src="/motion.js?v=5" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>
 </html>

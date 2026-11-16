@@ -276,19 +276,20 @@ function noticePage({ title = 'Private page', heading, body, after = '', head = 
 <html lang="en-GB"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title} | Phillips.</title><meta name="robots" content="noindex, nofollow, noarchive">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<link rel="stylesheet" href="/agency.css?v=12">
 <style>
-:root{color-scheme:light}
-body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#1A1A1A;background:#FDF6EE;min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box}
-main{max-width:460px;width:100%;box-sizing:border-box;background:#fff;border:1px solid #E8D8C4;border-radius:8px;padding:40px 36px}
-h1{font-size:28px;letter-spacing:-0.025em;line-height:1.15;margin:28px 0 12px}
-p{font-size:16px;line-height:1.6;color:#6B6B6B;margin:0 0 12px}
-ol{font-size:15px;line-height:1.6;color:#1A1A1A;margin:0 0 12px;padding-left:20px}
+/* Design Spec v3: the tokens and fonts come from agency.css; a choice is a centred card */
+body{background:var(--bg-art),var(--bg);min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box}
+main{max-width:460px;width:100%;box-sizing:border-box;border:1px solid transparent;border-radius:var(--r-md);padding:40px 36px;background:var(--card-fill) padding-box,var(--card-rim) border-box;box-shadow:var(--e3)}
+h1{font-size:28px;font-weight:800;letter-spacing:-0.035em;line-height:1.12;margin:28px 0 12px}
+p{font-size:16px;line-height:1.6;color:var(--text-2);margin:0 0 12px}
+ol{font-size:15px;line-height:1.6;color:var(--text);margin:0 0 12px;padding-left:20px}
 ol li{margin-bottom:4px}
 .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-a.btn{display:inline-block;background:#985830;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 18px;border-radius:6px}
-a.btn:hover{background:#7A3F1F}
-a.btn.quiet{background:#fff;color:#1A1A1A;border:1px solid #E8D8C4;padding:12px 17px}
-a.btn.quiet:hover{border-color:#985830;background:#fff}
+a.btn{display:inline-flex;align-items:center;min-height:var(--control-h);padding:0 20px;border:1px solid transparent;border-radius:var(--r-pill);background:linear-gradient(180deg,var(--brand-top),var(--brand));color:var(--brand-ink);text-decoration:none;font-weight:800;font-size:15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 18px -10px var(--brand-glow);transition:transform var(--d2) var(--ease-out),background var(--d2)}
+a.btn:hover{background:linear-gradient(180deg,var(--brand),var(--brand-hover));transform:translateY(-1px)}
+a.btn.quiet{background:var(--surface);color:var(--text);border-color:var(--line-2);box-shadow:var(--e1)}
+a.btn.quiet:hover{border-color:var(--text-2);background:var(--surface)}
 @media (max-width:480px){main{padding:32px 24px}h1{font-size:25px}}
 </style>${head}</head><body><main>
 <a href="/"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:34px;width:auto;display:block"></a>

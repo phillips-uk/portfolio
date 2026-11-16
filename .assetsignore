@@ -15,3 +15,5 @@ wrangler.jsonc
 *.md
 .claude
 lewis-phillips-cv.pdf
+tokens
+scripts

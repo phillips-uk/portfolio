@@ -17,8 +17,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="canonical" href="https://www.phillips-uk.com/guides/">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},3000)}</script>
-<link rel="stylesheet" href="/motion.css?v=4">
-<link rel="stylesheet" href="/brief.css?v=5">
+<link rel="stylesheet" href="/motion.css?v=5">
+<link rel="stylesheet" href="/brief.css?v=6">
 
 <meta property="og:title" content="Insights: The Monday Brief and guides | Phillips.">
 <meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png?v=2">
@@ -32,34 +32,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:description" content="What changed in Google Ads, GA4, Search and the other ad platforms this week, and what it means for your account, plus short practical guides on paid media and tracking.">
 
 <style>
-  :root {
-    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --ink: #1A1A1A;
-    --white: #ffffff;
-    --cream: #FDF6EE;
-    --amber: #985830;
-    --mid: #6B6B6B;
-    --border: #E8D8C4;
-  }
   html, body { margin: 0; padding: 0; }
-  body { font-family: var(--font-sans); color: var(--ink); background: var(--white); }
+  body { font-family: var(--body); color: var(--text); background: var(--surface); }
   .page-w { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
   .read-w { max-width: 720px; margin: 0 auto; padding: 0 32px; }
-  .sec-white { background: #fff; padding: 80px 0; }
-  .sec-cream { background: #FDF6EE; padding: 80px 0; }
-  ::selection { background: #985830; color: #fff; }
+  .sec-white { background: var(--surface); padding: 80px 0; }
+  .sec-cream { background: var(--bg); padding: 80px 0; }
+  ::selection { background: var(--brand); color: #fff; }
   *, *::before, *::after { box-sizing: border-box; }
   /* Mobile nav */
-  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #1A1A1A; line-height: 1; }
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); line-height: 1; }
   .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
   .ph-drawer.open { display: block; }
-  .ph-drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
-  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: #fff; padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
-  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: #1A1A1A; padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
-  .ph-drawer-link { font-size: 15px; font-weight: 500; color: #6B6B6B; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #F0E5D2; display: block; }
-  .ph-drawer-link:hover, .ph-drawer-link.active { color: #1A1A1A; }
-  .ph-drawer-cta { margin-top: 16px; background: #985830; color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
-  .ph-drawer-cta:hover { background: #7A3F1F; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: var(--scrim); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: var(--surface); padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text); padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line-soft); display: block; }
+  .ph-drawer-link:hover, .ph-drawer-link.active { color: var(--text); }
+  .ph-drawer-cta { margin-top: 16px; background: var(--brand); color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: var(--brand-hover); }
 
   @media (max-width: 700px) {
     .page-w { padding: 0 20px; }
@@ -70,35 +61,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* Nav */
   .nav-btn-filled {
     display: inline-flex; align-items: center; justify-content: center;
-    background: #985830; color: #fff;
+    background: var(--brand); color: #fff;
     padding: 10px 20px; font-size: 13px; font-weight: 600;
     border-radius: 4px; text-decoration: none; font-family: inherit;
     transition: background 150ms cubic-bezier(0.2,0,0,1);
   }
-  .nav-btn-filled:hover { background: #7A3F1F; }
+  .nav-btn-filled:hover { background: var(--brand-hover); }
 
   /* Filter pills */
   .filter-pill {
     background: transparent;
-    color: #1A1A1A;
-    border: 1px solid #E8D8C4;
+    color: var(--text);
+    border: 1px solid var(--line);
     padding: 8px 16px;
     font-size: 13px; font-weight: 600;
     border-radius: 999px; cursor: pointer; font-family: inherit;
     letter-spacing: -0.005em;
     transition: background 150ms cubic-bezier(0.2,0,0,1), color 150ms cubic-bezier(0.2,0,0,1), border-color 150ms cubic-bezier(0.2,0,0,1);
   }
-  .filter-pill:hover { background: #fff; }
+  .filter-pill:hover { background: var(--surface); }
   .filter-pill.active {
-    background: #1A1A1A; color: #fff; border-color: #1A1A1A;
+    background: var(--ink); color: #fff; border-color: var(--ink);
   }
 
   /* Guide cards */
   .guide-card {
     display: flex; flex-direction: column;
     text-decoration: none; color: inherit;
-    background: #fff;
-    border: 1px solid #E8D8C4;
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: 6px;
     padding: 24px 26px;
     transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms cubic-bezier(0.2,0,0,1), border-color 200ms cubic-bezier(0.2,0,0,1);
@@ -108,8 +99,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .guide-card.is-coming { cursor: default; opacity: 0.6; }
   .guide-card.is-live:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(152, 88, 48, 0.10);
-    border-color: #985830;
+    box-shadow: var(--e2);
+    border-color: var(--brand);
   }
   .guide-card.is-live:hover .card-arrow { transform: translateX(3px); }
 
@@ -122,12 +113,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .cta-btn-filled {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 16px 32px; font-size: 15px; font-weight: 600;
-    color: #fff; background: #985830;
-    border: 1.5px solid #985830;
+    color: #fff; background: var(--brand);
+    border: 1.5px solid var(--brand);
     border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
     transition: background 150ms cubic-bezier(0.2,0,0,1);
   }
-  .cta-btn-filled:hover { background: #7A3F1F; border-color: #7A3F1F; }
+  .cta-btn-filled:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
 
   .cta-btn-outline {
     display: inline-flex; align-items: center; justify-content: center;
@@ -150,15 +141,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .guide-card[hidden] { display: none !important; }
 
   /* Guide count */
-  #guide-count { font-size: 12px; color: #6B6B6B; letter-spacing: -0.005em; }
+  #guide-count { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; }
 
   /* Filter label */
   #filter-label {
     display: inline-block;
     font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; color: #985830;
+    text-transform: uppercase; color: var(--brand-text);
   }
 </style>
+<link rel="stylesheet" href="/guides.css?v=1">
 </head>
 <body>
 <!-- GTM noscript -->
@@ -166,20 +158,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ===== NAV ===== -->
-<header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:saturate(120%);border-bottom:1px solid #E8D8C4;height:64px;">
+<header style="position:sticky;top:0;z-index:50;background:color-mix(in oklab, var(--surface) 88%, transparent);backdrop-filter:saturate(120%);border-bottom:1px solid var(--line);height:64px;">
   <div style="max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
-    <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#1A1A1A;line-height:1;">
+    <a href="/" style="text-decoration:none;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:var(--text);line-height:1;">
       <img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block">
     </a>
     <nav class="nav-links" style="display:flex;align-items:center;gap:28px;">
-      <a href="/#services" style="font-size:14px;font-weight:500;color:#6B6B6B;text-decoration:none;transition:color 150ms;">Services</a>
-      <a href="/work/" style="font-size:14px;font-weight:500;color:#6B6B6B;text-decoration:none;transition:color 150ms;">Work</a>
-      <a href="/about/" style="font-size:14px;font-weight:500;color:#6B6B6B;text-decoration:none;transition:color 150ms;">About</a>
-      <a href="/guides/" style="font-size:14px;font-weight:600;color:#1A1A1A;text-decoration:none;">Insights</a>
+      <a href="/#services" style="font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 150ms;">Services</a>
+      <a href="/work/" style="font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 150ms;">Work</a>
+      <a href="/about/" style="font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 150ms;">About</a>
+      <a href="/guides/" style="font-size:14px;font-weight:600;color:var(--text);text-decoration:none;">Insights</a>
       <a href="/#contact" class="nav-btn-filled">Get in touch</a>
     </nav>
     <button class="ph-hamburger" onclick="document.getElementById('ph-guides-drawer').classList.add('open')" aria-label="Open menu">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="10" width="22" height="2" rx="1" fill="#1A1A1A"/><rect y="16" width="22" height="2" rx="1" fill="#1A1A1A"/></svg>
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="currentColor"/><rect y="10" width="22" height="2" rx="1" fill="currentColor"/><rect y="16" width="22" height="2" rx="1" fill="currentColor"/></svg>
     </button>
   </div>
 </header>
@@ -196,14 +188,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <!-- ===== HERO ===== -->
-<section data-hero style="background:#fff;padding:72px 0 56px;">
+<section data-hero style="background:var(--surface);padding:72px 0 56px;">
   <div class="page-w">
-    <div style="border-left:3px solid #985830;padding-left:24px;max-width:860px;">
-      <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">Insights</span>
-      <h1 style="font-size:clamp(40px, 5.4vw, 64px);font-weight:700;letter-spacing:-0.025em;line-height:1.04;color:#1A1A1A;margin:16px 0 0;">
-        Things worth knowing before you <em style="font-style:italic;color:#985830;">spend another pound.</em>
+    <div style="border-left:3px solid var(--brand);padding-left:24px;max-width:860px;">
+      <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--brand-text);">Insights</span>
+      <h1 style="font-size:clamp(40px, 5.4vw, 64px);font-weight:700;letter-spacing:-0.025em;line-height:1.04;color:var(--text);margin:16px 0 0;">
+        Things worth knowing before you <em style="font-style:italic;color:var(--brand-text);">spend another pound.</em>
       </h1>
-      <p style="font-size:18px;line-height:1.55;color:#6B6B6B;margin:20px 0 0;max-width:620px;">
+      <p style="font-size:18px;line-height:1.55;color:var(--muted);margin:20px 0 0;max-width:620px;">
         What changed in the ad platforms this week and what it means for your account, plus short guides that stay useful. Written from 11 years running paid media.
       </p>
     </div>
@@ -228,10 +220,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </section>
 
 <!-- ===== FILTER BAR ===== -->
-<div style="position:sticky;top:64px;z-index:40;background:#FDF6EE;border-top:1px solid #E8D8C4;border-bottom:1px solid #E8D8C4;">
+<div style="position:sticky;top:64px;z-index:40;background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
   <div class="page-w" style="padding:16px 32px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <span id="filter-label">Filter</span>
-    <span style="width:4px;height:4px;border-radius:999px;background:#E8D8C4;margin:0 6px;display:inline-block;"></span>
+    <span style="width:4px;height:4px;border-radius:999px;background:var(--line);margin:0 6px;display:inline-block;"></span>
     <button class="filter-pill active" data-filter="All" onclick="setFilter(this)">All</button>
     <button class="filter-pill" data-filter="Google Ads" onclick="setFilter(this)">Google Ads</button>
     <button class="filter-pill" data-filter="Landing Pages" onclick="setFilter(this)">Landing Pages</button>
@@ -240,10 +232,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <!-- ===== GUIDE GRID ===== -->
-<section style="background:#FDF6EE;padding:56px 0 96px;">
+<section style="background:var(--bg);padding:56px 0 96px;">
   <div class="page-w">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;gap:24px;flex-wrap:wrap;">
-      <span id="filter-heading" style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#985830;">All guides</span>
+      <span id="filter-heading" style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--brand-text);">All guides</span>
       <span id="guide-count">8 guides</span>
     </div>
 
@@ -252,15 +244,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Card 1: GA4 Imports | LIVE | Google Ads -->
       <a href="/guides/ga4-imports-break-smart-bidding/" class="guide-card is-live" data-cat="Google Ads">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--brand-wash);color:var(--brand-text);border:1px solid var(--line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--brand);display:inline-block;"></span>
             Google Ads
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">11 min read</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">11 min read</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Why GA4 Imports Can Break Smart Bidding</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">When GA4 imports are set as Primary, Smart Bidding trains on modelled data instead of observed conversions. Here's what breaks and how to fix it.</p>
-        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">Why GA4 Imports Can Break Smart Bidding</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">When GA4 imports are set as Primary, Smart Bidding trains on modelled data instead of observed conversions. Here's what breaks and how to fix it.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--brand-text);letter-spacing:-0.005em;">
           Read guide <span class="card-arrow">&rarr;</span>
         </span>
       </a>
@@ -268,15 +260,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Card 2: Fix Conversion Tracking | LIVE | Tracking -->
       <a href="/guides/fix-google-ads-conversion-tracking/" class="guide-card is-live" data-cat="Tracking">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#E4E7EB;color:#4F5760;border:1px solid #CFD4DA;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#4F5760;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--info-wash);color:var(--info);border:1px solid var(--info-line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--info-dot);display:inline-block;"></span>
             Tracking
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">12 min read</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">12 min read</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">How to Fix Google Ads Conversion Tracking</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">The seven most common causes of broken conversion tracking: inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures and Consent Mode v2 silent issues.</p>
-        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">How to Fix Google Ads Conversion Tracking</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">The seven most common causes of broken conversion tracking: inactive actions, duplicate counting, wrong primary/secondary setup, Enhanced Conversions failures and Consent Mode v2 silent issues.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--brand-text);letter-spacing:-0.005em;">
           Read guide <span class="card-arrow">&rarr;</span>
         </span>
       </a>
@@ -284,15 +276,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Card 3: Quality Score | LIVE | Google Ads -->
       <a href="/guides/improve-google-ads-quality-score/" class="guide-card is-live" data-cat="Google Ads">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--brand-wash);color:var(--brand-text);border:1px solid var(--line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--brand);display:inline-block;"></span>
             Google Ads
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">10 min read</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">10 min read</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Google Ads Quality Score Low? How to Improve It</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">Quality Score affects what you pay per click, not just where you rank. Covers Expected CTR, Ad Relevance and Landing Page Experience, with specific fixes for each component.</p>
-        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">Google Ads Quality Score Low? How to Improve It</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">Quality Score affects what you pay per click, not just where you rank. Covers Expected CTR, Ad Relevance and Landing Page Experience, with specific fixes for each component.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--brand-text);letter-spacing:-0.005em;">
           Read guide <span class="card-arrow">&rarr;</span>
         </span>
       </a>
@@ -300,15 +292,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Card 4: Bidding Strategy | LIVE | Google Ads -->
       <a href="/guides/google-ads-bidding-strategy/" class="guide-card is-live" data-cat="Google Ads">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--brand-wash);color:var(--brand-text);border:1px solid var(--line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--brand);display:inline-block;"></span>
             Google Ads
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">11 min read</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">11 min read</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Google Ads Bidding Strategy: Which to Use and When</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">Target CPA, Target ROAS, Maximise conversions or Manual CPC: when each strategy makes sense, and what Smart Bidding needs to work.</p>
-        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">Google Ads Bidding Strategy: Which to Use and When</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">Target CPA, Target ROAS, Maximise conversions or Manual CPC: when each strategy makes sense, and what Smart Bidding needs to work.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--brand-text);letter-spacing:-0.005em;">
           Read guide <span class="card-arrow">&rarr;</span>
         </span>
       </a>
@@ -316,15 +308,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Card 5: Target CPA | LIVE | Google Ads -->
       <a href="/guides/target-cpa-few-conversions/" class="guide-card is-live" data-cat="Google Ads">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--brand-wash);color:var(--brand-text);border:1px solid var(--line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--brand);display:inline-block;"></span>
             Google Ads
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">9 min read</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">9 min read</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Target CPA With Few Conversions: How to Tell If It&rsquo;s Working</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">With only a handful of conversions, Target CPA results are noisy and the latest days look worse than they are. How to judge it, and when to change the target.</p>
-        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#985830;letter-spacing:-0.005em;">
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">Target CPA With Few Conversions: How to Tell If It&rsquo;s Working</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">With only a handful of conversions, Target CPA results are noisy and the latest days look worse than they are. How to judge it, and when to change the target.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--brand-text);letter-spacing:-0.005em;">
           Read guide <span class="card-arrow">&rarr;</span>
         </span>
       </a>
@@ -332,49 +324,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Card 6: LCP | COMING SOON | Landing Pages -->
       <div class="guide-card is-coming" data-cat="Landing Pages">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#DCEAE8;color:#2E5F5C;border:1px solid #BFD6D2;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#2E5F5C;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--ok-wash);color:var(--ok);border:1px solid var(--ok-line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--ok-dot);display:inline-block;"></span>
             Landing Pages
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">6 min read</span>
-          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">6 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--muted);background:var(--off-wash);border:1px solid var(--line);padding:2px 8px;border-radius:20px;">Coming soon</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">LCP above 2.5s costs you real CPC</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">The direct line between Core Web Vitals and your Quality Score, with numbers.</p>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">LCP above 2.5s costs you real CPC</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">The direct line between Core Web Vitals and your Quality Score, with numbers.</p>
       </div>
 
       <!-- Card 7: Consent Mode | COMING SOON | Tracking -->
       <div class="guide-card is-coming" data-cat="Tracking">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#E4E7EB;color:#4F5760;border:1px solid #CFD4DA;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#4F5760;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--info-wash);color:var(--info);border:1px solid var(--info-line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--info-dot);display:inline-block;"></span>
             Tracking
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">5 min read</span>
-          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">5 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--muted);background:var(--off-wash);border:1px solid var(--line);padding:2px 8px;border-radius:20px;">Coming soon</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Consent Mode v2 and what defaulting to denied actually means</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">It's not a compliance checkbox. It's a data gap that warps every downstream report.</p>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">Consent Mode v2 and what defaulting to denied actually means</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">It's not a compliance checkbox. It's a data gap that warps every downstream report.</p>
       </div>
 
       <!-- Card 8: Enhanced Conversions | COMING SOON | Google Ads -->
       <div class="guide-card is-coming" data-cat="Google Ads">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#F5EBD9;color:#985830;border:1px solid #E8D8C4;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
-            <span style="width:6px;height:6px;border-radius:999px;background:#985830;display:inline-block;"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--brand-wash);color:var(--brand-text);border:1px solid var(--line);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;line-height:1;white-space:nowrap;">
+            <span style="width:6px;height:6px;border-radius:999px;background:var(--brand);display:inline-block;"></span>
             Google Ads
           </span>
-          <span style="font-size:11px;color:#6B6B6B;letter-spacing:-0.005em;">4 min read</span>
-          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#6B6B6B;background:#F0EEEB;border:1px solid #E8D8C4;padding:2px 8px;border-radius:20px;">Coming soon</span>
+          <span style="font-size:11px;color:var(--muted);letter-spacing:-0.005em;">4 min read</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--muted);background:var(--off-wash);border:1px solid var(--line);padding:2px 8px;border-radius:20px;">Coming soon</span>
         </div>
-        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:#1A1A1A;margin:0 0 12px;">Enhanced Conversions: what it is, why you probably don't have it</h3>
-        <p style="font-size:14px;line-height:1.55;color:#6B6B6B;margin:0 0 24px;">The easiest high-ROI fix on most accounts. Also the most skipped.</p>
+        <h3 style="font-size:20px;font-weight:700;letter-spacing:-0.015em;line-height:1.25;color:var(--text);margin:0 0 12px;">Enhanced Conversions: what it is, why you probably don't have it</h3>
+        <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 24px;">The easiest high-ROI fix on most accounts. Also the most skipped.</p>
       </div>
 
     </div><!-- /guide-grid -->
 
     <!-- Empty state -->
-    <div id="empty-state" style="display:none;background:#fff;border:1px solid #E8D8C4;border-radius:6px;padding:48px 32px;text-align:center;color:#6B6B6B;font-size:14px;">
+    <div id="empty-state" style="display:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:48px 32px;text-align:center;color:var(--muted);font-size:14px;">
       No guides in this category yet. Check back soon.
     </div>
 
@@ -382,41 +374,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </section>
 
 <!-- ===== END CTA ===== -->
-<section style="background:linear-gradient(135deg, #1A1A1A 0%, #241408 100%);padding:96px 32px;">
+<section style="background:var(--ink-panel);padding:96px 32px;">
   <div style="max-width:880px;margin:0 auto;text-align:center;">
-    <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#B87040;">Want a second pair of eyes?</span>
+    <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--brand-on-ink);">Want a second pair of eyes?</span>
     <h2 style="font-size:clamp(36px, 4.6vw, 52px);font-weight:700;letter-spacing:-0.025em;line-height:1.06;color:#fff;margin:20px 0 32px;">
-      Ask me <em style="font-style:italic;color:#985830;">about your account.</em>
+      Ask me <em style="font-style:italic;color:var(--brand-text);">about your account.</em>
     </h2>
     <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
       <a href="/#contact" class="cta-btn-filled">Ask me a question &rarr;</a>
       <a href="/google-ads/" class="cta-btn-outline">Google Ads management &rarr;</a>
     </div>
-    <div style="margin-top:32px;font-size:13px;color:rgba(255,255,255,0.5);">
+    <div style="margin-top:32px;font-size:13px;color:var(--ink-muted);">
       Free &middot; No obligation &middot; I reply myself
     </div>
   </div>
 </section>
 
 <!-- ===== FOOTER ===== -->
-<footer style="background:linear-gradient(135deg, #1A1A1A 0%, #241408 100%);padding:28px 32px;">
+<footer style="background:var(--ink-panel);padding:28px 32px;">
   <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-    <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);">
+    <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:var(--ink-muted);">
       <a href="/" style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em;text-decoration:none;">
         <img src="/logo/phillips-lockup-reversed.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block">
       </a>
       <span>&copy; 2026 PHILLIPSGROUPUK LIMITED &middot; phillips-uk.com</span>
     </div>
     <div style="display:flex;gap:20px;">
-      <a href="/#services" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Services</a>
-      <a href="/work/" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Work</a>
-      <a href="/#contact" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Get in touch</a>
-      <a href="/updates/" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">The Monday Brief</a>
-      <a href="/privacy/" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">Privacy</a>
+      <a href="/#services" style="font-size:12px;color:var(--ink-muted);text-decoration:none;">Services</a>
+      <a href="/work/" style="font-size:12px;color:var(--ink-muted);text-decoration:none;">Work</a>
+      <a href="/#contact" style="font-size:12px;color:var(--ink-muted);text-decoration:none;">Get in touch</a>
+      <a href="/updates/" style="font-size:12px;color:var(--ink-muted);text-decoration:none;">The Monday Brief</a>
+      <a href="/privacy/" style="font-size:12px;color:var(--ink-muted);text-decoration:none;">Privacy</a>
     </div>
   </div>
-  <nav class="group-links" aria-label="Phillips Group of Companies" style="max-width:1200px;margin:14px auto 0;font-size:12px;line-height:1.55;color:rgba(255,255,255,0.4)"><a href="https://phillips-group.uk/" style="color:inherit;text-decoration:underline">Phillips Group</a> of Companies: <span style="white-space:nowrap"><a href="https://thedirectorsoffice.uk/" style="color:inherit;text-decoration:underline">The Director's Office</a> &middot;</span> <span style="white-space:nowrap">Phillips. &middot;</span> <span style="white-space:nowrap"><a href="https://beforeyoupay.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Before You Pay</a> &middot;</span> <a href="https://searchdesk.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Search Desk</a></nav>
-  <p style="max-width:1200px;margin:14px auto 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,0.4)">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX. It handles official post only and doesn't take visitors, so please <a href="/#contact" style="color:inherit;text-decoration:underline">ask me a question</a> or email <a data-email style="color:inherit;text-decoration:underline">contact at phillips-uk dot com</a>.</p>
+  <nav class="group-links" aria-label="Phillips Group of Companies" style="max-width:1200px;margin:14px auto 0;font-size:12px;line-height:1.55;color:var(--ink-muted)"><a href="https://phillips-group.uk/" style="color:inherit;text-decoration:underline">Phillips Group</a> of Companies: <span style="white-space:nowrap"><a href="https://thedirectorsoffice.uk/" style="color:inherit;text-decoration:underline">The Director's Office</a> &middot;</span> <span style="white-space:nowrap">Phillips. &middot;</span> <span style="white-space:nowrap"><a href="https://beforeyoupay.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Before You Pay</a> &middot;</span> <a href="https://searchdesk.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Search Desk</a></nav>
+  <p style="max-width:1200px;margin:14px auto 0;font-size:11px;line-height:1.55;color:var(--ink-muted)">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX. It handles official post only and doesn't take visitors, so please <a href="/#contact" style="color:inherit;text-decoration:underline">ask me a question</a> or email <a data-email style="color:inherit;text-decoration:underline">contact at phillips-uk dot com</a>.</p>
 </footer>
 
 <script>
@@ -448,7 +440,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 </script>
 <script src="/brief-form.js?v=1" defer></script>
-<script src="/motion.js?v=4" defer></script>
+<script src="/motion.js?v=5" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>
 </html>

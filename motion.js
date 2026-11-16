@@ -3,6 +3,8 @@
 // the element marked data-hero (or .hero on the homepage), and each page's own cards are listed below.
 (function () {
   var root = document.documentElement;
+  // ?motion=off stills the page for screenshots, as reduced motion does (Design Spec v3 section 1e)
+  if (/[?&]motion=off\b/.test(location.search)) { root.classList.remove('motion-ready'); window.__phMotion = true; }
   if (!root.classList.contains('motion-ready')) return;
   window.__phMotion = true;
 
@@ -79,6 +81,25 @@
     });
   }
 
+  // The light on a card follows the pointer (Design Spec v3 section 1d, the surface recipe): the card's background
+  // reads --mx and --my, set here one frame at a time.
+  if (finePointer) {
+    var lit = '.card, .feature, .proof, .related a, .stats, .note, .tile, .find, .option, .rep-cta, .bi, .brief-card, .brief-latest, .guide-card, .related-card, .author-block, .callout';
+    var lastE = null, lightRaf = 0;
+    document.addEventListener('pointermove', function (e) {
+      lastE = e;
+      if (lightRaf) return;
+      lightRaf = requestAnimationFrame(function () {
+        lightRaf = 0;
+        var c = lastE.target && lastE.target.closest ? lastE.target.closest(lit) : null;
+        if (!c) return;
+        var r = c.getBoundingClientRect();
+        c.style.setProperty('--mx', (lastE.clientX - r.left).toFixed(0) + 'px');
+        c.style.setProperty('--my', (lastE.clientY - r.top).toFixed(0) + 'px');
+      });
+    }, { passive: true });
+  }
+
   if (!('IntersectionObserver' in window)) return;
 
   var gam = Array.prototype.slice.call(document.querySelectorAll('.gam-row'));
@@ -135,7 +156,7 @@
         var parent = el.parentNode;
         var i = seen.get(parent) || 0;
         seen.set(parent, i + 1);
-        el.style.setProperty('--d', ((i % 4) * 0.08).toFixed(2) + 's');
+        el.style.setProperty('--d', ((i % 4) * 0.045).toFixed(3) + 's'); // spec 1e: --stagger, 45ms
         el.classList.add('rv');
         pending.push(el);
         reveal.observe(el);
@@ -191,7 +212,7 @@
       var decimals = (m[2].split('.')[1] || '').length;
       var wait = hero && hero.contains(el) ? 450 : 120;
       setTimeout(function () {
-        var t0 = performance.now(), dur = 1300;
+        var t0 = performance.now(), dur = 900; // spec 1e: --d5, numbers counting up
         (function tick(now) {
           var k = Math.min(1, (now - t0) / dur);
           var v = to * (1 - Math.pow(1 - k, 3));

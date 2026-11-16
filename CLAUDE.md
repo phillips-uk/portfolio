@@ -65,6 +65,15 @@ Then check `https://www.phillips-uk.com/` returns 200 and `/audit` 301s to `/goo
 - Resend free plans: 3,000 transactional emails a month (shared with the contact form), 1,000 marketing contacts. Past 1,000 subscribers is Lewis's decision.
 - Events `newsletter_signup` and `newsletter_confirm` are in the GTM trigger "Site events to GA4" (version 10).
 
+## Design (Design Spec v3, since 16 Nov 2026)
+
+- **The source of truth is Design Spec v3**, one system for every brand where only the colour changes: vault `04_Projects/Before You Pay/Brand Assets/Web Design/BYP-DESIGN-SPEC.md` (sections 1b to 1e, section 2, Part B). Before You Pay is the reference build. The older `01_Phillips/Phillips. Design System.md` is history; where it disagrees, the spec wins for type, space, depth, motion and components, and Phillips. keeps its colour, mark, name and voice.
+- **Tokens:** `tokens/system.css` and `tokens/modes.css` are copied unchanged from Before You Pay; `tokens/brand.css` is Phillips. (`--brand: #985830` plus pins for hover, wash and on-ink). `node scripts/build-tokens.js` copies them between the `tokens:start` and `tokens:end` markers of `agency.css`, `guides.css`, `cloudflare/private/admin.html` and `cloudflare/private/rate-card.html`. Never edit the copied block; edit `tokens/` and rerun, then bump `?v=` where the file is loaded. `tokens/` and `scripts/` are in `.assetsignore`.
+- **Colours are token names only** (`var(--brand)`, `var(--text)`, `var(--line)`, `var(--e1)`, the six tones `--ok --info --attn --bad --party --off`). No hex in CSS apart from white text, colour mixes and the named `--dev-*` (drawn MacBook, iPhone, Safari) and `--gsi-*` (Google's button) colours. `node scripts/test-tokens.cjs` checks this, light only, and that the shared admin menu block is unchanged. `scripts/map-colours.cjs` moves a page in the old palette onto tokens.
+- **Type:** Manrope (reading, headlines 800) and DM Mono (labels, uppercase), hosted in `/fonts/` with their licences. Buttons are pills (brand button with thickness, line button at depth 1); cards use the surface recipe (`--card-fill`, `--card-rim`, `--e1`, lifting to `--e2`); tags are mono with a dot in one of the six tones; dark moments are `--ink`/`--ink-panel`.
+- **Light only:** never copy `modes-dark.css` or `modes-glass.css` from Before You Pay, never add an appearance setting.
+- **Guides** keep their own `<style>` for layout and diagrams and load `/guides.css` after it (tokens plus the shared v3 layer). `?motion=off` stills the motion for screenshots.
+
 ## Page standards (summary, full detail in the Obsidian note)
 
 - Static HTML and vanilla JS only. No new React/Babel pages.
