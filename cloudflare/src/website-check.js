@@ -8,9 +8,9 @@
 //   GET  /tools/website-check/report/<id>
 //
 // What it fetches from the visitor's site: the page itself, the http version (to see if it redirects to https),
-// robots.txt, the sitemap and llms.txt. Speed comes from Google's PageSpeed Insights API, which is free: it uses the
-// PAGESPEED_API_KEY secret when set (the new "Phillips. Tools" Cloud project), else the older PSI_API_KEY, else no key
-// (works at low volume).
+// robots.txt, the sitemap and llms.txt. Speed comes from Google's PageSpeed Insights API, which is free, with the
+// PAGESPEED_API_KEY secret (key "Website Check PageSpeed" in the Phillips Tools Cloud project, since 16 Nov 2026).
+// Without it the call goes keyless, which Google throttles.
 //
 // Storage: R2 (BLOBS), not D1. The tool needs a few small counters and one JSON report per check, the same shape as the
 // contact form's rate limit, so R2 avoids a new database. Keys:
@@ -92,7 +92,7 @@ async function smallText(url) {
 }
 
 async function pageSpeed(env, url, strategy) {
-  const key = env.PAGESPEED_API_KEY || env.PSI_API_KEY || '';
+  const key = env.PAGESPEED_API_KEY || '';
   const cats = strategy === 'mobile' ? ['performance', 'seo', 'accessibility'] : ['performance'];
   const q = new URLSearchParams({ url, strategy });
   cats.forEach(c => q.append('category', c));
