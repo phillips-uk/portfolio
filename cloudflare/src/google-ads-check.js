@@ -60,18 +60,20 @@ function sameOrigin(request) {
 async function readAccount(env, m, customerId) {
   const names = Object.keys(QUERIES);
   const data = {};
-  let next = 0;
+  let next = 0, failed = null;
   const worker = async () => {
-    while (next < names.length) {
+    while (!failed && next < names.length) {
       const name = names[next++];
       try { data[name] = await gaql(env, m, customerId, QUERIES[name]); }
       catch (err) {
         if (OPTIONAL.has(name)) { data[name] = undefined; console.warn('ads-check: optional query failed', name, err.code || err.message); }
-        else throw err;
+        else failed = failed || err;
       }
     }
   };
+  // Every read has finished before this returns, so the link is never ended while a query is still running.
   await Promise.all([worker(), worker(), worker(), worker()]);
+  if (failed) throw failed;
   return data;
 }
 
