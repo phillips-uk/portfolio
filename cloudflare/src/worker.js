@@ -159,6 +159,24 @@ async function route(request, env, ctx) {
   return withGtm(await env.ASSETS.fetch(request));
 }
 
+// Security headers on every response (2026-11-16), added only where a route hasn't set its own (the admin and the
+// rate card set stricter ones). No CSP here: it would need GTM, fonts and every tool page listed, so it is a separate job.
+const SECURITY_HEADERS = {
+  'Strict-Transport-Security': 'max-age=31536000',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
+function withSecurityHeaders(res) {
+  if (!res || res.status === 101 || res.webSocket) return res;
+  const missing = Object.keys(SECURITY_HEADERS).filter(h => !res.headers.has(h));
+  if (!missing.length) return res;
+  const out = new Response(res.body, res);
+  for (const h of missing) out.headers.set(h, SECURITY_HEADERS[h]);
+  return out;
+}
+
 export default {
   async fetch(request, env, ctx) {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
@@ -168,7 +186,7 @@ export default {
       res = new Response(res.body, res);
       res.headers.set('X-Robots-Tag', 'noindex, nofollow');
     }
-    return res;
+    return withSecurityHeaders(res);
   },
 
   // Cron triggers (wrangler.jsonc): the Monday Brief send at 07:00 UK time and Lewis's Friday and Sunday notes.
