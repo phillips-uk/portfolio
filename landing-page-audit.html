@@ -432,7 +432,7 @@ Paste a URL, run the audit and use the report. If it finds something significant
       </div>
     </div>
     <nav class="group-links" aria-label="Phillips Group of Companies" style="max-width:1200px;margin:14px auto 0;font-size:12px;line-height:1.55;color:rgba(255,255,255,0.4)"><a href="https://phillips-group.uk/" style="color:inherit;text-decoration:underline">Phillips Group</a> of Companies: <span style="white-space:nowrap"><a href="https://thedirectorsoffice.uk/" style="color:inherit;text-decoration:underline">The Director's Office</a> &middot;</span> <span style="white-space:nowrap">Phillips. &middot;</span> <span style="white-space:nowrap"><a href="https://beforeyoupay.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Before You Pay</a> &middot;</span> <a href="https://searchdesk.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Search Desk</a></nav>
-    <p style="max-width:1200px;margin:14px auto 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,0.4)">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX. It handles official post only and doesn't take visitors, so please email <a href="mailto:contact@phillips-uk.com" style="color:inherit;text-decoration:underline">contact@phillips-uk.com</a>.</p>
+    <p style="max-width:1200px;margin:14px auto 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,0.4)">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX. It handles official post only and doesn't take visitors, so please <a href="/#contact" style="color:inherit;text-decoration:underline">ask me a question</a> or email <a data-email style="color:inherit;text-decoration:underline">contact at phillips-uk dot com</a>.</p>
 </footer>
 </div>
 
@@ -657,19 +657,20 @@ Paste a URL, run the audit and use the report. If it finds something significant
 
   window.googleCredential = null;
 
+  // The server says whether this Google account may use the tool (/tool-access); the page holds no list of addresses.
   window.handleAuditCredential = function(response) {
-    var allowed = ['lewis@phillips-group.uk', 'lewis@phillips-uk.com', 'lewisdp87@gmail.com'];
-    try {
-      var b64 = response.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      var payload = JSON.parse(atob(b64));
-      if (!allowed.includes((payload.email || '').toLowerCase())) {
-        document.getElementById('audit-auth-error').style.display = '';
-        return;
-      }
-    } catch(e) {}
-    window.googleCredential = response.credential;
-    document.getElementById('audit-auth-gate').style.display = 'none';
-    document.getElementById('audit-form-wrap').style.display = '';
+    fetch('/tool-access', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ credential: response.credential }) })
+      .then(function (r) { return r.json(); })
+      .catch(function () { return { ok: false }; })
+      .then(function (out) {
+        if (!out || !out.ok) {
+          document.getElementById('audit-auth-error').style.display = '';
+          return;
+        }
+        window.googleCredential = response.credential;
+        document.getElementById('audit-auth-gate').style.display = 'none';
+        document.getElementById('audit-form-wrap').style.display = '';
+      });
   };
 
   window.addEventListener('DOMContentLoaded', function () {
@@ -1845,5 +1846,6 @@ Paste a URL, run the audit and use the report. If it finds something significant
 
 
 <script src="/motion.js?v=4" defer></script>
+<script src="/email.js?v=1" defer></script>
 </body>
 </html>

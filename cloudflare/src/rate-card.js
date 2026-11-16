@@ -219,9 +219,11 @@ export async function invitePing(request, env) {
 // Google Analytics on the invite pages, so a prospect reading a proposal shows in GA4 (Realtime included). Same property
 // as the public site, but loaded straight from gtag.js rather than GTM so only the path is sent: the invite token in the
 // address never reaches Google. GA groups these pages as "Proposals", and each open also sends proposal_view (a Key
-// Event) with the page's path. A click on a Phillips. email address counts as
-// contact_click, like the public site (Monument's own addresses on its draft do not). Never added to Lewis's previews
-// from /admin, nor to the locked page.
+// Event) with the page's path. Since 16 Nov 2026 the pages have no email button: "Ask me a question" goes to the form
+// on the homepage, where generate_lead is the lead (same _ga cookie, so GA4 joins the visit up). The only address left
+// is the one email.js writes into the legal line; a click on it still sends contact_click, now an ordinary event, not
+// a key event (Monument's own addresses on its draft never count). Never added to Lewis's previews from /admin, nor to
+// the locked page.
 const GA_ID = 'G-P8648KZWNP';
 const GA_TAG = `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
@@ -296,9 +298,9 @@ ${after}
 </main></body></html>`;
 }
 
-function askFor(subject) {
-  return `<p><strong style="color:#1A1A1A">contact@phillips-uk.com</strong></p>
-<div class="acts"><a class="btn" href="mailto:contact@phillips-uk.com?subject=${encodeURIComponent(subject)}">Ask for access</a></div>`;
+// The way to ask for a new link: the "Ask me a question" form on the homepage (no email address on the page).
+function askFor() {
+  return `<div class="acts"><a class="btn" href="https://www.phillips-uk.com/#contact">Ask me a question</a></div>`;
 }
 
 const attr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -376,7 +378,7 @@ export async function rateCard(request, url, env, ctx) {
     const locked = noticePage({
       heading: early ? 'This link opens soon.' : 'This page is by invitation.',
       body: early ? `${page.title} opens on ${opens}. Come back then, or ask if you need it sooner.` : `${page.title} is shared by link. If your link has stopped working or you would like a copy, ask and I'll send a new one.`,
-      after: askFor(page.title.replace(/^The /, '') + ' access'),
+      after: askFor(),
     });
     return new Response(locked, { status: 403, headers: PRIVATE_HEADERS });
   }
@@ -402,7 +404,7 @@ export async function rateCard(request, url, env, ctx) {
       title: 'Search Desk demo',
       heading: 'The demo is being refreshed.',
       body: 'The Search Desk demo is down for a short refresh and your link will work again soon. If you need it sooner, ask and I will sort it.',
-      after: askFor('Search Desk demo access'),
+      after: askFor(),
     });
     return new Response(held, { status: 503, headers });
   }

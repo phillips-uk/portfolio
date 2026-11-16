@@ -279,6 +279,8 @@ a.card:hover { border-color: var(--amber); box-shadow: var(--shadow-raised); tra
 .enquiry textarea { resize: vertical; min-height: 128px; line-height: 1.5; }
 .enquiry input:focus, .enquiry textarea:focus { outline: none; border-color: #D9925E; background: rgba(255,255,255,0.09); }
 .enquiry-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+/* Cloudflare Turnstile (contact-form.js): takes no space unless Cloudflare asks for a tick */
+.enquiry-ts.shown { margin-top: 20px; }
 .enquiry-foot { display: flex; align-items: center; gap: 20px; margin-top: 24px; flex-wrap: wrap; }
 .enquiry-btn { font: inherit; font-size: 15px; font-weight: 600; color: #fff; background: #985830; border: 0; border-radius: 6px; padding: 14px 26px; cursor: pointer; transition: background 150ms; }
 .enquiry-btn:hover { background: #B87040; }

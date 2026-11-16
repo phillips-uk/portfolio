@@ -10,7 +10,7 @@ import { briefAdmin } from './brief.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
-const GOOGLE_CLIENT_IDS = ['339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com'];
+export const GOOGLE_CLIENT_IDS = ['339165209514-jn3kstpi7on9jtl160afc8el2j5a4h1m.apps.googleusercontent.com'];
 // lewis@phillips-group.uk is the Google Workspace sign-in since 12 Nov 2026; lewis@phillips-uk.com is an alias now.
 const DEFAULT_ALLOWED = 'lewis@phillips-group.uk,lewis@phillips-uk.com,lewisdp87@gmail.com';
 
@@ -20,7 +20,8 @@ function json(body, status = 200, extra = {}) {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...NO_INDEX, ...extra } });
 }
 
-function allowed(env) {
+// Also used by /tool-access (tool-access.js), the sign-in check on the paused free tools.
+export function allowed(env) {
   return (env.ALLOWED_AUDIT_EMAILS || DEFAULT_ALLOWED).toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
 }
 

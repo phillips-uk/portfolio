@@ -4,6 +4,7 @@ import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard, invitePing } from './rate-card.js';
 import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
+import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
 
 const loaders = {
@@ -139,6 +140,8 @@ async function route(request, env, ctx) {
 
   // The "Ask me a question" form (cloudflare/src/enquiry.js)
   if (path === '/enquiry') return request.method === 'POST' ? enquiry(request, env) : new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
+  // The sign-in check on the paused free tools' pages (cloudflare/src/tool-access.js)
+  if (path === '/tool-access') return toolAccess(request, env);
 
   // The Monday Brief: sign-up, confirmation, issue pages and archive (cloudflare/src/brief.js)
   if (isBriefPath(url.pathname)) {
