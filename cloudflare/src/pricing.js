@@ -22,7 +22,8 @@ export const FIX_TYPES = {
   tracking:  { label: 'Conversion tracking',             item: 'conversion actions',    setup: 60, perItem: 20 },
   structure: { label: 'Account structure',               item: 'campaigns or ad groups', setup: 60, perItem: 30 },
   bidding:   { label: 'Bidding and budgets',             item: 'campaigns',             setup: 20, perItem: 15 },
-  shopping:  { label: 'Shopping and Performance Max',    item: 'campaigns or asset groups', setup: 30, perItem: 20 },
+  // Shopping rules count products (the first real read, 16 Nov, had hundreds), so the time per product is small.
+  shopping:  { label: 'Shopping and Performance Max',    item: 'products',              setup: 45, perItem: 0.5 },
 };
 
 export const DEFAULTS = {

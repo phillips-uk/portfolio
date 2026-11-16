@@ -175,7 +175,7 @@ export const QUERIES = {
 
   // Sitelinks and callouts at campaign level.
   campaignAssets: q(`
-    SELECT campaign.id, campaign_asset.field_type
+    SELECT campaign.id, campaign.status, campaign_asset.status, campaign_asset.field_type
     FROM campaign_asset
     WHERE campaign_asset.status = 'ENABLED'
       AND campaign.status = 'ENABLED'
@@ -216,7 +216,7 @@ export const QUERIES = {
 
   // Products with impressions in Shopping and Performance Max, last 30 days.
   products: q(`
-    SELECT segments.product_item_id, segments.product_title,
+    SELECT campaign.status, segments.product_item_id, segments.product_title,
            segments.product_type_l1, segments.product_brand,
            segments.product_custom_attribute0,
            metrics.impressions, metrics.clicks, metrics.cost_micros,

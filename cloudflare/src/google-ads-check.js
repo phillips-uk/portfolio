@@ -60,12 +60,14 @@ function sameOrigin(request) {
 async function readAccount(env, m, customerId) {
   const names = Object.keys(QUERIES);
   const data = {};
+  const diag = {}; // rows per query, or the error code: shown only in Lewis's preview
   let next = 0, failed = null;
   const worker = async () => {
     while (!failed && next < names.length) {
       const name = names[next++];
-      try { data[name] = await gaql(env, m, customerId, QUERIES[name]); }
+      try { data[name] = await gaql(env, m, customerId, QUERIES[name]); diag[name] = data[name].length; }
       catch (err) {
+        diag[name] = 'failed: ' + String(err.code || err.message).slice(0, 120);
         if (OPTIONAL.has(name)) { data[name] = undefined; console.warn('ads-check: optional query failed', name, err.code || err.message); }
         else failed = failed || err;
       }
@@ -74,6 +76,7 @@ async function readAccount(env, m, customerId) {
   // Every read has finished before this returns, so the link is never ended while a query is still running.
   await Promise.all([worker(), worker(), worker(), worker()]);
   if (failed) throw failed;
+  Object.defineProperty(data, '__diag', { value: diag, enumerable: false });
   return data;
 }
 
@@ -81,7 +84,7 @@ function publicReport(r, admin) {
   return {
     id: r.id, checkedAt: r.checkedAt, accountName: r.accountName, customerId: shownId(r.customerId), currency: r.currency,
     facts: r.facts, strengths: r.strengths, weaknesses: r.weaknesses, quote: r.quote,
-    flags: FLAGS, preview: !!admin, operations: admin ? r.operations : undefined,
+    flags: FLAGS, preview: !!admin, operations: admin ? r.operations : undefined, queryRows: admin ? r.queryRows : undefined,
   };
 }
 
@@ -152,7 +155,7 @@ async function run(request, env) {
     const report = {
       id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
       currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
-      quote: q, pricingVersion: pricing.version || 0, operations: m.ops, preview: !!access.admin,
+      quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin,
       route: accepted ? 'manager-link' : 'already-linked',
     };
     await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
