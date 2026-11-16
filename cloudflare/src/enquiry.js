@@ -1,12 +1,14 @@
 // POST /enquiry: the "Ask me a question" form on phillips-uk.com.
 // Each question is saved to R2 (admin/enquiries/), added to the /admin sales funnel as a Lead card, and emailed to
 // contact@phillips-uk.com through Resend when the RESEND_API_KEY secret is set (no key: saved and on the board only).
+// Since 16 Nov 2026 that email is branded HTML (enquiry-email.js) with a plain text version, and links to the Lead card.
 // Spam: a hidden trap field, a minimum time on the page, at most RATE_MAX questions an hour from one connection, and
 // Cloudflare Turnstile (since 16 Nov 2026; widget "Phillips. contact form (phillips-uk.com)", secret TURNSTILE_SECRET).
 // The trap and the timer give bots the same "sent" answer as people, so they learn nothing; a failed Turnstile check
 // asks the person to try again, as a real person can fail it too. No IP address is stored.
 // Local dev (localhost) uses Cloudflare's always-pass test secret; every other host needs the real one.
 import { addLead } from './pipeline.js';
+import { BRANDS, renderEnquiryEmail } from './enquiry-email.js';
 
 const LIMITS = { name: 120, email: 160, business: 160, message: 4000, page: 200, location: 40 };
 const MIN_MS = 3000;       // a person needs longer than this to fill in the form
@@ -66,24 +68,49 @@ async function humanCheck(env, request, url, token) {
   }
 }
 
-async function notify(env, q) {
+// A mailto: address with anything that would start a query (?, &, #, %) encoded, so a visitor's address can't add a
+// cc, bcc or body to the reply.
+const mailto = (email, subject) => 'mailto:' + encodeURIComponent(email).replace(/%40/g, '@') + (subject ? '?subject=' + encodeURIComponent(subject) : '');
+
+const LONDON_DATE = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'long', year: 'numeric' });
+const LONDON_TIME = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
+// The branded email (cloudflare/src/enquiry-email.js, the layout shared by every Phillips Group site), with a plain
+// text version alongside. Every visitor value is escaped by the renderer.
+export function enquiryEmail(q, { cardId, at }) {
+  const subject = `Website question from ${q.name}`;
+  const first = q.name.split(/\s+/)[0] || q.name;
+  const sentFrom = 'phillips-uk.com' + (q.page || '');
+  const when = at || new Date();
+  const board = 'https://www.phillips-uk.com/admin#prospects' + (cardId ? '/' + cardId : '');
+  const fields = [
+    ['Name', q.name],
+    ['Email', q.email, mailto(q.email)],
+    q.business ? ['Business or website', q.business] : null,
+    ['Sent from', sentFrom],
+  ].filter(Boolean);
+  const { html, text } = renderEnquiryEmail(BRANDS.phillips, {
+    kind: 'Website question',
+    title: `New question from ${q.name}`,
+    fields,
+    message: q.message,
+    primary: { label: `Reply to ${first}`, href: mailto(q.email, 'Re: ' + subject) },
+    secondary: { label: cardId ? 'Open the Lead card' : 'Open the board', href: board },
+    note: `Or press Reply: it goes straight to ${q.email}.`,
+    footer: `Sent from the contact form at ${sentFrom} on ${LONDON_DATE.format(when)} at ${LONDON_TIME.format(when)}. It passed the spam checks. ` +
+      (cardId ? 'Also saved on the board under Prospects, Lead.' : 'Saved, but it could not be added to the board, so add the Lead card by hand.'),
+  });
+  return { subject, html, text };
+}
+
+async function notify(env, q, extra) {
   if (!env.RESEND_API_KEY) return 'no key';
-  const text = [
-    `${q.name} asked a question on phillips-uk.com${q.page ? ' (' + q.page + ')' : ''}.`,
-    '',
-    `Name: ${q.name}`,
-    `Email: ${q.email}`,
-    q.business ? `Business or website: ${q.business}` : null,
-    '',
-    q.message,
-    '',
-    'Reply to this email to answer. The question is also on the board at https://www.phillips-uk.com/admin (Prospects, Lead).',
-  ].filter(l => l !== null).join('\n');
+  const { subject, html, text } = enquiryEmail(q, extra);
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: NOTIFY_FROM, to: [NOTIFY_TO], reply_to: q.email, subject: `Website question from ${q.name}`, text }),
+      body: JSON.stringify({ from: NOTIFY_FROM, to: [NOTIFY_TO], reply_to: q.email, subject, html, text }),
     });
     return res.ok ? 'sent' : 'failed ' + res.status;
   } catch (err) {
@@ -159,7 +186,7 @@ export async function enquiry(request, env) {
   } catch (err) {
     console.error('enquiry: board', err && err.message);
   }
-  record.notified = await notify(env, q);
+  record.notified = await notify(env, q, { cardId: record.card, at: now });
   await env.BLOBS.put('admin/enquiries/' + id + '.json', JSON.stringify(record), { httpMetadata: { contentType: 'application/json' } });
   return reply(form, request, true, 200);
 }
