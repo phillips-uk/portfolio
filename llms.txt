@@ -22,6 +22,8 @@ Key facts:
 
 ## Free tools
 
+Lewis gives these away with nothing asked in return, and builds the same kind of free tool (calculators, quote builders, checkers) into clients' websites: https://www.phillips-uk.com/marketing-systems/#tools
+
 - [Google Ads Check](https://www.phillips-uk.com/google-ads-audit): a free Google Ads account check for small and medium businesses. You invite the Phillips. manager account read only from inside Google Ads; it reads conversion tracking, settings, search terms, keywords, ads, bidding and Shopping, lists strengths and weaknesses with where to start on each, then removes the link. Fixed written rules, no AI. One free check per account every 30 days.
 - [Website Check](https://www.phillips-uk.com/website-check/): a free website check for local businesses, no sign-in. Speed and Core Web Vitals from Google PageSpeed Insights, phone layout, contact details, page titles and LocalBusiness structured data, https, robots.txt and sitemap, AI crawler access and llms.txt, enquiry tracking and reviews. Fixed written rules, no AI.
 
