@@ -630,3 +630,4 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
 .stage-ico { width: 44px; height: 44px; display: block; margin-top: 16px; }
 .usps .feature-ico { margin: 12px 0 4px; }
 @media (max-width: 900px) { .stage-ico { display: none; } }
+.grid-2 > .work-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
