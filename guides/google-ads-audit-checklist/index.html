@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<!-- End Google Tag Manager -->
+<link rel="canonical" href="https://www.phillips-uk.com/guides/google-ads-audit-checklist/">
+<meta property="og:title" content="Google Ads Audit Checklist: 9 Areas to Check, in Order | Phillips.">
+<meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png?v=2">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:description" content="A practical Google Ads audit checklist: what to check in tracking, bidding, structure, keywords, ads, targeting, Performance Max, feeds and landing pages, and what to fix first.">
+<meta property="og:url" content="https://www.phillips-uk.com/guides/google-ads-audit-checklist/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+<title>Google Ads Audit Checklist: 9 Areas to Check, in Order | Phillips. Guides</title>
+<meta name="description" content="A practical Google Ads audit checklist: what to check in tracking, bidding, structure, keywords, ads, targeting, Performance Max, feeds and landing pages, and what to fix first.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},3000)}</script>
+<link rel="stylesheet" href="/motion.css?v=5">
+<link rel="stylesheet" href="/brief.css?v=6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- JSON-LD: Article -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Google Ads Audit Checklist: 9 Areas to Check, in Order",
+  "description": "A practical Google Ads audit checklist: what to check in tracking, bidding, structure, keywords, ads, targeting, Performance Max, feeds and landing pages, and what to fix first.",
+  "author": {
+    "@type": "Person",
+    "name": "Lewis Phillips",
+    "url": "https://www.linkedin.com/in/lewis-phillips-uk/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Phillips.",
+    "url": "https://www.phillips-uk.com"
+  },
+  "datePublished": "2026-11-17",
+  "dateModified": "2026-11-17",
+  "url": "https://www.phillips-uk.com/guides/google-ads-audit-checklist/"
+}
+</script>
+
+<!-- JSON-LD: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How often should I audit a Google Ads account?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "I do a full audit when I take on an account, after a big change such as a new website or new tracking, and once or twice a year after that. In between, a short monthly check of tracking, budgets and search terms catches most problems early."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I check first in a Google Ads audit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Conversion tracking, always. Smart Bidding and every report depend on it, so if the conversions are wrong, every other finding is built on bad data."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Quality Score worth chasing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use it as a diagnostic, not a target. Google says Quality Score is not an input in the ad auction. A low score on a keyword that spends points you to the ad, the keyword or the landing page to look at."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use broad match?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Google recommends broad match with Smart Bidding, because it gives the bidding more searches to learn from. I use it where tracking is sound and a conversion-based strategy is running, and I watch the search terms closely."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I audit my account for free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Work through this checklist yourself, or run the free Google Ads Check on this site, which reads the account and checks most of these points automatically."
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+  /* ── Reset & base ── */
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
+    color: var(--text); background: var(--surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  ::selection { background: var(--brand); color: #fff; }
+  html { scroll-behavior: smooth; }
+  [id] { scroll-margin-top: 96px; }
+
+  /* ── Layout ── */
+  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
+
+  /* ── Article body typography ── */
+  .article-body p {
+    font-size: 17px; line-height: 1.7;
+    color: var(--text); margin: 0 0 22px;
+    letter-spacing: -0.003em;
+  }
+  .article-body p:last-child { margin-bottom: 0; }
+  .article-body h2 {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.2;
+    color: var(--text); margin: 56px 0 18px;
+    text-wrap: balance;
+  }
+  .article-body h2:first-child { margin-top: 0; }
+  .article-body + .article-body { margin-top: 48px; }
+  .issue-block + .article-body { margin-top: 48px; }
+  .article-body h3 {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.015em; line-height: 1.25;
+    color: var(--text); margin: 36px 0 12px;
+    text-wrap: balance;
+  }
+  .article-body strong { font-weight: 700; color: var(--text); }
+  .article-body em { font-style: italic; color: var(--brand-text); }
+  .article-body a {
+    color: var(--brand-text); text-decoration: underline;
+    text-decoration-thickness: 1px; text-underline-offset: 3px;
+    text-decoration-color: color-mix(in oklab, var(--brand) 40%, transparent);
+    transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .article-body a:hover { text-decoration-color: var(--brand); }
+  .article-body ul, .article-body ol { padding-left: 22px; margin: 0 0 22px; }
+  .article-body li {
+    font-size: 17px; line-height: 1.7; color: var(--text);
+    margin-bottom: 8px; letter-spacing: -0.003em;
+  }
+  .article-body li::marker { color: var(--brand-text); }
+  .article-body code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.92em; background: var(--bg);
+    border: 1px solid var(--line); padding: 1px 6px;
+    border-radius: 3px; color: var(--brand-hover);
+  }
+
+  /* ── Nav ── */
+  .site-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in oklab, var(--surface) 88%, transparent);
+    backdrop-filter: saturate(120%);
+    border-bottom: 1px solid var(--line); height: 64px;
+  }
+  .site-nav-inner {
+    max-width: 1200px; margin: 0 auto; height: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+  }
+  .nav-logo {
+    text-decoration: none; font-size: 24px; font-weight: 700;
+    letter-spacing: -0.01em; color: var(--text); line-height: 1;
+  }
+  .nav-logo .dot { color: var(--brand-text); }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-link {
+    font-size: 14px; font-weight: 500; color: var(--muted);
+    text-decoration: none;
+    transition: color 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .nav-link:hover { color: var(--text); }
+  .btn-nav {
+    background: var(--brand); color: #fff; border: 0;
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    border-radius: 4px; cursor: pointer; font-family: inherit;
+    text-decoration: none; display: inline-block;
+    transition: background 150ms cubic-bezier(0.2,0,0,1);
+  }
+  .btn-nav:hover { background: var(--brand-hover); }
+
+  /* ── Eyebrow ── */
+  .eyebrow {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-text);
+  }
+
+  /* ── Category pill ── */
+  .category-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--brand-wash); color: var(--brand-text); border: 1px solid var(--line);
+    padding: 4px 11px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; line-height: 1; white-space: nowrap;
+  }
+  .pill-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--brand); display: inline-block;
+  }
+
+  /* ── Article header ── */
+  .article-header { background: var(--surface); padding: 64px 0 48px; }
+  .breadcrumb { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; margin-bottom: 28px; }
+  .breadcrumb a { color: var(--muted); text-decoration: none; }
+  .breadcrumb .sep { margin: 0 8px; color: var(--line-2); }
+  .breadcrumb .cur { color: var(--brand-text); font-weight: 600; }
+  .article-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .article-readtime { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; }
+  .article-h1 {
+    font-size: clamp(36px, 4.8vw, 52px); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.06;
+    color: var(--text); margin: 0 0 24px; text-wrap: balance;
+  }
+  .article-byline {
+    font-size: 13px; color: var(--muted); letter-spacing: -0.005em;
+    padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px;
+  }
+  .article-lede {
+    font-size: 20px; line-height: 1.55; color: var(--text);
+    margin: 0; letter-spacing: -0.005em; font-weight: 500; text-wrap: pretty;
+  }
+
+  /* ── Article section ── */
+  .article-section { background: var(--surface); padding: 8px 0 96px; }
+
+  /* ── Diagram wrapper ── */
+  .diagram-wrap { margin: 32px 0 56px; }
+  .diagram-label { margin-bottom: 16px; }
+
+  /* ── Signal architecture table ── */
+  .signal-table {
+    border: 1px solid var(--line); border-radius: 6px;
+    background: var(--surface); overflow: hidden;
+  }
+  .signal-head {
+    display: grid;
+    grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 14px 24px; gap: 16px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .signal-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
+    padding: 18px 24px; border-bottom: 1px solid var(--line-soft);
+    align-items: start; gap: 16px;
+  }
+  .signal-row:last-child { border-bottom: none; }
+  .signal-row.highlight { background: var(--bg); }
+  .signal-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em; }
+  .signal-cell { font-size: 14px; color: var(--text-2); line-height: 1.5; }
+  .signal-status-on {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--ok);
+    background: var(--ok-wash); border: 1px solid var(--ok-line);
+    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
+  }
+  .signal-status-off {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    background: var(--off-wash); border: 1px solid var(--line-2);
+    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
+  }
+  .signal-status-bad {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--bad);
+    background: var(--bad-wash); border: 1px solid var(--bad-line);
+    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
+  }
+  .signal-foot {
+    padding: 12px 24px; font-size: 12px; color: var(--muted);
+    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);
+  }
+
+  /* ── Comp table (diagnosis) ── */
+  .comp-table {
+    border: 1px solid var(--line); border-radius: 6px;
+    background: var(--surface); overflow: hidden;
+  }
+  .comp-head {
+    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 14px 24px; gap: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .comp-row {
+    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    padding: 16px 24px; border-bottom: 1px solid var(--line-soft);
+    align-items: start; gap: 20px;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-symptom { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
+  .comp-cause { font-size: 14px; color: var(--text-2); line-height: 1.5; }
+  .comp-fix { font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5; }
+
+  /* ── Issue block ── */
+  .issue-block { margin: 56px 0 24px; }
+  .issue-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
+  .issue-num {
+    font-size: 14px; font-weight: 700; color: var(--brand-text);
+    letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
+  }
+  .issue-title {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.018em;
+    line-height: 1.25; color: var(--text); margin: 0; text-wrap: balance;
+  }
+
+  /* ── 2-column card grid ── */
+  .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+
+  /* ── Setup verdict cards ── */
+  .verdict-card { border-radius: 6px; background: var(--surface); overflow: hidden; }
+  .verdict-card-head {
+    padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .verdict-badge {
+    width: 18px; height: 18px; border-radius: 50%; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .verdict-label {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;
+  }
+  .verdict-card-body { padding: 20px 22px; }
+  .verdict-note { font-size: 13px; line-height: 1.55; color: var(--muted); }
+
+  /* ── Conversion action list ── */
+  .conv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .conv-item {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; padding: 9px 12px; background: var(--surface-2);
+    border: 1px solid var(--line-soft); border-radius: 4px;
+  }
+  .conv-item-name { font-size: 13px; color: var(--text); letter-spacing: -0.005em; }
+  .conv-badge-on {
+    font-size: 10px; font-weight: 700; color: var(--ok);
+    background: var(--ok-wash); border: 1px solid var(--ok-line);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+  }
+  .conv-badge-off {
+    font-size: 10px; font-weight: 700; color: var(--muted);
+    background: var(--off-wash); border: 1px solid var(--line-2);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+  }
+  .conv-badge-bad {
+    font-size: 10px; font-weight: 700; color: var(--bad);
+    background: var(--bad-wash); border: 1px solid var(--bad-line);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+  }
+  .conv-card-note {
+    border-top: 1px dashed var(--line); padding-top: 12px;
+    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;
+  }
+
+  /* ── 2026 dark callout ── */
+  .dark-callout-wrap { margin: 56px 0; }
+  .dark-callout {
+    background: var(--ink-panel);
+    border-radius: 6px; padding: 32px 36px; color: #fff;
+  }
+  .dark-callout-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 11px; border-radius: 20px;
+    background: color-mix(in oklab, var(--brand) 18%, transparent); border: 1px solid color-mix(in oklab, var(--brand) 40%, transparent);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;
+  }
+  .dark-callout-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+  .dark-callout h3 {
+    font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;
+  }
+  .dark-callout p { font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px; }
+  .dark-callout p:last-child { margin-bottom: 0; }
+  .dark-callout a { color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms; }
+  .dark-callout a:hover { text-decoration-color: var(--brand-on-ink); }
+
+  /* ── FAQ ── */
+  .faq-list {
+    border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; background: var(--surface); margin: 8px 0 56px;
+  }
+  .faq-item { border-bottom: 1px solid var(--line-soft); }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-btn {
+    width: 100%; text-align: left; background: transparent; border: 0;
+    cursor: pointer; padding: 20px 24px; font-family: inherit;
+    display: grid; grid-template-columns: 1fr 24px; gap: 16px; align-items: center;
+  }
+  .faq-q { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.008em; line-height: 1.4; }
+  .faq-icon {
+    font-size: 20px; color: var(--brand-text); line-height: 1; text-align: center;
+    transition: transform 180ms cubic-bezier(0.2,0,0,1); user-select: none;
+  }
+  .faq-icon.is-open { transform: rotate(45deg); }
+  .faq-answer { display: none; padding: 0 24px 22px; font-size: 15px; line-height: 1.65; color: var(--text-2); }
+  .faq-answer.is-open { display: block; }
+
+  /* ── Author block ── */
+  .author-block {
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: 6px; padding: 28px 32px;
+    display: grid; grid-template-columns: 64px 1fr;
+    gap: 22px; align-items: start; margin-top: 56px;
+  }
+  .author-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
+  .author-name { font-size: 16px; font-weight: 700; color: var(--text); }
+  .author-role { font-size: 13px; color: var(--muted); margin-left: 12px; }
+  .author-bio { font-size: 14px; line-height: 1.65; color: var(--text-2); margin: 8px 0 14px; max-width: 620px; }
+  .author-link { font-size: 13px; font-weight: 600; color: var(--brand-text); text-decoration: none; }
+  .author-link:hover { text-decoration: underline; }
+
+  /* ── Related section ── */
+  .related-section { background: var(--bg); padding: 72px 0 96px; }
+  .related-heading-wrap { border-left: 3px solid var(--brand); padding-left: 24px; margin-bottom: 28px; }
+  .related-heading {
+    font-size: clamp(24px, 2.6vw, 30px); font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.15;
+    color: var(--text); margin: 10px 0 0;
+  }
+  .related-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .related-card {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 24px 26px; min-height: 220px;
+    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms, border-color 200ms;
+  }
+  .related-card:hover { transform: translateY(-3px); box-shadow: var(--e2); border-color: var(--brand); }
+  .related-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .related-card-readtime { font-size: 11px; color: var(--muted); letter-spacing: -0.005em; }
+  .related-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; color: var(--text); margin: 0 0 12px; text-wrap: pretty; }
+  .related-card-desc { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0 0 24px; }
+  .related-card-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--brand-text); letter-spacing: -0.005em; }
+
+  /* ── End CTA ── */
+  .end-cta { background: var(--ink-panel); padding: 96px 32px; }
+  .end-cta-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+  .end-cta h2 {
+    font-size: clamp(36px, 4.6vw, 52px); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.06; color: #fff;
+    margin: 20px 0 32px;
+  }
+  .end-cta h2 em { font-style: italic; color: var(--brand-text); }
+  .end-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-cta-filled {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
+    background: var(--brand); border: 1.5px solid var(--brand);
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: background 150ms;
+  }
+  .btn-cta-filled:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
+  .btn-cta-outline {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
+    transition: border-color 150ms;
+  }
+  .btn-cta-outline:hover { border-color: rgba(255,255,255,0.7); }
+  .end-cta-note { margin-top: 32px; font-size: 13px; color: var(--ink-muted); }
+
+  /* ── Footer ── */
+  .site-footer { background: var(--ink-panel); padding: 28px 32px; }
+  .site-footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-left { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--ink-muted); }
+  .footer-logo { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; text-decoration: none; }
+  .footer-logo .dot { color: var(--brand-text); }
+  .footer-right { display: flex; gap: 20px; }
+  .footer-link { font-size: 12px; color: var(--ink-muted); text-decoration: none; }
+
+  /* ── Mobile nav ── */
+  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); line-height: 1; }
+  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .ph-drawer.open { display: block; }
+  .ph-drawer-backdrop { position: absolute; inset: 0; background: var(--scrim); }
+  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: var(--surface); padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
+  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text); padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
+  .ph-drawer-link { font-size: 15px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line-soft); display: block; }
+  .ph-drawer-link:hover, .ph-drawer-link.active { color: var(--text); }
+  .ph-drawer-cta { margin-top: 16px; background: var(--brand); color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
+  .ph-drawer-cta:hover { background: var(--brand-hover); }
+
+  /* ── Responsive ── */
+  @media (max-width: 780px) {
+    .nav-links { display: none !important; }
+    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
+    .read-w { padding: 0 20px; }
+    .page-w  { padding: 0 20px; }
+    .cards-2col { grid-template-columns: 1fr; }
+    /* Tables: stacked card layout instead of horizontal scroll */
+    .signal-head, .comp-head { display: none !important; }
+    .signal-row, .comp-row {
+      display: flex !important; flex-direction: column !important;
+      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;
+    }
+    .signal-row > span[data-label]::before,
+    .comp-row > span[data-label]::before {
+      content: attr(data-label); display: block;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;
+    }
+    .author-block { grid-template-columns: 1fr; }
+    .author-role { margin-left: 0; flex-basis: 100%; margin-top: 2px; }
+    .article-h1 { font-size: 32px; }
+    /* Section heading: restore top margin when article-body follows article-body */
+    .article-body + .article-body { margin-top: 48px; }
+    /* Issue numbers: stack above title, larger on mobile */
+    .issue-header { flex-direction: column; gap: 4px; }
+    .issue-num { font-size: 32px; letter-spacing: -0.02em; }
+  }
+
+  /* ── Audit checklist tables (2026-11-17) ── */
+  .ck-map { list-style: none; margin: 8px 0 48px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .ck-map a { display: flex; gap: 10px; align-items: baseline; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); text-decoration: none; font-weight: 700; font-size: 14.5px; line-height: 1.3; transition: border-color .2s, box-shadow .2s; }
+  .ck-map a:hover { border-color: var(--brand); box-shadow: var(--e1); }
+  .ck-map span { font: 500 11px/1 var(--mono, monospace); letter-spacing: .1em; color: var(--brand-text); }
+  .ck { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 8px 0 28px; background: var(--surface); }
+  .ck-row { display: grid; grid-template-columns: 0.9fr 1.3fr 1.3fr; border-top: 1px solid var(--line); }
+  .ck-row:first-child { border-top: 0; }
+  .ck-row > div { padding: 14px 16px; font-size: 14.5px; line-height: 1.55; color: var(--text-2); }
+  .ck-row .ck-c { font-weight: 700; color: var(--text); }
+  .ck-head > div { font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--bg); padding: 10px 16px; }
+  .ck-p { border-left: 3px solid var(--ok); }
+  .ck-f { border-left: 3px solid var(--bad); }
+  .ck-note { background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: 0 6px 6px 0; padding: 20px 24px; margin: 0 0 32px; }
+  .ck-note-k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); margin-bottom: 10px; }
+  .ck-note p { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  h2.issue-title { font-size: 26px; margin: 0; }
+  @media (max-width: 640px) {
+    .ck-map { grid-template-columns: 1fr 1fr; }
+    .ck-head { display: none; }
+    .ck-row { grid-template-columns: 1fr; padding: 14px 16px; gap: 8px; }
+    .ck-row > div { padding: 0 0 0 12px; }
+    .ck-row .ck-c { padding: 0; }
+    .ck-p::before, .ck-f::before { content: attr(data-l); display: block; font: 500 10.5px/1.4 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  }
+</style>
+<link rel="stylesheet" href="/guides.css?v=1">
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- ═══════════════════════════════════════════ NAV -->
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
+    <nav class="nav-links">
+      <a href="/#services" class="nav-link">Services</a>
+      <a href="/work/" class="nav-link">Work</a>
+      <a href="/about/" class="nav-link">About</a>
+      <a href="/guides/" class="nav-link">Insights</a>
+      <a href="/#contact" class="btn-nav">Get in touch</a>
+    </nav>
+    <button class="ph-hamburger" onclick="document.getElementById('ph-art2-drawer').classList.add('open')" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="currentColor"/><rect y="10" width="22" height="2" rx="1" fill="currentColor"/><rect y="16" width="22" height="2" rx="1" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<div id="ph-art2-drawer" class="ph-drawer">
+  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')"></div>
+  <div class="ph-drawer-panel">
+    <button class="ph-drawer-close" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')">&#x2715;</button>
+    <a href="/#services" class="ph-drawer-link">Services</a>
+    <a href="/work/" class="ph-drawer-link">Work</a>
+    <a href="/about/" class="ph-drawer-link">About</a>
+    <a href="/guides/" class="ph-drawer-link active">Insights</a>
+    <a href="/#contact" class="ph-drawer-cta">Get in touch</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ ARTICLE HEADER -->
+<header class="article-header">
+  <div class="read-w">
+    <div class="breadcrumb">
+      <a href="/guides/">Guides</a>
+      <span class="sep">/</span>
+      <span class="cur">Google Ads</span>
+    </div>
+    <div class="article-meta">
+      <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+      <span class="article-readtime">11 min read</span>
+    </div>
+    <h1 class="article-h1">Google Ads Audit Checklist: 9 Areas to Check, in Order</h1>
+    <div class="article-byline">Lewis Phillips &middot; 17 Nov 2026 &middot; 11 min read</div>
+    <p class="article-lede">This is the checklist I work through when I take on a Google Ads account. Nine areas, in the order I check them, each with what a pass and a fail look like. Work through it yourself, or use it to check the work of whoever runs your account.</p>
+
+    <!-- Quick Answer -->
+    <div style="margin-top:32px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:20px 24px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">Quick answer</div>
+      <p style="font-size:16px;line-height:1.6;color:var(--text);margin:0;">Audit in this order: conversion tracking, bidding and budget, account structure, keywords and search terms, ads and assets, targeting and audiences, Performance Max, product feed and landing pages. Fix anything that corrupts the data first, then anything that wastes money now, then anything holding back growth. Do a full audit once or twice a year and a short check of tracking, budgets and search terms every month.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ ARTICLE BODY -->
+<section class="article-section">
+  <div class="read-w">
+
+    <div class="article-body">
+      <h2>Why audit, and how often</h2>
+      <p>Google Ads accounts rarely break in one go. A tracking tag stops firing after a website update, a budget cap that made sense last year stays in place, search terms drift, and nobody notices because the account still spends and still reports something.</p>
+      <p>An audit is a structured look at the whole account against a fixed list, so problems are found by checking rather than by luck. I do a full one when I take on an account, after big changes such as a new website or new tracking, and once or twice a year after that. In between, a short monthly check of tracking, budgets and search terms catches most problems early.</p>
+      <p>The nine areas below are in the order I work through them. The order matters: there is no point tuning bids or ads while the account is learning from the wrong conversions.</p>
+    </div>
+
+    <ol class="ck-map" aria-label="The nine areas"><li><a href="#a01"><span>01</span>Conversion tracking</a></li><li><a href="#a02"><span>02</span>Bidding and budget</a></li><li><a href="#a03"><span>03</span>Account structure</a></li><li><a href="#a04"><span>04</span>Keywords and search terms</a></li><li><a href="#a05"><span>05</span>Ads and assets</a></li><li><a href="#a06"><span>06</span>Targeting and audiences</a></li><li><a href="#a07"><span>07</span>Performance Max</a></li><li><a href="#a08"><span>08</span>Product feed</a></li><li><a href="#a09"><span>09</span>Landing pages</a></li></ol>
+
+    <div class="issue-block" id="a01">
+      <div class="issue-header"><span class="issue-num">01</span><h2 class="issue-title">Conversion tracking</h2></div>
+    <div class="article-body">
+      <p>Everything else depends on this. Smart Bidding learns from the conversions it sees, so if they are wrong, the bidding chases the wrong thing and every report misleads.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">What counts as a conversion</div><div class="ck-p" role="cell" data-l="Pass">The main (Primary) actions are real enquiries, calls or sales.</div><div class="ck-f" role="cell" data-l="Fail">Page views, button clicks or time on site counted as Primary conversions.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Primary and Secondary</div><div class="ck-p" role="cell" data-l="Pass">Only actions you want bidding to chase are Primary. Google only bids towards Primary actions; Secondary ones are for observation.</div><div class="ck-f" role="cell" data-l="Fail">Several overlapping Primary actions, so one enquiry counts twice.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Google Analytics imports</div><div class="ck-p" role="cell" data-l="Pass">If you import GA4 conversions, you chose deliberately which ones are Primary. They arrive as Secondary by default.</div><div class="ck-f" role="cell" data-l="Fail">GA4 and Google Ads tags both counting the same purchase as Primary.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Attribution</div><div class="ck-p" role="cell" data-l="Pass">Main conversions use data-driven attribution, Google's default for most actions.</div><div class="ck-f" role="cell" data-l="Fail">Old last-click settings left on actions that drive bidding.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Enhanced conversions</div><div class="ck-p" role="cell" data-l="Pass">For lead businesses, enhanced conversions for leads is on, so sales that close offline can be credited back to the ad.</div><div class="ck-f" role="cell" data-l="Fail">No way to tell which enquiries became customers.</div></div>
+      </div>
+    <div class="ck-note"><div class="ck-note-k">Worth knowing</div><p>Google Ads can use hashed first-party data, such as an email address from a lead form, to match offline sales back to the campaign that brought the lead. For any business where the sale happens after the enquiry, this is the difference between bidding for form fills and bidding for customers.</p></div>
+    <div class="article-body"><p><a href="/guides/fix-google-ads-conversion-tracking/">How to fix Google Ads conversion tracking</a> and <a href="/guides/ga4-imports-break-smart-bidding/">why GA4 imports can break Smart Bidding</a> go into this in detail.</p></div>
+    </div>
+
+    <div class="issue-block" id="a02">
+      <div class="issue-header"><span class="issue-num">02</span><h2 class="issue-title">Bidding and budget</h2></div>
+    <div class="article-body">
+      <p>Once tracking is right, check that the bid strategy suits the volume of conversions and that budgets go where they earn.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Strategy fits volume</div><div class="ck-p" role="cell" data-l="Pass">A conversion-based strategy with enough conversions to learn from; a target set from what the account really achieves.</div><div class="ck-f" role="cell" data-l="Fail">Target CPA or ROAS on a campaign with a handful of conversions a month and a target pulled from a wish list.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Spend that earns</div><div class="ck-p" role="cell" data-l="Pass">Every campaign that spends brings in conversions, or has a clear reason not to yet.</div><div class="ck-f" role="cell" data-l="Fail">Campaigns spending month after month with nothing to show.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Budget limits</div><div class="ck-p" role="cell" data-l="Pass">Your best campaigns are not Limited by budget. Google warns a limited budget can mean fewer clicks and impressions than you could have earned.</div><div class="ck-f" role="cell" data-l="Fail">The most profitable campaign capped while weaker ones spend freely.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Manual adjustments</div><div class="ck-p" role="cell" data-l="Pass">Smart Bidding campaigns without leftover manual device or time bid adjustments, which Google says aren't supported with Smart Bidding.</div><div class="ck-f" role="cell" data-l="Fail">Old device and hour-of-day adjustments still set, giving a false sense of control.</div></div>
+      </div>
+    <div class="article-body"><p>For choosing a strategy, see <a href="/guides/google-ads-bidding-strategy/">which bidding strategy to use and when</a>. For judging one on thin data, <a href="/guides/target-cpa-few-conversions/">Target CPA with few conversions</a>.</p></div>
+    </div>
+
+    <div class="issue-block" id="a03">
+      <div class="issue-header"><span class="issue-num">03</span><h2 class="issue-title">Account structure</h2></div>
+    <div class="article-body">
+      <p>Structure decides how much data each campaign has to learn from. Google's own advice has moved towards fewer, broader campaigns organised around business goals.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Campaigns by goal</div><div class="ck-p" role="cell" data-l="Pass">Campaigns split where budgets or targets genuinely differ: a service, a region, a margin.</div><div class="ck-f" role="cell" data-l="Fail">Dozens of small campaigns split by habit, each too thin for Smart Bidding.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Themed ad groups</div><div class="ck-p" role="cell" data-l="Pass">Ad groups built around one theme that shares an ad and a landing page.</div><div class="ck-f" role="cell" data-l="Fail">Single-keyword ad groups, or one ad group holding everything.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">No duplicates</div><div class="ck-p" role="cell" data-l="Pass">Each keyword appears once. Google says duplicating a keyword across match types splits the data Smart Bidding works with.</div><div class="ck-f" role="cell" data-l="Fail">The same keyword in exact, phrase and broad, in different ad groups.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Nothing empty</div><div class="ck-p" role="cell" data-l="Pass">Every enabled ad group has keywords and active ads.</div><div class="ck-f" role="cell" data-l="Fail">Enabled ad groups with no ads, or ads with no keywords.</div></div>
+      </div>
+    </div>
+
+    <div class="issue-block" id="a04">
+      <div class="issue-header"><span class="issue-num">04</span><h2 class="issue-title">Keywords and search terms</h2></div>
+    <div class="article-body">
+      <p>This is where most wasted spend hides. Keywords are what you ask for; search terms are what you actually paid for.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Search terms</div><div class="ck-p" role="cell" data-l="Pass">Recent search terms read through, with irrelevant ones added as negatives.</div><div class="ck-f" role="cell" data-l="Fail">Searches for jobs, free versions, competitors' names or other towns, paid for every month.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Negative keywords</div><div class="ck-p" role="cell" data-l="Pass">Every Search campaign has a negative list that matches the business, without blocking real customers.</div><div class="ck-f" role="cell" data-l="Fail">No negatives at all, or so many that the ads barely show. Google warns too many negatives reduce reach.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Broad match with Smart Bidding</div><div class="ck-p" role="cell" data-l="Pass">Broad match used with a conversion-based Smart Bidding strategy, as Google recommends.</div><div class="ck-f" role="cell" data-l="Fail">Broad match on Manual CPC, which matches widely with nothing steering it towards conversions.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Quality Score</div><div class="ck-p" role="cell" data-l="Pass">Keywords that spend have Quality Scores without a Below average component you can fix.</div><div class="ck-f" role="cell" data-l="Fail">Big spenders scoring 1 to 3, with nobody looking at why.</div></div>
+      </div>
+    <div class="ck-note"><div class="ck-note-k">Worth knowing</div><p>Google scores Quality Score from 1 to 10 at the keyword level, built from expected click-through rate, ad relevance and landing page experience. It says plainly that Quality Score is not an input in the auction. I use it to point at which part to fix, not as a number to chase.</p></div>
+    <div class="article-body"><p>More in <a href="/guides/improve-google-ads-quality-score/">how to improve Google Ads Quality Score</a>.</p></div>
+    </div>
+
+    <div class="issue-block" id="a05">
+      <div class="issue-header"><span class="issue-num">05</span><h2 class="issue-title">Ads and assets</h2></div>
+    <div class="article-body">
+      <p>The ad is the only part of the account the customer sees. Check it says what you do, where, and why someone should pick you.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Enough to test</div><div class="ck-p" role="cell" data-l="Pass">Each ad group has a responsive search ad using a good share of the 15 headlines and 4 descriptions Google allows.</div><div class="ck-f" role="cell" data-l="Fail">Ads with a few headlines, all saying the same thing.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Ad Strength</div><div class="ck-p" role="cell" data-l="Pass">Ads rated Good or Excellent, on Google's scale from Poor to Excellent, without losing the message.</div><div class="ck-f" role="cell" data-l="Fail">Ads stuck at Poor or Average, or rewritten into generic copy just to raise the rating.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Assets</div><div class="ck-p" role="cell" data-l="Pass">Sitelinks, callouts and, where it fits, call and location assets in place.</div><div class="ck-f" role="cell" data-l="Fail">No sitelinks or callouts, so the ad takes up less space than competitors'.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Right page</div><div class="ck-p" role="cell" data-l="Pass">Each ad lands on the page that answers the search.</div><div class="ck-f" role="cell" data-l="Fail">Every ad sent to the homepage.</div></div>
+      </div>
+    </div>
+
+    <div class="issue-block" id="a06">
+      <div class="issue-header"><span class="issue-num">06</span><h2 class="issue-title">Targeting and audiences</h2></div>
+    <div class="article-body">
+      <p>Settings chosen once at setup and never looked at again cause some of the quietest waste in an account.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Location</div><div class="ck-p" role="cell" data-l="Pass">The location option matches the business. Google calls Presence or interest best practice for Search; a local service that only works in its area often needs Presence instead.</div><div class="ck-f" role="cell" data-l="Fail">A plumber in Ely paying for clicks from people who searched about Ely from Spain.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Networks</div><div class="ck-p" role="cell" data-l="Pass">Search campaigns run on search. Display placements, if wanted, have their own campaign and budget.</div><div class="ck-f" role="cell" data-l="Fail">A Search campaign quietly spending on the Display Network.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Audiences</div><div class="ck-p" role="cell" data-l="Pass">Search campaigns have relevant audiences added for observation, so you can see how past visitors and customers behave.</div><div class="ck-f" role="cell" data-l="Fail">No audiences at all, so no insight into returning visitors.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Ad schedule</div><div class="ck-p" role="cell" data-l="Pass">If the business can only take calls at certain hours, the schedule reflects that. Google says Smart Bidding respects ad schedules.</div><div class="ck-f" role="cell" data-l="Fail">Call ads running at 2am for a business with nobody to answer.</div></div>
+      </div>
+    </div>
+
+    <div class="issue-block" id="a07">
+      <div class="issue-header"><span class="issue-num">07</span><h2 class="issue-title">Performance Max</h2></div>
+    <div class="article-body">
+      <p>Performance Max spreads spend across Google's channels, so the checks are about what you feed it and what it is told to chase.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Goals</div><div class="ck-p" role="cell" data-l="Pass">It optimises to the same real conversions as the rest of the account.</div><div class="ck-f" role="cell" data-l="Fail">Performance Max chasing a soft goal that the Search campaigns ignore.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Asset groups</div><div class="ck-p" role="cell" data-l="Pass">Asset groups rated Good or better, with real images, video and headlines for each theme.</div><div class="ck-f" role="cell" data-l="Fail">One asset group with a handful of stock images and auto-generated copy.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Targets</div><div class="ck-p" role="cell" data-l="Pass">A cost or return target set once there is enough data.</div><div class="ck-f" role="cell" data-l="Fail">No target on a campaign with months of conversions, so it spends the budget however it likes.</div></div>
+      </div>
+    </div>
+
+    <div class="issue-block" id="a08">
+      <div class="issue-header"><span class="issue-num">08</span><h2 class="issue-title">Product feed</h2></div>
+    <div class="article-body">
+      <p>For shops, the feed is the ad. Shopping and Performance Max build ads from your product data, so the feed decides what shows and for which searches.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Titles</div><div class="ck-p" role="cell" data-l="Pass">Product titles say what the product is, with the words people search for: type, material, colour, size.</div><div class="ck-f" role="cell" data-l="Fail">Titles that are just a product name nobody searches for.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Product types</div><div class="ck-p" role="cell" data-l="Pass">Products sorted by type, so performance can be compared by category.</div><div class="ck-f" role="cell" data-l="Fail">Everything in one group, best sellers and dead stock bidding together.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Custom labels</div><div class="ck-p" role="cell" data-l="Pass">Some of the five custom labels Google allows used for margin, season or best sellers.</div><div class="ck-f" role="cell" data-l="Fail">No labels, so there is no way to bid harder on the products that pay.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Spend on sellers</div><div class="ck-p" role="cell" data-l="Pass">Spend goes mainly on products that sell.</div><div class="ck-f" role="cell" data-l="Fail">A long tail of products taking spend and never selling.</div></div>
+      </div>
+    </div>
+
+    <div class="issue-block" id="a09">
+      <div class="issue-header"><span class="issue-num">09</span><h2 class="issue-title">Landing pages</h2></div>
+    <div class="article-body">
+      <p>A strong account sending people to a weak page still loses money. The landing page is part of the audit.</p>
+    </div>
+      <div class="ck" role="table" aria-label="Checks">
+      <div class="ck-row ck-head" role="row"><div role="columnheader">Check</div><div role="columnheader">A pass</div><div role="columnheader">A fail</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Matches the ad</div><div class="ck-p" role="cell" data-l="Pass">The page repeats what the ad promised, in the first screen.</div><div class="ck-f" role="cell" data-l="Fail">An ad for one service landing on a general page.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Works on a phone</div><div class="ck-p" role="cell" data-l="Pass">Fast, readable and easy to act on at phone size, where most local searches happen.</div><div class="ck-f" role="cell" data-l="Fail">Slow pages, tiny buttons and forms that fight the keyboard.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Easy to act</div><div class="ck-p" role="cell" data-l="Pass">A clear next step near the top: call, book, enquire, buy.</div><div class="ck-f" role="cell" data-l="Fail">The contact details hidden at the bottom of a long page.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Tracked</div><div class="ck-p" role="cell" data-l="Pass">The form, the call button and the checkout all fire the conversion that bidding relies on.</div><div class="ck-f" role="cell" data-l="Fail">A redesign that quietly broke the tracking months ago.</div></div>
+      </div>
+    <div class="article-body"><p>The free <a href="/website-check/">Website Check</a> covers speed, phone layout and contact routes on any page.</p></div>
+    </div>
+
+    <div class="article-body">
+      <h2>How to prioritise what you find</h2>
+      <p>A full audit usually turns up more than anyone can fix at once. I sort findings into three groups and work down them in order.</p>
+      <ol><li><strong>Fix first: anything that corrupts the data.</strong> Wrong or duplicated conversions, broken tags, Primary actions that aren't real outcomes. Until these are right, every other change is judged on bad numbers.</li><li><strong>Fix next: anything that wastes money now.</strong> Irrelevant search terms, campaigns spending with nothing to show, Search campaigns leaking onto Display, location settings that reach the wrong people.</li><li><strong>Then: anything that holds back growth.</strong> Budget limits on the best campaigns, thin ads and assets, feed titles, landing pages, structure.</li></ol>
+      <p>Within each group, start with whatever touches the most spend. Then write down each change, the reason and a date to review it. After a major bidding or budget change, allow one to two conversion cycles before judging it, so the next audit can tell what worked.</p>
+    </div>
+
+    <div class="ck-note"><div class="ck-note-k">One rule above the rest</div><p>Fix conversion tracking first, always. Smart Bidding, Performance Max and every report learn from it. A beautifully structured account bidding towards the wrong conversions is still spending in the wrong direction.</p></div>
+
+    <div class="article-body">
+      <h2>Run the checks automatically</h2>
+      <p>Most of this checklist can be read straight from the account. The free <a href="/google-ads-audit">Google Ads Check</a> on this site does that: it reads the account, runs fixed written rules across tracking, bidding, structure, keywords, ads, targeting, Performance Max and product data, and lists what it finds with what to do first. Nothing in the account changes.</p>
+      <p>It doesn't replace judgement. It can tell you a campaign spends without converting; it can't tell you whether that campaign matters to the business. That is the part of an audit I do by hand.</p>
+    </div>
+
+    <!-- FAQ heading -->
+    <div class="article-body">
+      <h2>FAQ</h2>
+    </div>
+
+    <!-- FAQ accordion -->
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">How often should I audit a Google Ads account?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">I do a full audit when I take on an account, after a big change such as a new website or new tracking, and once or twice a year after that. In between, a short monthly check of tracking, budgets and search terms catches most problems early.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">What should I check first in a Google Ads audit?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Conversion tracking, always. Smart Bidding and every report depend on it, so if the conversions are wrong, every other finding is built on bad data.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">Is Quality Score worth chasing?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Use it as a diagnostic, not a target. Google says Quality Score is not an input in the ad auction. A low score on a keyword that spends points you to the ad, the keyword or the landing page to look at.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">Should I use broad match?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Google recommends broad match with Smart Bidding, because it gives the bidding more searches to learn from. I use it where tracking is sound and a conversion-based strategy is running, and I watch the search terms closely.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-q">Can I audit my account for free?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Yes. Work through this checklist yourself, or run the free Google Ads Check on this site, which reads the account and checks most of these points automatically.</div>
+      </div>
+    </div>
+
+    <!-- Author block -->
+    <div class="author-block">
+      <img src="/images/profile.jpg" alt="Lewis Phillips" class="author-avatar">
+      <div>
+        <div style="display:flex;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;">
+          <span class="author-name">Lewis Phillips</span>
+          <span class="author-role">Marketing consultant &middot; 11 years</span>
+        </div>
+        <p class="author-bio">I have spent 11 years in performance marketing, including paid media across 8 international markets. I now work as a marketing consultant in Ely, with businesses across Cambridgeshire and beyond.</p>
+        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="author-link">LinkedIn &rarr;</a>
+      </div>
+    </div>
+
+  </div><!-- /read-w -->
+</section>
+
+<!-- ═══════════════════════════════════════════ RELATED -->
+<section class="related-section">
+  <div class="page-w">
+    <div class="related-heading-wrap">
+      <span class="eyebrow">Related guides</span>
+      <h2 class="related-heading">Keep reading.</h2>
+    </div>
+    <div class="related-cards">
+      <a href="/guides/fix-google-ads-conversion-tracking/" class="related-card">
+        <div class="related-card-meta">
+          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+          <span class="related-card-readtime">12 min read</span>
+        </div>
+        <h3 class="related-card-title">How to Fix Google Ads Conversion Tracking</h3>
+        <p class="related-card-desc">Smart Bidding is only as good as the conversions it learns from. The seven most common causes of broken tracking, and how to fix each one.</p>
+        <span class="related-card-cta">Read guide &rarr;</span>
+      </a>
+      <a href="/guides/improve-google-ads-quality-score/" class="related-card">
+        <div class="related-card-meta">
+          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
+          <span class="related-card-readtime">10 min read</span>
+        </div>
+        <h3 class="related-card-title">Google Ads Quality Score Low? How to Improve It</h3>
+        <p class="related-card-desc">What Quality Score measures, why it matters for cost, and how to fix each of its three parts.</p>
+        <span class="related-card-cta">Read guide &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ END CTA -->
+<section class="end-cta">
+  <div class="end-cta-inner">
+    <span class="eyebrow" style="color:var(--brand-on-ink);">Want a second pair of eyes?</span>
+    <h2>Ask me <em>about your account.</em></h2>
+    <div class="end-cta-btns">
+      <a href="/#contact" class="btn-cta-filled">Ask me a question &rarr;</a>
+      <a href="/google-ads/" class="btn-cta-outline">Google Ads management &rarr;</a>
+    </div>
+    <div class="end-cta-note">Free &middot; No obligation &middot; I reply myself</div>
+    <div class="end-cta-note">Or run the <a href="/google-ads-audit" style="color:inherit;text-decoration:underline">free Google Ads Check</a> on your account first.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ THE MONDAY BRIEF -->
+<section class="brief-guide" aria-labelledby="brief-guide-h">
+  <div class="brief-guide-inner">
+    <span class="brief-eyebrow">The Monday Brief</span>
+    <h2 id="brief-guide-h">What changed in marketing last week, every Monday.</h2>
+    <p class="brief-guide-body">One email at 7am on the week's changes to Google Ads, GA4, SEO, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads, and what each one could affect in your account. <a href="/updates/">See past issues</a>.</p>
+    <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate>
+      <label class="brief-label" for="brief-email-guide">Your email address</label>
+      <div class="brief-row"><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required placeholder="you@yourbusiness.co.uk"><button type="submit" class="brief-btn">Get the Brief</button></div>
+      <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
+      <p class="brief-note">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account. I email you first to confirm. Unsubscribe any time. <a href="/privacy/">Privacy notice</a>.</p>
+      <p class="brief-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-left">
+      <a href="/" class="footer-logo"><img src="/logo/phillips-lockup-reversed.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
+      <span>&copy; 2026 PHILLIPSGROUPUK LIMITED &middot; phillips-uk.com</span>
+    </div>
+    <div class="footer-right">
+      <a href="/#services" class="footer-link">Services</a>
+      <a href="/work/" class="footer-link">Work</a>
+      <a href="/#contact" class="footer-link">Get in touch</a>
+      <a href="/updates/" class="footer-link">The Monday Brief</a>
+      <a href="/privacy/" class="footer-link">Privacy</a>
+    </div>
+  </div>
+  <nav class="group-links" aria-label="Phillips Group of Companies" style="max-width:1200px;margin:14px auto 0;font-size:12px;line-height:1.55;color:var(--ink-muted)"><a href="https://phillips-group.uk/" style="color:inherit;text-decoration:underline">Phillips Group</a> of Companies: <span style="white-space:nowrap"><a href="https://thedirectorsoffice.uk/" style="color:inherit;text-decoration:underline">The Director's Office</a> &middot;</span> <span style="white-space:nowrap">Phillips. &middot;</span> <span style="white-space:nowrap"><a href="https://beforeyoupay.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Before You Pay</a> &middot;</span> <a href="https://searchdesk.uk/" style="color:inherit;text-decoration:underline;white-space:nowrap">Search Desk</a></nav>
+  <p style="max-width:1200px;margin:14px auto 0;font-size:11px;line-height:1.55;color:var(--ink-muted)">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX. It handles official post only and doesn't take visitors, so please <a href="/#contact" style="color:inherit;text-decoration:underline">ask me a question</a> or email <a data-email style="color:inherit;text-decoration:underline">contact at phillips-uk dot com</a>.</p>
+</footer>
+
+<script>
+// FAQ accordion
+document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
+  var answer = btn.nextElementSibling;
+  var icon = btn.querySelector('.faq-icon');
+  if (i === 0) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
+  btn.addEventListener('click', function() {
+    var open = answer.classList.contains('is-open');
+    document.querySelectorAll('.faq-answer').forEach(function(a){ a.classList.remove('is-open'); });
+    document.querySelectorAll('.faq-icon').forEach(function(ic){ ic.classList.remove('is-open'); });
+    document.querySelectorAll('.faq-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+    if (!open) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
+  });
+});
+</script>
+<script>
+(function(){
+  // signal-table: class-based head/row
+  var sHead = document.querySelector('.signal-head');
+  if(sHead){
+    var sHdrs = [].map.call(sHead.children, function(c){ return c.textContent.trim(); });
+    document.querySelectorAll('.signal-row').forEach(function(row){
+      [].forEach.call(row.children, function(cell, i){ if(sHdrs[i]) cell.dataset.label = sHdrs[i]; });
+    });
+  }
+  // comp-table: first child = header
+  document.querySelectorAll('.comp-table').forEach(function(table){
+    var head = table.children[0];
+    if(!head) return;
+    var hdrs = [].map.call(head.querySelectorAll('span'), function(s){ return s.textContent.trim(); });
+    for(var i=1; i<table.children.length; i++){
+      [].forEach.call(table.children[i].querySelectorAll(':scope > span'), function(cell, j){ if(hdrs[j]) cell.dataset.label = hdrs[j]; });
+    }
+  });
+})();
+</script>
+<script src="/brief-form.js?v=1" defer></script>
+<script src="/motion.js?v=5" defer></script>
+<script src="/email.js?v=1" defer></script>
+</body>
+</html>
