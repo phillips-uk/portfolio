@@ -6,7 +6,7 @@ import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
-import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks } from './website-check.js';
+import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks, setSelfHandler } from './website-check.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
 import { isSignInPath, googleSignIn } from './google-signin.js';
 
@@ -210,6 +210,7 @@ function withSecurityHeaders(res) {
 export default {
   async fetch(request, env, ctx) {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
+    setSelfHandler(async (req) => withSecurityHeaders(await route(req, env, ctx))); // Website Check on this site itself
     let res = await route(request, env, ctx);
     // The workers.dev address is only for testing; keep it out of search results.
     if (new URL(request.url).hostname.endsWith('.workers.dev')) {

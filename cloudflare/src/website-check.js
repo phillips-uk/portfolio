@@ -55,7 +55,35 @@ export function normaliseUrl(input) {
   return { url: u.href, domain: host.replace(/^www\./, '') };
 }
 
+// A Worker can't fetch its own zone over the network (Cloudflare answers 522), so a check of phillips-uk.com
+// itself is served by the Worker's own router instead. worker.js hands the router in on each request.
+const SELF_HOSTS = new Set(['www.phillips-uk.com', 'phillips-uk.com']);
+let selfHandler = null;
+export function setSelfHandler(fn) { selfHandler = fn; }
+
+async function selfFetch(url, init) {
+  let current = url;
+  for (let hop = 0; hop < 5; hop++) {
+    const res = await selfHandler(new Request(current, { method: 'GET', headers: { 'User-Agent': UA, ...(init.headers || {}) } }));
+    const loc = res.headers.get('Location');
+    if (init.redirect !== 'manual' && res.status >= 300 && res.status < 400 && loc) {
+      current = new URL(loc, current).href;
+      if (!SELF_HOSTS.has(new URL(current).hostname.toLowerCase())) return netFetch(current, init, 12000);
+      continue;
+    }
+    const out = new Response(res.body, res);
+    Object.defineProperty(out, 'url', { value: current });
+    return out;
+  }
+  throw new Error('website-check: too many redirects');
+}
+
 async function timedFetch(url, init = {}, ms = 12000) {
+  if (selfHandler && SELF_HOSTS.has(new URL(url).hostname.toLowerCase())) return selfFetch(url, init);
+  return netFetch(url, init, ms);
+}
+
+async function netFetch(url, init = {}, ms = 12000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   try { return await fetch(url, { ...init, signal: ctrl.signal, headers: { 'User-Agent': UA, ...(init.headers || {}) } }); }
