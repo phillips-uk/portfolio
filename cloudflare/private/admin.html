@@ -204,6 +204,19 @@
   .who span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
   .scroll { overflow-x: auto; }
   .scroll .table { min-width: 720px; }
+  /* Email list: the sources table is short, so it never needs the sideways scroll; on phones each person is a stacked card */
+  .scroll .table.el-src { min-width: 0; }
+  @media (max-width: 640px) {
+    .scroll .table.el-people { min-width: 0; }
+    .el-people thead { display: none; }
+    .el-people tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 14px 18px; border-bottom: 1px solid var(--line-soft); }
+    .el-people td { padding: 0; border: 0; }
+    .el-people td:first-child { overflow-wrap: anywhere; }
+    .el-people td:nth-child(3), .el-people td:nth-child(4) { grid-column: 1 / -1; }
+    .el-people td:nth-child(3) .br-title, .el-people td:nth-child(4) .br-title { display: inline; font-weight: 500; }
+    .el-people td:nth-child(3) .br-sub, .el-people td:nth-child(4) .br-sub { display: inline; margin-left: 6px; }
+    .el-people td.empty { grid-column: 1 / -1; }
+  }
   .score { display: flex; align-items: center; gap: 10px; min-width: 140px; }
   .score b { font-size: 14px; width: 38px; font-variant-numeric: tabular-nums; }
   .bar { flex: 1; height: 6px; border-radius: 6px; background: var(--line-soft); overflow: hidden; max-width: 110px; }
@@ -910,6 +923,7 @@
         <a class="gm-item" href="#products" data-view="products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 20 7.6v8.8L12 20.5 4 16.4V7.6Z"/><path d="M4 7.6 12 11.8l8-4.2M12 11.8v8.7"/></svg><span>Products</span></a>
         <a class="gm-item" href="#links" data-view="links"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14l4-4"/><path d="M11 6.5l1.8-1.8a4 4 0 0 1 5.6 5.6L16.6 12"/><path d="M13 17.5l-1.8 1.8a4 4 0 0 1-5.6-5.6L7.4 12"/></svg><span>Invite links</span><span class="gm-count" id="b-links"></span></a>
         <a class="gm-item" href="#brief" data-view="brief"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg><span>Monday Brief</span><span class="gm-count" id="b-brief"></span></a>
+        <a class="gm-item" href="#list" data-view="list"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.8" cy="9.5" r="2.5"/><path d="M15.5 14.2c2.4-.3 4.4 1.2 5 4.3"/></svg><span>Email list</span><span class="gm-count" id="b-list"></span></a>
         <a class="gm-item" href="#pricing" data-view="pricing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 11.5h2M13.5 11.5h2M8.5 15h2M13.5 15h2"/></svg><span>Pricing</span></a>
         <a class="gm-item" href="#site" data-view="site"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5Z"/></svg><span>Site</span></a>
       </nav>
@@ -1104,6 +1118,39 @@
           <li>Preview the page and the email, send yourself a test, then press Approve. Changes: ask a Claude session to edit the draft, then approve again.</li>
           <li>Monday 07:00: it goes to everyone who confirmed, and the page goes live. You get a note when it's sent, or if it wasn't approved.</li>
         </ol></div>
+      </div>
+    </section>
+
+    <!-- Email list: everyone who signed up to the Monday Brief (GET /admin/api/brief/subscribers) -->
+    <section data-pane="list" hidden>
+      <div class="page-head">
+        <div><h1>Email list</h1><p class="lede">Everyone who signed up to The Monday Brief. A sign-up only counts once the person confirms by email; unconfirmed ones are deleted after <span id="el-days">7</span> days. Your own addresses are marked and left out of the numbers.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="el-csv" disabled>Download CSV</button></div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><small>Subscribed</small><b id="el-subs">–</b></div>
+        <div class="kpi"><small>New in the last 30 days</small><b id="el-new">–</b></div>
+        <div class="kpi"><small>Waiting to confirm</small><b id="el-pend">–</b></div>
+        <div class="kpi"><small>Unsubscribed</small><b id="el-unsub">–</b></div>
+      </div>
+      <p class="br-list bad" id="el-warn" hidden></p>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-head"><h2>Where sign-ups come from</h2></div>
+        <div class="scroll">
+          <table class="table el-src">
+            <thead><tr><th>Sign-up form</th><th class="r">Subscribed</th><th class="r">Waiting</th></tr></thead>
+            <tbody id="el-src"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Everyone</h2><span class="pill" id="el-pill">Loading</span></div>
+        <div class="scroll">
+          <table class="table el-people">
+            <thead><tr><th>Email</th><th>Status</th><th>Signed up</th><th>From</th></tr></thead>
+            <tbody id="el-rows"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1444,7 +1491,7 @@
   function route() {
     var h = (location.hash || '#overview').slice(1);
     var view = h.split('/')[0] || 'overview';
-    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'pricing', 'site'].indexOf(view) === -1) view = 'overview';
+    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'list', 'pricing', 'site'].indexOf(view) === -1) view = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== view; });
     closeMenus();
     document.querySelectorAll('.gm-nav a[data-view]').forEach(function (a) {
@@ -1462,6 +1509,7 @@
     var pane = document.querySelector('[data-pane="' + view + '"]');
     pane.classList.remove('enter'); void pane.offsetWidth; pane.classList.add('enter');
     if (view === 'prospects') boardEdges();
+    if (view === 'list') loadList();
     countPane();
     window.scrollTo(0, 0);
   }
@@ -2902,6 +2950,67 @@
   (function () { var t = new Date(); $('f-from').value = ymd(t); $('f-until').value = ymd(new Date(t.getTime() + 30 * 86400000)); })();
 
   /* ---------- site ---------- */
+  /* ---------- the email list ---------- */
+  var EL_FROM = { home: 'Homepage', about: 'About', work: 'Work', consultancy: 'Consultancy page', 'google-ads': 'Google Ads page', 'local-seo': 'Local SEO page', 'marketing-systems': 'Marketing systems page', 'web-design': 'Web design page', 'google-ads-check': 'Google Ads Check', 'website-check': 'Website Check', guide: 'A guide', 'guides-hub': 'Guides page', 'issue-end': 'End of a Brief issue', 'updates-hero': 'The Brief page' };
+  var EL_STATUS = { confirmed: ['Subscribed', 'good'], pending: ['Waiting to confirm', 'warn'], unsubscribed: ['Unsubscribed', ''] };
+  function elFrom(r) { return EL_FROM[r.location] || (r.location ? r.location : 'Unknown'); }
+  function loadList() {
+    return api('/admin/api/brief/subscribers').then(function (d) { state.list = d; renderList(); })
+      .catch(function () { $('el-rows').innerHTML = '<tr><td colspan="4" class="empty">The list did not load. Refresh to try again.</td></tr>'; $('el-pill').textContent = 'Not loaded'; });
+  }
+  function renderList() {
+    var d = state.list; if (!d) return;
+    var rows = d.rows || [], real = rows.filter(function (r) { return !r.own; });
+    var monthAgo = Date.now() - 30 * 86400000;
+    var subs = real.filter(function (r) { return r.status === 'confirmed'; });
+    $('el-days').textContent = d.pendingDays || 7;
+    $('el-subs').textContent = subs.length;
+    $('el-new').textContent = subs.filter(function (r) { var t = toDate(r.confirmedAt || r.createdAt); return t && t.getTime() >= monthAgo; }).length;
+    $('el-pend').textContent = real.filter(function (r) { return r.status === 'pending'; }).length;
+    $('el-unsub').textContent = d.unsubscribes.ok ? real.filter(function (r) { return r.status === 'unsubscribed'; }).length : '?';
+    $('b-list').textContent = subs.length || '';
+    var warn = $('el-warn');
+    if (!d.unsubscribes.ok) { warn.hidden = false; warn.textContent = 'Unsubscribes could not be checked with Resend (' + d.unsubscribes.error + '), so anyone who unsubscribed still shows as Subscribed.'; } else warn.hidden = true;
+    // Where sign-ups come from
+    var by = {};
+    real.forEach(function (r) { if (r.status === 'unsubscribed') return; var k = elFrom(r); by[k] = by[k] || { s: 0, p: 0 }; if (r.status === 'confirmed') by[k].s++; else by[k].p++; });
+    var src = $('el-src'); src.innerHTML = '';
+    var keys = Object.keys(by).sort(function (a, b) { return (by[b].s - by[a].s) || (by[b].p - by[a].p) || a.localeCompare(b); });
+    if (!keys.length) src.innerHTML = '<tr><td colspan="3" class="empty">No sign-ups yet, apart from yours.</td></tr>';
+    keys.forEach(function (k) { var tr = el('tr'); tr.appendChild(el('td', null, k)); tr.appendChild(el('td', 'r', String(by[k].s))); tr.appendChild(el('td', 'r', String(by[k].p))); src.appendChild(tr); });
+    // Everyone
+    var body = $('el-rows'); body.innerHTML = '';
+    $('el-pill').textContent = rows.length + (rows.length === 1 ? ' address' : ' addresses'); $('el-pill').className = 'pill';
+    if (!rows.length) body.innerHTML = '<tr><td colspan="4" class="empty">No sign-ups yet. The form is on every page of the site and at the end of each guide.</td></tr>';
+    rows.forEach(function (r) {
+      var tr = el('tr');
+      var td1 = el('td'); td1.appendChild(el('span', 'br-title', r.email)); if (r.own) td1.appendChild(el('span', 'br-sub', 'You'));
+      tr.appendChild(td1);
+      var st = EL_STATUS[r.status] || [r.status, ''];
+      var td2 = el('td'); td2.appendChild(el('span', 'pill ' + st[1], st[0]));
+      if (r.status === 'confirmed' && !r.listSynced) td2.appendChild(el('span', 'br-sub', 'Not on the Resend list yet'));
+      tr.appendChild(td2);
+      var td3 = el('td'); td3.appendChild(el('span', 'br-title', fmt(r.createdAt)));
+      if (r.confirmedAt) td3.appendChild(el('span', 'br-sub', 'Confirmed ' + fmt(r.confirmedAt)));
+      tr.appendChild(td3);
+      var td4 = el('td'); td4.appendChild(el('span', 'br-title', elFrom(r))); if (r.page) td4.appendChild(el('span', 'br-sub', r.page));
+      tr.appendChild(td4);
+      body.appendChild(tr);
+    });
+    var btn = $('el-csv'); btn.disabled = !rows.length;
+    btn.onclick = function () {
+      var q = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+      var lines = [['email', 'status', 'signed_up', 'confirmed', 'from', 'page', 'yours'].join(',')];
+      rows.forEach(function (r) { lines.push([r.email, (EL_STATUS[r.status] || [r.status])[0], r.createdAt || '', r.confirmedAt || '', elFrom(r), r.page, r.own ? 'yes' : ''].map(q).join(',')); });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([lines.join('\n') + '\n'], { type: 'text/csv' }));
+      a.download = 'monday-brief-email-list-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    };
+    countPane();
+  }
+
   /* ---------- the Monday Brief ---------- */
   var BR_STATUS = { draft: ['Draft', ''], approved: ['Approved', 'amber'], sending: ['Sending', 'warn'], sent: ['Sent', 'good'] };
   function longDay(d) { return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
@@ -2910,6 +3019,7 @@
     var d = state.brief, rows = $('br-rows');
     if (!d) { rows.innerHTML = '<tr><td colspan="4" class="empty">The Brief did not load. Refresh to try again.</td></tr>'; $('br-pill').textContent = 'Not loaded'; return; }
     $('br-conf').textContent = d.subscribers.confirmed; $('br-pend').textContent = d.subscribers.pending;
+    $('b-list').textContent = d.subscribers.others || '';
     $('br-pub').textContent = d.issues.filter(function (i) { return i.publishedAt; }).length;
     $('br-state').textContent = d.startedAt
       ? 'Email on since ' + fmt(d.startedAt) + ': approved issues go to subscribers at 07:00 on their Monday.'

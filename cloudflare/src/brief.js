@@ -174,6 +174,25 @@ async function addToList(env, email) {
   return add.ok || add.status === 409 || add.status === 422 ? { ok: true } : { ok: false, error: add.error };
 }
 
+// Addresses in the Brief's Resend segment that have unsubscribed. Pages through the segment 100 at a time
+// (Resend's maximum), up to 5,000 contacts, well past the free plan's 1,000.
+async function listUnsubscribed(env) {
+  const seg = await segmentId(env);
+  if (!seg.ok) return { ok: false, error: seg.error || 'Mailing list not connected.' };
+  const emails = new Set();
+  let after = '';
+  for (let i = 0; i < 50; i++) {
+    const r = await resend(env, 'GET', `/contacts?segment_id=${encodeURIComponent(seg.id)}&limit=100${after ? '&after=' + encodeURIComponent(after) : ''}`);
+    if (!r.ok) return { ok: false, error: r.error };
+    const list = (r.data && Array.isArray(r.data.data)) ? r.data.data : [];
+    list.forEach(c => { if (c && c.unsubscribed && c.email) emails.add(String(c.email).toLowerCase()); });
+    if (!r.data || !r.data.has_more || !list.length) break;
+    after = list[list.length - 1].id;
+    await new Promise(r => setTimeout(r, 550)); // Resend allows 2 requests a second
+  }
+  return { ok: true, emails };
+}
+
 /* ---------------- content ---------------- */
 
 // Text in an issue is plain: blank lines start a new paragraph, lines starting "- " are bullet points.
@@ -935,6 +954,27 @@ export async function briefAdmin(request, path, env, email, headers) {
     const [n, seg] = await Promise.all([counts(env), segmentId(env)]);
     const cfg = (await getJson(env, 'brief/config.json')) || {};
     return json({ issues, subscribers: n, startedAt: cfg.startedAt || null, list: seg.ok ? { ok: true } : { ok: false, error: seg.error, status: seg.status || null }, today });
+  }
+
+  // The email list: every sign-up record, newest first, with who has unsubscribed (Resend holds unsubscribes, since
+  // the unsubscribe link in each email goes to Resend). Read-only; nothing here emails anyone.
+  if (path === '/admin/api/brief/subscribers' && method === 'GET') {
+    const rows = [];
+    for (const key of await listKeys(env, 'brief/subscribers/')) {
+      const rec = await getJson(env, key);
+      if (!rec || !rec.email) continue;
+      const first = (rec.requests && rec.requests[0]) || {};
+      const last = (rec.requests && rec.requests[rec.requests.length - 1]) || {};
+      rows.push({
+        email: rec.email, status: rec.status === 'confirmed' ? 'confirmed' : 'pending', own: OWN.includes(rec.email),
+        createdAt: rec.createdAt || null, confirmedAt: rec.confirmedAt || null, lastRequestAt: rec.lastRequestAt || null,
+        location: first.location || last.location || '', page: first.page || last.page || '', listSynced: !!rec.listSyncedAt,
+      });
+    }
+    const unsubscribed = await listUnsubscribed(env);
+    if (unsubscribed.ok) rows.forEach(r => { if (r.status === 'confirmed' && unsubscribed.emails.has(r.email)) r.status = 'unsubscribed'; });
+    rows.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    return json({ rows, unsubscribes: unsubscribed.ok ? { ok: true } : { ok: false, error: unsubscribed.error }, pendingDays: TOKEN_DAYS });
   }
 
   const m = path.match(/^\/admin\/api\/brief\/(\d{4}-\d{2}-\d{2})\/(page|email|test|approve|withdraw|send-now)$/);
