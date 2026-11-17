@@ -213,3 +213,7 @@ h1, h2, h3, h4, .faq-btn, button { font-family: var(--display); }
 .ph-drawer-link { font-weight: 700; }
 
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+
+/* Footer tagline (brand line, 2026-11-17) */
+.site-footer .footer-left { flex-wrap: wrap; row-gap: 8px; }
+.site-footer .footer-tagline { color: var(--ink-text); }
