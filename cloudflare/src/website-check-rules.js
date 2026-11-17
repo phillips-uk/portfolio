@@ -5,7 +5,7 @@
 // A finding: { id, group, status: 'strength' | 'weakness' | 'note', priority: 'high' | 'medium' | 'low', title, detail,
 //              why, start, link: { href, label } }
 
-export const RULES_VERSION = 1;
+export const RULES_VERSION = 2; // 2 (17 Nov 2026): quotes credited to a person count as reviews
 
 const LINKS = {
   web: { href: '/web-design/', label: 'Web design' },
@@ -119,6 +119,9 @@ const GBP_LINK = /(g\.page\/|maps\.app\.goo\.gl\/|goo\.gl\/maps|google\.[a-z.]+\
 // Review services are counted only as links or embedded widgets (a name in the text may just be a former employer);
 // phrases are counted in the visible text.
 const REVIEW_LINKS = /(trustpilot\.com\/review|widget\.trustpilot|reviews\.io|feefo\.com|trustindex\.io|elfsight|birdeye\.com|yotpo|judge\.me|okendo|stamped\.io|checkatrade\.com\/trades|trustatrader\.com\/traders|ratedpeople\.com\/profile|mybuilder\.com\/profile|yell\.com\/biz|which\.co\.uk\/trusted-traders|search\.google\.com\/local\/reviews)/i;
+// A quote credited to a named person (a <blockquote> with a <cite>), or a block whose class says testimonial or review.
+const QUOTE_CITE = /<blockquote\b[^>]*>(?:(?!<\/blockquote>)[\s\S]){10,2000}?<cite\b[^>]*>([\s\S]{2,120}?)<\/cite>/i;
+const REVIEW_CLASS = /class="[^"]*\b(testimonials?|reviews?)\b[^"]*"/i;
 const REVIEW_TEXT = /(testimonials?\b|customer reviews|google reviews|what (?:our|my) (?:customers|clients) say|\b\d(?:\.\d)? out of 5\b|\bfive[- ]star|\b5[- ]star|★★★)/i;
 
 // ---------- robots.txt ----------
@@ -412,7 +415,10 @@ export function analyse(input) {
 
   // Reviews and proof
   const ratingSchema = nodes.some(n => n.aggregateRating || typesOf(n).includes('Review') || typesOf(n).includes('AggregateRating'));
-  const reviewSign = (p.text.match(REVIEW_TEXT) || p.raw.match(REVIEW_LINKS) || [])[0];
+  const cited = p.raw.match(QUOTE_CITE);
+  const reviewSign = (p.text.match(REVIEW_TEXT) || p.raw.match(REVIEW_LINKS) || [])[0]
+    || (cited ? 'a quote from ' + stripTags(cited[1]).trim() : null)
+    || (p.raw.match(REVIEW_CLASS) ? 'a testimonials or reviews block' : null);
   if (ratingSchema || reviewSign) add({ id: 'proof', group: 'proof', status: 'strength', priority: 'medium', title: 'Reviews or proof on the page',
     detail: ratingSchema ? 'The page shows ratings or reviews, marked up for search engines.' : `I found signs of reviews or testimonials (“${String(reviewSign).slice(0, 40)}”).`,
     why: 'New customers look for proof that others were happy.', start: 'Keep them recent, and link to where people can read more.', link: LINKS.seo });

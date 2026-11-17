@@ -206,7 +206,7 @@ async function run(request, env) {
   const wantFresh = !!(body.fresh && access.admin);
   if (last && !wantFresh && Date.now() - Date.parse(last.checkedAt) < L.websiteCacheHours * 3600000) {
     const r = await getJson(env, PREFIX + 'reports/' + last.id + '.json');
-    if (fresh(r)) return jsonResponse({ report: publicReport(r), reused: true });
+    if (fresh(r) && r.rulesVersion === RULES_VERSION) return jsonResponse({ report: publicReport(r), reused: true }); // a rules change re-runs the check
   }
 
   // Checks per connection per London day. Lewis's own preview runs aren't counted.
