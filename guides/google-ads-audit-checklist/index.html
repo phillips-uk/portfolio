@@ -532,8 +532,9 @@
   }
 
   /* ── Audit checklist tables (2026-11-17) ── */
-  .ck-map { list-style: none; margin: 8px 0 48px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .ck-map a { display: flex; gap: 10px; align-items: baseline; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); text-decoration: none; font-weight: 700; font-size: 14.5px; line-height: 1.3; transition: border-color .2s, box-shadow .2s; }
+  .ck-map { list-style: none; margin: 8px 0 48px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 8px; }
+  .ck-map li { display: flex; }
+  .ck-map a { flex: 1; display: flex; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); text-decoration: none; font-weight: 700; font-size: 14.5px; line-height: 1.3; transition: border-color .2s, box-shadow .2s; }
   .ck-map a:hover { border-color: var(--brand); box-shadow: var(--e1); }
   .ck-map span { font: 500 11px/1 var(--mono, monospace); letter-spacing: .1em; color: var(--brand-text); }
   .ck { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 8px 0 28px; background: var(--surface); }
@@ -548,6 +549,12 @@
   .ck-note-k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); margin-bottom: 10px; }
   .ck-note p { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 0; }
   h2.issue-title { font-size: 26px; margin: 0; }
+  .sd-tip { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px 18px; margin: 0 0 32px; box-shadow: var(--e1); }
+  .sd-tip img { width: 40px; height: 40px; border-radius: 9px; display: block; }
+  .sd-tip-k { font: 500 10.5px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .sd-tip p { font-size: 14.5px; line-height: 1.6; color: var(--text-2); margin: 0; }
+  .sd-tip a { color: var(--brand-text); font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .sd-tip a:hover { text-decoration: underline; }
   @media (max-width: 640px) {
     .ck-map { grid-template-columns: 1fr 1fr; }
     .ck-head { display: none; }
@@ -659,6 +666,7 @@
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Manual adjustments</div><div class="ck-p" role="cell" data-l="Pass">Smart Bidding campaigns without leftover manual device or time bid adjustments, which Google says aren't supported with Smart Bidding.</div><div class="ck-f" role="cell" data-l="Fail">Old device and hour-of-day adjustments still set, giving a false sense of control.</div></div>
       </div>
     <div class="article-body"><p>For choosing a strategy, see <a href="/guides/google-ads-bidding-strategy/">which bidding strategy to use and when</a>. For judging one on thin data, <a href="/guides/target-cpa-few-conversions/">Target CPA with few conversions</a>.</p></div>
+    <div class="sd-tip"><img src="/logos/group/sd-tile.png" alt="" width="40" height="40" loading="lazy"><div><div class="sd-tip-k">Between audits</div><p>A budget problem usually shows up days before anyone opens the account. Search Desk, the monitoring product I built, checks spend against a normal day every 30 minutes and forecasts where the month will land. <a href="https://searchdesk.uk/budget-pacing">Budget pacing &rarr;</a></p></div></div>
     </div>
 
     <div class="issue-block" id="a03">
@@ -689,6 +697,7 @@
       </div>
     <div class="ck-note"><div class="ck-note-k">Worth knowing</div><p>Google scores Quality Score from 1 to 10 at the keyword level, built from expected click-through rate, ad relevance and landing page experience. It says plainly that Quality Score is not an input in the auction. I use it to point at which part to fix, not as a number to chase.</p></div>
     <div class="article-body"><p>More in <a href="/guides/improve-google-ads-quality-score/">how to improve Google Ads Quality Score</a>.</p></div>
+    <div class="sd-tip"><img src="/logos/group/sd-tile.png" alt="" width="40" height="40" loading="lazy"><div><div class="sd-tip-k">Between audits</div><p>Search terms drift between audits. Search Desk reads them every morning across Search and Performance Max, and its negative keyword checks show which converting searches a new negative could block before you add it. <a href="https://searchdesk.uk/negative-keywords">Negative keyword checks &rarr;</a></p></div></div>
     </div>
 
     <div class="issue-block" id="a05">
@@ -730,6 +739,7 @@
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Asset groups</div><div class="ck-p" role="cell" data-l="Pass">Asset groups rated Good or better, with real images, video and headlines for each theme.</div><div class="ck-f" role="cell" data-l="Fail">One asset group with a handful of stock images and auto-generated copy.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Targets</div><div class="ck-p" role="cell" data-l="Pass">A cost or return target set once there is enough data.</div><div class="ck-f" role="cell" data-l="Fail">No target on a campaign with months of conversions, so it spends the budget however it likes.</div></div>
       </div>
+    <div class="sd-tip"><img src="/logos/group/sd-tile.png" alt="" width="40" height="40" loading="lazy"><div><div class="sd-tip-k">Between audits</div><p>Performance Max hides most of its detail. Search Desk breaks it down every morning by channel, product and asset group, so gaps show up without a manual dig. <a href="https://searchdesk.uk/performance-max-reporting">Performance Max reporting &rarr;</a></p></div></div>
     </div>
 
     <div class="issue-block" id="a08">
@@ -773,7 +783,8 @@
     <div class="article-body">
       <h2>Run the checks automatically</h2>
       <p>Most of this checklist can be read straight from the account. The free <a href="/google-ads-audit">Google Ads Check</a> on this site does that: it reads the account, runs fixed written rules across tracking, bidding, structure, keywords, ads, targeting, Performance Max and product data, and lists what it finds with what to do first. Nothing in the account changes.</p>
-      <p>It doesn't replace judgement. It can tell you a campaign spends without converting; it can't tell you whether that campaign matters to the business. That is the part of an audit I do by hand.</p>
+      <p>For watching the account between audits, <a href="https://searchdesk.uk/">Search Desk</a> re-reads it every morning and ranks what it finds by the money at stake.</p>
+      <p>Neither replaces judgement. A check can tell you a campaign spends without converting; it can't tell you whether that campaign matters to the business. That is the part of an audit I do by hand.</p>
     </div>
 
     <!-- FAQ heading -->
