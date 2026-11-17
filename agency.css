@@ -325,6 +325,7 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
   .sec-white, .sec-cream { padding: 80px 0; }
   .hero { padding: 64px 20px 56px; }
   .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .hero-grid > :not(:first-child) { order: -1; } /* Design rule (Lewis, 17 Nov 2026): on tablets and phones the hero's image or illustration comes first, above the headline */
   .person { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; padding: 12px; box-shadow: var(--e1); max-width: 420px; }
   .person img { width: 84px; height: 84px; aspect-ratio: 1; border-radius: 50%; object-position: center 20%; }
   .person-name { margin: 0 0 2px; }
@@ -602,8 +603,8 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
   .flow-node:last-child:nth-child(odd) { grid-column: 1 / -1; }
 }
 @media (max-width: 900px) {
-  .svc-hero .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-  .hero-art { margin: 0; max-width: 260px; }
+  .svc-hero .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+  .hero-art { margin: 0 auto; max-width: 240px; }
   .compare-2 { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
