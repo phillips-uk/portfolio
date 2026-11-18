@@ -305,3 +305,27 @@
   .adsr .rp-ink { background: var(--surface); color: var(--text); }
   .adsr .find details { display: block; }
 }
+
+/* Report order and tone (Lewis, 18 Nov 2026): the scene (words, when), then what's working, then what to fix, each
+   easy to tell apart; fix cards show what could be at stake, never a price; "Start here" on a raised panel. */
+.adsr .rp-tone .rp-ico { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; font-weight: 800; font-size: 16px; align-self: center; flex: none; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), var(--e1); }
+.adsr .rp-tone.good .rp-ico { background: var(--ok-wash); color: var(--ok); }
+.adsr .rp-tone.fix .rp-ico { background: var(--attn-wash); color: var(--attn); }
+.adsr .rp-tone.good h3 { color: var(--ok); }
+.adsr #sec-strong { box-shadow: inset 0 4px 0 var(--ok-dot); }
+.adsr #sec-weak { box-shadow: inset 0 4px 0 var(--attn-dot); }
+.adsr .oks li { border-color: var(--ok-line); }
+.adsr .find { grid-template-columns: auto minmax(0, 1fr) minmax(0, 180px); gap: 6px 16px; }
+.adsr .find .start-box { margin-top: 12px; padding: 12px 14px; border-radius: var(--r-nest); background: var(--brand-wash); border: 1px solid var(--brand-line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), var(--e2); transform: translateY(-1px); }
+.adsr .find .start-box .sb-k { display: block; font: 500 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); margin-bottom: 4px; }
+.adsr .find .start-box p { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.5; color: var(--text); }
+.adsr .find details { margin-top: 10px; }
+.adsr .find .px { grid-column: 3; text-align: right; white-space: normal; }
+.adsr .find .px .px-k { display: block; font: 500 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.adsr .find .px b { display: block; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--bad); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+.adsr .find .px small:last-child { display: block; font-size: 12px; line-height: 1.35; color: var(--muted); }
+@media (max-width: 560px) {
+  .adsr .find { grid-template-columns: auto minmax(0, 1fr); }
+  .adsr .find .px { grid-column: 2; grid-row: 2; text-align: left; display: block; }
+  .adsr .find .px b { display: block; }
+}

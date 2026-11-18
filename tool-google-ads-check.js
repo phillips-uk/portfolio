@@ -113,6 +113,7 @@
   });
 
   // ---------- report ----------
+  var current_money = null;
   var DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
   var money = function (cur) { return new Intl.NumberFormat('en-GB', { style: 'currency', currency: cur || 'GBP', maximumFractionDigits: 0 }); };
   var GBP = money('GBP');
@@ -124,25 +125,30 @@
     return t;
   }
 
-  // A weakness: the tone, the title and the price; what it found, why it matters and where to start sit behind
-  // "Why and where to start" (Lewis, 18 Nov 2026: hide text unless it's needed).
-  function finding(f, line) {
+  // A weakness (Lewis, 18 Nov 2026): the tone and the title; on the right, what it could cost over the next 30 days
+  // where the last 30 show it solidly (else nothing, no price, no selling); "Start here" always showing, on its own
+  // raised panel, since that is what people scan for; what was found and why it matters behind "Why it matters".
+  function finding(f) {
     var card = el('article', 'find weak ' + f.priority);
     card.appendChild(el('span', 'mk', '!'));
     var body = el('div', 'fb'); card.appendChild(body);
     var h = el('h4', null, f.title);
     h.appendChild(el('span', 'pr ' + f.priority, f.priority === 'high' ? 'Fix first' : f.priority === 'medium' ? 'Worth fixing' : 'Small'));
     body.appendChild(h);
-    var d = el('details'); d.appendChild(el('summary', null, 'Why and where to start'));
+    if (f.start) {
+      var sb = el('div', 'start-box'); sb.appendChild(el('span', 'sb-k', 'Start here')); sb.appendChild(el('p', null, f.start));
+      body.appendChild(sb);
+    }
+    var d = el('details'); d.appendChild(el('summary', null, 'Why it matters'));
     d.appendChild(el('p', null, f.detail));
     if (f.why) d.appendChild(el('p', 'why', f.why));
-    if (f.start) { var st = el('p', 'start'); st.appendChild(el('b', null, 'Start here: ')); st.appendChild(document.createTextNode(f.start)); d.appendChild(st); }
     if (f.startLink && /^\/[a-z0-9\-\/]*$/.test(f.startLink)) { var a = el('a', 'go', 'Read the guide →'); a.href = f.startLink; d.appendChild(a); }
     body.appendChild(d);
-    if (line) {
+    if (f.atStake && f.atStake.amount > 0) {
       var px = el('div', 'px');
-      px.appendChild(el('b', null, (line.fromPrice ? 'from ' : '') + GBP.format(line.price)));
-      px.appendChild(el('small', null, 'about ' + hrs(line.hours)));
+      px.appendChild(el('small', 'px-k', 'Next 30 days'));
+      px.appendChild(el('b', null, 'up to ' + current_money.format(f.atStake.amount)));
+      px.appendChild(el('small', null, f.atStake.basis));
       card.appendChild(px);
     }
     return card;
@@ -372,7 +378,7 @@
     tiles.appendChild(tile('Working well', String(r.strengths.length), 'keep these', 'good'));
     var byId = {}; ((r.quote && r.quote.lines) || []).forEach(function (l) { byId[l.id] = l; });
     var wk = $('rep-weak'); wk.textContent = '';
-    r.weaknesses.forEach(function (w) { wk.appendChild(finding(w, byId[w.id])); });
+    current_money = cur; r.weaknesses.forEach(function (w) { wk.appendChild(finding(w)); });
     $('sec-weak').hidden = !r.weaknesses.length;
     var st = $('rep-strong'); st.textContent = '';
     r.strengths.forEach(function (s) { var li = el('li', null, s.title); li.title = s.detail || ''; st.appendChild(li); });

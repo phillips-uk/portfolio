@@ -535,6 +535,7 @@ function ruleCampaigns(m, out) {
         priority: 'high',
         title: `${plural(zero.length, 'campaign')} spending with no conversions`,
         detail: `${money(wasted)} spent in the last 30 days with no recorded conversions: ${examples(zero.map((c) => c.name))}.`,
+        atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(zero.filter((c) => c.spend >= cpa).reduce((s, c) => s + c.spend, 0), 'Campaigns past your cost per conversion with none') : null; })(),
         why: 'Either the targeting is wrong or the tracking is broken, and in both cases that money is not traceable to any business.',
         start: 'Check the tracking fires for these campaigns first, then pause or rebuild the ones that still show nothing.',
         startLink: LINKS.tracking,
@@ -843,6 +844,18 @@ function wasteGuard(m) {
   };
 }
 
+// What a finding could cost over the next 30 days if nothing changes (Lewis, 18 Nov 2026: in place of a price, and
+// left empty when the sum isn't solid). Only spend the last 30 days already shows coming back with nothing, and only
+// past the account's own cost per conversion, so a quiet stretch isn't counted as loss. Null when the account has no
+// conversions to measure against, or when nothing clears the bar.
+function accountCpa(m) {
+  const conv = m.campaigns.reduce((s, c) => s + c.conversions, 0);
+  return conv > 0 ? m.totalSpend / conv : null;
+}
+function atStake(amount, basis) {
+  return amount >= 1 ? { amount: round2(amount), basis } : null;
+}
+
 function ngramTerms(m) { return m.searchTerms.concat(m.pmaxSearchTerms || []); }
 function ngramAgg(m) {
   const agg = new Map();
@@ -950,6 +963,7 @@ function ruleSearchTerms(m, out) {
           ? `${plural(irrelevant.length, 'off-target search term')} with no conversions`
           : `${plural(irrelevant.length, 'search term')} spending with no conversions`,
         detail: `${money(waste)}${shareText} spent in 30 days on searches ${kwTokens.size ? 'that share no words with your keywords' : 'that brought no conversions'}, such as ${examples(irrelevant.map((t) => t.term), 4)}.${relatedText}`,
+        atStake: kwTokens.size ? atStake(waste, 'Searches with no link to your keywords') : null,
         why: 'These searches have cost money, brought nothing and have no link to what you sell, so blocking them saves budget straight away.',
         start: 'Add these searches as negative keywords, then check the search terms report every week.',
         startLink: null,
@@ -990,6 +1004,7 @@ function ruleSearchTerms(m, out) {
       priority: 'low',
       title: `${plural(wasted.length, 'repeated word', 'repeated words and phrases')} with spend and no conversions`,
       detail: `Across ${plural(ngramTerms(m).length, 'search term')}${(m.pmaxSearchTerms || []).length ? ' in Search and Performance Max' : ''}, these words keep coming up in searches that never convert: ${top}.`,
+      atStake: atStake(ngramTerms(m).filter((t) => t.conversions === 0 && wasted.some((a) => (' ' + ngramWords(t.term).join(' ') + ' ').includes(' ' + a.ngram + ' '))).reduce((s, t) => s + t.cost, 0), 'Searches containing these words'),
       why: 'One negative keyword on a repeated word blocks every search that contains it, including ones you have not seen yet.',
       start: 'Check each word is never useful to you, then add it as a negative keyword at account level.',
       startLink: null,
@@ -1493,6 +1508,7 @@ function ruleShopping(m, out) {
       priority: share > 0.3 && wastedSpend > 15 ? 'high' : 'medium',
       title: `${plural(wasted.length, 'product')} spent ${money(wastedSpend)} with no sales`,
       detail: `${pct(share)} of your product spend in the last 30 days brought no conversions. The biggest are ${examples(wasted.map((p) => clean(p.title, 40)), 3, wasted.length)}.`,
+      atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(wasted.filter((p) => p.spend >= cpa).reduce((s, p) => s + p.spend, 0), 'Products past your cost per conversion with no sale') : null; })(),
       why: 'Money spent on products that never sell is money not spent on the ones that do.',
       start: 'Check price and product page for each, then exclude the ones that still do not sell from your listing groups.',
       startLink: null,

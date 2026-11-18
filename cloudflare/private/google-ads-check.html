@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="stylesheet" href="/agency.css?v=16">
-<link rel="stylesheet" href="/tools.css?v=8">
+<link rel="stylesheet" href="/tools.css?v=9">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
@@ -159,20 +159,6 @@
     </div>
   </section>
 
-  <section class="rp rp-white" id="sec-weak">
-    <div class="page-w">
-      <div class="rp-h"><h3>What to fix</h3><span class="rp-count" id="weak-count"></span></div>
-      <div class="finds" id="rep-weak"></div>
-    </div>
-  </section>
-
-  <section class="rp rp-paper" id="sec-strong">
-    <div class="page-w">
-      <div class="rp-h"><h3>What's working</h3><span class="rp-count" id="strong-count"></span></div>
-      <ul class="oks" id="rep-strong"></ul>
-    </div>
-  </section>
-
   <section class="rp rp-white" id="sec-ngrams" hidden>
     <div class="page-w">
       <div class="rp-h"><h3>Words in your searches</h3></div>
@@ -190,6 +176,22 @@
       <p class="rp-lede" id="hm-lede"></p>
       <div class="hm-card"><div class="hm" id="hm-grid" role="img"></div><div class="hm-key">Fewer <b></b> More conversions</div></div>
       <details class="rp-more-info"><summary>How to read this</summary><p>Last 30 days, in your account's time zone. That's four or five of each weekday, so look for patterns rather than single squares. Useful for ad schedules, opening hours and when to answer the phone.</p></details>
+    </div>
+  </section>
+
+  <section class="rp rp-paper" id="sec-strong">
+    <div class="page-w">
+      <div class="rp-h rp-tone good"><span class="rp-ico" aria-hidden="true">&#10003;</span><h3>What's working</h3><span class="rp-count" id="strong-count"></span></div>
+      <p class="rp-lede">Keep these as they are.</p>
+      <ul class="oks" id="rep-strong"></ul>
+    </div>
+  </section>
+
+  <section class="rp rp-white" id="sec-weak">
+    <div class="page-w">
+      <div class="rp-h rp-tone fix"><span class="rp-ico" aria-hidden="true">!</span><h3>What to fix</h3><span class="rp-count" id="weak-count"></span></div>
+      <p class="rp-lede">Most important first. Where the last 30 days show money going nowhere, the figure is what it could cost over the next 30.</p>
+      <div class="finds" id="rep-weak"></div>
     </div>
   </section>
 
@@ -303,7 +305,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-google-ads-check.js?v=9" defer></script>
+<script src="/tool-google-ads-check.js?v=10" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>
