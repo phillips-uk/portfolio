@@ -292,13 +292,68 @@
       tick = setTimeout(function () { tick = null; waiting.slice().forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight * 0.94) show1(el); }); }, 120);
     }, { passive: true });
     var seen = new Map();
-    document.querySelectorAll('#rep-tiles > .tile, #pf-summary, #pf-facts > div, #report .wr-view, #wr-journey > .wj, #report .wr-gauge, #wr-field, #rep-strong > li, #rep-weak > .find, #rep-notes > .wr-note, #report .ask-card').forEach(function (el) {
+    document.querySelectorAll('#rep-tiles > .tile, #pf-summary, #pf-facts > div, #report .wr-view, #wr-journey > .wj, #report .wr-gauge, #wr-field, #rep-strong > li, #rep-weak > .find, #rep-notes > .wr-note, #fix-rows > .fix-row, #options > .option, #report .ask-card').forEach(function (el) {
       var i = seen.get(el.parentNode) || 0; seen.set(el.parentNode, i + 1);
       el.style.setProperty('--d', ((i % 6) * 0.045).toFixed(3) + 's');
       el.classList.add('rv');
       waiting.push(el);
       io.observe(el);
     });
+  }
+
+  // ---------- price list (Lewis, 18 Nov 2026: pricing like the Google Ads report) ----------
+  // One line per kind of job, smallest first; ticking them adds up a one-off price. No checkout yet: the button
+  // fills in the question form with the jobs and the report link, the same as the Google Ads report.
+  var GBP = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+  var hrs = function (h) { return (h % 1 ? h.toFixed(1) : String(h)) + (h === 1 ? ' hour' : ' hours'); };
+  function fixes(r) {
+    var q = r.quote, rows = $('fix-rows'); rows.textContent = '';
+    var has = !!(q && q.lines && q.lines.length);
+    $('sec-fix').hidden = !has;
+    $('sec-ask').hidden = has; // the price list carries its own "ask me" line
+    if (!has) return;
+    q.lines.slice().sort(function (a, b) { return a.price - b.price; }).forEach(function (l) {
+      var row = el('label', 'fix-row');
+      var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!l.ticked; cb.value = l.id; row.appendChild(cb);
+      var t = el('span'); t.appendChild(el('span', 't', l.fixLabel));
+      var sub = el('span', 's', l.covers && l.covers.length ? l.covers.join(' · ') : l.title); sub.style.display = 'block'; t.appendChild(sub);
+      row.appendChild(t);
+      row.appendChild(el('span', 'h', hrs(l.hours)));
+      row.appendChild(el('span', 'p', (l.fromPrice ? 'from ' : '') + GBP.format(l.price)));
+      rows.appendChild(row);
+      cb.addEventListener('change', function () { options(r); track('website_check_fix_select'); });
+    });
+    options(r);
+  }
+  function chosen(r) {
+    var ids = Array.prototype.map.call(document.querySelectorAll('#fix-rows input:checked'), function (i) { return i.value; });
+    return r.quote.lines.filter(function (l) { return ids.indexOf(l.id) !== -1; });
+  }
+  function options(r) {
+    var q = r.quote, list = chosen(r);
+    var total = list.reduce(function (a, l) { return a + l.price; }, 0), hours = list.reduce(function (a, l) { return a + l.hours; }, 0);
+    var box = $('options'); box.textContent = '';
+    var once = el('div', 'option best');
+    once.appendChild(el('h4', null, 'Fix these once'));
+    once.appendChild(el('div', 'big', GBP.format(total)));
+    once.appendChild(el('p', null, list.length ? list.length + (list.length === 1 ? ' job, ' : ' jobs, ') + 'about ' + hrs(hours) + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the jobs you’d like done.'));
+    var b = el('button', null, 'Ask me to do these'); b.type = 'button'; b.disabled = !list.length;
+    b.addEventListener('click', function () { ask(list); });
+    once.appendChild(b);
+    box.appendChild(once);
+    $('fix-fine').textContent = (q.holdForReview ? 'I’ll confirm the price within one working day before anything is charged. ' : '') +
+      'Prices hold until ' + DATE.format(new Date(q.validUntil + 'T12:00:00Z')) + '. No VAT is added. Most fixes depend on how your site is built, so I’ll confirm access first.';
+  }
+  function ask(list) {
+    var f = document.querySelector('#contact form.enquiry');
+    if (f && current) {
+      var biz = f.querySelector('[name="business"]'), msg = f.querySelector('[name="message"]');
+      if (biz && !biz.value) biz.value = current.domain;
+      if (msg) msg.value = 'I’d like these website fixes done:\n' + list.map(function (l) { return '- ' + l.fixLabel + ' (' + GBP.format(l.price) + ')'; }).join('\n') +
+        '\n\nMy report: ' + location.origin + '/website-check/r/' + current.id + '\n\n';
+    }
+    track('website_check_fix_ask', { jobs: list.length });
+    var c = document.getElementById('contact'); if (c) c.scrollIntoView({ behavior: 'smooth' });
   }
 
   function show(r, scroll) {
@@ -325,6 +380,7 @@
     var nt = $('rep-notes'); nt.textContent = '';
     (r.notes || []).forEach(function (f) { var n = el('details', 'wr-note'); n.appendChild(el('summary', null, f.title)); n.appendChild(el('p', null, f.detail)); if (f.start) n.appendChild(el('p', 'why', f.start)); nt.appendChild(n); });
     $('sec-notes').hidden = !(r.notes || []).length;
+    fixes(r);
     $('report').hidden = false;
     animate();
     // Paper and white alternate down the sections that are showing (v3 sec. 5).
@@ -356,6 +412,13 @@
   });
   // "Ask me about this report": the contact form gets the site and the report link.
   $('rep-ask').addEventListener('click', function () {
+    var f = document.querySelector('#contact form.enquiry');
+    if (!f || !current) return;
+    var biz = f.querySelector('[name="business"]'), msg = f.querySelector('[name="message"]');
+    if (biz && !biz.value) biz.value = current.domain;
+    if (msg && !msg.value) msg.value = 'About my Website Check report: ' + location.origin + '/website-check/r/' + current.id + '\n\n';
+  });
+  $('rep-ask-2').addEventListener('click', function () {
     var f = document.querySelector('#contact form.enquiry');
     if (!f || !current) return;
     var biz = f.querySelector('[name="business"]'), msg = f.querySelector('[name="message"]');

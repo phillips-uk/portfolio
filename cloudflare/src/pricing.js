@@ -24,7 +24,55 @@ export const FIX_TYPES = {
   bidding:   { label: 'Bidding and budgets',             item: 'campaigns',             setup: 20, perItem: 15 },
   // Shopping rules count products (the first real read, 16 Nov, had hundreds), so the time per product is small.
   shopping:  { label: 'Shopping and Performance Max',    item: 'products',              setup: 45, perItem: 0.5 },
+  // Website Check fixes (18 Nov 2026, Lewis: "implement pricing into this report, like we did for the audit"). One job
+  // per kind of fix, however many checks it covers, so three speed findings are one speed job. Starting estimates for
+  // Lewis to tune in /admin#pricing, the same as the Google Ads ones.
+  web_speed:    { tool: 'web', label: 'Website speed',                 item: 'speed findings',   setup: 120, perItem: 0 },
+  web_mobile:   { tool: 'web', label: 'Phone layout',                  item: 'layout findings',  setup: 45,  perItem: 30 },
+  web_first:    { tool: 'web', label: 'Heading, place and contact button', item: 'changes',      setup: 30,  perItem: 15 },
+  web_contact:  { tool: 'web', label: 'Contact details and Maps link', item: 'changes',          setup: 20,  perItem: 15 },
+  web_search:   { tool: 'web', label: 'Search basics',                 item: 'changes',          setup: 20,  perItem: 15 },
+  web_schema:   { tool: 'web', label: 'Structured data',               item: 'blocks',           setup: 45,  perItem: 15 },
+  web_technical:{ tool: 'web', label: 'Technical set-up',              item: 'changes',          setup: 30,  perItem: 15 },
+  web_tracking: { tool: 'web', label: 'Tracking enquiries',            item: 'changes',          setup: 60,  perItem: 30 },
+  web_proof:    { tool: 'web', label: 'Reviews on the page',           item: 'sections',         setup: 60,  perItem: 0 },
 };
+
+// Which Website Check finding is which kind of job. A finding not listed here isn't priced (it stays in the report).
+export const WEB_FIX = {
+  'speed-mobile': 'web_speed', 'speed-desktop': 'web_speed', 'web-vitals': 'web_speed',
+  viewport: 'web_mobile', 'zoom-blocked': 'web_mobile', 'tap-targets': 'web_mobile', 'font-size': 'web_mobile',
+  'what-you-do': 'web_first', where: 'web_first', 'contact-top': 'web_first',
+  'contact-routes': 'web_contact', 'tap-to-call': 'web_contact', consistent: 'web_contact', 'gbp-link': 'web_contact',
+  title: 'web_search', description: 'web_search', 'one-heading': 'web_search', 'alt-text': 'web_search', noindex: 'web_search',
+  'local-schema': 'web_schema', 'schema-broken': 'web_schema',
+  https: 'web_technical', robots: 'web_technical', sitemap: 'web_technical', 'ai-search-bots': 'web_technical',
+  analytics: 'web_tracking', measurable: 'web_tracking',
+  proof: 'web_proof',
+};
+
+// A Website Check report's weaknesses as priced jobs: one per kind, named after its most important finding, with the
+// others counted ("and 2 more"). Weaknesses arrive most important first.
+export function webFixLines(weaknesses) {
+  const jobs = new Map();
+  for (const w of weaknesses || []) {
+    const fixType = WEB_FIX[w.id];
+    if (!fixType) continue;
+    const j = jobs.get(fixType);
+    if (j) { j.items += 1; j.titles.push(w.title); if (w.priority === 'high') j.priority = 'high'; }
+    else jobs.set(fixType, { id: fixType, fixType, items: 1, titles: [w.title], priority: w.priority });
+  }
+  return [...jobs.values()].map(j => ({ id: j.id, fixType: j.fixType, items: j.items, priority: j.priority,
+    title: j.titles[0] + (j.items > 1 ? ` and ${j.items - 1} more` : ''), covers: j.titles }));
+}
+
+// The Website Check's price list: the same calculator, no monthly option (that belongs to Google Ads management).
+export function webQuote(pricing, weaknesses, now = new Date()) {
+  const lines = webFixLines(weaknesses);
+  const q = quote(pricing, lines, now);
+  const covers = Object.fromEntries(lines.map(l => [l.id, l.covers]));
+  return { ...q, retainer: null, lines: q.lines.map(l => ({ ...l, covers: covers[l.id] || [] })) };
+}
 
 export const DEFAULTS = {
   dayRate: 625,               // £, from the rate card
@@ -191,6 +239,15 @@ export function quote(pricing, weaknesses, now = new Date()) {
 // Sample account sizes for the preview in /admin, so a change can be seen before it is saved. These are made-up
 // accounts for the preview only, never shown to a customer.
 export const SAMPLES = {
+  website: {
+    label: 'Website, old local trade site (sample)',
+    weaknesses: webFixLines([
+      { id: 'speed-mobile', title: 'Slow on a phone', priority: 'high' }, { id: 'viewport', title: 'Not set up for phone screens', priority: 'high' },
+      { id: 'analytics', title: 'No Google Analytics or Tag Manager found', priority: 'high' }, { id: 'tap-to-call', title: 'The phone number isn’t tap-to-call', priority: 'medium' },
+      { id: 'title', title: 'The page title is very short', priority: 'medium' }, { id: 'description', title: 'No meta description', priority: 'medium' },
+      { id: 'local-schema', title: 'No local business details for search engines', priority: 'medium' }, { id: 'sitemap', title: 'No sitemap found', priority: 'low' },
+    ]),
+  },
   small: {
     label: 'Small account (sample)',
     weaknesses: [

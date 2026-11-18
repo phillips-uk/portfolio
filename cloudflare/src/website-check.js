@@ -23,7 +23,7 @@
 import websiteCheckHtml from '../private/website-check.html';
 import { analyse, readPsi, GROUPS, RULES_VERSION } from './website-check-rules.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX } from './tools-gate.js';
-import { getPricing } from './pricing.js';
+import { getPricing, webQuote } from './pricing.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 
 const PREFIX = 'tools/website-check/';
@@ -189,6 +189,13 @@ function publicReport(r) {
 
 const fresh = r => r && Date.now() - Date.parse(r.checkedAt) < REPORT_DAYS * 86400000;
 
+// The report as the page gets it, with today's price list for its fixes (Lewis, 18 Nov 2026: pricing like the
+// Google Ads report). Priced when it's shown, from the live calculator, so a saved link always shows current prices.
+async function priced(env, r, pricing) {
+  const p = pricing || await getPricing(env);
+  return { ...publicReport(r), quote: webQuote(p, r.weaknesses || []) };
+}
+
 async function run(request, env) {
   const origin = request.headers.get('Origin');
   if (origin && origin !== new URL(request.url).origin) return jsonResponse({ error: 'Forbidden' }, 403);
@@ -209,7 +216,7 @@ async function run(request, env) {
   const wantFresh = !!(body.fresh && access.admin);
   if (last && !wantFresh && Date.now() - Date.parse(last.checkedAt) < L.websiteCacheHours * 3600000) {
     const r = await getJson(env, PREFIX + 'reports/' + last.id + '.json');
-    if (fresh(r) && r.rulesVersion === RULES_VERSION) return jsonResponse({ report: publicReport(r), reused: true }); // a rules change re-runs the check
+    if (fresh(r) && r.rulesVersion === RULES_VERSION) return jsonResponse({ report: await priced(env, r), reused: true }); // a rules change re-runs the check
   }
 
   // Checks per connection per London day. Lewis's own preview runs aren't counted.
@@ -235,7 +242,7 @@ async function run(request, env) {
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report);
   await put(env, PREFIX + 'domain/' + n.domain + '.json', { id, checkedAt: report.checkedAt });
-  return jsonResponse({ report: publicReport(report), reused: false });
+  return jsonResponse({ report: await priced(env, report), reused: false });
 }
 
 const pick = s => ({ performance: s.performance, lcp: s.lcp, cls: s.cls, tbt: s.tbt, field: s.field });
@@ -265,7 +272,7 @@ export async function websiteCheck(request, url, env) {
       checkedAt: new Date().toISOString(), rulesVersion: RULES_VERSION, ...result,
       speed: { mobile: input.psi.mobile && pick(input.psi.mobile), desktop: input.psi.desktop && pick(input.psi.desktop) },
     };
-    return jsonResponse({ report: { ...publicReport(report), sample: true, demoName: demo.name } });
+    return jsonResponse({ report: { ...(await priced(env, report)), sample: true, demoName: demo.name } });
   }
   if (path === '/tools/website-check/run') {
     if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
@@ -276,7 +283,7 @@ export async function websiteCheck(request, url, env) {
     const access = await toolAccessFor('website-check', request, env);
     if (!access.allowed) return jsonResponse({ error: 'Not found' }, 404);
     const r = await reportById(env, api[1]);
-    return r ? jsonResponse({ report: publicReport(r) }) : jsonResponse({ error: 'That report has expired or doesn’t exist. Reports are kept for 30 days.' }, 404);
+    return r ? jsonResponse({ report: await priced(env, r) }) : jsonResponse({ error: 'That report has expired or doesn’t exist. Reports are kept for 30 days.' }, 404);
   }
   if (path === '/website-check' || path.startsWith('/website-check/r/')) {
     const access = await toolAccessFor('website-check', request, env);

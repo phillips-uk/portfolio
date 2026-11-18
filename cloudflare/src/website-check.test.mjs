@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { analyse } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
+import { webQuote, WEB_FIX, getPricing } from './pricing.js';
 
 const run = (id) => analyse(findWebsiteDemo(id).input());
 const ids = (list) => list.map((f) => f.id);
@@ -45,5 +46,16 @@ assert.equal(prof('shop').place, 'Suffolk', 'the title and heading are not joine
 assert.equal(prof('shop').platform, 'Shopify'); assert.equal(prof('salon').platform, 'Wix');
 assert.deepEqual(prof('clinic').firstScreen.cta, { text: 'Call 01353 000 333', kind: 'call' });
 assert.ok(prof('relaunch').google.title && prof('relaunch').google.description, 'Google preview has a title and description');
+
+// Pricing (18 Nov 2026): every weakness a demo can raise is a priced job; same-kind findings are one job
+const pricing = await getPricing({});
+for (const d of WEBSITE_DEMOS) for (const w of run(d.id).weaknesses) assert.ok(WEB_FIX[w.id], `${d.id}: ${w.id} has a price`);
+const tq = webQuote(pricing, run('trades').weaknesses);
+const speedJob = tq.lines.find((l) => l.fixType === 'web_speed');
+assert.equal(tq.lines.filter((l) => l.fixType === 'web_speed').length, 1, 'speed findings are one job');
+assert.ok(speedJob.covers.length >= 2 && speedJob.price > 0, 'the speed job lists what it covers');
+assert.equal(tq.retainer, null, 'no monthly option on the Website Check');
+assert.equal(webQuote(pricing, run('clinic').weaknesses).lines.length, 0, 'nothing to fix, nothing to price');
+assert.ok(tq.lines.every((l) => l.price >= Math.round(pricing.settings.dayRate / pricing.settings.hoursPerDay)), 'each job at least the one-hour minimum');
 
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

@@ -384,6 +384,7 @@
   .dm-pick .dm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .dm-pick small { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
   .dm-tool { margin-bottom: 16px; }
+  .pr-group th { text-align: left; font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 18px 12px 8px; }
   .dm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line-soft); }
   .dm-bar h2 { margin: 0; font-size: 16px; }
   .dm-stage { background: var(--line-soft); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 20px; overflow-x: auto; }
@@ -3221,8 +3222,12 @@
     field('holdForReview').checked = !!s.holdForReview;
     Object.keys(s.limits).forEach(function (k) { var f = field('l.' + k); if (f) f.value = s.limits[k]; });
     var tb = $('pr-fix'); tb.textContent = '';
-    Object.keys(s.fixTypes).forEach(function (id) {
-      var ft = s.fixTypes[id], tr = el('tr');
+    // Google Ads Check jobs first, then the Website Check's (tool: 'web'), each under its own heading
+    var lastTool = null;
+    Object.keys(s.fixTypes).sort(function (a, b) { return (s.fixTypes[a].tool === 'web') - (s.fixTypes[b].tool === 'web'); }).forEach(function (id) {
+      var ft = s.fixTypes[id], tool = ft.tool === 'web' ? 'web' : 'ads';
+      if (tool !== lastTool) { var hr = el('tr', 'pr-group'), th = el('th', null, tool === 'web' ? 'Website Check jobs' : 'Google Ads Check fixes'); th.colSpan = 4; hr.appendChild(th); tb.appendChild(hr); lastTool = tool; }
+      var tr = el('tr');
       tr.appendChild(el('td', null, ft.label));
       var td1 = el('td'), i1 = el('input', 'item'); i1.type = 'text'; i1.value = ft.item; i1.setAttribute('data-ft', id); i1.setAttribute('data-k', 'item'); i1.maxLength = 60; td1.appendChild(i1); tr.appendChild(td1);
       ['setup', 'perItem'].forEach(function (k) {
