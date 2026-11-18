@@ -155,6 +155,7 @@
   }
 
   function fixes(r) {
+    if (!$('fix-rows')) return; // the priced fixes were swapped for one "Ask me" line (Lewis, 18 Nov 2026)
     var q = r.quote, rows = $('fix-rows'); rows.textContent = '';
     if (!q || !q.lines.length) { $('sec-fix').hidden = true; return; }
     $('sec-fix').hidden = false;

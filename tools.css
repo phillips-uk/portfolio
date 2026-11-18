@@ -329,3 +329,10 @@
   .adsr .find .px { grid-column: 2; grid-row: 2; text-align: left; display: block; }
   .adsr .find .px b { display: block; }
 }
+
+/* "Ask me" in place of the priced fixes (Lewis, 18 Nov 2026: no hard selling). A centred card: text, then the button. */
+.adsr .ask-card { max-width: 640px; margin: 0 auto; text-align: center; padding: 40px 32px; border-radius: var(--r-md); border: 1px solid transparent;
+  background: radial-gradient(280px circle at 25% -12%, var(--card-glint), transparent 65%) padding-box, var(--card-fill) padding-box, var(--card-rim) border-box; box-shadow: var(--e1); }
+.adsr .ask-card h3 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 800; letter-spacing: -0.03em; margin: 0 0 var(--s2); }
+.adsr .ask-card p { color: var(--text-2); margin: 0 0 var(--s6); font-size: 16px; }
+@media (max-width: 560px) { .adsr .ask-card { padding: 28px 20px; } .adsr .ask-card .btn-filled { width: 100%; justify-content: center; } }
