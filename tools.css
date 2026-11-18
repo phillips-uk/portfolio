@@ -257,7 +257,7 @@
 .adsr .pf-legend em { font-style: normal; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
 .adsr .pf-root { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: var(--r-pill); border: 1px solid var(--ink-rim); background: color-mix(in oklab, #fff 7%, var(--ink)); font-weight: 800; color: #fff; position: relative; }
 .adsr .pf-root small { font: 500 11.5px/1 var(--mono); color: var(--ink-muted); font-weight: 500; }
-.adsr .pf-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s4); margin-top: var(--s8); position: relative; }
+.adsr .pf-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s4); align-items: start; margin-top: var(--s8); position: relative; }
 .adsr .pf-groups::before { content: ""; position: absolute; left: 28px; top: calc(-1 * var(--s8)); height: var(--s8); border-left: 1px dashed var(--ink-rim); }
 .adsr .pf-group { border: 1px solid var(--ink-rim); border-radius: var(--r-md); padding: 16px; background: color-mix(in oklab, #fff 5%, var(--ink)); box-shadow: var(--e1); }
 .adsr .pf-gh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: var(--s3); }

@@ -509,7 +509,7 @@
   } else if (signIn && /[?&]signin=([a-z]+)/.test(location.search)) {
     say(SIGNIN_MSG[location.search.match(/[?&]signin=([a-z]+)/)[1]] || '', true);
     history.replaceState(null, '', '/google-ads-audit');
-  } else if (preview && /[?&]sample=1/.test(location.search)) {
-    post('/tools/google-ads-check/sample').then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
+  } else if (preview && /[?&]sample=[12]/.test(location.search)) {
+    post('/tools/google-ads-check/sample', { variant: /[?&]sample=2/.test(location.search) ? 'multi' : 'small' }).then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
   }
 })();

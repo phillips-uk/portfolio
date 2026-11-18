@@ -22,6 +22,7 @@ import { gaql, linkStatus, acceptLink, endLink, configured, meter, AdsError, MAN
 import { QUERIES, OPTIONAL } from './ads-check/queries.js';
 import { runRules } from './ads-check/rules.js';
 import { SAMPLE_DATA } from './ads-check/sample.js';
+import { SAMPLE_MULTI } from './ads-check/sample-multi.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX } from './tools-gate.js';
 import { getPricing, quote } from './pricing.js';
 
@@ -200,9 +201,11 @@ async function sample(request, env) {
   const access = await toolAccessFor('google-ads-check', request, env);
   if (!access.admin) return jsonResponse({ error: 'Not found' }, 404);
   const pricing = await getPricing(env);
-  const result = runRules(SAMPLE_DATA, { currency: 'GBP', today: londonDay() });
+  // ?sample=2: ten campaigns of six types, mostly healthy (sample-multi.js). Otherwise the small problem account.
+  const multi = (await readBody(request)).variant === 'multi';
+  const result = runRules(multi ? SAMPLE_MULTI : SAMPLE_DATA, { currency: 'GBP', today: londonDay() });
   const report = {
-    id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: 'Sample account (made up for the preview)',
+    id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: multi ? 'Sample: ten campaigns (made up for the preview)' : 'Sample account (made up for the preview)',
     currency: 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
     profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour,
     quote: quote(pricing, result.weaknesses), pricingVersion: pricing.version || 0, operations: 0, sample: true,
