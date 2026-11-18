@@ -791,6 +791,8 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
 /* Info icons: the hint sits behind an i */
 .label-row{display:flex;align-items:center;gap:8px;min-height:26px}
 .label-row label{font-weight:600;font-size:.9rem}
+select.input{cursor:pointer}
+.result-per,.calc-intro{text-wrap:balance}
 .info{position:relative;flex:none;width:20px;height:20px;padding:0;border-radius:50%;border:1px solid var(--field-line);background:transparent;color:var(--ink-soft);font-family:var(--font-display);font-style:italic;font-weight:600;font-size:.8rem;line-height:1;display:inline-grid;place-items:center;cursor:help;vertical-align:middle;transition:background .2s,color .2s,border-color .2s}
 .info::before{content:"i"}
 .info::after{content:"";position:absolute;inset:-12px}
@@ -1095,6 +1097,31 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
               </div>
             </div>
             <div class="field">
+              <div class="label-row"><label for="ddIndustry">Your customers' industry</label><button type="button" class="info" aria-label="About your customers' industry" data-tip="Who you mostly sell to. We compare you with how fast large companies in that industry pay their suppliers, from the government's 2025 figures."></button></div>
+              <select class="input" id="ddIndustry">
+                    <option value="all" selected>Mixed, or not sure</option>
+                    <option value="A">Agriculture, forestry and fishing</option>
+                    <option value="I">Accommodation and food</option>
+                    <option value="N">Admin and support services</option>
+                    <option value="R">Arts and recreation</option>
+                    <option value="F">Construction</option>
+                    <option value="P">Education</option>
+                    <option value="D">Electricity and gas</option>
+                    <option value="K">Finance and insurance</option>
+                    <option value="Q">Health and social care</option>
+                    <option value="J">Information and communication</option>
+                    <option value="C">Manufacturing</option>
+                    <option value="B">Mining and quarrying</option>
+                    <option value="S">Other services</option>
+                    <option value="M">Professional and scientific</option>
+                    <option value="O">Public administration</option>
+                    <option value="L">Real estate</option>
+                    <option value="H">Transport and storage</option>
+                    <option value="E">Water and waste</option>
+                    <option value="G">Wholesale and retail</option>
+              </select>
+            </div>
+            <div class="field">
               <div class="range-row"><label for="ddTerms">Your standard payment terms</label><span class="range-out" id="ddTermsOut">30 days</span></div>
               <input type="range" id="ddTerms" min="7" max="120" step="1" value="30">
             </div>
@@ -1114,15 +1141,18 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
               <p class="result-big" id="ddDays">&nbsp;</p>
               <p class="result-per" id="ddPer">&nbsp;</p>
               <dl class="result-list">
+                <div><dt id="ddBenchDt">Large businesses pay in</dt><dd id="ddOutBench"></dd></div>
                 <div><dt>Invoice discounting could release now</dt><dd id="ddOutRelease"></dd></div>
-                <div><dt>Cash tied up beyond terms</dt><dd id="ddOutCash"></dd></div>
               </dl>
               <button type="button" class="btn btn-brass btn-block" id="ddQuote">Request terms</button>
               <details class="more">
                 <summary>See the breakdown</summary>
                 <div class="more-body">
                   <dl class="result-list">
+                    <div><dt>Against your customers' industry</dt><dd id="ddOutVs"></dd></div>
+                    <div><dt>Collecting at that pace would release</dt><dd id="ddOutCatch"></dd></div>
                     <div><dt>Days beyond your terms</dt><dd id="ddOutBeyond"></dd></div>
+                    <div><dt>Cash tied up beyond terms</dt><dd id="ddOutCash"></dd></div>
                     <div><dt>Each day is worth</dt><dd id="ddOutDay"></dd></div>
                   </dl>
                 </div>
@@ -1131,7 +1161,8 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
                 <summary>How it works</summary>
                 <div class="more-body">
                   <p>Debtor days are trade debtors divided by credit sales, times 365.</p>
-                  <p>Invoice discounting turns unpaid invoices into cash as you raise them, so the business is not waiting on its customers. It is often part of an asset-based lending facility. Example advance rate for this draft: 70% to 85% of debtors.</p>
+                  <p>Industry figures are the median time large UK businesses took to pay their suppliers in 2025, and the share of invoices they paid late, from the Department for Business and Trade's payment practices statistics (published 14 July 2026, Open Government Licence).</p>
+                  <p>Invoice discounting turns unpaid invoices into cash as you raise them. It is often part of an asset-based lending facility. Example advance rate for this draft: 70% to 85% of debtors.</p>
                 </div>
               </details>
               <p class="result-small">Indicative only. Not an offer of finance.</p>
@@ -1438,25 +1469,55 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
   }));
   listen('#panel-cycle', calcCycle);
 
-  /* 3. Debtor days */
+  /* 3. Debtor days, compared with how fast large companies in the customers' industry pay.
+     Median days to pay and share of invoices paid late, large UK businesses, 2025 (DBT, published 14 July 2026). */
+  const PAYERS = {
+    all: ['businesses', 32, 15],
+    A: ['agricultural businesses', 32, 15],
+    I: ['hospitality businesses', 35, 9],
+    N: ['support services firms', 27, 12],
+    R: ['arts and leisure businesses', 30, 15],
+    F: ['construction firms', 33, 14],
+    P: ['education providers', 25, 16],
+    D: ['energy companies', 25, 11],
+    K: ['finance and insurance firms', 21, 13],
+    Q: ['health and care providers', 26, 10],
+    J: ['tech and media firms', 29, 15],
+    C: ['manufacturers', 45, 21],
+    B: ['mining and quarrying firms', 31, 12.5],
+    S: ['service businesses', 31, 12],
+    M: ['professional firms', 31, 16],
+    O: ['public administration bodies', 27, 14.5],
+    L: ['property companies', 28, 17],
+    H: ['transport and logistics firms', 35, 12],
+    E: ['water and waste firms', 37, 18.5],
+    G: ['wholesalers and retailers', 37, 15]
+  };
   let lastDd = null;
   function calcDebtors() {
     const D = num($('#ddDebtors')), S = num($('#ddSales')), terms = Number($('#ddTerms').value);
     $('#ddTermsOut').textContent = terms + ' days';
+    const p = PAYERS[$('#ddIndustry').value] || PAYERS.all;
     const box = $('#ddResult'), msg = $('#ddMsg');
     if (D <= 0 || S <= 0) { showMsg(box, msg, 'Enter your trade debtors and credit sales to see the figures.'); lastDd = null; return; }
     hideMsg(box, msg);
-    const dso = D / S * 365, day = S / 365, beyond = Math.round(dso - terms);
+    const dso = D / S * 365, day = S / 365, beyond = Math.round(dso - terms), vs = Math.round(dso - p[1]);
     const lo = nice(D * ADVANCE.debtors[0]), hi = nice(D * ADVANCE.debtors[1]);
-    $('#ddDays').textContent = Math.round(dso) + ' days';
-    $('#ddPer').textContent = beyond > 0 ? 'to get paid, against ' + terms + '-day terms' : 'to get paid, inside your ' + terms + '-day terms';
-    $('#ddOutBeyond').textContent = beyond > 0 ? beyond + (beyond === 1 ? ' day' : ' days') : 'None';
+    const days = n => n + (n === 1 ? ' day' : ' days');
+    $('#ddDays').textContent = days(Math.round(dso));
+    $('#ddPer').textContent = 'to get paid. Large ' + p[0] + ' take ' + p[1] + '.';
+    $('#ddBenchDt').textContent = 'Large ' + p[0] + ' pay in';
+    $('#ddOutBench').textContent = p[1] + ' days, ' + p[2] + '% paid late';
+    $('#ddOutRelease').textContent = money(lo) + ' to ' + money(hi);
+    $('#ddOutVs').textContent = vs > 0 ? days(vs) + ' slower' : vs < 0 ? days(-vs) + ' faster' : 'In line';
+    $('#ddOutCatch').textContent = vs > 0 ? money(nice(vs * day)) : 'Nothing: you are at or ahead of it';
+    $('#ddOutBeyond').textContent = beyond > 0 ? days(beyond) : 'None';
     $('#ddOutCash').textContent = beyond > 0 ? money(nice(D - day * terms)) : 'None';
     $('#ddOutDay').textContent = money(nice(day));
-    $('#ddOutRelease').textContent = money(lo) + ' to ' + money(hi);
-    lastDd = { dso: Math.round(dso), lo, hi };
+    lastDd = { dso: Math.round(dso), lo, hi, who: p[0], bench: p[1] };
   }
   listen('#panel-debtors', calcDebtors);
+  $('#ddIndustry').addEventListener('change', calcDebtors);
 
   /* 4. Growth funding gap */
   let lastGr = null;
@@ -1504,7 +1565,7 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
   });
   $('#ddQuote').addEventListener('click', () => {
     if (!lastDd) return;
-    sendToForm('abl', band(lastDd.hi), 'From the debtor days tool: customers take ' + lastDd.dso + ' days to pay, and invoice discounting could release about ' + money(lastDd.lo) + ' to ' + money(lastDd.hi) + '.');
+    sendToForm('abl', band(lastDd.hi), 'From the debtor days tool: customers take ' + lastDd.dso + ' days to pay (large ' + lastDd.who + ' take ' + lastDd.bench + '), and invoice discounting could release about ' + money(lastDd.lo) + ' to ' + money(lastDd.hi) + '.');
   });
   $('#grQuote').addEventListener('click', () => {
     if (!lastGr) return;
