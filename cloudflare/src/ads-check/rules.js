@@ -243,6 +243,23 @@ function buildModel(data, ctx) {
   }
   const searchTerms = [...termMap.values()].sort((a, b) => b.cost - a.cost);
 
+  // Performance Max search terms (an optional read), added up per term the same way. Only the n-gram finding and
+  // table use them.
+  const pmaxMap = new Map();
+  for (const r of rows('pmaxSearchTerms')) {
+    const text = r.campaignSearchTermView?.searchTerm;
+    if (!text) continue;
+    const t = pmaxMap.get(text) || { term: text, campaigns: new Set(), impressions: 0, clicks: 0, cost: 0, conversions: 0, convValue: 0 };
+    t.campaigns.add(r.campaign?.name || '');
+    t.impressions += num(r.metrics?.impressions);
+    t.clicks += num(r.metrics?.clicks);
+    t.cost += fromMicros(r.metrics?.costMicros);
+    t.conversions += num(r.metrics?.conversions);
+    t.convValue += num(r.metrics?.conversionsValue);
+    pmaxMap.set(text, t);
+  }
+  const pmaxSearchTerms = [...pmaxMap.values()].sort((a, b) => b.cost - a.cost);
+
   const ads = rows('ads').map((r) => ({
     id: String(r.adGroupAd?.ad?.id ?? ''),
     type: r.adGroupAd?.ad?.type || 'UNKNOWN',
@@ -293,6 +310,7 @@ function buildModel(data, ctx) {
     keywords,
     conversionActions,
     searchTerms,
+    pmaxSearchTerms,
     ads,
     adGroups,
     products,
@@ -797,9 +815,10 @@ function ruleKeywords(m, out) {
 // 4. Search terms (audit.py check_search_terms and _compute_ngrams)
 // Every word and phrase of 1 to 3 words across the search terms, with what the terms containing it cost and brought in.
 // Shared by the n-gram finding and the report's n-gram table (audit.py _compute_ngrams).
+function ngramTerms(m) { return m.searchTerms.concat(m.pmaxSearchTerms || []); }
 function ngramAgg(m) {
   const agg = new Map();
-  for (const t of m.searchTerms) {
+  for (const t of ngramTerms(m)) {
     const words = ngramWords(t.term);
     const seenHere = new Set();
     for (let n = 1; n <= 3; n++) {
@@ -823,12 +842,13 @@ function ngramAgg(m) {
 // The report's n-gram table (the old audit report showed the same): repeated words and phrases that spent with no
 // conversions, and the ones that bring conversions in. Each needs 2 or more search terms. Top 20 of each.
 function ngramTable(m) {
-  if (!m.searchTerms.length) return null;
+  const terms = ngramTerms(m);
+  if (!terms.length) return null;
   const rows = [...ngramAgg(m).values()].filter((a) => a.termCount >= 2);
   const shape = (a) => ({ text: clean(a.ngram, 50), n: a.n, terms: a.termCount, clicks: a.clicks, cost: round2(a.cost), conversions: Math.round(a.conversions * 10) / 10 });
   const wasted = rows.filter((a) => a.conversions === 0 && a.cost >= 2).sort((a, b) => b.cost - a.cost).slice(0, 20).map(shape);
   const performing = rows.filter((a) => a.conversions > 0).sort((a, b) => b.conversions - a.conversions || a.cost - b.cost).slice(0, 20).map(shape);
-  return { searchTerms: m.searchTerms.length, wasted, performing, wastedSpend: round2(m.searchTerms.filter((t) => t.conversions === 0).reduce((s, t) => s + t.cost, 0)) };
+  return { searchTerms: m.searchTerms.length, pmaxSearchTerms: (m.pmaxSearchTerms || []).length, wasted, performing, wastedSpend: round2(terms.filter((t) => t.conversions === 0).reduce((s, t) => s + t.cost, 0)) };
 }
 
 // When conversions come in: day of week by hour (account time zone), last 30 days. Null when the read failed or is empty.
@@ -936,7 +956,7 @@ function ruleSearchTerms(m, out) {
       category: 'search-terms',
       priority: 'low',
       title: `${plural(wasted.length, 'repeated word', 'repeated words and phrases')} with spend and no conversions`,
-      detail: `Across ${plural(m.searchTerms.length, 'search term')}, these words keep coming up in searches that never convert: ${top}.`,
+      detail: `Across ${plural(ngramTerms(m).length, 'search term')}${(m.pmaxSearchTerms || []).length ? ' in Search and Performance Max' : ''}, these words keep coming up in searches that never convert: ${top}.`,
       why: 'One negative keyword on a repeated word blocks every search that contains it, including ones you have not seen yet.',
       start: 'Check each word is never useful to you, then add it as a negative keyword at account level.',
       startLink: null,

@@ -152,6 +152,23 @@ export const QUERIES = {
       AND metrics.impressions > 0
   `),
 
+  // Performance Max search terms with cost (campaign_search_term_view, v24): search_term_view leaves Performance Max
+  // out. Used only for the words-and-phrases (n-gram) finding and table; the keyword-based search term checks stay on
+  // Search campaigns, since Performance Max has no keywords to compare with.
+  pmaxSearchTerms: q(`
+    SELECT campaign_search_term_view.search_term,
+           campaign.id, campaign.name,
+           metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions, metrics.conversions_value
+    FROM campaign_search_term_view
+    WHERE segments.date DURING LAST_30_DAYS
+      AND campaign.advertising_channel_type = 'PERFORMANCE_MAX'
+      AND campaign.status = 'ENABLED'
+      AND metrics.cost_micros > 500000
+    ORDER BY metrics.cost_micros DESC
+    LIMIT 300
+  `),
+
   // Performance Max asset groups and their ad strength.
   assetGroups: q(`
     SELECT asset_group.id, asset_group.name, asset_group.ad_strength,
@@ -246,6 +263,7 @@ export const QUERIES = {
 // failed optional query; the rules then skip whatever depends on it.
 export const OPTIONAL = new Set([
   'dayHour',
+  'pmaxSearchTerms',
   'negativeKeywordLists',
   'accountNegativeLists',
   'assetGroups',

@@ -234,8 +234,10 @@
     $('ng-lede').textContent = 'Words and phrases that keep coming up across your search terms. ' +
       (d.wastedSpend > 0 ? cur.format(d.wastedSpend) + ' went on search terms with no conversions in the last 30 days. ' : '') +
       'One negative keyword on a word that never converts blocks every search containing it, including ones you haven’t seen yet.';
-    $('ng-note').textContent = 'From the ' + d.searchTerms + ' search term' + (d.searchTerms === 1 ? '' : 's') + ' that spent in your Search campaigns. Each word or phrase appears in two or more of them.' +
-      ((r.facts && (r.facts.channels || []).indexOf('PERFORMANCE_MAX') >= 0) ? ' Performance Max searches are not included.' : '');
+    var pm = d.pmaxSearchTerms || 0, all = d.searchTerms + pm, hasPmax = r.facts && (r.facts.channels || []).indexOf('PERFORMANCE_MAX') >= 0;
+    $('ng-note').textContent = 'From the ' + all + ' search term' + (all === 1 ? '' : 's') + ' that spent ' +
+      (pm ? 'in your Search campaigns (' + d.searchTerms + ') and Performance Max (' + pm + ')' : 'in your Search campaigns') +
+      ' in the last 30 days. Each word or phrase appears in two or more of them.' + (hasPmax && !pm ? ' Performance Max searches were not available this time.' : '');
     function draw() {
       var rows = d[ngState.kind].filter(function (x) { return !ngState.n || x.n === ngState.n; });
       var body = $('ng-rows'); body.textContent = '';
