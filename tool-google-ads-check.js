@@ -276,7 +276,25 @@
         meta.appendChild(el('span', null, Math.round(c.share) + '% of spend'));
         meta.appendChild(el('span', null, c.conversions + ' conv.' + (c.cpa ? ' · ' + cur.format(c.cpa) + ' each' : '')));
         if (c.inside) meta.appendChild(el('span', null, c.inside));
-        row.appendChild(meta); box.appendChild(row);
+        row.appendChild(meta);
+        // one level down: the campaign's asset groups, with strength and share of the campaign's spend
+        if (c.children && c.children.length) {
+          var kids = el('ul', 'pf-ags');
+          c.children.slice(0, 8).forEach(function (k) {
+            var li = el('li'), top = el('div', 'pf-agt');
+            top.appendChild(el('span', 'pf-agn', k.name));
+            if (k.strength) top.appendChild(el('span', 'pf-st ' + k.strength.toLowerCase(), k.strength));
+            li.appendChild(top);
+            if (k.share != null) {
+              var kb = el('div', 'pf-cbar thin'), kf = el('i'); kf.style.width = Math.max(2, k.share) + '%'; kb.appendChild(kf); li.appendChild(kb);
+              li.appendChild(el('div', 'pf-cm', Math.round(k.share) + '% of campaign spend · ' + k.conversions + ' conv.'));
+            }
+            kids.appendChild(li);
+          });
+          if (c.children.length > 8) kids.appendChild(el('li', 'pf-cm', '+ ' + (c.children.length - 8) + ' more'));
+          row.appendChild(kids);
+        }
+        box.appendChild(row);
       });
       if (g.campaigns.length > 6) box.appendChild(el('div', 'pf-cm', '+ ' + (g.campaigns.length - 6) + ' more'));
       groups.appendChild(box);

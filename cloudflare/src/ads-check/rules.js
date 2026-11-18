@@ -1753,6 +1753,26 @@ function accountProfile(m) {
   const agByCampaign = new Map(); m.adGroups.forEach((g) => agByCampaign.set(g.campaignId, (agByCampaign.get(g.campaignId) || 0) + 1));
   const kwByCampaign = new Map(); m.keywords.forEach((k) => kwByCampaign.set(k.campaignId, (kwByCampaign.get(k.campaignId) || 0) + 1));
   const assetByCampaign = new Map(); m.rows('assetGroups').forEach((r) => { const id = String(r.campaign?.id ?? ''); assetByCampaign.set(id, (assetByCampaign.get(id) || 0) + 1); });
+  // One level down for Performance Max (Lewis, 18 Nov 2026): each asset group with its strength and, when the optional
+  // read worked, its share of the campaign's spend and its conversions. Biggest first; unknown spend keeps API order.
+  const agStats = new Map();
+  m.rows('assetGroupStats').forEach((r) => {
+    const id = String(r.assetGroup?.id ?? ''); if (!id) return;
+    const st = agStats.get(id) || { spend: 0, conversions: 0 };
+    st.spend += fromMicros(r.metrics?.costMicros); st.conversions += num(r.metrics?.conversions);
+    agStats.set(id, st);
+  });
+  const STRENGTH = { EXCELLENT: 'Excellent', GOOD: 'Good', AVERAGE: 'Average', POOR: 'Poor', PENDING: 'Pending' };
+  const agByCamp = new Map();
+  m.rows('assetGroups').forEach((r) => {
+    const cid = String(r.campaign?.id ?? ''); const id = String(r.assetGroup?.id ?? '');
+    const list = agByCamp.get(cid) || [];
+    const st = agStats.get(id);
+    list.push({ name: clean(r.assetGroup?.name || 'Unnamed asset group', 40), strength: STRENGTH[r.assetGroup?.adStrength] || null,
+      spend: st ? round2(st.spend) : null, conversions: st ? Math.round(st.conversions * 10) / 10 : null });
+    agByCamp.set(cid, list);
+  });
+  const hasAgStats = m.has('assetGroupStats');
   const groups = new Map();
   for (const c of live.sort((a, b) => b.spend - a.spend)) {
     const role = campaignRole(c, kwTokensByCampaign);
@@ -1761,7 +1781,14 @@ function accountProfile(m) {
     const inside = c.channel === 'PERFORMANCE_MAX' ? plural(assetByCampaign.get(c.id) || 0, 'asset group')
       : c.channel === 'SEARCH' ? `${plural(agByCampaign.get(c.id) || 0, 'ad group')}, ${plural(kwByCampaign.get(c.id) || 0, 'keyword')}` : null;
     g.spend += c.spend; g.conversions += c.conversions;
-    g.campaigns.push({ name: clean(c.name, 48), role: c.channel === 'SEARCH' ? null : role, spend: round2(c.spend), share: Math.round((c.spend / total) * 1000) / 10, conversions: Math.round(c.conversions * 10) / 10, cpa: c.conversions > 0 ? round2(c.spend / c.conversions) : null, inside });
+    let children = null;
+    if (c.channel === 'PERFORMANCE_MAX' && agByCamp.has(c.id)) {
+      const kids = agByCamp.get(c.id).slice();
+      const campSpend = kids.reduce((x, k) => x + (k.spend || 0), 0);
+      if (hasAgStats) kids.sort((a, b) => (b.spend || 0) - (a.spend || 0));
+      children = kids.map((k) => ({ ...k, share: hasAgStats && campSpend > 0 ? Math.round(((k.spend || 0) / campSpend) * 1000) / 10 : null }));
+    }
+    g.campaigns.push({ name: clean(c.name, 48), role: c.channel === 'SEARCH' ? null : role, spend: round2(c.spend), share: Math.round((c.spend / total) * 1000) / 10, conversions: Math.round(c.conversions * 10) / 10, cpa: c.conversions > 0 ? round2(c.spend / c.conversions) : null, inside, children });
     groups.set(label, g);
   }
   const list = [...groups.values()].map((g) => ({ ...g, spend: round2(g.spend), share: Math.round((g.spend / total) * 1000) / 10, conversions: Math.round(g.conversions * 10) / 10 }))

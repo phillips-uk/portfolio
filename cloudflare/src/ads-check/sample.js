@@ -145,4 +145,22 @@ const problem = {
 // Fixture 2: a mostly healthy account
 // ---------------------------------------------------------------------------
 
+// The preview also shows a made-up Performance Max campaign, so the structure diagram's asset group level can be
+// reviewed (18 Nov 2026). Only in the sample, not in rules.test.mjs.
+problem.campaigns = [...problem.campaigns, {
+  campaign: { resourceName: 'customers/111/campaigns/9', id: '9', name: 'PMax - Boilers - All', status: 'ENABLED', advertisingChannelType: 'PERFORMANCE_MAX', biddingStrategyType: 'MAXIMIZE_CONVERSIONS', geoTargetTypeSetting: { positiveGeoTargetType: 'PRESENCE' } },
+  campaignBudget: { amountMicros: micros(25) },
+  metrics: { impressions: '20000', clicks: '310', costMicros: micros(640), conversions: 14, conversionsValue: 0 },
+}];
+problem.assetGroups = [
+  { assetGroup: { id: '91', name: 'Boiler installs', adStrength: 'GOOD' }, campaign: { id: '9', name: 'PMax - Boilers - All' } },
+  { assetGroup: { id: '92', name: 'Boiler servicing', adStrength: 'AVERAGE' }, campaign: { id: '9', name: 'PMax - Boilers - All' } },
+  { assetGroup: { id: '93', name: 'Emergency repairs', adStrength: 'POOR' }, campaign: { id: '9', name: 'PMax - Boilers - All' } },
+];
+problem.assetGroupStats = [
+  { assetGroup: { id: '91' }, campaign: { id: '9' }, metrics: { costMicros: micros(380), conversions: 10 } },
+  { assetGroup: { id: '92' }, campaign: { id: '9' }, metrics: { costMicros: micros(190), conversions: 3 } },
+  { assetGroup: { id: '93' }, campaign: { id: '9' }, metrics: { costMicros: micros(70), conversions: 1 } },
+];
+
 export const SAMPLE_DATA = problem;

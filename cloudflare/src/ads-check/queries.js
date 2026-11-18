@@ -169,6 +169,17 @@ export const QUERIES = {
     LIMIT 300
   `),
 
+  // Spend and conversions per Performance Max asset group, last 30 days, for the structure diagram (optional).
+  assetGroupStats: q(`
+    SELECT asset_group.id, campaign.id,
+           metrics.cost_micros, metrics.conversions, metrics.conversions_value
+    FROM asset_group
+    WHERE segments.date DURING LAST_30_DAYS
+      AND campaign.advertising_channel_type = 'PERFORMANCE_MAX'
+      AND campaign.status = 'ENABLED'
+      AND asset_group.status = 'ENABLED'
+  `),
+
   // Performance Max asset groups and their ad strength.
   assetGroups: q(`
     SELECT asset_group.id, asset_group.name, asset_group.ad_strength,
@@ -262,6 +273,7 @@ export const QUERIES = {
 // no shared lists, access limits). The caller should pass `undefined` for a
 // failed optional query; the rules then skip whatever depends on it.
 export const OPTIONAL = new Set([
+  'assetGroupStats',
   'dayHour',
   'pmaxSearchTerms',
   'negativeKeywordLists',

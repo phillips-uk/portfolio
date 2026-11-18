@@ -336,3 +336,17 @@
 .adsr .ask-card h3 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 800; letter-spacing: -0.03em; margin: 0 0 var(--s2); }
 .adsr .ask-card p { color: var(--text-2); margin: 0 0 var(--s6); font-size: 16px; }
 @media (max-width: 560px) { .adsr .ask-card { padding: 28px 20px; } .adsr .ask-card .btn-filled { width: 100%; justify-content: center; } }
+
+/* Structure diagram, one level down (Lewis, 18 Nov 2026): a Performance Max campaign's asset groups, joined to it by a
+   dashed line, each with its ad strength and share of the campaign's spend. */
+.adsr .pf-ags { list-style: none; margin: var(--s3) 0 0; padding: 0 0 0 var(--s4); border-left: 1px dashed color-mix(in oklab, var(--brand-on-ink) 45%, var(--ink)); display: grid; gap: var(--s3); }
+.adsr .pf-ags li { position: relative; }
+.adsr .pf-ags li::before { content: ""; position: absolute; left: calc(-1 * var(--s4)); top: 9px; width: 10px; border-top: 1px dashed color-mix(in oklab, var(--brand-on-ink) 45%, var(--ink)); }
+.adsr .pf-agt { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.adsr .pf-agn { font-size: 13px; font-weight: 600; color: var(--ink-text); overflow-wrap: anywhere; }
+.adsr .pf-st { flex: none; font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 7px; border-radius: var(--r-pill); color: var(--ink-text); background: color-mix(in oklab, #fff 10%, var(--ink)); }
+.adsr .pf-st.excellent, .adsr .pf-st.good { color: var(--ok-on-ink); background: color-mix(in oklab, var(--ok-on-ink) 16%, var(--ink)); }
+.adsr .pf-st.average { color: var(--brand-on-ink); background: color-mix(in oklab, var(--brand-on-ink) 16%, var(--ink)); }
+.adsr .pf-st.poor { color: #fff; background: color-mix(in oklab, var(--bad) 55%, var(--ink)); }
+.adsr .pf-cbar.thin { height: 4px; margin: 6px 0 4px; }
+.adsr .pf-cbar.thin i { background: color-mix(in oklab, var(--brand-on-ink) 70%, var(--ink)); }
