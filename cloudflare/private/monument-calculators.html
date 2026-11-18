@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Monument Corporate Finance | Calculators draft</title>
+<title>Monument Corporate Finance | Tools draft</title>
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.MCF_READY)document.documentElement.classList.remove("js")},3000);</script>
 <link rel="preconnect" href="https://images.unsplash.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -757,13 +757,35 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
 /* ===== v7: the calculators match asset-based lending and trade finance ===== */
 .calc-intro{margin:0;max-width:52ch;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 
+
+/* ===== v8: four tools ===== */
+[hidden]{display:none !important}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.tab{line-height:1.25;padding:10px 12px}
+.tool-head{display:grid;gap:10px}
+.tool-title{font-family:var(--font-display);font-size:clamp(1.35rem, 2.2vw, 1.7rem);font-weight:500;line-height:1.2;margin:0}
+.cy-group{display:grid;gap:24px}
+.tool-links{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.tool-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--navy-line);color:var(--on-navy);font-size:.88rem;font-weight:600;text-decoration:none}
+.tool-links a:hover,.tool-links a:focus-visible{border-color:var(--brass-light);color:var(--brass-light)}
+.result-list dt{min-width:0}
+@media (max-width:760px){
+  .tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tab:nth-child(2){border-right:0}
+  .tab:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:700px){
+  .tool-links{justify-content:center}
+  .tool-head{text-align:center;justify-items:center}
+}
+@media (max-width:480px){.tab{font-size:.7rem;letter-spacing:.05em;padding:8px 6px}}
 </style>
 </head>
 <body>
 
 <div class="review" role="region" aria-label="About this draft">
   <div class="wrap review-in">
-    <p class="review-text"><strong>Draft for review</strong>: the calculators page, prepared by Phillips. for Monument Corporate Finance. Not a live site. The rates are examples.</p>
+    <p class="review-text"><strong>Draft for review</strong>: the tools page, prepared by Phillips. for Monument Corporate Finance. Not a live site. The rates are examples.</p>
     <div class="review-controls">
       
     </div>
@@ -789,7 +811,7 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
       <a href="/monument#process">How it works</a>
       <a href="/monument#about">About</a>
       <a href="/monument#faqs">FAQs</a>
-      <a href="/monument/calculators" aria-current="page">Calculators</a>
+      <a href="/monument/calculators" aria-current="page">Tools</a>
       <a class="nav-cta btn btn-navy" href="/monument#enquiry">Start an enquiry</a>
     </nav>
     <div class="head-cta">
@@ -805,9 +827,15 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
   <section class="page-hero on-dark" aria-labelledby="pageTitle">
     <div class="wrap page-hero-grid">
       <div class="page-hero-copy" data-stagger>
-        <p class="crumbs"><a href="/monument">Home</a><span aria-hidden="true"> / </span>Calculators</p>
-        <h1 id="pageTitle">See what your assets could support</h1>
-        <p class="lede">An indicative borrowing base for asset-based lending, and the cash your trade cycle ties up. No email needed. When the numbers look right, send them to us for real terms.</p>
+        <p class="crumbs"><a href="/monument">Home</a><span aria-hidden="true"> / </span>Tools</p>
+        <h1 id="pageTitle">Work out what your business could raise</h1>
+        <p class="lede">Four free tools for owners and finance directors. No email needed. When the numbers look right, send them to us for real terms.</p>
+        <ul class="tool-links" aria-label="The tools">
+          <li><a href="#asset-based-lending" data-tool="asset-based-lending">Asset-based lending estimate</a></li>
+          <li><a href="#cash-conversion-cycle" data-tool="cash-conversion-cycle">Cash conversion cycle</a></li>
+          <li><a href="#debtor-days" data-tool="debtor-days">Debtor days</a></li>
+          <li><a href="#growth-funding-gap" data-tool="growth-funding-gap">Growth funding gap</a></li>
+        </ul>
       </div>
       <div class="page-hero-art" aria-hidden="true"><svg class="illo" viewBox="0 0 200 120" aria-hidden="true" focusable="false">
             <path d="M16 30 h32 l14 14 v48 h-46 z"/><path d="M48 30 v14 h14"/>
@@ -818,17 +846,23 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
     </div>
   </section>
 
-  <section class="band band-mist" id="calculator" aria-label="Calculators">
+  <section class="band band-mist" id="calculator" aria-label="Tools">
     <div class="wrap">
 <div class="calc" data-rv>
-        <div class="tabs" role="tablist" aria-label="Calculator">
-          <button type="button" class="tab" role="tab" id="tab-abl" aria-controls="panel-abl" aria-selected="true">Asset-based lending</button>
-          <button type="button" class="tab" role="tab" id="tab-trade" aria-controls="panel-trade" aria-selected="false" tabindex="-1">Trade finance</button>
+        <div class="tabs" role="tablist" aria-label="Tools">
+          <button type="button" class="tab" role="tab" id="tab-abl" data-slug="asset-based-lending" aria-controls="panel-abl" aria-selected="true">Asset-based lending</button>
+          <button type="button" class="tab" role="tab" id="tab-cycle" data-slug="cash-conversion-cycle" aria-controls="panel-cycle" aria-selected="false" tabindex="-1">Cash conversion cycle</button>
+          <button type="button" class="tab" role="tab" id="tab-debtors" data-slug="debtor-days" aria-controls="panel-debtors" aria-selected="false" tabindex="-1">Debtor days</button>
+          <button type="button" class="tab" role="tab" id="tab-growth" data-slug="growth-funding-gap" aria-controls="panel-growth" aria-selected="false" tabindex="-1">Growth funding gap</button>
         </div>
 
+        <!-- 1. Asset-based lending estimate -->
         <div class="calc-body" role="tabpanel" id="panel-abl" aria-labelledby="tab-abl">
           <div class="calc-inputs">
-            <p class="calc-intro">Enter what the business owns today. We estimate what lenders might advance against each asset.</p>
+            <div class="tool-head">
+              <h2 class="tool-title">Asset-based lending estimate</h2>
+              <p class="calc-intro">How much could the business borrow against what it owns? Enter today's figures and we estimate what lenders might advance against each asset.</p>
+            </div>
             <div class="row2">
               <div class="field">
                 <label for="ablDebtors">Trade debtors</label>
@@ -836,21 +870,33 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
                 <p class="hint">What customers owe you today, excluding VAT.</p>
               </div>
               <div class="field">
+                <label for="ablAged">Of which, over 90 days old</label>
+                <div class="money"><input class="input" id="ablAged" type="text" inputmode="decimal" autocomplete="off" value="300,000" data-money></div>
+                <p class="hint">Lenders usually leave these out.</p>
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field">
                 <label for="ablStock">Inventory</label>
                 <div class="money"><input class="input" id="ablStock" type="text" inputmode="decimal" autocomplete="off" value="2,500,000" data-money></div>
                 <p class="hint">Raw materials and finished goods, at cost.</p>
               </div>
-            </div>
-            <div class="row2">
               <div class="field">
                 <label for="ablPlant">Plant and machinery</label>
                 <div class="money"><input class="input" id="ablPlant" type="text" inputmode="decimal" autocomplete="off" value="1,500,000" data-money></div>
                 <p class="hint">An estimate of what it would sell for.</p>
               </div>
+            </div>
+            <div class="row2">
               <div class="field">
                 <label for="ablProperty">Property <span class="optional">(optional)</span></label>
                 <div class="money"><input class="input" id="ablProperty" type="text" inputmode="decimal" autocomplete="off" value="0" data-money></div>
                 <p class="hint">Commercial property the business owns.</p>
+              </div>
+              <div class="field">
+                <label for="ablCurrent">Current facility limit <span class="optional">(optional)</span></label>
+                <div class="money"><input class="input" id="ablCurrent" type="text" inputmode="decimal" autocomplete="off" value="2,000,000" data-money></div>
+                <p class="hint">Your overdraft, loan or invoice finance limit today.</p>
               </div>
             </div>
           </div>
@@ -870,12 +916,13 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
             <div class="result-body">
               <p class="result-label">Indicative facility</p>
               <p class="result-big" id="ablTotal">&nbsp;</p>
-              <p class="result-per">against the assets entered</p>
+              <p class="result-per" id="ablPer">against the assets entered</p>
               <dl class="result-list">
                 <div><dt>Trade debtors</dt><dd id="ablOutDebtors"></dd></div>
                 <div><dt>Inventory</dt><dd id="ablOutStock"></dd></div>
                 <div><dt>Plant and machinery</dt><dd id="ablOutPlant"></dd></div>
                 <div><dt>Property</dt><dd id="ablOutProperty"></dd></div>
+                <div id="ablHeadRow"><dt id="ablHeadDt">Compared with your current limit</dt><dd id="ablOutHeadroom"></dd></div>
               </dl>
               <p class="result-note">Lenders value each asset and set their own advance rates once they have reviewed the business. Asset-based lending is usually priced as a margin over base rate on the funds drawn, plus fees.</p>
               <button type="button" class="btn btn-brass btn-block" id="ablQuote">Request terms</button>
@@ -884,48 +931,210 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
           </div>
         </div>
 
-        <div class="calc-body" role="tabpanel" id="panel-trade" aria-labelledby="tab-trade" hidden>
+        <!-- 2. Cash conversion cycle -->
+        <div class="calc-body" role="tabpanel" id="panel-cycle" aria-labelledby="tab-cycle" hidden>
           <div class="calc-inputs">
-            <p class="calc-intro">See how much cash your trade cycle ties up, from paying a supplier to being paid by your customer.</p>
-            <div class="field">
-              <label for="trBuy">Annual purchases from suppliers</label>
-              <div class="money"><input class="input" id="trBuy" type="text" inputmode="decimal" autocomplete="off" value="12,000,000" data-money></div>
-              <p class="hint">Goods bought for resale or production, excluding VAT.</p>
+            <div class="tool-head">
+              <h2 class="tool-title">Cash conversion cycle</h2>
+              <p class="calc-intro">How many days, and how much cash, does your working capital cycle tie up? Use the figures from your last accounts, or enter the days if you know them.</p>
             </div>
             <div class="field">
-              <div class="range-row"><label for="trTransit">Days from paying the supplier to receiving the goods</label><span class="range-out" id="trTransitOut">45 days</span></div>
-              <input type="range" id="trTransit" min="0" max="120" step="5" value="45">
+              <span class="label" id="cyModeLabel">Work it out from</span>
+              <div class="toggle" role="radiogroup" aria-labelledby="cyModeLabel">
+                <label><input type="radio" name="cyMode" value="accounts" checked>Accounts figures</label>
+                <label><input type="radio" name="cyMode" value="days">Days</label>
+              </div>
             </div>
-            <div class="field">
-              <div class="range-row"><label for="trStock">Days goods are held before sale</label><span class="range-out" id="trStockOut">60 days</span></div>
-              <input type="range" id="trStock" min="0" max="180" step="5" value="60">
+            <div class="row2">
+              <div class="field">
+                <label for="cyTurnover">Turnover</label>
+                <div class="money"><input class="input" id="cyTurnover" type="text" inputmode="decimal" autocomplete="off" value="24,000,000" data-money></div>
+                <p class="hint">Annual sales, excluding VAT.</p>
+              </div>
+              <div class="field">
+                <label for="cyCos">Cost of sales</label>
+                <div class="money"><input class="input" id="cyCos" type="text" inputmode="decimal" autocomplete="off" value="18,000,000" data-money></div>
+                <p class="hint">What the goods or services you sold cost you.</p>
+              </div>
             </div>
-            <div class="field">
-              <div class="range-row"><label for="trDebtor">Days customers take to pay</label><span class="range-out" id="trDebtorOut">60 days</span></div>
-              <input type="range" id="trDebtor" min="0" max="120" step="5" value="60">
+            <div class="cy-group" id="cyAccounts">
+              <div class="row2">
+                <div class="field">
+                  <label for="cyDebtors">Trade debtors</label>
+                  <div class="money"><input class="input" id="cyDebtors" type="text" inputmode="decimal" autocomplete="off" value="4,000,000" data-money></div>
+                  <p class="hint">What customers owe you.</p>
+                </div>
+                <div class="field">
+                  <label for="cyStock">Stock</label>
+                  <div class="money"><input class="input" id="cyStock" type="text" inputmode="decimal" autocomplete="off" value="2,500,000" data-money></div>
+                  <p class="hint">At cost.</p>
+                </div>
+              </div>
+              <div class="row2">
+                <div class="field">
+                  <label for="cyCreditors">Trade creditors</label>
+                  <div class="money"><input class="input" id="cyCreditors" type="text" inputmode="decimal" autocomplete="off" value="1,800,000" data-money></div>
+                  <p class="hint">What you owe suppliers.</p>
+                </div>
+              </div>
             </div>
-            <div class="field">
-              <div class="range-row"><label for="trCredit">Days of credit from suppliers</label><span class="range-out" id="trCreditOut">30 days</span></div>
-              <input type="range" id="trCredit" min="0" max="120" step="5" value="30">
+            <div class="cy-group" id="cyDaysGroup" hidden>
+              <div class="field">
+                <div class="range-row"><label for="cyDso">Days customers take to pay</label><span class="range-out" id="cyDsoOut">61 days</span></div>
+                <input type="range" id="cyDso" min="0" max="150" step="1" value="61">
+              </div>
+              <div class="field">
+                <div class="range-row"><label for="cyDio">Days stock is held</label><span class="range-out" id="cyDioOut">51 days</span></div>
+                <input type="range" id="cyDio" min="0" max="200" step="1" value="51">
+              </div>
+              <div class="field">
+                <div class="range-row"><label for="cyDpo">Days you take to pay suppliers</label><span class="range-out" id="cyDpoOut">37 days</span></div>
+                <input type="range" id="cyDpo" min="0" max="150" step="1" value="37">
+              </div>
             </div>
           </div>
-          <div class="result" id="trResult" aria-live="polite">
-            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M10 110 c 8 -5 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0"/><path d="M18 86 H204 L190 102 H32 Z"/><path d="M26 86 V56 h24 v30"/><line x1="31" y1="64" x2="45" y2="64"/><line x1="31" y1="71" x2="45" y2="71"/><path class="accent" d="M34 56 V46 h8 v10"/><rect x="56" y="74" width="20" height="12"/><rect x="78" y="74" width="20" height="12"/><rect x="100" y="74" width="20" height="12"/><rect x="122" y="74" width="20" height="12"/><rect x="144" y="74" width="20" height="12"/><rect x="166" y="74" width="20" height="12"/><rect class="accent" x="67" y="62" width="20" height="12"/><rect class="accent" x="89" y="62" width="20" height="12"/><rect class="accent" x="111" y="62" width="20" height="12"/><rect class="accent" x="133" y="62" width="20" height="12"/><rect class="accent" x="155" y="62" width="20" height="12"/></svg></div>
-            <p class="result-msg" id="trMsg" hidden></p>
+          <div class="result" id="cyResult" aria-live="polite">
+            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
+              <path d="M117.3 18.6 A42 42 0 0 1 146.4 81"/><path d="M154.7 76.6 L146.4 81 L146.1 71.6"/>
+              <path class="accent" d="M142.2 87 A42 42 0 0 1 73.6 81"/><path class="accent" d="M73.3 90.4 L73.6 81 L81.9 85.4"/>
+              <path d="M70.5 74.4 A42 42 0 0 1 110 18"/><path d="M102 13 L110 18 L102 23"/>
+              <ellipse class="accent" cx="110" cy="54" rx="14" ry="5"/>
+              <path d="M96 54 V66 M124 54 V66"/><path d="M96 60 A14 5 0 0 0 124 60"/><path d="M96 66 A14 5 0 0 0 124 66"/>
+            </svg></div>
+            <p class="result-msg" id="cyMsg" hidden></p>
             <div class="result-body">
-              <p class="result-label">Cash tied up in the trade cycle</p>
-              <p class="result-big" id="trTied">&nbsp;</p>
-              <p class="result-per" id="trPer">&nbsp;</p>
+              <p class="result-label">Cash conversion cycle</p>
+              <p class="result-big" id="cyCycle">&nbsp;</p>
+              <p class="result-per" id="cyPer">&nbsp;</p>
               <dl class="result-list">
-                <div><dt>Purchases a day</dt><dd id="trDaily"></dd></div>
-                <div><dt>Days you fund yourself</dt><dd id="trDays"></dd></div>
+                <div><dt>Debtor days</dt><dd id="cyOutDso"></dd></div>
+                <div><dt>Stock days</dt><dd id="cyOutDio"></dd></div>
+                <div><dt>Creditor days</dt><dd id="cyOutDpo"></dd></div>
+                <div><dt>One day of sales</dt><dd id="cyOutDay"></dd></div>
+                <div><dt>Collecting 10 days sooner would release</dt><dd id="cyOutTen"></dd></div>
               </dl>
-              <p class="result-note">Trade finance can pay suppliers, fund goods in transit and in stock, and bridge the wait for customer payment. Lenders decide how much of the cycle to fund.</p>
-              <button type="button" class="btn btn-brass btn-block" id="trQuote">Request terms</button>
-              <p class="result-small">Measured at cost. Figures are indicative and are not an offer of finance.</p>
+              <p class="result-note">Asset-based lending can fund the debtors and stock in the cycle, so the facility rises and falls with the business.</p>
+              <button type="button" class="btn btn-brass btn-block" id="cyQuote">Request terms</button>
+              <p class="result-small">Debtor days use turnover; stock and creditor days use cost of sales. Figures are indicative and are not an offer of finance.</p>
             </div>
           </div>
         </div>
+
+        <!-- 3. Debtor days -->
+        <div class="calc-body" role="tabpanel" id="panel-debtors" aria-labelledby="tab-debtors" hidden>
+          <div class="calc-inputs">
+            <div class="tool-head">
+              <h2 class="tool-title">Debtor days</h2>
+              <p class="calc-intro">How long do your customers take to pay, and what is the wait costing you?</p>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label for="ddDebtors">Trade debtors today</label>
+                <div class="money"><input class="input" id="ddDebtors" type="text" inputmode="decimal" autocomplete="off" value="4,000,000" data-money></div>
+                <p class="hint">Unpaid customer invoices, excluding VAT.</p>
+              </div>
+              <div class="field">
+                <label for="ddSales">Credit sales in the last 12 months</label>
+                <div class="money"><input class="input" id="ddSales" type="text" inputmode="decimal" autocomplete="off" value="24,000,000" data-money></div>
+                <p class="hint">Excluding VAT.</p>
+              </div>
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="ddTerms">Your standard payment terms</label><span class="range-out" id="ddTermsOut">30 days</span></div>
+              <input type="range" id="ddTerms" min="7" max="120" step="1" value="30">
+            </div>
+          </div>
+          <div class="result" id="ddResult" aria-live="polite">
+            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
+              <path d="M50 24 h96 v84 h-96 z"/><path d="M50 42 h96"/><path d="M70 16 v16 M126 16 v16"/>
+              <path d="M62 58 h10 M80 58 h10 M98 58 h10 M116 58 h10 M134 58 h4"/>
+              <path d="M62 94 h10 M80 94 h10 M98 94 h10"/>
+              <path class="accent" d="M62 76 H134"/><path class="accent" d="M127 71 L134 76 L127 81"/>
+              <ellipse class="accent" cx="182" cy="78" rx="20" ry="6"/>
+              <path d="M162 78 V100 M202 78 V100"/><path d="M162 86 A20 6 0 0 0 202 86"/><path d="M162 93 A20 6 0 0 0 202 93"/><path d="M162 100 A20 6 0 0 0 202 100"/>
+            </svg></div>
+            <p class="result-msg" id="ddMsg" hidden></p>
+            <div class="result-body">
+              <p class="result-label">Debtor days</p>
+              <p class="result-big" id="ddDays">&nbsp;</p>
+              <p class="result-per" id="ddPer">&nbsp;</p>
+              <dl class="result-list">
+                <div><dt>Days beyond your terms</dt><dd id="ddOutBeyond"></dd></div>
+                <div><dt>Cash tied up beyond terms</dt><dd id="ddOutCash"></dd></div>
+                <div><dt>Each day is worth</dt><dd id="ddOutDay"></dd></div>
+                <div><dt>Invoice discounting could release now</dt><dd id="ddOutRelease"></dd></div>
+              </dl>
+              <p class="result-note">Invoice discounting turns unpaid invoices into cash as you raise them, so the business is not waiting on its customers. It is often part of an asset-based lending facility.</p>
+              <button type="button" class="btn btn-brass btn-block" id="ddQuote">Request terms</button>
+              <p class="result-small">Debtor days = trade debtors &divide; credit sales &times; 365. Example advance rate for this draft: 70% to 85% of debtors. Indicative, and not an offer of finance.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Growth funding gap -->
+        <div class="calc-body" role="tabpanel" id="panel-growth" aria-labelledby="tab-growth" hidden>
+          <div class="calc-inputs">
+            <div class="tool-head">
+              <h2 class="tool-title">Growth funding gap</h2>
+              <p class="calc-intro">If sales grow, how much more working capital will the business need, and how much of it could a facility cover?</p>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label for="grNow">Turnover now</label>
+                <div class="money"><input class="input" id="grNow" type="text" inputmode="decimal" autocomplete="off" value="12,000,000" data-money></div>
+                <p class="hint">Annual sales, excluding VAT.</p>
+              </div>
+              <div class="field">
+                <label for="grTarget">Target turnover</label>
+                <div class="money"><input class="input" id="grTarget" type="text" inputmode="decimal" autocomplete="off" value="18,000,000" data-money></div>
+                <p class="hint">Where you expect to be in a year or two.</p>
+              </div>
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="grMargin">Gross margin</label><span class="range-out" id="grMarginOut">25%</span></div>
+              <input type="range" id="grMargin" min="5" max="70" step="1" value="25">
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="grDso">Days customers take to pay</label><span class="range-out" id="grDsoOut">60 days</span></div>
+              <input type="range" id="grDso" min="0" max="150" step="5" value="60">
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="grDio">Days stock is held</label><span class="range-out" id="grDioOut">45 days</span></div>
+              <input type="range" id="grDio" min="0" max="200" step="5" value="45">
+            </div>
+            <div class="field">
+              <div class="range-row"><label for="grDpo">Days you take to pay suppliers</label><span class="range-out" id="grDpoOut">30 days</span></div>
+              <input type="range" id="grDpo" min="0" max="150" step="5" value="30">
+            </div>
+          </div>
+          <div class="result" id="grResult" aria-live="polite">
+            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
+              <path d="M18 104 H202"/>
+              <path d="M30 104 V84 h20 V104"/><path d="M62 104 V70 h20 V104"/><path d="M94 104 V56 h20 V104"/><path d="M126 104 V42 h20 V104"/>
+              <path class="accent" d="M158 104 V22 h20 V104"/>
+              <path class="accent" d="M36 74 C 80 66, 120 46, 150 24"/><path class="accent" d="M141 24 L151 23 L149 33"/>
+            </svg></div>
+            <p class="result-msg" id="grMsg" hidden></p>
+            <div class="result-body">
+              <p class="result-label">Extra working capital needed</p>
+              <p class="result-big" id="grGap">&nbsp;</p>
+              <p class="result-per" id="grPer">&nbsp;</p>
+              <dl class="result-list">
+                <div><dt>Working capital now</dt><dd id="grOutNow"></dd></div>
+                <div><dt>At the target</dt><dd id="grOutTarget"></dd></div>
+                <div><dt>Extra debtors</dt><dd id="grOutDeb"></dd></div>
+                <div><dt>Extra stock</dt><dd id="grOutStk"></dd></div>
+                <div><dt>Extra supplier credit</dt><dd id="grOutCre"></dd></div>
+                <div><dt>A facility could grow by</dt><dd id="grOutCover"></dd></div>
+                <div><dt>Left to fund another way</dt><dd id="grOutLeft"></dd></div>
+              </dl>
+              <p class="result-note">When growth needs more cash than the extra sales bring in, a business can run out of money while it is winning work. That is overtrading. A facility tied to debtors and stock grows with the sales ledger.</p>
+              <button type="button" class="btn btn-brass btn-block" id="grQuote">Request terms</button>
+              <p class="result-small">Example advance rates for this draft only: debtors 70% to 85%, stock 20% to 50%. Figures are indicative and are not an offer of finance.</p>
+            </div>
+          </div>
+        </div>
+
         <div class="calc-foot">
         </div>
       </div>
@@ -988,7 +1197,7 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
         <ul>
           <li><a href="/monument#about">About</a></li>
           <li><a href="/monument#transactions">Transactions</a></li>
-          <li><a href="/monument/calculators">Calculators</a></li>
+          <li><a href="/monument/calculators">Tools</a></li>
           <li><a href="#footer">Privacy</a></li>
           <li><a href="#footer">Complaints</a></li>
         </ul>
@@ -1033,44 +1242,61 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
   });
   $$('a', nav).forEach(a => a.addEventListener('click', closeMenu));
 
-  /* Calculator tabs */
+  /* Tools: tabs, plus links straight to one tool, such as #debtor-days */
+  const short = n => (n >= 1e6 ? '£' + String(Math.round(n / 1e5) / 10).replace(/\.0$/, '') + 'm' : money(n));
   const tabs = $$('[role="tab"]');
   const selectTab = tab => tabs.forEach(t => {
     const on = t === tab;
     t.setAttribute('aria-selected', String(on));
     t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    const panel = document.getElementById(t.getAttribute('aria-controls'));
+    panel.hidden = !on;
+    if (on) $$('.illo', panel).forEach(s => s.classList.add('in'));
   });
+  const setHash = slug => { try { history.replaceState(null, '', '#' + slug); } catch (e) { /* a preview without a real address */ } };
   tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('click', () => { selectTab(tab); setHash(tab.dataset.slug); });
     tab.addEventListener('keydown', e => {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-      selectTab(next); next.focus();
+      selectTab(next); next.focus(); setHash(next.dataset.slug);
     });
   });
+  const fromHash = () => {
+    const tab = tabs.find(t => '#' + t.dataset.slug === location.hash);
+    if (!tab) return;
+    selectTab(tab);
+    const box = document.getElementById('calculator');
+    if (box) box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+  };
+  window.addEventListener('hashchange', fromHash);
+  $$('a[data-tool]').forEach(a => a.addEventListener('click', e => {
+    const tab = tabs.find(t => t.dataset.slug === a.dataset.tool);
+    if (!tab) return;
+    e.preventDefault(); selectTab(tab); setHash(tab.dataset.slug);
+    document.getElementById('calculator').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+  }));
 
   /* Money inputs: tidy the format when the field loses focus */
   $$('input[data-money]').forEach(el => el.addEventListener('blur', () => {
     if (el.value.trim() === '') return;
     el.value = Math.round(num(el)).toLocaleString('en-GB');
   }));
+  const showMsg = (box, msg, text) => { msg.textContent = text; msg.hidden = false; box.classList.add('is-empty'); };
+  const hideMsg = (box, msg) => { msg.hidden = true; box.classList.remove('is-empty'); };
+  const listen = (sel, fn) => $$(sel + ' input').forEach(el => { el.addEventListener('input', fn); el.addEventListener('change', fn); });
 
-  /* Asset-based lending: an indicative borrowing base. Example advance rates, low and high. */
+  /* 1. Asset-based lending: an indicative borrowing base. Example advance rates, low and high. */
   const ADVANCE = { debtors: [0.70, 0.85], stock: [0.20, 0.50], plant: [0.40, 0.70], property: [0.50, 0.70] };
-  const ABL_IN = { debtors: '#ablDebtors', stock: '#ablStock', plant: '#ablPlant', property: '#ablProperty' };
   const ABL_OUT = { debtors: '#ablOutDebtors', stock: '#ablOutStock', plant: '#ablOutPlant', property: '#ablOutProperty' };
   let lastAbl = null;
   function calcAbl() {
-    const v = {};
-    Object.keys(ABL_IN).forEach(k => { v[k] = num($(ABL_IN[k])); });
-    const total = Object.values(v).reduce((a, b) => a + b, 0);
+    const debt = num($('#ablDebtors'));
+    const aged = Math.min(num($('#ablAged')), debt);
+    const v = { debtors: debt - aged, stock: num($('#ablStock')), plant: num($('#ablPlant')), property: num($('#ablProperty')) };
     const box = $('#ablResult'), msg = $('#ablMsg');
-    if (total <= 0) {
-      msg.textContent = 'Enter the value of at least one asset to see the figures.';
-      msg.hidden = false; box.classList.add('is-empty'); lastAbl = null; return;
-    }
-    msg.hidden = true; box.classList.remove('is-empty');
+    if (v.debtors + v.stock + v.plant + v.property <= 0) { showMsg(box, msg, 'Enter the value of at least one asset to see the figures.'); lastAbl = null; return; }
+    hideMsg(box, msg);
     let lo = 0, hi = 0;
     Object.keys(ADVANCE).forEach(k => {
       const l = nice(v[k] * ADVANCE[k][0]), h = nice(v[k] * ADVANCE[k][1]);
@@ -1078,33 +1304,111 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
       $(ABL_OUT[k]).textContent = v[k] > 0 ? money(l) + ' to ' + money(h) : 'None entered';
     });
     $('#ablTotal').textContent = money(lo) + ' to ' + money(hi);
+    $('#ablPer').textContent = aged > 0 ? 'after leaving out ' + money(aged) + ' of debts over 90 days' : 'against the assets entered';
+    const cur = num($('#ablCurrent')), row = $('#ablHeadRow');
+    row.hidden = cur <= 0;
+    if (cur > 0) {
+      $('#ablHeadDt').textContent = 'Compared with your ' + short(cur) + ' limit';
+      const a = lo - cur, b = hi - cur;
+      $('#ablOutHeadroom').textContent = b <= 0 ? 'No more than today' : a > 0 ? money(a) + ' to ' + money(b) + ' more' : 'Up to ' + money(b) + ' more';
+    }
     lastAbl = { lo, hi };
   }
-  $$('#panel-abl input').forEach(el => { el.addEventListener('input', calcAbl); el.addEventListener('change', calcAbl); });
+  listen('#panel-abl', calcAbl);
 
-  /* Trade finance: the cash a trade cycle ties up, measured at cost */
-  let lastTrade = null;
-  function calcTrade() {
-    const buy = num($('#trBuy'));
-    const d = { Transit: Number($('#trTransit').value), Stock: Number($('#trStock').value), Debtor: Number($('#trDebtor').value), Credit: Number($('#trCredit').value) };
-    Object.keys(d).forEach(k => { $('#tr' + k + 'Out').textContent = d[k] + ' days'; });
-    const cycle = d.Transit + d.Stock + d.Debtor;
-    const days = cycle - d.Credit;
-    const daily = buy / 365;
-    const box = $('#trResult'), msg = $('#trMsg');
-    let err = '';
-    if (buy <= 0) err = 'Enter your annual purchases to see the figures.';
-    else if (days <= 0) err = 'Your supplier credit covers the whole cycle, so no cash is tied up in it.';
-    if (err) { msg.textContent = err; msg.hidden = false; box.classList.add('is-empty'); lastTrade = null; return; }
-    msg.hidden = true; box.classList.remove('is-empty');
-    const tied = nice(daily * days);
-    $('#trTied').textContent = money(tied);
-    $('#trPer').textContent = 'a ' + cycle + '-day cycle, less ' + d.Credit + ' days of supplier credit';
-    $('#trDaily').textContent = money(daily);
-    $('#trDays').textContent = days + ' days';
-    lastTrade = { tied, days };
+  /* 2. Cash conversion cycle, from the accounts or from the days */
+  let cyMode = 'accounts', lastCy = null;
+  const cyAccountsDays = (T, C) => ({
+    dso: T > 0 ? num($('#cyDebtors')) / T * 365 : 0,
+    dio: C > 0 ? num($('#cyStock')) / C * 365 : 0,
+    dpo: C > 0 ? num($('#cyCreditors')) / C * 365 : 0,
+  });
+  function calcCycle() {
+    const T = num($('#cyTurnover')), C = num($('#cyCos'));
+    const box = $('#cyResult'), msg = $('#cyMsg');
+    let d;
+    if (cyMode === 'days') {
+      d = { dso: Number($('#cyDso').value), dio: Number($('#cyDio').value), dpo: Number($('#cyDpo').value) };
+      $('#cyDsoOut').textContent = d.dso + ' days'; $('#cyDioOut').textContent = d.dio + ' days'; $('#cyDpoOut').textContent = d.dpo + ' days';
+    }
+    if (T <= 0 || C <= 0) { showMsg(box, msg, 'Enter your turnover and cost of sales to see the figures.'); lastCy = null; return; }
+    if (cyMode === 'accounts') d = cyAccountsDays(T, C);
+    hideMsg(box, msg);
+    const deb = T * d.dso / 365, stk = C * d.dio / 365, cre = C * d.dpo / 365;
+    const cycle = Math.round(d.dso + d.dio - d.dpo);
+    const tied = deb + stk - cre;
+    $('#cyCycle').textContent = cycle + (Math.abs(cycle) === 1 ? ' day' : ' days');
+    $('#cyPer').textContent = tied > 0 ? money(nice(tied)) + ' tied up in debtors and stock, after supplier credit' : 'Supplier credit covers your debtors and stock';
+    $('#cyOutDso').textContent = Math.round(d.dso) + ' days';
+    $('#cyOutDio').textContent = Math.round(d.dio) + ' days';
+    $('#cyOutDpo').textContent = Math.round(d.dpo) + ' days';
+    $('#cyOutDay').textContent = money(nice(T / 365));
+    $('#cyOutTen').textContent = money(nice(T / 365 * 10));
+    lastCy = { cycle, tied: Math.max(0, nice(tied)) };
   }
-  $$('#panel-trade input').forEach(el => { el.addEventListener('input', calcTrade); el.addEventListener('change', calcTrade); });
+  $$('input[name="cyMode"]').forEach(r => r.addEventListener('change', () => {
+    if (!r.checked) return;
+    if (r.value === 'days' && cyMode === 'accounts') {
+      const d = cyAccountsDays(num($('#cyTurnover')), num($('#cyCos')));
+      $('#cyDso').value = Math.round(d.dso); $('#cyDio').value = Math.round(d.dio); $('#cyDpo').value = Math.round(d.dpo);
+    }
+    cyMode = r.value;
+    $('#cyAccounts').hidden = cyMode !== 'accounts';
+    $('#cyDaysGroup').hidden = cyMode !== 'days';
+    calcCycle();
+  }));
+  listen('#panel-cycle', calcCycle);
+
+  /* 3. Debtor days */
+  let lastDd = null;
+  function calcDebtors() {
+    const D = num($('#ddDebtors')), S = num($('#ddSales')), terms = Number($('#ddTerms').value);
+    $('#ddTermsOut').textContent = terms + ' days';
+    const box = $('#ddResult'), msg = $('#ddMsg');
+    if (D <= 0 || S <= 0) { showMsg(box, msg, 'Enter your trade debtors and credit sales to see the figures.'); lastDd = null; return; }
+    hideMsg(box, msg);
+    const dso = D / S * 365, day = S / 365, beyond = Math.round(dso - terms);
+    const lo = nice(D * ADVANCE.debtors[0]), hi = nice(D * ADVANCE.debtors[1]);
+    $('#ddDays').textContent = Math.round(dso) + ' days';
+    $('#ddPer').textContent = beyond > 0 ? 'to get paid, against ' + terms + '-day terms' : 'to get paid, inside your ' + terms + '-day terms';
+    $('#ddOutBeyond').textContent = beyond > 0 ? beyond + (beyond === 1 ? ' day' : ' days') : 'None';
+    $('#ddOutCash').textContent = beyond > 0 ? money(nice(D - day * terms)) : 'None';
+    $('#ddOutDay').textContent = money(nice(day));
+    $('#ddOutRelease').textContent = money(lo) + ' to ' + money(hi);
+    lastDd = { dso: Math.round(dso), lo, hi };
+  }
+  listen('#panel-debtors', calcDebtors);
+
+  /* 4. Growth funding gap */
+  let lastGr = null;
+  function calcGrowth() {
+    const now = num($('#grNow')), tgt = num($('#grTarget'));
+    const m = Number($('#grMargin').value) / 100, dso = Number($('#grDso').value), dio = Number($('#grDio').value), dpo = Number($('#grDpo').value);
+    $('#grMarginOut').textContent = Math.round(m * 100) + '%';
+    $('#grDsoOut').textContent = dso + ' days'; $('#grDioOut').textContent = dio + ' days'; $('#grDpoOut').textContent = dpo + ' days';
+    const box = $('#grResult'), msg = $('#grMsg');
+    if (now <= 0 || tgt <= 0) { showMsg(box, msg, 'Enter turnover now and your target to see the figures.'); lastGr = null; return; }
+    if (tgt <= now) { showMsg(box, msg, 'Enter a target above today’s turnover to see the gap.'); lastGr = null; return; }
+    hideMsg(box, msg);
+    const wc = T => T * dso / 365 + T * (1 - m) * (dio - dpo) / 365;
+    const dT = tgt - now, dC = dT * (1 - m);
+    const xDeb = dT * dso / 365, xStk = dC * dio / 365, xCre = dC * dpo / 365;
+    const gap = nice(wc(tgt) - wc(now));
+    const covLo = nice(xDeb * ADVANCE.debtors[0] + xStk * ADVANCE.stock[0]);
+    const covHi = nice(xDeb * ADVANCE.debtors[1] + xStk * ADVANCE.stock[1]);
+    $('#grGap').textContent = gap > 0 ? money(gap) : 'None';
+    $('#grPer').textContent = gap > 0 ? 'to grow from ' + short(now) + ' to ' + short(tgt) + ' turnover' : 'Supplier credit grows faster than your debtors and stock';
+    $('#grOutNow').textContent = money(nice(wc(now)));
+    $('#grOutTarget').textContent = money(nice(wc(tgt)));
+    $('#grOutDeb').textContent = money(nice(xDeb));
+    $('#grOutStk').textContent = money(nice(xStk));
+    $('#grOutCre').textContent = 'less ' + money(nice(xCre));
+    $('#grOutCover').textContent = money(covLo) + ' to ' + money(covHi);
+    const leftLo = Math.max(0, gap - covHi), leftHi = Math.max(0, gap - covLo);
+    $('#grOutLeft').textContent = leftHi <= 0 ? 'None: a facility could cover it' : leftLo === leftHi ? money(leftHi) : money(leftLo) + ' to ' + money(leftHi);
+    lastGr = { gap: Math.max(0, gap), tgt };
+  }
+  listen('#panel-growth', calcGrowth);
 
   /* "Request terms" opens the homepage form with the figures filled in */
   const HOME = '/monument';
@@ -1113,15 +1417,26 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
   };
   $('#ablQuote').addEventListener('click', () => {
     if (!lastAbl) return;
-    sendToForm('abl', band(lastAbl.hi), 'From the calculator: an indicative facility of about ' + money(lastAbl.lo) + ' to ' + money(lastAbl.hi) + ' against the business’s assets.');
+    sendToForm('abl', band(lastAbl.hi), 'From the asset-based lending tool: an indicative facility of about ' + money(lastAbl.lo) + ' to ' + money(lastAbl.hi) + ' against the business’s assets.');
   });
-  $('#trQuote').addEventListener('click', () => {
-    if (!lastTrade) return;
-    sendToForm('trade', band(lastTrade.tied), 'From the calculator: about ' + money(lastTrade.tied) + ' tied up in a trade cycle of ' + lastTrade.days + ' days.');
+  $('#cyQuote').addEventListener('click', () => {
+    if (!lastCy) return;
+    sendToForm('abl', band(lastCy.tied), 'From the cash conversion cycle tool: a ' + lastCy.cycle + '-day cycle, with about ' + money(lastCy.tied) + ' tied up in working capital.');
+  });
+  $('#ddQuote').addEventListener('click', () => {
+    if (!lastDd) return;
+    sendToForm('abl', band(lastDd.hi), 'From the debtor days tool: customers take ' + lastDd.dso + ' days to pay, and invoice discounting could release about ' + money(lastDd.lo) + ' to ' + money(lastDd.hi) + '.');
+  });
+  $('#grQuote').addEventListener('click', () => {
+    if (!lastGr) return;
+    sendToForm('abl', band(lastGr.gap), 'From the growth funding gap tool: about ' + money(lastGr.gap) + ' more working capital needed to reach ' + short(lastGr.tgt) + ' turnover.');
   });
 
   calcAbl();
-  calcTrade();
+  calcCycle();
+  calcDebtors();
+  calcGrowth();
+  fromHash();
 
   /* ===== Motion, shared by both pages ===== */
   $$('[data-stagger]').forEach(g => Array.from(g.children).forEach((c, i) => c.style.setProperty('--i', i)));
