@@ -86,6 +86,7 @@ function publicReport(r, admin) {
   return {
     id: r.id, checkedAt: r.checkedAt, accountName: r.accountName, customerId: shownId(r.customerId), currency: r.currency,
     facts: r.facts, strengths: r.strengths, weaknesses: r.weaknesses, quote: r.quote,
+    ngrams: r.ngrams || null, dayHour: r.dayHour || null,
     flags: FLAGS, preview: !!admin, operations: admin ? r.operations : undefined, queryRows: admin ? r.queryRows : undefined,
   };
 }
@@ -123,6 +124,7 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
   const report = {
     id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
     currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
+    ngrams: result.ngrams, dayHour: result.dayHour,
     quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin, route,
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
@@ -202,6 +204,7 @@ async function sample(request, env) {
   const report = {
     id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: 'Sample account (made up for the preview)',
     currency: 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
+    ngrams: result.ngrams, dayHour: result.dayHour,
     quote: quote(pricing, result.weaknesses), pricingVersion: pricing.version || 0, operations: 0, sample: true,
   };
   return jsonResponse({ report: { ...publicReport(report, true), sample: true } });

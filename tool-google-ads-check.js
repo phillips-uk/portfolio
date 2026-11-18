@@ -225,6 +225,86 @@
     if (!preview || demo) document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
   }
 
+  // ---------- words in your searches (n-grams) ----------
+  var ngState = { kind: 'wasted', n: 0 };
+  function ngrams(r, cur) {
+    var d = r.ngrams, sec = $('sec-ngrams');
+    sec.hidden = !d || (!d.wasted.length && !d.performing.length);
+    if (sec.hidden) return;
+    $('ng-lede').textContent = 'Words and phrases that keep coming up across your search terms. ' +
+      (d.wastedSpend > 0 ? cur.format(d.wastedSpend) + ' went on search terms with no conversions in the last 30 days. ' : '') +
+      'One negative keyword on a word that never converts blocks every search containing it, including ones you haven’t seen yet.';
+    $('ng-note').textContent = 'From the ' + d.searchTerms + ' search term' + (d.searchTerms === 1 ? '' : 's') + ' that spent in your Search campaigns. Each word or phrase appears in two or more of them.' +
+      ((r.facts && (r.facts.channels || []).indexOf('PERFORMANCE_MAX') >= 0) ? ' Performance Max searches are not included.' : '');
+    function draw() {
+      var rows = d[ngState.kind].filter(function (x) { return !ngState.n || x.n === ngState.n; });
+      var body = $('ng-rows'); body.textContent = '';
+      if (!rows.length) {
+        var tr = el('tr'), td = el('td', 'empty', ngState.kind === 'wasted' ? 'Nothing here: no repeated words that only cost money.' : 'Nothing here yet: no repeated words with conversions.');
+        td.colSpan = 5; tr.appendChild(td); body.appendChild(tr); return;
+      }
+      rows.forEach(function (x) {
+        var tr = el('tr');
+        tr.appendChild(el('td', null, x.text));
+        tr.appendChild(el('td', 'r wide', String(x.terms)));
+        tr.appendChild(el('td', 'r wide', String(x.clicks)));
+        tr.appendChild(el('td', 'r', cur.format(x.cost)));
+        tr.appendChild(el('td', 'r', String(x.conversions)));
+        body.appendChild(tr);
+      });
+    }
+    function wire(groupId, key, attr) {
+      var btns = $(groupId).querySelectorAll('button');
+      btns.forEach(function (b) {
+        b.onclick = function () {
+          ngState[key] = attr === 'n' ? Number(b.getAttribute('data-n')) : b.getAttribute('data-kind');
+          btns.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+          draw();
+        };
+      });
+    }
+    wire('ng-kind', 'kind', 'kind'); wire('ng-len', 'n', 'n');
+    if (!d.wasted.length && d.performing.length) $('ng-kind').querySelector('[data-kind="performing"]').click(); else draw();
+  }
+
+  // ---------- when conversions come in (day by hour) ----------
+  var DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  var DAYS_LONG = ['Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays', 'Sundays'];
+  var narrow = window.matchMedia('(max-width: 560px)');
+  var hmDraw = null, hmWired = false;
+  var hour = function (h) { return (h % 12 || 12) + (h < 12 ? 'am' : 'pm'); };
+  function heatmap(r) {
+    var d = r.dayHour, sec = $('sec-heat');
+    sec.hidden = !d || !(d.totalConversions > 0);
+    if (sec.hidden) return;
+    var dayTot = d.conversions.map(function (row) { return row.reduce(function (s, v) { return s + v; }, 0); });
+    var hourTot = d.conversions[0].map(function (_, h) { return d.conversions.reduce(function (s, row) { return s + row[h]; }, 0); });
+    var bestDay = dayTot.indexOf(Math.max.apply(null, dayTot)), bestHour = hourTot.indexOf(Math.max.apply(null, hourTot));
+    $('hm-lede').textContent = Math.round(d.totalConversions * 10) / 10 + ' conversions in the last 30 days. The most came on ' + DAYS_LONG[bestDay] +
+      ', and the busiest hour across the week was ' + hour(bestHour) + ' to ' + hour((bestHour + 1) % 24) + '. Useful for ad schedules, opening hours and when to answer the phone.';
+    function draw() {
+      var block = narrow.matches ? 4 : 1, cols = 24 / block;
+      var grid = d.conversions.map(function (row) { var out = []; for (var c = 0; c < cols; c++) { var v = 0; for (var k = 0; k < block; k++) v += row[c * block + k]; out.push(Math.round(v * 10) / 10); } return out; });
+      var max = Math.max.apply(null, grid.map(function (row) { return Math.max.apply(null, row); })) || 1;
+      var g = $('hm-grid'); g.textContent = ''; g.style.setProperty('--cols', cols);
+      g.setAttribute('aria-label', 'Conversions by day and ' + (block > 1 ? 'four-hour block' : 'hour') + ', last 30 days');
+      g.appendChild(el('span'));
+      for (var c = 0; c < cols; c++) g.appendChild(el('span', 'hh', block > 1 ? hour(c * block) : (c % 3 === 0 ? hour(c) : '')));
+      grid.forEach(function (row, di) {
+        g.appendChild(el('span', null, DAYS[di]));
+        row.forEach(function (v, c) {
+          var cell = el('i');
+          var pct = v > 0 ? Math.round(15 + 85 * (v / max)) : 0;
+          if (pct) cell.style.background = 'color-mix(in oklab, var(--brand) ' + pct + '%, var(--line-soft))';
+          cell.title = DAYS[di] + ' ' + (block > 1 ? hour(c * block) + ' to ' + hour((c * block + block) % 24) : hour(c) + ' to ' + hour((c + 1) % 24)) + ': ' + v + ' conversion' + (v === 1 ? '' : 's');
+          g.appendChild(cell);
+        });
+      });
+    }
+    hmDraw = draw; draw();
+    if (!hmWired && narrow.addEventListener) { hmWired = true; narrow.addEventListener('change', function () { if (hmDraw) hmDraw(); }); }
+  }
+
   function show(r, scroll) {
     current = r;
     var cur = money(r.currency || 'GBP');
@@ -243,6 +323,8 @@
     var st = $('rep-strong'); st.textContent = '';
     r.strengths.forEach(function (s) { st.appendChild(finding(s, null)); });
     $('sec-strong').hidden = !r.strengths.length;
+    ngrams(r, cur);
+    heatmap(r);
     fixes(r);
     $('report').hidden = false;
     if (!r.sample && location.pathname !== '/google-ads-audit/r/' + r.id) history.replaceState(null, '', '/google-ads-audit/r/' + r.id);

@@ -795,6 +795,63 @@ function ruleKeywords(m, out) {
 }
 
 // 4. Search terms (audit.py check_search_terms and _compute_ngrams)
+// Every word and phrase of 1 to 3 words across the search terms, with what the terms containing it cost and brought in.
+// Shared by the n-gram finding and the report's n-gram table (audit.py _compute_ngrams).
+function ngramAgg(m) {
+  const agg = new Map();
+  for (const t of m.searchTerms) {
+    const words = ngramWords(t.term);
+    const seenHere = new Set();
+    for (let n = 1; n <= 3; n++) {
+      for (let i = 0; i + n <= words.length; i++) {
+        const ng = words.slice(i, i + n).join(' ');
+        if (seenHere.has(ng)) continue;
+        seenHere.add(ng);
+        const a = agg.get(ng) || { ngram: ng, n, cost: 0, conversions: 0, convValue: 0, clicks: 0, termCount: 0 };
+        a.cost += t.cost;
+        a.conversions += t.conversions;
+        a.convValue += t.convValue || 0;
+        a.clicks += t.clicks || 0;
+        a.termCount += 1;
+        agg.set(ng, a);
+      }
+    }
+  }
+  return agg;
+}
+
+// The report's n-gram table (the old audit report showed the same): repeated words and phrases that spent with no
+// conversions, and the ones that bring conversions in. Each needs 2 or more search terms. Top 20 of each.
+function ngramTable(m) {
+  if (!m.searchTerms.length) return null;
+  const rows = [...ngramAgg(m).values()].filter((a) => a.termCount >= 2);
+  const shape = (a) => ({ text: clean(a.ngram, 50), n: a.n, terms: a.termCount, clicks: a.clicks, cost: round2(a.cost), conversions: Math.round(a.conversions * 10) / 10 });
+  const wasted = rows.filter((a) => a.conversions === 0 && a.cost >= 2).sort((a, b) => b.cost - a.cost).slice(0, 20).map(shape);
+  const performing = rows.filter((a) => a.conversions > 0).sort((a, b) => b.conversions - a.conversions || a.cost - b.cost).slice(0, 20).map(shape);
+  return { searchTerms: m.searchTerms.length, wasted, performing, wastedSpend: round2(m.searchTerms.filter((t) => t.conversions === 0).reduce((s, t) => s + t.cost, 0)) };
+}
+
+// When conversions come in: day of week by hour (account time zone), last 30 days. Null when the read failed or is empty.
+const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+function dayHourTable(rows) {
+  if (!Array.isArray(rows) || !rows.length) return null;
+  const grid = () => DAYS.map(() => new Array(24).fill(0));
+  const conv = grid(), clicks = grid(), cost = grid();
+  for (const r of rows) {
+    const d = DAYS.indexOf(r.segments?.dayOfWeek);
+    const h = Number(r.segments?.hour);
+    if (d < 0 || !(h >= 0 && h < 24)) continue;
+    conv[d][h] += num(r.metrics?.conversions);
+    clicks[d][h] += num(r.metrics?.clicks);
+    cost[d][h] += fromMicros(r.metrics?.costMicros);
+  }
+  const r1 = (g) => g.map((row) => row.map((v) => Math.round(v * 10) / 10));
+  const totalConv = conv.flat().reduce((s, v) => s + v, 0);
+  const totalClicks = clicks.flat().reduce((s, v) => s + v, 0);
+  if (!totalClicks && !totalConv) return null;
+  return { conversions: r1(conv), clicks: clicks.map((row) => row.map((v) => Math.round(v))), cost: cost.map((row) => row.map(round2)), totalConversions: Math.round(totalConv * 10) / 10 };
+}
+
 function ruleSearchTerms(m, out) {
   if (!m.has('searchTerms')) return;
   const money = m.money;
@@ -866,23 +923,7 @@ function ruleSearchTerms(m, out) {
   // N-gram patterns: words and phrases of 1 to 3 words seen in 2+ terms with
   // 1+ spend; wasted means no conversions and 2+ spend; top 15; reported when
   // the total reaches 5 (audit.py _compute_ngrams and _score_ngrams).
-  const agg = new Map();
-  for (const t of m.searchTerms) {
-    const words = ngramWords(t.term);
-    const seenHere = new Set();
-    for (let n = 1; n <= 3; n++) {
-      for (let i = 0; i + n <= words.length; i++) {
-        const ng = words.slice(i, i + n).join(' ');
-        if (seenHere.has(ng)) continue;
-        seenHere.add(ng);
-        const a = agg.get(ng) || { ngram: ng, cost: 0, conversions: 0, termCount: 0 };
-        a.cost += t.cost;
-        a.conversions += t.conversions;
-        a.termCount += 1;
-        agg.set(ng, a);
-      }
-    }
-  }
+  const agg = ngramAgg(m);
   const wasted = [...agg.values()]
     .filter((a) => a.termCount >= 2 && a.cost >= 1 && a.conversions === 0 && a.cost >= 2)
     .sort((a, b) => b.cost - a.cost)
@@ -1656,5 +1697,5 @@ export function runRules(data = {}, ctx = {}) {
   // Stable sort: high, medium, low, keeping rule order within each.
   weaknesses.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 
-  return { strengths, weaknesses, facts: buildFacts(m) };
+  return { strengths, weaknesses, facts: buildFacts(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour) };
 }

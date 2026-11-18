@@ -50,7 +50,7 @@
 .rep-acts button:active, .rep-acts a:active { transform: scale(.97); }
 
 /* the surface recipe (spec 1d) on every card in a report */
-.tile, .find, .fixes, .option, .rep-cta, .pick-list button {
+.tile, .find, .fixes, .option, .rep-cta, .pick-list button, .ng-card, .hm-card {
   border: 1px solid transparent;
   background: radial-gradient(280px circle at var(--mx, 25%) var(--my, -12%), var(--card-glint), transparent 65%) padding-box, var(--card-fill) padding-box, var(--card-rim) border-box;
   box-shadow: var(--e1);
@@ -187,3 +187,33 @@
 .pick-list small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
 .pick-list .go { color: var(--brand-text); font-weight: 800; white-space: nowrap; }
 .linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--brand-text); font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Google Ads Check report: words in your searches (n-grams) and when conversions come in (day by hour), 18 Nov 2026 */
+.ng-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 var(--s4); }
+.ng-tabs.sub { margin-top: calc(-1 * var(--s2)); }
+.ng-tabs button { font-family: inherit; font-weight: 700; font-size: 13.5px; line-height: 1; padding: 9px 15px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+.ng-tabs.sub button { font-size: 12.5px; padding: 7px 12px; }
+.ng-tabs button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+.ng-card, .hm-card { border-radius: var(--r-md); overflow: hidden; }
+.ng-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.ng-table th { font: 500 11px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.ng-table td { padding: 12px 18px; border-bottom: 1px solid var(--line-soft); }
+.ng-table tr:last-child td { border-bottom: 0; }
+.ng-table .r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ng-table td:first-child { font-weight: 700; overflow-wrap: anywhere; }
+.ng-table .empty { color: var(--muted); text-align: center; padding: 22px 18px; font-weight: 400; }
+.hm-card { padding: 20px 22px; }
+.hm { display: grid; grid-template-columns: 40px repeat(var(--cols, 24), minmax(0, 1fr)); gap: 3px; }
+.hm span { font: 500 10.5px/1 var(--mono); color: var(--muted); display: flex; align-items: center; }
+.hm .hh { justify-content: center; padding-bottom: 4px; }
+.hm i { display: block; height: 26px; border-radius: 4px; background: var(--line-soft); }
+.hm-key { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: var(--s4); font-size: 12.5px; color: var(--muted); }
+.hm-key b { display: block; width: 120px; height: 10px; border-radius: 99px; background: linear-gradient(90deg, var(--line-soft), var(--brand)); }
+.ng-note, .rep-sec > p.ng-note { font-size: 13px; color: var(--muted); margin: var(--s6) 0 0; }
+@media (max-width: 560px) {
+  .ng-table th, .ng-table td { padding: 11px 14px; }
+  .ng-table .wide { display: none; }
+  .hm-card { padding: 16px; }
+  .hm { grid-template-columns: 34px repeat(var(--cols, 6), minmax(0, 1fr)); }
+  .hm i { height: 30px; }
+}

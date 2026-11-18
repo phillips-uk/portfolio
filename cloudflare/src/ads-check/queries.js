@@ -141,6 +141,17 @@ export const QUERIES = {
     LIMIT 300
   `),
 
+  // When conversions come in: day of week by hour of day (the account's time zone), last 30 days, for the report's
+  // heatmap. One row per campaign, day and hour; the rules add them up.
+  dayHour: q(`
+    SELECT segments.day_of_week, segments.hour,
+           metrics.clicks, metrics.cost_micros, metrics.conversions
+    FROM campaign
+    WHERE segments.date DURING LAST_30_DAYS
+      AND campaign.status = 'ENABLED'
+      AND metrics.impressions > 0
+  `),
+
   // Performance Max asset groups and their ad strength.
   assetGroups: q(`
     SELECT asset_group.id, asset_group.name, asset_group.ad_strength,
@@ -234,6 +245,7 @@ export const QUERIES = {
 // no shared lists, access limits). The caller should pass `undefined` for a
 // failed optional query; the rules then skip whatever depends on it.
 export const OPTIONAL = new Set([
+  'dayHour',
   'negativeKeywordLists',
   'accountNegativeLists',
   'assetGroups',

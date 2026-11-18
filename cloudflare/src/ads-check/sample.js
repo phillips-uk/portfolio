@@ -4,6 +4,22 @@
 const micros = (pounds) => String(Math.round(pounds * 1e6));
 const CA = (id) => `customers/111/conversionActions/${id}`;
 
+// Made-up clicks and conversions by day and hour for the sample's heatmap: busy on weekday mornings and evenings,
+// quiet overnight and on Sundays. Fixed numbers (no randomness), so the preview looks the same every time.
+function sampleDayHour() {
+  const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+  const shape = [0, 0, 0, 0, 0, 0, 1, 3, 6, 7, 6, 5, 5, 5, 4, 4, 5, 6, 7, 8, 6, 4, 2, 1];
+  const rows = [];
+  days.forEach((d, di) => shape.forEach((w, h) => {
+    if (!w) return;
+    const day = di === 6 ? 0.4 : di === 5 ? 0.7 : 1;
+    const clicks = Math.round(w * 2 * day);
+    const conversions = Math.round(((w * day) / 11) * ((di + h) % 3 === 0 ? 1.4 : 0.8) * 10) / 10;
+    rows.push({ segments: { dayOfWeek: d, hour: h }, metrics: { clicks: String(clicks), costMicros: micros(clicks * 2.2), conversions: (h >= 8 && h <= 20) ? conversions : 0 } });
+  }));
+  return rows;
+}
+
 // ---------------------------------------------------------------------------
 // Fixture 1: an account with several problems
 // ---------------------------------------------------------------------------
@@ -122,6 +138,7 @@ const problem = {
   audienceCriteria: [],
   campaignCriteria: [],
   products: undefined,
+  dayHour: sampleDayHour(),
 };
 
 // ---------------------------------------------------------------------------
