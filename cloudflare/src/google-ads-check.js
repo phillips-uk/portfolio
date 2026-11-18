@@ -11,7 +11,8 @@
 //   POST /tools/google-ads-check/link         { customerId } is the invitation there yet?
 //   POST /tools/google-ads-check/run          { customerId, token } accept, read, price, end the link
 //   GET  /tools/google-ads-check/report/<id>
-//   POST /tools/google-ads-check/sample       Lewis only: a report from a made-up account, to review layout and prices
+//   POST /tools/google-ads-check/sample       Lewis only: a report from a made-up demo client (demos.js)
+//   GET  /tools/google-ads-check/demos        Lewis only: the demo clients, for /admin#demos
 //
 // Storage (R2 BLOBS):
 //   tools/google-ads-check/reports/<id>.json      the report with its quote and pricing version, 30 days
@@ -21,8 +22,7 @@ import pageHtml from '../private/google-ads-check.html';
 import { gaql, linkStatus, acceptLink, endLink, configured, meter, AdsError, MANAGER_ID_SHOWN } from './ads-check/client.js';
 import { QUERIES, OPTIONAL } from './ads-check/queries.js';
 import { runRules } from './ads-check/rules.js';
-import { SAMPLE_DATA } from './ads-check/sample.js';
-import { SAMPLE_MULTI } from './ads-check/sample-multi.js';
+import { DEMOS, findDemo } from './ads-check/demos.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX } from './tools-gate.js';
 import { getPricing, quote } from './pricing.js';
 
@@ -195,17 +195,24 @@ async function run(request, env) {
   }
 }
 
+// Lewis only: the demo clients, for the picker in /admin#demos.
+async function demoList(request, env) {
+  const access = await toolAccessFor('google-ads-check', request, env);
+  if (!access.admin) return jsonResponse({ error: 'Not found' }, 404);
+  return jsonResponse({ demos: DEMOS.map(({ id, name, size, model, build, note }) => ({ id, name, size, model, build, note })) });
+}
+
 // Lewis only: the report for a made-up account, priced with the live calculator. Not saved.
 async function sample(request, env) {
   if (!sameOrigin(request)) return jsonResponse({ error: 'Forbidden' }, 403);
   const access = await toolAccessFor('google-ads-check', request, env);
   if (!access.admin) return jsonResponse({ error: 'Not found' }, 404);
   const pricing = await getPricing(env);
-  // ?sample=2: ten campaigns of six types, mostly healthy (sample-multi.js). Otherwise the small problem account.
-  const multi = (await readBody(request)).variant === 'multi';
-  const result = runRules(multi ? SAMPLE_MULTI : SAMPLE_DATA, { currency: 'GBP', today: londonDay() });
+  // ?sample=<demo id> (demos.js, listed in /admin#demos). 1 and 2 are the first two samples' old names.
+  const demo = findDemo(String((await readBody(request)).variant || ''));
+  const result = runRules(demo.data(), { currency: 'GBP', today: londonDay() });
   const report = {
-    id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: multi ? 'Sample: ten campaigns (made up for the preview)' : 'Sample account (made up for the preview)',
+    id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: `Demo: ${demo.name} (made up)`,
     currency: 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
     profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour,
     quote: quote(pricing, result.weaknesses), pricingVersion: pricing.version || 0, operations: 0, sample: true,
@@ -215,6 +222,7 @@ async function sample(request, env) {
 
 export async function adsCheck(request, url, env) {
   const path = url.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/tools/google-ads-check/demos') return request.method === 'GET' ? demoList(request, env) : new Response('Method not allowed', { status: 405 });
   if (path === '/tools/google-ads-check/sample') return request.method === 'POST' ? sample(request, env) : new Response('Method not allowed', { status: 405 });
   if (path === '/tools/google-ads-check/link') return request.method === 'POST' ? link(request, env) : new Response('Method not allowed', { status: 405 });
   if (path === '/tools/google-ads-check/run') return request.method === 'POST' ? run(request, env) : new Response('Method not allowed', { status: 405 });

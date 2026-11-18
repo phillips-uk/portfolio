@@ -4,6 +4,7 @@
 import assert from 'node:assert/strict';
 import { runRules } from './rules.js';
 import { QUERIES, OPTIONAL } from './queries.js';
+import { DEMOS, findDemo } from './demos.js';
 
 const CTX = { currency: 'GBP', today: '2026-11-16' };
 const micros = (pounds) => String(Math.round(pounds * 1e6));
@@ -354,4 +355,18 @@ console.log(`problem account: ${bad.weaknesses.length} weaknesses, ${bad.strengt
 for (const w of bad.weaknesses) console.log(`  [${w.priority}] ${w.id} (${w.fixType}, ${w.items} ${w.itemLabel})`);
 console.log(`healthy account: ${good.weaknesses.length} weaknesses, ${good.strengths.length} strengths`);
 console.log('facts (problem):', JSON.stringify(bad.facts));
+// Demo clients (/admin#demos): every one runs, has a profile, and the cases they caught stay fixed.
+for (const d of DEMOS) {
+  const r = runRules(d.data(), CTX);
+  checkShape(r, `demo ${d.id}`);
+  assert.ok(r.profile && r.profile.groups.length, `demo ${d.id} has an account profile`);
+}
+const demo = (id) => runRules(findDemo(id).data(), CTX);
+assert.ok(demo('retailer').profile.groups.some((g) => g.label === 'Search · Brand'), 'underscore names: UK_Search_Brand_Exact reads as brand');
+assert.deepEqual(demo('national').profile.sells, ['Windows', 'Solar', 'Conservatories', 'Roofing'], 'regions and competitor ad groups are left out of what it sells');
+assert.deepEqual(demo('clinic').profile.sells, ['Implants', 'Invisalign', 'Emergency', 'Whitening'], '"Implants prices" folds into "Implants"');
+assert.deepEqual(demo('trades').profile.sells, [], '"Ad group 1" is not a product');
+assert.equal(demo('clinic').weaknesses.length, 0, 'the clinic demo is clean');
+assert.equal(findDemo('2').id, 'mixed'); assert.equal(findDemo('1').id, 'problem');
+console.log(`demo clients: ${DEMOS.length} run cleanly`);
 console.log('All rules tests passed.');

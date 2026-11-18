@@ -87,7 +87,10 @@ function moneyFormatter(currency) {
 
 const pct = (x) => `${Math.round(x * 100)}%`;
 const round2 = (n) => Math.round(n * 100) / 100;
-const isBrandName = (name) => /\bbrand\b/i.test(name || '');
+// Underscores, pipes and slashes count as spaces, so "UK_Search_Brand_Exact" reads as brand (found by the demo
+// accounts, 18 Nov 2026: \b treats _ as part of a word).
+const spaced = (name) => String(name || '').replace(/[_|/\\]+/g, ' ');
+const isBrandName = (name) => /\bbrand\b/i.test(spaced(name));
 
 // Same tokeniser as audit.py check_search_terms: words of 3+ letters, minus stopwords.
 const TERM_STOPWORDS = new Set([
@@ -1692,7 +1695,7 @@ const SEPARATORS = [' | ', '|', ' - ', ' \u2013 ', '-', '_', ':', '/', '>'];
 const titleCase = (t) => String(t || '').trim().replace(/\s+/g, ' ').replace(/^./, (c) => c.toUpperCase());
 
 function campaignRole(c, kwTokensByCampaign) {
-  const n = String(c.name || '').toLowerCase();
+  const n = spaced(c.name).toLowerCase();
   if (/remarket|rmkt|retarget|\brlsa\b/.test(n)) return 'Remarketing';
   if (/competitor|\bcomp\b|conquest/.test(n)) return 'Competitor';
   if (c.channel !== 'SEARCH') return null;
@@ -1719,6 +1722,25 @@ function namingPattern(names) {
   return best && best.share >= 0.6 ? { separator: best.separator, parts: best.parts, consistent: best.share >= 0.8 } : { separator: null, parts: 0, consistent: false };
 }
 
+// What it sells from Search ad group names, busiest first. Words that qualify many different names (regions, "prices",
+// "offers", "men") are dropped, then repeats and default names ("Ad group 1") are left out, so "Windows North",
+// "Windows South" and "Implants prices" read as "Windows" and "Implants" (demo accounts, 18 Nov 2026).
+function sellsFromGroups(names) {
+  const orig = names.map((g) => spaced(g).split(/[\s,&+-]+/).filter(Boolean));
+  const words = orig.map((ws) => ws.map((w) => w.toLowerCase()));
+  const heads = new Map();
+  words.forEach((ws) => ws.forEach((w) => { const others = ws.filter((x) => x !== w).join(' '); if (!heads.has(w)) heads.set(w, new Set()); heads.get(w).add(others); }));
+  const modifier = (w) => heads.get(w).size >= 3 && words.filter((ws) => ws[0] === w).length < 2;
+  const out = [];
+  words.forEach((ws, i) => {
+    if (/^ad ?group \d*$/i.test(names[i].trim())) return;
+    const kept = orig[i].filter((w, j) => !modifier(ws[j]));
+    const label = titleCase(clean((kept.length ? kept : orig[i]).join(' '), 28));
+    if (label && !out.some((o) => o.toLowerCase() === label.toLowerCase())) out.push(label);
+  });
+  return out.slice(0, 4);
+}
+
 function accountProfile(m) {
   const live = m.campaigns.filter((c) => c.spend > 0 || c.impressions > 0);
   if (!live.length) return null;
@@ -1738,8 +1760,8 @@ function accountProfile(m) {
   if (byType.size) { sells = [...byType.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([t]) => titleCase(clean(t, 28))); sellsFrom = 'product types'; }
   else {
     const byGroup = new Map();
-    m.keywords.filter((k) => k.channel === 'SEARCH' && !isBrandName(k.adGroup) && !isBrandName(k.campaign)).forEach((k) => byGroup.set(k.adGroup, (byGroup.get(k.adGroup) || 0) + k.impressions + 1));
-    if (byGroup.size) { sells = [...byGroup.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([g]) => titleCase(clean(g, 28))); sellsFrom = 'ad groups'; }
+    m.keywords.filter((k) => k.channel === 'SEARCH' && !isBrandName(k.adGroup) && !isBrandName(k.campaign) && !/competitor|\bcomp\b|conquest|remarket|rlsa/i.test(spaced(k.adGroup + ' ' + k.campaign))).forEach((k) => byGroup.set(k.adGroup, (byGroup.get(k.adGroup) || 0) + k.impressions + 1));
+    if (byGroup.size) { sells = sellsFromGroups([...byGroup.entries()].sort((a, b) => b[1] - a[1]).map(([g]) => g)); sellsFrom = sells.length ? 'ad groups' : null; }
   }
 
   // Campaigns grouped by type, Search split by role.

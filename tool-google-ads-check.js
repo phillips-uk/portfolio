@@ -264,6 +264,8 @@
     var tree = $('pf-tree'); tree.textContent = '';
     tree.appendChild(el('div', 'pf-th', 'Your ' + p.campaigns + ' campaign' + (p.campaigns === 1 ? '' : 's') + ', biggest spend first'));
     var total = p.groups.reduce(function (s, g) { return s + (g.spend || 0); }, 0) || 1;
+    // bars are scaled to the biggest campaign, so a 26-campaign account still shows readable bars (the % stays true)
+    var top = Math.max.apply(null, p.groups.map(function (g) { return Math.max.apply(null, g.campaigns.map(function (c) { return c.share || 0; }).concat(0)); }).concat(1));
     var plural = function (n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); };
     var cap = function (s) { s = String(s || '').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); };
     function fold(label, kids, cls) {
@@ -274,7 +276,7 @@
     function camp(c) {
       var row = el('div', 'pf-row');
       row.appendChild(el('div', 'pf-cn', c.name));
-      var cb = el('div', 'pf-cbar'), fill = el('i'); fill.style.width = Math.max(2, c.share) + '%'; cb.appendChild(fill); row.appendChild(cb);
+      var cb = el('div', 'pf-cbar'), fill = el('i'); fill.style.width = Math.max(2, (c.share || 0) / top * 100) + '%'; cb.appendChild(fill); row.appendChild(cb);
       row.appendChild(el('span', 'pf-n', Math.round(c.share) + '%'));
       row.appendChild(el('span', 'pf-n', c.conversions + ' conv.'));
       row.appendChild(el('span', 'pf-n', c.cpa ? cur.format(c.cpa) + ' each' : ''));
@@ -526,7 +528,7 @@
   } else if (signIn && /[?&]signin=([a-z]+)/.test(location.search)) {
     say(SIGNIN_MSG[location.search.match(/[?&]signin=([a-z]+)/)[1]] || '', true);
     history.replaceState(null, '', '/google-ads-audit');
-  } else if (preview && /[?&]sample=[12]/.test(location.search)) {
-    post('/tools/google-ads-check/sample', { variant: /[?&]sample=2/.test(location.search) ? 'multi' : 'small' }).then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
+  } else if (preview && /[?&]sample=[a-z0-9]+/.test(location.search)) {
+    post('/tools/google-ads-check/sample', { variant: location.search.match(/[?&]sample=([a-z0-9]+)/)[1] }).then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
   }
 })();
