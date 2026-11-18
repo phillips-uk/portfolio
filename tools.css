@@ -479,3 +479,33 @@
   .webr .wf-row { grid-template-columns: minmax(0, 1fr); }
   .webr .wr-serp { padding: var(--s4); }
 }
+
+/* Website Check, v3 depth and motion (Lewis, 18 Nov 2026: "give it the V3 treatment").
+   Hero: a drawn example report beside the form (spec 1 "show the product"); on tablets and phones it sits above the
+   headline (agency.css hero-grid rule), kept short. Report: blocks rise in turn, numbers count up, the speed rings draw
+   and the path bars grow, only under .motion-ready, so reduced motion and ?motion=off show everything in place. */
+.wc-hero-vis { margin: 0; padding: var(--s5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-soft); box-shadow: var(--e2); display: grid; gap: var(--s4); }
+.wc-ex { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.wc-ex-top { display: flex; align-items: center; gap: var(--s3); }
+.wc-ex-dial { flex: none; width: 52px; height: 52px; }
+.wc-ex-dial circle { fill: none; stroke-width: 6; stroke-linecap: round; }
+.wc-ex-dial .g-bg { stroke: var(--line-soft); } .wc-ex-dial .g-fg { stroke: var(--ok); }
+.wc-ex-top b { display: block; font-size: 15px; font-weight: 800; }
+.wc-ex-top small { font-size: 12.5px; color: var(--muted); }
+.wc-ex-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.wc-ex-list li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; padding: 9px 12px; border-radius: var(--r-sm); background: var(--bg); }
+.wc-ex-list li::before { flex: none; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 800; }
+.wc-ex-list .ok::before { content: "\2713"; background: var(--ok-wash); color: var(--ok); }
+.wc-ex-list .no::before { content: "!"; background: var(--attn-wash); color: var(--attn); }
+@media (max-width: 960px) {
+  .wc-hero-vis { max-width: 420px; gap: var(--s3); padding: var(--s4); }
+  .wc-ex-list li:nth-child(n+3) { display: none; } /* short on phones, so the headline still shows in the first screen */
+}
+.motion-ready .webr .g-fg { transition: stroke-dashoffset var(--d5) var(--ease-out); }
+.motion-ready .webr .wj-segs i { transform-origin: left; transition: transform var(--d4) var(--ease-out); transition-delay: calc(var(--i, 0) * 45ms + 120ms); }
+.motion-ready .webr .rv:not(.in) .wj-segs i { transform: scaleX(0); }
+.motion-ready .webr .oks li.rv { transition-duration: var(--d3); }
+@media (max-width: 560px) {
+  .wc-hero-vis { padding: var(--s3) var(--s4); gap: var(--s2); }
+  .wc-ex-list { display: none; } /* on a phone the example is just its dial row, so the address box stays in the first screen */
+}

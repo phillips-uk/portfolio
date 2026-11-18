@@ -253,6 +253,54 @@
     box.appendChild(row);
   }
 
+  // v3 motion (spec 1e): blocks rise in turn as they come into view, numbers count up, the speed rings draw and the
+  // path bars grow. Only when the page's head script set .motion-ready (it doesn't for reduced motion or ?motion=off),
+  // so otherwise everything is simply there. The real figures are always in the HTML.
+  function animate() {
+    var root = document.documentElement;
+    // A report drawn in a background tab simply appears: there's nobody watching, and hidden tabs pause animation.
+    if (!root.classList.contains('motion-ready') || !('IntersectionObserver' in window) || document.visibilityState === 'hidden') return;
+    var rings = Array.prototype.slice.call(document.querySelectorAll('#report .g-fg'));
+    rings.forEach(function (g) { g.setAttribute('data-to', g.getAttribute('stroke-dashoffset')); g.setAttribute('stroke-dashoffset', g.getAttribute('stroke-dasharray')); });
+    var nums = Array.prototype.slice.call(document.querySelectorAll('#rep-tiles .tile b, #report .g-dial b')).filter(function (b) { return /^\d+$/.test(b.textContent); });
+    nums.forEach(function (b) { b.setAttribute('data-to', b.textContent); b.textContent = '0'; });
+    document.querySelectorAll('#report .wj-segs').forEach(function (row) { Array.prototype.forEach.call(row.children, function (i, n) { i.style.setProperty('--i', n); }); });
+    function count(b) {
+      var to = +b.getAttribute('data-to'), t0 = null;
+      function step(t) { if (t0 === null) t0 = t; var k = Math.min(1, (t - t0) / 900); b.textContent = String(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+      setTimeout(function () { b.textContent = String(to); }, 1100); // lands on the real figure even if frames are slowed
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) show1(en.target);
+      });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+    var waiting = [];
+    function show1(el) {
+      if (waiting.indexOf(el) === -1) return;
+      waiting.splice(waiting.indexOf(el), 1); io.unobserve(el);
+      el.classList.add('in');
+      nums.forEach(function (b) { if (el.contains(b)) count(b); });
+      rings.forEach(function (g) { if (el.contains(g)) setTimeout(function () { g.setAttribute('stroke-dashoffset', g.getAttribute('data-to')); }, 60); });
+      setTimeout(function () { el.classList.remove('rv', 'in'); el.style.removeProperty('--d'); }, 1400);
+    }
+    // Belt and braces: a plain scroll check reveals anything in view (or jumped past) that the observer missed.
+    var tick = null;
+    window.addEventListener('scroll', function () {
+      if (tick || !waiting.length) return;
+      tick = setTimeout(function () { tick = null; waiting.slice().forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight * 0.94) show1(el); }); }, 120);
+    }, { passive: true });
+    var seen = new Map();
+    document.querySelectorAll('#rep-tiles > .tile, #pf-summary, #pf-facts > div, #report .wr-view, #wr-journey > .wj, #report .wr-gauge, #wr-field, #rep-strong > li, #rep-weak > .find, #rep-notes > .wr-note, #report .ask-card').forEach(function (el) {
+      var i = seen.get(el.parentNode) || 0; seen.set(el.parentNode, i + 1);
+      el.style.setProperty('--d', ((i % 6) * 0.045).toFixed(3) + 's');
+      el.classList.add('rv');
+      waiting.push(el);
+      io.observe(el);
+    });
+  }
+
   function show(r, scroll) {
     current = r;
     (r.groups || []).forEach(function (g) { GROUP[g[0]] = g[1]; });
@@ -278,6 +326,7 @@
     (r.notes || []).forEach(function (f) { var n = el('details', 'wr-note'); n.appendChild(el('summary', null, f.title)); n.appendChild(el('p', null, f.detail)); if (f.start) n.appendChild(el('p', 'why', f.start)); nt.appendChild(n); });
     $('sec-notes').hidden = !(r.notes || []).length;
     $('report').hidden = false;
+    animate();
     // Paper and white alternate down the sections that are showing (v3 sec. 5).
     var flip = false;
     document.querySelectorAll('#report > section.rp').forEach(function (sec) {

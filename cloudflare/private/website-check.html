@@ -8,8 +8,10 @@
 <link rel="canonical" href="https://www.phillips-uk.com/website-check/">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
+<script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
 <link rel="stylesheet" href="/agency.css?v=16">
-<link rel="stylesheet" href="/tools.css?v=16">
+<link rel="stylesheet" href="/motion.css?v=5">
+<link rel="stylesheet" href="/tools.css?v=18">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/website-check/">
@@ -76,8 +78,10 @@
   <a href="#contact" class="nav-cta" style="margin-top:8px">Ask a question</a>
 </div>
 
-<section class="hero svc-hero tool-hero">
+<section class="hero svc-hero tool-hero" data-hero>
   <div class="hero-inner">
+   <div class="hero-grid">
+   <div>
     <div class="preview-flag" id="preview-flag" hidden>Private preview: only you can see this page</div>
     <span class="eyebrow">Free Website Check · Ely, Cambridgeshire</span>
     <h1 class="hero-h1">Free website check <span>for local businesses.</span></h1>
@@ -97,6 +101,21 @@
       <li data-step="3">Measuring speed with Google's PageSpeed test</li>
     </ol>
     <p class="hero-note">Free for small and medium businesses. It only reads public pages and changes nothing.</p>
+   </div>
+   <figure class="wc-hero-vis" aria-label="An example report, made up">
+     <span class="wc-ex">Example report</span>
+     <div class="wc-ex-top">
+       <svg class="wc-ex-dial" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="24" class="g-bg"/><circle cx="30" cy="30" r="24" class="g-fg" stroke-dasharray="150.8" stroke-dashoffset="12" transform="rotate(-90 30 30)"/></svg>
+       <div><b>Your website</b><small>Speed on a phone: 92 out of 100</small></div>
+     </div>
+     <ul class="wc-ex-list">
+       <li class="ok">Says what you do and where</li>
+       <li class="ok">Tap-to-call at the top</li>
+       <li class="no">No link to your Google profile</li>
+       <li class="ok">AI assistants can read it</li>
+     </ul>
+   </figure>
+   </div>
   </div>
 </section>
 
@@ -275,7 +294,8 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-website-check.js?v=5" defer></script>
+<script src="/tool-website-check.js?v=6" defer></script>
+<script src="/motion.js?v=5" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>
