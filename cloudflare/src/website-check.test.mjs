@@ -35,4 +35,15 @@ assert.ok(ids(relaunch.strengths).includes('proof'), '"Rated 4.8 on Checkatrade"
 assert.ok(ids(national.strengths).includes('proof'), '"Rated 4.6 on Capterra" counts as proof');
 assert.ok(ids(run('salon').weaknesses).includes('gbp-link'), 'a local salon with an address is still asked for its Maps link');
 
+// Rules version 4: the site profile behind "How I read your site"
+const prof = (id) => run(id).profile;
+assert.equal(prof('clinic').summary, 'A dentist in Ely, reached by phone, email and a contact form.');
+assert.equal(prof('national').summary, 'A company working across the UK, reached by a contact form.');
+assert.equal(prof('trades').place, 'Ely', 'a postcode gives the town written before it');
+assert.equal(prof('trades').name, null, 'a title of "Home" is not the business name');
+assert.equal(prof('shop').place, 'Suffolk', 'the title and heading are not joined into "Suffolk Hand"');
+assert.equal(prof('shop').platform, 'Shopify'); assert.equal(prof('salon').platform, 'Wix');
+assert.deepEqual(prof('clinic').firstScreen.cta, { text: 'Call 01353 000 333', kind: 'call' });
+assert.ok(prof('relaunch').google.title && prof('relaunch').google.description, 'Google preview has a title and description');
+
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

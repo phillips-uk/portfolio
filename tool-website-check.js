@@ -102,7 +102,10 @@
     });
   });
 
-  // ---------- report ----------
+  // ---------- report (v3, Lewis 18 Nov 2026: the same treatment as the Google Ads report) ----------
+  // Top: domain and four tiles. Ink panel "How I read your site": a one-line read of the business, four facts, how the
+  // page looks in Google, its first screen on a phone, and a visitor's path (found, first look, trust, get in touch,
+  // counted) built from the findings' groups. Then speed gauges, what's working, what to fix and notes.
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   var DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
   var GROUP = {};
@@ -115,31 +118,139 @@
     return t;
   }
   var tone = function (s) { return s == null ? '' : s >= 90 ? 'good' : s >= 50 ? 'warn' : 'bad'; };
+  var secs = function (ms) { return (Math.round(ms / 100) / 10).toFixed(1) + ' s'; };
+  var cut = function (s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : s; };
+  var all = function (r) { return (r.strengths || []).concat(r.weaknesses || [], r.notes || []); };
+  var byId = function (r, id) { return all(r).filter(function (f) { return f.id === id; })[0]; };
 
   function finding(f) {
-    var kind = f.status === 'weakness' ? 'weak ' + f.priority : f.status === 'strength' ? 'strong' : 'note';
-    var card = el('article', 'find ' + kind);
-    card.appendChild(el('span', 'mk', f.status === 'weakness' ? '!' : f.status === 'strength' ? '✓' : 'i'));
-    var body = el('div', 'fb');
-    card.appendChild(body);
+    var card = el('article', 'find weak ' + f.priority);
+    card.appendChild(el('span', 'mk', '!'));
+    var body = el('div', 'fb'); card.appendChild(body);
     var h = el('h4', null, f.title);
-    if (f.status === 'weakness') h.appendChild(el('span', 'pr ' + f.priority, f.priority === 'high' ? 'Fix first' : f.priority === 'medium' ? 'Worth fixing' : 'Small'));
+    h.appendChild(el('span', 'pr ' + f.priority, f.priority === 'high' ? 'Fix first' : f.priority === 'medium' ? 'Worth fixing' : 'Small'));
     if (GROUP[f.group]) h.appendChild(el('span', 'grp', GROUP[f.group]));
     body.appendChild(h);
-    body.appendChild(el('p', null, f.detail));
-    if (f.why) body.appendChild(el('p', 'why', f.why));
-    if (f.start && f.status !== 'strength') {
-      var s = el('p', 'start');
-      s.appendChild(el('b', null, 'Start here: '));
-      s.appendChild(document.createTextNode(f.start));
-      body.appendChild(s);
-      if (f.link && /^\/[a-z0-9\-\/]*$/.test(f.link.href)) {
-        var a = el('a', 'go', f.link.label + ' →');
-        a.href = f.link.href;
-        body.appendChild(a);
-      }
+    if (f.start) {
+      var sb = el('div', 'start-box'); sb.appendChild(el('span', 'sb-k', 'Start here')); sb.appendChild(el('p', null, f.start));
+      body.appendChild(sb);
     }
+    var d = el('details'); d.appendChild(el('summary', null, 'Why it matters'));
+    d.appendChild(el('p', null, f.detail));
+    if (f.why) d.appendChild(el('p', 'why', f.why));
+    if (f.link && /^\/[a-z0-9\-\/]*$/.test(f.link.href)) { var a = el('a', 'go', f.link.label + ' →'); a.href = f.link.href; d.appendChild(a); }
+    body.appendChild(d);
     return card;
+  }
+
+  function chip(text, ok) { var li = el('li', ok == null ? 'na' : ok ? 'ok' : 'no'); li.appendChild(el('i', null, ok == null ? '·' : ok ? '✓' : '!')); li.appendChild(document.createTextNode(text)); return li; }
+  function passes(r, id) { var f = byId(r, id); return f ? f.status === 'strength' : null; }
+
+  function profile(r) {
+    var p = r.profile, sec = $('sec-profile');
+    sec.hidden = !p;
+    if (!p) return;
+    $('pf-summary').textContent = p.summary;
+    var facts = $('pf-facts'); facts.textContent = '';
+    function fact(k, v, sub) { var d = el('div'); d.appendChild(el('dt', null, k)); var dd = el('dd', null, v); if (sub) dd.appendChild(el('small', null, sub)); d.appendChild(dd); facts.appendChild(d); }
+    fact('Business', p.kind || 'Not clear from the page', p.kindFrom === 'structured data' ? 'From your structured data' : p.kindFrom === 'Shopify' ? 'From your Shopify store' : p.kindFrom ? 'From the page' : 'No business type in the page code');
+    fact('Where', p.place || 'Not named near the top', p.wide && p.place === 'Across the UK' ? 'You say you serve the whole country' : p.place ? 'From the top of the page' : 'Name your town near the top');
+    var reach = (p.reach || []).map(function (x) { return x.replace(/^a /, ''); });
+    fact('Get in touch', reach.length ? reach.join(', ').replace(/^./, function (c) { return c.toUpperCase(); }) : 'Nothing found', reach.length ? 'On this page' : 'No phone, email or form');
+    fact('Built on', p.platform || 'Custom or not detected', p.platform ? 'From the page code' : 'No website builder found in the code');
+
+    // How you look in Google
+    var g = p.google || {}, serp = $('wr-serp'); serp.textContent = '';
+    var top = el('div', 'sr-top'), fav = el('span', 'sr-fav', ((p.name || g.url || '?').replace(/^www\./, '').charAt(0) || '?').toUpperCase());
+    var who = el('span', 'sr-who'); who.appendChild(el('b', null, p.name || g.url)); who.appendChild(el('small', null, 'https://' + g.url));
+    top.appendChild(fav); top.appendChild(who); serp.appendChild(top);
+    serp.appendChild(g.title ? el('p', 'sr-title', cut(g.title, 66)) : el('p', 'sr-title none', 'No page title, so Google writes its own'));
+    serp.appendChild(g.description ? el('p', 'sr-desc', cut(g.description, 158)) : el('p', 'sr-desc none', 'No description, so Google picks a line from the page.'));
+    var sc = $('wr-serp-chips'); sc.textContent = '';
+    var tl = (g.title || '').length, dl = (g.description || '').length;
+    sc.appendChild(chip(tl ? 'Title, ' + tl + ' characters' + (tl > 65 ? ', cut off' : tl < 15 ? ', very short' : '') : 'No title', passes(r, 'title')));
+    sc.appendChild(chip(dl ? 'Description, ' + dl + ' characters' + (dl > 170 ? ', cut off' : '') : 'No description', dl ? dl >= 50 && dl <= 170 : false));
+    var ni = byId(r, 'noindex'); sc.appendChild(chip(ni ? 'Asks Google not to list it' : 'Google may list it', !ni));
+
+    // The first screen on a phone
+    var fs = p.firstScreen || {}, scr = $('wr-screen'); scr.textContent = '';
+    var bar = el('div', 'ph-bar'); bar.appendChild(el('b', null, p.name || g.url)); bar.appendChild(el('span', 'ph-menu')); scr.appendChild(bar);
+    scr.appendChild(fs.h1 ? el('p', 'ph-h1', cut(fs.h1, 70)) : el('p', 'ph-h1 none', 'No main heading'));
+    if (p.place && p.place !== 'Across the UK') scr.appendChild(el('p', 'ph-place', p.place));
+    scr.appendChild(fs.cta ? el('span', 'ph-cta', (fs.cta.kind === 'call' ? '☎ ' : '') + cut(fs.cta.text, 26)) : el('span', 'ph-cta none', 'No contact button'));
+    var lines = el('div', 'ph-lines'); for (var i = 0; i < 3; i++) lines.appendChild(el('i')); scr.appendChild(lines);
+    var pc = $('wr-phone-chips'); pc.textContent = '';
+    pc.appendChild(chip('Fits a phone screen', passes(r, 'viewport')));
+    pc.appendChild(chip(fs.h1 ? 'Says what you do' : 'No main heading', passes(r, 'what-you-do')));
+    pc.appendChild(chip(fs.cta ? 'Contact at the top' : 'No contact at the top', passes(r, 'contact-top')));
+
+    // A visitor's path
+    var STAGES = [
+      ['Found', 'Google and AI assistants can find and read it', ['search', 'technical', 'ai']],
+      ['First look', 'Fast, fits the phone, says what and where', ['speed', 'mobile', 'first']],
+      ['Trust', 'Reviews and proof on the page', ['proof']],
+      ['Get in touch', 'Easy to call, email or ask', ['contact']],
+      ['Counted', 'Enquiries can be measured', ['measure']]
+    ];
+    var J = $('wr-journey'); J.textContent = '';
+    STAGES.forEach(function (st, i) {
+      var fs2 = (r.strengths || []).concat(r.weaknesses || []).filter(function (f) { return st[2].indexOf(f.group) !== -1; });
+      var ok = fs2.filter(function (f) { return f.status === 'strength'; }).length;
+      var weak = (r.weaknesses || []).filter(function (f) { return st[2].indexOf(f.group) !== -1; });
+      var worst = weak[0];
+      var li = el('li', 'wj ' + (!fs2.length ? 'na' : !weak.length ? 'good' : weak.some(function (f) { return f.priority === 'high'; }) ? 'bad' : 'warn'));
+      li.appendChild(el('span', 'wj-n', String(i + 1)));
+      li.appendChild(el('b', null, st[0]));
+      li.appendChild(el('small', null, st[1]));
+      var segs = el('span', 'wj-segs');
+      fs2.forEach(function (f) { segs.appendChild(el('i', f.status === 'strength' ? 'ok' : f.priority)); });
+      li.appendChild(segs);
+      li.appendChild(el('span', 'wj-score', fs2.length ? ok + ' of ' + fs2.length + ' checks pass' : 'Not checked'));
+      li.appendChild(el('span', 'wj-next', worst ? 'Next: ' + worst.title : fs2.length ? 'All good' : ''));
+      J.appendChild(li);
+    });
+  }
+
+  function gauge(label, s) {
+    var card = el('div', 'wr-gauge ' + tone(s && s.performance));
+    var v = s && s.performance != null ? s.performance : null;
+    var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 120 120'); svg.setAttribute('aria-hidden', 'true');
+    var bg = document.createElementNS(NS, 'circle'), fg = document.createElementNS(NS, 'circle');
+    [bg, fg].forEach(function (c) { c.setAttribute('cx', '60'); c.setAttribute('cy', '60'); c.setAttribute('r', '50'); c.setAttribute('fill', 'none'); c.setAttribute('stroke-width', '10'); });
+    bg.setAttribute('class', 'g-bg'); fg.setAttribute('class', 'g-fg');
+    var len = 2 * Math.PI * 50; fg.setAttribute('stroke-dasharray', len.toFixed(1)); fg.setAttribute('stroke-dashoffset', (len * (1 - (v || 0) / 100)).toFixed(1));
+    fg.setAttribute('stroke-linecap', 'round'); fg.setAttribute('transform', 'rotate(-90 60 60)');
+    svg.appendChild(bg); svg.appendChild(fg);
+    var dial = el('div', 'g-dial'); dial.appendChild(svg); dial.appendChild(el('b', null, v == null ? 'n/a' : String(v)));
+    card.appendChild(dial);
+    var txt = el('div', 'g-txt'); txt.appendChild(el('h4', null, label));
+    txt.appendChild(el('p', 'g-verdict', v == null ? 'Google’s test didn’t answer this time' : v >= 90 ? 'Fast' : v >= 50 ? 'Could be faster' : 'Slow'));
+    var ul = el('ul', 'g-facts');
+    if (s && s.lcp != null) ul.appendChild(el('li', null, 'Main content shows in ' + secs(s.lcp)));
+    if (s && s.tbt != null) ul.appendChild(el('li', null, 'Busy for ' + Math.round(s.tbt) + ' ms while loading'));
+    if (s && s.cls != null) ul.appendChild(el('li', null, 'Layout shift ' + s.cls.toFixed(2) + (s.cls > 0.1 ? ' (jumps while loading)' : '')));
+    txt.appendChild(ul); card.appendChild(txt);
+    return card;
+  }
+  function speed(r) {
+    var m = r.speed && r.speed.mobile, d = r.speed && r.speed.desktop;
+    $('sec-speed').hidden = !m && !d;
+    if (!m && !d) return;
+    var g = $('wr-gauges'); g.textContent = '';
+    g.appendChild(gauge('On a phone', m)); g.appendChild(gauge('On a computer', d));
+    var ms = m && m.performance;
+    $('sp-lede').textContent = ms == null ? 'Google’s speed test, on a phone and a computer.' : ms >= 90 ? 'Quick on a phone, where most local searches happen.' : 'Most visitors arrive on a phone, and slow pages lose them before they read anything.';
+    var f = m && m.field, box = $('wr-field'); box.textContent = '';
+    box.hidden = !(f && (f.lcp != null || f.inp != null || f.cls != null));
+    if (box.hidden) return;
+    box.appendChild(el('span', 'wf-k', 'Real visitors on phones, last 28 days'));
+    var row = el('div', 'wf-row');
+    function vital(name, val, good, txt) { var v = el('div', 'wf ' + (good ? 'ok' : 'no')); v.appendChild(el('small', null, name)); v.appendChild(el('b', null, txt)); v.appendChild(el('span', null, good ? 'Good' : 'Needs work')); row.appendChild(v); }
+    if (f.lcp != null) vital('Main content shows', f.lcp, f.lcp <= 2500, secs(f.lcp));
+    if (f.inp != null) vital('Taps respond in', f.inp, f.inp <= 200, Math.round(f.inp) + ' ms');
+    if (f.cls != null) vital('Layout shift', f.cls, f.cls <= 0.1, f.cls.toFixed(2));
+    box.appendChild(row);
   }
 
   function show(r, scroll) {
@@ -153,15 +264,34 @@
     tiles.appendChild(tile('Speed on a computer', d && d.performance != null ? String(d.performance) : 'n/a', 'out of 100', tone(d && d.performance)));
     tiles.appendChild(tile('To fix', String(r.counts.weaknesses), r.counts.high ? r.counts.high + ' to fix first' : 'none urgent', r.counts.high ? 'bad' : r.counts.weaknesses ? 'warn' : 'good'));
     tiles.appendChild(tile('Working well', String(r.counts.strengths), 'keep these', 'good'));
-    [['rep-weak', 'sec-weak', r.weaknesses], ['rep-strong', 'sec-strong', r.strengths], ['rep-notes', 'sec-notes', r.notes]].forEach(function (x) {
-      var box = $(x[0]); box.textContent = '';
-      (x[2] || []).forEach(function (f) { box.appendChild(finding(f)); });
-      $(x[1]).hidden = !(x[2] || []).length;
-    });
+    profile(r);
+    speed(r);
+    var ok = $('rep-strong'); ok.textContent = '';
+    (r.strengths || []).forEach(function (f) { ok.appendChild(el('li', null, f.title)); });
+    $('strong-count').textContent = String((r.strengths || []).length);
+    $('sec-strong').hidden = !(r.strengths || []).length;
+    var wk = $('rep-weak'); wk.textContent = '';
+    (r.weaknesses || []).forEach(function (f) { wk.appendChild(finding(f)); });
+    $('weak-count').textContent = String((r.weaknesses || []).length);
+    $('sec-weak').hidden = !(r.weaknesses || []).length;
+    var nt = $('rep-notes'); nt.textContent = '';
+    (r.notes || []).forEach(function (f) { var n = el('details', 'wr-note'); n.appendChild(el('summary', null, f.title)); n.appendChild(el('p', null, f.detail)); if (f.start) n.appendChild(el('p', 'why', f.start)); nt.appendChild(n); });
+    $('sec-notes').hidden = !(r.notes || []).length;
     $('report').hidden = false;
+    // Paper and white alternate down the sections that are showing (v3 sec. 5).
+    var flip = false;
+    document.querySelectorAll('#report > section.rp').forEach(function (sec) {
+      if (sec.hidden || sec.classList.contains('rp-ink')) return;
+      sec.classList.toggle('rp-white', flip); sec.classList.toggle('rp-paper', !flip); flip = !flip;
+    });
     var path = '/website-check/r/' + r.id;
     if (!r.sample && location.pathname !== path) history.replaceState(null, '', path);
-    if (scroll) $('report').scrollIntoView({ behavior: scroll === 'jump' ? 'auto' : 'smooth', block: 'start' });
+    // Straight to "Your website report", just under the fixed header, once the sections have laid out.
+    if (scroll) setTimeout(function () {
+      var head = document.querySelector('.site-header'), off = (head ? head.getBoundingClientRect().height : 64) + 24;
+      var y = $('rep-top').querySelector('.rep-head').getBoundingClientRect().top + window.scrollY - off;
+      window.scrollTo({ top: Math.max(0, y), behavior: scroll === 'jump' ? 'auto' : 'smooth' });
+    }, 80);
   }
 
   $('rep-copy').addEventListener('click', function () {

@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="stylesheet" href="/agency.css?v=16">
-<link rel="stylesheet" href="/tools.css?v=15">
+<link rel="stylesheet" href="/tools.css?v=16">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/website-check/">
@@ -100,42 +100,92 @@
   </div>
 </section>
 
-<section class="report" id="report" hidden>
-  <div class="page-w">
-    <div class="rep-head">
-      <div>
-        <span class="eyebrow">Your report</span>
-        <h2 id="rep-domain"></h2>
-        <p class="rep-meta" id="rep-meta"></p>
+<div class="report adsr webr" id="report" hidden>
+  <section class="rp rp-paper rp-top" id="rep-top">
+    <div class="page-w">
+      <div class="rep-head">
+        <div>
+          <span class="eyebrow">Your website report</span>
+          <h2 id="rep-domain"></h2>
+          <p class="rep-meta" id="rep-meta"></p>
+        </div>
+        <div class="rep-acts">
+          <button type="button" id="rep-copy">Copy the link</button>
+          <button type="button" id="rep-again">Check another site</button>
+        </div>
       </div>
-      <div class="rep-acts">
-        <button type="button" id="rep-copy">Copy the link</button>
-        <button type="button" id="rep-again">Check another site</button>
+      <div class="tiles" id="rep-tiles"></div>
+    </div>
+  </section>
+
+  <section class="rp rp-ink" id="sec-profile" hidden>
+    <div class="page-w">
+      <span class="eyebrow pf-eyebrow">How I read your site</span>
+      <h3 class="pf-h" id="pf-summary"></h3>
+      <dl class="pf-facts" id="pf-facts"></dl>
+      <div class="wr-views">
+        <figure class="wr-view">
+          <figcaption>How you look in Google</figcaption>
+          <div class="wr-serp" id="wr-serp"></div>
+          <ul class="wr-chips" id="wr-serp-chips"></ul>
+        </figure>
+        <figure class="wr-view">
+          <figcaption>The first screen on a phone</figcaption>
+          <div class="wr-phone"><div class="wr-screen" id="wr-screen"></div></div>
+          <ul class="wr-chips" id="wr-phone-chips"></ul>
+        </figure>
+      </div>
+      <div class="wr-path">
+        <span class="wr-path-k">A visitor's path through your page</span>
+        <ol class="wr-journey" id="wr-journey"></ol>
       </div>
     </div>
-    <div class="tiles" id="rep-tiles"></div>
-    <div class="rep-sec" id="sec-weak">
-      <h3>What to fix first</h3>
-      <p>Most important first. Each one says why it matters and where to start.</p>
+  </section>
+
+  <section class="rp rp-white" id="sec-speed" hidden>
+    <div class="page-w">
+      <div class="rp-h"><h3>How fast it feels</h3></div>
+      <p class="rp-lede" id="sp-lede"></p>
+      <div class="wr-gauges" id="wr-gauges"></div>
+      <div class="wr-field" id="wr-field" hidden></div>
+      <details class="rp-more-info"><summary>Where these numbers come from</summary><p>Google's own PageSpeed test, run on your page as a phone and as a computer, scored out of 100 (90 or more is good). When Google has enough visits, it also reports what real visitors on phones experienced over the last 28 days; that is the part Google uses in search.</p></details>
+    </div>
+  </section>
+
+  <section class="rp rp-paper" id="sec-strong">
+    <div class="page-w">
+      <div class="rp-h rp-tone good"><span class="rp-ico" aria-hidden="true">&#10003;</span><h3>What's working</h3><span class="rp-count" id="strong-count"></span></div>
+      <p class="rp-lede">Keep these as they are.</p>
+      <ul class="oks" id="rep-strong"></ul>
+    </div>
+  </section>
+
+  <section class="rp rp-white" id="sec-weak">
+    <div class="page-w">
+      <div class="rp-h rp-tone fix"><span class="rp-ico" aria-hidden="true">!</span><h3>What to fix</h3><span class="rp-count" id="weak-count"></span></div>
+      <p class="rp-lede">Most important first. Each one says where to start.</p>
       <div class="finds" id="rep-weak"></div>
     </div>
-    <div class="rep-sec" id="sec-strong">
-      <h3>What's working</h3>
-      <p>Keep these as they are.</p>
-      <div class="finds compact" id="rep-strong"></div>
+  </section>
+
+  <section class="rp rp-paper" id="sec-notes">
+    <div class="page-w">
+      <div class="rp-h"><h3>Worth knowing</h3></div>
+      <div class="wr-notes" id="rep-notes"></div>
     </div>
-    <div class="rep-sec" id="sec-notes">
-      <h3>Worth knowing</h3>
-      <div class="finds" id="rep-notes"></div>
+  </section>
+
+  <section class="rp rp-white" id="sec-ask">
+    <div class="page-w">
+      <div class="ask-card">
+        <h3>Want a hand with the fixes?</h3>
+        <p>I build and fix websites for small businesses in Ely and across Cambridgeshire. Ask me about this report and I'll reply myself.</p>
+        <div class="btn-row"><a href="#contact" class="btn-filled" id="rep-ask">Ask me about this report</a><a href="/web-design/" class="btn-outline">How I build websites</a></div>
+      </div>
+      <p class="rep-more">Want the week's changes in search and ads in one short email? <a href="/updates/">Read The Monday Brief</a>.</p>
     </div>
-    <div class="rep-cta">
-      <h3>Want a hand with the fixes?</h3>
-      <p>I build and fix websites for small businesses in Ely and across Cambridgeshire. Send me a question about this report and I'll reply by email.</p>
-      <div class="btn-row"><a href="#contact" class="btn-filled" id="rep-ask">Ask me about this report</a><a href="/web-design/" class="btn-outline">How I build websites</a></div>
-    </div>
-    <p class="rep-more">Want the week's changes in search and ads in one short email? <a href="/updates/">Read The Monday Brief</a>.</p>
-  </div>
-</section>
+  </section>
+</div>
 
 <section class="sec-white" id="what">
   <div class="page-w">
@@ -225,7 +275,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-website-check.js?v=4" defer></script>
+<script src="/tool-website-check.js?v=5" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>

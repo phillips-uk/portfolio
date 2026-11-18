@@ -182,7 +182,7 @@ async function gather(env, url) {
 function publicReport(r) {
   return {
     id: r.id, domain: r.domain, url: r.url, finalUrl: r.finalUrl, checkedAt: r.checkedAt,
-    page: r.page, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
+    page: r.page, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
     speed: r.speed, groups: GROUPS,
   };
 }

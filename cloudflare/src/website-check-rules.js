@@ -5,8 +5,9 @@
 // A finding: { id, group, status: 'strength' | 'weakness' | 'note', priority: 'high' | 'medium' | 'low', title, detail,
 //              why, start, link: { href, label } }
 
-export const RULES_VERSION = 3; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
-// businesses aren't asked for a town, a Maps link or local business details; "Rated 4.8 on Checkatrade" counts as a review
+export const RULES_VERSION = 4; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
+// businesses aren't asked for a town, a Maps link or local business details; "Rated 4.8 on Checkatrade" counts as a review. 4
+// (18 Nov 2026): the report carries a profile of the site (siteProfile)
 
 const LINKS = {
   web: { href: '/web-design/', label: 'Web design' },
@@ -193,6 +194,48 @@ const secs = ms => (Math.round(ms / 100) / 10).toFixed(1) + ' seconds';
 
 // ---------- the rules ----------
 
+// How the page reads to a visitor (Lewis, 18 Nov 2026: the report should show "I get it" before the list of fixes).
+// Fixed rules on what the page itself says, nothing guessed beyond it: what kind of business (its structured data,
+// else a shop's tell-tale signs), where (the place the "where" check found, or UK-wide), how people get in touch, what
+// it is built on, and the pieces Google and a phone visitor see first. Drawn on the report's ink panel.
+const PLATFORMS = [
+  ['Shopify', /cdn\.shopify\.com|myshopify\.com/i], ['Wix', /static\.wixstatic\.com|wix\.com\b/i], ['Squarespace', /squarespace\.com/i],
+  ['WordPress', /wp-content\/|wp-includes\//i], ['Webflow', /webflow\.(?:com|io)/i], ['GoDaddy', /img1\.wsimg\.com/i], ['Framer', /framerusercontent\.com/i],
+];
+const TYPE_WORDS = { LocalBusiness: 'Local business', HomeAndConstructionBusiness: 'Building and home services firm', ProfessionalService: 'Professional services firm',
+  HealthAndBeautyBusiness: 'Health and beauty business', FoodEstablishment: 'Food and drink business', MedicalBusiness: 'Medical practice', AutomotiveBusiness: 'Motor trade business',
+  Organization: 'Company', Corporation: 'Company', OnlineStore: 'Online shop', OnlineBusiness: 'Online business', LegalService: 'Legal services firm', Attorney: 'Solicitor',
+  EmergencyService: 'Emergency service', EntertainmentBusiness: 'Entertainment business', LodgingBusiness: 'Place to stay', SportsActivityLocation: 'Sports venue' };
+const REACH = { 'a phone number': 'phone', 'an email address': 'email', 'a contact form': 'a contact form' };
+const typeWords = t => TYPE_WORDS[t] || t.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^(.)(.*)$/, (m, a, b) => a + b.toLowerCase());
+const list = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+
+function siteProfile({ p, h1, nodes, types, local, foundPlace, wide, routes, contactTop, postcodes, finalUrl }) {
+  const platform = (PLATFORMS.find(([, re]) => re.test(p.raw)) || [null])[0];
+  const shopSigns = platform === 'Shopify' || types.some(t => /^(Product|Offer|OnlineStore)$/.test(t)) || /\badd to (?:cart|basket|bag)\b/i.test(p.text);
+  const org = nodes.find(n => typesOf(n).some(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t)));
+  let kind, kindFrom;
+  if (local) { const t = typesOf(local).find(isLocalType); kind = typeWords(t); kindFrom = 'structured data'; }
+  else if (shopSigns) { kind = 'Online shop'; kindFrom = platform === 'Shopify' ? 'Shopify' : 'the page'; }
+  else if (org) { kind = 'Company'; kindFrom = 'structured data'; }
+  else { kind = null; kindFrom = null; }
+  // A postcode alone reads better as the town written before it ("Ely CB7 4AA" gives "Ely").
+  const town = postcodes[0] && (p.text.match(new RegExp('([A-Z][a-z]+(?:[ -][A-Z][a-z]+)*)\\s*,?\\s*' + postcodes[0].replace(' ', '\\s*'))) || [])[1];
+  const place = foundPlace === 'a postcode' ? (town || postcodes[0] || null) : foundPlace || (wide ? 'Across the UK' : null);
+  const reach = routes.map(r => REACH[r] || r);
+  const who = kind ? (/^[AEIOU]/.test(kind) ? 'An ' : 'A ') + kind.toLowerCase() : 'A business';
+  const where = place === 'Across the UK' ? ' working across the UK' : place ? ' in ' + place : ', with no town named near the top';
+  const how = reach.length ? `, reached by ${list(reach)}.` : ', with no phone, email or form on this page.';
+  const fromTitle = (p.title.split(/\s[|\-:\u2013]\s/)[0] || '').trim();
+  const name = (local && local.name) || (org && org.name) || (/^(home|welcome|index|untitled|home page)$/i.test(fromTitle) ? '' : fromTitle) || null;
+  return {
+    summary: who + where + how,
+    kind, kindFrom, place, wide: !!wide, reach, platform, name: name ? String(name).slice(0, 60) : null,
+    google: { title: p.title || null, description: p.description || null, url: finalUrl.host.replace(/^www\./, '') + (finalUrl.pathname === '/' ? '' : finalUrl.pathname.replace(/\/$/, '').split('/').join(' \u203a ')) },
+    firstScreen: { h1: h1 || null, cta: contactTop ? { text: (contactTop.text || contactTop.href.replace(/^(tel|mailto):/i, '')).slice(0, 40), kind: /^tel:/i.test(contactTop.href) ? 'call' : /^mailto:/i.test(contactTop.href) ? 'email' : 'link' } : null },
+  };
+}
+
 export function analyse(input) {
   const out = [];
   const add = f => out.push(f);
@@ -280,7 +323,9 @@ export function analyse(input) {
     const area = n.areaServed && (Array.isArray(n.areaServed) ? n.areaServed : [n.areaServed]);
     if (area) for (const a of area) { const name = typeof a === 'string' ? a : a && a.name; if (name) localities.push(String(name)); }
   }
-  const topBits = [p.title, h1, p.description, p.top.text].join(' ');
+  // Joined with a mark the place pattern can't cross, so a title ending "Suffolk" and a heading starting "Hand-poured"
+  // don't read as a place called "Suffolk Hand" (found by the demo websites, 18 Nov 2026).
+  const topBits = [p.title, h1, p.description, p.top.text].join(' \u00b7 ');
   const foundPlace = localities.find(l => l.length > 2 && topBits.toLowerCase().includes(l.toLowerCase()))
     || (topBits.match(/\b(?:in|across|around|near|serving|based in|covering)\s+((?:[A-Z][a-z]+)(?:[\s-](?:[A-Z][a-z]+|upon|on|under|in|le))*)/) || [])[1]
     || (POSTCODE.test(p.top.text) ? 'a postcode' : null);
@@ -290,7 +335,7 @@ export function analyse(input) {
   const wide = !POSTCODE.test(p.text) && /\b(?:across|throughout|all over|around) the (?:uk|united kingdom|country)\b|\bnationwide\b|\buk[- ]wide\b|\buk delivery\b|\bdeliver(?:y|ed|ing)? (?:across|to|throughout) the uk\b|\b\d[\d,]* uk \w+/i.test(topBits);
   const notPlaces = /^(The|Our|Your|Every|All|Business|Home|Stock|Store|Touch|Time|Style|Love|Need|Store|January|February|March|April|May|June|July|August|September|October|November|December)$/;
   if (foundPlace && !notPlaces.test(foundPlace.split(/\s/)[0])) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says where you work',
-    detail: `Near the top of the page I found “${foundPlace}”.`, why: 'Local customers, Google and AI assistants all look for the place before they trust a local business.', start: 'Keep the town or area in the page title and main heading.', link: LINKS.seo });
+    detail: foundPlace === 'a postcode' ? 'Near the top of the page I found a postcode.' : `Near the top of the page I found “${foundPlace}”.`, why: 'Local customers, Google and AI assistants all look for the place before they trust a local business.', start: 'Keep the town or area in the page title and main heading.', link: LINKS.seo });
   else if (wide) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says you work across the UK',
     detail: 'The top of the page says you serve the whole country, so no town is needed.', why: 'Visitors and Google can tell straight away that you serve them wherever they are.', start: 'If you also have premises customers visit, name the town as well.', link: LINKS.seo });
   else add({ id: 'where', group: 'first', status: 'weakness', priority: 'high', title: 'Doesn’t say where you work near the top',
@@ -450,6 +495,7 @@ export function analyse(input) {
   return {
     rulesVersion: RULES_VERSION,
     page: { title: p.title, h1, lang: p.lang || null },
+    profile: siteProfile({ p, h1, nodes, types, local, foundPlace, wide, routes, contactTop, postcodes, finalUrl }),
     strengths, weaknesses, notes,
     counts: { strengths: strengths.length, weaknesses: weaknesses.length, high: weaknesses.filter(w => w.priority === 'high').length },
   };
