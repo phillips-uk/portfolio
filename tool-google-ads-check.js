@@ -237,12 +237,14 @@
     var pm = d.pmaxSearchTerms || 0, all = d.searchTerms + pm, hasPmax = r.facts && (r.facts.channels || []).indexOf('PERFORMANCE_MAX') >= 0;
     $('ng-note').textContent = 'From the ' + all + ' search term' + (all === 1 ? '' : 's') + ' that spent ' +
       (pm ? 'in your Search campaigns (' + d.searchTerms + ') and Performance Max (' + pm + ')' : 'in your Search campaigns') +
-      ' in the last 30 days. Each word or phrase appears in two or more of them.' + (hasPmax && !pm ? ' Performance Max searches were not available this time.' : '');
+      ' in the last 30 days. Each word or phrase appears in two or more of them.' + (hasPmax && !pm ? ' Performance Max searches were not available this time.' : '') +
+      ' Costing money leaves out words that match what you sell (your products, keywords and campaign names' + (d.ownLeftOut ? ': ' + d.ownLeftOut + ' this time' : '') + '), since those are for bidding, not blocking. A word only shows once it has spent ' +
+      (d.costPerConversion ? cur.format(d.minSpend) + ', your average cost per conversion,' : cur.format(d.minSpend || 2)) + ' without a conversion.';
     function draw() {
       var rows = d[ngState.kind].filter(function (x) { return !ngState.n || x.n === ngState.n; });
       var body = $('ng-rows'); body.textContent = '';
       if (!rows.length) {
-        var tr = el('tr'), td = el('td', 'empty', ngState.kind === 'wasted' ? 'Nothing here: no repeated words that only cost money.' : 'Nothing here yet: no repeated words with conversions.');
+        var tr = el('tr'), td = el('td', 'empty', ngState.kind === 'wasted' ? 'Nothing here: no off-topic words have spent enough without a conversion to call them waste.' : 'Nothing here yet: no repeated words with conversions.');
         td.colSpan = 5; tr.appendChild(td); body.appendChild(tr); return;
       }
       rows.forEach(function (x) {

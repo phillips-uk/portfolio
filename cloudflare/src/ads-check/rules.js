@@ -815,6 +815,34 @@ function ruleKeywords(m, out) {
 // 4. Search terms (audit.py check_search_terms and _compute_ngrams)
 // Every word and phrase of 1 to 3 words across the search terms, with what the terms containing it cost and brought in.
 // Shared by the n-gram finding and the report's n-gram table (audit.py _compute_ngrams).
+// Guards on the "costing money" n-grams (Lewis, 18 Nov 2026, after the Lee Renée run listed "rings" and "earrings"
+// as words to block). 1. Relevance first: a word or phrase that shares a word with what the account sells (product
+// titles and types, keywords, asset group, campaign and ad group names) is never put forward as a negative; it is the
+// business's own vocabulary, and whether it pays is a bidding question, not a blocking one. Plurals match singulars.
+// 2. Enough evidence: it must have spent at least the account's average cost per conversion with none, so one sale's
+// worth of spend without a sale is not called waste. With no conversions in the account the old £2 floor stays.
+const plainWord = (w) => (w.length > 3 && w.endsWith('s') ? w.slice(0, -1) : w);
+function ownWords(m) {
+  const vocab = new Set();
+  const add = (text) => ngramWords(text).forEach((w) => vocab.add(plainWord(w)));
+  m.products.forEach((p) => { add(p.title); add(p.type); });
+  m.keywords.forEach((k) => add(k.text));
+  m.campaigns.forEach((c) => add(c.name));
+  m.adGroups.forEach((g) => add(g.name));
+  m.rows('assetGroups').forEach((r) => add(r.assetGroup?.name));
+  return vocab;
+}
+function wasteGuard(m) {
+  const conv = m.campaigns.reduce((s, c) => s + c.conversions, 0);
+  const cpa = conv > 0 ? m.totalSpend / conv : null;
+  const vocab = ownWords(m);
+  return {
+    min: cpa ? Math.max(2, cpa) : 2,
+    cpa,
+    ownWord: (ngram) => ngram.split(' ').some((w) => vocab.has(plainWord(w))),
+  };
+}
+
 function ngramTerms(m) { return m.searchTerms.concat(m.pmaxSearchTerms || []); }
 function ngramAgg(m) {
   const agg = new Map();
@@ -846,9 +874,13 @@ function ngramTable(m) {
   if (!terms.length) return null;
   const rows = [...ngramAgg(m).values()].filter((a) => a.termCount >= 2);
   const shape = (a) => ({ text: clean(a.ngram, 50), n: a.n, terms: a.termCount, clicks: a.clicks, cost: round2(a.cost), conversions: Math.round(a.conversions * 10) / 10 });
-  const wasted = rows.filter((a) => a.conversions === 0 && a.cost >= 2).sort((a, b) => b.cost - a.cost).slice(0, 20).map(shape);
+  const guard = wasteGuard(m);
+  const unconverted = rows.filter((a) => a.conversions === 0 && a.cost >= 2);
+  const wasted = unconverted.filter((a) => a.cost >= guard.min && !guard.ownWord(a.ngram)).sort((a, b) => b.cost - a.cost).slice(0, 20).map(shape);
+  const ownLeftOut = unconverted.filter((a) => a.cost >= guard.min && guard.ownWord(a.ngram)).length;
   const performing = rows.filter((a) => a.conversions > 0).sort((a, b) => b.conversions - a.conversions || a.cost - b.cost).slice(0, 20).map(shape);
-  return { searchTerms: m.searchTerms.length, pmaxSearchTerms: (m.pmaxSearchTerms || []).length, wasted, performing, wastedSpend: round2(terms.filter((t) => t.conversions === 0).reduce((s, t) => s + t.cost, 0)) };
+  return { searchTerms: m.searchTerms.length, pmaxSearchTerms: (m.pmaxSearchTerms || []).length, wasted, performing,
+    minSpend: round2(guard.min), costPerConversion: guard.cpa ? round2(guard.cpa) : null, ownLeftOut, wastedSpend: round2(terms.filter((t) => t.conversions === 0).reduce((s, t) => s + t.cost, 0)) };
 }
 
 // When conversions come in: day of week by hour (account time zone), last 30 days. Null when the read failed or is empty.
@@ -944,8 +976,9 @@ function ruleSearchTerms(m, out) {
   // 1+ spend; wasted means no conversions and 2+ spend; top 15; reported when
   // the total reaches 5 (audit.py _compute_ngrams and _score_ngrams).
   const agg = ngramAgg(m);
+  const guard = wasteGuard(m);
   const wasted = [...agg.values()]
-    .filter((a) => a.termCount >= 2 && a.cost >= 1 && a.conversions === 0 && a.cost >= 2)
+    .filter((a) => a.termCount >= 2 && a.conversions === 0 && a.cost >= guard.min && !guard.ownWord(a.ngram))
     .sort((a, b) => b.cost - a.cost)
     .slice(0, 15);
   const total = wasted.reduce((s, a) => s + a.cost, 0);

@@ -273,12 +273,30 @@ const expectedProblems = [
   'spend-no-conversions', 'budget-limited', 'learning-phase', 'manual-cpc-ready-for-smart-bidding',
   'location-presence', 'search-display-network',
   'low-quality-score', 'duplicate-keywords', 'broad-match-manual-bidding', 'no-negative-keywords',
-  'search-term-waste', 'ngram-waste', 'max-conversions-no-target',
+  'search-term-waste', 'max-conversions-no-target',
   'single-weak-ad', 'weak-rsa-strength', 'missing-sitelinks-callouts', 'rsa-display-paths',
   'bloated-ad-groups', 'empty-ad-groups', 'homepage-landing-pages',
   'no-audiences', 'no-device-adjustments', 'no-schedule-adjustments',
 ];
 for (const id of expectedProblems) assert.ok(badIds.includes(id), `problem account flags ${id}`);
+
+// N-gram waste guards (18 Nov 2026). The problem account's "apprenticeship" spent £42 against a £50 average cost per
+// conversion, so it is not yet proven waste; "plumbing" is the business's own word and is never put forward.
+assert.ok(!badIds.includes('ngram-waste'), 'n-grams under one cost per conversion are not called waste');
+{
+  const pm = (t, cost, conv) => ({ campaignSearchTermView: { searchTerm: t }, campaign: { id: '9', name: 'PMax' }, metrics: { impressions: '100', clicks: '10', costMicros: String(cost * 1e6), conversions: conv } });
+  const withPmax = runRules({ ...problem, pmaxSearchTerms: [
+    pm('plumbing apprenticeship course', 40, 0), pm('apprenticeship wages', 35, 0),
+    pm('plumbers near me', 60, 0), pm('plumber quotes', 55, 0),
+  ] }, { currency: 'GBP', today: '2026-11-18' });
+  const ng = withPmax.ngrams;
+  const words = ng.wasted.map((w) => w.text);
+  assert.ok(words.includes('apprenticeship'), 'an off-topic word over one cost per conversion is listed');
+  assert.ok(!words.some((w) => /plumb/.test(w)), 'the business\'s own words (and their plurals) are never listed');
+  assert.ok(ng.ownLeftOut >= 1, 'own words left out are counted for the note');
+  assert.equal(ng.minSpend, 50, 'the bar is the account cost per conversion');
+  assert.ok(withPmax.weaknesses.some((w) => w.id === 'ngram-waste'), 'the finding uses the same guards');
+}
 assert.equal(new Set(badIds).size, badIds.length, 'no duplicate weakness ids');
 
 const byId = Object.fromEntries(bad.weaknesses.map((w) => [w.id, w]));
