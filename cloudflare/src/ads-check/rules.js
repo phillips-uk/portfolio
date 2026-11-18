@@ -1659,6 +1659,110 @@ function ruleSettings(m, out) {
 }
 
 // ---------------------------------------------------------------------------
+// How the account is built (Lewis, 18 Nov 2026: show the client we read it the right way). Fixed rules on the
+// account's own data, never a guess beyond it: the business model from the main conversion goals and Shopping, what it
+// sells from its product types (else its Search ad group names), the campaigns grouped by type and role (brand,
+// non-brand, competitor, remarketing), and whether the campaign names follow one pattern.
+// ---------------------------------------------------------------------------
+
+const CHANNEL_LABEL = {
+  SEARCH: 'Search', PERFORMANCE_MAX: 'Performance Max', SHOPPING: 'Shopping', DISPLAY: 'Display',
+  VIDEO: 'YouTube', DEMAND_GEN: 'Demand Gen', DISCOVERY: 'Demand Gen', MULTI_CHANNEL: 'App', LOCAL: 'Local',
+  SMART: 'Smart', HOTEL: 'Hotel', TRAVEL: 'Travel', LOCAL_SERVICES: 'Local Services',
+};
+const SALE_CATS = new Set(['PURCHASE', 'STORE_SALE']);
+const LEAD_CATS = new Set(['SUBMIT_LEAD_FORM', 'PHONE_CALL_LEAD', 'IMPORTED_LEAD', 'QUALIFIED_LEAD', 'CONVERTED_LEAD', 'CONTACT', 'REQUEST_QUOTE', 'BOOK_APPOINTMENT', 'SIGNUP', 'GET_DIRECTIONS']);
+const SEPARATORS = [' | ', '|', ' - ', ' \u2013 ', '-', '_', ':', '/', '>'];
+const titleCase = (t) => String(t || '').trim().replace(/\s+/g, ' ').replace(/^./, (c) => c.toUpperCase());
+
+function campaignRole(c, kwTokensByCampaign) {
+  const n = String(c.name || '').toLowerCase();
+  if (/remarket|rmkt|retarget|\brlsa\b/.test(n)) return 'Remarketing';
+  if (/competitor|\bcomp\b|conquest/.test(n)) return 'Competitor';
+  if (c.channel !== 'SEARCH') return null;
+  if (/\bbrand(ed)?\b/.test(n) && !/non[- ]?brand|generic/.test(n)) return 'Brand';
+  const kw = kwTokensByCampaign.get(c.id);
+  if (kw && kw.size) {
+    const allowed = new Set([...nameTokens(c.name), 'the', 'a', 'an', 'and', 'or']);
+    if ([...kw].every((t) => allowed.has(t))) return 'Brand';
+  }
+  return 'Non-brand';
+}
+
+function namingPattern(names) {
+  if (names.length < 2) return null;
+  let best = null;
+  for (const sep of SEPARATORS) {
+    const withSep = names.filter((n) => n.includes(sep));
+    if (withSep.length / names.length < 0.8) continue;
+    const counts = withSep.map((n) => n.split(sep).length);
+    const common = counts.sort((a, b) => counts.filter((x) => x === b).length - counts.filter((x) => x === a).length)[0];
+    const share = withSep.filter((n) => n.split(sep).length === common).length / names.length;
+    if (!best || share > best.share) best = { separator: sep.trim() || sep, parts: common, share };
+  }
+  return best && best.share >= 0.6 ? { separator: best.separator, parts: best.parts, consistent: best.share >= 0.8 } : { separator: null, parts: 0, consistent: false };
+}
+
+function accountProfile(m) {
+  const live = m.campaigns.filter((c) => c.spend > 0 || c.impressions > 0);
+  if (!live.length) return null;
+  const total = live.reduce((s, c) => s + c.spend, 0) || 1;
+
+  // Business model: the categories of the main (primary, enabled) conversion goals, plus Shopping or products.
+  const primary = m.conversionActions.filter((a) => a.status === 'ENABLED' && a.primary);
+  const sales = primary.some((a) => SALE_CATS.has(a.category)) || live.some((c) => c.channel === 'SHOPPING') || m.products.length > 0;
+  const leads = primary.some((a) => LEAD_CATS.has(a.category));
+  const model = sales && leads ? 'both' : sales ? 'shop' : leads ? 'leads' : 'unknown';
+  const tracksValue = live.some((c) => c.convValue > 0);
+
+  // What it sells: product types by spend, else the busiest Search ad group names (not brand ones).
+  let sells = [], sellsFrom = null;
+  const byType = new Map();
+  m.products.forEach((p) => { if (p.type) byType.set(p.type, (byType.get(p.type) || 0) + p.spend + p.impressions / 1e4); });
+  if (byType.size) { sells = [...byType.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([t]) => titleCase(clean(t, 28))); sellsFrom = 'product types'; }
+  else {
+    const byGroup = new Map();
+    m.keywords.filter((k) => k.channel === 'SEARCH' && !isBrandName(k.adGroup) && !isBrandName(k.campaign)).forEach((k) => byGroup.set(k.adGroup, (byGroup.get(k.adGroup) || 0) + k.impressions + 1));
+    if (byGroup.size) { sells = [...byGroup.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([g]) => titleCase(clean(g, 28))); sellsFrom = 'ad groups'; }
+  }
+
+  // Campaigns grouped by type, Search split by role.
+  const kwTokensByCampaign = new Map();
+  for (const k of m.keywords) {
+    if (k.channel !== 'SEARCH') continue;
+    const set = kwTokensByCampaign.get(k.campaignId) || new Set();
+    for (const t of nameTokens(k.text)) set.add(t);
+    kwTokensByCampaign.set(k.campaignId, set);
+  }
+  const agByCampaign = new Map(); m.adGroups.forEach((g) => agByCampaign.set(g.campaignId, (agByCampaign.get(g.campaignId) || 0) + 1));
+  const kwByCampaign = new Map(); m.keywords.forEach((k) => kwByCampaign.set(k.campaignId, (kwByCampaign.get(k.campaignId) || 0) + 1));
+  const assetByCampaign = new Map(); m.rows('assetGroups').forEach((r) => { const id = String(r.campaign?.id ?? ''); assetByCampaign.set(id, (assetByCampaign.get(id) || 0) + 1); });
+  const groups = new Map();
+  for (const c of live.sort((a, b) => b.spend - a.spend)) {
+    const role = campaignRole(c, kwTokensByCampaign);
+    const label = (CHANNEL_LABEL[c.channel] || titleCase(String(c.channel).toLowerCase().replace(/_/g, ' '))) + (role && c.channel === 'SEARCH' ? ` · ${role}` : '');
+    const g = groups.get(label) || { label, channel: c.channel, role, spend: 0, conversions: 0, campaigns: [] };
+    const inside = c.channel === 'PERFORMANCE_MAX' ? plural(assetByCampaign.get(c.id) || 0, 'asset group')
+      : c.channel === 'SEARCH' ? `${plural(agByCampaign.get(c.id) || 0, 'ad group')}, ${plural(kwByCampaign.get(c.id) || 0, 'keyword')}` : null;
+    g.spend += c.spend; g.conversions += c.conversions;
+    g.campaigns.push({ name: clean(c.name, 48), role: c.channel === 'SEARCH' ? null : role, spend: round2(c.spend), share: Math.round((c.spend / total) * 1000) / 10, conversions: Math.round(c.conversions * 10) / 10, cpa: c.conversions > 0 ? round2(c.spend / c.conversions) : null, inside });
+    groups.set(label, g);
+  }
+  const list = [...groups.values()].map((g) => ({ ...g, spend: round2(g.spend), share: Math.round((g.spend / total) * 1000) / 10, conversions: Math.round(g.conversions * 10) / 10 }))
+    .sort((a, b) => b.spend - a.spend);
+
+  // One sentence: what it is, and where the money goes.
+  const who = { shop: 'An online shop', leads: 'A business that wins enquiries', both: 'A business that sells online and takes enquiries', unknown: 'An advertiser' }[model];
+  const main = list[0];
+  const mainName = main.label.replace(' · ', ' ').replace('Search Non-brand', 'non-brand Search').replace('Search Brand', 'brand Search');
+  let summary = `${who}, spending ${Math.round(main.share)}% of its budget on ${mainName}`;
+  if (list[1]) summary += list[1].share < 10 ? `, with a small ${list[1].label.replace('Search · Brand', 'brand Search').replace('Search · Non-brand', 'non-brand Search').replace(' · ', ' ')} campaign alongside` : ` and ${Math.round(list[1].share)}% on ${list[1].label.replace('Search · Brand', 'brand Search').replace('Search · Non-brand', 'non-brand Search').replace(' · ', ' ')}`;
+  summary += '.';
+
+  return { model, tracksValue, sells, sellsFrom, summary, naming: namingPattern(live.map((c) => c.name)), campaigns: live.length, groups: list };
+}
+
+// ---------------------------------------------------------------------------
 // Facts for the report header and the estimates
 // ---------------------------------------------------------------------------
 
@@ -1750,5 +1854,5 @@ export function runRules(data = {}, ctx = {}) {
   // Stable sort: high, medium, low, keeping rule order within each.
   weaknesses.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 
-  return { strengths, weaknesses, facts: buildFacts(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour) };
+  return { strengths, weaknesses, facts: buildFacts(m), profile: accountProfile(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour) };
 }

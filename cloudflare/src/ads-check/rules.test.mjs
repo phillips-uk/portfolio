@@ -299,6 +299,17 @@ assert.ok(!badIds.includes('ngram-waste'), 'n-grams under one cost per conversio
 }
 assert.equal(new Set(badIds).size, badIds.length, 'no duplicate weakness ids');
 
+// How the account is read (18 Nov 2026): lead goals, Search only, grouped by role, what it sells from ad groups.
+{
+  const p = bad.profile;
+  assert.equal(p.model, 'leads', 'lead goals read as a lead business');
+  assert.equal(p.groups.length, 1, 'all Search, one group');
+  assert.equal(p.groups[0].label, 'Search · Non-brand', 'non-brand Search');
+  assert.equal(p.groups[0].campaigns.length, 3, 'three campaigns in the group');
+  assert.ok(p.sells.length > 0 && p.sellsFrom === 'ad groups', 'what it sells comes from the ad groups');
+  assert.ok(/enquiries/.test(p.summary) && !/\u2014/.test(p.summary), 'summary names the model, no long dashes');
+}
+
 const byId = Object.fromEntries(bad.weaknesses.map((w) => [w.id, w]));
 assert.equal(byId['no-negative-keywords'].items, 2, 'two campaigns lack negatives');
 assert.equal(byId['search-term-waste'].items, 3, 'three off-target search terms');

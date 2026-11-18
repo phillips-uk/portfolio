@@ -124,26 +124,26 @@
     return t;
   }
 
+  // A weakness: the tone, the title and the price; what it found, why it matters and where to start sit behind
+  // "Why and where to start" (Lewis, 18 Nov 2026: hide text unless it's needed).
   function finding(f, line) {
-    var weak = !!line || f.fixType;
-    var card = el('article', 'find ' + (weak ? 'weak ' + f.priority : 'strong'));
-    card.appendChild(el('span', 'mk', weak ? '!' : '✓'));
+    var card = el('article', 'find weak ' + f.priority);
+    card.appendChild(el('span', 'mk', '!'));
     var body = el('div', 'fb'); card.appendChild(body);
     var h = el('h4', null, f.title);
-    if (weak) h.appendChild(el('span', 'pr ' + f.priority, f.priority === 'high' ? 'Fix first' : f.priority === 'medium' ? 'Worth fixing' : 'Small'));
+    h.appendChild(el('span', 'pr ' + f.priority, f.priority === 'high' ? 'Fix first' : f.priority === 'medium' ? 'Worth fixing' : 'Small'));
     body.appendChild(h);
-    body.appendChild(el('p', null, f.detail));
-    if (weak) {
-      if (f.why) body.appendChild(el('p', 'why', f.why));
-      if (f.start) { var s = el('p', 'start'); s.appendChild(el('b', null, 'Start here: ')); s.appendChild(document.createTextNode(f.start)); body.appendChild(s); }
-      if (f.startLink && /^\/[a-z0-9\-\/]*$/.test(f.startLink)) { var a = el('a', 'go', 'Read more →'); a.href = f.startLink; body.appendChild(a); }
-      if (line) {
-        var c = el('p', 'cost');
-        c.appendChild(document.createTextNode('If I fix it: about ' + hrs(line.hours) + ', '));
-        c.appendChild(el('b', null, (line.fromPrice ? 'from ' : '') + GBP.format(line.price)));
-        c.appendChild(document.createTextNode(' (' + line.itemLabel + ': ' + line.items + ')'));
-        body.appendChild(c);
-      }
+    var d = el('details'); d.appendChild(el('summary', null, 'Why and where to start'));
+    d.appendChild(el('p', null, f.detail));
+    if (f.why) d.appendChild(el('p', 'why', f.why));
+    if (f.start) { var st = el('p', 'start'); st.appendChild(el('b', null, 'Start here: ')); st.appendChild(document.createTextNode(f.start)); d.appendChild(st); }
+    if (f.startLink && /^\/[a-z0-9\-\/]*$/.test(f.startLink)) { var a = el('a', 'go', 'Read the guide →'); a.href = f.startLink; d.appendChild(a); }
+    body.appendChild(d);
+    if (line) {
+      var px = el('div', 'px');
+      px.appendChild(el('b', null, (line.fromPrice ? 'from ' : '') + GBP.format(line.price)));
+      px.appendChild(el('small', null, 'about ' + hrs(line.hours)));
+      card.appendChild(px);
     }
     return card;
   }
@@ -225,15 +225,66 @@
     if (!preview || demo) document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
   }
 
+  // ---------- how I read your account (ink panel and structure diagram) ----------
+  var MODEL = { shop: 'Online shop', leads: 'Enquiries and leads', both: 'Online sales and enquiries', unknown: 'Not clear from the goals' };
+  var SHADES = [100, 72, 50, 34, 22, 14];
+  function profile(r, cur) {
+    var p = r.profile, sec = $('sec-profile');
+    sec.hidden = !p || !p.groups || !p.groups.length;
+    if (sec.hidden) return;
+    $('pf-summary').textContent = p.summary;
+    var facts = $('pf-facts'); facts.textContent = '';
+    function fact(k, v, sub) { var d = el('div'); d.appendChild(el('dt', null, k)); var dd = el('dd', null, v); if (sub) dd.appendChild(el('small', null, sub)); d.appendChild(dd); facts.appendChild(d); }
+    fact('Business', MODEL[p.model] || MODEL.unknown, p.model === 'unknown' ? 'No sale or lead goal set as main' : 'From your main conversion goals');
+    if (p.sells && p.sells.length) fact('What you sell', p.sells.slice(0, 3).join(', '), 'From your ' + p.sellsFrom);
+    else fact('What you sell', 'Not clear from the account', 'No product types or Search ad groups');
+    fact('Sale values', p.tracksValue ? 'Tracked' : 'Not tracked', p.tracksValue ? 'Conversions carry a value' : (p.model === 'leads' ? 'Normal for enquiries' : 'Conversions have no value'));
+    fact('Campaign names', p.naming && p.naming.consistent ? 'One pattern' : p.campaigns < 2 ? 'One campaign' : 'No single pattern',
+      p.naming && p.naming.consistent ? p.naming.parts + ' parts, split by "' + p.naming.separator + '"' : p.campaigns + ' active campaign' + (p.campaigns === 1 ? '' : 's'));
+    // where the money goes: one bar, a shade of the brand per group
+    var split = $('pf-split'); split.textContent = '';
+    split.setAttribute('aria-label', 'Spend by campaign type: ' + p.groups.map(function (g) { return g.label + ' ' + Math.round(g.share) + '%'; }).join(', '));
+    var bar = el('div', 'pf-bar'), leg = el('div', 'pf-legend');
+    p.groups.forEach(function (g, i) {
+      var c = 'color-mix(in oklab, var(--brand-on-ink) ' + SHADES[Math.min(i, SHADES.length - 1)] + '%, var(--ink))';
+      var seg = el('i'); seg.style.flex = String(Math.max(g.share, 0.5)); seg.style.background = c; bar.appendChild(seg);
+      var item = el('span'); var sw = el('b'); sw.style.background = c; item.appendChild(sw); item.appendChild(document.createTextNode(g.label + ' '));
+      item.appendChild(el('em', null, Math.round(g.share) + '%')); leg.appendChild(item);
+    });
+    split.appendChild(bar); split.appendChild(leg);
+    // the structure: the account, its campaign types, each campaign with its share of spend
+    var tree = $('pf-tree'); tree.textContent = '';
+    var root = el('div', 'pf-root', r.accountName || 'Your account'); root.appendChild(el('small', null, p.campaigns + ' campaign' + (p.campaigns === 1 ? '' : 's')));
+    tree.appendChild(root);
+    var groups = el('div', 'pf-groups');
+    p.groups.forEach(function (g) {
+      var box = el('div', 'pf-group'), gh = el('div', 'pf-gh');
+      gh.appendChild(el('b', null, g.label)); gh.appendChild(el('em', null, cur.format(g.spend)));
+      box.appendChild(gh);
+      g.campaigns.slice(0, 6).forEach(function (c) {
+        var row = el('div', 'pf-camp');
+        row.appendChild(el('div', 'pf-cn', c.name));
+        var cb = el('div', 'pf-cbar'), fill = el('i'); fill.style.width = Math.max(2, c.share) + '%'; cb.appendChild(fill); row.appendChild(cb);
+        var meta = el('div', 'pf-cm');
+        meta.appendChild(el('span', null, Math.round(c.share) + '% of spend'));
+        meta.appendChild(el('span', null, c.conversions + ' conv.' + (c.cpa ? ' · ' + cur.format(c.cpa) + ' each' : '')));
+        if (c.inside) meta.appendChild(el('span', null, c.inside));
+        row.appendChild(meta); box.appendChild(row);
+      });
+      if (g.campaigns.length > 6) box.appendChild(el('div', 'pf-cm', '+ ' + (g.campaigns.length - 6) + ' more'));
+      groups.appendChild(box);
+    });
+    tree.appendChild(groups);
+  }
+
   // ---------- words in your searches (n-grams) ----------
   var ngState = { kind: 'wasted', n: 0 };
   function ngrams(r, cur) {
     var d = r.ngrams, sec = $('sec-ngrams');
     sec.hidden = !d || (!d.wasted.length && !d.performing.length);
     if (sec.hidden) return;
-    $('ng-lede').textContent = 'Words and phrases that keep coming up across your search terms. ' +
-      (d.wastedSpend > 0 ? cur.format(d.wastedSpend) + ' went on search terms with no conversions in the last 30 days. ' : '') +
-      'One negative keyword on a word that never converts blocks every search containing it, including ones you haven’t seen yet.';
+    $('ng-lede').textContent = (d.wastedSpend > 0 ? cur.format(d.wastedSpend) + ' went on searches with no conversions. ' : '') +
+      'One negative on an off-topic word blocks every search that contains it.';
     var pm = d.pmaxSearchTerms || 0, all = d.searchTerms + pm, hasPmax = r.facts && (r.facts.channels || []).indexOf('PERFORMANCE_MAX') >= 0;
     $('ng-note').textContent = 'From the ' + all + ' search term' + (all === 1 ? '' : 's') + ' that spent ' +
       (pm ? 'in your Search campaigns (' + d.searchTerms + ') and Performance Max (' + pm + ')' : 'in your Search campaigns') +
@@ -284,8 +335,7 @@
     var dayTot = d.conversions.map(function (row) { return row.reduce(function (s, v) { return s + v; }, 0); });
     var hourTot = d.conversions[0].map(function (_, h) { return d.conversions.reduce(function (s, row) { return s + row[h]; }, 0); });
     var bestDay = dayTot.indexOf(Math.max.apply(null, dayTot)), bestHour = hourTot.indexOf(Math.max.apply(null, hourTot));
-    $('hm-lede').textContent = Math.round(d.totalConversions * 10) / 10 + ' conversions in the last 30 days. The most came on ' + DAYS_LONG[bestDay] +
-      ', and the busiest hour across the week was ' + hour(bestHour) + ' to ' + hour((bestHour + 1) % 24) + '. Useful for ad schedules, opening hours and when to answer the phone.';
+    $('hm-lede').textContent = 'Busiest day: ' + DAYS_LONG[bestDay].replace(/s$/, '') + '. Busiest hour: ' + hour(bestHour) + ' to ' + hour((bestHour + 1) % 24) + '.';
     function draw() {
       var block = narrow.matches ? 4 : 1, cols = 24 / block;
       var grid = d.conversions.map(function (row) { var out = []; for (var c = 0; c < cols; c++) { var v = 0; for (var k = 0; k < block; k++) v += row[c * block + k]; out.push(Math.round(v * 10) / 10); } return out; });
@@ -325,14 +375,27 @@
     r.weaknesses.forEach(function (w) { wk.appendChild(finding(w, byId[w.id])); });
     $('sec-weak').hidden = !r.weaknesses.length;
     var st = $('rep-strong'); st.textContent = '';
-    r.strengths.forEach(function (s) { st.appendChild(finding(s, null)); });
+    r.strengths.forEach(function (s) { var li = el('li', null, s.title); li.title = s.detail || ''; st.appendChild(li); });
+    $('weak-count').textContent = String(r.weaknesses.length); $('strong-count').textContent = String(r.strengths.length);
     $('sec-strong').hidden = !r.strengths.length;
+    profile(r, cur);
     ngrams(r, cur);
     heatmap(r);
     fixes(r);
     $('report').hidden = false;
+    // Paper and white alternate down the sections that are showing, so two of the same never sit together (v3 sec. 5).
+    var flip = false;
+    document.querySelectorAll('#report > section.rp').forEach(function (sec) {
+      if (sec.hidden || sec.classList.contains('rp-ink')) return;
+      sec.classList.toggle('rp-white', flip); sec.classList.toggle('rp-paper', !flip); flip = !flip;
+    });
     if (!r.sample && location.pathname !== '/google-ads-audit/r/' + r.id) history.replaceState(null, '', '/google-ads-audit/r/' + r.id);
-    if (scroll) $('report').scrollIntoView({ behavior: scroll === 'jump' ? 'auto' : 'smooth', block: 'start' });
+    // Straight to "Your Google Ads report", just under the fixed header, once the new sections have laid out.
+    if (scroll) setTimeout(function () {
+      var head = document.querySelector('.site-header'), off = (head ? head.getBoundingClientRect().height : 64) + 24;
+      var y = $('rep-top').querySelector('.rep-head').getBoundingClientRect().top + window.scrollY - off;
+      window.scrollTo({ top: Math.max(0, y), behavior: scroll === 'jump' ? 'auto' : 'smooth' });
+    }, 80);
   }
 
   $('rep-copy').addEventListener('click', function () {

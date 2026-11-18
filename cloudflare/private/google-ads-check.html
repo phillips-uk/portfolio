@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="stylesheet" href="/agency.css?v=16">
-<link rel="stylesheet" href="/tools.css?v=7">
+<link rel="stylesheet" href="/tools.css?v=8">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
@@ -131,60 +131,90 @@
   </div>
 </section>
 
-<section class="report" id="report" hidden>
-  <div class="page-w">
-    <div class="rep-head">
-      <div>
-        <span class="eyebrow">Your Google Ads report</span>
-        <h2 id="rep-name"></h2>
-        <p class="rep-meta" id="rep-meta"></p>
+<div class="report adsr" id="report" hidden>
+  <section class="rp rp-paper rp-top" id="rep-top">
+    <div class="page-w">
+      <div class="rep-head">
+        <div>
+          <span class="eyebrow">Your Google Ads report</span>
+          <h2 id="rep-name"></h2>
+          <p class="rep-meta" id="rep-meta"></p>
+        </div>
+        <div class="rep-acts">
+          <button type="button" id="rep-copy">Copy the link</button>
+          <button type="button" id="rep-print">Print or save as PDF</button>
+        </div>
       </div>
-      <div class="rep-acts">
-        <button type="button" id="rep-copy">Copy the link</button>
-        <button type="button" id="rep-print">Print or save as PDF</button>
-      </div>
+      <div class="tiles" id="rep-tiles"></div>
     </div>
-    <div class="tiles" id="rep-tiles"></div>
-    <div class="rep-sec" id="sec-weak">
-      <h3>What to fix</h3>
-      <p>Most important first. Each one says why it matters, where to start, and what it would cost me to fix.</p>
+  </section>
+
+  <section class="rp rp-ink" id="sec-profile" hidden>
+    <div class="page-w">
+      <span class="eyebrow pf-eyebrow">How I read your account</span>
+      <h3 class="pf-h" id="pf-summary"></h3>
+      <dl class="pf-facts" id="pf-facts"></dl>
+      <div class="pf-split" id="pf-split" role="img"></div>
+      <div class="pf-tree" id="pf-tree"></div>
+    </div>
+  </section>
+
+  <section class="rp rp-white" id="sec-weak">
+    <div class="page-w">
+      <div class="rp-h"><h3>What to fix</h3><span class="rp-count" id="weak-count"></span></div>
       <div class="finds" id="rep-weak"></div>
     </div>
-    <div class="rep-sec" id="sec-strong">
-      <h3>What's working</h3>
-      <p>Keep these as they are.</p>
-      <div class="finds compact" id="rep-strong"></div>
+  </section>
+
+  <section class="rp rp-paper" id="sec-strong">
+    <div class="page-w">
+      <div class="rp-h"><h3>What's working</h3><span class="rp-count" id="strong-count"></span></div>
+      <ul class="oks" id="rep-strong"></ul>
     </div>
-    <div class="rep-sec" id="sec-ngrams" hidden>
-      <h3>Words in your searches</h3>
-      <p id="ng-lede"></p>
+  </section>
+
+  <section class="rp rp-white" id="sec-ngrams" hidden>
+    <div class="page-w">
+      <div class="rp-h"><h3>Words in your searches</h3></div>
+      <p class="rp-lede" id="ng-lede"></p>
       <div class="ng-tabs" id="ng-kind" role="group" aria-label="Show"><button type="button" data-kind="wasted" aria-pressed="true">Costing money</button><button type="button" data-kind="performing" aria-pressed="false">Bringing conversions</button></div>
       <div class="ng-tabs sub" id="ng-len" role="group" aria-label="Length"><button type="button" data-n="0" aria-pressed="true">All</button><button type="button" data-n="1" aria-pressed="false">1 word</button><button type="button" data-n="2" aria-pressed="false">2 words</button><button type="button" data-n="3" aria-pressed="false">3 words</button></div>
       <div class="ng-card"><table class="ng-table"><thead><tr><th>Word or phrase</th><th class="r wide">Searches</th><th class="r wide">Clicks</th><th class="r">Cost</th><th class="r">Conv.</th></tr></thead><tbody id="ng-rows"></tbody></table></div>
-      <p class="ng-note" id="ng-note"></p>
+      <details class="rp-more-info"><summary>How this list is made</summary><p id="ng-note"></p></details>
     </div>
-    <div class="rep-sec" id="sec-heat" hidden>
-      <h3>When conversions come in</h3>
-      <p id="hm-lede"></p>
+  </section>
+
+  <section class="rp rp-paper" id="sec-heat" hidden>
+    <div class="page-w">
+      <div class="rp-h"><h3>When conversions come in</h3></div>
+      <p class="rp-lede" id="hm-lede"></p>
       <div class="hm-card"><div class="hm" id="hm-grid" role="img"></div><div class="hm-key">Fewer <b></b> More conversions</div></div>
-      <p class="ng-note">Last 30 days, in your account's time zone. That's four or five of each weekday, so look for patterns rather than single squares.</p>
+      <details class="rp-more-info"><summary>How to read this</summary><p>Last 30 days, in your account's time zone. That's four or five of each weekday, so look for patterns rather than single squares. Useful for ad schedules, opening hours and when to answer the phone.</p></details>
     </div>
-    <div class="rep-sec" id="sec-fix">
-      <h3>Have me fix them</h3>
-      <p id="fix-lede">Tick the fixes you'd like me to do. The price is the time each one takes from the size of your account, at my hourly rate.</p>
+  </section>
+
+  <section class="rp rp-white" id="sec-fix">
+    <div class="page-w">
+      <div class="rp-h"><h3>Have me fix them</h3></div>
+      <p class="rp-lede" id="fix-lede">Tick what you'd like me to do. Each price is the time it takes on an account your size.</p>
       <div class="fixes" id="fix-rows"></div>
       <div class="options" id="options"></div>
       <p class="fine" id="fix-fine"></p>
       <div class="checkout-preview" id="checkout-preview" hidden></div>
     </div>
-    <div class="rep-cta">
-      <h3>Once the account is in shape, Search Desk keeps an eye on it.</h3>
-      <p>Every morning it shows what changed in your performance and what needs fixing, so problems are caught in days, not months.</p>
-      <div class="btn-row"><a href="https://searchdesk.uk/" class="btn-filled" target="_blank" rel="noopener">See Search Desk</a><a href="#contact" class="btn-outline" id="rep-ask">Ask me about this report</a></div>
+  </section>
+
+  <section class="rp rp-paper">
+    <div class="page-w">
+      <div class="rep-cta">
+        <h3>Once the account is in shape, Search Desk keeps an eye on it.</h3>
+        <p>Every morning it shows what changed and what needs fixing.</p>
+        <div class="btn-row"><a href="https://searchdesk.uk/" class="btn-filled" target="_blank" rel="noopener">See Search Desk</a><a href="#contact" class="btn-outline" id="rep-ask">Ask me about this report</a></div>
+      </div>
+      <p class="rep-more">Want the week's changes in Google Ads in one short email? <a href="/updates/">Read The Monday Brief</a>.</p>
     </div>
-    <p class="rep-more">Want the week's changes in Google Ads in one short email? <a href="/updates/">Read The Monday Brief</a>.</p>
-  </div>
-</section>
+  </section>
+</div>
 
 <section class="sec-white" id="what">
   <div class="page-w">
@@ -273,7 +303,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-google-ads-check.js?v=8" defer></script>
+<script src="/tool-google-ads-check.js?v=9" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>
