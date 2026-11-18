@@ -113,6 +113,8 @@
   --brand-hover-pin: #7A3F1F;    /* amber dark: button and link hover */
   --brand-wash-pin: #F5EBD9;     /* amber surface: brand-tinted fills, selected options, light mode only */
   --brand-on-ink-pin: #D9925E;   /* light amber: accents on ink (eyebrows, the full stop, the focus edge) */
+  --brand-sd: #2A5185;           /* Search Desk blue (Design Spec v3 1b, 8.03:1 with white), only where Search Desk is offered */
+  --brand-sd-hover: #1F3D66;     /* Search Desk blue, darker: its button hover */
 }
 /* tokens:end */
   /* The admin's own additions to the tokens: tinted borders for status cards and notes, worked out from each tone (as the
@@ -381,12 +383,13 @@
   .dm-pick b { font-size: 14px; }
   .dm-pick .dm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .dm-pick small { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
-  .dm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .dm-tool { margin-bottom: 16px; }
+  .dm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line-soft); }
   .dm-bar h2 { margin: 0; font-size: 16px; }
-  .dm-stage { background: var(--line-soft); border: 1px solid var(--line); border-radius: 14px; padding: 16px; overflow-x: auto; }
+  .dm-stage { background: var(--line-soft); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 20px; overflow-x: auto; }
   .dm-frame { display: block; margin: 0 auto; width: 100%; height: 78vh; min-height: 560px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); transition: width .2s ease; }
   .dm-frame[data-w="768"] { width: 768px; } .dm-frame[data-w="375"] { width: 375px; }
-  @media (max-width: 700px) { .dm-stage { padding: 8px; } .dm-frame { height: 70vh; } }
+  @media (max-width: 700px) { .dm-bar { padding: 14px 16px; } .dm-stage { padding: 8px; margin: 12px; } .dm-frame { height: 70vh; } }
   .fees { display: grid; gap: 8px; }
   .fees:empty { display: none; }
   .fee { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 96px 36px; grid-template-areas: "label label label x" "amount basis qty qty"; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--line-soft); border-radius: 10px; background: var(--surface-2); }
@@ -1172,16 +1175,17 @@
     <!-- Demo clients: made-up accounts through the real Google Ads Check (cloudflare/src/ads-check/demos.js) -->
     <section data-pane="demos" hidden>
       <div class="page-head">
-        <div><h1>Demo clients</h1><p class="lede">Made-up accounts run through the real Google Ads Check: the same page, rules and design a client sees, so what you see here is what they get. Pick one, look at it at each width, then ask for changes.</p></div>
+        <div><h1>Demo clients</h1><p class="lede">Made-up accounts and websites run through the real free tools: the same page, rules and design a client sees, so what you see here is what they get. Pick one, look at it at each width, then ask for changes.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" id="dm-open" href="/google-ads-audit?sample=trades&amp;demo=1" target="_blank" rel="noopener">Open in a new tab</a></div>
       </div>
+      <div class="seg dm-tool" role="group" aria-label="Tool"><button type="button" data-tool="ads" aria-pressed="true">Google Ads Check</button><button type="button" data-tool="web" aria-pressed="false">Website Check</button></div>
       <div class="dm-pick" id="dm-pick" role="group" aria-label="Demo client"><p class="empty">Loading…</p></div>
       <div class="card">
         <div class="dm-bar">
           <h2 id="dm-title">Report</h2>
           <div class="seg" role="group" aria-label="Width"><button type="button" data-w="full" aria-pressed="true">Desktop</button><button type="button" data-w="768" aria-pressed="false">Tablet</button><button type="button" data-w="375" aria-pressed="false">Phone</button></div>
         </div>
-        <div class="dm-stage"><iframe class="dm-frame" id="dm-frame" title="Google Ads Check report for the chosen demo client" loading="lazy"></iframe></div>
+        <div class="dm-stage"><iframe class="dm-frame" id="dm-frame" title="Report for the chosen demo" loading="lazy"></iframe></div>
       </div>
     </section>
 
@@ -1519,37 +1523,57 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenus(); });
 
   /* ---------- demo clients ---------- */
-  // The list comes from the Worker (demos.js), so a new demo shows here without touching this page. The frame loads
-  // the real /google-ads-audit page in its client view (?demo=1), so any change to the report shows here too.
-  var demos = null, demoW = 'full';
+  // Made-up accounts (Google Ads Check, ads-check/demos.js) and websites (Website Check, website-demos.js). The lists come
+  // from the Worker, so a new demo shows here without touching this page. The frame loads the real tool page in its
+  // client view (?demo=1), so any change to a report shows here too. #demos/<id> (Ads) or #demos/web/<id>.
+  var DM_TOOLS = {
+    ads: { list: '/tools/google-ads-check/demos', page: '/google-ads-audit', hash: '#demos/' },
+    web: { list: '/tools/website-check/demos', page: '/website-check', hash: '#demos/web/' }
+  };
+  var demos = {}, demoTool = 'ads', demoW = 'full';
   function showDemo(id) {
-    var d = demos.filter(function (x) { return x.id === id; })[0] || demos[0];
-    var url = '/google-ads-audit?sample=' + d.id + '&demo=1';
+    var list = demos[demoTool] || [];
+    var d = list.filter(function (x) { return x.id === id; })[0] || list[0];
+    if (!d) return;
+    var url = DM_TOOLS[demoTool].page + '?sample=' + d.id + '&demo=1';
     $('dm-pick').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-id') === d.id)); });
     $('dm-title').textContent = d.name;
     $('dm-open').href = url;
     if ($('dm-frame').getAttribute('src') !== url) $('dm-frame').setAttribute('src', url);
-    if (location.hash !== '#demos/' + d.id) history.replaceState(null, '', '#demos/' + d.id);
+    if (location.hash !== DM_TOOLS[demoTool].hash + d.id) history.replaceState(null, '', DM_TOOLS[demoTool].hash + d.id);
   }
-  function loadDemos(want) {
-    if (demos) { showDemo(want); return; }
-    fetch('/tools/google-ads-check/demos', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) {
-      demos = j.demos || [];
-      var pick = $('dm-pick'); pick.textContent = '';
-      demos.forEach(function (d) {
-        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-id', d.id); b.setAttribute('aria-pressed', 'false');
-        var name = document.createElement('b'); name.textContent = d.name; b.appendChild(name);
-        var tags = document.createElement('span'); tags.className = 'dm-tags';
-        [d.size, d.model, d.build].forEach(function (t) { var p = document.createElement('span'); p.className = 'pill'; p.textContent = t; tags.appendChild(p); });
-        b.appendChild(tags);
-        var note = document.createElement('small'); note.textContent = d.note; b.appendChild(note);
-        b.addEventListener('click', function () { showDemo(d.id); });
-        pick.appendChild(b);
-      });
-      if (demos.length) showDemo(want); else pick.innerHTML = '<p class="empty">No demo clients found.</p>';
-    }).catch(function () { $('dm-pick').innerHTML = '<p class="empty">Could not load the demo clients.</p>'; });
+  function drawDemoPicker(want) {
+    var pick = $('dm-pick'); pick.textContent = '';
+    document.querySelectorAll('.dm-tool button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-tool') === demoTool)); });
+    var list = demos[demoTool] || [];
+    if (!list.length) { pick.innerHTML = '<p class="empty">No demos found.</p>'; return; }
+    list.forEach(function (d) {
+      var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-id', d.id); b.setAttribute('aria-pressed', 'false');
+      var name = document.createElement('b'); name.textContent = d.name; b.appendChild(name);
+      var tags = document.createElement('span'); tags.className = 'dm-tags';
+      [d.size, d.model, d.build].forEach(function (t) { var p = document.createElement('span'); p.className = 'pill'; p.textContent = t; tags.appendChild(p); });
+      b.appendChild(tags);
+      var note = document.createElement('small'); note.textContent = d.note; b.appendChild(note);
+      b.addEventListener('click', function () { showDemo(d.id); });
+      pick.appendChild(b);
+    });
+    showDemo(want);
   }
-  document.querySelectorAll('[data-pane="demos"] .seg button').forEach(function (b) {
+  function loadDemos(rest) {
+    var parts = (rest || '').split('/');
+    var tool = parts[0] === 'web' ? 'web' : 'ads', want = tool === 'web' ? (parts[1] || '') : (parts[0] || '');
+    var changed = tool !== demoTool; demoTool = tool;
+    if (demos[tool]) { if (changed || !$('dm-pick').querySelector('button')) drawDemoPicker(want); else showDemo(want); return; }
+    $('dm-pick').innerHTML = '<p class="empty">Loading…</p>';
+    fetch(DM_TOOLS[tool].list, { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) {
+      demos[tool] = j.demos || [];
+      if (demoTool === tool) drawDemoPicker(want);
+    }).catch(function () { $('dm-pick').innerHTML = '<p class="empty">Could not load the demos.</p>'; });
+  }
+  document.querySelectorAll('.dm-tool button').forEach(function (b) {
+    b.addEventListener('click', function () { loadDemos(b.getAttribute('data-tool') === 'web' ? 'web' : ''); });
+  });
+  document.querySelectorAll('[data-pane="demos"] .dm-bar .seg button').forEach(function (b) {
     b.addEventListener('click', function () {
       demoW = b.getAttribute('data-w');
       b.parentNode.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
@@ -1580,7 +1604,7 @@
     pane.classList.remove('enter'); void pane.offsetWidth; pane.classList.add('enter');
     if (view === 'prospects') boardEdges();
     if (view === 'list') loadList();
-    if (view === 'demos') loadDemos(h.split('/')[1] || '');
+    if (view === 'demos') loadDemos(h.split('/').slice(1).join('/'));
     countPane();
     window.scrollTo(0, 0);
   }

@@ -5,7 +5,8 @@
 // A finding: { id, group, status: 'strength' | 'weakness' | 'note', priority: 'high' | 'medium' | 'low', title, detail,
 //              why, start, link: { href, label } }
 
-export const RULES_VERSION = 2; // 2 (17 Nov 2026): quotes credited to a person count as reviews
+export const RULES_VERSION = 3; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
+// businesses aren't asked for a town, a Maps link or local business details; "Rated 4.8 on Checkatrade" counts as a review
 
 const LINKS = {
   web: { href: '/web-design/', label: 'Web design' },
@@ -122,7 +123,7 @@ const REVIEW_LINKS = /(trustpilot\.com\/review|widget\.trustpilot|reviews\.io|fe
 // A quote credited to a named person (a <blockquote> with a <cite>), or a block whose class says testimonial or review.
 const QUOTE_CITE = /<blockquote\b[^>]*>(?:(?!<\/blockquote>)[\s\S]){10,2000}?<cite\b[^>]*>([\s\S]{2,120}?)<\/cite>/i;
 const REVIEW_CLASS = /class="[^"]*\b(testimonials?|reviews?)\b[^"]*"/i;
-const REVIEW_TEXT = /(testimonials?\b|customer reviews|google reviews|what (?:our|my) (?:customers|clients) say|\b\d(?:\.\d)? out of 5\b|\bfive[- ]star|\b5[- ]star|★★★)/i;
+const REVIEW_TEXT = /(\brated \d(?:\.\d)? (?:out of 5 |stars? )?(?:on|by)\b|\b(?:checkatrade|trustatrader|trustpilot|capterra|feefo)\b|testimonials?\b|customer reviews|google reviews|what (?:our|my) (?:customers|clients) say|\b\d(?:\.\d)? out of 5\b|\bfive[- ]star|\b5[- ]star|★★★)/i;
 
 // ---------- robots.txt ----------
 
@@ -283,9 +284,15 @@ export function analyse(input) {
   const foundPlace = localities.find(l => l.length > 2 && topBits.toLowerCase().includes(l.toLowerCase()))
     || (topBits.match(/\b(?:in|across|around|near|serving|based in|covering)\s+((?:[A-Z][a-z]+)(?:[\s-](?:[A-Z][a-z]+|upon|on|under|in|le))*)/) || [])[1]
     || (POSTCODE.test(p.top.text) ? 'a postcode' : null);
+  // A business that serves the whole country (an online shop, a national firm) says so instead of naming a town
+  // (found by the demo websites, 18 Nov 2026). Only when the page has no postcode, so a local firm with premises still
+  // gets asked for its town, its Maps link and its local business details.
+  const wide = !POSTCODE.test(p.text) && /\b(?:across|throughout|all over|around) the (?:uk|united kingdom|country)\b|\bnationwide\b|\buk[- ]wide\b|\buk delivery\b|\bdeliver(?:y|ed|ing)? (?:across|to|throughout) the uk\b|\b\d[\d,]* uk \w+/i.test(topBits);
   const notPlaces = /^(The|Our|Your|Every|All|Business|Home|Stock|Store|Touch|Time|Style|Love|Need|Store|January|February|March|April|May|June|July|August|September|October|November|December)$/;
   if (foundPlace && !notPlaces.test(foundPlace.split(/\s/)[0])) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says where you work',
     detail: `Near the top of the page I found “${foundPlace}”.`, why: 'Local customers, Google and AI assistants all look for the place before they trust a local business.', start: 'Keep the town or area in the page title and main heading.', link: LINKS.seo });
+  else if (wide) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says you work across the UK',
+    detail: 'The top of the page says you serve the whole country, so no town is needed.', why: 'Visitors and Google can tell straight away that you serve them wherever they are.', start: 'If you also have premises customers visit, name the town as well.', link: LINKS.seo });
   else add({ id: 'where', group: 'first', status: 'weakness', priority: 'high', title: 'Doesn’t say where you work near the top',
     detail: 'I couldn’t find a town, area or postcode in the page title, main heading, description or opening lines.',
     why: 'People search for a service plus a place, and a page that never names the place is hard to match to those searches.', start: 'Name your town and the area you cover in the title, the main heading and the first paragraph.', link: LINKS.seo });
@@ -325,6 +332,8 @@ export function analyse(input) {
   const gbp = p.links.find(l => GBP_LINK.test(l.href)) || (/<iframe\b[^>]*google\.[a-z.]+\/maps/i.test(p.raw) ? { href: 'map' } : null);
   if (gbp) add({ id: 'gbp-link', group: 'contact', status: 'strength', priority: 'medium', title: 'Links to Google Maps or your Business Profile',
     detail: gbp.href === 'map' ? 'The page has a Google map.' : 'The page links to your Google Maps listing or Business Profile.', why: 'It connects the website and the profile, and makes reviews and directions one tap away.', start: 'Make sure the link opens your own profile.', link: LINKS.seo });
+  else if (wide) add({ id: 'gbp-link', group: 'contact', status: 'note', priority: 'low', title: 'No link to a Google Business Profile',
+    detail: 'I couldn’t find a link to Google Maps or a Google Business Profile.', why: 'A profile matters most to businesses customers visit or that serve one area. For a business that works across the UK it is optional.', start: 'If you have a profile, link it from the footer so Google connects the two.', link: LINKS.seo });
   else add({ id: 'gbp-link', group: 'contact', status: 'weakness', priority: 'medium', title: 'No link to your Google Business Profile',
     detail: 'I couldn’t find a link to Google Maps or a Google Business Profile.', why: 'The profile is what shows in the map results for local searches. Linking both ways helps Google connect them, and sends customers to your reviews.', start: 'Link to your profile from the footer or contact section. If you don’t have one yet, set it up first.', link: LINKS.seo });
 
@@ -353,7 +362,16 @@ export function analyse(input) {
       detail: `The page describes the business as ${typesOf(local).join(', ')} in structured data` + (missing.length ? `, without ${missing.join(', ').replace(/, ([^,]*)$/, ' or $1')}.` : '.'),
       why: 'Structured data tells Google and AI assistants your name, area and contact details in a form they read reliably.',
       start: missing.length ? 'Add the missing details to the LocalBusiness structured data.' : 'Keep it matching your Google Business Profile.', link: LINKS.seo });
-  } else add({ id: 'local-schema', group: 'search', status: 'weakness', priority: 'medium',
+  } else if (wide && types.some(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t))) add({ id: 'local-schema', group: 'search', status: 'strength', priority: 'medium',
+    title: 'Business details written for search engines',
+    detail: `The page describes the business as ${[...new Set(types)].filter(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t)).join(', ')} in structured data, which suits a business that works across the UK.`,
+    why: 'Structured data tells Google and AI assistants your name and details in a form they read reliably.', start: 'Add your logo, contact details and social profiles to it if they aren’t there yet.', link: LINKS.seo });
+  else if (wide) add({ id: 'local-schema', group: 'search', status: 'weakness', priority: 'low',
+    title: 'No business details for search engines',
+    detail: types.length ? `The page has structured data (${[...new Set(types)].slice(0, 4).join(', ')}) but nothing describing the business itself.` : 'The page has no structured data.',
+    why: 'Organization structured data tells Google and AI assistants your name, logo and contact details in a form they read reliably.',
+    start: 'Add Organization structured data with your name, logo, website and contact details.', link: LINKS.seo });
+  else add({ id: 'local-schema', group: 'search', status: 'weakness', priority: 'medium',
     title: 'No local business details for search engines',
     detail: types.length ? `The page has structured data (${[...new Set(types)].slice(0, 4).join(', ')}) but nothing marking it as a local business.` : 'The page has no structured data.',
     why: 'LocalBusiness structured data tells Google and AI assistants your name, area and contact details in a form they read reliably.',

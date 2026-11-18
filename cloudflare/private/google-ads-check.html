@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="stylesheet" href="/agency.css?v=16">
-<link rel="stylesheet" href="/tools.css?v=13">
+<link rel="stylesheet" href="/tools.css?v=14">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
@@ -195,22 +195,25 @@
     </div>
   </section>
 
-  <section class="rp rp-white" id="sec-ask">
+  <section class="rp rp-white" id="sec-fix">
     <div class="page-w">
-      <div class="ask-card">
-        <h3>Want a hand with any of this?</h3>
-        <p>Ask me about this report and I'll reply myself.</p>
-        <a href="#contact" class="btn-filled" id="rep-ask">Ask me about this report</a>
-      </div>
+      <div class="rp-h"><h3>Prefer me to do them?</h3></div>
+      <p class="rp-lede" id="fix-lede">Fixed prices, smallest jobs first. Each is the time it takes on an account your size. Tick what you'd like done.</p>
+      <div class="fixes" id="fix-rows"></div>
+      <div class="options" id="options"></div>
+      <p class="fine" id="fix-fine"></p>
+      <div class="checkout-preview" id="checkout-preview" hidden></div>
+      <p class="fix-ask">Not sure yet? <a href="#contact" id="rep-ask">Ask me about this report</a> and I'll reply myself.</p>
     </div>
   </section>
 
   <section class="rp rp-paper">
     <div class="page-w">
-      <div class="rep-cta">
+      <div class="rep-cta sd-cta">
+        <img class="sd-mark" src="/logos/group/sd-tile.png" alt="Search Desk" width="56" height="56" loading="lazy">
         <h3>Once the account is in shape, Search Desk keeps an eye on it.</h3>
         <p>Every morning it shows what changed and what needs fixing.</p>
-        <div class="btn-row"><a href="https://searchdesk.uk/" class="btn-outline" target="_blank" rel="noopener">See Search Desk</a></div>
+        <div class="btn-row"><a href="https://searchdesk.uk/" class="btn-sd" target="_blank" rel="noopener">See Search Desk</a></div>
       </div>
       <p class="rep-more">Want the week's changes in Google Ads in one short email? <a href="/updates/">Read The Monday Brief</a>.</p>
     </div>
@@ -304,7 +307,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-google-ads-check.js?v=15" defer></script>
+<script src="/tool-google-ads-check.js?v=16" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>

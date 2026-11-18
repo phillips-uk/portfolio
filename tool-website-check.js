@@ -8,7 +8,10 @@
   var preview = document.body.getAttribute('data-preview') === '1';
   var current = null;
 
-  if (preview) { $('preview-flag').hidden = false; $('fresh-opt').hidden = false; }
+  // ?demo=1 in Lewis's signed-in preview: the page looks as a visitor sees it (no preview banner or options), for
+  // /admin#demos/web. ?sample=<id> draws a made-up demo website's report (website-demos.js).
+  var demo = preview && /[?&]demo=1/.test(location.search);
+  if (preview && !demo) { $('preview-flag').hidden = false; $('fresh-opt').hidden = false; }
 
   function track(event, params) {
     window.dataLayer = window.dataLayer || [];
@@ -143,7 +146,7 @@
     current = r;
     (r.groups || []).forEach(function (g) { GROUP[g[0]] = g[1]; });
     $('rep-domain').textContent = r.domain;
-    $('rep-meta').textContent = 'Checked ' + DATE.format(new Date(r.checkedAt)) + (r.page && r.page.title ? ' · “' + r.page.title.slice(0, 80) + '”' : '');
+    $('rep-meta').textContent = (r.sample ? 'Demo website, made up · ' : '') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + (r.page && r.page.title ? ' · “' + r.page.title.slice(0, 80) + '”' : '');
     var tiles = $('rep-tiles'); tiles.textContent = '';
     var m = r.speed && r.speed.mobile, d = r.speed && r.speed.desktop;
     tiles.appendChild(tile('Speed on a phone', m && m.performance != null ? String(m.performance) : 'n/a', 'out of 100', tone(m && m.performance)));
@@ -157,7 +160,7 @@
     });
     $('report').hidden = false;
     var path = '/website-check/r/' + r.id;
-    if (location.pathname !== path) history.replaceState(null, '', path);
+    if (!r.sample && location.pathname !== path) history.replaceState(null, '', path);
     if (scroll) $('report').scrollIntoView({ behavior: scroll === 'jump' ? 'auto' : 'smooth', block: 'start' });
   }
 
@@ -180,6 +183,16 @@
     if (biz && !biz.value) biz.value = current.domain;
     if (msg && !msg.value) msg.value = 'About my Website Check report: ' + location.origin + '/website-check/r/' + current.id + '\n\n';
   });
+
+  // A demo website's report (Lewis's preview only)
+  var sm = preview && location.search.match(/[?&]sample=([a-z0-9]+)/);
+  if (sm) {
+    say('Loading the demo…');
+    fetch('/tools/website-check/sample', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ variant: sm[1] }) })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) { if (!res.ok) throw new Error(res.d.error || 'The demo could not be loaded.'); say(''); show(res.d.report, 'jump'); })
+      .catch(function (err) { say(err.message, true); });
+  }
 
   // A saved report (the share link)
   var m = location.pathname.match(/^\/website-check\/r\/([a-f0-9]{32})\/?$/);

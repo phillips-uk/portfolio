@@ -6,6 +6,8 @@
 //   GET  /website-check/r/<id>          the same page, showing a saved report (the share link)
 //   POST /tools/website-check/run       { url, token, fresh? } runs a check, or reuses the domain's last one
 //   GET  /tools/website-check/report/<id>
+//   POST /tools/website-check/sample    Lewis only: { variant } a report for a made-up demo website (website-demos.js)
+//   GET  /tools/website-check/demos     Lewis only: the demo websites, for /admin#demos/web
 //
 // What it fetches from the visitor's site: the page itself, the http version (to see if it redirects to https),
 // robots.txt, the sitemap and llms.txt. Speed comes from Google's PageSpeed Insights API, which is free, with the
@@ -22,6 +24,7 @@ import websiteCheckHtml from '../private/website-check.html';
 import { analyse, readPsi, GROUPS, RULES_VERSION } from './website-check-rules.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX } from './tools-gate.js';
 import { getPricing } from './pricing.js';
+import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 
 const PREFIX = 'tools/website-check/';
 const REPORT_DAYS = 30;
@@ -244,6 +247,26 @@ async function reportById(env, id) {
 
 export async function websiteCheck(request, url, env) {
   const path = url.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/tools/website-check/demos' || path === '/tools/website-check/sample') {
+    const access = await toolAccessFor('website-check', request, env);
+    if (!access.admin) return jsonResponse({ error: 'Not found' }, 404);
+    if (path === '/tools/website-check/demos') return jsonResponse({ demos: WEBSITE_DEMOS.map(({ id, name, size, model, build, note }) => ({ id, name, size, model, build, note })) });
+    if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
+    const origin = request.headers.get('Origin');
+    if (origin && origin !== new URL(request.url).origin) return jsonResponse({ error: 'Forbidden' }, 403);
+    let body = {};
+    try { body = await request.json(); } catch { /* empty */ }
+    // A made-up site through the same rules a visitor's site goes through. Not saved, never counted.
+    const demo = findWebsiteDemo(String(body.variant || ''));
+    const input = demo.input();
+    const result = analyse(input);
+    const report = {
+      id: '0'.repeat(32), domain: new URL(input.finalUrl).hostname.replace(/^www\./, ''), url: input.url, finalUrl: input.finalUrl,
+      checkedAt: new Date().toISOString(), rulesVersion: RULES_VERSION, ...result,
+      speed: { mobile: input.psi.mobile && pick(input.psi.mobile), desktop: input.psi.desktop && pick(input.psi.desktop) },
+    };
+    return jsonResponse({ report: { ...publicReport(report), sample: true, demoName: demo.name } });
+  }
   if (path === '/tools/website-check/run') {
     if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
     return run(request, env);

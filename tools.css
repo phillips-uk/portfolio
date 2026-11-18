@@ -360,3 +360,27 @@
 
 /* Structure diagram, one level down (Lewis, 18 Nov 2026): a Performance Max campaign's asset groups, joined to it by a
    dashed line, each with its ad strength and share of the campaign's spend. */
+
+/* Search Desk card (Lewis, 18 Nov 2026): its own blue button and its icon at the top. On a computer the icon sits
+   top left beside the words; on a phone everything centres under the icon. */
+.btn-sd { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--control-h); padding: 0 24px; border-radius: var(--r-pill);
+  font-size: 15px; font-weight: 800; text-decoration: none; letter-spacing: -0.005em; cursor: pointer; color: #fff; border: 1px solid transparent;
+  background: linear-gradient(180deg, color-mix(in oklab, #fff 12%, var(--brand-sd)), var(--brand-sd));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 1px 2px rgba(20, 25, 31, .18), 0 8px 18px -10px color-mix(in oklab, var(--brand-sd) 70%, transparent);
+  transition: transform var(--d2) var(--ease-out), box-shadow var(--d2) var(--ease-out), background var(--d2); }
+.btn-sd:hover { background: linear-gradient(180deg, var(--brand-sd), var(--brand-sd-hover)); transform: translateY(-1px); }
+.btn-sd:active { transform: translateY(0) scale(.97); transition-duration: var(--d1); }
+.sd-cta, .adsr .rep-cta.sd-cta { display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: var(--s6); align-items: start; text-align: left; width: 100%; max-width: 760px; margin: 0 auto; }
+.sd-cta .sd-mark { grid-row: span 3; width: 56px; height: 56px; border-radius: 14px; display: block; box-shadow: var(--e1); }
+.sd-cta h3, .sd-cta p, .sd-cta .btn-row { grid-column: 2; }
+.sd-cta p { margin-left: 0; }
+.sd-cta .btn-row { justify-content: flex-start; }
+@media (max-width: 560px) {
+  .sd-cta, .adsr .rep-cta.sd-cta { grid-template-columns: minmax(0, 1fr); text-align: center; }
+  .sd-cta .sd-mark { grid-row: auto; margin: 0 auto var(--s4); }
+  .sd-cta h3, .sd-cta p, .sd-cta .btn-row { grid-column: 1; }
+  .sd-cta p { margin-left: auto; }
+  .sd-cta .btn-row { justify-content: center; }
+}
+.adsr .fix-ask { text-align: center; color: var(--text-2); margin: var(--s10) 0 0; font-size: 15px; }
+.adsr .fix-ask a { color: var(--brand-text); font-weight: 700; }

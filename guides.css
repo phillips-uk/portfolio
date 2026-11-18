@@ -107,6 +107,8 @@
   --brand-hover-pin: #7A3F1F;    /* amber dark: button and link hover */
   --brand-wash-pin: #F5EBD9;     /* amber surface: brand-tinted fills, selected options, light mode only */
   --brand-on-ink-pin: #D9925E;   /* light amber: accents on ink (eyebrows, the full stop, the focus edge) */
+  --brand-sd: #2A5185;           /* Search Desk blue (Design Spec v3 1b, 8.03:1 with white), only where Search Desk is offered */
+  --brand-sd-hover: #1F3D66;     /* Search Desk blue, darker: its button hover */
 }
 /* tokens:end */
 

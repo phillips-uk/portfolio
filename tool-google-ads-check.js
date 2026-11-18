@@ -155,11 +155,12 @@
   }
 
   function fixes(r) {
-    if (!$('fix-rows')) return; // the priced fixes were swapped for one "Ask me" line (Lewis, 18 Nov 2026)
+    // The price list is back (Lewis, 18 Nov 2026: the cheaper, duller fixes are good business), smallest jobs first.
+    if (!$('fix-rows')) return;
     var q = r.quote, rows = $('fix-rows'); rows.textContent = '';
     if (!q || !q.lines.length) { $('sec-fix').hidden = true; return; }
     $('sec-fix').hidden = false;
-    q.lines.forEach(function (l) {
+    q.lines.slice().sort(function (a, b) { return a.price - b.price; }).forEach(function (l) {
       var row = el('label', 'fix-row');
       var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!l.ticked; cb.value = l.id; row.appendChild(cb);
       var t = el('span'); t.appendChild(el('span', 't', l.title)); t.appendChild(el('span', 's', ' ' + l.fixLabel)); t.querySelector('.s').style.display = 'block'; row.appendChild(t);
