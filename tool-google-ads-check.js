@@ -259,46 +259,63 @@
       item.appendChild(el('em', null, Math.round(g.share) + '%')); leg.appendChild(item);
     });
     split.appendChild(bar); split.appendChild(leg);
-    // the structure: the account, its campaign types, each campaign with its share of spend
+    // the structure, kept simple (Lewis, 18 Nov): one card per campaign type, biggest spend first, each campaign on one line.
+    // Asset groups fold behind a one-line strength count, and the smaller campaign types fold behind "Show more".
     var tree = $('pf-tree'); tree.textContent = '';
-    var root = el('div', 'pf-root', r.accountName || 'Your account'); root.appendChild(el('small', null, p.campaigns + ' campaign' + (p.campaigns === 1 ? '' : 's')));
-    tree.appendChild(root);
-    var groups = el('div', 'pf-groups');
-    p.groups.forEach(function (g) {
+    tree.appendChild(el('div', 'pf-th', 'Your ' + p.campaigns + ' campaign' + (p.campaigns === 1 ? '' : 's') + ', biggest spend first'));
+    var total = p.groups.reduce(function (s, g) { return s + (g.spend || 0); }, 0) || 1;
+    var plural = function (n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); };
+    var cap = function (s) { s = String(s || '').toLowerCase(); return s.charAt(0).toUpperCase() + s.slice(1); };
+    function fold(label, kids, cls) {
+      var d = el('details', cls), s = el('summary', null, label); d.appendChild(s);
+      kids.forEach(function (k) { d.appendChild(k); });
+      return d;
+    }
+    function camp(c) {
+      var row = el('div', 'pf-row');
+      row.appendChild(el('div', 'pf-cn', c.name));
+      var cb = el('div', 'pf-cbar'), fill = el('i'); fill.style.width = Math.max(2, c.share) + '%'; cb.appendChild(fill); row.appendChild(cb);
+      row.appendChild(el('span', 'pf-n', Math.round(c.share) + '%'));
+      row.appendChild(el('span', 'pf-n', c.conversions + ' conv.'));
+      row.appendChild(el('span', 'pf-n', c.cpa ? cur.format(c.cpa) + ' each' : ''));
+      if (c.children && c.children.length) {
+        var tally = {};
+        c.children.forEach(function (k) { if (k.strength) { var t = cap(k.strength); tally[t] = (tally[t] || 0) + 1; } });
+        var parts = ['Excellent', 'Good', 'Average', 'Poor'].filter(function (t) { return tally[t]; }).map(function (t) { return tally[t] + ' ' + t; });
+        var ul = el('ul', 'pf-ag-list');
+        c.children.forEach(function (k) {
+          var li = el('li');
+          li.appendChild(el('span', 'pf-agn', k.name));
+          li.appendChild(k.strength ? el('span', 'pf-st ' + k.strength.toLowerCase(), cap(k.strength)) : el('span'));
+          li.appendChild(el('span', 'pf-n', k.share != null ? Math.round(k.share) + '% · ' + k.conversions + ' conv.' : ''));
+          ul.appendChild(li);
+        });
+        row.appendChild(fold(plural(c.children.length, 'asset group') + (parts.length ? ': ' + parts.join(', ') : ''), [ul], 'pf-fold pf-sub'));
+      } else if (c.inside) {
+        row.appendChild(el('div', 'pf-ci', c.inside));
+      }
+      return row;
+    }
+    function group(g) {
       var box = el('div', 'pf-group'), gh = el('div', 'pf-gh');
-      gh.appendChild(el('b', null, g.label)); gh.appendChild(el('em', null, cur.format(g.spend)));
+      gh.appendChild(el('b', null, g.label));
+      gh.appendChild(el('span', null, plural(g.campaigns.length, 'campaign')));
+      gh.appendChild(el('em', null, cur.format(g.spend) + ' · ' + Math.round(g.spend / total * 100) + '%'));
       box.appendChild(gh);
-      g.campaigns.slice(0, 6).forEach(function (c) {
-        var row = el('div', 'pf-camp');
-        row.appendChild(el('div', 'pf-cn', c.name));
-        var cb = el('div', 'pf-cbar'), fill = el('i'); fill.style.width = Math.max(2, c.share) + '%'; cb.appendChild(fill); row.appendChild(cb);
-        var meta = el('div', 'pf-cm');
-        meta.appendChild(el('span', null, Math.round(c.share) + '% of spend'));
-        meta.appendChild(el('span', null, c.conversions + ' conv.' + (c.cpa ? ' · ' + cur.format(c.cpa) + ' each' : '')));
-        if (c.inside) meta.appendChild(el('span', null, c.inside));
-        row.appendChild(meta);
-        // one level down: the campaign's asset groups, with strength and share of the campaign's spend
-        if (c.children && c.children.length) {
-          var kids = el('ul', 'pf-ags');
-          c.children.slice(0, 8).forEach(function (k) {
-            var li = el('li'), top = el('div', 'pf-agt');
-            top.appendChild(el('span', 'pf-agn', k.name));
-            if (k.strength) top.appendChild(el('span', 'pf-st ' + k.strength.toLowerCase(), k.strength));
-            li.appendChild(top);
-            if (k.share != null) {
-              var kb = el('div', 'pf-cbar thin'), kf = el('i'); kf.style.width = Math.max(2, k.share) + '%'; kb.appendChild(kf); li.appendChild(kb);
-              li.appendChild(el('div', 'pf-cm', Math.round(k.share) + '% of campaign spend · ' + k.conversions + ' conv.'));
-            }
-            kids.appendChild(li);
-          });
-          if (c.children.length > 8) kids.appendChild(el('li', 'pf-cm', '+ ' + (c.children.length - 8) + ' more'));
-          row.appendChild(kids);
-        }
-        box.appendChild(row);
-      });
-      if (g.campaigns.length > 6) box.appendChild(el('div', 'pf-cm', '+ ' + (g.campaigns.length - 6) + ' more'));
-      groups.appendChild(box);
-    });
+      var rows = g.campaigns.map(camp), KEEP = 5;
+      if (rows.length > KEEP + 1) {
+        rows.slice(0, KEEP).forEach(function (r) { box.appendChild(r); });
+        box.appendChild(fold('Show ' + plural(rows.length - KEEP, 'more campaign'), rows.slice(KEEP), 'pf-fold'));
+      } else rows.forEach(function (r) { box.appendChild(r); });
+      return box;
+    }
+    var groups = el('div', 'pf-groups'), SHOW = 4;
+    var cards = p.groups.map(group);
+    if (cards.length > SHOW + 1) {
+      cards.slice(0, SHOW).forEach(function (c) { groups.appendChild(c); });
+      var rest = p.groups.slice(SHOW), restSpend = rest.reduce(function (s, g) { return s + (g.spend || 0); }, 0);
+      groups.appendChild(fold('Show ' + plural(rest.length, 'more campaign type') + ' (' + cur.format(restSpend) + ', ' + Math.round(restSpend / total * 100) + '% of spend)', cards.slice(SHOW), 'pf-fold pf-more'));
+    } else cards.forEach(function (c) { groups.appendChild(c); });
     tree.appendChild(groups);
   }
 
