@@ -229,7 +229,7 @@
     current = r;
     var cur = money(r.currency || 'GBP');
     $('rep-name').textContent = r.accountName;
-    $('rep-meta').textContent = (r.sample ? 'Sample data, not a real account · ' : 'Customer ID ' + r.customerId + ' · ') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + ' · last 30 days' + (r.preview && r.operations ? ' · ' + r.operations + ' API operations' : '');
+    $('rep-meta').textContent = (r.sample ? 'Sample data, not a real account · ' : 'Customer ID ' + r.customerId + ' · ') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + ' · last 30 days' + (r.preview && !demo && r.operations ? ' · ' + r.operations + ' API operations' : '');
     var f = r.facts || {}, tiles = $('rep-tiles'); tiles.textContent = '';
     tiles.appendChild(tile('Spend, last 30 days', f.spend30 != null ? cur.format(f.spend30) : 'n/a', (f.activeCampaigns || 0) + ' active campaigns'));
     tiles.appendChild(tile('Conversions', f.conversions30 != null ? String(Math.round(f.conversions30 * 10) / 10) : 'n/a', f.costPerConversion30 ? cur.format(f.costPerConversion30) + ' each' : ''));

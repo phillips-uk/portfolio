@@ -52,11 +52,21 @@ function allOf(n, one, many = one + 's') {
 // Verb that agrees with a count: verb(1, 'has', 'have') is 'has'.
 const verb = (n, one, many) => (n === 1 ? one : many);
 
-// "A", "B" and 3 more
-function examples(names, max = 3) {
+// "Your only ad", "Both ads", "All 4 ads" or "3 of your 6 ads", so a count of one never reads "1 of your 1 ads".
+function someOf(n, total, one, many = one + 's') {
+  if (total === 1) return `Your only ${one}`;
+  if (n === total) return n === 2 ? `Both ${many}` : `All ${n} ${many}`;
+  return `${n} of your ${total} ${many}`;
+}
+// The verb that goes with someOf: singular for "Your only ad" and "1 of your 6 ads".
+const verbOf = (n, total, one, many) => (total === 1 || (n === 1 && total !== 1) ? one : many);
+
+// "A", "B" and 3 more. total: how many there are in all, when that is more than the distinct names
+// (two products can share a title), so "and N more" always adds up to the count in the title.
+function examples(names, max = 3, total) {
   const unique = [...new Set(names.map((n) => clean(n)).filter(Boolean))];
   const shown = unique.slice(0, max).map((n) => `"${n}"`);
-  const rest = unique.length - shown.length;
+  const rest = Math.max(total ?? unique.length, unique.length) - shown.length;
   if (rest > 0) return `${shown.join(', ')} and ${rest} more`;
   if (shown.length <= 1) return shown.join('');
   return `${shown.slice(0, -1).join(', ')} and ${shown[shown.length - 1]}`;
@@ -521,7 +531,7 @@ function ruleCampaigns(m, out) {
         category: 'structure',
         priority: 'high',
         title: 'Every campaign that spends brings in conversions',
-        detail: `${allOf(eligible.length, 'campaign')} that spent more than ${money(10)} in the last 30 days recorded conversions.`,
+        detail: `${allOf(eligible.length, 'campaign')} outside Performance Max that spent more than ${money(10)} in the last 30 days recorded conversions. Performance Max is checked by product and asset group.`,
       });
     }
   }
@@ -714,7 +724,7 @@ function ruleKeywords(m, out) {
       category: 'keywords',
       priority: 'medium',
       title: 'No duplicate keywords',
-      detail: `Each of your ${plural(kws.length, 'keyword')} appears in only one ad group.`,
+      detail: kws.length === 1 ? 'Your only keyword appears in one ad group.' : `Each of your ${plural(kws.length, 'keyword')} appears in only one ad group.`,
     });
   }
 
@@ -915,10 +925,8 @@ function ruleAutomation(m, out) {
         id: 'pmax-asset-strength',
         category: 'ads',
         priority: poor.length ? 'medium' : 'low',
-        title: poor.length
-          ? `${plural(poor.length, 'Performance Max asset group')} rated Poor`
-          : `${plural(weak.length, 'Performance Max asset group')} rated Average or below`,
-        detail: `${weak.length} of your ${groups.length} asset groups are not rated Good or Excellent: ${examples(weak.map((g) => g.name))}.`,
+        title: `${plural(weak.length, 'Performance Max asset group')} rated below Good`,
+        detail: `${someOf(weak.length, groups.length, 'asset group')} ${verbOf(weak.length, groups.length, 'is', 'are')} not rated Good or Excellent${poor.length ? ` (${poor.length} rated Poor)` : ''}: ${examples(weak.map((g) => g.name), 3, weak.length)}.`,
         why: 'Weak asset groups give Google fewer combinations to build ads from, so they show less often.',
         start: 'Add more headlines, descriptions, images and a video to each weak group until it reaches Good.',
         startLink: LINKS.ads,
@@ -996,7 +1004,7 @@ function ruleAds(m, out) {
       category: 'ads',
       priority: 'medium',
       title: `${plural(singleWeak.length, 'ad group')} with one ad that is not rated Good`,
-      detail: `These ad groups run a single ad rated below Good: ${examples(singleWeak.map((g) => g.name))}.`,
+      detail: `${singleWeak.length === 1 ? 'This ad group runs' : 'These ad groups run'} a single ad rated below Good: ${examples(singleWeak.map((g) => g.name), 3, singleWeak.length)}.`,
       why: 'One weak ad gives Google little to test, so the ad group cannot find a better message.',
       start: 'Improve the existing ad to Good (more headlines and descriptions, less pinning), or add a second ad with a different angle.',
       startLink: LINKS.quality,
@@ -1011,7 +1019,7 @@ function ruleAds(m, out) {
       category: 'ads',
       priority: 'medium',
       title: 'Every ad group has enough ads to test',
-      detail: `Outside brand ad groups, each of your ${plural(byGroup.size, 'Search ad group')} with ads has two or more ads, or one ad rated Good or Excellent.`,
+      detail: `Outside brand ad groups, ${byGroup.size === 1 ? 'your only Search ad group with ads has' : `each of your ${byGroup.size} Search ad groups with ads has`} two or more ads, or one ad rated Good or Excellent.`,
     });
   }
 
@@ -1027,7 +1035,7 @@ function ruleAds(m, out) {
       category: 'ads',
       priority: 'medium',
       title: `${plural(weakRest.length, 'responsive search ad')} rated Poor or Average`,
-      detail: `${weakRest.length} of your ${rsas.length} responsive search ads ${verb(weakRest.length, 'is', 'are')} rated Poor or Average, in ${plural(groups, 'ad group')}: ${examples(weakRest.map((a) => a.adGroup))}.`,
+      detail: `${someOf(weakRest.length, rsas.length, 'responsive search ad')} ${verbOf(weakRest.length, rsas.length, 'is', 'are')} rated Poor or Average, in ${groups === 1 ? 'the ad group' : `${plural(groups, 'ad group')}:`} ${examples(weakRest.map((a) => a.adGroup))}.`,
       why: 'Ads rated below Good enter fewer auctions and give Google fewer combinations to test.',
       start: 'Fill all 15 headlines and 4 descriptions, use the keyword in two or three headlines and avoid pinning.',
       startLink: LINKS.quality,
@@ -1095,7 +1103,7 @@ function ruleAds(m, out) {
         category: 'ads',
         priority: 'low',
         title: `${pct(share)} of your search ads have no display path`,
-        detail: `${noPath.length} of your ${allRsas.length} responsive search ads show only your domain in the web address line.`,
+        detail: `${someOf(noPath.length, allRsas.length, 'responsive search ad')} ${verbOf(noPath.length, allRsas.length, 'shows', 'show')} only your domain in the web address line.`,
         why: 'A short path such as /plumbing/ely tells people the click leads to what they searched for.',
         start: 'Add path 1 for the service and path 2 for the place or detail on each ad.',
         startLink: null,
@@ -1110,7 +1118,7 @@ function ruleAds(m, out) {
         category: 'ads',
         priority: 'low',
         title: 'Your ads use display paths',
-        detail: `${allRsas.length - noPath.length} of your ${allRsas.length} responsive search ads show a path after your domain.`,
+        detail: `${someOf(allRsas.length - noPath.length, allRsas.length, 'responsive search ad')} ${verbOf(allRsas.length - noPath.length, allRsas.length, 'shows', 'show')} a path after your domain.`,
       });
     }
   }
@@ -1346,7 +1354,7 @@ function ruleBidAdjustments(m, out) {
       title: 'Device bid adjustments are in place',
       detail: noDevice.length === 0
         ? `${allOf(search.length, 'main Search campaign')} ${verb(search.length, 'has', 'have')} device bid adjustments.`
-        : `${search.length - noDevice.length} of your ${search.length} main Search campaigns ${verb(search.length - noDevice.length, 'has', 'have')} device bid adjustments.`,
+        : `${someOf(search.length - noDevice.length, search.length, 'main Search campaign')} ${verbOf(search.length - noDevice.length, search.length, 'has', 'have')} device bid adjustments.`,
     });
   }
 
@@ -1381,7 +1389,7 @@ function ruleShopping(m, out) {
 
   // 11a. Products over 3 spent with no conversions. Over 30% of product spend and
   // over 15 is high; over 15% and over 8 is medium (audit.py).
-  const wasted = products.filter((p) => p.spend > 3 && p.conversions === 0);
+  const wasted = products.filter((p) => p.spend > 3 && p.conversions === 0).sort((a, b) => b.spend - a.spend);
   const wastedSpend = wasted.reduce((s, p) => s + p.spend, 0);
   const share = totalSpend > 0 ? wastedSpend / totalSpend : 0;
   if ((share > 0.3 && wastedSpend > 15) || (share > 0.15 && wastedSpend > 8)) {
@@ -1390,7 +1398,7 @@ function ruleShopping(m, out) {
       category: 'shopping',
       priority: share > 0.3 && wastedSpend > 15 ? 'high' : 'medium',
       title: `${plural(wasted.length, 'product')} spent ${money(wastedSpend)} with no sales`,
-      detail: `${pct(share)} of your product spend in the last 30 days brought no conversions. The biggest are ${examples(wasted.map((p) => clean(p.title, 40)))}.`,
+      detail: `${pct(share)} of your product spend in the last 30 days brought no conversions. The biggest are ${examples(wasted.map((p) => clean(p.title, 40)), 3, wasted.length)}.`,
       why: 'Money spent on products that never sell is money not spent on the ones that do.',
       start: 'Check price and product page for each, then exclude the ones that still do not sell from your listing groups.',
       startLink: null,
@@ -1405,7 +1413,7 @@ function ruleShopping(m, out) {
       category: 'shopping',
       priority: 'high',
       title: 'Product spend goes on products that sell',
-      detail: `${converting.length} of your ${plural(total, 'active product')} recorded conversions, and only ${pct(share)} of product spend went on items with none.`,
+      detail: `${someOf(converting.length, total, 'active product')} recorded conversions, and only ${pct(share)} of product spend went on items with none.`,
     });
   }
 
@@ -1473,7 +1481,7 @@ function ruleShopping(m, out) {
       category: 'shopping',
       priority: 'low',
       title: `${pct(noLabel.length / total)} of products have no custom label`,
-      detail: `${noLabel.length} of your ${total} active products have no custom label 0, so every product is treated the same in bidding.`,
+      detail: `${someOf(noLabel.length, total, 'active product')} ${verbOf(noLabel.length, total, 'has', 'have')} no custom label 0, so ${noLabel.length === 1 ? 'it is' : 'they are'} all treated the same in bidding.`,
       why: 'Custom labels let you bid harder on best sellers and high-margin lines, and pull back on the rest.',
       start: 'Add a simple label in your feed, such as "hero" for your top sellers and "standard" for the rest.',
       startLink: null,
@@ -1507,9 +1515,9 @@ function ruleSettings(m, out) {
       id: 'location-presence',
       category: 'settings',
       priority: 'medium',
-      title: `${plural(interest.length, 'campaign')} also targets people outside your area`,
+      title: `${plural(interest.length, 'campaign')} also ${verb(interest.length, 'reaches', 'reach')} people outside your locations`,
       detail: `${examples(interest.map((c) => c.name))} ${interest.length === 1 ? 'is' : 'are'} set to reach people in, or interested in, your locations, so ${interest.length === 1 ? 'it can' : 'they can'} show to people elsewhere.`,
-      why: 'If you serve a local area, clicks from people who only searched about it from far away rarely turn into business.',
+      why: 'Your ads can show to people who are not in the places you target, such as someone abroad searching about them. If you only sell, deliver or work there, those clicks rarely turn into business.',
       start: 'In each campaign\'s location options, choose "Presence: people in or regularly in your included locations".',
       startLink: LINKS.ads,
       fixType: 'settings',
