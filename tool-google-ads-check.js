@@ -6,12 +6,16 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var preview = document.body.getAttribute('data-preview') === '1';
+  // ?demo=1 in Lewis's signed-in preview: the page looks and reads exactly as a client sees it (no preview banner or
+  // preview notes), while the run still uses his access, so an account already under the manager account can be shown.
+  var demo = preview && /[?&]demo=1/.test(location.search);
   var status = $('check-status');
   var cid = '';
   var current = null;
-  if (preview) { $('preview-flag').hidden = false; }
+  if (preview && !demo) { $('preview-flag').hidden = false; }
 
   function track(event, params) {
+    if (preview) return; // Lewis's own runs and demos stay out of GA4
     window.dataLayer = window.dataLayer || [];
     var o = { event: event };
     for (var k in params || {}) o[k] = params[k];
@@ -92,7 +96,7 @@
       var st = res.d.status;
       if (st === 'NONE') throw new Error('I can’t see the invitation from ' + shown(cid) + ' yet. It can take a minute to arrive: check it went to 495-618-4074, then press the button again.');
       if (st === 'ACTIVE' && !preview) throw new Error('This account is already linked to my manager account, so I can’t run the free check on it. Ask me a question below instead.');
-      say(st === 'ACTIVE' ? 'Preview: this account is already linked, so the check reads it and leaves the link as it is.' : 'Invitation found. Running the check: this takes about half a minute.');
+      say(st === 'ACTIVE' && !demo ? 'Preview: this account is already linked, so the check reads it and leaves the link as it is.' : 'Invitation found. Running the check: this takes about half a minute.');
       progress(true);
       return withToken().then(function (t) { return post('/tools/google-ads-check/run', { customerId: cid, token: t }); });
     }).then(function (res) {
@@ -198,7 +202,7 @@
 
   // Checkout waits on the Phillips. Stripe account (FLAGS.checkout). Until then the buttons fill in the question form.
   function buy(kind, chosen, amount) {
-    if (preview) {
+    if (preview && !demo) {
       var cp = $('checkout-preview'); cp.textContent = ''; cp.hidden = false;
       cp.appendChild(el('h4', null, 'Preview: what happens once Stripe and Google sign-in are switched on'));
       var ol = el('ol');
@@ -218,7 +222,7 @@
       msg.value = (kind === 'once' ? 'I’d like these fixes done:\n' + lines : 'I’m interested in the small business monthly option.' + (lines ? '\nFixes I ticked:\n' + lines : '')) +
         '\n\nMy report: ' + location.origin + '/google-ads-audit/r/' + current.id + '\n\n';
     }
-    if (!preview) document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    if (!preview || demo) document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
   }
 
   function show(r, scroll) {
