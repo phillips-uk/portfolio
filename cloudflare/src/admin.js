@@ -8,6 +8,7 @@ import { deals } from './pipeline.js';
 import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
 import { briefAdmin } from './brief.js';
 import { getPricing, getVersion, listVersions, savePricing, validate, quote, hourlyRate, SAMPLES } from './pricing.js';
+import { usageByWeek } from './tool-leads.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -264,6 +265,8 @@ export async function admin(request, url, env) {
   }
   // The Monday Brief: drafts, previews, test sends and Lewis's approval (cloudflare/src/brief.js)
   if (path === '/admin/api/brief' || path.startsWith('/admin/api/brief/')) return briefAdmin(request, path, env, email, { 'Content-Type': 'application/json', ...NO_INDEX });
+  // The free tools' use, week by week (cloudflare/src/tool-leads.js)
+  if (path === '/admin/api/tool-usage' && method === 'GET') return json({ weeks: await usageByWeek(env, 8) });
   // The pricing calculator behind the free tools' reports (cloudflare/src/pricing.js)
   if (path === '/admin/api/pricing' || path.startsWith('/admin/api/pricing/')) return pricingAdmin(request, path, env, email);
   const doc = path.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);

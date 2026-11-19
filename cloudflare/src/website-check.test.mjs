@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { analyse } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
-import { webQuote, WEB_FIX, getPricing } from './pricing.js';
+import { webQuote, WEB_FIX, getPricing, quote, validate, humanMinutes } from './pricing.js';
 
 const run = (id) => analyse(findWebsiteDemo(id).input());
 const ids = (list) => list.map((f) => f.id);
@@ -56,6 +56,26 @@ assert.equal(tq.lines.filter((l) => l.fixType === 'web_speed').length, 1, 'speed
 assert.ok(speedJob.covers.length >= 2 && speedJob.price > 0, 'the speed job lists what it covers');
 assert.equal(tq.retainer, null, 'no monthly option on the Website Check');
 assert.equal(webQuote(pricing, run('clinic').weaknesses).lines.length, 0, 'nothing to fix, nothing to price');
-assert.ok(tq.lines.every((l) => l.price >= Math.round(pricing.settings.dayRate / pricing.settings.hoursPerDay)), 'each job at least the one-hour minimum');
+
+// AI-assisted pricing (Lewis, 19 Nov 2026): one hour to start, charged once; then each job at its AI-assisted time where
+// it has one, or its time by hand where it can't be done quickly with AI. No job is forced up to an hour any more.
+const hour = Math.round(pricing.settings.dayRate / pricing.settings.hoursPerDay);
+assert.equal(tq.start.price, hour, 'the start is one hour');
+assert.equal(tq.total, tq.start.price + tq.lines.reduce((a, l) => a + l.price, 0), 'total is the start plus every job');
+assert.ok(tq.lines.some((l) => l.ai && l.price < hour), 'an AI-assisted job can cost less than an hour');
+assert.ok(tq.lines.every((l) => l.minutes <= l.humanMinutes), 'AI time is never more than the time by hand');
+assert.ok(tq.lines.filter((l) => l.fixType === 'web_speed' || l.fixType === 'web_tracking').every((l) => !l.ai && l.minutes === l.humanMinutes), 'speed and tracking keep the time by hand');
+assert.ok(tq.lines.every((l) => l.minutes % pricing.settings.jobRoundMinutes === 0 && l.minutes >= pricing.settings.jobMinMinutes), 'jobs round to the quarter hour');
+assert.equal(quote(pricing, []).total, 0, 'nothing ticked, no start charge');
+// Version 1 (saved 16 Nov) carries roundToMinutes 30 and minMinutesPerFix 60; they no longer push a job up to an hour.
+const v1 = validate({ roundToMinutes: 30, minMinutesPerFix: 60, dayRate: 625, hoursPerDay: 7 });
+assert.ok(!v1.error && v1.settings.jobMinMinutes === 15, 'old minimum keys are ignored');
+// An empty AI time in the admin means "by hand only"
+const noAi = validate({ fixTypes: { web_search: { setup: 20, perItem: 15, aiSetup: '', aiPerItem: '' } } });
+assert.equal(noAi.settings.fixTypes.web_search.aiSetup, null, 'empty AI time is saved as none');
+const lines = [{ id: 'x', title: 'x', fixType: 'web_search', items: 2, priority: 'high' }];
+assert.equal(quote({ settings: noAi.settings }, lines).lines[0].minutes, humanMinutes(noAi.settings, 'web_search', 2), 'no AI time: priced by hand');
+assert.ok(quote(pricing, lines).lines[0].minutes < humanMinutes(pricing.settings, 'web_search', 2), 'with AI time: cheaper');
+assert.ok(validate({ fixTypes: { web_search: { aiSetup: -1 } } }).error, 'a negative AI time is refused');
 
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

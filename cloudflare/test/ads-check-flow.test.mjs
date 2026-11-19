@@ -15,8 +15,13 @@ function bucket() {
   const m = new Map();
   return {
     m,
-    async get(k) { const v = m.get(k); return v ? { json: async () => JSON.parse(v.body), text: async () => v.body } : null; },
-    async put(k, body, o = {}) { m.set(k, { body: String(body), uploaded: new Date(), customMetadata: o.customMetadata }); },
+    async get(k) { const v = m.get(k); return v ? { etag: v.etag, json: async () => JSON.parse(v.body), text: async () => v.body } : null; },
+    async put(k, body, o = {}) {
+      if (o.onlyIf && o.onlyIf.etagMatches && (!m.has(k) || m.get(k).etag !== o.onlyIf.etagMatches)) return null;
+      const etag = Math.random().toString(36).slice(2);
+      m.set(k, { body: String(body), uploaded: new Date(), customMetadata: o.customMetadata, etag });
+      return { etag };
+    },
     async list({ prefix }) { return { objects: [...m.keys()].filter(k => k.startsWith(prefix)).map(key => ({ key, uploaded: m.get(key).uploaded, customMetadata: m.get(key).customMetadata })), truncated: false }; },
     async delete(keys) { [].concat(keys).forEach(k => m.delete(k)); },
   };
@@ -59,9 +64,11 @@ const env = { BLOBS: bucket(), ADMIN_SESSION_KEY: 'test-key', ALLOWED_AUDIT_EMAI
   GOOGLE_ADS_CLIENT_ID: 'id', GOOGLE_ADS_CLIENT_SECRET: 'secret', GOOGLE_ADS_REFRESH_TOKEN: 'refresh' };
 const admin = await cookie(env.ADMIN_SESSION_KEY, 'tester@example.test');
 
-async function run(headers = {}) {
+// A visitor's browser on the page itself (tools-gate.js guard: Origin and a browser user agent)
+const BROWSER = { Origin: 'http://localhost', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36', 'CF-Connecting-IP': '203.0.113.7' };
+async function run(headers = {}, bare = false) {
   const url = new URL('http://localhost/tools/google-ads-check/run');
-  const req = new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify({ customerId: '123-456-7890', token: 't' }) });
+  const req = new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(bare ? {} : BROWSER), ...headers }, body: JSON.stringify({ customerId: '123-456-7890', token: 't' }) });
   const res = await adsCheck(req, url, env);
   return { status: res.status, body: await res.json() };
 }
@@ -83,11 +90,55 @@ assert.equal(r.body.report.operations, undefined, 'operations are shown only to 
 assert.equal(r.body.report.customerId, '123-456-7890');
 console.log('pending invite: accepted, read', queryCalls().length, 'queries, unlinked last; total', r.body.report.quote.total);
 
+// 1a. That visitor run is a Lead card in the /admin funnel (tool-leads.js), anonymous, with the report link, and counted.
+const board = () => { const v = env.BLOBS.m.get('admin/pipeline.json'); return v ? JSON.parse(v.body).deals : []; };
+const usage = () => { const k = [...env.BLOBS.m.keys()].find(k => k.startsWith('admin/tool-usage/')); return k ? JSON.parse(env.BLOBS.m.get(k).body) : null; };
+assert.equal(board().length, 1, 'one Lead card');
+const card = board()[0];
+assert.equal(card.stage, 'Lead'); assert.equal(card.name, 'Stub Ltd'); assert.equal(card.source, 'Google Ads Check'); assert.equal(card.contact, 'Anonymous');
+assert.ok(card.about.includes('/google-ads-audit/r/' + r.body.report.id), 'card links the report');
+assert.ok(card.about.includes('123-456-7890') && card.about.includes('Issues found: ' + r.body.report.weaknesses.length), 'card names the account and the issue count');
+assert.equal(usage().tools['google-ads-check'].completed, 1); assert.equal(usage().cards, 1);
+console.log('visitor run: Lead card "' + card.name + '" (' + card.contact + '), counted');
+
 // 2. The same account again: one free check every 30 days.
 calls = []; linkState = 'PENDING';
 r = await run();
 assert.equal(r.status, 429); assert.ok(!calls.includes('accept'));
-console.log('second check on the same account: refused (429), nothing accepted');
+assert.equal(board().length, 1, 'no card for a refused run');
+assert.equal(usage().tools['google-ads-check'].blocked.account, 1);
+console.log('second check on the same account: refused (429), nothing accepted, no card');
+
+// 2a. Crawlers and scripts: refused before Turnstile or Google is touched, no card.
+for (const [why, h, bare] of [['curl', { 'User-Agent': 'curl/8.4.0' }, false], ['Googlebot', { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }, false], ['headless', { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/120.0 Safari/537.36' }, false], ['no Origin', { 'User-Agent': BROWSER['User-Agent'] }, true]]) {
+  calls = []; linkState = 'PENDING';
+  r = await run(h, bare);
+  assert.equal(r.status, 403, why); assert.equal(calls.length, 0, why + ': nothing called');
+}
+assert.equal(board().length, 1, 'no card for a crawler');
+console.log('curl, Googlebot, HeadlessChrome and no Origin: refused (403), nothing called, no card');
+
+// 2b. A failed Turnstile check: refused, no card.
+{
+  const real = globalThis.fetch;
+  globalThis.fetch = async (input, init) => String(input).includes('challenges.cloudflare.com') ? new Response(JSON.stringify({ success: false }), { status: 200 }) : real(input, init);
+  env.BLOBS.m.delete([...env.BLOBS.m.keys()].find(k => k.includes('/account/')));
+  calls = []; linkState = 'PENDING';
+  r = await run({ 'CF-Connecting-IP': '203.0.113.9' });
+  globalThis.fetch = real;
+  assert.equal(r.status, 400); assert.equal(board().length, 1, 'no card when Turnstile fails');
+  assert.equal(usage().tools['google-ads-check'].blocked.turnstile, 1);
+  console.log('Turnstile fails: refused (400), no card');
+}
+
+// 2c. One connection: at most 6 runs an hour.
+{
+  const ipH = { 'CF-Connecting-IP': '198.51.100.1' };
+  let last;
+  for (let i = 0; i < 7; i++) { calls = []; linkState = null; last = await run(ipH); }
+  assert.equal(last.status, 429); assert.equal(calls.length, 0, 'the 7th run in an hour is refused before Google is called');
+  console.log('7th run in an hour from one connection: refused (429)');
+}
 
 // 3. An already-linked account (an existing client) is refused for a visitor, and the link is left alone.
 env.BLOBS = bucket(); calls = []; linkState = 'ACTIVE';
@@ -106,7 +157,9 @@ env.BLOBS = bucket(); calls = []; linkState = 'PENDING'; failQuery = 'campaigns'
 r = await run();
 assert.equal(r.status, 502); assert.equal(calls.at(-1), 'unlink');
 assert.equal([...env.BLOBS.m.keys()].filter(k => k.includes('/reports/')).length, 0);
-console.log('read fails: 502, link still ended, no report saved');
+assert.equal(board().length, 0, 'no card for a failed run');
+assert.equal(usage().tools['google-ads-check'].failed, 1);
+console.log('read fails: 502, link still ended, no report saved, no card');
 
 // 6. Lewis's preview on an already-linked account: read without touching the link, no Turnstile call.
 TOOLS_PUBLIC['google-ads-check'] = false;
@@ -115,6 +168,7 @@ r = await run({ Cookie: admin });
 assert.equal(r.status, 200, JSON.stringify(r.body));
 assert.ok(!calls.includes('accept') && !calls.includes('unlink') && !calls.includes('turnstile'));
 assert.ok(r.body.report.operations > 0);
+assert.equal(board().length, 0, 'Lewis\'s own run makes no card'); assert.equal(usage(), null, 'and is not counted');
 console.log('preview, already linked: read with the link left alone,', r.body.report.operations, 'operations');
 
 // 7. Private: without the admin cookie, the tool answers 404 while it is a preview.

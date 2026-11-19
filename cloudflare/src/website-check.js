@@ -22,7 +22,8 @@
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
 import { analyse, readPsi, GROUPS, RULES_VERSION } from './website-check-rules.js';
-import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX } from './tools-gate.js';
+import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
+import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, webQuote } from './pricing.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 
@@ -196,17 +197,23 @@ async function priced(env, r, pricing) {
   return { ...publicReport(r), quote: webQuote(p, r.weaknesses || []) };
 }
 
+const TOOL = 'website-check';
+
 async function run(request, env) {
-  const origin = request.headers.get('Origin');
-  if (origin && origin !== new URL(request.url).origin) return jsonResponse({ error: 'Forbidden' }, 403);
-  const access = await toolAccessFor('website-check', request, env);
+  const access = await toolAccessFor(TOOL, request, env);
   if (!access.allowed) return jsonResponse({ error: 'Not found' }, 404);
+  // Spam and crawlers: this site's page only, a browser, at most 12 tries an hour from one connection (tools-gate.js)
+  const blocked = await guard(env, request, access, TOOL, 12, 60);
+  if (blocked) { await countUse(env, TOOL, 'blocked', blocked.reason); return blocked.response; }
   let body = {};
   try { body = await request.json(); } catch { /* empty */ }
   const n = normaliseUrl(body.url);
   if (n.error) return jsonResponse({ error: n.error }, 400);
   // Lewis's own preview is already signed in to /admin, so it skips the bot check; visitors always get it.
-  if (!access.admin && !(await turnstileOk(env, request, body.token, 'website_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Check again.' }, 400);
+  if (!access.admin && !(await turnstileOk(env, request, body.token, 'website_check'))) {
+    await countUse(env, TOOL, 'blocked', 'turnstile');
+    return jsonResponse({ error: 'The spam check didn’t go through. Please press Check again.' }, 400);
+  }
 
   const { settings } = await getPricing(env);
   const L = settings.limits;
@@ -216,7 +223,11 @@ async function run(request, env) {
   const wantFresh = !!(body.fresh && access.admin);
   if (last && !wantFresh && Date.now() - Date.parse(last.checkedAt) < L.websiteCacheHours * 3600000) {
     const r = await getJson(env, PREFIX + 'reports/' + last.id + '.json');
-    if (fresh(r) && r.rulesVersion === RULES_VERSION) return jsonResponse({ report: await priced(env, r), reused: true }); // a rules change re-runs the check
+    if (fresh(r) && r.rulesVersion === RULES_VERSION) { // a rules change re-runs the check
+      // A reused report already has its Lead card from the run that made it, so it is only counted.
+      if (!access.admin) await countUse(env, TOOL, 'reused');
+      return jsonResponse({ report: await priced(env, r), reused: true });
+    }
   }
 
   // Checks per connection per London day. Lewis's own preview runs aren't counted.
@@ -224,13 +235,19 @@ async function run(request, env) {
   const ipKey = PREFIX + 'ip/' + await sha(ip + '|' + (env.WORKER_SECRET || 'phillips')) + '/' + londonDay() + '.json';
   if (!access.admin) {
     const used = (await getJson(env, ipKey)) || { n: 0 };
-    if (used.n >= L.websiteChecksPerIpPerDay) return jsonResponse({ error: `That’s ${L.websiteChecksPerIpPerDay} checks from this connection today, the most I allow. Please come back tomorrow, or ask me a question below.`, limit: true }, 429);
+    if (used.n >= L.websiteChecksPerIpPerDay) {
+      await countUse(env, TOOL, 'blocked', 'daily');
+      return jsonResponse({ error: `That’s ${L.websiteChecksPerIpPerDay} checks from this connection today, the most I allow. Please come back tomorrow, or ask me a question below.`, limit: true }, 429);
+    }
     await put(env, ipKey, { n: used.n + 1 });
   }
 
   let input;
   try { input = await gather(env, n.url); }
-  catch (err) { return jsonResponse({ error: (err && err.userMessage) || 'Something went wrong while checking that site. Please try again.' }, 422); }
+  catch (err) {
+    if (!access.admin) await countUse(env, TOOL, 'failed');
+    return jsonResponse({ error: (err && err.userMessage) || 'Something went wrong while checking that site. Please try again.' }, 422);
+  }
 
   const result = analyse(input);
   const id = crypto.randomUUID().replace(/-/g, '');
@@ -242,7 +259,18 @@ async function run(request, env) {
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report);
   await put(env, PREFIX + 'domain/' + n.domain + '.json', { id, checkedAt: report.checkedAt });
-  return jsonResponse({ report: await priced(env, report), reused: false });
+  const out = await priced(env, report);
+  if (!access.admin) {
+    // Every completed visitor check is a Lead card in /admin#prospects (tool-leads.js). Lewis's preview makes none.
+    await countUse(env, TOOL, 'completed');
+    await addToolLead(env, access, {
+      tool: TOOL, at: report.checkedAt, name: n.domain, website: input.finalUrl || n.url, checked: input.finalUrl || n.url,
+      reportUrl: new URL('/website-check/r/' + id, request.url).href,
+      issues: (report.weaknesses || []).length, high: (report.weaknesses || []).filter(w => w.priority === 'high').length,
+      total: out.quote && out.quote.total,
+    });
+  }
+  return jsonResponse({ report: out, reused: false });
 }
 
 const pick = s => ({ performance: s.performance, lcp: s.lcp, cls: s.cls, tbt: s.tbt, field: s.field });

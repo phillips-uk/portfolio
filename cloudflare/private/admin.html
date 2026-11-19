@@ -384,6 +384,14 @@
   .dm-pick .dm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .dm-pick small { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
   .dm-tool { margin-bottom: 16px; }
+  .tu-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 18px 20px 4px; margin: 0; }
+  .tu-table .tu-n { display: flex; align-items: center; gap: 10px; }
+  .tu-table .tu-n b { min-width: 2ch; font-variant-numeric: tabular-nums; }
+  .tu-table .tu-n i { display: block; height: 6px; border-radius: 3px; background: var(--brand); min-width: 2px; }
+  .tu-table .tu-n small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .tu-table .tu-n.zero i { display: none; }
+  .tu-i { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--line); font: 600 10px/1 var(--mono, monospace); color: var(--muted); text-transform: none; cursor: help; vertical-align: 1px; }
+  @media (max-width: 900px) { .tu-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .pr-group th { text-align: left; font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 18px 12px 8px; }
   .dm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line-soft); }
   .dm-bar h2 { margin: 0; font-size: 16px; }
@@ -1204,10 +1212,11 @@
             <div class="pr-fields">
               <label>Day rate (£)<input type="number" name="dayRate" min="1" step="1" required></label>
               <label>Hours in a day<input type="number" name="hoursPerDay" min="1" max="24" step="0.5" required></label>
-              <label>Round time up to (minutes)<input type="number" name="roundToMinutes" min="1" step="1" required></label>
-              <label>Minimum per fix (minutes)<input type="number" name="minMinutesPerFix" min="0" step="5" required></label>
+              <label>To start the job(s), charged once (minutes)<input type="number" name="startMinutes" min="0" step="5" required></label>
+              <label>Round each job up to (minutes)<input type="number" name="jobRoundMinutes" min="1" step="1" required></label>
+              <label>Shortest job (minutes)<input type="number" name="jobMinMinutes" min="0" step="5" required></label>
             </div>
-            <p class="pr-note">Hourly rate is the day rate divided by the hours. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
+            <p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the start once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
           </div>
           <div class="card">
             <div class="card-head"><h2>Small business monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
@@ -1223,8 +1232,8 @@
         </div>
         <div class="card" style="margin-top:20px">
           <div class="card-head"><h2>Time per fix</h2><span class="meta">set-up + minutes per item, from the account's own counts</span></div>
-          <div class="scroll"><table class="table pr-table"><thead><tr><th>Fix type</th><th>What counts as an item</th><th class="r">Set-up (min)</th><th class="r">Per item (min)</th></tr></thead><tbody id="pr-fix"></tbody></table></div>
-          <p class="pr-note">Starting minutes are estimates made at build on 16 Nov 2026. Tune them against the time real jobs take.</p>
+          <div class="scroll"><table class="table pr-table"><thead><tr><th>Fix type</th><th>What counts as an item</th><th class="r">By hand: set-up (min)</th><th class="r">By hand: per item (min)</th><th class="r">With AI: set-up (min)</th><th class="r">With AI: per item (min)</th></tr></thead><tbody id="pr-fix"></tbody></table></div>
+          <p class="pr-note">Reports price each job on its AI-assisted time. Leave both AI boxes empty for a job that can't be done quickly with AI: it keeps the time by hand. The hand times are estimates made at build on 16 Nov 2026 and the AI times on 19 Nov 2026; tune both against real jobs.</p>
         </div>
         <div class="card" style="margin-top:20px">
           <div class="card-head"><h2>Free-use limits</h2></div>
@@ -1257,7 +1266,20 @@
 
     <!-- Site -->
     <section data-pane="site" hidden>
-      <div class="page-head"><div><h1>Site</h1><p class="lede">The free landing page audit tool. Traffic and search live in Google Analytics and Search Console.</p></div></div>
+      <div class="page-head"><div><h1>Site</h1><p class="lede">The free checks, week by week, and the old landing page audit tool. Traffic and search live in Google Analytics and Search Console.</p></div></div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-head"><h2>Free checks</h2><span class="meta">completed by visitors, week by week; your own runs aren't counted</span></div>
+        <div class="kpis tu-kpis">
+          <div class="kpi"><small>Website Checks this week</small><b id="tu-web">–</b></div>
+          <div class="kpi"><small>Google Ads Checks this week</small><b id="tu-ads">–</b></div>
+          <div class="kpi"><small>Lead cards this week</small><b id="tu-cards">–</b></div>
+          <div class="kpi"><small>Refused this week</small><b id="tu-blocked">–</b></div>
+        </div>
+        <div class="scroll"><table class="table tu-table">
+          <thead><tr><th>Week of</th><th>Website Check</th><th>Google Ads Check</th><th class="r">Lead cards</th><th class="r">Refused <span class="tu-i" title="Crawlers, failed spam checks, too many tries from one connection, and the free-use limits. Hover a number for the reasons.">i</span></th></tr></thead>
+          <tbody id="tu-rows"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+        </table></div>
+      </div>
       <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
         <div class="kpi"><small>Audits, last 7 days</small><b id="s-7">–</b></div>
         <div class="kpi"><small>Audits, last 30 days</small><b id="s-30">–</b></div>
@@ -1622,9 +1644,11 @@
       api('/admin/api/invites').catch(function () { return null; }),
       api('/admin/api/site').catch(function () { return null; }),
       api('/admin/api/deals').catch(function () { return null; }),
-      api('/admin/api/brief').catch(function () { return null; })
+      api('/admin/api/brief').catch(function () { return null; }),
+      api('/admin/api/tool-usage').catch(function () { return null; })
     ]).then(function (r) {
       state.brief = r[4] || null;
+      state.toolUsage = r[5] && r[5].weeks ? r[5].weeks : null;
       if (r[0]) { state.clients = r[0].clients || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
       if (r[1]) { state.invites = r[1].invites || []; state.deskDemo = r[1].deskDemo || null; }
       if (r[2]) state.site = r[2];
@@ -3174,7 +3198,45 @@
     return b;
   }
 
+  // Free checks per week (cloudflare/src/tool-leads.js): completed visitor checks per tool, the Lead cards they made, and
+  // what was refused (crawlers, spam checks, rate and free-use limits), with the reasons on hover.
+  var REFUSED = { bot: 'crawler or script', turnstile: 'spam check failed', rate: 'too many tries from one connection', origin: 'not from the page', account: 'account had its free check', daily: 'daily limit reached', other: 'other' };
+  function renderToolUsage() {
+    var weeks = state.toolUsage, body = $('tu-rows');
+    if (!body) return;
+    body.innerHTML = '';
+    if (!weeks) { var tr0 = el('tr'), td0 = el('td', 'empty', 'Couldn’t load the counts. Refresh to try again.'); td0.colSpan = 5; tr0.appendChild(td0); body.appendChild(tr0); return; }
+    var blockedOf = function (w) { var n = 0, why = {}; Object.keys(w.tools).forEach(function (t) { var b = w.tools[t].blocked || {}; Object.keys(b).forEach(function (k) { n += b[k]; why[k] = (why[k] || 0) + b[k]; }); }); return { n: n, why: why }; };
+    var max = 1;
+    weeks.forEach(function (w) { ['website-check', 'google-ads-check'].forEach(function (t) { max = Math.max(max, (w.tools[t] || {}).completed || 0); }); });
+    var now = weeks[0];
+    $('tu-web').textContent = (now.tools['website-check'] || {}).completed || 0;
+    $('tu-ads').textContent = (now.tools['google-ads-check'] || {}).completed || 0;
+    $('tu-cards').textContent = now.cards || 0;
+    $('tu-blocked').textContent = blockedOf(now).n;
+    weeks.forEach(function (w, i) {
+      var tr = el('tr');
+      tr.appendChild(el('td', null, i === 0 ? 'This week' : fmt(w.week + 'T12:00:00Z')));
+      ['website-check', 'google-ads-check'].forEach(function (t) {
+        var c = w.tools[t] || {}, n = c.completed || 0, td = el('td'), box = el('div', 'tu-n' + (n ? '' : ' zero'));
+        box.appendChild(el('b', null, String(n)));
+        var bar = el('i'); bar.style.width = Math.round(n / max * 120) + 'px'; box.appendChild(bar);
+        var extra = [];
+        if (c.reused) extra.push(c.reused + ' reused');
+        if (c.failed) extra.push(c.failed + ' failed');
+        if (extra.length) box.appendChild(el('small', null, extra.join(' · ')));
+        td.appendChild(box); tr.appendChild(td);
+      });
+      tr.appendChild(el('td', 'r', String(w.cards || 0)));
+      var b = blockedOf(w), bt = el('td', 'r', String(b.n));
+      if (b.n) bt.title = Object.keys(b.why).map(function (k) { return b.why[k] + ' ' + (REFUSED[k] || k); }).join(', ');
+      tr.appendChild(bt);
+      body.appendChild(tr);
+    });
+  }
+
   function renderSite() {
+    renderToolUsage();
     if (!state.site) return;
     var d = state.site;
     $('s-7').textContent = d.audits.last7; $('s-30').textContent = d.audits.last30; $('s-all').textContent = d.audits.total;
@@ -3217,7 +3279,7 @@
   function field(name) { return form.querySelector('[name="' + name + '"]'); }
 
   function fill(s) {
-    ['dayRate', 'hoursPerDay', 'roundToMinutes', 'minMinutesPerFix', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { field(k).value = s[k]; });
+    ['dayRate', 'hoursPerDay', 'startMinutes', 'jobRoundMinutes', 'jobMinMinutes', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { field(k).value = s[k]; });
     field('retainerFee').value = s.retainerFee == null ? '' : s.retainerFee;
     field('holdForReview').checked = !!s.holdForReview;
     Object.keys(s.limits).forEach(function (k) { var f = field('l.' + k); if (f) f.value = s.limits[k]; });
@@ -3226,12 +3288,15 @@
     var lastTool = null;
     Object.keys(s.fixTypes).sort(function (a, b) { return (s.fixTypes[a].tool === 'web') - (s.fixTypes[b].tool === 'web'); }).forEach(function (id) {
       var ft = s.fixTypes[id], tool = ft.tool === 'web' ? 'web' : 'ads';
-      if (tool !== lastTool) { var hr = el('tr', 'pr-group'), th = el('th', null, tool === 'web' ? 'Website Check jobs' : 'Google Ads Check fixes'); th.colSpan = 4; hr.appendChild(th); tb.appendChild(hr); lastTool = tool; }
+      if (tool !== lastTool) { var hr = el('tr', 'pr-group'), th = el('th', null, tool === 'web' ? 'Website Check jobs' : 'Google Ads Check fixes'); th.colSpan = 6; hr.appendChild(th); tb.appendChild(hr); lastTool = tool; }
       var tr = el('tr');
       tr.appendChild(el('td', null, ft.label));
       var td1 = el('td'), i1 = el('input', 'item'); i1.type = 'text'; i1.value = ft.item; i1.setAttribute('data-ft', id); i1.setAttribute('data-k', 'item'); i1.maxLength = 60; td1.appendChild(i1); tr.appendChild(td1);
-      ['setup', 'perItem'].forEach(function (k) {
-        var td = el('td', 'r'), i = el('input'); i.type = 'number'; i.min = '0'; i.step = k === 'perItem' ? '0.5' : '5'; i.value = ft[k]; i.setAttribute('data-ft', id); i.setAttribute('data-k', k); td.appendChild(i); tr.appendChild(td);
+      ['setup', 'perItem', 'aiSetup', 'aiPerItem'].forEach(function (k) {
+        var td = el('td', 'r'), i = el('input'); i.type = 'number'; i.min = '0'; i.step = /perItem|PerItem/.test(k) ? 'any' : '5';
+        i.value = ft[k] == null ? '' : ft[k]; i.setAttribute('data-ft', id); i.setAttribute('data-k', k);
+        if (k.indexOf('ai') === 0) { i.placeholder = 'by hand'; i.setAttribute('aria-label', ft.label + ': with AI, ' + (k === 'aiSetup' ? 'set-up' : 'per item') + ' minutes (empty: by hand only)'); }
+        td.appendChild(i); tr.appendChild(td);
       });
       tb.appendChild(tr);
     });
@@ -3239,7 +3304,7 @@
   }
   function read() {
     var s = { limits: {}, fixTypes: {} };
-    ['dayRate', 'hoursPerDay', 'roundToMinutes', 'minMinutesPerFix', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { s[k] = field(k).value; });
+    ['dayRate', 'hoursPerDay', 'startMinutes', 'jobRoundMinutes', 'jobMinMinutes', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { s[k] = field(k).value; });
     s.retainerFee = field('retainerFee').value.trim() === '' ? null : field('retainerFee').value;
     s.holdForReview = field('holdForReview').checked;
     form.querySelectorAll('[name^="l."]').forEach(function (f) { s.limits[f.name.slice(2)] = f.value; });
@@ -3286,23 +3351,33 @@
     api('/admin/api/pricing/preview', { settings: read(), sample: $('pr-sample').value }).then(function (d) {
       var q = d.quote; box.textContent = '';
       var t = el('table'), th = el('thead'), hr = el('tr');
-      ['Fix', 'Items', 'Time', 'Price'].forEach(function (h, i) { hr.appendChild(el('th', i ? 'r' : null, h)); });
+      ['Fix', 'Items', 'By hand', 'Priced at', 'Price'].forEach(function (h, i) { hr.appendChild(el('th', i ? 'r' : null, h)); });
       th.appendChild(hr); t.appendChild(th);
       var tb = el('tbody');
+      var mins = function (m) { return m >= 60 ? (m / 60 % 1 ? (m / 60).toFixed(2).replace(/0$/, '') : m / 60) + ' h' : m + ' min'; };
+      if (q.start && q.lines.length) {
+        var sr = el('tr');
+        sr.appendChild(el('td', null, 'To start the job(s), once')); sr.appendChild(el('td', 'r', '')); sr.appendChild(el('td', 'r', ''));
+        sr.appendChild(el('td', 'r', mins(q.start.minutes))); sr.appendChild(el('td', 'r', GBP.format(q.start.price)));
+        tb.appendChild(sr);
+      }
       q.lines.forEach(function (l) {
         var tr = el('tr');
         tr.appendChild(el('td', null, l.title + ' (' + l.fixLabel + ')'));
         tr.appendChild(el('td', 'r', l.itemLabel + ': ' + l.items));
-        tr.appendChild(el('td', 'r', (l.hours % 1 ? l.hours.toFixed(1) : l.hours) + ' h'));
+        tr.appendChild(el('td', 'r', mins(l.humanMinutes != null ? l.humanMinutes : l.minutes)));
+        tr.appendChild(el('td', 'r', mins(l.minutes) + (l.ai ? ' with AI' : '')));
         tr.appendChild(el('td', 'r', (l.fromPrice ? 'from ' : '') + GBP.format(l.price)));
         tb.appendChild(tr);
       });
       t.appendChild(tb);
       var tf = el('tfoot'), fr = el('tr');
-      fr.appendChild(el('td', null, 'Total for all fixes')); fr.appendChild(el('td')); fr.appendChild(el('td', 'r', q.totalHours + ' h')); fr.appendChild(el('td', 'r', GBP.format(q.total)));
+      fr.appendChild(el('td', null, 'Total for everything')); fr.appendChild(el('td')); fr.appendChild(el('td'));
+      fr.appendChild(el('td', 'r', mins(Math.round(q.totalHours * 60)))); fr.appendChild(el('td', 'r', GBP.format(q.total)));
       tf.appendChild(fr); t.appendChild(tf);
       box.appendChild(t);
-      box.appendChild(el('p', null, d.label + ' at ' + GBP2.format(d.hourlyRate) + ' an hour. Quote holds until ' + q.validUntil + '.' +
+      box.appendChild(el('p', null, d.label + ' at ' + GBP2.format(d.hourlyRate) + ' an hour. ' +
+        (q.humanTotal != null && q.lines.length ? 'Every job by hand, without the start, would be ' + GBP.format(q.humanTotal) + '. ' : '') + 'Quote holds until ' + q.validUntil + '.' +
         (q.retainer ? ' Monthly option: ' + GBP.format(q.retainer.fee) + ' a month, ' + q.retainer.minMonths + '-month minimum' + (q.retainer.suggested ? ', shown as the better choice for this account.' : '.') : ' The monthly option is hidden until its fee is set.') +
         (q.holdForReview ? ' Quotes are held for your check.' : '')));
     }).catch(function (e) { box.textContent = e.message; });

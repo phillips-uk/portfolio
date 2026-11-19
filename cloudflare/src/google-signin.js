@@ -19,7 +19,8 @@
 //   POST signout    forgets the token
 import { FLAGS, freeLimits, buildReport, publicReport } from './google-ads-check.js';
 import { asVisitor, accessibleAccounts, meter, AdsError } from './ads-check/client.js';
-import { toolAccessFor, jsonResponse } from './tools-gate.js';
+import { toolAccessFor, jsonResponse, guard } from './tools-gate.js';
+import { countUse } from './tool-leads.js';
 import { getPricing } from './pricing.js';
 
 const SCOPE = 'https://www.googleapis.com/auth/adwords';
@@ -142,6 +143,10 @@ async function run(request, env) {
   if (origin && origin !== new URL(request.url).origin) return jsonResponse({ error: 'Forbidden' }, 403);
   const access = await allowed(request, env);
   if (!access.signIn) return jsonResponse({ error: 'Not found' }, 404);
+  // The Google sign-in itself shows a person is there, so no Turnstile here; the same crawler and rate checks as the
+  // manager-link run (tools-gate.js) still apply.
+  const blocked = await guard(env, request, access, 'google-ads-check', 6, 60);
+  if (blocked) { await countUse(env, 'google-ads-check', 'blocked', blocked.reason); return blocked.response; }
   const t = await token(request, env);
   if (!t) return jsonResponse({ error: 'Your Google sign-in has expired. Please sign in again.', signin: true }, 401);
   let body = {};
@@ -151,7 +156,7 @@ async function run(request, env) {
   if (!/^\d{10}$/.test(customerId) || (via && !/^\d{10}$/.test(via))) return jsonResponse({ error: 'Choose one of your accounts.' }, 400);
   const pricing = await getPricing(env);
   const limit = await freeLimits(env, access, customerId, pricing);
-  if (limit.error) return limit.error;
+  if (limit.error) { await countUse(env, 'google-ads-check', 'blocked', limit.reason); return limit.error; }
   const m = meter();
   try {
     // Google checks this login really can reach the account (and through that manager), so nothing else is trusted here.
@@ -160,6 +165,7 @@ async function run(request, env) {
     return jsonResponse({ report: publicReport(out.report, access.admin) }, 200, { 'Set-Cookie': clearToken() });
   } catch (err) {
     console.error('google-signin: run failed', err && (err.code || err.message));
+    if (!access.admin) await countUse(env, 'google-ads-check', 'failed');
     return jsonResponse({ error: 'Something went wrong while reading the account. Nothing was changed. Please sign in and try again, or ask me a question below.' }, 502, { 'Set-Cookie': clearToken() });
   }
 }

@@ -9,6 +9,7 @@ import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as br
 import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks, setSelfHandler } from './website-check.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
 import { isSignInPath, googleSignIn } from './google-signin.js';
+import { cleanupToolRates } from './tools-gate.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -225,7 +226,7 @@ export default {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
     ctx.waitUntil(briefScheduled(controller, env));
     // Weekly tidy of the free tools' saved reports and counters (Monday's early run only)
-    if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env)]).catch(err => console.error('tools cleanup', err && err.message)));
+    if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env), cleanupToolRates(env)]).catch(err => console.error('tools cleanup', err && err.message)));
   },
 
   async queue(batch, env, ctx) {

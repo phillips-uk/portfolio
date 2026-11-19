@@ -23,7 +23,8 @@ import { gaql, linkStatus, acceptLink, endLink, configured, meter, AdsError, MAN
 import { QUERIES, OPTIONAL } from './ads-check/queries.js';
 import { runRules } from './ads-check/rules.js';
 import { DEMOS, findDemo } from './ads-check/demos.js';
-import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX } from './tools-gate.js';
+import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
+import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, quote } from './pricing.js';
 
 // Built but switched off until Lewis's set-up is done. Nothing here holds a credential.
@@ -36,6 +37,8 @@ export const FLAGS = {
 };
 
 const PREFIX = 'tools/google-ads-check/';
+const TOOL = 'google-ads-check';
+const SITE = 'https://www.phillips-uk.com';
 const REPORT_DAYS = 30;
 
 export function isAdsCheckPath(path) {
@@ -101,10 +104,10 @@ export async function freeLimits(env, access, customerId, pricing) {
   if (!access.admin) {
     const last = await getJson(env, accountKey);
     if (last && Date.now() - Date.parse(last.at) < L.adsChecksPerAccountDays * 86400000) {
-      return { error: jsonResponse({ error: `This account had its free check on ${new Date(last.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. Each account gets one every ${L.adsChecksPerAccountDays} days. Ask me a question below if you’d like another look.`, limit: true }, 429) };
+      return { reason: 'account', error: jsonResponse({ error: `This account had its free check on ${new Date(last.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. Each account gets one every ${L.adsChecksPerAccountDays} days. Ask me a question below if you’d like another look.`, limit: true }, 429) };
     }
     const day = (await getJson(env, dayKey)) || { n: 0 };
-    if (day.n >= L.adsChecksPerDay) return { error: jsonResponse({ error: 'I’m busy today: the free checks for today have all been used. Please try again tomorrow, or ask me a question below.', limit: true }, 429) };
+    if (day.n >= L.adsChecksPerDay) return { reason: 'daily', error: jsonResponse({ error: 'I’m busy today: the free checks for today have all been used. Please try again tomorrow, or ask me a question below.', limit: true }, 429) };
   }
   return { accountKey, dayKey };
 }
@@ -133,6 +136,16 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
     await put(env, limit.accountKey, { at: report.checkedAt });
     const day = (await getJson(env, limit.dayKey)) || { n: 0 };
     await put(env, limit.dayKey, { n: day.n + 1 });
+    // Every completed visitor check is a Lead card in /admin#prospects (tool-leads.js), whichever way the account was
+    // reached. Lewis's own preview and the demo clients (sample()) make none.
+    await countUse(env, TOOL, 'completed');
+    await addToolLead(env, access, {
+      tool: TOOL, at: report.checkedAt, name: report.accountName,
+      checked: `${report.accountName} (Google Ads customer ID ${shownId(customerId)})`,
+      reportUrl: SITE + '/google-ads-audit/r/' + id,
+      issues: report.weaknesses.length, high: report.weaknesses.filter(w => w.priority === 'high').length,
+      total: q.total,
+    });
   }
   return { report };
 }
@@ -143,6 +156,9 @@ async function link(request, env) {
   if (!sameOrigin(request)) return jsonResponse({ error: 'Forbidden' }, 403);
   const access = await toolAccessFor('google-ads-check', request, env);
   if (!access.allowed) return jsonResponse({ error: 'Not found' }, 404);
+  // Each look for the invitation is a Google Ads API call, so crawlers are refused and one connection gets 30 an hour.
+  const blocked = await guard(env, request, access, 'ads-link', 30, 60);
+  if (blocked) { await countUse(env, TOOL, 'blocked', blocked.reason); return blocked.response; }
   if (!configured(env)) return jsonResponse({ error: 'The Google Ads Check is not connected yet.' }, 503);
   const body = await readBody(request);
   const customerId = cleanId(body.customerId);
@@ -162,15 +178,21 @@ async function run(request, env) {
   const access = await toolAccessFor('google-ads-check', request, env);
   if (!access.allowed) return jsonResponse({ error: 'Not found' }, 404);
   if (!configured(env)) return jsonResponse({ error: 'The Google Ads Check is not connected yet.' }, 503);
+  // Spam and crawlers: this site's page only, a browser, at most 6 runs an hour from one connection (tools-gate.js)
+  const blocked = await guard(env, request, access, TOOL, 6, 60);
+  if (blocked) { await countUse(env, TOOL, 'blocked', blocked.reason); return blocked.response; }
   const body = await readBody(request);
   const customerId = cleanId(body.customerId);
   if (!/^\d{10}$/.test(customerId)) return jsonResponse({ error: 'Enter your 10-digit Google Ads customer ID.' }, 400);
   // Lewis's own preview is already signed in to /admin, so it skips the bot check; visitors always get it.
-  if (!access.admin && !(await turnstileOk(env, request, body.token, 'ads_check'))) return jsonResponse({ error: 'The spam check didn’t go through. Please press Run again.' }, 400);
+  if (!access.admin && !(await turnstileOk(env, request, body.token, 'ads_check'))) {
+    await countUse(env, TOOL, 'blocked', 'turnstile');
+    return jsonResponse({ error: 'The spam check didn’t go through. Please press Run again.' }, 400);
+  }
 
   const pricing = await getPricing(env);
   const limit = await freeLimits(env, access, customerId, pricing);
-  if (limit.error) return limit.error;
+  if (limit.error) { await countUse(env, TOOL, 'blocked', limit.reason); return limit.error; }
 
   const m = meter();
   let s;
@@ -188,6 +210,7 @@ async function run(request, env) {
     return out.error || jsonResponse({ report: publicReport(out.report, access.admin) });
   } catch (err) {
     console.error('ads-check: run failed', err && (err.code || err.message));
+    if (!access.admin) await countUse(env, TOOL, 'failed');
     const msg = err instanceof AdsError && err.kind === 'link' ? err.message : 'Something went wrong while reading the account. Nothing was changed. Please try again, or ask me a question below.';
     return jsonResponse({ error: msg }, 502);
   } finally {

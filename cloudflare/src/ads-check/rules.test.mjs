@@ -369,4 +369,25 @@ assert.deepEqual(demo('trades').profile.sells, [], '"Ad group 1" is not a produc
 assert.equal(demo('clinic').weaknesses.length, 0, 'the clinic demo is clean');
 assert.equal(findDemo('2').id, 'mixed'); assert.equal(findDemo('1').id, 'problem');
 console.log(`demo clients: ${DEMOS.length} run cleanly`);
+
+// AI-assisted pricing (Lewis, 19 Nov 2026): every demo's price list has the one-hour start, judgement fixes keep the
+// time by hand, and AI-assisted fixes can cost less than an hour.
+{
+  const { quote, getPricing, HUMAN_ONLY } = await import('../pricing.js');
+  const pricing = await getPricing({});
+  const hour = Math.round(pricing.settings.dayRate / pricing.settings.hoursPerDay);
+  let cheap = 0;
+  for (const d of DEMOS) {
+    const q = quote(pricing, demo(d.id).weaknesses);
+    if (!q.lines.length) { assert.equal(q.total, 0, d.id + ': nothing to fix, nothing to pay'); continue; }
+    assert.equal(q.start.price, hour, d.id + ': one hour to start');
+    assert.equal(q.total, q.start.price + q.lines.reduce((a, l) => a + l.price, 0), d.id + ': total is the start plus the fixes');
+    for (const l of q.lines) {
+      if (['tracking', 'structure', 'bidding'].includes(l.fixType) || HUMAN_ONLY.has(l.id)) assert.ok(!l.ai && l.minutes === l.humanMinutes, `${d.id}: ${l.id} keeps the time by hand`);
+      if (l.ai && l.price < hour) cheap++;
+    }
+  }
+  assert.ok(cheap > 0, 'some AI-assisted fixes cost less than an hour');
+  console.log(`pricing: ${cheap} AI-assisted fixes under an hour across the demos`);
+}
 console.log('All rules tests passed.');

@@ -14,28 +14,32 @@ const VERSIONS = 'admin/pricing/versions/';
 
 // Fix types: what each weakness in a Google Ads report is priced as. The minutes are starting estimates made at build
 // (16 Nov 2026) for Lewis to tune against real jobs; they are not prices.
+// setup + perItem is the time by hand. aiSetup + aiPerItem (19 Nov 2026) is the time when the job can easily be done with
+// AI help (AI drafts or makes the change, Lewis checks it); null means it can't be done quickly with AI (it needs his
+// judgement about the business, the money or the site), so the job keeps the time by hand. The AI minutes are starting
+// estimates for Lewis to tune in /admin#pricing, following the groups in the Google Ads Pricing Proposal (18 Nov 2026).
 export const FIX_TYPES = {
-  settings:  { label: 'Campaign settings',               item: 'campaigns',             setup: 15, perItem: 10 },
-  negatives: { label: 'Search term negatives',           item: 'search terms',          setup: 30, perItem: 0.5 },
-  keywords:  { label: 'Keywords',                        item: 'keywords',              setup: 20, perItem: 1 },
-  ad_copy:   { label: 'Ads and assets',                  item: 'ad groups or assets',   setup: 20, perItem: 15 },
-  tracking:  { label: 'Conversion tracking',             item: 'conversion actions',    setup: 60, perItem: 20 },
-  structure: { label: 'Account structure',               item: 'campaigns or ad groups', setup: 60, perItem: 30 },
-  bidding:   { label: 'Bidding and budgets',             item: 'campaigns',             setup: 20, perItem: 15 },
+  settings:  { label: 'Campaign settings',               item: 'campaigns',             setup: 15, perItem: 10,  aiSetup: 5,  aiPerItem: 2 },
+  negatives: { label: 'Search term negatives',           item: 'search terms',          setup: 30, perItem: 0.5, aiSetup: 10, aiPerItem: 0.1 },
+  keywords:  { label: 'Keywords',                        item: 'keywords',              setup: 20, perItem: 1,   aiSetup: 10, aiPerItem: 0.25 },
+  ad_copy:   { label: 'Ads and assets',                  item: 'ad groups or assets',   setup: 20, perItem: 15,  aiSetup: 10, aiPerItem: 5 },
+  tracking:  { label: 'Conversion tracking',             item: 'conversion actions',    setup: 60, perItem: 20,  aiSetup: null, aiPerItem: null },
+  structure: { label: 'Account structure',               item: 'campaigns or ad groups', setup: 60, perItem: 30, aiSetup: null, aiPerItem: null },
+  bidding:   { label: 'Bidding and budgets',             item: 'campaigns',             setup: 20, perItem: 15,  aiSetup: null, aiPerItem: null },
   // Shopping rules count products (the first real read, 16 Nov, had hundreds), so the time per product is small.
-  shopping:  { label: 'Shopping and Performance Max',    item: 'products',              setup: 45, perItem: 0.5 },
+  shopping:  { label: 'Shopping and Performance Max',    item: 'products',              setup: 45, perItem: 0.5, aiSetup: 15, aiPerItem: 0.1 },
   // Website Check fixes (18 Nov 2026, Lewis: "implement pricing into this report, like we did for the audit"). One job
   // per kind of fix, however many checks it covers, so three speed findings are one speed job. Starting estimates for
   // Lewis to tune in /admin#pricing, the same as the Google Ads ones.
-  web_speed:    { tool: 'web', label: 'Website speed',                 item: 'speed findings',   setup: 120, perItem: 0 },
-  web_mobile:   { tool: 'web', label: 'Phone layout',                  item: 'layout findings',  setup: 45,  perItem: 30 },
-  web_first:    { tool: 'web', label: 'Heading, place and contact button', item: 'changes',      setup: 30,  perItem: 15 },
-  web_contact:  { tool: 'web', label: 'Contact details and Maps link', item: 'changes',          setup: 20,  perItem: 15 },
-  web_search:   { tool: 'web', label: 'Search basics',                 item: 'changes',          setup: 20,  perItem: 15 },
-  web_schema:   { tool: 'web', label: 'Structured data',               item: 'blocks',           setup: 45,  perItem: 15 },
-  web_technical:{ tool: 'web', label: 'Technical set-up',              item: 'changes',          setup: 30,  perItem: 15 },
-  web_tracking: { tool: 'web', label: 'Tracking enquiries',            item: 'changes',          setup: 60,  perItem: 30 },
-  web_proof:    { tool: 'web', label: 'Reviews on the page',           item: 'sections',         setup: 60,  perItem: 0 },
+  web_speed:    { tool: 'web', label: 'Website speed',                 item: 'speed findings',   setup: 120, perItem: 0,  aiSetup: null, aiPerItem: null },
+  web_mobile:   { tool: 'web', label: 'Phone layout',                  item: 'layout findings',  setup: 45,  perItem: 30, aiSetup: 20, aiPerItem: 10 },
+  web_first:    { tool: 'web', label: 'Heading, place and contact button', item: 'changes',      setup: 30,  perItem: 15, aiSetup: 15, aiPerItem: 5 },
+  web_contact:  { tool: 'web', label: 'Contact details and Maps link', item: 'changes',          setup: 20,  perItem: 15, aiSetup: 10, aiPerItem: 5 },
+  web_search:   { tool: 'web', label: 'Search basics',                 item: 'changes',          setup: 20,  perItem: 15, aiSetup: 5,  aiPerItem: 5 },
+  web_schema:   { tool: 'web', label: 'Structured data',               item: 'blocks',           setup: 45,  perItem: 15, aiSetup: 10, aiPerItem: 5 },
+  web_technical:{ tool: 'web', label: 'Technical set-up',              item: 'changes',          setup: 30,  perItem: 15, aiSetup: 10, aiPerItem: 5 },
+  web_tracking: { tool: 'web', label: 'Tracking enquiries',            item: 'changes',          setup: 60,  perItem: 30, aiSetup: null, aiPerItem: null },
+  web_proof:    { tool: 'web', label: 'Reviews on the page',           item: 'sections',         setup: 60,  perItem: 0,  aiSetup: null, aiPerItem: null },
 };
 
 // Which Website Check finding is which kind of job. A finding not listed here isn't priced (it stays in the report).
@@ -77,8 +81,12 @@ export function webQuote(pricing, weaknesses, now = new Date()) {
 export const DEFAULTS = {
   dayRate: 625,               // £, from the rate card
   hoursPerDay: 7,             // hourly rate = day rate / hours (£89.29)
-  roundToMinutes: 30,         // time rounds up to the next half hour
-  minMinutesPerFix: 60,       // at least one hour per fix
+  // Lewis, 19 Nov 2026: a flat one-hour rate to start the job(s), then each job priced on how long it takes, with AI help
+  // where the fix can easily be done that way. Replaced roundToMinutes (30) and minMinutesPerFix (60), which made every
+  // small fix at least an hour. New keys, so version 1's saved 30 and 60 can't bring the old minimum back.
+  startMinutes: 60,           // charged once per order, whatever is ticked
+  jobRoundMinutes: 15,        // each job's time rounds up to the next quarter hour
+  jobMinMinutes: 15,          // and is at least this long
   retainerFee: null,          // £ a month. Not set yet: the report hides the monthly option until it is
   retainerMinMonths: 3,
   suggestRetainerMonths: 2,   // suggest the retainer when the one-off total is more than this many months of the fee
@@ -114,8 +122,9 @@ export function validate(input) {
   };
   set('dayRate', 1, 100000);
   set('hoursPerDay', 1, 24);
-  set('roundToMinutes', 1, 240);
-  set('minMinutesPerFix', 0, 2400);
+  set('startMinutes', 0, 2400);
+  set('jobRoundMinutes', 1, 240);
+  set('jobMinMinutes', 0, 2400);
   set('retainerFee', 1, 100000, { optional: true });
   set('retainerMinMonths', 1, 36);
   set('suggestRetainerMonths', 0, 36);
@@ -131,6 +140,9 @@ export function validate(input) {
       s.fixTypes[id] = { ...ft };
       set('setup', 0, 6000, { target: s.fixTypes[id], from: f });
       set('perItem', 0, 600, { target: s.fixTypes[id], from: f });
+      // Empty AI time: the job can't be done quickly with AI, so it keeps the time by hand.
+      set('aiSetup', 0, 6000, { target: s.fixTypes[id], from: f, optional: true });
+      set('aiPerItem', 0, 600, { target: s.fixTypes[id], from: f, optional: true });
       if (typeof f.item === 'string' && f.item.trim()) s.fixTypes[id].item = f.item.trim().slice(0, 60);
     }
   }
@@ -193,33 +205,53 @@ export async function savePricing(env, settings, email, note) {
   return record;
 }
 
-// Minutes for one weakness: set-up plus minutes per item, rounded up, with the minimum per fix.
+// Findings that sit in a job type with AI time but need Lewis's judgement throughout, so they keep the time by hand
+// (the "Human" group in the Google Ads Pricing Proposal, 18 Nov 2026, where its job type is otherwise AI-assisted).
+export const HUMAN_ONLY = new Set(['low-quality-score', 'no-audiences', 'shopping-wasted-spend']);
+
+const roundUp = (s, raw) => { const step = s.jobRoundMinutes || 1; return Math.max(s.jobMinMinutes || 0, Math.ceil(raw / step) * step); };
+const hasAi = ft => ft && ft.aiSetup != null && ft.aiPerItem != null && Number.isFinite(Number(ft.aiSetup)) && Number.isFinite(Number(ft.aiPerItem));
+
+// Minutes for one job by hand: set-up plus minutes per item, rounded up.
+export function humanMinutes(s, fixType, items) {
+  const ft = s.fixTypes[fixType];
+  if (!ft) return null;
+  return roundUp(s, ft.setup + ft.perItem * Math.max(1, Math.round(Number(items) || 1)));
+}
+
+// Minutes for one job as priced: the AI-assisted time where the job type has one, otherwise the time by hand.
 export function fixMinutes(s, fixType, items) {
   const ft = s.fixTypes[fixType];
   if (!ft) return null;
-  const raw = ft.setup + ft.perItem * Math.max(1, Math.round(Number(items) || 1));
-  const step = s.roundToMinutes || 1;
-  return Math.max(s.minMinutesPerFix, Math.ceil(raw / step) * step);
+  if (!hasAi(ft)) return humanMinutes(s, fixType, items);
+  return Math.min(humanMinutes(s, fixType, items), roundUp(s, Number(ft.aiSetup) + Number(ft.aiPerItem) * Math.max(1, Math.round(Number(items) || 1))));
 }
 
 // Prices a list of weaknesses: [{ id, title, fixType, items, fromPrice, priority }].
-// Returns the lines, the total, and whether to show and suggest the monthly option.
+// Returns the one-hour start (charged once when anything is ticked), the lines, the total for everything, and whether to
+// show and suggest the monthly option. Each line also carries its time by hand (humanMinutes) so the admin preview can
+// show the saving.
 export function quote(pricing, weaknesses, now = new Date()) {
   const s = pricing.settings;
   const rate = hourlyRate(s);
   const lines = [];
   for (const w of weaknesses) {
-    const minutes = fixMinutes(s, w.fixType, w.items);
+    const minutes = HUMAN_ONLY.has(w.id) ? humanMinutes(s, w.fixType, w.items) : fixMinutes(s, w.fixType, w.items);
     if (minutes == null) continue;
     const hours = minutes / 60;
+    const human = humanMinutes(s, w.fixType, w.items);
     lines.push({
       id: w.id, title: w.title, fixType: w.fixType, fixLabel: s.fixTypes[w.fixType].label,
       items: Math.max(1, Math.round(Number(w.items) || 1)), itemLabel: w.itemLabel || s.fixTypes[w.fixType].item,
       minutes, hours, price: Math.round(hours * rate), fromPrice: !!w.fromPrice,
+      ai: minutes < human, humanMinutes: human, humanPrice: Math.round(human / 60 * rate),
       ticked: w.priority === 'high',
     });
   }
-  const total = lines.reduce((a, l) => a + l.price, 0);
+  const startMinutes = Number(s.startMinutes) || 0;
+  const start = { minutes: startMinutes, hours: startMinutes / 60, price: Math.round(startMinutes / 60 * rate) };
+  const jobs = lines.reduce((a, l) => a + l.price, 0);
+  const total = lines.length ? start.price + jobs : 0;
   const fee = s.retainerFee;
   const retainer = fee ? {
     fee, minMonths: s.retainerMinMonths, suggestMonths: s.suggestRetainerMonths,
@@ -228,8 +260,10 @@ export function quote(pricing, weaknesses, now = new Date()) {
   return {
     version: pricing.version || 0,
     hourlyRate: Math.round(rate * 100) / 100,
-    lines, total,
-    totalHours: lines.reduce((a, l) => a + l.hours, 0),
+    start, lines, total,
+    totalHours: lines.length ? start.hours + lines.reduce((a, l) => a + l.hours, 0) : 0,
+    // the same jobs, every one by hand (no AI time), without the start: for the admin preview only
+    humanTotal: lines.reduce((a, l) => a + l.humanPrice, 0),
     retainer,
     holdForReview: !!s.holdForReview,
     validUntil: new Date(now.getTime() + s.quoteValidDays * 86400000).toISOString().slice(0, 10),

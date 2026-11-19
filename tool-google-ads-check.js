@@ -117,7 +117,27 @@
   var DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
   var money = function (cur) { return new Intl.NumberFormat('en-GB', { style: 'currency', currency: cur || 'GBP', maximumFractionDigits: 0 }); };
   var GBP = money('GBP');
-  var hrs = function (h) { return (h % 1 ? h.toFixed(1) : String(h)) + (h === 1 ? ' hour' : ' hours'); };
+  // 15 min, 1 hour, 2 hours 30 min: AI-assisted jobs are often under an hour (Lewis, 19 Nov 2026)
+  var START_T = 'To start, once', START_S = 'Access, a look round the account and a plan for the fixes you tick';
+  var hrs = function (h) {
+    var m = Math.round(h * 60), H = Math.floor(m / 60), r = m % 60;
+    if (!H) return r + ' min';
+    return H + (H === 1 ? ' hour' : ' hours') + (r ? ' ' + r + ' min' : '');
+  };
+  // The start: one hour, charged once whatever is ticked. Reports saved before 19 Nov 2026 have none.
+  function startRow(q) {
+    var row = el('div', 'fix-row fix-start');
+    row.appendChild(el('span', 'fix-dot'));
+    var t = el('span'); t.appendChild(el('span', 't', START_T)); var sub = el('span', 's', START_S); sub.style.display = 'block'; t.appendChild(sub); row.appendChild(t);
+    row.appendChild(el('span', 'h', hrs(q.start.hours)));
+    row.appendChild(el('span', 'p', GBP.format(q.start.price)));
+    return row;
+  }
+  function aiTag(l) { return l.ai ? el('span', 'fix-ai', 'AI-assisted') : null; }
+  function withStart(q, list, total, hours) {
+    var on = !!(q.start && q.start.price && list.length);
+    return { total: total + (on ? q.start.price : 0), hours: hours + (on ? q.start.hours : 0) };
+  }
 
   function tile(label, value, sub, tone) {
     var t = el('div', 'tile' + (tone ? ' ' + tone : ''));
@@ -160,10 +180,11 @@
     var q = r.quote, rows = $('fix-rows'); rows.textContent = '';
     if (!q || !q.lines.length) { $('sec-fix').hidden = true; return; }
     $('sec-fix').hidden = false;
+    if (q.start && q.start.price) rows.appendChild(startRow(q));
     q.lines.slice().sort(function (a, b) { return a.price - b.price; }).forEach(function (l) {
       var row = el('label', 'fix-row');
       var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!l.ticked; cb.value = l.id; row.appendChild(cb);
-      var t = el('span'); t.appendChild(el('span', 't', l.title)); t.appendChild(el('span', 's', ' ' + l.fixLabel)); t.querySelector('.s').style.display = 'block'; row.appendChild(t);
+      var t = el('span'); t.appendChild(el('span', 't', l.title)); var sub = el('span', 's', l.fixLabel); sub.style.display = 'block'; var tag = aiTag(l); if (tag) sub.appendChild(tag); t.appendChild(sub); row.appendChild(t);
       row.appendChild(el('span', 'h', hrs(l.hours)));
       row.appendChild(el('span', 'p', (l.fromPrice ? 'from ' : '') + GBP.format(l.price)));
       rows.appendChild(row);
@@ -177,8 +198,8 @@
   }
   function options(r) {
     var q = r.quote, chosen = ticked(r);
-    var total = chosen.reduce(function (a, l) { return a + l.price; }, 0);
-    var hours = chosen.reduce(function (a, l) { return a + l.hours; }, 0);
+    var sum = withStart(q, chosen, chosen.reduce(function (a, l) { return a + l.price; }, 0), chosen.reduce(function (a, l) { return a + l.hours; }, 0));
+    var total = sum.total, hours = sum.hours;
     var from = chosen.some(function (l) { return l.fromPrice; });
     var box = $('options'); box.textContent = '';
     box.className = 'options' + (q.retainer ? '' : ' one');
@@ -187,7 +208,7 @@
     var once = el('div', 'option' + (monthlyBetter ? '' : ' best'));
     once.appendChild(el('h4', null, 'Fix these once'));
     once.appendChild(el('div', 'big', chosen.length ? (from ? 'from ' : '') + GBP.format(total) : GBP.format(0)));
-    once.appendChild(el('p', null, chosen.length ? chosen.length + (chosen.length === 1 ? ' fix, ' : ' fixes, ') + 'about ' + hrs(hours) + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the fixes you’d like done.'));
+    once.appendChild(el('p', null, chosen.length ? chosen.length + (chosen.length === 1 ? ' fix, ' : ' fixes, ') + 'about ' + hrs(hours) + (q.start && q.start.price ? ' with the start' : '') + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the fixes you’d like done.'));
     var b1 = el('button', null, r.flags && r.flags.checkout ? 'Pay and book these fixes' : 'Ask me to do these'); b1.type = 'button'; b1.disabled = !chosen.length;
     b1.addEventListener('click', function () { buy('once', chosen, total); });
     once.appendChild(b1);
@@ -227,7 +248,8 @@
       var biz = f.querySelector('[name="business"]'), msg = f.querySelector('[name="message"]');
       if (biz && !biz.value) biz.value = current.accountName;
       var lines = chosen.map(function (l) { return '- ' + l.title; }).join('\n');
-      msg.value = (kind === 'once' ? 'I’d like these fixes done:\n' + lines : 'I’m interested in the small business monthly option.' + (lines ? '\nFixes I ticked:\n' + lines : '')) +
+      var q = current.quote || {}, startLine = kind === 'once' && q.start && q.start.price ? '\n- ' + START_T + '\nTotal: ' + GBP.format(amount) : '';
+      msg.value = (kind === 'once' ? 'I’d like these fixes done:\n' + lines + startLine : 'I’m interested in the small business monthly option.' + (lines ? '\nFixes I ticked:\n' + lines : '')) +
         '\n\nMy report: ' + location.origin + '/google-ads-audit/r/' + current.id + '\n\n';
     }
     if (!preview || demo) document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });

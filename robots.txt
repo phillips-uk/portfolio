@@ -1,6 +1,8 @@
 # phillips-uk.com: search engines and AI assistants are welcome to read and cite this site.
 User-agent: *
 Allow: /
+# The free checks' workings: pages are welcome, the tools themselves are for people (they refuse crawlers anyway).
+Disallow: /tools/
 
 # AI search and assistant crawlers, named so the intent is explicit.
 User-agent: OAI-SearchBot
@@ -15,5 +17,6 @@ User-agent: Google-Extended
 User-agent: Applebot-Extended
 User-agent: bingbot
 Allow: /
+Disallow: /tools/
 
 Sitemap: https://www.phillips-uk.com/sitemap.xml

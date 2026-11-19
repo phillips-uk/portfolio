@@ -116,6 +116,10 @@
 .fix-row .s { font-size: 13px; color: var(--muted); }
 .fix-row .h { font-size: 13px; color: var(--muted); white-space: nowrap; }
 .fix-row .p { font-weight: 800; font-size: 14.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fix-start { background: var(--brand-wash); }
+.fix-start .fix-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--brand); justify-self: center; }
+.fix-ai { display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--brand-text); vertical-align: 1px; white-space: nowrap; }
+.fix-ai::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--brand); }
 .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
 .options.one { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin-left: auto; margin-right: auto; }
 .option { border-radius: var(--r-md); padding: 26px 24px; text-align: center; }
