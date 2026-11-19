@@ -155,6 +155,33 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<style>
+  .ls-demo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+  .serp { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--e2); padding: 22px; }
+  .serp-label { font: 500 11px/1.3 var(--mono); letter-spacing: .06em; color: var(--muted); margin: 0 0 14px; text-transform: uppercase; }
+  .serp-box { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 16px; font-size: 15px; color: var(--text); }
+  .serp-box svg { width: 16px; height: 16px; fill: none; stroke: var(--muted); stroke-width: 1.8; flex: none; }
+  .serp-ai { margin: 16px 0; background: var(--brand-wash); border-radius: var(--r-nest); padding: 14px 16px; }
+  .serp-ai-h { font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--text); }
+  .serp-spark { color: var(--brand-text); margin-right: 6px; }
+  .serp-ai p { margin: 0; font-size: 15px; }
+  .serp-ai mark { background: none; color: var(--brand-text); font-weight: 700; }
+  .serp-ai .serp-src { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .serp-map { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 14px; align-items: stretch; }
+  .serp-mapart { position: relative; border-radius: var(--r-nest); background: repeating-linear-gradient(45deg, var(--brand-wash) 0 10px, var(--surface) 10px 20px); border: 1px solid var(--line); min-height: 120px; }
+  .pin { position: absolute; width: 12px; height: 12px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--muted); }
+  .pin.p1 { background: var(--brand); left: 30%; top: 28%; } .pin.p2 { left: 62%; top: 52%; } .pin.p3 { left: 40%; top: 72%; }
+  .serp-map ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .serp-map li { display: grid; gap: 2px; padding: 8px 10px; border-radius: 8px; font-size: 14px; }
+  .serp-map li span { font-size: 12.5px; color: var(--muted); }
+  .serp-map li.is-you { background: var(--brand-wash); }
+  .ls-notes { list-style: none; counter-reset: n; margin: 0; padding: 0; display: grid; gap: 18px; }
+  .ls-notes li { counter-increment: n; display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 12px; }
+  .ls-notes li::before { content: counter(n, decimal-leading-zero); grid-row: span 2; font: 500 13px/1.6 var(--mono); color: var(--brand-text); }
+  .ls-notes b { font-size: 17px; } .ls-notes span { color: var(--text-2); font-size: 15px; }
+  @media (max-width: 900px) { .ls-demo { grid-template-columns: 1fr; gap: 28px; } }
+  @media (max-width: 420px) { .serp-map { grid-template-columns: 1fr; } .serp-mapart { min-height: 90px; } }
+</style>
 </head>
 <body>
 
@@ -237,8 +264,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </section>
 
+<!-- ═══════════════════════════ EXAMPLE SEARCH ═══════════════════════════ -->
+<section class="sec-cream" id="example-search">
+  <div class="page-w">
+    <div class="sec-head">
+      <span class="eyebrow">An example local search</span>
+      <h2 class="h2">How a local business could appear in search.</h2>
+      <p class="lede">I work to help local customers find your business. This example shows where it could appear in an AI answer and in the map results. Neither placement is guaranteed.</p>
+    </div>
+    <div class="ls-demo">
+      <figure class="serp" aria-label="Illustration of a local search result">
+        <p class="serp-label">Illustration. Business names and listings are fictional.</p>
+        <div class="serp-box"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><span>plumber near Ely</span></div>
+        <div class="serp-ai">
+          <div class="serp-ai-h"><span class="serp-spark" aria-hidden="true">&#10022;</span>Example AI answer</div>
+          <p><mark>Example Plumbing</mark> is listed as a plumber serving Ely.</p>
+          <p class="serp-src">Example answer with fictional sources.</p>
+        </div>
+        <div class="serp-map">
+          <div class="serp-mapart" aria-hidden="true"><span class="pin p1"></span><span class="pin p2"></span><span class="pin p3"></span></div>
+          <ul>
+            <li class="is-you"><b>Example Plumbing</b><span>Plumber · Ely</span></li>
+            <li><b>Sample Plumbing</b><span>Plumber · Soham</span></li>
+            <li><b>Demo Plumbing</b><span>Plumber · Littleport</span></li>
+          </ul>
+        </div>
+      </figure>
+      <ol class="ls-notes">
+        <li><b>The profile</b><span>The profile shows what you do, when you&rsquo;re open and what your work looks like.</span></li>
+        <li><b>The page</b><span>The page answers common customer questions in plain English.</span></li>
+        <li><b>The reviews</b><span>Ask customers for honest reviews and reply to them.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════════════════ WHAT YOU GET ═══════════════════════════ -->
-<section class="sec-cream">
+<section class="sec-white">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">What you get</span>
@@ -251,7 +313,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ═══════════════════════════ AI SEARCH ═══════════════════════════ -->
-<section class="sec-white">
+<section class="sec-cream">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">AI search</span>
@@ -267,7 +329,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ═══════════════════════════ COMPARE ═══════════════════════════ -->
-<section class="sec-cream">
+<section class="sec-white">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">The difference</span>
@@ -281,7 +343,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
-<section class="sec-white">
+<section class="sec-cream">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">How it works</span>
@@ -292,7 +354,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ═══════════════════════════ PROOF ═══════════════════════════ -->
-<section class="sec-cream">
+<section class="sec-white">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">Proof</span>
@@ -304,7 +366,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ═══════════════════════════ FAQ ═══════════════════════════ -->
-<section class="sec-white">
+<section class="sec-cream">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">Questions</span>
@@ -315,7 +377,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 
 <!-- ═══════════════════════════ RELATED ═══════════════════════════ -->
-<section class="sec-cream">
+<section class="sec-white">
   <div class="page-w">
     <div class="sec-head">
       <span class="eyebrow">Other services</span>

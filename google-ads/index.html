@@ -147,6 +147,21 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
+<style>
+  .ga-prev { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; align-items: center; }
+  .rep { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--e2); padding: 22px; }
+  .rep-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; border-bottom: 1px solid var(--line-soft); padding-bottom: 12px; margin-bottom: 14px; }
+  .rep-head b { font-size: 16px; } .rep-head span { font: 500 11px/1.6 var(--mono); letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+  .rep-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .rep-facts div { background: var(--brand-wash); border-radius: 10px; padding: 10px 12px; display: grid; }
+  .rep-facts b { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; } .rep-facts span { font-size: 12px; color: var(--text-2); }
+  .rep-block { padding: 12px 0; border-top: 1px solid var(--line-soft); }
+  .rep-block h3 { font-size: 15px; margin: 0 0 6px; } .rep-block h3 span { color: var(--brand-text); font-weight: 800; margin-right: 4px; }
+  .rep-block p, .rep-block li { font-size: 14.5px; color: var(--text-2); margin: 0; }
+  .rep-block ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  .rep-foot { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  @media (max-width: 900px) { .ga-prev { grid-template-columns: 1fr; gap: 28px; } }
+</style>
 </head>
 <body>
 
@@ -256,23 +271,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </section>
 
-<!-- ═══════════════════════════ WHAT GOOGLE LEARNS FROM ═══════════════════════════ -->
-<section class="sec-cream">
+<!-- ═══════════════════════════ REPORT PREVIEW ═══════════════════════════ -->
+<section class="sec-cream" id="report-preview">
   <div class="page-w">
-    <div class="sec-head">
-      <span class="eyebrow">How bidding learns</span>
-      <h2 class="h2">Google's bidding is only as good as what you tell it.</h2>
-      <p class="lede">Smart Bidding learns from the conversions it sees. If it only sees form fills, it chases form fills. If it sees which enquiries became paying customers, it chases customers.</p>
-    </div>
-    <ol class="flow four">
-      <li class="flow-node"><span class="flow-n">01</span><svg class="ill feature-ico" viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="10"/><path class="b" d="m25 25 9 9"/><path class="m" d="M13 17h8"/></svg><h3>The search</h3><p>Someone searches for what you sell, where you sell it.</p><div class="flow-set"><b>I set up</b>Campaigns grouped around the things your customers search for</div></li>
-      <li class="flow-node"><span class="flow-n">02</span><svg class="ill feature-ico" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="8" width="30" height="24" rx="3"/><path d="M5 14h30"/><path class="b" d="M10 20h12M10 25h8"/><rect class="b fw" x="25" y="19" width="6" height="8" rx="1.5"/></svg><h3>The landing page</h3><p>An ad that matches the page it lands on.</p><div class="flow-set"><b>I set up</b>Pages that match the ad and load fast</div></li>
-      <li class="flow-node"><span class="flow-n">03</span><svg class="ill feature-ico" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 9h28v18H18l-7 6v-6H6z"/><path class="b" d="M12 16h16M12 21h10"/></svg><h3>The enquiry</h3><p>A form, a call or a purchase.</p><div class="flow-set"><b>I set up</b>Tracking on the forms, calls and purchases that matter</div></li>
-      <li class="flow-node"><span class="flow-n">04</span><svg class="ill feature-ico" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 8h5l4 18h16l3-12H12"/><circle class="b" cx="16" cy="32" r="2.5"/><circle class="b" cx="28" cy="32" r="2.5"/></svg><h3>The sale</h3><p>Which enquiries became customers, and what they were worth.</p><div class="flow-set"><b>I set up</b>Sales and values sent back to Google where possible</div></li>
-    </ol>
-    <div class="flow-data">
-      <svg class="ill feature-ico" viewBox="0 0 40 40" aria-hidden="true" style="width:56px;height:56px;margin:0"><path d="M6 34h28"/><path d="M11 34V22M19 34V14M27 34V18"/><circle cx="11" cy="17" r="2.5"/><circle cx="19" cy="9" r="2.5"/><circle cx="27" cy="13" r="2.5"/></svg>
-      <div><h3>One set of numbers.</h3><p>Where the data allows, I use Google Ads, Google Analytics and your sales figures to estimate what you spend to win a customer and help you decide where to spend next.</p></div>
+    <div class="ga-prev">
+      <div>
+        <span class="eyebrow">The free check</span>
+        <h2 class="h2" style="margin-bottom:16px">What the report shows.</h2>
+        <p class="lede">A preview of the report for a made-up trades business with one campaign. Yours is built from your own Google Ads account.</p>
+        <div class="btn-row" style="margin-top:24px"><a href="/google-ads-audit" class="btn-filled">Check my Google Ads</a></div>
+      </div>
+      <figure class="rep" aria-label="Sample Google Ads report for a made-up account">
+        <div class="rep-head"><b>Sample Google Ads report</b><span>Made-up account · Last 30 days</span></div>
+        <div class="rep-facts"><div><b>£655</b><span>spent</span></div><div><b>9</b><span>recorded enquiries</span></div><div><b>1</b><span>campaign</span></div></div>
+        <div class="rep-block ok"><h3><span aria-hidden="true">&#10003;</span> What&rsquo;s working</h3><p>The account tracks calls and contact form submissions as enquiries.</p></div>
+        <div class="rep-block fix"><h3><span aria-hidden="true">!</span> What to check first</h3>
+          <ol><li>Search ads are also showing on websites (the Display Network).</li><li>Ads are shown to people interested in your area, not just in it.</li><li>No negative keywords are set, so unrelated searches can cost money.</li><li>The budget runs out: 41% of eligible impressions lost to budget.</li></ol></div>
+        <p class="rep-foot">The report shows where to start. If you&rsquo;d like me to make the changes, I can give you a fixed price.</p>
+      </figure>
     </div>
   </div>
 </section>
