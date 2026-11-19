@@ -79,7 +79,9 @@ async function start(request, url, env) {
   const challenge = b64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))));
   const auth = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
     client_id: env.GOOGLE_ADS_CLIENT_ID, redirect_uri: redirectUri(url), response_type: 'code', scope: SCOPE,
-    access_type: 'online', prompt: 'select_account', state, code_challenge: challenge, code_challenge_method: 'S256',
+    // ?consent=1, Lewis only: Google shows its permission screen again even for a login that already allowed the app,
+    // so the verification video can show it. Visitors always get the normal prompt.
+    access_type: 'online', prompt: access.admin && url.searchParams.get('consent') === '1' ? 'select_account consent' : 'select_account', state, code_challenge: challenge, code_challenge_method: 'S256',
   });
   const headers = new Headers({ Location: auth, 'Cache-Control': 'no-store' });
   headers.append('Set-Cookie', cookie(STATE_COOKIE, await seal(env, { state, verifier, exp: Date.now() + 600000 }), BASE, 600));

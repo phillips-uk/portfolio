@@ -76,6 +76,9 @@ assert.equal(r.status, 302);
 const auth = new URL(r.headers.get('Location'));
 assert.equal(auth.origin, 'https://accounts.google.com');
 assert.equal(auth.searchParams.get('access_type'), 'online', 'no refresh token is ever asked for');
+assert.equal(auth.searchParams.get('prompt'), 'select_account');
+{ const c = await go('/tools/google-ads-check/oauth/start?consent=1', { headers: { Cookie: admin } });
+  assert.equal(new URL(c.headers.get('Location')).searchParams.get('prompt'), 'select_account consent'); }
 assert.equal(auth.searchParams.get('scope'), 'https://www.googleapis.com/auth/adwords');
 assert.equal(auth.searchParams.get('redirect_uri'), 'https://www.phillips-uk.com/tools/google-ads-check/oauth/callback');
 assert.equal(auth.searchParams.get('code_challenge_method'), 'S256');
