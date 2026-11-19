@@ -799,6 +799,13 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
 @keyframes mcfBump{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){.more[open] > .more-body,.result-big.bump{animation:none}.tipbox{transition:none}}
 @media (max-width:700px){.about-copy .more-light{justify-self:stretch;text-align:left}}
+
+/* ===== v12: credentials centred in their cards ===== */
+.stats-grid .stat{justify-items:center;text-align:center;padding:30px 20px}
+.stats-grid .stat:first-child{padding-left:20px}
+.stat-l{max-width:26ch;text-wrap:balance}
+@media (max-width:900px){.stats-grid .stat:nth-child(3){padding-left:20px}}
+@media (max-width:700px){.stats-grid .stat,.stats-grid .stat:first-child,.stats-grid .stat:nth-child(odd){padding:24px 8px}}
 </style>
 </head>
 <body>
@@ -841,7 +848,7 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
       <a class="nav-cta btn btn-navy" href="#enquiry">Start an enquiry</a>
     </nav>
     <div class="head-cta">
-      <a class="btn btn-navy btn-sm" href="#enquiry">Arrange a call</a>
+      <a class="btn btn-navy btn-sm" href="#enquiry">Get in touch</a>
       <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav">Menu</button>
     </div>
   </div>
@@ -1113,7 +1120,7 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
         <div class="about-name"><h2 id="aboutTitle">Ben Boateng</h2><span>Director</span></div>
         <blockquote class="quote">A line from Ben on how he works with owners goes here, in his own words.<cite>Ben Boateng, Director</cite></blockquote>
         <details class="more more-light"><summary>Ben's story</summary><div class="more-body"><p class="placeholder">Ben's story: his background in asset-based lending and trade finance, the transactions that shaped how he works, and why he works from London and Cambridgeshire. We write it from a short interview with him.</p></div></details>
-        <div><a class="btn btn-line" href="#enquiry">Arrange a call</a></div>
+        <div><a class="btn btn-line" href="#enquiry">Get in touch</a></div>
       </div>
       <div>
         <dl class="facts" data-stagger>
