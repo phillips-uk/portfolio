@@ -806,6 +806,10 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
 .stat-l{max-width:26ch;text-wrap:balance}
 @media (max-width:900px){.stats-grid .stat:nth-child(3){padding-left:20px}}
 @media (max-width:700px){.stats-grid .stat,.stats-grid .stat:first-child,.stats-grid .stat:nth-child(odd){padding:24px 8px}}
+
+/* ===== Dropdowns: the arrow sits inset from the edge ===== */
+select.input{-webkit-appearance:none;-moz-appearance:none;appearance:none;padding-right:52px;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%230D1B2E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 20px center;background-size:12px 8px}
+select.input::-ms-expand{display:none}
 </style>
 </head>
 <body>
