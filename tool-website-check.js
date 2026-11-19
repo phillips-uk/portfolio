@@ -306,13 +306,13 @@
   // fills in the question form with the jobs and the report link, the same as the Google Ads report.
   var GBP = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
   // 15 min, 1 hour, 2 hours 30 min: AI-assisted jobs are often under an hour (Lewis, 19 Nov 2026)
-  var START_T = 'To start, once', START_S = 'Access, a look round the site and a plan for the jobs you tick';
+  var START_T = 'Set-up (charged once)', START_S = 'I get access, review your site and plan the jobs you tick';
   var hrs = function (h) {
     var m = Math.round(h * 60), H = Math.floor(m / 60), r = m % 60;
     if (!H) return r + ' min';
     return H + (H === 1 ? ' hour' : ' hours') + (r ? ' ' + r + ' min' : '');
   };
-  // The start: one hour, charged once whatever is ticked. Reports saved before 19 Nov 2026 have none.
+  // The set-up: one hour, charged once whatever is ticked. Reports saved before 19 Nov 2026 have none.
   function startRow(q) {
     var row = el('div', 'fix-row fix-start');
     row.appendChild(el('span', 'fix-dot'));
@@ -358,7 +358,7 @@
     var once = el('div', 'option best');
     once.appendChild(el('h4', null, 'Fix these once'));
     once.appendChild(el('div', 'big', GBP.format(total)));
-    once.appendChild(el('p', null, list.length ? list.length + (list.length === 1 ? ' job, ' : ' jobs, ') + 'about ' + hrs(hours) + (q.start && q.start.price ? ' with the start' : '') + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the jobs you’d like done.'));
+    once.appendChild(el('p', null, list.length ? list.length + (list.length === 1 ? ' job, ' : ' jobs, ') + 'about ' + hrs(hours) + (q.start && q.start.price ? ' including set-up' : '') + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the jobs you’d like done.'));
     var b = el('button', null, 'Ask me to do these'); b.type = 'button'; b.disabled = !list.length;
     b.addEventListener('click', function () { ask(list); });
     once.appendChild(b);

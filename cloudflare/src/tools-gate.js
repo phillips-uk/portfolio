@@ -85,8 +85,8 @@ export async function guard(env, request, access, bucket, max, minutes) {
   if (access && access.admin) return null;
   const origin = request.headers.get('Origin');
   if (!origin || origin !== new URL(request.url).origin) return { reason: 'origin', response: jsonResponse({ error: 'Forbidden' }, 403) };
-  if (looksLikeBot(request)) return { reason: 'bot', response: jsonResponse({ error: 'The free checks are for people using a web browser. Ask me a question below instead.' }, 403) };
-  if (await overRate(env, request, bucket, max, minutes)) return { reason: 'rate', response: jsonResponse({ error: 'That’s a lot of checks from this connection in a short time. Please wait a while and try again, or ask me a question below.', limit: true }, 429) };
+  if (looksLikeBot(request)) return { reason: 'bot', response: jsonResponse({ error: 'I couldn’t run this free check from here. Please try again in your web browser, or ask me a question below.' }, 403) };
+  if (await overRate(env, request, bucket, max, minutes)) return { reason: 'rate', response: jsonResponse({ error: 'Too many checks from this connection. Please wait a while and try again, or ask me a question below.', limit: true }, 429) };
   return null;
 }
 

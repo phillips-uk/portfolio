@@ -118,13 +118,13 @@
   var money = function (cur) { return new Intl.NumberFormat('en-GB', { style: 'currency', currency: cur || 'GBP', maximumFractionDigits: 0 }); };
   var GBP = money('GBP');
   // 15 min, 1 hour, 2 hours 30 min: AI-assisted jobs are often under an hour (Lewis, 19 Nov 2026)
-  var START_T = 'To start, once', START_S = 'Access, a look round the account and a plan for the fixes you tick';
+  var START_T = 'Set-up (charged once)', START_S = 'I get access, review your account and plan the fixes you tick';
   var hrs = function (h) {
     var m = Math.round(h * 60), H = Math.floor(m / 60), r = m % 60;
     if (!H) return r + ' min';
     return H + (H === 1 ? ' hour' : ' hours') + (r ? ' ' + r + ' min' : '');
   };
-  // The start: one hour, charged once whatever is ticked. Reports saved before 19 Nov 2026 have none.
+  // The set-up: one hour, charged once whatever is ticked. Reports saved before 19 Nov 2026 have none.
   function startRow(q) {
     var row = el('div', 'fix-row fix-start');
     row.appendChild(el('span', 'fix-dot'));
@@ -208,7 +208,7 @@
     var once = el('div', 'option' + (monthlyBetter ? '' : ' best'));
     once.appendChild(el('h4', null, 'Fix these once'));
     once.appendChild(el('div', 'big', chosen.length ? (from ? 'from ' : '') + GBP.format(total) : GBP.format(0)));
-    once.appendChild(el('p', null, chosen.length ? chosen.length + (chosen.length === 1 ? ' fix, ' : ' fixes, ') + 'about ' + hrs(hours) + (q.start && q.start.price ? ' with the start' : '') + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the fixes you’d like done.'));
+    once.appendChild(el('p', null, chosen.length ? chosen.length + (chosen.length === 1 ? ' fix, ' : ' fixes, ') + 'about ' + hrs(hours) + (q.start && q.start.price ? ' including set-up' : '') + '. Paid in advance. I re-run the check when they’re done.' : 'Tick the fixes you’d like done.'));
     var b1 = el('button', null, r.flags && r.flags.checkout ? 'Pay and book these fixes' : 'Ask me to do these'); b1.type = 'button'; b1.disabled = !chosen.length;
     b1.addEventListener('click', function () { buy('once', chosen, total); });
     once.appendChild(b1);

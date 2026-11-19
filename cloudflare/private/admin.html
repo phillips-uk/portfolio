@@ -1212,11 +1212,11 @@
             <div class="pr-fields">
               <label>Day rate (£)<input type="number" name="dayRate" min="1" step="1" required></label>
               <label>Hours in a day<input type="number" name="hoursPerDay" min="1" max="24" step="0.5" required></label>
-              <label>To start the job(s), charged once (minutes)<input type="number" name="startMinutes" min="0" step="5" required></label>
+              <label>Set-up, charged once per order (minutes)<input type="number" name="startMinutes" min="0" step="5" required></label>
               <label>Round each job up to (minutes)<input type="number" name="jobRoundMinutes" min="1" step="1" required></label>
               <label>Shortest job (minutes)<input type="number" name="jobMinMinutes" min="0" step="5" required></label>
             </div>
-            <p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the start once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
+            <p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the set-up once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
           </div>
           <div class="card">
             <div class="card-head"><h2>Small business monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
@@ -3357,7 +3357,7 @@
       var mins = function (m) { return m >= 60 ? (m / 60 % 1 ? (m / 60).toFixed(2).replace(/0$/, '') : m / 60) + ' h' : m + ' min'; };
       if (q.start && q.lines.length) {
         var sr = el('tr');
-        sr.appendChild(el('td', null, 'To start the job(s), once')); sr.appendChild(el('td', 'r', '')); sr.appendChild(el('td', 'r', ''));
+        sr.appendChild(el('td', null, 'Set-up, charged once')); sr.appendChild(el('td', 'r', '')); sr.appendChild(el('td', 'r', ''));
         sr.appendChild(el('td', 'r', mins(q.start.minutes))); sr.appendChild(el('td', 'r', GBP.format(q.start.price)));
         tb.appendChild(sr);
       }
@@ -3377,7 +3377,7 @@
       tf.appendChild(fr); t.appendChild(tf);
       box.appendChild(t);
       box.appendChild(el('p', null, d.label + ' at ' + GBP2.format(d.hourlyRate) + ' an hour. ' +
-        (q.humanTotal != null && q.lines.length ? 'Every job by hand, without the start, would be ' + GBP.format(q.humanTotal) + '. ' : '') + 'Quote holds until ' + q.validUntil + '.' +
+        (q.humanTotal != null && q.lines.length ? 'Every job by hand, without the set-up, would be ' + GBP.format(q.humanTotal) + '. ' : '') + 'Quote holds until ' + q.validUntil + '.' +
         (q.retainer ? ' Monthly option: ' + GBP.format(q.retainer.fee) + ' a month, ' + q.retainer.minMonths + '-month minimum' + (q.retainer.suggested ? ', shown as the better choice for this account.' : '.') : ' The monthly option is hidden until its fee is set.') +
         (q.holdForReview ? ' Quotes are held for your check.' : '')));
     }).catch(function (e) { box.textContent = e.message; });
