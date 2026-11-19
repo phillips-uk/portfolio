@@ -850,6 +850,11 @@ select.input::-ms-expand{display:none}
 .thanks-card .rnote{text-align:left}
 @media (max-width:520px){.thanks-actions{flex-direction:column;align-self:stretch}.thanks-actions .btn{width:100%}}
 @media (prefers-reduced-motion: reduce){.thanks-card{animation:none}.thanks-tick circle,.thanks-tick path{animation:none;stroke-dashoffset:0}}
+
+/* ===== v16: company, spam protection, and Ben's number and email out of the page ===== */
+.hp{position:absolute !important;left:-9999px !important;width:1px;height:1px;overflow:hidden}
+.lead-captcha{display:flex;justify-content:center}
+.lead-captcha:empty{display:none}
 </style>
 </head>
 <body>
@@ -866,7 +871,7 @@ select.input::-ms-expand{display:none}
 <div class="utility on-dark">
   <div class="wrap utility-in">
     <span>London<span class="dot">&amp;</span>Cambridgeshire</span>
-    <span><a href="tel:+447903877970">+44 (0)7903 877970</a><span class="dot u-email-dot">&middot;</span><a class="u-email" href="mailto:ben@monumentcorporatefinance.com">ben@monumentcorporatefinance.com</a></span>
+    <span><a class="ph" href="/monument#enquiry" data-ph-call="Call Ben" data-ph-show="Show number">Show number</a><span class="dot u-email-dot">&middot;</span><a class="u-email" href="/monument?by=email#enquiry">Send a message</a></span>
   </div>
 </div>
 
@@ -927,8 +932,8 @@ select.input::-ms-expand{display:none}
         <address>The Fisheries, 1 Mentmore Terrace<br>London E8 3PN</address>
         <p style="margin-top:10px">Cambridgeshire</p>
         <ul style="margin-top:12px">
-          <li><a href="tel:+447903877970">+44 (0)7903 877970</a></li>
-          <li><a href="mailto:ben@monumentcorporatefinance.com">ben@monumentcorporatefinance.com</a></li>
+          <li><a class="ph" href="/monument#enquiry" data-ph-call="Call Ben" data-ph-show="Show number">Show number</a></li>
+          <li><a href="/monument?by=email#enquiry">Send a message</a></li>
         </ul>
       </div>
       <div>
@@ -953,13 +958,13 @@ select.input::-ms-expand{display:none}
       </div>
     </div>
     <div class="foot-base" id="footer">
-      <p>Monument Corporate Finance Limited. Registered in England and Wales, company number 08855574. Registered office: 27 Old Gloucester Street, London WC1N 3AX.</p>
+      <p>Monument Corporate Finance Limited. Registered in England and Wales, company number 08855574. Registered office: 27 Old Gloucester Street, London WC1N 3AX. Email: <span class="js-email"></span>.</p>
       <p>&copy; 2026 Monument Corporate Finance</p>
     </div>
   </div>
 </footer>
 
-<nav class="mbar" id="mbar" aria-label="Quick contact"><a class="btn btn-line-light" href="tel:+447903877970">Call us</a><a class="btn btn-brass" href="/monument#enquiry">Start an enquiry</a></nav>
+<nav class="mbar" id="mbar" aria-label="Quick contact"><a class="btn btn-line-light ph" href="/monument#enquiry" data-ph-call="Call us" data-ph-show="Call us">Call us</a><a class="btn btn-brass" href="/monument#enquiry">Start an enquiry</a></nav>
 <a href="#top" class="to-top" id="toTop" aria-label="Back to top">&uarr;</a>
 
 <script>
@@ -990,6 +995,28 @@ select.input::-ms-expand{display:none}
     $$('a', nav).forEach(a => a.addEventListener('click', closeMenu));
   }
 
+
+  /* ===== v16: Ben's number and email stay out of the page, away from bots. Phones tap to call; desktops show the
+     number on a click. "Send a message" links open the contact form. Both clicks are events the live site can count. ===== */
+  const MCF_LIVE = false; /* on the live site these clicks go to GA4, and Google Ads can count them as calls */
+  const track = (event, params) => { if (MCF_LIVE) { window.dataLayer = window.dataLayer || []; window.dataLayer.push(Object.assign({ event }, params || {})); } };
+  const PH = ['+44', '7903', '877970'], PH_TEL = 'tel:' + PH.join(''), PH_SHOW = '0' + PH[1] + ' ' + PH[2];
+  const canCall = !!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+  $$('a.ph').forEach(a => {
+    if (canCall) { a.href = PH_TEL; a.textContent = a.dataset.phCall; a.setAttribute('aria-label', a.dataset.phCall + ', ' + PH_SHOW); }
+    a.addEventListener('click', e => {
+      if (canCall || a.dataset.shown) { track('phone_click', { where: a.closest('footer') ? 'footer' : 'page' }); return; }
+      e.preventDefault();
+      a.dataset.shown = '1'; a.href = PH_TEL;
+      a.textContent = a.classList.contains('btn') ? 'Call ' + PH_SHOW : PH_SHOW;
+      track('phone_reveal', { where: a.closest('footer') ? 'footer' : 'page' });
+    });
+  });
+  $$('.js-email').forEach(el => {
+    const at = ['ben', ['monumentcorporatefinance', 'com'].join('.')].join('@'), a = document.createElement('a');
+    a.href = 'mailto:' + at; a.textContent = at; el.appendChild(a);
+  });
+
   /* The visitor's own details come from this browser's session, never from the address */
   let lead = null;
   try { lead = JSON.parse(sessionStorage.getItem('mcfLead') || 'null'); } catch (e) { lead = null; }
@@ -1006,7 +1033,7 @@ select.input::-ms-expand{display:none}
     $('#thanksWhen').textContent = 'He\u2019ll aim to call in the ' + list + ', as you asked.';
     $('#thanksWhen').hidden = false;
   }
-  const sent = lead ? [lead.needLabel, lead.amountLabel, lead.ctx, lead.note].filter(Boolean) : [];
+  const sent = lead ? [lead.company, lead.needLabel, lead.amountLabel, lead.ctx, lead.note].filter(Boolean) : [];
   if (sent.length) { $('#thanksWhat').textContent = sent.join(' \u00b7 '); $('#thanksSent').hidden = false; }
 
   /* Tracking. On the live site this page is the conversion: GA4 records a generate_lead key event with the tool and

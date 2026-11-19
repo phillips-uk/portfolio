@@ -832,7 +832,13 @@ select.input::-ms-expand{display:none}
 .form-step.lead-stack .form-title{margin-bottom:0}
 .hero-form .lead-stack legend{margin-bottom:10px}
 @media (max-width:700px){.hero-form .lead-not{justify-self:center}}
+
+/* ===== v16: company, spam protection, and Ben's number and email out of the page ===== */
+.hp{position:absolute !important;left:-9999px !important;width:1px;height:1px;overflow:hidden}
+.lead-captcha{display:flex;justify-content:center}
+.lead-captcha:empty{display:none}
 </style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
 <body>
 
@@ -854,7 +860,7 @@ select.input::-ms-expand{display:none}
 <div class="utility on-dark">
   <div class="wrap utility-in">
     <span>London<span class="dot">&amp;</span>Cambridgeshire</span>
-    <span><a href="tel:+447903877970">+44 (0)7903 877970</a><span class="dot u-email-dot">&middot;</span><a class="u-email" href="mailto:ben@monumentcorporatefinance.com">ben@monumentcorporatefinance.com</a></span>
+    <span><a class="ph" href="#enquiry" data-ph-call="Call Ben" data-ph-show="Show number">Show number</a><span class="dot u-email-dot">&middot;</span><a class="u-email" href="#enquiry" data-msg="email">Send a message</a></span>
   </div>
 </div>
 
@@ -894,7 +900,7 @@ select.input::-ms-expand{display:none}
           <li>For growth, acquisitions and refinancing</li>
           <li>High street banks and independent lenders</li>
         </ul>
-        <p class="hero-call">Prefer to talk? <a href="tel:+447903877970">Call 07903 877970</a></p>
+        <p class="hero-call">Prefer to talk? <a class="ph" href="#enquiry" data-ph-call="Call Ben" data-ph-show="Show Ben&rsquo;s number">Show Ben&rsquo;s number</a></p>
       </div>
 
       <div class="hero-form" id="enquiry">
@@ -936,6 +942,8 @@ select.input::-ms-expand{display:none}
             <div class="form-step lead-stack" id="step2" hidden>
               <h2 class="form-title" tabindex="-1">How should Ben get in touch?</h2>
               <div class="field"><label for="fName">Your name</label><input class="input" id="fName" name="name" type="text" autocomplete="name"></div>
+              <div class="field"><label for="fCompany">Company</label><input class="input" id="fCompany" name="company" type="text" autocomplete="organization"></div>
+              <div class="hp" aria-hidden="true"><label for="fWebsite">Leave this empty</label><input id="fWebsite" name="website" type="text" tabindex="-1" autocomplete="off"></div>
               <fieldset><legend>Phone, email or both?</legend>
                 <div class="lead-chips">
                   <label class="lead-chip"><input type="checkbox" name="by" value="phone">Phone</label>
@@ -957,6 +965,7 @@ select.input::-ms-expand{display:none}
               </div>
               <button type="button" class="lead-not" id="noteBtn" aria-expanded="false" aria-controls="noteField">Add a note for Ben</button>
               <div class="field" id="noteField" hidden><label for="fNotes">A line about the business <span class="optional">(optional)</span></label><textarea class="input" id="fNotes" rows="3"></textarea></div>
+              <div class="lead-captcha"></div>
               <p class="err lead-err" id="err2" role="alert" hidden></p>
               <div class="form-actions">
                 <button type="submit" class="btn btn-navy">Send to Ben</button>
@@ -1172,10 +1181,10 @@ select.input::-ms-expand{display:none}
         <p class="lede">Confidential, with no obligation.</p>
         <div class="cta-actions">
           <a class="btn btn-brass" href="#enquiry">Start an enquiry</a>
-          <a class="btn btn-line-light" href="tel:+447903877970">Call Ben on 07903 877970</a>
+          <a class="btn btn-line-light ph" href="#enquiry" data-ph-call="Call Ben" data-ph-show="Show Ben&rsquo;s number">Show Ben&rsquo;s number</a>
         </div>
         <dl class="cta-contacts">
-          <div><dt>Email</dt><dd><a href="mailto:ben@monumentcorporatefinance.com">ben@monumentcorporatefinance.com</a></dd></div>
+          <div><dt>Message</dt><dd><a href="#enquiry" data-msg="email">Send Ben a message</a></dd></div>
           <div><dt>London office</dt><dd>The Fisheries, 1 Mentmore Terrace, London E8 3PN</dd></div>
           <div><dt>Cambridgeshire</dt><dd>Serving businesses across the county</dd></div>
         </dl>
@@ -1197,8 +1206,8 @@ select.input::-ms-expand{display:none}
         <address>The Fisheries, 1 Mentmore Terrace<br>London E8 3PN</address>
         <p style="margin-top:10px">Cambridgeshire</p>
         <ul style="margin-top:12px">
-          <li><a href="tel:+447903877970">+44 (0)7903 877970</a></li>
-          <li><a href="mailto:ben@monumentcorporatefinance.com">ben@monumentcorporatefinance.com</a></li>
+          <li><a class="ph" href="#enquiry" data-ph-call="Call Ben" data-ph-show="Show number">Show number</a></li>
+          <li><a href="#enquiry" data-msg="email">Send a message</a></li>
         </ul>
       </div>
       <div>
@@ -1223,13 +1232,13 @@ select.input::-ms-expand{display:none}
       </div>
     </div>
     <div class="foot-base" id="footer">
-      <p>Monument Corporate Finance Limited. Registered in England and Wales, company number 08855574. Registered office: 27 Old Gloucester Street, London WC1N 3AX.</p>
+      <p>Monument Corporate Finance Limited. Registered in England and Wales, company number 08855574. Registered office: 27 Old Gloucester Street, London WC1N 3AX. Email: <span class="js-email"></span>.</p>
       <p>&copy; 2026 Monument Corporate Finance</p>
     </div>
   </div>
 </footer>
 
-<nav class="mbar" id="mbar" aria-label="Quick contact"><a class="btn btn-line-light" href="tel:+447903877970">Call us</a><a class="btn btn-brass" href="#enquiry">Start an enquiry</a></nav>
+<nav class="mbar" id="mbar" aria-label="Quick contact"><a class="btn btn-line-light ph" href="#enquiry" data-ph-call="Call us" data-ph-show="Call us">Call us</a><a class="btn btn-brass" href="#enquiry">Start an enquiry</a></nav>
 <a href="#top" class="to-top" id="toTop" aria-label="Back to top">&uarr;</a>
 
 <script>
@@ -1338,7 +1347,7 @@ select.input::-ms-expand{display:none}
       err.textContent = !need ? 'Choose what you need to continue.' : 'Choose an approximate size, or "Not sure yet".';
       err.hidden = false; return;
     }
-    err.hidden = true; showStep(2); $('#fName').focus({ preventScroll: true });
+    err.hidden = true; showStep(2); renderCaptcha($('.lead-captcha', step2)); $('#fName').focus({ preventScroll: true });
     if (card.getBoundingClientRect().top < 0) goTo('enquiry');
   }
   $('#toStep2').addEventListener('click', toStep2);
@@ -1346,6 +1355,20 @@ select.input::-ms-expand{display:none}
 
   /* ===== v15: the contact step. A name, then phone and/or email, whichever the visitor prefers. ===== */
   const LEAD_KEY = 'mcfLead', THANKS = '/monument/thank-you';
+  /* Spam protection: Cloudflare Turnstile, shown only if Cloudflare is unsure, plus a hidden field only bots fill in.
+     This draft uses Cloudflare's public test key, which always passes. The live site uses Ben's own key, and the server
+     checks each token with Cloudflare, rejects forms sent back within a couple of seconds and limits repeat sends. */
+  const TS_KEY = '1x00000000000000000000AA';
+  const renderCaptcha = el => {
+    if (!el || el.dataset.done) return;
+    const go = () => {
+      if (!window.turnstile) return false;
+      el.dataset.done = '1';
+      window.turnstile.render(el, { sitekey: TS_KEY, appearance: 'interaction-only', theme: 'light', action: 'enquiry' });
+      return true;
+    };
+    if (!go()) { const t = setInterval(() => { if (go()) clearInterval(t); }, 300); setTimeout(() => clearInterval(t), 10000); }
+  };
   const leadWire = root => {
     const show = () => $$('.lead-reveal', root).forEach(r => { r.hidden = !$('input[name="by"][value="' + r.dataset.by + '"]', root).checked; });
     $$('input[name="by"]', root).forEach(i => i.addEventListener('change', () => {
@@ -1357,25 +1380,40 @@ select.input::-ms-expand{display:none}
   };
   const leadRead = root => {
     const q = n => $('[name="' + n + '"]', root);
-    const name = q('name').value.trim(), by = $$('input[name="by"]:checked', root).map(i => i.value);
+    if (q('website') && q('website').value) return { bot: true, by: [] }; /* only a bot fills the hidden field */
+    const name = q('name').value.trim(), company = q('company').value.trim(), by = $$('input[name="by"]:checked', root).map(i => i.value);
     const phone = q('phone').value.trim(), email = q('email').value.trim(), when = $$('input[name="when"]:checked', root).map(i => i.value);
     let err = '', bad = null;
+    const cap = $('.lead-captcha', root), token = $('[name="cf-turnstile-response"]', root);
     if (!name) { err = 'Add your name so Ben knows who to contact.'; bad = q('name'); }
+    else if (!company) { err = 'Add your company name so Ben can look it up.'; bad = q('company'); }
     else if (!by.length) { err = 'Choose phone, email or both.'; bad = $('input[name="by"]', root); }
     else if (by.includes('phone') && phone.replace(/\D/g, '').length < 10) { err = 'Add a phone number Ben can call, such as 07700 900123.'; bad = q('phone'); }
     else if (by.includes('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err = 'Add an email address Ben can reply to, such as name@company.co.uk.'; bad = q('email'); }
+    else if (window.turnstile && cap && cap.dataset.done && !(token && token.value)) { err = 'One moment: the security check is still finishing.'; bad = q('name'); }
     const box = $('.lead-err', root);
     if (err) { box.textContent = err; box.hidden = false; bad.focus(); return null; }
     box.hidden = true;
-    return { name, by, phone: by.includes('phone') ? phone : '', email: by.includes('email') ? email : '', when: by.includes('phone') ? when : [] };
+    return { name, company, by, phone: by.includes('phone') ? phone : '', email: by.includes('email') ? email : '', when: by.includes('phone') ? when : [] };
   };
   /* The person's details stay in this browser's session for the thank-you page. The address carries only the
      tool and the channel, never a name, number or email, so analytics never sees personal details. */
   const leadSend = (lead, from) => {
+    if (lead.bot) { location.href = THANKS; return; } /* a bot gets the same page, and nothing is kept */
     try { sessionStorage.setItem(LEAD_KEY, JSON.stringify(lead)); } catch (e) { /* a private window: the thank-you page still works */ }
     location.href = THANKS + '?from=' + encodeURIComponent(from) + '&by=' + encodeURIComponent(lead.by.join('-'));
   };
   leadWire(step2);
+  /* "Send a message" opens this form with Email ticked */
+  const preferEmail = () => {
+    const em = $('#step2 input[name="by"][value="email"]');
+    if (em && !em.checked) { em.checked = true; em.dispatchEvent(new Event('change')); }
+  };
+  $$('a[data-msg]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); preferEmail(); goTo('enquiry');
+    setTimeout(() => $('#enqTitle').focus({ preventScroll: true }), reduceMotion ? 0 : 700);
+  }));
+  if (qs.get('by') === 'email') preferEmail();
   $('#noteBtn').addEventListener('click', () => {
     $('#noteField').hidden = false; $('#noteBtn').hidden = true; $('#noteBtn').setAttribute('aria-expanded', 'true'); $('#fNotes').focus();
   });
@@ -1394,6 +1432,28 @@ select.input::-ms-expand{display:none}
   /* FAQs: one answer open at a time */
   const faqs = $$('.faq details');
   faqs.forEach(d => d.addEventListener('toggle', () => { if (d.open) faqs.forEach(o => { if (o !== d) o.open = false; }); }));
+
+
+  /* ===== v16: Ben's number and email stay out of the page, away from bots. Phones tap to call; desktops show the
+     number on a click. "Send a message" links open the contact form. Both clicks are events the live site can count. ===== */
+  const MCF_LIVE = false; /* on the live site these clicks go to GA4, and Google Ads can count them as calls */
+  const track = (event, params) => { if (MCF_LIVE) { window.dataLayer = window.dataLayer || []; window.dataLayer.push(Object.assign({ event }, params || {})); } };
+  const PH = ['+44', '7903', '877970'], PH_TEL = 'tel:' + PH.join(''), PH_SHOW = '0' + PH[1] + ' ' + PH[2];
+  const canCall = !!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+  $$('a.ph').forEach(a => {
+    if (canCall) { a.href = PH_TEL; a.textContent = a.dataset.phCall; a.setAttribute('aria-label', a.dataset.phCall + ', ' + PH_SHOW); }
+    a.addEventListener('click', e => {
+      if (canCall || a.dataset.shown) { track('phone_click', { where: a.closest('footer') ? 'footer' : 'page' }); return; }
+      e.preventDefault();
+      a.dataset.shown = '1'; a.href = PH_TEL;
+      a.textContent = a.classList.contains('btn') ? 'Call ' + PH_SHOW : PH_SHOW;
+      track('phone_reveal', { where: a.closest('footer') ? 'footer' : 'page' });
+    });
+  });
+  $$('.js-email').forEach(el => {
+    const at = ['ben', ['monumentcorporatefinance', 'com'].join('.')].join('@'), a = document.createElement('a');
+    a.href = 'mailto:' + at; a.textContent = at; el.appendChild(a);
+  });
 
   /* ===== v9: info tips and result motion ===== */
   const tipBox = document.createElement('div');
