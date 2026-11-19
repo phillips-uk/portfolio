@@ -43,7 +43,7 @@
   "name": "How to Fix Google Ads Conversion Tracking",
   "step": [
     {"@type": "HowToStep", "name": "Identify the symptom", "text": "Match your symptom (inactive status, duplicate conversions, inflated rates) to the likely cause using the diagnosis table."},
-    {"@type": "HowToStep", "name": "Check for duplicate conversion counting", "text": "Open every conversion action and identify any pairs tracking the same event from different sources. Set GA4-imported versions to secondary (Include in Conversions = Off)."},
+    {"@type": "HowToStep", "name": "Check for duplicate conversion counting", "text": "Open every conversion action and identify any pairs tracking the same event from different sources. For the duplicate GA4 actions, set Action optimisation to Secondary action."},
     {"@type": "HowToStep", "name": "Verify tag firing with Tag Assistant", "text": "Run Tag Assistant on the conversion page to confirm the tag fires correctly. Check Conversion ID and Label match exactly."},
     {"@type": "HowToStep", "name": "Confirm Consent Mode v2 firing order", "text": "The Consent Mode default state tag must fire before all other Google tags. Verify in Tag Assistant that consent state shows granted before the conversion tag fires."}
   ]
@@ -69,7 +69,7 @@
     {
       "@type": "Question",
       "name": "Should I import GA4 conversions into Google Ads?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes. In most lead-generation accounts, use a GTM-deployed Google Ads Conversion Tag for Smart Bidding. If a GA4 import measures the same outcome, set its Action optimisation to Secondary action and keep it out of any custom goal used for bidding."}
     },
     {
       "@type": "Question",
@@ -79,7 +79,7 @@
     {
       "@type": "Question",
       "name": "What is the difference between primary and secondary conversions?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but don't influence bid decisions."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Under Action optimisation, Primary actions guide Smart Bidding when the campaign uses their standard goal. Secondary actions are available for reporting. A campaign using a custom goal bids towards all actions in that goal, including Secondary actions."}
     }
   ]
 }
@@ -836,9 +836,9 @@
         <h3 class="issue-title">Duplicate conversion counting</h3>
       </div>
       <div class="article-body">
-        <p>The most widespread misconfiguration in Google Ads accounts. It happens when two sources are both tracking the same conversion and both are set as primary. The common version: a GTM-deployed Google Ads Conversion Tag <em>and</em> a GA4-imported conversion action both set to Include in Conversions = On for the same event. Every conversion gets counted twice.</p>
+        <p>The most widespread misconfiguration in Google Ads accounts. It happens when two sources are both tracking the same conversion and both are set as primary. The common version: a GTM-deployed Google Ads Conversion Tag <em>and</em> a GA4-imported conversion action both set to Primary action under Action optimisation for the same event. If the campaign bids towards both, conversions they both record are counted twice.</p>
         <p>Impact goes beyond inflated reporting. Smart Bidding receives a corrupted signal: it thinks conversions are happening more frequently than they are, at a lower CPA than is real. Performance looks better than it is until you compare against actual revenue or CRM data.</p>
-        <p><strong>Fix:</strong> Open every conversion action and identify any pairs tracking the same event from different sources. Set the GA4-imported version to <strong>secondary</strong> (Include in Conversions = Off). The GTM-deployed Google Ads Conversion Tag stays primary. Re-run this check every time you add a new conversion source.</p>
+        <p><strong>Fix:</strong> Open every conversion action and identify any pairs tracking the same event from different sources. Set Action optimisation for the duplicate GA4 import to <strong>Secondary action</strong> and exclude it from any custom goal used for bidding. Keep the GTM-deployed Google Ads Conversion Tag set to Primary action. Re-run this check every time you add a new conversion source.</p>
       </div>
     </div>
 
@@ -896,7 +896,7 @@
     </div>
 
     <div class="article-body">
-      <p><strong>Fix:</strong> For every conversion action imported from GA4, set <strong>Include in Conversions = Off</strong>. Keep the import for reference and reporting; let your GTM-deployed Google Ads Conversion Tag carry the bidding weight. The rule isn&rsquo;t &ldquo;never import GA4&rdquo;; it&rsquo;s &ldquo;never let two sources track the same event as primary&rdquo;.</p>
+      <p><strong>Fix:</strong> For each GA4 import that duplicates your Google Ads tag, set <strong>Action optimisation</strong> to <strong>Secondary action</strong>. Keep the import for reference and reporting, and exclude it from any custom goal used for bidding. Use the GTM-deployed Google Ads Conversion Tag as the single bidding action for that outcome.</p>
     </div>
 
     <!-- Issue 04 -->
@@ -1127,7 +1127,7 @@
       <div class="best-table-head">
         <span>Conversion event</span>
         <span>Source</span>
-        <span>Include in Conversions</span>
+        <span>Action optimisation</span>
         <span>Bidding role</span>
       </div>
       <div class="best-table-row">
@@ -1136,7 +1136,7 @@
         <span>
           <span class="best-badge primary">
             <span class="best-badge-dot" style="background:var(--brand);"></span>
-            On &middot; primary
+            Primary action
           </span>
         </span>
         <span class="best-role">Smart Bidding signal</span>
@@ -1147,7 +1147,7 @@
         <span>
           <span class="best-badge secondary">
             <span class="best-badge-dot" style="background:var(--info-dot);"></span>
-            Off &middot; secondary
+            Secondary action
           </span>
         </span>
         <span class="best-role">Reporting only</span>
@@ -1158,7 +1158,7 @@
         <span>
           <span class="best-badge secondary">
             <span class="best-badge-dot" style="background:var(--info-dot);"></span>
-            Off &middot; secondary
+            Secondary action
           </span>
         </span>
         <span class="best-role">Observed</span>
@@ -1260,7 +1260,7 @@
           <span class="faq-q">Should I import GA4 conversions into Google Ads?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Yes, but in most lead-generation accounts, GA4-imported conversions work best as secondary (Include in Conversions = Off). Your primary Smart Bidding signal should be a GTM-deployed Google Ads Conversion Tag. GA4 imports are useful for cross-referencing and reporting; the important rule is never to let two sources track the same event as primary.</div>
+        <div class="faq-answer">Yes. In most lead-generation accounts, use a GTM-deployed Google Ads Conversion Tag for Smart Bidding. If a GA4 import measures the same outcome, set its Action optimisation to Secondary action and keep it out of any custom goal used for bidding. Use the import to cross-check results and for reporting.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
@@ -1274,7 +1274,7 @@
           <span class="faq-q">What is the difference between primary and secondary conversions?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Primary conversions (Include in Conversions = On) feed directly into Smart Bidding as the optimisation target. Secondary conversions are recorded in reports but don&rsquo;t influence bid decisions. If primary conversions are duplicated, miscategorised, or include low-quality signals, Smart Bidding optimises toward the wrong thing.</div>
+        <div class="faq-answer">Under Action optimisation, Primary actions guide Smart Bidding when the campaign uses their standard goal. Secondary actions are available for reporting. A campaign using a custom goal bids towards all actions in that goal, including Secondary actions. If primary conversions are duplicated, miscategorised, or include low-quality signals, Smart Bidding optimises toward the wrong thing.</div>
       </div>
     </div>
 
@@ -1317,7 +1317,7 @@
           <span class="related-card-readtime">10 min read</span>
         </div>
         <h3 class="related-card-title">Google Ads Quality Score Low? How to Improve It</h3>
-        <p class="related-card-desc">Quality Score affects what you pay per click, not just where you rank.</p>
+        <p class="related-card-desc">Use Quality Score to diagnose issues with expected click-through rate, ad relevance and landing page experience, and see what to improve for each.</p>
         <span class="related-card-cta">Read guide &rarr;</span>
       </a>
     </div>
