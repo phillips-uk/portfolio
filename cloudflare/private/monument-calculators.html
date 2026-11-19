@@ -874,6 +874,32 @@ optgroup{font-style:normal;font-weight:600}
 .payer:focus-visible{outline:2px solid var(--brass-light);outline-offset:2px}
 .payer-name{min-width:0;overflow-wrap:anywhere}
 .payer-days{flex:none;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ===== v14: the cost of the wait, and the detail in tabs ===== */
+.dd-heads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.dd-head{display:grid;gap:14px;align-content:start;min-width:0}
+.label-tip{display:flex;align-items:center;gap:8px}
+.dd-cost{color:var(--brass-light)}
+.result .info{width:18px;height:18px;font-size:.72rem;border-color:var(--on-navy-soft);color:var(--on-navy-soft)}
+.result .info:hover,.result .info[aria-expanded="true"]{background:var(--on-navy);border-color:var(--on-navy);color:var(--navy)}
+.dtabs{display:flex;flex-wrap:wrap;gap:2px 18px;border-bottom:1px solid var(--navy-line);margin-bottom:4px}
+.dtab{font:inherit;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 0 9px;margin-bottom:-1px;background:none;border:0;border-bottom:2px solid transparent;color:var(--on-navy-soft);cursor:pointer;transition:color .2s,border-color .2s}
+.dtab:hover{color:var(--on-navy)}
+.dtab[aria-selected="true"]{color:var(--brass-light);border-bottom-color:var(--brass-light)}
+.dtab:focus-visible{outline:2px solid var(--brass-light);outline-offset:2px}
+.dpanel{display:grid;gap:10px}
+.how-link{font:inherit;padding:0;margin-left:4px;background:none;border:0;color:var(--brass-light);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.how-body{display:grid;gap:8px;animation:mcfOpen .4s var(--ease)}
+.how-body p{margin:0;font-size:.84rem;line-height:1.55;color:var(--on-navy-soft)}
+@media (prefers-reduced-motion: reduce){.how-body{animation:none}}
+@media (max-width:700px){.label-tip{justify-content:center}.dtabs{justify-content:center}.how-body{text-align:left}}
+@media (max-width:480px){
+  .dd-heads{gap:12px}
+  .dd-heads .result-label{letter-spacing:.08em;white-space:nowrap}
+  .label-tip{gap:5px}
+  .dtabs{flex-wrap:nowrap;justify-content:space-between;gap:8px}
+  .dtab{font-size:.62rem;letter-spacing:.05em;white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -1123,19 +1149,20 @@ optgroup{font-style:normal;font-weight:600}
             </div>
           </div>
           <div class="result" id="ddResult" aria-live="polite">
-            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
-              <path d="M50 24 h96 v84 h-96 z"/><path d="M50 42 h96"/><path d="M70 16 v16 M126 16 v16"/>
-              <path d="M62 58 h10 M80 58 h10 M98 58 h10 M116 58 h10 M134 58 h4"/>
-              <path d="M62 94 h10 M80 94 h10 M98 94 h10"/>
-              <path class="accent" d="M62 76 H134"/><path class="accent" d="M127 71 L134 76 L127 81"/>
-              <ellipse class="accent" cx="182" cy="78" rx="20" ry="6"/>
-              <path d="M162 78 V100 M202 78 V100"/><path d="M162 86 A20 6 0 0 0 202 86"/><path d="M162 93 A20 6 0 0 0 202 93"/><path d="M162 100 A20 6 0 0 0 202 100"/>
-            </svg></div>
             <p class="result-msg" id="ddMsg" hidden></p>
             <div class="result-body">
-              <p class="result-label">You take</p>
-              <p class="result-big" id="ddDays">&nbsp;</p>
-              <p class="result-per">to get paid, on average.</p>
+              <div class="dd-heads">
+                <div class="dd-head">
+                  <p class="result-label">You take</p>
+                  <p class="result-big" id="ddDays">&nbsp;</p>
+                  <p class="result-per">to get paid, on average</p>
+                </div>
+                <div class="dd-head">
+                  <div class="result-label label-tip">The wait costs<button type="button" class="info" id="ddCostTip" aria-label="About the cost" data-tip="Your trade debtors, financed at an example rate of 8% a year."></button></div>
+                  <p class="result-big dd-cost" id="ddCost">&nbsp;</p>
+                  <p class="result-per">a year in finance</p>
+                </div>
+              </div>
               <div class="cmp">
                 <div class="cmp-row cmp-you">
                   <div class="cmp-top"><span class="cmp-name">You</span><span class="cmp-val" id="ddYouVal"></span></div>
@@ -1153,82 +1180,71 @@ optgroup{font-style:normal;font-weight:600}
                 <div><dt>Invoice discounting could release now</dt><dd id="ddOutRelease"></dd></div>
               </dl>
               <button type="button" class="btn btn-brass btn-block" id="ddQuote">Request terms</button>
-              <details class="more" id="ddTrendMore" hidden>
-                <summary>See their trend</summary>
+              <details class="more" id="ddMore">
+                <summary>See the detail</summary>
                 <div class="more-body">
-                  <div id="pcChart"></div>
-                  <p>Average days to pay each year. The dashed line is the industry median for 2025, and 2026 is the year so far.</p>
+                  <div class="dtabs" role="tablist" aria-label="Detail">
+                    <button type="button" class="dtab" role="tab" id="dtTrend" aria-controls="dpTrend" aria-selected="true">Trend</button>
+                    <button type="button" class="dtab" role="tab" id="dtHow" aria-controls="dpHow" aria-selected="false" tabindex="-1">How they pay</button>
+                    <button type="button" class="dtab" role="tab" id="dtTerms" aria-controls="dpTerms" aria-selected="false" tabindex="-1" hidden>Terms</button>
+                    <button type="button" class="dtab" role="tab" id="dtPayers" aria-controls="dpPayers" aria-selected="false" tabindex="-1">Payers</button>
+                    <button type="button" class="dtab" role="tab" id="dtBreak" aria-controls="dpBreak" aria-selected="false" tabindex="-1">Breakdown</button>
+                  </div>
+                  <div class="dpanel" role="tabpanel" id="dpTrend" aria-labelledby="dtTrend">
+                    <div id="ddChart"></div>
+                    <p id="ddChartNote"></p>
+                  </div>
+                  <div class="dpanel" role="tabpanel" id="dpHow" aria-labelledby="dtHow" hidden>
+                    <dl class="result-list">
+                      <div><dt>Paid within 30 days</dt><dd id="grp30"></dd></div>
+                      <div><dt>Paid in 31 to 60 days</dt><dd id="grp60"></dd></div>
+                      <div><dt>Paid after 60 days</dt><dd id="grpOver"></dd></div>
+                      <div><dt>Typical standard terms</dt><dd id="grpTerms"></dd></div>
+                      <div><dt>Typical longest contract terms</dt><dd id="grpMax"></dd></div>
+                      <div><dt>Offer supply chain finance</dt><dd id="grpScf"></dd></div>
+                      <div><dt>Signed up to a payment code</dt><dd id="grpCode"></dd></div>
+                    </dl>
+                    <p id="grpBase"></p>
+                  </div>
+                  <div class="dpanel" role="tabpanel" id="dpTerms" aria-labelledby="dtTerms" hidden>
+                    <p><span id="pcWho"></span>. <span id="pcPeriod"></span>.</p>
+                    <dl class="result-list">
+                      <div><dt>Paid within 30 days</dt><dd id="pc30"></dd></div>
+                      <div><dt>Paid in 31 to 60 days</dt><dd id="pc60"></dd></div>
+                      <div><dt>Paid after 60 days</dt><dd id="pcOver"></dd></div>
+                      <div><dt>Standard payment terms</dt><dd id="pcTerms"></dd></div>
+                      <div><dt>Longest terms in its contracts</dt><dd id="pcMax"></dd></div>
+                      <div><dt>Offers supply chain finance</dt><dd id="pcScf"></dd></div>
+                      <div><dt>Signed up to a payment code</dt><dd id="pcCode"></dd></div>
+                    </dl>
+                    <p><span id="pcFiled"></span> <a class="pc-link" id="pcReport" href="https://www.gov.uk/check-when-businesses-pay-invoices" target="_blank" rel="noopener">See the full report on GOV.UK</a></p>
+                  </div>
+                  <div class="dpanel" role="tabpanel" id="dpPayers" aria-labelledby="dtPayers" hidden>
+                    <p class="payers-h">Slowest</p>
+                    <ol class="payers" id="grpSlow"></ol>
+                    <p class="payers-h">Fastest</p>
+                    <ol class="payers" id="grpFast"></ol>
+                    <p>Latest reports since January 2024, as filed. Only companies with steady figures since 2023 are ranked, so a one-off filing error stays off the list. Select one to check it as a customer.</p>
+                  </div>
+                  <div class="dpanel" role="tabpanel" id="dpBreak" aria-labelledby="dtBreak" hidden>
+                    <dl class="result-list">
+                      <div><dt>Days beyond your terms</dt><dd id="ddOutBeyond"></dd></div>
+                      <div><dt>Cash tied up beyond terms</dt><dd id="ddOutCash"></dd></div>
+                      <div><dt>Each day is worth</dt><dd id="ddOutDay"></dd></div>
+                      <div><dt>Each day costs, in finance</dt><dd id="ddOutDayCost"></dd></div>
+                    </dl>
+                  </div>
                 </div>
               </details>
-              <details class="more" id="ddDetailMore" hidden>
-                <summary>Payment terms and detail</summary>
-                <div class="more-body">
-                  <p><span id="pcWho"></span>. <span id="pcPeriod"></span>.</p>
-                  <dl class="result-list">
-                    <div><dt>Paid within 30 days</dt><dd id="pc30"></dd></div>
-                    <div><dt>Paid in 31 to 60 days</dt><dd id="pc60"></dd></div>
-                    <div><dt>Paid after 60 days</dt><dd id="pcOver"></dd></div>
-                    <div><dt>Standard payment terms</dt><dd id="pcTerms"></dd></div>
-                    <div><dt>Longest terms in its contracts</dt><dd id="pcMax"></dd></div>
-                    <div><dt>Offers supply chain finance</dt><dd id="pcScf"></dd></div>
-                    <div><dt>Signed up to a payment code</dt><dd id="pcCode"></dd></div>
-                  </dl>
-                  <p><span id="pcFiled"></span> <a class="pc-link" id="pcReport" href="https://www.gov.uk/check-when-businesses-pay-invoices" target="_blank" rel="noopener">See the full report on GOV.UK</a></p>
-                </div>
-              </details>
-              <details class="more" id="grpTrendMore">
-                <summary>See the trend</summary>
-                <div class="more-body">
-                  <div id="grpChart"></div>
-                  <p id="grpChartNote"></p>
-                </div>
-              </details>
-              <details class="more" id="grpHowMore">
-                <summary>How they pay</summary>
-                <div class="more-body">
-                  <dl class="result-list">
-                    <div><dt>Paid within 30 days</dt><dd id="grp30"></dd></div>
-                    <div><dt>Paid in 31 to 60 days</dt><dd id="grp60"></dd></div>
-                    <div><dt>Paid after 60 days</dt><dd id="grpOver"></dd></div>
-                    <div><dt>Typical standard terms</dt><dd id="grpTerms"></dd></div>
-                    <div><dt>Typical longest contract terms</dt><dd id="grpMax"></dd></div>
-                    <div><dt>Offer supply chain finance</dt><dd id="grpScf"></dd></div>
-                    <div><dt>Signed up to a payment code</dt><dd id="grpCode"></dd></div>
-                  </dl>
-                  <p id="grpBase"></p>
-                </div>
-              </details>
-              <details class="more" id="grpPayersMore">
-                <summary>Slowest and fastest payers</summary>
-                <div class="more-body">
-                  <p class="payers-h">Slowest</p>
-                  <ol class="payers" id="grpSlow"></ol>
-                  <p class="payers-h">Fastest</p>
-                  <ol class="payers" id="grpFast"></ol>
-                  <p>Latest reports since January 2024, as filed. Only companies with steady figures since 2023 are ranked, so a one-off filing error stays off the list. Select one to check it as a customer.</p>
-                </div>
-              </details>
-              <details class="more">
-                <summary>See the breakdown</summary>
-                <div class="more-body">
-                  <dl class="result-list">
-                    <div><dt>Days beyond your terms</dt><dd id="ddOutBeyond"></dd></div>
-                    <div><dt>Cash tied up beyond terms</dt><dd id="ddOutCash"></dd></div>
-                    <div><dt>Each day is worth</dt><dd id="ddOutDay"></dd></div>
-                  </dl>
-                </div>
-              </details>
-              <details class="more">
-                <summary>How it works</summary>
-                <div class="more-body">
-                  <p>Debtor days are trade debtors divided by credit sales, times 365.</p>
-                  <p>Industry and region figures are medians of large UK companies' own payment practices reports for 2025, published on GOV.UK under the Open Government Licence v3.0, with each company's industry from Companies House. The broad industry figures match the Department for Business and Trade's published ones to within a day.</p>
-                  <p>A region is where companies have their registered office, from ONS postcode data. That is not always where they trade: many groups register in London.</p>
-                  <p>A named customer's figures are its own latest report. On the live site all of these refresh every month.</p>
-                  <p>Invoice discounting turns unpaid invoices into cash as you raise them. It is often part of an asset-based lending facility. Example advance rate for this draft: 70% to 85% of debtors.</p>
-                </div>
-              </details>
-              <p class="result-small">Indicative only. Not an offer of finance.</p>
+              <p class="result-small">Indicative only. Not an offer of finance. <button type="button" class="how-link" id="ddHowBtn" aria-expanded="false" aria-controls="ddHow">How it works</button></p>
+              <div class="how-body" id="ddHow" hidden>
+                <p>Debtor days are trade debtors divided by credit sales, times 365.</p>
+                <p>The cost is what it takes to fund your trade debtors for a year, at an example finance rate of 8%.</p>
+                <p>Industry and region figures are medians of large UK companies' own payment practices reports for 2025, published on GOV.UK under the Open Government Licence v3.0, with each company's industry from Companies House. The broad industry figures match the Department for Business and Trade's published ones to within a day.</p>
+                <p>A region is where companies have their registered office, from ONS postcode data. That is not always where they trade: many groups register in London.</p>
+                <p>A named customer's figures are its own latest report. On the live site all of these refresh every month.</p>
+                <p>Invoice discounting turns unpaid invoices into cash as you raise them. It is often part of an asset-based lending facility. Example advance rate for this draft: 70% to 85% of debtors.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1598,7 +1614,7 @@ optgroup{font-style:normal;font-weight:600}
 
   /* Tools: tabs, plus links straight to one tool, such as #debtor-days */
   const short = n => (n >= 1e6 ? '£' + String(Math.round(n / 1e5) / 10).replace(/\.0$/, '') + 'm' : money(n));
-  const tabs = $$('[role="tab"]');
+  const tabs = $$('.tabs [role="tab"]');
   const selectTab = tab => tabs.forEach(t => {
     const on = t === tab;
     t.setAttribute('aria-selected', String(on));
@@ -1723,6 +1739,7 @@ optgroup{font-style:normal;font-weight:600}
      (GOV.UK, Open Government Licence v3.0), with its industry from Companies House.
      On the live site the customer data reads from the database and refreshes monthly. */
   const GRP = JSON.parse(document.getElementById('grpData').textContent);
+  const COST_RATE = 0.08; /* example finance rate for the cost of the wait; Ben sets it in his back office */
   const PC = JSON.parse(document.getElementById('pcData').textContent);
   const F = {}; PC.fields.forEach((f, k) => { F[f] = k; });
   const HIDDEN = new Set([]); /* company numbers Ben hides in his back office */
@@ -1807,7 +1824,8 @@ optgroup{font-style:normal;font-weight:600}
     $('#pcCode').textContent = c[F.paymentCode] == null ? 'Not reported' : c[F.paymentCode] ? 'Yes' : 'No';
     $('#pcFiled').textContent = 'Filed ' + fullDate(c[F.filed]) + '.';
     $('#pcReport').href = 'https://check-payment-practices.service.gov.uk/report/' + c[F.reportId];
-    $('#pcChart').innerHTML = pcChart(c[F.trend2018to2026], ind && ind.days);
+    $('#ddChart').innerHTML = pcChart(c[F.trend2018to2026], ind && ind.days);
+    $('#ddChartNote').textContent = 'Average days to pay each year.' + (ind ? ' The dashed line is its industry median for 2025 (' + dayText(ind.days) + ').' : '') + ' 2026 is the year so far.';
   }
   /* An industry's or region's own detail: trend, how they pay, and their slowest and fastest payers */
   let grpShown = null;
@@ -1827,8 +1845,8 @@ optgroup{font-style:normal;font-weight:600}
     if (grpShown === key) return;
     grpShown = key;
     const all = key === 'all', p = v => (v == null ? 'Not reported' : v + '%'), d = v => (v == null ? 'Not reported' : dayText(v));
-    $('#grpChart').innerHTML = pcChart(g.t, all ? null : GRP.groups.all.d, 'Median');
-    $('#grpChartNote').textContent = 'Median days to pay each year.' + (all ? '' : ' The dashed line is all large businesses in 2025 (' + dayText(GRP.groups.all.d) + ').') + ' 2026 is the year so far.';
+    $('#ddChart').innerHTML = pcChart(g.t, all ? null : GRP.groups.all.d, 'Median');
+    $('#ddChartNote').textContent = 'Median days to pay each year.' + (all ? '' : ' The dashed line is all large businesses in 2025 (' + dayText(GRP.groups.all.d) + ').') + ' 2026 is the year so far.';
     $('#grp30').textContent = p(g.p30); $('#grp60').textContent = p(g.p60); $('#grpOver').textContent = p(g.pov);
     $('#grpTerms').textContent = d(g.terms); $('#grpMax').textContent = d(g.tmax);
     $('#grpScf').textContent = p(g.scf); $('#grpCode').textContent = p(g.code);
@@ -1853,7 +1871,7 @@ optgroup{font-style:normal;font-weight:600}
       const diff = Math.round(them - exact);
       gap = diff === 0 ? 'In line with your customers\' average.' : days(Math.abs(diff)) + (diff < 0 ? ' faster' : ' slower') + ' than your customers\' average.';
       tie = sales > 0 ? nice(sales * them / 365) : 0;
-      pay = tie ? 'On ' + short(sales) + ' a year of sales to them, the time they take ties up about ' + short(tie) + '.' : '';
+      pay = tie ? 'On ' + short(sales) + ' a year of sales to them, the time they take ties up about ' + short(tie) + ', costing about ' + short(nice(tie * COST_RATE)) + ' a year.' : '';
       pcDetail(c, ind);
     } else {
       const key = ddMode === 'region' ? $('#ddRegion').value : $('#ddIndustry').value, g = GRP.groups[key] || GRP.groups.all;
@@ -1861,10 +1879,14 @@ optgroup{font-style:normal;font-weight:600}
       them = g.d; themName = g.who; who = lowerFirst(g.who); late = g.l == null ? 'Not reported' : g.l + '%';
       grpDetail(key, g);
       gap = r > 0 ? days(r) + ' slower.' : r < 0 ? days(-r) + ' faster.' : 'In line.';
-      pay = r > 0 ? 'Getting paid at their pace would release about ' + short(nice(vs * day)) + '.'
+      pay = r > 0 ? 'Getting paid at their pace would save about ' + short(nice(vs * day * COST_RATE)) + ' a year and release ' + short(nice(vs * day)) + '.'
         : r < 0 ? 'You already get paid faster than they pay.' : 'You get paid about as fast as they pay.';
     }
     setText($('#ddDays'), days(dso));
+    const cost = nice(D * COST_RATE), perDay = nice(day * COST_RATE);
+    setText($('#ddCost'), short(cost));
+    $('#ddCostTip').dataset.tip = 'Your trade debtors of ' + money(D) + ', financed at an example rate of ' + Math.round(COST_RATE * 100) + '% a year. Each day you take off saves about ' + money(perDay) + ' a year.';
+    $('#ddOutDayCost').textContent = money(perDay) + ' a year';
     const top = Math.max(exact, them, 1);
     $('#ddYouBar').style.width = (exact / top * 100).toFixed(1) + '%';
     $('#ddThemBar').style.width = (them / top * 100).toFixed(1) + '%';
@@ -1884,7 +1906,7 @@ optgroup{font-style:normal;font-weight:600}
     $('#ddOutBeyond').textContent = beyond > 0 ? days(beyond) : 'None';
     $('#ddOutCash').textContent = beyond > 0 ? money(nice(D - day * terms)) : 'None';
     $('#ddOutDay').textContent = money(nice(day));
-    lastDd = { cust, dso, lo, hi, who, them, tie };
+    lastDd = { cust, dso, lo, hi, who, them, tie, cost: nice(D * COST_RATE) };
   }
   /* Compare with an industry, a region or a named customer; #customer-payment-checker opens the second */
   function setDdMode(mode) {
@@ -1893,11 +1915,35 @@ optgroup{font-style:normal;font-weight:600}
     $('#ddIndField').hidden = mode !== 'industry';
     $('#ddRegField').hidden = mode !== 'region';
     $('#ddCustFields').hidden = mode !== 'customer';
-    $('#ddTrendMore').hidden = $('#ddDetailMore').hidden = mode !== 'customer';
-    $('#grpTrendMore').hidden = $('#grpHowMore').hidden = $('#grpPayersMore').hidden = mode === 'customer';
+        pcShown = null; grpShown = null;
+    const custTabs = mode === 'customer';
+    $('#dtHow').hidden = $('#dtPayers').hidden = custTabs; $('#dtTerms').hidden = !custTabs;
+    const cur = $$('.dtab', ddPanel).find(t => t.getAttribute('aria-selected') === 'true');
+    if (!cur || cur.hidden) selectDtab($('#dtTrend'));
     if (!ddPanel.hidden) setHash(mode === 'customer' ? 'customer-payment-checker' : 'debtor-days');
     calcDebtors();
   }
+  /* The detail: one tab at a time */
+  function selectDtab(t) {
+    $$('.dtab', ddPanel).forEach(b => {
+      const on = b === t;
+      b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
+      document.getElementById(b.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  $$('.dtab', ddPanel).forEach(b => {
+    b.addEventListener('click', () => selectDtab(b));
+    b.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const vis = $$('.dtab', ddPanel).filter(x => !x.hidden), k = vis.indexOf(b);
+      const next = vis[(k + (e.key === 'ArrowRight' ? 1 : vis.length - 1)) % vis.length];
+      e.preventDefault(); selectDtab(next); next.focus();
+    });
+  });
+  $('#ddHowBtn').addEventListener('click', () => {
+    const open = $('#ddHow').hidden;
+    $('#ddHow').hidden = !open; $('#ddHowBtn').setAttribute('aria-expanded', String(open));
+  });
   $$('input[name="ddMode"]', ddPanel).forEach(r => r.addEventListener('change', () => { if (r.checked) setDdMode(r.value); }));
   const pcPick = c => { pcChosen = c; pcSearch.value = c[F.name]; pcClose(); calcDebtors(); };
   pcSearch.addEventListener('input', () => {
@@ -1968,8 +2014,8 @@ optgroup{font-style:normal;font-weight:600}
     if (!lastDd) return;
     const release = 'invoice discounting could release about ' + money(lastDd.lo) + ' to ' + money(lastDd.hi) + '.';
     sendToForm('abl', band(lastDd.hi), lastDd.cust
-      ? 'From the debtor days tool: our customers take ' + lastDd.dso + ' days to pay us. ' + lastDd.who + ' takes ' + lastDd.them + ' days to pay its suppliers' + (lastDd.tie ? ', which ties up about ' + money(lastDd.tie) + ' on our sales to them' : '') + '. And ' + release
-      : 'From the debtor days tool: our customers take ' + lastDd.dso + ' days to pay us (' + lastDd.who + ' take ' + lastDd.them + '), and ' + release);
+      ? 'From the debtor days tool: our customers take ' + lastDd.dso + ' days to pay us, which costs about ' + money(lastDd.cost) + ' a year in finance. ' + lastDd.who + ' takes ' + lastDd.them + ' days to pay its suppliers' + (lastDd.tie ? ', which ties up about ' + money(lastDd.tie) + ' on our sales to them' : '') + '. And ' + release
+      : 'From the debtor days tool: our customers take ' + lastDd.dso + ' days to pay us (' + lastDd.who + ' take ' + lastDd.them + '), which costs about ' + money(lastDd.cost) + ' a year in finance, and ' + release);
   });
   $('#grQuote').addEventListener('click', () => {
     if (!lastGr) return;
