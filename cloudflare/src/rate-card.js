@@ -1,7 +1,7 @@
 // Private pages that open with an invite link made in /admin: the rate card, the Search Desk demo and prospect prototypes.
 //   /rate-card?invite=<token>   /search-desk?invite=<token>   /the-loft?invite=<token>   /monument?invite=<token>
 // A page can ride on another page's invite (`access`) and share its cookie path (`cookiePath`), so one link opens a
-// small multi-page proposal: /monument and /monument/calculators both open with a "monument" invite.
+// small multi-page proposal: /monument, /monument/calculators and /monument/thank-you all open with a "monument" invite.
 // The link itself is meant to be forwarded, so the token stays in the address bar. A cookie also remembers it, so the
 // plain address keeps working in the same browser. Invites live in R2 under rate-card-invites/<token>.json and list the
 // pages they open in `pages` (invites made before the demo existed have none and open the rate card only).
@@ -13,6 +13,7 @@ import rateCardHtml from '../private/rate-card.html';
 import theLoftHtml from '../private/the-loft.html';
 import monumentHtml from '../private/monument.html';
 import monumentCalculatorsHtml from '../private/monument-calculators.html';
+import monumentThankYouHtml from '../private/monument-thank-you.html';
 import { adminEmail } from './admin.js';
 import { openDeskDemo } from './desk-demo.js';
 
@@ -25,6 +26,8 @@ export const PAGES = {
   // Monument Corporate Finance (Ben Boateng): the website draft, a homepage plus its calculators page. One invite opens both.
   'monument': { path: '/monument', html: monumentHtml, cookie: 'ph_mcf', cookiePath: '/monument', title: 'The Monument website draft' },
   'monument-calculators': { path: '/monument/calculators', html: monumentCalculatorsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  // Where every enquiry on the draft lands (no details are sent; the page only shows the flow)
+  'monument-thank-you': { path: '/monument/thank-you', html: monumentThankYouHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid';

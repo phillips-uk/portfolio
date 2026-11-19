@@ -810,6 +810,28 @@ legend{font-weight:600;font-size:.9rem;padding:0;margin-bottom:10px}
 /* ===== Dropdowns: the arrow sits inset from the edge ===== */
 select.input{-webkit-appearance:none;-moz-appearance:none;appearance:none;padding-right:52px;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%230D1B2E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 20px center;background-size:12px 8px}
 select.input::-ms-expand{display:none}
+
+/* ===== v15: the contact step asks only for what Ben needs ===== */
+.lead-stack{display:grid;gap:16px}
+.lead-stack[hidden],.lead[hidden],.lead-reveal[hidden]{display:none !important}
+.lead-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.lead-chips.chips-3{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lead-chip{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 10px;border:1px solid var(--field-line);background:var(--white);color:var(--ink);font-weight:600;font-size:.92rem;line-height:1.2;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.chips-3 .lead-chip{min-height:42px;font-size:.84rem;font-weight:500}
+.lead-chip input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.lead-chip::before{content:"";flex:none;width:16px;height:16px;border:1.5px solid var(--field-line);background:var(--white) center/10px 8px no-repeat;transition:background-color .2s,border-color .2s}
+.lead-chip:hover{border-color:var(--navy)}
+.lead-chip:has(input:checked){background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.lead-chip:has(input:checked)::before{background-color:var(--brass-light);border-color:var(--brass-light);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l2.8 2.8L9 1.2' fill='none' stroke='%230D1B2E' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.lead-chip:has(input:focus-visible){outline:2px solid var(--brass-dark);outline-offset:2px}
+.lead-reveal{display:grid;gap:14px;animation:mcfOpen .35s var(--ease)}
+.lead-err{margin:0;color:var(--error);font-size:.88rem;font-weight:500}
+.lead-not{justify-self:center;font:inherit;font-size:.86rem;padding:4px 6px;background:none;border:0;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lead-not:hover{color:var(--ink)}
+@media (prefers-reduced-motion: reduce){.lead-reveal,.lead{animation:none !important}}
+.form-step.lead-stack .form-title{margin-bottom:0}
+.hero-form .lead-stack legend{margin-bottom:10px}
+@media (max-width:700px){.hero-form .lead-not{justify-self:center}}
 </style>
 </head>
 <body>
@@ -911,53 +933,38 @@ select.input::-ms-expand{display:none}
               <div class="form-actions"><button type="button" class="btn btn-navy btn-block" id="toStep2">Continue</button></div>
             </div>
 
-            <div class="form-step" id="step2" hidden>
-              <h2 class="form-title" tabindex="-1">How can we reach you?</h2>
-              <div class="row2">
-                <div class="field"><label for="fName">Name</label><input class="input" id="fName" type="text" autocomplete="name"></div>
-                <div class="field"><label for="fCompany">Company</label><input class="input" id="fCompany" type="text" autocomplete="organization"></div>
-              </div>
-              <div class="row2">
-                <div class="field"><label for="fPhone">Telephone</label><input class="input" id="fPhone" type="tel" autocomplete="tel"></div>
-                <div class="field"><label for="fEmail">Email</label><input class="input" id="fEmail" type="email" autocomplete="email"></div>
-              </div>
-              <div class="row2">
-                <div class="field">
-                  <label for="fTurnover">Annual turnover</label>
-                  <select class="input" id="fTurnover">
-                    <option value="">Choose a band</option>
-                    <option>Under &pound;5m</option>
-                    <option>&pound;5m to &pound;25m</option>
-                    <option>&pound;25m to &pound;100m</option>
-                    <option>Over &pound;100m</option>
-                  </select>
+            <div class="form-step lead-stack" id="step2" hidden>
+              <h2 class="form-title" tabindex="-1">How should Ben get in touch?</h2>
+              <div class="field"><label for="fName">Your name</label><input class="input" id="fName" name="name" type="text" autocomplete="name"></div>
+              <fieldset><legend>Phone, email or both?</legend>
+                <div class="lead-chips">
+                  <label class="lead-chip"><input type="checkbox" name="by" value="phone">Phone</label>
+                  <label class="lead-chip"><input type="checkbox" name="by" value="email">Email</label>
                 </div>
-                <div class="field">
-                  <label for="fTiming">Timing</label>
-                  <select class="input" id="fTiming">
-                    <option value="">Choose a timing</option>
-                    <option>Within a month</option>
-                    <option>In 1 to 3 months</option>
-                    <option>In 3 to 6 months</option>
-                    <option>Exploring options</option>
-                  </select>
-                </div>
+              </fieldset>
+              <div class="lead-reveal" data-by="phone" hidden>
+                <div class="field"><label for="fPhone">Phone number</label><input class="input" id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel"></div>
+                <fieldset><legend>Best time to call <span class="optional">(optional)</span></legend>
+                  <div class="lead-chips chips-3">
+                    <label class="lead-chip"><input type="checkbox" name="when" value="morning">Morning</label>
+                    <label class="lead-chip"><input type="checkbox" name="when" value="afternoon">Afternoon</label>
+                    <label class="lead-chip"><input type="checkbox" name="when" value="evening">Evening</label>
+                  </div>
+                </fieldset>
               </div>
-              <div class="field"><label for="fNotes">A line about the business <span class="optional">(optional)</span></label><textarea class="input" id="fNotes" rows="3"></textarea></div>
-              <p class="err" id="err2" role="alert" hidden></p>
+              <div class="lead-reveal" data-by="email" hidden>
+                <div class="field"><label for="fEmail">Email</label><input class="input" id="fEmail" name="email" type="email" autocomplete="email"></div>
+              </div>
+              <button type="button" class="lead-not" id="noteBtn" aria-expanded="false" aria-controls="noteField">Add a note for Ben</button>
+              <div class="field" id="noteField" hidden><label for="fNotes">A line about the business <span class="optional">(optional)</span></label><textarea class="input" id="fNotes" rows="3"></textarea></div>
+              <p class="err lead-err" id="err2" role="alert" hidden></p>
               <div class="form-actions">
-                <button type="submit" class="btn btn-navy">Send enquiry</button>
+                <button type="submit" class="btn btn-navy">Send to Ben</button>
                 <button type="button" class="btn btn-line" id="backTo1">Back</button>
               </div>
             </div>
           </form>
 
-          <div class="done" id="enqDone" hidden>
-            <h3 id="doneTitle" tabindex="-1">Thank you, <span id="doneName"></span>.</h3>
-            <p>This is a draft, so nothing was sent. On the live site your enquiry is sent straight to Monument.</p>
-            <p class="done-summary" id="doneSummary"></p>
-            <div class="done-actions"><button type="button" class="btn btn-line" id="restart">Start again</button></div>
-          </div>
           <p class="form-assure"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><rect x="3" y="7" width="10" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V5a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Confidential, with no obligation.</p>
         </div>
       </div>
@@ -1297,10 +1304,10 @@ select.input::-ms-expand{display:none}
   /* Enquiry form, in the hero */
   const NEEDS = ['abl', 'trade', 'acquisition', 'refinance', 'other'];
   const AMOUNT_LABEL = { 'u1m': 'Under £1m', '1-5m': '£1m to £5m', '5-25m': '£5m to £25m', '25m+': 'Over £25m', 'unsure': 'Size not yet known' };
-  const form = $('#enqForm'), step1 = $('#step1'), step2 = $('#step2'), done = $('#enqDone');
+  const form = $('#enqForm'), step1 = $('#step1'), step2 = $('#step2');
   const stepTag = $('#stepTag'), stepBar = $('#stepBar'), progress = $('#formProgress');
   function showStep(n) {
-    form.hidden = false; done.hidden = true; progress.hidden = false;
+    progress.hidden = false;
     step1.hidden = n !== 1; step2.hidden = n !== 2;
     stepTag.textContent = 'Step ' + n + ' of 2';
     stepBar.style.width = (n === 1 ? 50 : 100) + '%';
@@ -1336,22 +1343,52 @@ select.input::-ms-expand{display:none}
   }
   $('#toStep2').addEventListener('click', toStep2);
   $('#backTo1').addEventListener('click', () => { showStep(1); $('#enqTitle').focus(); });
+
+  /* ===== v15: the contact step. A name, then phone and/or email, whichever the visitor prefers. ===== */
+  const LEAD_KEY = 'mcfLead', THANKS = '/monument/thank-you';
+  const leadWire = root => {
+    const show = () => $$('.lead-reveal', root).forEach(r => { r.hidden = !$('input[name="by"][value="' + r.dataset.by + '"]', root).checked; });
+    $$('input[name="by"]', root).forEach(i => i.addEventListener('change', () => {
+      show(); $('.lead-err', root).hidden = true;
+      const r = $('.lead-reveal[data-by="' + i.value + '"]', root);
+      if (i.checked && r) $('input', r).focus({ preventScroll: true });
+    }));
+    show();
+  };
+  const leadRead = root => {
+    const q = n => $('[name="' + n + '"]', root);
+    const name = q('name').value.trim(), by = $$('input[name="by"]:checked', root).map(i => i.value);
+    const phone = q('phone').value.trim(), email = q('email').value.trim(), when = $$('input[name="when"]:checked', root).map(i => i.value);
+    let err = '', bad = null;
+    if (!name) { err = 'Add your name so Ben knows who to contact.'; bad = q('name'); }
+    else if (!by.length) { err = 'Choose phone, email or both.'; bad = $('input[name="by"]', root); }
+    else if (by.includes('phone') && phone.replace(/\D/g, '').length < 10) { err = 'Add a phone number Ben can call, such as 07700 900123.'; bad = q('phone'); }
+    else if (by.includes('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err = 'Add an email address Ben can reply to, such as name@company.co.uk.'; bad = q('email'); }
+    const box = $('.lead-err', root);
+    if (err) { box.textContent = err; box.hidden = false; bad.focus(); return null; }
+    box.hidden = true;
+    return { name, by, phone: by.includes('phone') ? phone : '', email: by.includes('email') ? email : '', when: by.includes('phone') ? when : [] };
+  };
+  /* The person's details stay in this browser's session for the thank-you page. The address carries only the
+     tool and the channel, never a name, number or email, so analytics never sees personal details. */
+  const leadSend = (lead, from) => {
+    try { sessionStorage.setItem(LEAD_KEY, JSON.stringify(lead)); } catch (e) { /* a private window: the thank-you page still works */ }
+    location.href = THANKS + '?from=' + encodeURIComponent(from) + '&by=' + encodeURIComponent(lead.by.join('-'));
+  };
+  leadWire(step2);
+  $('#noteBtn').addEventListener('click', () => {
+    $('#noteField').hidden = false; $('#noteBtn').hidden = true; $('#noteBtn').setAttribute('aria-expanded', 'true'); $('#fNotes').focus();
+  });
   form.addEventListener('submit', e => {
     e.preventDefault();
     if (!step1.hidden) { toStep2(); return; }
-    const name = $('#fName').value.trim(), email = $('#fEmail').value.trim(), err = $('#err2');
-    if (!name) { err.textContent = 'Add your name so we know who to reply to.'; err.hidden = false; $('#fName').focus(); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Add an email address we can reply to, such as name@company.co.uk.'; err.hidden = false; $('#fEmail').focus(); return; }
-    err.hidden = true;
-    $('#doneName').textContent = name.split(/\s+/)[0];
-    const needLabel = $('input[name="need"]:checked').closest('label').textContent.trim();
-    $('#doneSummary').textContent = needLabel + ' · ' + AMOUNT_LABEL[$('#amount').value];
-    form.hidden = true; progress.hidden = true; done.hidden = false;
-    $('#doneTitle').focus();
-  });
-  $('#restart').addEventListener('click', () => {
-    form.reset(); $('#calcContext').hidden = true; $('#err1').hidden = true; $('#err2').hidden = true;
-    showStep(1); $('#enqTitle').focus();
+    const l = leadRead(step2);
+    if (!l) return;
+    const need = $('input[name="need"]:checked'), amount = $('#amount').value, cx = $('#calcContext');
+    leadSend(Object.assign(l, {
+      need: need ? need.value : '', needLabel: need ? need.closest('label').textContent.trim() : '',
+      amount, amountLabel: AMOUNT_LABEL[amount] || '', ctx: cx.hidden ? '' : cx.textContent, note: $('#fNotes').value.trim(), tool: 'homepage'
+    }), 'homepage');
   });
 
   /* FAQs: one answer open at a time */
