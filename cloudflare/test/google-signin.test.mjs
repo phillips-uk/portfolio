@@ -57,7 +57,8 @@ const admin = await adminCookie(env.ADMIN_SESSION_KEY, 'tester@example.test');
 const go = (path, init = {}) => { const url = new URL('https://www.phillips-uk.com' + path); return googleSignIn(new Request(url, init), url, env, url.pathname); };
 const cookieOf = (res, name) => (res.headers.getSetCookie().find(c => c.startsWith(name + '=')) || '').split(';')[0];
 
-// 0. With the preview switch off (as now), not even Lewis gets it.
+// 0. With the preview switch off, not even Lewis gets it.
+FLAGS.googleSignInPreview = false;
 const off = await go('/tools/google-ads-check/oauth/start', { headers: { Cookie: admin } });
 assert.equal(off.status, 404);
 { const u = new URL('https://www.phillips-uk.com/google-ads-audit'); assert.doesNotMatch(await (await adsCheck(new Request(u, { headers: { Cookie: admin } }), u, env)).text(), /data-signin/); }

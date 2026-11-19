@@ -29,8 +29,8 @@ import { getPricing, quote } from './pricing.js';
 // Built but switched off until Lewis's set-up is done. Nothing here holds a credential.
 export const FLAGS = {
   googleSignIn: false,   // true once Google verifies the app: Google sign-in for everyone (google-signin.js)
-  googleSignInPreview: false, // true: Google sign-in for Lewis only (signed in to /admin), e.g. to record the review video.
-                              // Off since 16 Nov 2026 (Lewis: hide it until we're ready)
+  googleSignInPreview: true,  // true: Google sign-in for Lewis only (signed in to /admin), e.g. to record the review video.
+                              // On for the verification video (Nov 2026); visitors still see the manager-link route only
   checkout: false,       // needs the Phillips. Stripe account (inside the Phillips Group Stripe account)
   applyFixes: false,     // needs Google sign-in with the customer's approval of the exact changes
 };
