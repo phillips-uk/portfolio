@@ -825,7 +825,6 @@ select.input{cursor:pointer}
 @media (max-width:700px){.about-copy .more-light{justify-self:stretch;text-align:left}}
 
 /* ===== v11: customer payment checker ===== */
-.tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
 .pc-field{position:relative}
 input[type="search"].input{-webkit-appearance:none;appearance:none}
 .pc-list{position:absolute;left:0;right:0;top:calc(26px + 8px + 50px + 4px);z-index:30;margin:0;padding:4px 0;list-style:none;background:var(--white);border:1px solid var(--navy);box-shadow:0 12px 32px rgba(13,27,46,.18);max-height:320px;overflow:auto}
@@ -844,15 +843,25 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
 .pc-chart .bar.part{fill:none;stroke:var(--brass-light);stroke-width:1.2}
 .pc-chart .median{stroke:var(--on-navy);stroke-width:1;stroke-dasharray:3 3}
 .pc-link{color:var(--brass-light)}
-.dd-link{margin:2px 0 0;font-size:.88rem}
-.dd-link a{color:var(--brass-dark)}
-@media (max-width:760px){
-  .tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tab{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .tab:nth-child(2n){border-right:0}
-  .tab:last-child{grid-column:1 / -1;border-right:0;border-bottom:0}
-}
-@media (max-width:700px){.pc-try{justify-content:center}.dd-link{text-align:center}}
+@media (max-width:700px){.pc-try{justify-content:center}}
+
+/* ===== v12: debtor days compares with an industry or a named customer ===== */
+.page-hero .lede a{color:var(--brass-light);text-underline-offset:3px}
+.label-text{font-weight:600;font-size:.9rem}
+.cust-fields{display:contents}
+.cmp{display:grid;gap:14px;margin-top:2px;text-align:left}
+.cmp-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:7px}
+.cmp-name{min-width:0;font-size:.7rem;font-weight:600;letter-spacing:.14em;line-height:1.35;text-transform:uppercase;color:var(--on-navy-soft)}
+.cmp-val{flex:none;font-weight:600;font-variant-numeric:tabular-nums}
+.cmp-track{display:block;height:10px;background:var(--navy-line)}
+.cmp-bar{display:block;height:100%;width:0;transition:width .7s var(--ease)}
+.cmp-you .cmp-bar{background:var(--on-navy)}
+.cmp-them .cmp-bar{background:var(--brass-light)}
+.cmp-take{margin:2px 0 0;font-family:var(--font-display);font-size:1.12rem;line-height:1.4;text-wrap:balance}
+.take-gap{font-weight:600;color:var(--on-navy)}
+.take-pay{color:var(--brass-light)}
+.cmp-take.bump{animation:mcfBump .45s var(--ease)}
+@media (prefers-reduced-motion: reduce){.cmp-bar{transition:none}.cmp-take.bump{animation:none}}
 </style>
 </head>
 <body>
@@ -903,13 +912,12 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
       <div class="page-hero-copy" data-stagger>
         <p class="crumbs"><a href="/monument">Home</a><span aria-hidden="true"> / </span>Tools</p>
         <h1 id="pageTitle">Work out what your business could raise</h1>
-        <p class="lede">Five free tools. No email needed.</p>
+        <p class="lede">Four free tools, including <a href="#customer-payment-checker" data-tool="customer-payment-checker">a check on how fast big customers pay</a>. No email needed.</p>
         <ul class="tool-links" aria-label="The tools">
           <li><a href="#asset-based-lending" data-tool="asset-based-lending">Asset-based lending estimate</a></li>
           <li><a href="#cash-conversion-cycle" data-tool="cash-conversion-cycle">Cash conversion cycle</a></li>
           <li><a href="#debtor-days" data-tool="debtor-days">Debtor days</a></li>
           <li><a href="#growth-funding-gap" data-tool="growth-funding-gap">Growth funding gap</a></li>
-          <li><a href="#customer-payment-checker" data-tool="customer-payment-checker">Customer payment checker</a></li>
         </ul>
       </div>
       <div class="page-hero-art" aria-hidden="true"><svg class="illo" viewBox="0 0 200 120" aria-hidden="true" focusable="false">
@@ -929,7 +937,6 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
           <button type="button" class="tab" role="tab" id="tab-cycle" data-slug="cash-conversion-cycle" aria-controls="panel-cycle" aria-selected="false" tabindex="-1">Cash conversion cycle</button>
           <button type="button" class="tab" role="tab" id="tab-debtors" data-slug="debtor-days" aria-controls="panel-debtors" aria-selected="false" tabindex="-1">Debtor days</button>
           <button type="button" class="tab" role="tab" id="tab-growth" data-slug="growth-funding-gap" aria-controls="panel-growth" aria-selected="false" tabindex="-1">Growth funding gap</button>
-          <button type="button" class="tab" role="tab" id="tab-checker" data-slug="customer-payment-checker" aria-controls="panel-checker" aria-selected="false" tabindex="-1">Payment checker</button>
         </div>
 
         <!-- 1. Asset-based lending estimate -->
@@ -1112,7 +1119,7 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
         </div>
 
         <!-- 3. Debtor days -->
-        <div class="calc-body" role="tabpanel" id="panel-debtors" aria-labelledby="tab-debtors" hidden>
+        <div class="calc-body" role="tabpanel" id="panel-debtors" aria-labelledby="tab-debtors" data-mode="industry" hidden>
           <div class="calc-inputs">
             <div class="tool-head">
               <h2 class="tool-title">Debtor days</h2>
@@ -1129,7 +1136,14 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
               </div>
             </div>
             <div class="field">
-              <div class="label-row"><label for="ddIndustry">Your customers' industry</label><button type="button" class="info" aria-label="About your customers' industry" data-tip="Who you mostly sell to. We compare you with how fast large companies in that industry pay their suppliers, from the government's 2025 figures."></button></div>
+              <div class="label-row"><span class="label-text" id="ddCmpLabel">Compare with</span><button type="button" class="info" aria-label="About the comparison" data-tip="Large UK companies report to the government how fast they pay their suppliers. Compare yourself with a whole industry, or look up one customer by name."></button></div>
+              <div class="toggle" role="radiogroup" aria-labelledby="ddCmpLabel">
+                <label><input type="radio" name="ddMode" value="industry" checked>An industry</label>
+                <label><input type="radio" name="ddMode" value="customer">A named customer</label>
+              </div>
+            </div>
+            <div class="field" id="ddIndField">
+              <div class="label-row"><label for="ddIndustry">Your customers' industry</label><button type="button" class="info" aria-label="About your customers' industry" data-tip="Who you mostly sell to. We compare you with how fast large companies in that industry paid their suppliers in 2025, from the government's figures."></button></div>
               <select class="input" id="ddIndustry">
                     <option value="all" selected>Mixed, or not sure</option>
                     <option value="A">Agriculture, forestry and fishing</option>
@@ -1152,7 +1166,18 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
                     <option value="E">Water and waste</option>
                     <option value="G">Wholesale and retail</option>
               </select>
-              <p class="dd-link"><a href="#customer-payment-checker" data-tool="customer-payment-checker">Or check a named customer</a></p>
+            </div>
+            <div class="cust-fields" id="ddCustFields" hidden>
+              <div class="field pc-field">
+                <div class="label-row"><label for="pcSearch">Customer</label><button type="button" class="info" aria-label="About the customer search" data-tip="Large UK companies report how they pay their suppliers twice a year. Search any of the 7,068 that have reported since January 2024."></button></div>
+                <input class="input" id="pcSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Company name or number" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="pcList">
+                <ul class="pc-list" id="pcList" role="listbox" aria-label="Matching companies" hidden></ul>
+                <div class="pc-try"><span>Try</span><button type="button" data-pc="01672070">Jaguar Land Rover</button><button type="button" data-pc="00519500">Tesco Stores</button><button type="button" data-pc="03298903">Greene King</button></div>
+              </div>
+              <div class="field">
+                <div class="label-row"><label for="pcSales">Your sales to them a year</label><button type="button" class="info" aria-label="About your sales to them" data-tip="Optional. We show how much of your cash the time they take ties up."></button></div>
+                <div class="money"><input class="input" id="pcSales" type="text" inputmode="decimal" autocomplete="off" value="2,000,000" placeholder="0" data-money></div>
+              </div>
             </div>
             <div class="field">
               <div class="range-row"><label for="ddTerms">Your standard payment terms</label><span class="range-out" id="ddTermsOut">30 days</span></div>
@@ -1170,20 +1195,53 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
             </svg></div>
             <p class="result-msg" id="ddMsg" hidden></p>
             <div class="result-body">
-              <p class="result-label">Debtor days</p>
+              <p class="result-label">You take</p>
               <p class="result-big" id="ddDays">&nbsp;</p>
-              <p class="result-per" id="ddPer">&nbsp;</p>
+              <p class="result-per">to get paid, on average.</p>
+              <div class="cmp">
+                <div class="cmp-row cmp-you">
+                  <div class="cmp-top"><span class="cmp-name">You</span><span class="cmp-val" id="ddYouVal"></span></div>
+                  <span class="cmp-track" aria-hidden="true"><span class="cmp-bar" id="ddYouBar"></span></span>
+                </div>
+                <div class="cmp-row cmp-them">
+                  <div class="cmp-top"><span class="cmp-name" id="ddThemName"></span><span class="cmp-val" id="ddThemVal"></span></div>
+                  <span class="cmp-track" aria-hidden="true"><span class="cmp-bar" id="ddThemBar"></span></span>
+                </div>
+              </div>
+              <p class="cmp-take" id="ddTake"><strong class="take-gap" id="ddTakeGap"></strong> <span class="take-pay" id="ddTakePay"></span></p>
               <dl class="result-list">
-                <div><dt id="ddBenchDt">Large businesses pay in</dt><dd id="ddOutBench"></dd></div>
+                <div id="ddIndRow" hidden><dt id="ddIndDt">Industry median</dt><dd id="ddInd"></dd></div>
+                <div><dt>Invoices paid late</dt><dd id="ddLate"></dd></div>
                 <div><dt>Invoice discounting could release now</dt><dd id="ddOutRelease"></dd></div>
               </dl>
               <button type="button" class="btn btn-brass btn-block" id="ddQuote">Request terms</button>
+              <details class="more" id="ddTrendMore" hidden>
+                <summary>See their trend</summary>
+                <div class="more-body">
+                  <div id="pcChart"></div>
+                  <p>Average days to pay each year. The dashed line is the industry median for 2025, and 2026 is the year so far.</p>
+                </div>
+              </details>
+              <details class="more" id="ddDetailMore" hidden>
+                <summary>Payment terms and detail</summary>
+                <div class="more-body">
+                  <p><span id="pcWho"></span>. <span id="pcPeriod"></span>.</p>
+                  <dl class="result-list">
+                    <div><dt>Paid within 30 days</dt><dd id="pc30"></dd></div>
+                    <div><dt>Paid in 31 to 60 days</dt><dd id="pc60"></dd></div>
+                    <div><dt>Paid after 60 days</dt><dd id="pcOver"></dd></div>
+                    <div><dt>Standard payment terms</dt><dd id="pcTerms"></dd></div>
+                    <div><dt>Longest terms in its contracts</dt><dd id="pcMax"></dd></div>
+                    <div><dt>Offers supply chain finance</dt><dd id="pcScf"></dd></div>
+                    <div><dt>Signed up to a payment code</dt><dd id="pcCode"></dd></div>
+                  </dl>
+                  <p><span id="pcFiled"></span> <a class="pc-link" id="pcReport" href="https://www.gov.uk/check-when-businesses-pay-invoices" target="_blank" rel="noopener">See the full report on GOV.UK</a></p>
+                </div>
+              </details>
               <details class="more">
                 <summary>See the breakdown</summary>
                 <div class="more-body">
                   <dl class="result-list">
-                    <div><dt>Against your customers' industry</dt><dd id="ddOutVs"></dd></div>
-                    <div><dt>Collecting at that pace would release</dt><dd id="ddOutCatch"></dd></div>
                     <div><dt>Days beyond your terms</dt><dd id="ddOutBeyond"></dd></div>
                     <div><dt>Cash tied up beyond terms</dt><dd id="ddOutCash"></dd></div>
                     <div><dt>Each day is worth</dt><dd id="ddOutDay"></dd></div>
@@ -1195,6 +1253,7 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
                 <div class="more-body">
                   <p>Debtor days are trade debtors divided by credit sales, times 365.</p>
                   <p>Industry figures are the median time large UK businesses took to pay their suppliers in 2025, and the share of invoices they paid late, from the Department for Business and Trade's payment practices statistics (published 14 July 2026, Open Government Licence).</p>
+                  <p>A named customer's figures are its own latest report to the government under the payment practices reporting rules, published on GOV.UK under the Open Government Licence v3.0, with its industry from Companies House. On the live site they refresh every month.</p>
                   <p>Invoice discounting turns unpaid invoices into cash as you raise them. It is often part of an asset-based lending facility. Example advance rate for this draft: 70% to 85% of debtors.</p>
                 </div>
               </details>
@@ -1279,74 +1338,6 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
         </div>
 
         <!-- 5. Customer payment checker -->
-        <div class="calc-body" role="tabpanel" id="panel-checker" aria-labelledby="tab-checker" hidden>
-          <div class="calc-inputs">
-            <div class="tool-head">
-              <h2 class="tool-title">Customer payment checker</h2>
-              <p class="calc-intro">How long does a big customer really take to pay?</p>
-            </div>
-            <div class="field pc-field">
-              <div class="label-row"><label for="pcSearch">Customer</label><button type="button" class="info" aria-label="About the customer search" data-tip="Large UK companies report how they pay their suppliers twice a year. Search any of the 7,068 that have reported since January 2024."></button></div>
-              <input class="input" id="pcSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Company name or number" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="pcList">
-              <ul class="pc-list" id="pcList" role="listbox" aria-label="Matching companies" hidden></ul>
-              <div class="pc-try"><span>Try</span><button type="button" data-pc="01672070">Jaguar Land Rover</button><button type="button" data-pc="00519500">Tesco Stores</button><button type="button" data-pc="03298903">Greene King</button></div>
-            </div>
-            <div class="field">
-              <div class="label-row"><label for="pcSales">Your sales to them a year <span class="optional">(optional)</span></label><button type="button" class="info" aria-label="About your sales to them" data-tip="We show how much of your cash their payment time ties up."></button></div>
-              <div class="money"><input class="input" id="pcSales" type="text" inputmode="decimal" autocomplete="off" value="" placeholder="0" data-money></div>
-            </div>
-          </div>
-          <div class="result" id="pcResult" aria-live="polite">
-            <div class="result-art" aria-hidden="true"><svg class="illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false">
-              <path d="M22 106 H198"/>
-              <path d="M44 106 V30 h60 v76"/><path d="M58 106 V84 h32 v22"/>
-              <path d="M56 44 h10 M74 44 h10 M92 44 h4 M56 58 h10 M74 58 h10 M92 58 h4 M56 72 h10 M74 72 h10 M92 72 h4"/>
-              <circle class="accent" cx="158" cy="64" r="30"/><path class="accent" d="M158 44 V64 L172 72"/>
-            </svg></div>
-            <p class="result-msg" id="pcMsg" hidden></p>
-            <div class="result-body">
-              <p class="result-label">Average time to pay</p>
-              <p class="result-big" id="pcDays">&nbsp;</p>
-              <p class="result-per"><span id="pcWho"></span><br><span class="pc-period" id="pcPeriod"></span></p>
-              <dl class="result-list">
-                <div><dt id="pcIndDt">Industry median</dt><dd id="pcInd"></dd></div>
-                <div><dt>Invoices paid late</dt><dd id="pcLate"></dd></div>
-                <div id="pcTieRow" hidden><dt>Ties up, on your sales to them</dt><dd id="pcTie"></dd></div>
-              </dl>
-              <button type="button" class="btn btn-brass btn-block" id="pcQuote">Request terms</button>
-              <details class="more">
-                <summary>See the trend</summary>
-                <div class="more-body">
-                  <div id="pcChart"></div>
-                  <p>Average days to pay each year. The dashed line is the industry median for 2025, and 2026 is the year so far.</p>
-                </div>
-              </details>
-              <details class="more">
-                <summary>Payment terms and detail</summary>
-                <div class="more-body">
-                  <dl class="result-list">
-                    <div><dt>Paid within 30 days</dt><dd id="pc30"></dd></div>
-                    <div><dt>Paid in 31 to 60 days</dt><dd id="pc60"></dd></div>
-                    <div><dt>Paid after 60 days</dt><dd id="pcOver"></dd></div>
-                    <div><dt>Standard payment terms</dt><dd id="pcTerms"></dd></div>
-                    <div><dt>Longest terms in its contracts</dt><dd id="pcMax"></dd></div>
-                    <div><dt>Offers supply chain finance</dt><dd id="pcScf"></dd></div>
-                    <div><dt>Signed up to a payment code</dt><dd id="pcCode"></dd></div>
-                  </dl>
-                  <p><span id="pcFiled"></span> <a class="pc-link" id="pcReport" href="https://www.gov.uk/check-when-businesses-pay-invoices" target="_blank" rel="noopener">See the full report on GOV.UK</a></p>
-                </div>
-              </details>
-              <details class="more">
-                <summary>About this data</summary>
-                <div class="more-body">
-                  <p>Each figure is the company's own report to the government under the payment practices reporting rules, published on GOV.UK under the Open Government Licence v3.0. Industries come from Companies House. On the live site the data refreshes every month.</p>
-                </div>
-              </details>
-              <p class="result-small">Indicative only. Not an offer of finance.</p>
-            </div>
-          </div>
-        </div>
-
         <div class="calc-foot">
         </div>
       </div>
@@ -1467,26 +1458,31 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
     if (on) $$('.illo', panel).forEach(s => s.classList.add('in'));
   });
   const setHash = slug => { try { history.replaceState(null, '', '#' + slug); } catch (e) { /* a preview without a real address */ } };
+  /* The customer payment checker lives inside debtor days */
+  const toolFor = slug => (slug === 'customer-payment-checker' ? 'debtor-days' : slug);
+  const slugFor = t => (t.id === 'tab-debtors' && document.getElementById('panel-debtors').dataset.mode === 'customer' ? 'customer-payment-checker' : t.dataset.slug);
   tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => { selectTab(tab); setHash(tab.dataset.slug); });
+    tab.addEventListener('click', () => { selectTab(tab); setHash(slugFor(tab)); });
     tab.addEventListener('keydown', e => {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-      selectTab(next); next.focus(); setHash(next.dataset.slug);
+      selectTab(next); next.focus(); setHash(slugFor(next));
     });
   });
   const fromHash = () => {
-    const tab = tabs.find(t => '#' + t.dataset.slug === location.hash);
+    const slug = location.hash.slice(1), tab = tabs.find(t => t.dataset.slug === toolFor(slug));
     if (!tab) return;
     selectTab(tab);
+    if (slug === 'customer-payment-checker') setDdMode('customer');
     const box = document.getElementById('calculator');
     if (box) box.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
   };
   window.addEventListener('hashchange', fromHash);
   $$('a[data-tool]').forEach(a => a.addEventListener('click', e => {
-    const tab = tabs.find(t => t.dataset.slug === a.dataset.tool);
+    const tab = tabs.find(t => t.dataset.slug === toolFor(a.dataset.tool));
     if (!tab) return;
-    e.preventDefault(); selectTab(tab); setHash(tab.dataset.slug);
+    e.preventDefault(); selectTab(tab);
+    if (a.dataset.tool === 'customer-payment-checker') setDdMode('customer'); else setHash(slugFor(tab));
     document.getElementById('calculator').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
   }));
 
@@ -1572,8 +1568,10 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
   }));
   listen('#panel-cycle', calcCycle);
 
-  /* 3. Debtor days, compared with how fast large companies in the customers' industry pay.
-     Median days to pay and share of invoices paid late, large UK businesses, 2025 (DBT, published 14 July 2026). */
+  /* 3. Debtor days: the visitor's own figure, compared with an industry or with a named customer.
+     Industries: DBT's 2025 medians. Customers: each large company's own payment practices report
+     (GOV.UK, Open Government Licence v3.0), with its industry from Companies House.
+     On the live site the customer data reads from the database and refreshes monthly. */
   const PAYERS = {
     all: ['businesses', 32, 15],
     A: ['agricultural businesses', 32, 15],
@@ -1596,87 +1594,6 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
     E: ['water and waste firms', 37, 18.5],
     G: ['wholesalers and retailers', 37, 15]
   };
-  let lastDd = null;
-  function calcDebtors() {
-    const D = num($('#ddDebtors')), S = num($('#ddSales')), terms = Number($('#ddTerms').value);
-    $('#ddTermsOut').textContent = terms + ' days';
-    const p = PAYERS[$('#ddIndustry').value] || PAYERS.all;
-    const box = $('#ddResult'), msg = $('#ddMsg');
-    if (D <= 0 || S <= 0) { showMsg(box, msg, 'Enter your trade debtors and credit sales to see the figures.'); lastDd = null; return; }
-    hideMsg(box, msg);
-    const dso = D / S * 365, day = S / 365, beyond = Math.round(dso - terms), vs = Math.round(dso - p[1]);
-    const lo = nice(D * ADVANCE.debtors[0]), hi = nice(D * ADVANCE.debtors[1]);
-    const days = n => n + (n === 1 ? ' day' : ' days');
-    $('#ddDays').textContent = days(Math.round(dso));
-    $('#ddPer').textContent = 'to get paid. Large ' + p[0] + ' take ' + p[1] + '.';
-    $('#ddBenchDt').textContent = 'Large ' + p[0] + ' pay in';
-    $('#ddOutBench').textContent = p[1] + ' days, ' + p[2] + '% paid late';
-    $('#ddOutRelease').textContent = money(lo) + ' to ' + money(hi);
-    $('#ddOutVs').textContent = vs > 0 ? days(vs) + ' slower' : vs < 0 ? days(-vs) + ' faster' : 'In line';
-    $('#ddOutCatch').textContent = vs > 0 ? money(nice(vs * day)) : 'Nothing: you are at or ahead of it';
-    $('#ddOutBeyond').textContent = beyond > 0 ? days(beyond) : 'None';
-    $('#ddOutCash').textContent = beyond > 0 ? money(nice(D - day * terms)) : 'None';
-    $('#ddOutDay').textContent = money(nice(day));
-    lastDd = { dso: Math.round(dso), lo, hi, who: p[0], bench: p[1] };
-  }
-  listen('#panel-debtors', calcDebtors);
-  $('#ddIndustry').addEventListener('change', calcDebtors);
-
-  /* 4. Growth funding gap */
-  let lastGr = null;
-  function calcGrowth() {
-    const now = num($('#grNow')), tgt = num($('#grTarget'));
-    const m = Number($('#grMargin').value) / 100, dso = Number($('#grDso').value), dio = Number($('#grDio').value), dpo = Number($('#grDpo').value);
-    $('#grMarginOut').textContent = Math.round(m * 100) + '%';
-    $('#grDsoOut').textContent = dso + ' days'; $('#grDioOut').textContent = dio + ' days'; $('#grDpoOut').textContent = dpo + ' days';
-    const box = $('#grResult'), msg = $('#grMsg');
-    if (now <= 0 || tgt <= 0) { showMsg(box, msg, 'Enter turnover now and your target to see the figures.'); lastGr = null; return; }
-    if (tgt <= now) { showMsg(box, msg, 'Enter a target above today’s turnover to see the gap.'); lastGr = null; return; }
-    hideMsg(box, msg);
-    const wc = T => T * dso / 365 + T * (1 - m) * (dio - dpo) / 365;
-    const dT = tgt - now, dC = dT * (1 - m);
-    const xDeb = dT * dso / 365, xStk = dC * dio / 365, xCre = dC * dpo / 365;
-    const gap = nice(wc(tgt) - wc(now));
-    const covLo = nice(xDeb * ADVANCE.debtors[0] + xStk * ADVANCE.stock[0]);
-    const covHi = nice(xDeb * ADVANCE.debtors[1] + xStk * ADVANCE.stock[1]);
-    $('#grGap').textContent = gap > 0 ? money(gap) : 'None';
-    $('#grPer').textContent = gap > 0 ? 'to grow from ' + short(now) + ' to ' + short(tgt) + ' turnover' : 'Supplier credit grows faster than your debtors and stock';
-    $('#grOutNow').textContent = money(nice(wc(now)));
-    $('#grOutTarget').textContent = money(nice(wc(tgt)));
-    $('#grOutDeb').textContent = money(nice(xDeb));
-    $('#grOutStk').textContent = money(nice(xStk));
-    $('#grOutCre').textContent = 'less ' + money(nice(xCre));
-    $('#grOutCover').textContent = money(covLo) + ' to ' + money(covHi);
-    const leftLo = Math.max(0, gap - covHi), leftHi = Math.max(0, gap - covLo);
-    $('#grOutLeft').textContent = leftHi <= 0 ? 'None: a facility could cover it' : leftLo === leftHi ? money(leftHi) : money(leftLo) + ' to ' + money(leftHi);
-    lastGr = { gap: Math.max(0, gap), tgt };
-  }
-  listen('#panel-growth', calcGrowth);
-
-  /* "Request terms" opens the homepage form with the figures filled in */
-  const HOME = '/monument';
-  const sendToForm = (need, amount, ctx) => {
-    location.href = HOME + '?need=' + encodeURIComponent(need) + '&amount=' + encodeURIComponent(amount) + '&ctx=' + encodeURIComponent(ctx) + '#enquiry';
-  };
-  $('#ablQuote').addEventListener('click', () => {
-    if (!lastAbl) return;
-    sendToForm('abl', band(lastAbl.hi), 'From the asset-based lending tool: an indicative facility of about ' + money(lastAbl.lo) + ' to ' + money(lastAbl.hi) + ' against the business’s assets.');
-  });
-  $('#cyQuote').addEventListener('click', () => {
-    if (!lastCy) return;
-    sendToForm('abl', band(lastCy.tied), 'From the cash conversion cycle tool: a ' + lastCy.cycle + '-day cycle, with about ' + money(lastCy.tied) + ' tied up in working capital.');
-  });
-  $('#ddQuote').addEventListener('click', () => {
-    if (!lastDd) return;
-    sendToForm('abl', band(lastDd.hi), 'From the debtor days tool: customers take ' + lastDd.dso + ' days to pay (large ' + lastDd.who + ' take ' + lastDd.bench + '), and invoice discounting could release about ' + money(lastDd.lo) + ' to ' + money(lastDd.hi) + '.');
-  });
-  $('#grQuote').addEventListener('click', () => {
-    if (!lastGr) return;
-    sendToForm('abl', band(lastGr.gap), 'From the growth funding gap tool: about ' + money(lastGr.gap) + ' more working capital needed to reach ' + short(lastGr.tgt) + ' turnover.');
-  });
-
-  /* 5. Customer payment checker: each large company's own payment practices report (GOV.UK, Open Government Licence v3.0),
-     with its industry from Companies House. On the live site this reads from the database and refreshes monthly. */
   const PC = JSON.parse(document.getElementById('pcData').textContent);
   const F = {}; PC.fields.forEach((f, k) => { F[f] = k; });
   const HIDDEN = new Set([]); /* company numbers Ben hides in his back office */
@@ -1688,14 +1605,16 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
   const fullDate = s => Number(s.slice(8, 10)) + ' ' + MONTHS[Number(s.slice(5, 7)) - 1] + ' ' + s.slice(0, 4);
   const pct = v => (v == null ? 'Not reported' : v + '%');
   const dayText = d => (Number.isInteger(d) ? d : d.toFixed(1)) + (d === 1 ? ' day' : ' days');
+  const shortName = s => s.replace(/\s+(PUBLIC LIMITED COMPANY|LIMITED|LTD\.?|PLC|LLP|L\.L\.P\.)$/i, '');
+  const setText = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const industryOf = c => {
     const d = PC.divisions[c[F.division]];
     if (d) return { name: d[2], days: d[0] };
     const s = PC.sections[c[F.section]];
     return s ? { name: s[2], days: s[0] } : null;
   };
-  const pcSearch = $('#pcSearch'), pcList = $('#pcList');
-  let pcHits = [], pcActive = -1, pcChosen = null, lastPc = null;
+  const ddPanel = $('#panel-debtors'), pcSearch = $('#pcSearch'), pcList = $('#pcList');
+  let ddMode = 'industry', pcHits = [], pcActive = -1, pcChosen = null, lastDd = null;
   const pcFind = q => {
     const cq = pcClean(q), digits = q.replace(/\s/g, '');
     if (cq.length < 2) return [];
@@ -1745,20 +1664,13 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
     if (med) { const y = base - (med / max) * (base - top); s += '<line class="median" x1="0" x2="' + W + '" y1="' + y + '" y2="' + y + '"/>'; }
     return '<svg class="pc-chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Average days to pay each year, 2018 to 2026">' + s + '</svg>';
   };
-  function pcShow() {
-    const box = $('#pcResult'), msg = $('#pcMsg'), c = pcChosen;
-    if (!c) { showMsg(box, msg, 'Search for a customer to see how long it takes to pay.'); lastPc = null; return; }
-    hideMsg(box, msg);
-    const days = c[F.days], ind = industryOf(c), sales = num($('#pcSales'));
-    $('#pcDays').textContent = dayText(days);
+  /* The named customer's own report, in the two customer expanders */
+  let pcShown = null;
+  function pcDetail(c, ind) {
+    if (pcShown === c) return;
+    pcShown = c;
     $('#pcWho').textContent = c[F.name] + (c[F.town] ? ', ' + c[F.town] : '');
     $('#pcPeriod').textContent = 'Report for ' + ym(c[F.periodStart]) + ' to ' + ym(c[F.periodEnd]);
-    $('#pcIndDt').textContent = ind ? 'Industry median (' + ind.name.toLowerCase() + ')' : 'Industry median';
-    $('#pcInd').textContent = ind ? dayText(ind.days) : 'Not known';
-    $('#pcLate').textContent = pct(c[F.pctLate]);
-    $('#pcTieRow').hidden = !(sales > 0);
-    const tie = sales > 0 ? nice(sales * days / 365) : 0;
-    if (tie) $('#pcTie').textContent = money(tie);
     $('#pc30').textContent = pct(c[F.pct30]); $('#pc60').textContent = pct(c[F.pct60]); $('#pcOver').textContent = pct(c[F.pctOver60]);
     const a = c[F.termsShortest], b = c[F.termsLongest];
     $('#pcTerms').textContent = a == null && b == null ? 'Not reported' : (a == null || b == null || a === b) ? (a == null ? b : a) + ' days' : a + ' to ' + b + ' days';
@@ -1768,9 +1680,68 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
     $('#pcFiled').textContent = 'Filed ' + fullDate(c[F.filed]) + '.';
     $('#pcReport').href = 'https://check-payment-practices.service.gov.uk/report/' + c[F.reportId];
     $('#pcChart').innerHTML = pcChart(c[F.trend2018to2026], ind && ind.days);
-    lastPc = { name: c[F.name], days, tie };
   }
-  const pcPick = c => { pcChosen = c; pcSearch.value = c[F.name]; pcClose(); pcShow(); };
+  function calcDebtors() {
+    const D = num($('#ddDebtors')), S = num($('#ddSales')), terms = Number($('#ddTerms').value);
+    $('#ddTermsOut').textContent = terms + ' days';
+    const box = $('#ddResult'), msg = $('#ddMsg'), cust = ddMode === 'customer';
+    if (D <= 0 || S <= 0) { showMsg(box, msg, 'Enter your trade debtors and credit sales to see the figures.'); lastDd = null; return; }
+    if (cust && !pcChosen) { showMsg(box, msg, 'Search for a customer to compare with.'); lastDd = null; return; }
+    hideMsg(box, msg);
+    const exact = D / S * 365, dso = Math.round(exact), day = S / 365, beyond = Math.round(exact - terms);
+    const lo = nice(D * ADVANCE.debtors[0]), hi = nice(D * ADVANCE.debtors[1]);
+    const days = n => n + (n === 1 ? ' day' : ' days');
+    let them, themName, late, gap, pay, ind = null, tie = 0, who;
+    if (cust) {
+      const c = pcChosen, sales = num($('#pcSales'));
+      ind = industryOf(c);
+      them = c[F.days]; themName = shortName(c[F.name]); who = c[F.name]; late = pct(c[F.pctLate]);
+      const diff = Math.round(them - exact);
+      gap = diff === 0 ? 'In line with your customers\' average.' : days(Math.abs(diff)) + (diff < 0 ? ' faster' : ' slower') + ' than your customers\' average.';
+      tie = sales > 0 ? nice(sales * them / 365) : 0;
+      pay = tie ? 'On ' + short(sales) + ' a year of sales to them, the time they take ties up about ' + short(tie) + '.' : '';
+      pcDetail(c, ind);
+    } else {
+      const p = PAYERS[$('#ddIndustry').value] || PAYERS.all, vs = exact - p[1], r = Math.round(vs);
+      them = p[1]; themName = 'Large ' + p[0]; who = p[0]; late = p[2] + '%';
+      gap = r > 0 ? days(r) + ' slower.' : r < 0 ? days(-r) + ' faster.' : 'In line.';
+      pay = r > 0 ? 'Getting paid at their pace would release about ' + short(nice(vs * day)) + '.'
+        : r < 0 ? 'You already get paid faster than they pay.' : 'You get paid about as fast as they pay.';
+    }
+    setText($('#ddDays'), days(dso));
+    const top = Math.max(exact, them, 1);
+    $('#ddYouBar').style.width = (exact / top * 100).toFixed(1) + '%';
+    $('#ddThemBar').style.width = (them / top * 100).toFixed(1) + '%';
+    setText($('#ddYouVal'), days(dso));
+    setText($('#ddThemName'), themName);
+    setText($('#ddThemVal'), dayText(them));
+    const take = $('#ddTake');
+    if (take.dataset.was !== gap + pay) {
+      take.dataset.was = gap + pay;
+      $('#ddTakeGap').textContent = gap; $('#ddTakePay').textContent = pay;
+      if (!reduceMotion) { take.classList.remove('bump'); void take.offsetWidth; take.classList.add('bump'); }
+    }
+    $('#ddIndRow').hidden = !(cust && ind);
+    if (cust && ind) { $('#ddIndDt').textContent = 'Industry median (' + ind.name.toLowerCase() + ')'; $('#ddInd').textContent = dayText(ind.days); }
+    $('#ddLate').textContent = late;
+    $('#ddOutRelease').textContent = money(lo) + ' to ' + money(hi);
+    $('#ddOutBeyond').textContent = beyond > 0 ? days(beyond) : 'None';
+    $('#ddOutCash').textContent = beyond > 0 ? money(nice(D - day * terms)) : 'None';
+    $('#ddOutDay').textContent = money(nice(day));
+    lastDd = { cust, dso, lo, hi, who, them, tie };
+  }
+  /* Compare with an industry or a named customer; #customer-payment-checker opens the second */
+  function setDdMode(mode) {
+    ddMode = mode; ddPanel.dataset.mode = mode;
+    $$('input[name="ddMode"]', ddPanel).forEach(r => { r.checked = r.value === mode; });
+    $('#ddIndField').hidden = mode !== 'industry';
+    $('#ddCustFields').hidden = mode !== 'customer';
+    $('#ddTrendMore').hidden = $('#ddDetailMore').hidden = mode !== 'customer';
+    if (!ddPanel.hidden) setHash(mode === 'customer' ? 'customer-payment-checker' : 'debtor-days');
+    calcDebtors();
+  }
+  $$('input[name="ddMode"]', ddPanel).forEach(r => r.addEventListener('change', () => { if (r.checked) setDdMode(r.value); }));
+  const pcPick = c => { pcChosen = c; pcSearch.value = c[F.name]; pcClose(); calcDebtors(); };
   pcSearch.addEventListener('input', () => {
     pcHits = pcFind(pcSearch.value); pcActive = -1;
     if (pcClean(pcSearch.value).length < 2) pcClose(); else pcRender();
@@ -1783,15 +1754,68 @@ input[type="search"].input{-webkit-appearance:none;appearance:none}
     else if (e.key === 'Escape') pcClose();
   });
   pcSearch.addEventListener('blur', () => setTimeout(pcClose, 150));
-  $('#pcSales').addEventListener('input', pcShow);
   $$('[data-pc]').forEach(btn => btn.addEventListener('click', () => {
     const c = pcRows.find(r => r[F.number] === btn.dataset.pc); if (c) pcPick(c);
   }));
-  $('#pcQuote').addEventListener('click', () => {
-    if (!lastPc) return;
-    sendToForm('abl', lastPc.tie ? band(lastPc.tie) : '', 'From the customer payment checker: ' + lastPc.name + ' takes ' + lastPc.days + ' days to pay its suppliers' + (lastPc.tie ? ', tying up about ' + money(lastPc.tie) + ' of our sales to them' : '') + '.');
+  { const first = pcRows.find(r => r[F.number] === '01672070') || pcRows[0]; if (first) { pcChosen = first; pcSearch.value = first[F.name]; } }
+  listen('#panel-debtors', calcDebtors);
+  $('#ddIndustry').addEventListener('change', calcDebtors);
+
+  /* 4. Growth funding gap */
+  let lastGr = null;
+  function calcGrowth() {
+    const now = num($('#grNow')), tgt = num($('#grTarget'));
+    const m = Number($('#grMargin').value) / 100, dso = Number($('#grDso').value), dio = Number($('#grDio').value), dpo = Number($('#grDpo').value);
+    $('#grMarginOut').textContent = Math.round(m * 100) + '%';
+    $('#grDsoOut').textContent = dso + ' days'; $('#grDioOut').textContent = dio + ' days'; $('#grDpoOut').textContent = dpo + ' days';
+    const box = $('#grResult'), msg = $('#grMsg');
+    if (now <= 0 || tgt <= 0) { showMsg(box, msg, 'Enter turnover now and your target to see the figures.'); lastGr = null; return; }
+    if (tgt <= now) { showMsg(box, msg, 'Enter a target above today’s turnover to see the gap.'); lastGr = null; return; }
+    hideMsg(box, msg);
+    const wc = T => T * dso / 365 + T * (1 - m) * (dio - dpo) / 365;
+    const dT = tgt - now, dC = dT * (1 - m);
+    const xDeb = dT * dso / 365, xStk = dC * dio / 365, xCre = dC * dpo / 365;
+    const gap = nice(wc(tgt) - wc(now));
+    const covLo = nice(xDeb * ADVANCE.debtors[0] + xStk * ADVANCE.stock[0]);
+    const covHi = nice(xDeb * ADVANCE.debtors[1] + xStk * ADVANCE.stock[1]);
+    $('#grGap').textContent = gap > 0 ? money(gap) : 'None';
+    $('#grPer').textContent = gap > 0 ? 'to grow from ' + short(now) + ' to ' + short(tgt) + ' turnover' : 'Supplier credit grows faster than your debtors and stock';
+    $('#grOutNow').textContent = money(nice(wc(now)));
+    $('#grOutTarget').textContent = money(nice(wc(tgt)));
+    $('#grOutDeb').textContent = money(nice(xDeb));
+    $('#grOutStk').textContent = money(nice(xStk));
+    $('#grOutCre').textContent = 'less ' + money(nice(xCre));
+    $('#grOutCover').textContent = money(covLo) + ' to ' + money(covHi);
+    const leftLo = Math.max(0, gap - covHi), leftHi = Math.max(0, gap - covLo);
+    $('#grOutLeft').textContent = leftHi <= 0 ? 'None: a facility could cover it' : leftLo === leftHi ? money(leftHi) : money(leftLo) + ' to ' + money(leftHi);
+    lastGr = { gap: Math.max(0, gap), tgt };
+  }
+  listen('#panel-growth', calcGrowth);
+
+  /* "Request terms" opens the homepage form with the figures filled in */
+  const HOME = '/monument';
+  const sendToForm = (need, amount, ctx) => {
+    location.href = HOME + '?need=' + encodeURIComponent(need) + '&amount=' + encodeURIComponent(amount) + '&ctx=' + encodeURIComponent(ctx) + '#enquiry';
+  };
+  $('#ablQuote').addEventListener('click', () => {
+    if (!lastAbl) return;
+    sendToForm('abl', band(lastAbl.hi), 'From the asset-based lending tool: an indicative facility of about ' + money(lastAbl.lo) + ' to ' + money(lastAbl.hi) + ' against the business’s assets.');
   });
-  { const first = pcRows.find(r => r[F.number] === '01672070') || pcRows[0]; if (first) pcPick(first); }
+  $('#cyQuote').addEventListener('click', () => {
+    if (!lastCy) return;
+    sendToForm('abl', band(lastCy.tied), 'From the cash conversion cycle tool: a ' + lastCy.cycle + '-day cycle, with about ' + money(lastCy.tied) + ' tied up in working capital.');
+  });
+  $('#ddQuote').addEventListener('click', () => {
+    if (!lastDd) return;
+    const release = 'invoice discounting could release about ' + money(lastDd.lo) + ' to ' + money(lastDd.hi) + '.';
+    sendToForm('abl', band(lastDd.hi), lastDd.cust
+      ? 'From the debtor days tool: our customers take ' + lastDd.dso + ' days to pay us. ' + lastDd.who + ' takes ' + lastDd.them + ' days to pay its suppliers' + (lastDd.tie ? ', which ties up about ' + money(lastDd.tie) + ' on our sales to them' : '') + '. And ' + release
+      : 'From the debtor days tool: our customers take ' + lastDd.dso + ' days to pay us (large ' + lastDd.who + ' take ' + lastDd.them + '), and ' + release);
+  });
+  $('#grQuote').addEventListener('click', () => {
+    if (!lastGr) return;
+    sendToForm('abl', band(lastGr.gap), 'From the growth funding gap tool: about ' + money(lastGr.gap) + ' more working capital needed to reach ' + short(lastGr.tgt) + ' turnover.');
+  });
 
   calcAbl();
   calcCycle();
