@@ -43,7 +43,7 @@
     "url": "https://www.phillips-uk.com"
   },
   "datePublished": "2026-11-17",
-  "dateModified": "2026-11-17",
+  "dateModified": "2026-11-19",
   "url": "https://www.phillips-uk.com/guides/fix-performance-max-assets/"
 }
 </script>
@@ -59,7 +59,7 @@
       "name": "Does Ad Strength affect how Performance Max performs?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Not directly. Google calls Ad Strength an indicator of how complete and varied your assets are, not an auction factor. It has found that higher Ad Strength goes with better performance, so a low rating is worth fixing, but by adding real, varied assets rather than writing to the score. The one hard limit is the minimum: an Incomplete asset group can't run."
+        "text": "Not directly. Google calls Ad Strength an indicator of how complete and varied your assets are, not an auction factor. It has found that higher Ad Strength goes with better performance, so a low rating is worth fixing, but by adding real, varied assets rather than writing to the score. An Incomplete asset group can’t run. Check for missing required creative and for any call or lead form asset required by the primary bidding goal."
       }
     },
     {
@@ -67,7 +67,7 @@
       "name": "How do I stop Performance Max making its own videos?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Upload your own. Google makes videos when an asset group has no active video of its own, and its guidance is that uploading your own in all three shapes (horizontal, square and vertical, each 10 seconds or longer) stops that. There is no separate off switch for auto-generated video."
+        "text": "Upload your own. Google makes videos when an asset group has no active video of its own, and its guidance is that uploading your own in all three shapes (horizontal, square and vertical, each at least 10 seconds long) stops that. Keep the vertical video between 10 and 60 seconds for Shorts eligibility. There is no separate off switch for auto-generated video."
       }
     },
     {
@@ -75,7 +75,7 @@
       "name": "Should I turn off Final URL expansion?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Turn it off if one page is the only route to a sale or enquiry: that is Google's own advice, with text customisation left on. If several pages on your site are good landing pages, keep it on and exclude the ones you don't want, such as blog posts, job pages and old offers."
+        "text": "Turn it off if one page is the only route to a sale or enquiry: that is Google's own advice, with text customisation left on. If several pages on your site are good landing pages, keep it on and exclude the ones you don't want, such as blog posts, job pages and old offers. Final URL expansion is unavailable in campaigns that use store goals only."
       }
     },
     {
@@ -83,7 +83,7 @@
       "name": "How many headlines does Performance Max need?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "At least 3 and up to 15, each up to 30 characters. Google recommends 11 or more, with at least one of 15 characters or fewer. You also need 1 to 5 long headlines of up to 90 characters, and 2 to 5 descriptions of up to 90 characters."
+        "text": "The standard requirement is 3 to 15 headlines, each up to 30 characters. Google recommends 11 or more, with at least one of 15 characters or fewer. The standard requirements also include 1 to 5 long headlines and 2 to 5 descriptions, each up to 90 characters. Campaigns linked to a Merchant Center feed can launch without additional creative assets."
       }
     },
     {
@@ -91,7 +91,7 @@
       "name": "What image sizes does Performance Max need?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Landscape 1.91:1 (1200 x 628 recommended) and square 1:1 (1200 x 1200 recommended) are required; portrait 4:5 (960 x 1200) is optional. You can add up to 20 images, each up to 5,120 KB. Logos need a square 1:1 version and can have a landscape 4:1 version."
+        "text": "For a standard asset group, landscape 1.91:1 (1200 x 628 recommended) and square 1:1 (1200 x 1200 recommended) are required. Portrait 4:5 (960 x 1200 recommended) is optional. You can add up to 20 images per asset group across all three formats combined, each up to 5,120 KB. The standard logo requirement is a square 1:1 version, with an optional landscape 4:1 version. Campaigns linked to a Merchant Center feed can launch without additional creative assets."
       }
     }
   ]
@@ -613,7 +613,7 @@
       <span class="article-readtime">10 min read</span>
     </div>
     <h1 class="article-h1">How to Fix Performance Max Asset Issues in Google Ads (2026)</h1>
-    <div class="article-byline">Lewis Phillips &middot; 17 Nov 2026 &middot; 10 min read</div>
+    <div class="article-byline">Lewis Phillips &middot; 17 Nov 2026 &middot; Updated 19 Nov 2026 &middot; 10 min read</div>
     <p class="article-lede">Performance Max builds its ads from what you give it. Leave a gap and it fills it itself, with its own videos, its own copy and its own choice of landing page. This guide puts Google's asset requirements in one place, explains what Ad Strength really tells you, and fixes the nine asset issues that come up most.</p>
 
     <!-- Quick Answer -->
@@ -631,12 +631,12 @@
     <div class="article-body">
       <h2>What an asset group is, and why it matters</h2>
       <p>An asset group is the set of headlines, descriptions, images, logos and videos Performance Max builds its ads from, around one theme or one set of products. Google mixes and matches them into ads for Search, YouTube, Display, Discover, Gmail and Maps.</p>
-      <p>That makes the assets the brief. A Search campaign shows the ad you wrote. Performance Max shows whatever combination it thinks will work, and where you leave a gap, it fills it: its own videos, its own copy, its own choice of landing page. Most asset issues come down to one of those gaps, or to a setting Google switched on for you.</p>
+      <p>That makes the assets the brief. A Search campaign shows the ad you wrote. Performance Max chooses the combination it thinks will work. Depending on your settings, Google can generate eligible videos or copy and choose a different landing page. Most asset issues come down to one of those gaps, or to a setting Google switched on for you.</p>
     </div>
 
     <div class="article-body">
       <h2>Google's asset requirements, in one place</h2>
-      <p>The required counts are what Performance Max needs to run. The recommended counts are what gives it room to work. I aim for the recommended numbers in every asset group.</p>
+      <p>The table shows the standard creative requirements. Campaigns linked to a Merchant Center feed can launch without additional creative assets. You can add up to 20 images per asset group across landscape, square and portrait formats combined. I aim for the recommended numbers in every asset group.</p>
     </div>
       <div class="ck" role="table" aria-label="Performance Max asset requirements">
       <div class="ck-row ck-head" role="row"><div role="columnheader">Asset</div><div role="columnheader">Google's rule</div><div role="columnheader">What I add</div></div>
@@ -644,11 +644,11 @@
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Long headlines</div><div class="ck-r" role="cell" data-l="Google's rule">1 to 5, up to 90 characters.</div><div class="ck-p" role="cell" data-l="What I add">2 or more, each at least 30 characters.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Descriptions</div><div class="ck-r" role="cell" data-l="Google's rule">2 to 5, up to 90 characters.</div><div class="ck-p" role="cell" data-l="What I add">4 or more: the product, the proof, the offer, the reason to act now.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Business name</div><div class="ck-r" role="cell" data-l="Google's rule">1, up to 25 characters. It must match your domain or your verified business name.</div><div class="ck-p" role="cell" data-l="What I add">Set once, in brand guidelines.</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Landscape images (1.91:1)</div><div class="ck-r" role="cell" data-l="Google's rule">Required. 1200 x 628 recommended, 600 x 314 minimum. Up to 20.</div><div class="ck-p" role="cell" data-l="What I add">4 or more real photos of the product, the work or the place.</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Square images (1:1)</div><div class="ck-r" role="cell" data-l="Google's rule">Required. 1200 x 1200 recommended, 300 x 300 minimum. Up to 20.</div><div class="ck-p" role="cell" data-l="What I add">4 or more.</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Portrait images (4:5)</div><div class="ck-r" role="cell" data-l="Google's rule">Optional. 960 x 1200 recommended, 480 x 600 minimum. Up to 20.</div><div class="ck-p" role="cell" data-l="What I add">2 or more. Optional doesn't mean unimportant.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Landscape images (1.91:1)</div><div class="ck-r" role="cell" data-l="Google's rule">Required. 1200 x 628 recommended, 600 x 314 minimum.</div><div class="ck-p" role="cell" data-l="What I add">4 or more real photos of the product, the work or the place.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Square images (1:1)</div><div class="ck-r" role="cell" data-l="Google's rule">Required. 1200 x 1200 recommended, 300 x 300 minimum.</div><div class="ck-p" role="cell" data-l="What I add">4 or more.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Portrait images (4:5)</div><div class="ck-r" role="cell" data-l="Google's rule">Optional. 960 x 1200 recommended, 480 x 600 minimum.</div><div class="ck-p" role="cell" data-l="What I add">2 or more. Optional doesn't mean unimportant.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Logos</div><div class="ck-r" role="cell" data-l="Google's rule">Square (1:1) required, 1200 x 1200 recommended, 128 x 128 minimum. Landscape (4:1) optional, 1200 x 300 recommended. Up to 5.</div><div class="ck-p" role="cell" data-l="What I add">Both shapes. No white logo on a transparent background, which Google warns can vanish on white.</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Videos</div><div class="ck-r" role="cell" data-l="Google's rule">Optional. 10 seconds or longer, horizontal, square or vertical. Up to 15.</div><div class="ck-p" role="cell" data-l="What I add">One of each shape, made by you. Without any, Google makes its own.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Videos</div><div class="ck-r" role="cell" data-l="Google's rule">Optional. Videos must be at least 10 seconds long. For Shorts eligibility, add a vertical video of 10 to 60 seconds. Up to 15 videos.</div><div class="ck-p" role="cell" data-l="What I add">One of each shape, made by you. Without an active video, Google can generate one.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Sitelinks</div><div class="ck-r" role="cell" data-l="Google's rule">Optional.</div><div class="ck-p" role="cell" data-l="What I add">6 or more. Google lists them as part of an Excellent rating.</div></div>
       </div>
     <div class="ck-note"><div class="ck-note-k">Worth knowing</div><p>Images and logos can be up to 5,120 KB each. Since 2025, the business name and logos sit in brand guidelines at campaign level for most accounts, rather than in each asset group. If you can't find them in the asset group, look there.</p></div>
@@ -657,7 +657,7 @@
       <h2>What Ad Strength tells you, and what it doesn't</h2>
       <p>Every asset group gets an Ad Strength rating. Google scores it on the asset types you have, how varied they are, how different your text is, and how many assets there are in total.</p>
       <ul>
-        <li><strong>Incomplete:</strong> below the minimum. The asset group can't run.</li>
+        <li><strong>Incomplete:</strong> missing required creative or a call or lead form asset required by the primary bidding goal. The asset group can&rsquo;t run.</li>
         <li><strong>Poor:</strong> the minimum only, so it can serve on some placements but not all.</li>
         <li><strong>Average:</strong> every asset type is there, with little variety.</li>
         <li><strong>Good:</strong> every type, with good variety and different text.</li>
@@ -685,7 +685,7 @@
       <div class="issue-header"><span class="issue-num">02</span><h2 class="issue-title">Google's videos running instead of yours</h2></div>
       <div class="ck" role="table" aria-label="Issue 02">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Videos on YouTube that you never made, stitched from your images and text.</div><div class="ck-f" role="cell" data-l="Why">The asset group has no active video of its own, so Google builds them where it can.</div><div class="ck-p" role="cell" data-l="The fix">Upload your own: 10 seconds or longer, one horizontal, one square, one vertical.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Videos on YouTube that you never made, stitched from your images and text.</div><div class="ck-f" role="cell" data-l="Why">The asset group has no active video of its own, so Google builds them where it can.</div><div class="ck-p" role="cell" data-l="The fix">Upload one horizontal, one square and one vertical video, each at least 10 seconds long. Keep the vertical video between 10 and 60 seconds for Shorts eligibility.</div></div>
       </div>
       <div class="article-body"><p>There is no separate switch for this. Google's own guidance is that uploading your own videos in all three shapes is what stops auto-generated ones. If you have no video at all, the video creation tool inside Google Ads can build a simple one from your own images, which at least keeps the content yours.</p><p>Video enhancements are a different setting: these are Google's reworked versions and shorter cuts of videos you uploaded. You can untick them under Asset optimisation, then Video.</p></div>
     </div>
@@ -694,9 +694,9 @@
       <div class="issue-header"><span class="issue-num">03</span><h2 class="issue-title">Ads sending people to the wrong pages</h2></div>
       <div class="ck" role="table" aria-label="Issue 03">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Clicks landing on blog posts, job pages, old offers or pages you'd never advertise.</div><div class="ck-f" role="cell" data-l="Why">Final URL expansion is on by default. It swaps your final URL for whichever page on your site Google thinks fits the search better.</div><div class="ck-p" role="cell" data-l="The fix">Keep it on and exclude the pages you don't want, or turn it off if one page is the only route to a sale or enquiry.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Clicks landing on blog posts, job pages, old offers or pages you'd never advertise.</div><div class="ck-f" role="cell" data-l="Why">Final URL expansion is on by default where supported and is unavailable in Performance Max campaigns that use store goals only. When it&rsquo;s on, Google can send people to another page on your site if it fits the search better.</div><div class="ck-p" role="cell" data-l="The fix">Keep it on and exclude the pages you don't want, or turn it off if one page is the only route to a sale or enquiry.</div></div>
       </div>
-      <div class="article-body"><p>Google's own advice for a business with one landing page is to keep text customisation on and turn Final URL expansion off. Where several pages are fair game, keep expansion on and add exclusions under Asset optimisation: specific URLs, rules such as "exclude anything under /blog/", or labels from a page feed.</p><p>Three things to know. Exclusions only work while expansion is on. You can't exclude the asset group's own final URL. Changes can take 24 to 48 hours to apply. To see where traffic actually went, open the Expanded Final URL assets view for the campaign.</p></div>
+      <div class="article-body"><p>Google's own advice for a business with one landing page is to keep text customisation on and turn Final URL expansion off. Where several pages are fair game, keep expansion on and add individual URLs or rules under Asset optimisation, such as excluding anything under /blog/. You can also exclude pages by label if you use a page feed in place of a Merchant Center, vehicle or hotel feed.</p><p>Three things to know. Exclusions only work while expansion is on. You can't exclude the asset group's own final URL. Changes can take 24 to 48 hours to apply. To see where traffic actually went, open the Expanded Final URL assets view for the campaign.</p></div>
     </div>
 
     <div class="issue-block" id="i04">
@@ -723,16 +723,16 @@
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">An old logo, a trading name you've dropped, or a name rejected in review.</div><div class="ck-f" role="cell" data-l="Why">Brand guidelines moved the name and logos to campaign level. Google filled them from your best asset group if nobody updated them.</div><div class="ck-p" role="cell" data-l="The fix">Open brand guidelines for each campaign and set the name, 1 to 5 logos, and your colours and font if you want them.</div></div>
       </div>
-      <div class="article-body"><p>The name must match your domain or your verified legal name, and the logo must appear on your landing page. Review usually takes up to one business day. If old logos keep appearing, check the account-level Dynamic business logos setting. Colours and fonts only apply to Google's own videos and to display ads, so they matter most when issue 02 isn't fixed yet.</p></div>
+      <div class="article-body"><p>The name must match your domain or your verified legal name, and the logo must appear on your landing page. Allow up to two working days for Google to review uploaded business information assets. If old logos keep appearing, check the account-level Dynamic business logos setting. Colours and fonts only apply to Google's own videos and to display ads, so they matter most when issue 02 isn't fixed yet.</p></div>
     </div>
 
     <div class="issue-block" id="i07">
       <div class="issue-header"><span class="issue-num">07</span><h2 class="issue-title">Images Google changed or added</h2></div>
       <div class="ck" role="table" aria-label="Issue 07">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Crops of your images you didn't make, or pictures pulled from your website.</div><div class="ck-f" role="cell" data-l="Why">Image enhancements create extra cropped versions. Landing page images take pictures from your site, following the account's dynamic images setting.</div><div class="ck-p" role="cell" data-l="The fix">Check the asset report, remove any image you don't want and set the image options per campaign.</div></div>
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Crops of your images you didn't make, or pictures pulled from your website.</div><div class="ck-f" role="cell" data-l="Why">Image enhancements create extra cropped versions. Landing page images take pictures from your site when the campaign setting allows it.</div><div class="ck-p" role="cell" data-l="The fix">Check the asset report, remove any image you don't want and set the image options per campaign.</div></div>
       </div>
-      <div class="ck-note"><div class="ck-note-k">Coming on 4 December 2026</div><p>Google has announced that image extraction will be on by default for new Performance Max campaigns from 4 December, even where the account-level dynamic images setting is off. Existing campaigns keep their current setting. If you launch a new campaign after that date and don't want images taken from your site, opt out in that campaign.</p></div>
+      <div class="ck-note"><div class="ck-note-k">Landing page images in new campaigns</div><p>New Performance Max campaigns inherit the account&rsquo;s Dynamic images setting for landing page images. You can override it in campaign settings.</p></div>
     </div>
 
     <div class="issue-block" id="i08">
@@ -768,7 +768,7 @@
       </ol>
     </div>
 
-    <div class="ck-note"><div class="ck-note-k">One rule above the rest</div><p>Give Performance Max your own material for every slot it has. Every gap you leave is a gap Google fills with its own guess, and its guess is built from whatever it can find, not from what you know sells.</p></div>
+    <div class="ck-note"><div class="ck-note-k">One rule above the rest</div><p>Give Performance Max your own material for every slot it has. Google can generate eligible assets where the relevant automation applies. Missing assets can still limit where your ads show, so start with the material you know sells.</p></div>
 
     <div class="article-body">
       <h2>Check it automatically</h2>
@@ -787,35 +787,35 @@
           <span class="faq-q">Does Ad Strength affect how Performance Max performs?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Not directly. Google calls Ad Strength an indicator of how complete and varied your assets are, not an auction factor. It has found that higher Ad Strength goes with better performance, so a low rating is worth fixing, but by adding real, varied assets rather than writing to the score. The one hard limit is the minimum: an Incomplete asset group can't run.</div>
+        <div class="faq-answer">Not directly. Google calls Ad Strength an indicator of how complete and varied your assets are, not an auction factor. It has found that higher Ad Strength goes with better performance, so a low rating is worth fixing, but by adding real, varied assets rather than writing to the score. An Incomplete asset group can&rsquo;t run. Check for missing required creative and for any call or lead form asset required by the primary bidding goal.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
           <span class="faq-q">How do I stop Performance Max making its own videos?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Upload your own. Google makes videos when an asset group has no active video of its own, and its guidance is that uploading your own in all three shapes (horizontal, square and vertical, each 10 seconds or longer) stops that. There is no separate off switch for auto-generated video.</div>
+        <div class="faq-answer">Upload your own. Google makes videos when an asset group has no active video of its own, and its guidance is that uploading your own in all three shapes (horizontal, square and vertical, each at least 10 seconds long) stops that. Keep the vertical video between 10 and 60 seconds for Shorts eligibility. There is no separate off switch for auto-generated video.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
           <span class="faq-q">Should I turn off Final URL expansion?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Turn it off if one page is the only route to a sale or enquiry: that is Google's own advice, with text customisation left on. If several pages on your site are good landing pages, keep it on and exclude the ones you don't want, such as blog posts, job pages and old offers.</div>
+        <div class="faq-answer">Turn it off if one page is the only route to a sale or enquiry: that is Google's own advice, with text customisation left on. If several pages on your site are good landing pages, keep it on and exclude the ones you don't want, such as blog posts, job pages and old offers. Final URL expansion is unavailable in campaigns that use store goals only.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
           <span class="faq-q">How many headlines does Performance Max need?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">At least 3 and up to 15, each up to 30 characters. Google recommends 11 or more, with at least one of 15 characters or fewer. You also need 1 to 5 long headlines of up to 90 characters, and 2 to 5 descriptions of up to 90 characters.</div>
+        <div class="faq-answer">The standard requirement is 3 to 15 headlines, each up to 30 characters. Google recommends 11 or more, with at least one of 15 characters or fewer. The standard requirements also include 1 to 5 long headlines and 2 to 5 descriptions, each up to 90 characters. Campaigns linked to a Merchant Center feed can launch without additional creative assets.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
           <span class="faq-q">What image sizes does Performance Max need?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Landscape 1.91:1 (1200 x 628 recommended) and square 1:1 (1200 x 1200 recommended) are required; portrait 4:5 (960 x 1200) is optional. You can add up to 20 images, each up to 5,120 KB. Logos need a square 1:1 version and can have a landscape 4:1 version.</div>
+        <div class="faq-answer">For a standard asset group, landscape 1.91:1 (1200 x 628 recommended) and square 1:1 (1200 x 1200 recommended) are required. Portrait 4:5 (960 x 1200 recommended) is optional. You can add up to 20 images per asset group across all three formats combined, each up to 5,120 KB. The standard logo requirement is a square 1:1 version, with an optional landscape 4:1 version. Campaigns linked to a Merchant Center feed can launch without additional creative assets.</div>
       </div>
     </div>
 
