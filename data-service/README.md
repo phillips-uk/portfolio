@@ -43,6 +43,9 @@ Every response carries `as_of`, `source` and `licence`. Errors: 401 bad key, 403
 `.github/workflows/data-service-monthly.yml` downloads both files, runs `ingest/build.py`, refuses to publish if
 any check fails, then loads `*_next` tables (`load.sql`, then `register-001.sql` onwards, each about 100MB) and swaps them in (`publish.sql`). The previous copy stays as `*_prev`.
 
+**Schema changes on the live database:** run only the new `CREATE` statements. Re-running all of `schema.sql`
+adds duplicate indexes to tables that were swapped in (their indexes carry a load tag in the name).
+
 **Rollback:** check `SELECT COUNT(*) FROM companies_prev` is not 0, then
 `npx wrangler d1 execute phillips-data --remote --file rollback.sql`.
 
