@@ -54,7 +54,10 @@ export default {
     const denied = json({ error: 'not_in_plan' }, 403);
 
     try {
-      if (path === '/v1/companies/search') return allow('payments') ? await search(url, env) : denied;
+      if (path === '/v1/companies/search') {
+        const all = url.searchParams.get('all') === '1';
+        return (all ? allow('live') || allow('payments') : allow('payments')) ? await (all ? searchRegister : search)(url, env) : denied;
+      }
       let m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/payments$/);
       if (m) return allow('payments') ? await payments(m[1].toUpperCase(), env) : denied;
       m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/live$/);
@@ -95,6 +98,22 @@ async function search(url, env) {
   const seen = new Set();
   const results = [...byNumber.results, ...byName.results].filter(r => !seen.has(r.number) && seen.add(r.number)).slice(0, 8);
   return json({ ...(await meta(env)), results });
+}
+
+// GET /v1/companies/search?q=acme&all=1 : any company on the register (about 5.6 million). Name prefix or number,
+// 8 results at most, in name order (the index answers it without sorting).
+async function searchRegister(url, env) {
+  const qn = (url.searchParams.get('q') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (qn.length < 2) return json({ error: 'query_too_short', min_length: 2 }, 400);
+  const cols = 'number, name, status, postcode_area, section, sic_code, incorporated';
+  const byNumber = /^[A-Z0-9]{8}$/.test(qn)
+    ? await env.DB.prepare(`SELECT ${cols} FROM register WHERE number = ?`).bind(qn).all() : { results: [] };
+  const byName = await env.DB.prepare(
+    `SELECT ${cols} FROM register WHERE name_norm >= ? AND name_norm < ? ORDER BY name_norm LIMIT 8`).bind(qn, qn + '~').all();
+  const seen = new Set();
+  const results = [...byNumber.results, ...byName.results].filter(r => !seen.has(r.number) && seen.add(r.number)).slice(0, 8);
+  return json({ source: 'Companies House Free Company Data Product',
+    licence: 'Contains public sector information licensed under the Open Government Licence v3.0', results });
 }
 
 // GET /v1/companies/{number}/payments : latest report, history and the industry benchmark for the same year.

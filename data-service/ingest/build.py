@@ -10,11 +10,12 @@ Inputs (download fresh each month, never commit them):
 
 Writes to <out-dir>:
   load.sql     creates and fills companies_next, payment_reports_next, benchmarks_next, sectors_next
+  register.sql creates and fills register_next with every company in the Companies House file (about 5.6 million)
   publish.sql  swaps the *_next tables in and keeps the old ones as *_prev
   report.json  counts and validation results; the load must not be published if "ok" is false
 
 Company-level data only. The Companies House file also lists nothing about people that we read:
-only number, name, status, postcode, incorporation date and the first SIC code are kept.
+only number, name, status, postcode area, incorporation date and the first SIC code are kept.
 """
 import csv, hashlib, io, json, os, re, statistics, sys, zipfile, datetime
 
@@ -111,8 +112,25 @@ with open(PAY_CSV, newline='', encoding='utf-8-sig') as f:
         prev = names.get(num)
         if not prev or rep['filed'] >= prev[0]: names[num] = (rep['filed'], r['Company'].strip())
 
-# ---------- 2. Companies House basics, for the reporting companies only ----------
-companies = {}
+# ---------- 2. Companies House basics: every company to register.sql, reporting companies kept in memory ----------
+def lit(v):
+    if v is None: return 'NULL'
+    if isinstance(v, (int, float)): return repr(v)
+    return "'" + str(v).replace("'", "''") + "'"
+
+REG_COLS = ['number', 'name', 'name_norm', 'status', 'sic_code', 'division', 'section', 'postcode_area', 'incorporated']
+schema = open(os.path.join(os.path.dirname(__file__), '..', 'schema.sql')).read()
+reg_out = open(os.path.join(OUT, 'register.sql'), 'w')
+reg_out.write('DROP TABLE IF EXISTS register_next;\n')
+reg_out.write(re.search(r'CREATE TABLE IF NOT EXISTS register \(.*?\) WITHOUT ROWID;', schema, re.S).group(0)
+              .replace('IF NOT EXISTS register (', 'register_next (') + '\n')
+reg_batch, reg_count = [], 0
+def flush_register():
+    if reg_batch:
+        reg_out.write(f'INSERT INTO register_next ({",".join(REG_COLS)}) VALUES\n' + ',\n'.join(reg_batch) + ';\n')
+        reg_batch.clear()
+
+companies, seen_numbers = {}, set()
 with zipfile.ZipFile(CH_ZIP) as z:
     member = next(n for n in z.namelist() if n.lower().endswith('.csv'))
     with z.open(member) as raw:
@@ -122,7 +140,8 @@ with zipfile.ZipFile(CH_ZIP) as z:
         for row in rd:
             if len(row) < len(head): continue
             num = row[ix['CompanyNumber']].strip().upper()
-            if num not in names: continue
+            if not re.fullmatch(r'[A-Z0-9]{8}', num) or num in seen_numbers: continue
+            seen_numbers.add(num)
             sic = row[ix['SICCode.SicText_1']].strip()
             m = re.match(r'(\d{5})\s*-\s*(.+)', sic)
             code, text = (m.group(1), m.group(2).strip()) if m else (None, None)
@@ -130,12 +149,22 @@ with zipfile.ZipFile(CH_ZIP) as z:
             if code == '99999': code = text = div = None  # dormant company marker
             pc = row[ix['RegAddress.PostCode']].strip().upper()
             pm = re.match(r'([A-Z]{1,2})\d', pc)
-            companies[num] = dict(
+            c = dict(
                 name=row[ix['CompanyName']].strip(), status=row[ix['CompanyStatus']].strip() or None,
                 sic_code=code, sic_text=text,
                 division=f'{div:02d}' if div else None, section=DIV_SECTION.get(div) if div else None,
                 postcode_area=pm.group(1) if pm else None,
                 incorporated=iso_date(row[ix['IncorporationDate']]))
+            if not c['name']: continue
+            reg = dict(number=num, name_norm=norm(c['name']), **c)
+            reg_batch.append('(' + ','.join(lit(reg[k]) for k in REG_COLS) + ')')
+            reg_count += 1
+            if len(reg_batch) >= 200: flush_register()
+            if num in names: companies[num] = c
+flush_register()
+for idx in re.findall(r'CREATE INDEX IF NOT EXISTS (\w+) ON register\(([^)]*)\);', schema):
+    reg_out.write(f'CREATE INDEX {idx[0]}_{TAG} ON register_next({idx[1]});\n')  # after the rows: faster to build
+reg_out.close()
 
 per_company = {}
 for rep in reports: per_company[rep['company_number']] = per_company.get(rep['company_number'], 0) + 1
@@ -172,26 +201,22 @@ matched = sum(1 for c in company_rows if c['number'] in companies)
 checks = {
     'reports at least 100,000': len(reports) >= 100_000,
     'companies at least 9,000': len(company_rows) >= 9_000,
+    'register at least 4,000,000 companies': reg_count >= 4_000_000,
     'at least 90% of companies found in Companies House data': matched / len(company_rows) >= 0.9,
     'impossible values under 1% of reports': sum(bad.values()) < 0.01 * len(reports),
     f'overall median days for {latest_full_year} between 15 and 60': bool(overall and 15 <= overall['median'] <= 60),
 }
-report = dict(as_of=TODAY, reports=len(reports), companies=len(company_rows), matched_in_companies_house=matched,
+report = dict(as_of=TODAY, reports=len(reports), companies=len(company_rows), register=reg_count, matched_in_companies_house=matched,
               benchmarks=len(bench), impossible_values=bad, checks=checks, ok=all(checks.values()),
               overall_median_days=overall, payments_sha256=sha256(PAY_CSV))
 
 # ---------- 5. SQL ----------
-def lit(v):
-    if v is None: return 'NULL'
-    if isinstance(v, (int, float)): return repr(v)
-    return "'" + str(v).replace("'", "''") + "'"
 
 def inserts(table, rows, cols, batch=200):
     for i in range(0, len(rows), batch):
         vals = ',\n'.join('(' + ','.join(lit(r[c]) for c in cols) + ')' for r in rows[i:i + batch])
         yield f'INSERT INTO {table} ({",".join(cols)}) VALUES\n{vals};\n'
 
-schema = open(os.path.join(os.path.dirname(__file__), '..', 'schema.sql')).read()
 DATA = ['companies', 'payment_reports', 'benchmarks', 'sectors']
 with open(os.path.join(OUT, 'load.sql'), 'w') as out:
     for t in DATA:
@@ -205,11 +230,11 @@ with open(os.path.join(OUT, 'load.sql'), 'w') as out:
         for stmt in inserts(f'{t}_next', rows, cols): out.write(stmt)
 
 with open(os.path.join(OUT, 'publish.sql'), 'w') as out:
-    for t in DATA:
+    for t in DATA + ['register']:
         out.write(f'DROP TABLE IF EXISTS {t}_prev;\nALTER TABLE {t} RENAME TO {t}_prev;\nALTER TABLE {t}_next RENAME TO {t};\n')
     out.write(f"INSERT INTO dataset_versions (dataset, as_of, row_count, checksum, validated, published_at, notes) VALUES "
               f"('payments', {lit(TODAY)}, {len(reports)}, {lit(report['payments_sha256'])}, 1, datetime('now'), "
-              f"{lit(f'{len(company_rows)} companies, {len(bench)} benchmarks')});\n")
+              f"{lit(f'{len(company_rows)} companies, {len(bench)} benchmarks, {reg_count} on the register')});\n")
 
 json.dump(report, open(os.path.join(OUT, 'report.json'), 'w'), indent=2)
-print(json.dumps({k: report[k] for k in ('reports', 'companies', 'matched_in_companies_house', 'benchmarks', 'impossible_values', 'checks', 'ok')}, indent=2))
+print(json.dumps({k: report[k] for k in ('reports', 'companies', 'register', 'matched_in_companies_house', 'benchmarks', 'impossible_values', 'checks', 'ok')}, indent=2))

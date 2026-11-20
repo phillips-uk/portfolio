@@ -15,6 +15,14 @@ CREATE TABLE IF NOT EXISTS companies (
 );
 CREATE INDEX IF NOT EXISTS companies_name ON companies(name_norm);
 
+-- Every company on the live register (Companies House Free Company Data Product, about 5.6 million), refreshed
+-- monthly with the payments load. Gives search across all companies and SIC codes for the accounts job.
+CREATE TABLE IF NOT EXISTS register (
+  number TEXT PRIMARY KEY, name TEXT NOT NULL, name_norm TEXT NOT NULL, status TEXT,
+  sic_code TEXT, division TEXT, section TEXT, postcode_area TEXT, incorporated TEXT
+) WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS register_name ON register(name_norm);
+
 CREATE TABLE IF NOT EXISTS payment_reports (
   report_id INTEGER PRIMARY KEY,
   company_number TEXT NOT NULL,

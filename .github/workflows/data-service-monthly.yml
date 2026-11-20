@@ -12,7 +12,7 @@ jobs:
   refresh:
     if: vars.DATA_SERVICE_ENABLED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     defaults:
       run:
         working-directory: data-service
@@ -39,6 +39,7 @@ jobs:
       - name: Load and publish
         run: |
           npx --no-install wrangler d1 execute phillips-data --remote --file "$RUNNER_TEMP/load/load.sql"
+          npx --no-install wrangler d1 execute phillips-data --remote --file "$RUNNER_TEMP/load/register.sql"
           npx --no-install wrangler d1 execute phillips-data --remote --file "$RUNNER_TEMP/load/publish.sql"
       - name: Delete the downloaded files
         if: always()
