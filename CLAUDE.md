@@ -6,6 +6,8 @@ Lewis Phillips's portfolio and tools site. Full history, standards and design wo
 
 This repo is the main Phillips. business: phillips-uk.com, the admin (`/admin`: clients, the prospects sales funnel, invite links) and the private pages (rate card, Search Desk demo, prospect prototypes). Its notes are in the vault under `01_Phillips/`. Search Desk itself, Before You Pay, The Director's Office and Phillips Group are separate repos with their own sessions: don't edit them from here. The `/desk` route only forwards to the Search Desk Worker. Rules for every project: `~/.claude/CLAUDE.md`.
 
+**Before any setup task** (accounts, Search Console, Bing, GA4, listings, automations), read vault `01_Phillips/00_Phillips. Setup Map.md`: it records what is already done and under which sign-in. Update it when anything changes.
+
 Lewis reviews changes on the live site, so after a change: commit, push `main`, then deploy (below).
 
 ## Cost rule (hard limit)
