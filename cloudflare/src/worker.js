@@ -82,6 +82,15 @@ const MOVED = {
   '/google-ads-audit-report': '/google-ads-audit',
   '/landing-page-audit': '/website-check/',
   '/landing-page-audit-report': '/website-check/',
+  // Names people type or AI assistants guess for the free checks (20 Nov 2026)
+  '/google-ads-check': '/google-ads-audit',
+  '/free-google-ads-audit': '/google-ads-audit',
+  '/google-ads-audit-tool': '/google-ads-audit',
+  '/ppc-audit': '/google-ads-audit',
+  '/website-checker': '/website-check/',
+  '/website-audit': '/website-check/',
+  '/free-website-check': '/website-check/',
+  '/free-website-audit': '/website-check/',
 };
 
 function getHandler(mod) {
