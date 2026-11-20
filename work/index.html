@@ -25,6 +25,15 @@
   .case-links { font-size: 15px; color: var(--muted); margin: 16px 0 0; }
   a.inline { color: var(--brand-text); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .wip-card { display: flex; flex-direction: column; }
+  .wip-shot { position: relative; margin: 0 0 16px; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; aspect-ratio: 16 / 10; background: var(--surface); }
+  .wip-shot.browser { padding-top: 22px; background: var(--brand-wash); }
+  .wip-shot.browser::before { content: ""; position: absolute; top: 8px; left: 10px; width: 6px; height: 6px; border-radius: 50%; background: var(--line); box-shadow: 10px 0 0 var(--line), 20px 0 0 var(--line); }
+  .wip-shot.browser img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .wip-shot.phone { background: var(--brand-wash); display: flex; justify-content: center; padding-top: 18px; }
+  .wip-shot.phone .ph { width: 42%; max-width: 170px; border: 6px solid var(--text); border-bottom: 0; border-radius: 22px 22px 0 0; overflow: hidden; background: #fff; box-shadow: var(--e2); }
+  .wip-shot.phone img { display: block; width: 100%; height: auto; }
+  @media (max-width: 1000px) { .wip-shot { aspect-ratio: 16 / 8; } .wip-shot.phone .ph { width: 30%; } }
+  @media (max-width: 600px) { .wip-shot { aspect-ratio: 16 / 10; } .wip-shot.phone .ph { width: 42%; } }
   .wip-card p { margin: 0 0 12px; }
   .wip-more { border-top: 1px solid var(--line-soft); padding-top: 12px; margin-top: auto; }
   .wip-more summary { cursor: pointer; font-weight: 700; font-size: 15px; color: var(--text); }
@@ -202,6 +211,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <p class="sub">These projects are under way, so there are no results to share yet. Here&rsquo;s the problem each one has, and how I&rsquo;m solving it.</p>
       <div class="grid-3 wip-grid">
         <div class="card work-card wip-card">
+          <div class="wip-shot browser"><img src="/images/work/wip-scotfuel.jpg" alt="A ScotFuel town page: heating oil in Pitlochry, with local oil heating figures" width="1000" height="625" loading="lazy" decoding="async"></div>
           <div class="work-top"><span class="work-tag">Client · SEO</span></div>
           <h3>ScotFuel</h3>
           <p class="work-role">SEO and tracking · Started November 2026</p>
@@ -209,18 +219,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <details class="wip-more"><summary>What I've done so far</summary><ul class="ticks"><li>Each town page covers the surrounding postcode district as well as the town, using local census figures and ScotFuel&rsquo;s own supplier prices.</li><li>A Scotland page, 20 council area pages and the first 49 town pages, live since 19 November 2026.</li><li>Four free tools: a heating oil cost calculator, how long your oil will last, tank capacity in litres and Scotland&rsquo;s oil tank rules.</li><li>The sitemap, robots.txt, structured data, Google Analytics, Search Console, a cookie banner and privacy wording.</li><li>Next: more towns in stages once the first pages are indexed.</li></ul></details>
         </div>
         <div class="card work-card wip-card">
-          <div class="work-top"><span class="work-tag">Prospect · Website</span></div>
+          <div class="wip-shot browser"><img src="/images/work/wip-monument.jpg" alt="The Monument Corporate Finance homepage in development, with the enquiry form at the top" width="1000" height="625" loading="lazy" decoding="async"></div>
+          <div class="work-top"><span class="work-tag">Client · Website</span></div>
           <h3>Monument Corporate Finance</h3>
           <p class="work-role">Website, tools and local SEO · In development</p>
           <p>Monument is an Ely-based corporate finance adviser specialising in asset-based lending and trade finance, working across London and Cambridgeshire. The challenge: people looking for these services rarely include a town name in their search, so the site has to be found for the services themselves.</p>
           <details class="wip-more"><summary>What I've done so far</summary><ul class="ticks"><li>A website that puts the enquiry form at the top.</li><li>Free tools for finance directors, led by a debtor days calculator that uses GOV.UK payment data to compare a business with its industry.</li><li>A cash conversion cycle calculator and an asset-based lending estimate.</li><li>A local SEO plan for London and Cambridgeshire.</li><li>The site isn&rsquo;t live yet.</li></ul></details>
         </div>
         <div class="card work-card wip-card">
-          <div class="work-top"><span class="work-tag">Prospect · App</span></div>
-          <h3>A booking app for a local barbershop</h3>
+          <div class="wip-shot phone"><div class="ph"><img src="/images/work/wip-barber.jpg" alt="The booking app prototype: choosing which barber to book" width="360" height="779" loading="lazy" decoding="async"></div></div>
+          <div class="work-top"><span class="work-tag">Client · App</span></div>
+          <h3>A booking app for a barbershop</h3>
           <p class="work-role">App design and build · Prototype</p>
-          <p>A barber in Ely is opening his own shop and renting chairs to other barbers. The challenge: standard booking apps are built around a shop&rsquo;s staff. Here, each barber sets their own hours and prices and manages their own clients.</p>
-          <details class="wip-more"><summary>What I've done so far</summary><ul class="ticks"><li>Customers book with a barber based on when that barber is free, and pay the barber directly.</li><li>Each barber sets their own working days, hours and services.</li><li>Loyalty cards for each barber, a waitlist, walk-ins and ratings after a cut.</li><li>Barber profiles with photos of their work and links to Instagram and TikTok.</li><li>An owner view to fill chairs, track chair rent and post events.</li><li>Customers can book from the shop&rsquo;s mobile website and install the app on their phone.</li></ul></details>
+          <p>The challenge: most booking apps assume the barbers work for the shop. Here, each barber works for themselves, setting their own hours and prices and managing their own clients.</p>
+          <details class="wip-more"><summary>What I've done so far</summary><ul class="ticks"><li>Customers book with a barber based on when that barber is free, and pay the barber directly.</li><li>Each barber sets their own working days, hours and services.</li><li>Loyalty cards for each barber, a waitlist, walk-ins and ratings after a cut.</li><li>Barber profiles with photos of their work and links to Instagram and TikTok.</li><li>The shop owner can see the week&rsquo;s bookings for every chair and post events.</li><li>Customers can book from the shop&rsquo;s mobile website and install the app on their phone.</li></ul></details>
         </div>
       </div>
     </div>
