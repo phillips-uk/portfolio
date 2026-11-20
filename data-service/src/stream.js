@@ -20,7 +20,16 @@ export async function runStreams(env) {
   // Two at a time: charges and insolvency together, then company profiles.
   const first = await Promise.allSettled([read('charges', env, chargeRows), read('insolvency-cases', env, insolvencyRows)]);
   const second = await Promise.allSettled([read('companies', env, companyRows)]);
-  return [...first, ...second].map(r => r.status === 'fulfilled' ? r.value : { error: String(r.reason) });
+  const names = ['charges', 'insolvency-cases', 'companies'];
+  const results = [...first, ...second].map((r, i) => r.status === 'fulfilled' ? r.value : { stream: names[i], error: String(r.reason) });
+  // One row per stream per run, so any run can be checked later (kept 14 days).
+  await env.DB.batch([
+    ...results.map(r => env.DB.prepare(
+      `INSERT INTO stream_runs (run_at, stream, status, events, timepoint, note) VALUES (datetime('now'), ?, ?, ?, ?, ?)`)
+      .bind(r.stream || null, r.status ?? (r.error ? 0 : 200), r.events ?? 0, r.timepoint ?? null, (r.error || r.note || '').slice(0, 300))),
+    env.DB.prepare(`DELETE FROM stream_runs WHERE run_at < datetime('now', '-14 days')`),
+  ]);
+  return results;
 }
 
 async function read(stream, env, toStatements) {
@@ -34,7 +43,7 @@ async function read(stream, env, toStatements) {
     await env.DB.prepare('DELETE FROM stream_state WHERE stream = ?').bind(stream).run();
     return { stream, status: 416, note: 'timepoint too old; restarting from now' };
   }
-  if (!res.ok) return { stream, status: res.status };
+  if (!res.ok) return { stream, status: res.status, note: (await res.text()).slice(0, 200) };
 
   const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
   let buf = '', events = 0, lastEvent = Date.now(), timepoint = state?.timepoint || null, published = null;
@@ -75,7 +84,7 @@ async function read(stream, env, toStatements) {
   } finally {
     controller.abort();
   }
-  return { stream, events, timepoint, published_at: published };
+  return { stream, status: 200, events, timepoint, published_at: published };
 }
 
 const companyFrom = uri => (uri?.match(/\/company\/([A-Z0-9]{8})/i) || [])[1]?.toUpperCase() || null;

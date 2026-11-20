@@ -52,6 +52,9 @@ CREATE TABLE IF NOT EXISTS insolvency_cases (
   company_number TEXT PRIMARY KEY, status TEXT, cases TEXT, updated_at TEXT
 );
 CREATE INDEX IF NOT EXISTS insolvency_cases_updated ON insolvency_cases(updated_at);
+CREATE TABLE IF NOT EXISTS stream_runs (
+  run_at TEXT, stream TEXT, status INTEGER, events INTEGER, timepoint INTEGER, note TEXT
+);
 CREATE TABLE IF NOT EXISTS stream_state (
   stream TEXT PRIMARY KEY, timepoint INTEGER, published_at TEXT, updated_at TEXT, events INTEGER DEFAULT 0
 );
