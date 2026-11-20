@@ -4,6 +4,7 @@
 
 import { liveCompany } from './live.js';
 import { fxRates } from './fx.js';
+import { runStreams } from './stream.js';
 
 const SOURCE = {
   payments: {
@@ -76,6 +77,7 @@ export default {
         if (dataset === 'accounts') return allow('accounts') ? await accountBenchmarks(url, env) : denied;
         return allow('payments') ? await benchmarks(url, env) : denied;
       }
+      if (path === '/v1/changes') return allow('live') ? await changes(url, env) : denied;
       if (path === '/v1/sectors') return json(await sectors(env));  // any active key: names for industry dropdowns
       if (path === '/v1/rates/sme') return allow('rates') ? await smeRate(env) : denied;
       if (path === '/v1/rates/fx') return allow('rates') ? json(await fxRates(ctx)) : denied;
@@ -84,6 +86,12 @@ export default {
       console.error(err);
       return json({ error: 'server_error' }, 500);
     }
+  },
+
+  // Every 10 minutes: catch up on the Companies House streams (charges, insolvency cases, company profiles).
+  async scheduled(event, env, ctx) {
+    const result = await runStreams(env);
+    console.log(JSON.stringify({ streams: result }));
   },
 };
 
@@ -149,6 +157,33 @@ async function group(number, env) {
   return json({ as_of: v?.as_of || null, source: 'Companies House register of people with significant control (corporate owners only)',
     licence: SOURCE.payments.licence, company, owners, parents: chain, top_parent: chain[chain.length - 1] || null,
     subsidiaries: subs.results, subsidiaries_total: total?.n || 0 });
+}
+
+// GET /v1/changes?type=charges|insolvency&since=2026-11-20&section=C : recent events from the Companies House streams,
+// newest first, 100 at most. For alert-style tools ("new charges in construction this week").
+async function changes(url, env) {
+  const type = url.searchParams.get('type') || 'charges';
+  const since = url.searchParams.get('since') || new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+  const section = url.searchParams.get('section');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(since)) return json({ error: 'bad_since' }, 400);
+  if (section && !/^[A-U]$/.test(section)) return json({ error: 'bad_section' }, 400);
+  const where = section ? ' AND r.section = ?' : '';
+  const binds = section ? [since, section] : [since];
+  let rows;
+  if (type === 'charges') {
+    rows = (await env.DB.prepare(
+      `SELECT c.company_number AS number, r.name, r.section, c.status, c.kind, c.created_on, c.satisfied_on, c.holders,
+              c.holders_not_listed, c.updated_at FROM charges c LEFT JOIN register r ON r.number = c.company_number
+       WHERE c.updated_at >= ?${where} ORDER BY c.updated_at DESC LIMIT 100`).bind(...binds).all()).results
+      .map(r => ({ ...r, holders: JSON.parse(r.holders || '[]') }));
+  } else if (type === 'insolvency') {
+    rows = (await env.DB.prepare(
+      `SELECT i.company_number AS number, r.name, r.section, i.status, i.cases, i.updated_at FROM insolvency_cases i
+       LEFT JOIN register r ON r.number = i.company_number WHERE i.updated_at >= ?${where} ORDER BY i.updated_at DESC LIMIT 100`)
+      .bind(...binds).all()).results.map(r => ({ ...r, cases: JSON.parse(r.cases || '[]') }));
+  } else return json({ error: 'bad_type', allowed: ['charges', 'insolvency'] }, 400);
+  const state = (await env.DB.prepare('SELECT stream, published_at, updated_at FROM stream_state').all()).results;
+  return json({ source: 'Companies House streaming API', licence: SOURCE.payments.licence, type, since, section, results: rows, streams: state });
 }
 
 // GET /v1/sectors : SIC 2007 sections (s-A..s-U) and divisions (d-01..d-99) with the section each division sits in.

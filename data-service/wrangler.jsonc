@@ -19,6 +19,10 @@
   ],
   // Secret: CH_API_KEY (Companies House REST key, application "Phillips Data Service"). Set with
   // `npx wrangler secret put CH_API_KEY`; locally it comes from data-service/.dev.vars (git-ignored).
+  // Every 10 minutes: Companies House streaming catch-up (src/stream.js). Secret: CH_STREAM_KEY (a streaming key,
+  // not the REST key). CPU is raised for long catch-ups; most runs use a few seconds.
+  "triggers": { "crons": ["*/10 * * * *"] },
+  "limits": { "cpu_ms": 120000 },
   "routes": [
     { "pattern": "data.phillips-uk.com", "custom_domain": true }
   ]

@@ -16,6 +16,7 @@ Brief and decisions: vault `01_Phillips/04_Products/Phillips Data Service/`.
 | `GET /v1/companies/{number}/live` | Companies House profile, outstanding charges (lenders named only when they are organisations) and the latest accounts' figures and debtor, stock and creditor days when the accounts are machine-readable; cached 24 hours |
 | `GET /v1/benchmarks?dataset=accounts&group=s-C&metric=debtor_days` | debtor, stock or creditor days from filed accounts of companies with 10+ staff; groups need 30 companies |
 | `GET /v1/companies/{number}/group` | owners that are companies (never individuals), the chain of majority owners up to the top parent, and up to 100 subsidiaries; needs `group` |
+| `GET /v1/changes?type=charges&since=2026-11-20&section=F` | newest 100 charges (or `type=insolvency` cases) seen on the Companies House streams since a date; needs `live` |
 | `GET /v1/sectors` | SIC 2007 sections and divisions (with each division's section), for industry dropdowns; any active key |
 | `GET /v1/rates/sme` | latest Bank of England effective rate on new loans to SMEs (entered by hand) |
 | `GET /v1/rates/fx` | ECB reference rates as units per £1; cached 6 hours |
@@ -64,6 +65,14 @@ every machine-readable filing of any size (`ingest/accounts.py`), upserts them i
 `.github/workflows/data-service-groups.yml` downloads the Companies House PSC snapshot weekly (33 files of about 80MB),
 runs `ingest/groups.py` (corporate owners only; individual records are skipped), refuses to publish if a check fails,
 loads `owners-NNN.sql` and swaps `company_owners` in.
+
+## Companies House streams
+
+The Worker's scheduled handler runs every 10 minutes (`src/stream.js`): it resumes the charges, insolvency-cases and
+companies streams from their saved timepoints (`stream_state`), reads until each goes quiet for 30 seconds or 4 minutes
+pass, and closes (two connections at most). Charges and insolvency cases go into their own tables; company profile
+changes update `register`. Secret `CH_STREAM_KEY` is a streaming key from the Developer Hub (not the REST key).
+Officer and PSC streams are not read (people).
 
 ## Insolvency notices
 

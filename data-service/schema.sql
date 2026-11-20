@@ -39,6 +39,23 @@ CREATE TABLE IF NOT EXISTS insolvency_notices (
 CREATE INDEX IF NOT EXISTS insolvency_notices_company ON insolvency_notices(company_number, published);
 CREATE INDEX IF NOT EXISTS insolvency_notices_published ON insolvency_notices(published);
 
+-- Companies House streams, caught up every 10 minutes by the scheduled handler (src/stream.js).
+-- Charges as they are created or satisfied; holders kept only when they are organisations.
+CREATE TABLE IF NOT EXISTS charges (
+  charge_id TEXT PRIMARY KEY, company_number TEXT NOT NULL, status TEXT, created_on TEXT, delivered_on TEXT,
+  satisfied_on TEXT, kind TEXT, holders TEXT, holders_not_listed INTEGER, updated_at TEXT
+);
+CREATE INDEX IF NOT EXISTS charges_company ON charges(company_number);
+CREATE INDEX IF NOT EXISTS charges_updated ON charges(updated_at);
+-- Insolvency cases: status, case types, numbers and dates. Practitioners are never stored.
+CREATE TABLE IF NOT EXISTS insolvency_cases (
+  company_number TEXT PRIMARY KEY, status TEXT, cases TEXT, updated_at TEXT
+);
+CREATE INDEX IF NOT EXISTS insolvency_cases_updated ON insolvency_cases(updated_at);
+CREATE TABLE IF NOT EXISTS stream_state (
+  stream TEXT PRIMARY KEY, timepoint INTEGER, published_at TEXT, updated_at TEXT, events INTEGER DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS payment_reports (
   report_id INTEGER PRIMARY KEY,
   company_number TEXT NOT NULL,
