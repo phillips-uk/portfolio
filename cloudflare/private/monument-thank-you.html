@@ -855,6 +855,11 @@ select.input::-ms-expand{display:none}
 .hp{position:absolute !important;left:-9999px !important;width:1px;height:1px;overflow:hidden}
 .lead-captcha{display:flex;justify-content:center}
 .lead-captcha:empty{display:none}
+
+/* ===== v17: the Phillips. credit ===== */
+.foot-credit a{color:var(--on-navy);text-decoration:underline;text-decoration-color:var(--brass);text-underline-offset:3px;transition:color .2s}
+.credit-keep{white-space:nowrap}
+.foot-credit a:hover,.foot-credit a:focus-visible{color:var(--brass-light)}
 </style>
 </head>
 <body>
@@ -959,7 +964,7 @@ select.input::-ms-expand{display:none}
     </div>
     <div class="foot-base" id="footer">
       <p>Monument Corporate Finance Limited. Registered in England and Wales, company number 08855574. Registered office: 27 Old Gloucester Street, London WC1N 3AX. Email: <span class="js-email"></span>.</p>
-      <p>&copy; 2026 Monument Corporate Finance</p>
+      <p class="foot-credit">&copy; 2026 Monument Corporate Finance &middot; <span class="credit-keep">Powered by <a href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Phillips.</a></span></p>
     </div>
   </div>
 </footer>
@@ -1013,7 +1018,7 @@ select.input::-ms-expand{display:none}
     });
   });
   $$('.js-email').forEach(el => {
-    const at = ['ben', ['monumentcorporatefinance', 'com'].join('.')].join('@'), a = document.createElement('a');
+    const at = ['contact', ['monumentcorporatefinance', 'com'].join('.')].join('@'), a = document.createElement('a');
     a.href = 'mailto:' + at; a.textContent = at; el.appendChild(a);
   });
 
