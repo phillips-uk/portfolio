@@ -128,13 +128,17 @@ async function group(number, env) {
   const company = await env.DB.prepare('SELECT number, name, status, sic_code, division, section FROM register WHERE number = ?').bind(number).first();
   if (!company) return json({ error: 'company_not_found', number }, 404);
   const { results: owners } = await env.DB.prepare(OWNERS).bind(number).all();
-  // Walk up through UK company owners with majority control (shares over 50%) to the top parent; stop on loops.
+  // Walk up the chain of parents to the top one we can see; stop on loops.
   const chain = [], seen = new Set([number]);
   let cur = owners;
   for (let i = 0; i < 10; i++) {
-    const up = cur.find(o => o.number && /shares (50|75)-/.test(o.control || '') && !seen.has(o.number));
-    if (!up) { const top = cur.find(o => !o.number && /shares (50|75)-/.test(o.control || '')); if (top) chain.push(top); break; }
-    chain.push(up); seen.add(up.number);
+    // The parent is the owner with over 50% of the shares, or the only corporate owner when there is just one.
+    const parent = cur.find(o => /shares (50|75)-/.test(o.control || '')) || (cur.length === 1 ? cur[0] : null);
+    if (!parent || (parent.number && seen.has(parent.number))) break;
+    chain.push(parent);
+    if (!parent.number) break;  // owner outside the UK register: the top we can see
+    const up = parent;
+    seen.add(up.number);
     cur = (await env.DB.prepare(OWNERS).bind(up.number).all()).results;
   }
   const subs = await env.DB.prepare(
