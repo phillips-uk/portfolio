@@ -1,13 +1,17 @@
 // Live lookup of one company at Companies House: profile, registered charges and its latest filed accounts.
 // Company data only: charge holders are listed only when they are organisations, never private individuals.
-// Results are cached at the edge for 24 hours and never stored in the database.
-import { readAccounts } from './ixbrl.js';
+// Results are cached at the edge for 24 hours. Figures come from our stored copy of the bulk accounts files when we
+// hold that period (companies with 10+ staff), so the document is fetched only for companies we don't store.
+import { readAccounts, withRatios } from './ixbrl.js';
+
+const STORED = ['employees', 'turnover', 'cost_of_sales', 'trade_debtors', 'debtors', 'stock', 'trade_creditors', 'cash',
+                'creditors_within_year', 'fixed_assets', 'net_assets'];
 
 const API = 'https://api.company-information.service.gov.uk';
 const ORG = /\b(limited|ltd|plc|llp|bank|banking|finance|financial|capital|lending|leasing|credit|trust|trustees|fund|funding|holdings|group|corporation|corp|inc|llc|gmbh|s\.?a\.?|n\.?v\.?|b\.?v\.?|ag|partners|council|authority|society|association|ministers)\b/i;
 
 export async function liveCompany(number, env, ctx) {
-  const cacheKey = new Request(`https://data.phillips-uk.com/__cache/live/${number}/v2`);
+  const cacheKey = new Request(`https://data.phillips-uk.com/__cache/live/${number}/v3`);
   const cache = caches.default;
   const hit = await cache.match(cacheKey);
   if (hit) return { ...(await hit.json()), cached: true };
@@ -37,14 +41,20 @@ export async function liveCompany(number, env, ctx) {
     const madeUp = accFiling.description_values?.made_up_date || profile.accounts?.last_accounts?.made_up_to || null;
     accounts = { made_up_to: madeUp, filed: accFiling.date, type: profile.accounts?.last_accounts?.type || accFiling.description,
                  machine_readable: false };
+    const stored = madeUp && env.DB ? await env.DB.prepare(
+      `SELECT ${STORED.join(', ')} FROM accounts_facts WHERE company_number = ? AND period_end = ?`).bind(number, madeUp).first() : null;
     const metaUrl = accFiling.links?.document_metadata;
-    if (metaUrl) {
+    if (stored) {
+      const figures = { period_end: madeUp };
+      for (const k of STORED) if (stored[k] !== null) figures[k] = stored[k];
+      Object.assign(accounts, { machine_readable: true, figures: withRatios(figures), from: 'stored' });
+    } else if (metaUrl) {
       const meta = await (await fetch(metaUrl, { headers: { Authorization: auth, Accept: 'application/json' } })).json();
       if (meta.resources?.['application/xhtml+xml']) {
         const doc = await fetch(metaUrl + '/content', { headers: { Authorization: auth, Accept: 'application/xhtml+xml' }, redirect: 'manual' });
         const loc = doc.headers.get('Location');
         const html = loc ? await (await fetch(loc)).text() : doc.ok ? await doc.text() : null;
-        if (html) Object.assign(accounts, { machine_readable: true, figures: readAccounts(html, madeUp) });
+        if (html) Object.assign(accounts, { machine_readable: true, figures: readAccounts(html, madeUp), from: 'filing' });
       }
     }
   }

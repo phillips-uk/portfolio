@@ -61,7 +61,9 @@ with zipfile.ZipFile(ZIP) as z:
         rows.append(dict(company_number=number, period_end=facts['period_end'], employees=int(facts['employees']),
                          turnover=facts.get('turnover'), cost_of_sales=facts.get('cost_of_sales'),
                          trade_debtors=facts.get('trade_debtors'), debtors=facts.get('debtors'), stock=facts.get('stock'),
-                         trade_creditors=facts.get('trade_creditors'), cash=facts.get('cash'), sic_code=code,
+                         trade_creditors=facts.get('trade_creditors'), cash=facts.get('cash'),
+                         creditors_within_year=facts.get('creditors_within_year'), fixed_assets=facts.get('fixed_assets'),
+                         net_assets=facts.get('net_assets'), sic_code=code,
                          division=f'{div:02d}' if div else None, section=DIV_SECTION.get(div), source_file=src))
 
 cols = list(rows[0].keys()) if rows else []

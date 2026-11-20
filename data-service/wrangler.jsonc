@@ -9,7 +9,7 @@
   // Logs sampled at 10%: a busy API is the one place Cloudflare's volume-priced logs could add up.
   "observability": { "enabled": true, "head_sampling_rate": 0.1 },
   "d1_databases": [
-    { "binding": "DB", "database_name": "phillips-data", "database_id": "TO_BE_CREATED" }
+    { "binding": "DB", "database_name": "phillips-data", "database_id": "73a2e732-e320-4b06-9aaf-41cba25e6f0f" }
   ],
   // 120 requests a minute per key; the daily quota per client is in the clients table.
   "ratelimits": [
