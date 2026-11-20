@@ -305,6 +305,7 @@ input[type="range"]{width:100%;accent-color:var(--navy);height:28px;margin:0}
 .result-list dt{color:var(--on-navy-soft);font-size:.9rem}
 .result-list dd{margin:0;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;min-width:0}
 .result-note{font-size:.9rem;color:var(--on-navy-soft)}
+.cy-ind-note{margin:10px 0 0;font-size:.78rem;line-height:1.5;color:var(--on-navy-soft)}
 .result-small{font-size:.78rem;line-height:1.5;color:var(--on-navy-soft)}
 .result-msg{font-size:1rem;border:1px dashed var(--navy-line);padding:14px}
 .result.is-empty .result-body{display:none}
@@ -943,6 +944,13 @@ select.input::-ms-expand{display:none}
 .foot-credit a{color:var(--on-navy);text-decoration:underline;text-decoration-color:var(--brass);text-underline-offset:3px;transition:color .2s}
 .credit-keep{white-space:nowrap}
 .foot-credit a:hover,.foot-credit a:focus-visible{color:var(--brass-light)}
+
+/* ===== v19: fill in from your accounts ===== */
+.lu-field{padding-bottom:18px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.lu-status{margin:8px 0 0;font-size:.84rem;line-height:1.5;color:var(--ink-soft)}
+.lu-status strong{color:var(--ink);font-weight:600}
+#ablSecRow{display:block}
+#ablSecRow dd{margin:4px 0 0;text-align:left}
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
@@ -1335,6 +1343,12 @@ select.input::-ms-expand{display:none}
               <h2 class="tool-title">Asset-based lending estimate</h2>
               <p class="calc-intro">How much could you borrow against what the business owns?</p>
             </div>
+            <div class="field pc-field lu-field" data-lu hidden>
+              <div class="label-row"><label for="luAbl">Fill in from your accounts</label><button type="button" class="info" aria-label="About filling in from your accounts" data-tip="Optional. Search your company and we read the figures from its latest accounts at Companies House, into all three of these tools. Change any figure afterwards."></button></div>
+              <input class="input lu-input" id="luAbl" type="search" autocomplete="off" spellcheck="false" placeholder="Your company name or number" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="luAblList">
+              <ul class="pc-list" id="luAblList" role="listbox" aria-label="Matching companies" hidden></ul>
+              <p class="lu-status" id="luAblStatus" data-tool="abl" aria-live="polite" hidden></p>
+            </div>
             <div class="row2">
               <div class="field">
                 <div class="label-row"><label for="ablDebtors">Trade debtors</label><button type="button" class="info" aria-label="About trade debtors" data-tip="What customers owe you today, excluding VAT."></button></div>
@@ -1385,6 +1399,7 @@ select.input::-ms-expand{display:none}
               <p class="result-per" id="ablPer">against the assets entered</p>
               <dl class="result-list">
                 <div id="ablHeadRow"><dt id="ablHeadDt">Compared with your current limit</dt><dd id="ablOutHeadroom"></dd></div>
+                <div id="ablSecRow" hidden><dt>Lenders with security today</dt><dd id="ablSec"></dd></div>
               </dl>
               <button type="button" class="btn btn-brass btn-block" id="ablQuote">Request terms</button>
               <details class="more">
@@ -1416,6 +1431,12 @@ select.input::-ms-expand{display:none}
             <div class="tool-head">
               <h2 class="tool-title">Cash conversion cycle</h2>
               <p class="calc-intro">How many days, and how much cash, does your working capital cycle tie up?</p>
+            </div>
+            <div class="field pc-field lu-field" data-lu hidden>
+              <div class="label-row"><label for="luCy">Fill in from your accounts</label><button type="button" class="info" aria-label="About filling in from your accounts" data-tip="Optional. Search your company and we read the figures from its latest accounts at Companies House, into all three of these tools. Change any figure afterwards."></button></div>
+              <input class="input lu-input" id="luCy" type="search" autocomplete="off" spellcheck="false" placeholder="Your company name or number" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="luCyList">
+              <ul class="pc-list" id="luCyList" role="listbox" aria-label="Matching companies" hidden></ul>
+              <p class="lu-status" id="luCyStatus" data-tool="cycle" aria-live="polite" hidden></p>
             </div>
             <div class="field">
               <span class="label" id="cyModeLabel">Work it out from</span>
@@ -1481,6 +1502,7 @@ select.input::-ms-expand{display:none}
               <p class="result-big" id="cyCycle">&nbsp;</p>
               <p class="result-per" id="cyPer">&nbsp;</p>
               <dl class="result-list">
+                <div id="cyIndRow" hidden><dt id="cyIndDt">Typical cycle in your industry</dt><dd id="cyInd"></dd></div>
                 <div><dt>Collecting 10 days sooner would release</dt><dd id="cyOutTen"></dd></div>
               </dl>
               <button type="button" class="btn btn-brass btn-block" id="cyQuote">Request terms</button>
@@ -1493,6 +1515,7 @@ select.input::-ms-expand{display:none}
                     <div><dt>Creditor days</dt><dd id="cyOutDpo"></dd></div>
                     <div><dt>One day of sales</dt><dd id="cyOutDay"></dd></div>
                   </dl>
+                  <p class="cy-ind-note" id="cyIndNote" hidden></p>
                 </div>
               </details>
               <details class="more">
@@ -1513,6 +1536,12 @@ select.input::-ms-expand{display:none}
             <div class="tool-head">
               <h2 class="tool-title">Growth funding gap</h2>
               <p class="calc-intro">If sales grow, how much more working capital will you need?</p>
+            </div>
+            <div class="field pc-field lu-field" data-lu hidden>
+              <div class="label-row"><label for="luGr">Fill in from your accounts</label><button type="button" class="info" aria-label="About filling in from your accounts" data-tip="Optional. Search your company and we read the figures from its latest accounts at Companies House, into all three of these tools. Change any figure afterwards."></button></div>
+              <input class="input lu-input" id="luGr" type="search" autocomplete="off" spellcheck="false" placeholder="Your company name or number" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="luGrList">
+              <ul class="pc-list" id="luGrList" role="listbox" aria-label="Matching companies" hidden></ul>
+              <p class="lu-status" id="luGrStatus" data-tool="growth" aria-live="polite" hidden></p>
             </div>
             <div class="row2">
               <div class="field">
@@ -1798,6 +1827,18 @@ select.input::-ms-expand{display:none}
     $('#cyOutDpo').textContent = Math.round(d.dpo) + ' days';
     $('#cyOutDay').textContent = money(nice(T / 365));
     $('#cyOutTen').textContent = money(nice(T / 365 * 10));
+    const ib = BENCH;
+    $('#cyIndRow').hidden = $('#cyIndNote').hidden = !ib;
+    if (ib) {
+      const md = k => Math.round(ib[k].median);
+      $('#cyIndDt').textContent = 'Typical cycle (' + ib.name + ')';
+      $('#cyInd').textContent = (md('debtor_days') + md('stock_days') - md('creditor_days')) + ' days';
+      $('#cyOutDso').textContent += ' \u00b7 median ' + md('debtor_days');
+      $('#cyOutDio').textContent += ' \u00b7 median ' + md('stock_days');
+      $('#cyOutDpo').textContent += ' \u00b7 median ' + md('creditor_days');
+      $('#cyIndNote').textContent = 'Medians for ' + ib.name + ', from the ' + ib.debtor_days.year + ' accounts of ' + ib.debtor_days.n.toLocaleString('en-GB')
+        + ' companies with 10 or more staff (Companies House). The typical cycle is their median debtor plus stock days, less creditor days.';
+    }
     lastCy = { cycle, tied: Math.max(0, nice(tied)) };
   }
   $$('input[name="cyMode"]').forEach(r => r.addEventListener('change', () => {
@@ -1819,7 +1860,7 @@ select.input::-ms-expand{display:none}
      With data-api set (the hosted draft), the customer search and each customer's report come live from the
      Phillips. data service through Ben's own server; the built-in companies are the fallback and the payer lists. */
   const GRP = JSON.parse(document.getElementById('grpData').textContent);
-  let COST_RATE = 0.08, RATE_NOTE = 'an example rate of 8%'; /* replaced by the Bank of England SME rate when the data service has it */
+  const COST_RATE = 0.08, RATE_NOTE = 'an example rate of 8%'; /* Ben's indicative finance rate, set in his back office */
   const PC = JSON.parse(document.getElementById('pcData').textContent);
   const F = {}; PC.fields.forEach((f, k) => { F[f] = k; });
   const HIDDEN = new Set([]); /* company numbers Ben hides in his back office */
@@ -2111,13 +2152,7 @@ select.input::-ms-expand{display:none}
     const c = pcRows.find(r => r[F.number] === btn.dataset.pc); if (c) pcPick(c);
   }));
   { const first = pcRows.find(r => r[F.number] === '01672070') || pcRows[0]; if (first) { pcChosen = first; pcSearch.value = first[F.name]; } }
-  /* The cost of the wait at the Bank of England's rate on new loans to small businesses, once it is in the data service */
-  if (API) getJson('/rate').then(d => {
-    if (!d || typeof d.value !== 'number' || !(d.value > 0 && d.value < 30) || !/^\d{4}-\d{2}$/.test(d.month || '')) return;
-    COST_RATE = d.value / 100;
-    RATE_NOTE = 'the Bank of England\u2019s average rate on new loans to small businesses (' + d.value + '% in ' + ym(d.month) + ')';
-    calcDebtors();
-  }).catch(() => {});
+  if (API) { const tip = $('#ddCustFields .pc-field .info'); if (tip) tip.dataset.tip = 'Large UK companies report how they pay their suppliers twice a year. Search any company that has filed a report.'; }
   listen('#panel-debtors', calcDebtors);
   $('#ddIndustry').addEventListener('change', calcDebtors);
   $('#ddRegion').addEventListener('change', calcDebtors);
@@ -2152,6 +2187,149 @@ select.input::-ms-expand{display:none}
     lastGr = { gap: Math.max(0, gap), tgt };
   }
   listen('#panel-growth', calcGrowth);
+
+  /* v19: fill the other three tools from a company's latest filed accounts (hosted draft only), show who holds
+     security over its assets, and compare its cycle with its industry. Company data only, from Companies House. */
+  let BENCH = null, benchFor = null;
+  const LU = API ? $$('[data-lu]') : [];
+  const setMoney = (sel, v) => { $(sel).value = v == null || !Number.isFinite(v) ? '' : Math.round(Math.max(0, v)).toLocaleString('en-GB'); };
+  const setRange = (sel, v) => {
+    const el = $(sel), st = Number(el.step) || 1;
+    if (v != null && Number.isFinite(v)) el.value = Math.max(Number(el.min), Math.min(Number(el.max), Math.round(v / st) * st));
+  };
+  const groupName = g => {
+    const x = g === 'all' ? null : GRP.groups[g.startsWith('d-') ? 'd' + g.slice(2) : g.slice(2)];
+    return x ? x.name.toLowerCase() : 'all companies';
+  };
+  function loadBench(div, sec) {
+    const key = (div || '') + '|' + (sec || '');
+    if (!API || key === benchFor) return;
+    benchFor = key;
+    getJson('/benchmarks?division=' + encodeURIComponent(div || '') + '&section=' + encodeURIComponent(sec || '')).then(b => {
+      if (benchFor !== key) return;
+      BENCH = b && b.debtor_days && b.stock_days && b.creditor_days ? Object.assign(b, { name: groupName(b.group) }) : null;
+      calcCycle();
+    }).catch(() => {});
+  }
+  const lender = s => s.replace(/\s+\(.*$/, '').replace(/\s+as\s+.*$/i, '').trim();
+  function luStatus(text) { /* text: one string, or { abl, cycle, growth } */
+    LU.forEach(box => {
+      const p = $('.lu-status', box), t = typeof text === 'string' ? text : text[p.dataset.tool];
+      p.hidden = !t; p.innerHTML = t || '';
+    });
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+  function luApply(d) {
+    const c = d.company || {}, a = d.accounts, f = (a && a.figures) || {}, who = esc(shortName(c.name || ''));
+    loadBench(c.division, c.section);
+    /* who holds security over the company's assets today */
+    const ch = d.charges || { outstanding: 0, holders: [] }, names = [...new Set(ch.holders.map(lender))];
+    $('#ablSecRow').hidden = false;
+    $('#ablSec').textContent = !ch.outstanding ? 'None registered'
+      : names.length ? names.slice(0, 2).join(' \u00b7 ') + (names.length > 2 ? ' and ' + (names.length - 2) + ' more' : '')
+      : ch.outstanding + (ch.outstanding === 1 ? ' charge' : ' charges');
+    /* No readable figures: empty the fields rather than leave another company's numbers in them */
+    const luClear = () => {
+      ['#ablDebtors', '#ablAged', '#ablStock', '#ablPlant', '#ablProperty', '#ablCurrent', '#cyTurnover', '#cyCos', '#cyDebtors', '#cyStock', '#cyCreditors', '#grNow', '#grTarget']
+        .forEach(sel => setMoney(sel, null));
+      calcAbl(); calcCycle(); calcGrowth();
+    };
+    if (!a) { luStatus('<strong>' + who + '</strong> has no accounts filed yet, so enter the figures yourself.'); luClear(); return; }
+    const when = fullDate(a.made_up_to);
+    if (!Object.keys(f).length) {
+      luStatus('<strong>' + who + '</strong>: its latest accounts, to ' + when + ', are filed in a form we can\u2019t read automatically, so enter the figures yourself.');
+      luClear(); return;
+    }
+    const T = f.turnover, C = f.cost_of_sales, deb = f.trade_debtors != null ? f.trade_debtors : f.debtors;
+    const stock = f.stock || 0, cre = f.trade_creditors, fixed = f.fixed_assets || 0;
+    const head = 'From <strong>' + who + '</strong>\u2019s accounts to ' + when + '. Change any figure.';
+    /* asset-based lending */
+    setMoney('#ablDebtors', deb || 0); setMoney('#ablAged', 0); setMoney('#ablStock', stock);
+    setMoney('#ablPlant', fixed); setMoney('#ablProperty', 0); setMoney('#ablCurrent', null);
+    /* cash conversion cycle, from the accounts figures */
+    const acc = $('input[name="cyMode"][value="accounts"]');
+    if (!acc.checked) { acc.checked = true; acc.dispatchEvent(new Event('change')); }
+    setMoney('#cyTurnover', T); setMoney('#cyCos', C); setMoney('#cyDebtors', deb || 0); setMoney('#cyStock', stock); setMoney('#cyCreditors', cre || 0);
+    /* growth funding gap */
+    if (T > 0) {
+      setMoney('#grNow', T); setMoney('#grTarget', nice(T * 1.5));
+      if (C > 0) setRange('#grMargin', (T - C) / T * 100);
+      setRange('#grDso', (deb || 0) / T * 365);
+      if (C > 0) { setRange('#grDio', stock / C * 365); setRange('#grDpo', (cre || 0) / C * 365); }
+    }
+    const noT = 'The accounts don\u2019t show turnover (usual for smaller companies\u2019 accounts), so enter it yourself.';
+    luStatus({
+      abl: head + (fixed > 0 ? ' Fixed assets are under plant and machinery: move any property across.' : ''),
+      cycle: head + (!(T > 0) ? ' ' + noT : !(C > 0) ? ' The accounts don\u2019t show cost of sales, so enter it yourself.' : ''),
+      growth: T > 0 ? head + ' The target is 50% above that turnover.' : noT,
+    });
+    calcAbl(); calcCycle(); calcGrowth();
+  }
+  let luSeq = 0;
+  function luPick(c) {
+    LU.forEach(box => { $('.lu-input', box).value = c.name; });
+    luStatus('Reading the latest accounts for <strong>' + esc(shortName(c.name)) + '</strong>\u2026');
+    const s = ++luSeq;
+    getJson('/lookup/' + encodeURIComponent(c.number)).then(d => {
+      if (s !== luSeq) return;
+      if (d && d.company) luApply(d);
+      else luStatus(d && d.error === 'busy' ? 'Companies House is busy. Try again in a minute.' : 'That company could not be found.');
+    }).catch(() => { if (s === luSeq) luStatus('That company could not be looked up just now. Try again in a moment.'); });
+  }
+  LU.forEach(box => {
+    box.hidden = false;
+    const inp = $('.lu-input', box), list = $('.pc-list', box);
+    let hits = [], active = -1, timer = 0, seq = 0, ctrl = null;
+    const close = () => { list.hidden = true; inp.setAttribute('aria-expanded', 'false'); inp.removeAttribute('aria-activedescendant'); active = -1; };
+    const render = note => {
+      list.innerHTML = '';
+      if (note || !hits.length) {
+        const li = document.createElement('li'); li.className = 'pc-none';
+        li.textContent = note || 'No company name starts with that. Try the company number.';
+        list.appendChild(li);
+      }
+      if (!note) hits.forEach((c, k) => {
+        const li = document.createElement('li');
+        li.id = inp.id + 'Opt' + k; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', String(k === active));
+        li.innerHTML = '<span class="pc-name"></span><span class="pc-meta"></span>';
+        li.firstChild.textContent = c.name;
+        li.lastChild.textContent = c.number + (c.status && c.status !== 'Active' ? ' \u00b7 ' + c.status : '');
+        li.addEventListener('mousedown', e => { e.preventDefault(); close(); luPick(c); });
+        list.appendChild(li);
+      });
+      list.hidden = false; inp.setAttribute('aria-expanded', 'true');
+      if (active >= 0) { inp.setAttribute('aria-activedescendant', inp.id + 'Opt' + active); const o = document.getElementById(inp.id + 'Opt' + active); if (o) o.scrollIntoView({ block: 'nearest' }); }
+      else inp.removeAttribute('aria-activedescendant');
+    };
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim();
+      clearTimeout(timer);
+      if (q.replace(/[^A-Za-z0-9]/g, '').length < 2) { close(); return; }
+      hits = []; render('Searching\u2026');
+      timer = setTimeout(() => {
+        if (ctrl) ctrl.abort();
+        ctrl = new AbortController();
+        const s = ++seq;
+        getJson('/register?q=' + encodeURIComponent(q), ctrl.signal).then(d => {
+          if (s !== seq) return;
+          hits = (d && d.results) || []; active = -1;
+          if (document.activeElement === inp) render();
+        }).catch(err => {
+          if (err && err.name === 'AbortError') return;
+          if (s === seq && document.activeElement === inp) render('The search isn\u2019t available just now.');
+        });
+      }, 250);
+    });
+    inp.addEventListener('keydown', e => {
+      if (list.hidden || !hits.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, hits.length - 1); render(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); render(); }
+      else if (e.key === 'Enter') { e.preventDefault(); const c = hits[active >= 0 ? active : 0]; close(); if (c) luPick(c); }
+      else if (e.key === 'Escape') close();
+    });
+    inp.addEventListener('blur', () => setTimeout(close, 150));
+  });
+  if (API) loadBench('', '');
 
 
   /* ===== v15: the contact step. A name, then phone and/or email, whichever the visitor prefers. ===== */
