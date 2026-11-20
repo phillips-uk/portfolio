@@ -32,6 +32,13 @@ CREATE TABLE IF NOT EXISTS company_owners (
 CREATE INDEX IF NOT EXISTS company_owners_company ON company_owners(company_number);
 CREATE INDEX IF NOT EXISTS company_owners_owner ON company_owners(owner_number);
 
+-- Corporate insolvency notices from The Gazette (daily), only for companies on the register. No personal data.
+CREATE TABLE IF NOT EXISTS insolvency_notices (
+  notice_id INTEGER PRIMARY KEY, company_number TEXT NOT NULL, notice_code TEXT, notice_type TEXT, published TEXT
+);
+CREATE INDEX IF NOT EXISTS insolvency_notices_company ON insolvency_notices(company_number, published);
+CREATE INDEX IF NOT EXISTS insolvency_notices_published ON insolvency_notices(published);
+
 CREATE TABLE IF NOT EXISTS payment_reports (
   report_id INTEGER PRIMARY KEY,
   company_number TEXT NOT NULL,

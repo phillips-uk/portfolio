@@ -65,6 +65,12 @@ every machine-readable filing of any size (`ingest/accounts.py`), upserts them i
 runs `ingest/groups.py` (corporate owners only; individual records are skipped), refuses to publish if a check fails,
 loads `owners-NNN.sql` and swaps `company_owners` in.
 
+## Insolvency notices
+
+`.github/workflows/data-service-gazette.yml` reads The Gazette's insolvency notice feed nightly (22:30 UTC, inside its
+9pm to 7am window, 2.5 seconds between requests, User-Agent from the repository variable `GAZETTE_UA`). Corporate
+notices only, kept only when they match a company on the register. The live lookup returns the latest 10.
+
 ## Bank of England SME rate
 
 The Bank blocks automated downloads. Once a month, check the figure on the Bank's release and run

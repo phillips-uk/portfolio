@@ -11,7 +11,7 @@ const API = 'https://api.company-information.service.gov.uk';
 const ORG = /\b(limited|ltd|plc|llp|bank|banking|finance|financial|capital|lending|leasing|credit|trust|trustees|fund|funding|holdings|group|corporation|corp|inc|llc|gmbh|s\.?a\.?|n\.?v\.?|b\.?v\.?|ag|partners|council|authority|society|association|ministers)\b/i;
 
 export async function liveCompany(number, env, ctx) {
-  const cacheKey = new Request(`https://data.phillips-uk.com/__cache/live/${number}/v4`);
+  const cacheKey = new Request(`https://data.phillips-uk.com/__cache/live/${number}/v5`);
   const cache = caches.default;
   const hit = await cache.match(cacheKey);
   if (hit) return { ...(await hit.json()), cached: true };
@@ -62,6 +62,10 @@ export async function liveCompany(number, env, ctx) {
   const pc = profile.registered_office_address?.postal_code || '';
   // Industry group from our register, so a site can ask for the matching benchmark (d-NN, else s-X, else all).
   const reg = env.DB ? await env.DB.prepare('SELECT division, section FROM register WHERE number = ?').bind(number).first() : null;
+  const notices = env.DB ? (await env.DB.prepare(
+    `SELECT notice_id, notice_type, notice_code, published FROM insolvency_notices WHERE company_number = ?
+     ORDER BY published DESC LIMIT 10`).bind(number).all()).results
+    .map(n => ({ type: n.notice_type, code: n.notice_code, published: n.published, url: `https://www.thegazette.co.uk/notice/${n.notice_id}` })) : [];
   const result = {
     company: {
       number, name: profile.company_name, status: profile.company_status, type: profile.type,
@@ -77,7 +81,8 @@ export async function liveCompany(number, env, ctx) {
       holders_not_listed: holders.filter(n => !ORG.test(n)).length,  // private individuals are counted, never named
     },
     accounts,
-    source: 'Companies House',
+    insolvency_notices: notices,  // The Gazette, corporate notices only, newest first
+    source: 'Companies House; The Gazette (insolvency notices)',
     licence: 'Contains public sector information licensed under the Open Government Licence v3.0',
     as_of: new Date().toISOString().slice(0, 10),
   };
