@@ -39,7 +39,12 @@ jobs:
       - name: Load and publish
         run: |
           npx --no-install wrangler d1 execute phillips-data --remote --file "$RUNNER_TEMP/load/load.sql"
-          npx --no-install wrangler d1 execute phillips-data --remote --file "$RUNNER_TEMP/load/register.sql"
+          for f in "$RUNNER_TEMP"/load/register-*.sql; do
+            for try in 1 2 3; do
+              npx --no-install wrangler d1 execute phillips-data --remote --file "$f" && break
+              [ "$try" = 3 ] && exit 1; echo "retrying $f"; sleep 30
+            done
+          done
           npx --no-install wrangler d1 execute phillips-data --remote --file "$RUNNER_TEMP/load/publish.sql"
       - name: Delete the downloaded files
         if: always()

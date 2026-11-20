@@ -10,7 +10,8 @@ Inputs (download fresh each month, never commit them):
 
 Writes to <out-dir>:
   load.sql     creates and fills companies_next, payment_reports_next, benchmarks_next, sectors_next
-  register.sql creates and fills register_next with every company in the Companies House file (about 5.6 million)
+  register-NNN.sql  creates and fills register_next with every company in the Companies House file (about 5.7
+               million), split into files of about 100MB so each import upload stays small; load them in name order
   publish.sql  swaps the *_next tables in and keeps the old ones as *_prev
   report.json  counts and validation results; the load must not be published if "ok" is false
 
@@ -120,7 +121,20 @@ def lit(v):
 
 REG_COLS = ['number', 'name', 'name_norm', 'status', 'sic_code', 'division', 'section', 'postcode_area', 'incorporated']
 schema = open(os.path.join(os.path.dirname(__file__), '..', 'schema.sql')).read()
-reg_out = open(os.path.join(OUT, 'register.sql'), 'w')
+class ChunkedSQL:  # writes whole statements to register-001.sql, register-002.sql, ... of about 100MB each
+    def __init__(self, limit=100_000_000):
+        self.limit, self.n, self.f = limit, 0, None
+        self.next()
+    def next(self):
+        if self.f: self.f.close()
+        self.n += 1
+        self.f, self.size = open(os.path.join(OUT, f'register-{self.n:03d}.sql'), 'w'), 0
+    def write(self, stmt):
+        if self.size and self.size + len(stmt) > self.limit: self.next()
+        self.f.write(stmt); self.size += len(stmt)
+    def close(self): self.f.close()
+
+reg_out = ChunkedSQL()
 reg_out.write('DROP TABLE IF EXISTS register_next;\n')
 reg_out.write(re.search(r'CREATE TABLE IF NOT EXISTS register \(.*?\) WITHOUT ROWID;', schema, re.S).group(0)
               .replace('IF NOT EXISTS register (', 'register_next (') + '\n')
