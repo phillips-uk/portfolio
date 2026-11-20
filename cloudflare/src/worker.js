@@ -2,6 +2,7 @@
 // netlify/functions/*.js handlers unchanged through the adapter (same approach as Before You Pay).
 import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard, invitePing } from './rate-card.js';
+import { isMonumentDataPath, monumentData } from './monument-data.js';
 import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
@@ -189,6 +190,7 @@ async function route(request, env, ctx) {
   // The Insights hub shows the latest Monday Brief issue
   if (path === '/guides') return withGtm(await withLatestIssue(await env.ASSETS.fetch(request), env));
 
+  if (isMonumentDataPath(path)) return monumentData(request, url, env, ctx);
   if (isRateCardPath(path)) return rateCard(request, url, env, ctx);
   if (path === '/invite-ping' && request.method === 'POST') return invitePing(request, env);
   if (isAdminPath(path)) return admin(request, url, env);
