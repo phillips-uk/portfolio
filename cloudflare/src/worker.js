@@ -69,13 +69,9 @@ const REDIRECTS = {
   '/lewis-phillips-cv.pdf': '/about/',
 };
 
-// Creative scoring was retired with the free tools' relaunch (16 Nov 2026); its pages stay in the repo and its addresses
-// send visitors to the homepage with a temporary redirect.
-const PAUSED = {
-  '/creative-analysis': '/',
-  '/creative-analysis-demo': '/',
-  '/creative-analysis-report': '/',
-};
+// Creative scoring was retired with the free tools' relaunch (16 Nov 2026); its pages stay in the repo. Since 20 Nov 2026
+// its addresses redirect permanently to the free checks, so Google drops the old page from its index.
+const PAUSED = {};
 
 // The old tool addresses, since the relaunch (16 Nov 2026): permanent redirects to the Website Check and the Google Ads
 // Check. The old .html files are redirected too, so the retired pages are never served.
@@ -83,6 +79,9 @@ const MOVED = {
   '/google-ads-audit-report': '/google-ads-audit',
   '/landing-page-audit': '/website-check/',
   '/landing-page-audit-report': '/website-check/',
+  '/creative-analysis': '/free-checks/',
+  '/creative-analysis-demo': '/free-checks/',
+  '/creative-analysis-report': '/free-checks/',
   // Names people type or AI assistants guess for the free checks (20 Nov 2026)
   '/google-ads-check': '/google-ads-audit',
   '/free-google-ads-audit': '/google-ads-audit',
@@ -198,6 +197,15 @@ async function route(request, env, ctx) {
   const share = path.match(/^\/r\/([^/]+)$/);
   if (share) return withGtm(await runFunction('audit-share', request, url, { id: decodeURIComponent(share[1]) }, env, ctx));
 
+  // One address per page, with a permanent redirect (the asset server's own is a temporary 307): /about to /about/,
+  // and /about/index.html to /about/ (20 Nov 2026)
+  if ((request.method === 'GET' || request.method === 'HEAD') && url.pathname !== '/') {
+    if (url.pathname.endsWith('/index.html')) return Response.redirect(new URL(url.pathname.slice(0, -10) + url.search, url).href, 301);
+    if (!url.pathname.endsWith('/') && !/\.[a-z0-9]+$/i.test(url.pathname)) {
+      const probe = await env.ASSETS.fetch(new Request(new URL(url.pathname + '/', url).href, { method: 'HEAD' }));
+      if (probe.status === 200) return Response.redirect(new URL(url.pathname + '/' + url.search, url).href, 301);
+    }
+  }
   return withGtm(await env.ASSETS.fetch(request));
 }
 

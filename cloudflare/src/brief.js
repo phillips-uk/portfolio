@@ -420,7 +420,8 @@ function issueJsonLd(c) {
 
 export function issuePage(c, opts = {}) {
   return shell({
-    title: `${c.title} | ${NAME} | Phillips.`,
+    // Search results cut titles at about 60 characters: drop the newsletter name when the headline is long (20 Nov 2026)
+    title: (c.title.length + NAME.length + 14 <= 60) ? `${c.title} | ${NAME} | Phillips.` : `${c.title} | Phillips.`,
     description: String(c.summary || '').replace(/\s+/g, ' ').slice(0, 155),
     path: `/updates/${c.date}/`,
     robots: opts.preview ? 'noindex, nofollow' : 'index, follow',

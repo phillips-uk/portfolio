@@ -14,6 +14,8 @@
       views.forEach(function (v) {
         v.querySelectorAll('.pg').forEach(function (p, j) {
           var on = j === i;
+          // Hidden pages carry data-src and load when shown, or when they are next (20 Nov 2026: lighter first load)
+          if (p.dataset.src && (on || j === (i + 1) % n)) { p.src = p.dataset.src; p.removeAttribute('data-src'); }
           p.classList.toggle('is-on', on);
           p.classList.remove('run');
           if (on && !reduce && started) { void p.offsetWidth; p.classList.add('run'); }
