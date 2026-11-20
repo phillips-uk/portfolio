@@ -13,8 +13,12 @@
   ],
   // 120 requests a minute per key; the daily quota per client is in the clients table.
   "ratelimits": [
-    { "name": "PER_KEY", "namespace_id": "4101", "simple": { "limit": 120, "period": 60 } }
+    { "name": "PER_KEY", "namespace_id": "4101", "simple": { "limit": 120, "period": 60 } },
+    // Live lookups across every client: 20 a minute keeps Companies House calls under its 600 per 5 minutes.
+    { "name": "CH_GLOBAL", "namespace_id": "4102", "simple": { "limit": 20, "period": 60 } }
   ],
+  // Secret: CH_API_KEY (Companies House REST key, application "Phillips Data Service"). Set with
+  // `npx wrangler secret put CH_API_KEY`; locally it comes from data-service/.dev.vars (git-ignored).
   "routes": [
     { "pattern": "data.phillips-uk.com", "custom_domain": true }
   ]

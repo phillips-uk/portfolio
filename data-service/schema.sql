@@ -44,6 +44,32 @@ CREATE TABLE IF NOT EXISTS sectors (
   name TEXT NOT NULL
 );
 
+-- Entered by hand once a month (the Bank of England blocks automated downloads). See scripts/set-rate.mjs.
+CREATE TABLE IF NOT EXISTS rates (
+  series TEXT NOT NULL,             -- 'boe-sme-new-loans'
+  month TEXT NOT NULL,              -- '2026-09'
+  value REAL NOT NULL,              -- per cent a year
+  release TEXT, source_url TEXT NOT NULL, entered_by TEXT NOT NULL, entered_at TEXT NOT NULL,
+  PRIMARY KEY (series, month)
+);
+
+-- Headline figures from filed accounts of companies with 10 or more staff (bulk iXBRL files). Appended daily;
+-- never swapped, so a monthly payments publish leaves them alone.
+CREATE TABLE IF NOT EXISTS accounts_facts (
+  company_number TEXT NOT NULL, period_end TEXT NOT NULL,
+  employees INTEGER, turnover REAL, cost_of_sales REAL, trade_debtors REAL, debtors REAL, stock REAL,
+  trade_creditors REAL, cash REAL, sic_code TEXT, division TEXT, section TEXT, source_file TEXT NOT NULL,
+  PRIMARY KEY (company_number, period_end)
+);
+CREATE INDEX IF NOT EXISTS accounts_facts_section ON accounts_facts(section, period_end);
+
+-- Debtor, stock and creditor days by group, from accounts_facts. Rebuilt in full by ingest/accounts_benchmarks.py.
+CREATE TABLE IF NOT EXISTS accounts_benchmarks (
+  group_key TEXT NOT NULL, metric TEXT NOT NULL, year INTEGER NOT NULL,
+  median REAL, p25 REAL, p75 REAL, n INTEGER NOT NULL,
+  PRIMARY KEY (group_key, metric, year)
+);
+
 CREATE TABLE IF NOT EXISTS dataset_versions (
   dataset TEXT NOT NULL, as_of TEXT NOT NULL, row_count INTEGER NOT NULL, checksum TEXT NOT NULL,
   validated INTEGER NOT NULL, published_at TEXT, notes TEXT

@@ -12,6 +12,18 @@ Brief and decisions: vault `01_Phillips/04_Products/Phillips Data Service/`.
 | `GET /v1/companies/search?q=jaguar` | up to 8 companies that have filed payment reports (2+ characters; a company number also works) |
 | `GET /v1/companies/{number}/payments` | company basics, latest report, up to 20 past reports, and the benchmark for its SIC division (or section, or all) in the same year |
 | `GET /v1/benchmarks?group=s-C&metric=days&year=2025` | medians and quartiles; `group` is `all`, `s-A`..`s-U` or `d-01`..`d-99`; `metric` is `days`, `pct_late` or `pct30` |
+| `GET /v1/companies/{number}/live` | Companies House profile, outstanding charges (lenders named only when they are organisations) and the latest accounts' figures and debtor, stock and creditor days when the accounts are machine-readable; cached 24 hours |
+| `GET /v1/benchmarks?dataset=accounts&group=s-C&metric=debtor_days` | debtor, stock or creditor days from filed accounts of companies with 10+ staff; groups need 30 companies |
+| `GET /v1/rates/sme` | latest Bank of England effective rate on new loans to SMEs (entered by hand) |
+| `GET /v1/rates/fx` | ECB reference rates as units per £1; cached 6 hours |
+
+**Plans (scopes in `clients.scopes`):** `payments` (search, payments, payment benchmarks), `live`, `rates`, `accounts`.
+Live lookups share a cap of 20 a minute across all clients, to stay inside Companies House's 600 calls per 5 minutes.
+
+**Which calculator uses what:** debtor days and customer checker: `payments`, `rates/sme`. Asset-based lending,
+acquisition and cash cycle: `live` to pre-fill a company's figures, `accounts` benchmarks. Growth gap: `accounts`
+benchmarks, `rates/sme`. Import order: `rates/fx`. Recruitment payroll: `payments` benchmarks for division 78 and
+the client's industry.
 
 Every response carries `as_of`, `source` and `licence`. Errors: 401 bad key, 403 suspended or not in plan,
 429 rate limit (120 a minute per key) or daily quota (per client, default 5,000), 404 unknown company.
@@ -33,6 +45,18 @@ any check fails, then loads `*_next` tables and swaps them in (`publish.sql`). T
 
 Run locally: `python3 -I ingest/build.py <payments.csv> <basic.zip> <out-dir>`, then `wrangler d1 execute
 phillips-data --local --file <out-dir>/load.sql` and `publish.sql`, then `npx wrangler dev`.
+
+## Accounts figures
+
+`.github/workflows/data-service-accounts-daily.yml` reads each day's Companies House accounts bulk file, keeps
+companies with 10 or more staff (`ingest/accounts.py`, which also looks up each one's SIC code), upserts them into
+`accounts_facts`, and rebuilds `accounts_benchmarks`. A manual run can backfill a list of past files.
+`ingest/ixbrl.py` and `src/ixbrl.js` read accounts the same way; change both together.
+
+## Bank of England SME rate
+
+The Bank blocks automated downloads. Once a month, check the figure on the Bank's release and run
+`node scripts/set-rate.mjs 2026-09 <percent> "<release>" "<https://www.bankofengland.co.uk/...>" --remote`.
 
 ## Keys
 

@@ -2,6 +2,9 @@
 // Clients call it server to server with their own key, held as a Worker secret in their own account.
 // The key is never stored here: only its SHA-256 hash. Writes come only from the ingest job.
 
+import { liveCompany } from './live.js';
+import { fxRates } from './fx.js';
+
 const SOURCE = {
   payments: {
     source: 'Department for Business and Trade, payment practices reporting; Companies House',
@@ -9,6 +12,7 @@ const SOURCE = {
   },
 };
 const METRICS = new Set(['days', 'pct_late', 'pct30']);
+const ACCOUNT_METRICS = new Set(['debtor_days', 'stock_days', 'creditor_days']);
 
 export default {
   async fetch(request, env, ctx) {
@@ -35,7 +39,7 @@ export default {
       if (!success) return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
     }
     const day = new Date().toISOString().slice(0, 10);
-    const endpoint = path.split('/').slice(0, 3).join('/') + (path.includes('/payments') ? '/payments' : '');
+    const endpoint = path.replace(/\/[A-Z0-9]{8}(?=\/)/i, '/{number}');
     const used = await env.DB.prepare('SELECT COALESCE(SUM(requests), 0) AS n FROM usage WHERE client_id = ? AND day = ?')
       .bind(client.id, day).first('n');
     if (used >= client.daily_quota) return json({ error: 'daily_quota_reached' }, 429);
@@ -46,13 +50,29 @@ export default {
     ]));
 
     const scopes = safeParse(client.scopes, []);
-    if (!scopes.includes('payments')) return json({ error: 'not_in_plan' }, 403);
+    const allow = scope => scopes.includes(scope);
+    const denied = json({ error: 'not_in_plan' }, 403);
 
     try {
-      if (path === '/v1/companies/search') return await search(url, env);
-      const m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/payments$/);
-      if (m) return await payments(m[1].toUpperCase(), env);
-      if (path === '/v1/benchmarks') return await benchmarks(url, env);
+      if (path === '/v1/companies/search') return allow('payments') ? await search(url, env) : denied;
+      let m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/payments$/);
+      if (m) return allow('payments') ? await payments(m[1].toUpperCase(), env) : denied;
+      m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/live$/);
+      if (m) {
+        if (!allow('live')) return denied;
+        // Companies House allows 600 calls per 5 minutes in total; a lookup uses up to 5. Shared cap across all clients.
+        if (env.CH_GLOBAL && !(await env.CH_GLOBAL.limit({ key: 'companies-house' })).success)
+          return json({ error: 'busy_try_again' }, 429, { 'Retry-After': '60' });
+        const r = await liveCompany(m[1].toUpperCase(), env, ctx);
+        return json(r, r.error ? 404 : 200);
+      }
+      if (path === '/v1/benchmarks') {
+        const dataset = url.searchParams.get('dataset') || 'payments';
+        if (dataset === 'accounts') return allow('accounts') ? await accountBenchmarks(url, env) : denied;
+        return allow('payments') ? await benchmarks(url, env) : denied;
+      }
+      if (path === '/v1/rates/sme') return allow('rates') ? await smeRate(env) : denied;
+      if (path === '/v1/rates/fx') return allow('rates') ? json(await fxRates(ctx)) : denied;
       return json({ error: 'not_found' }, 404);
     } catch (err) {
       console.error(err);
@@ -127,6 +147,32 @@ async function benchmarks(url, env) {
   const name = group === 'all' ? 'All reporting companies'
     : await env.DB.prepare('SELECT name FROM sectors WHERE code = ?').bind(group).first('name');
   return json({ ...(await meta(env)), group, group_name: name, results });
+}
+
+// GET /v1/benchmarks?dataset=accounts&group=s-C&metric=debtor_days : from filed accounts of companies with 10+ staff.
+async function accountBenchmarks(url, env) {
+  const group = url.searchParams.get('group') || 'all';
+  const metric = url.searchParams.get('metric') || 'debtor_days';
+  if (!/^(all|s-[A-U]|d-\d{2})$/.test(group)) return json({ error: 'bad_group' }, 400);
+  if (!ACCOUNT_METRICS.has(metric)) return json({ error: 'bad_metric', allowed: [...ACCOUNT_METRICS] }, 400);
+  const { results } = await env.DB.prepare(
+    'SELECT group_key, metric, year, median, p25, p75, n FROM accounts_benchmarks WHERE group_key = ? AND metric = ? ORDER BY year')
+    .bind(group, metric).all();
+  const name = group === 'all' ? 'All companies with 10 or more staff'
+    : await env.DB.prepare('SELECT name FROM sectors WHERE code = ?').bind(group).first('name');
+  const as_of = await env.DB.prepare("SELECT as_of FROM dataset_versions WHERE dataset = 'accounts' ORDER BY as_of DESC LIMIT 1").first('as_of');
+  return json({ as_of, source: 'Companies House accounts bulk data (filed iXBRL accounts)',
+    licence: SOURCE.payments.licence, group, group_name: name, basis: 'Companies with 10 or more staff that file turnover', results });
+}
+
+// GET /v1/rates/sme : the latest Bank of England effective rate on new loans to SMEs, entered by hand each month.
+async function smeRate(env) {
+  const r = await env.DB.prepare(
+    "SELECT month, value, release, source_url FROM rates WHERE series = 'boe-sme-new-loans' ORDER BY month DESC LIMIT 1").first();
+  if (!r) return json({ error: 'not_yet_entered' }, 404);
+  return json({ series: 'Effective interest rate on new loans to SMEs', ...r,
+    source: 'Bank of England, Bankstats (monetary and financial statistics)',
+    licence: "Bank of England statistical data, reused under the Bank's terms of use" });
 }
 
 async function meta(env) {
