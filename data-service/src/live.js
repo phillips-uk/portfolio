@@ -11,7 +11,7 @@ const API = 'https://api.company-information.service.gov.uk';
 const ORG = /\b(limited|ltd|plc|llp|bank|banking|finance|financial|capital|lending|leasing|credit|trust|trustees|fund|funding|holdings|group|corporation|corp|inc|llc|gmbh|s\.?a\.?|n\.?v\.?|b\.?v\.?|ag|partners|council|authority|society|association|ministers)\b/i;
 
 export async function liveCompany(number, env, ctx) {
-  const cacheKey = new Request(`https://data.phillips-uk.com/__cache/live/${number}/v3`);
+  const cacheKey = new Request(`https://data.phillips-uk.com/__cache/live/${number}/v4`);
   const cache = caches.default;
   const hit = await cache.match(cacheKey);
   if (hit) return { ...(await hit.json()), cached: true };
@@ -60,12 +60,15 @@ export async function liveCompany(number, env, ctx) {
   }
 
   const pc = profile.registered_office_address?.postal_code || '';
+  // Industry group from our register, so a site can ask for the matching benchmark (d-NN, else s-X, else all).
+  const reg = env.DB ? await env.DB.prepare('SELECT division, section FROM register WHERE number = ?').bind(number).first() : null;
   const result = {
     company: {
       number, name: profile.company_name, status: profile.company_status, type: profile.type,
       incorporated: profile.date_of_creation, sic_codes: profile.sic_codes || [],
       postcode_area: (pc.toUpperCase().match(/^([A-Z]{1,2})\d/) || [])[1] || null,
       next_accounts_due: profile.accounts?.next_due || null,
+      division: reg?.division || null, section: reg?.section || null,
     },
     charges: {
       outstanding: outstanding.length, total: charges?.total_count ?? items.length,

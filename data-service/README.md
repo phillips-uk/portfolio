@@ -15,6 +15,7 @@ Brief and decisions: vault `01_Phillips/04_Products/Phillips Data Service/`.
 | `GET /v1/benchmarks?group=s-C&metric=days&year=2025` | medians and quartiles; `group` is `all`, `s-A`..`s-U` or `d-01`..`d-99`; `metric` is `days`, `pct_late` or `pct30` |
 | `GET /v1/companies/{number}/live` | Companies House profile, outstanding charges (lenders named only when they are organisations) and the latest accounts' figures and debtor, stock and creditor days when the accounts are machine-readable; cached 24 hours |
 | `GET /v1/benchmarks?dataset=accounts&group=s-C&metric=debtor_days` | debtor, stock or creditor days from filed accounts of companies with 10+ staff; groups need 30 companies |
+| `GET /v1/sectors` | SIC 2007 sections and divisions (with each division's section), for industry dropdowns; any active key |
 | `GET /v1/rates/sme` | latest Bank of England effective rate on new loans to SMEs (entered by hand) |
 | `GET /v1/rates/fx` | ECB reference rates as units per £1; cached 6 hours |
 

@@ -74,6 +74,7 @@ export default {
         if (dataset === 'accounts') return allow('accounts') ? await accountBenchmarks(url, env) : denied;
         return allow('payments') ? await benchmarks(url, env) : denied;
       }
+      if (path === '/v1/sectors') return json(await sectors(env));  // any active key: names for industry dropdowns
       if (path === '/v1/rates/sme') return allow('rates') ? await smeRate(env) : denied;
       if (path === '/v1/rates/fx') return allow('rates') ? json(await fxRates(ctx)) : denied;
       return json({ error: 'not_found' }, 404);
@@ -115,6 +116,17 @@ async function searchRegister(url, env) {
   return json({ source: 'Companies House Free Company Data Product',
     licence: 'Contains public sector information licensed under the Open Government Licence v3.0', results });
 }
+
+// GET /v1/sectors : SIC 2007 sections (s-A..s-U) and divisions (d-01..d-99) with the section each division sits in.
+async function sectors(env) {
+  const { results } = await env.DB.prepare('SELECT code, name FROM sectors ORDER BY code').all();
+  return { source: 'UK SIC 2007', sections: results.filter(r => r.code.startsWith('s-')),
+           divisions: results.filter(r => r.code.startsWith('d-')).map(r => ({ ...r, section: SECTION_OF[r.code.slice(2)] || null })) };
+}
+const SECTION_OF = Object.fromEntries([['A', 1, 3], ['B', 5, 9], ['C', 10, 33], ['D', 35, 35], ['E', 36, 39], ['F', 41, 43],
+  ['G', 45, 47], ['H', 49, 53], ['I', 55, 56], ['J', 58, 63], ['K', 64, 66], ['L', 68, 68], ['M', 69, 75], ['N', 77, 82],
+  ['O', 84, 84], ['P', 85, 85], ['Q', 86, 88], ['R', 90, 93], ['S', 94, 96], ['T', 97, 98], ['U', 99, 99]]
+  .flatMap(([s, lo, hi]) => Array.from({ length: hi - lo + 1 }, (_, i) => [String(lo + i).padStart(2, '0'), s])));
 
 // GET /v1/companies/{number}/payments : latest report, history and the industry benchmark for the same year.
 async function payments(number, env) {
