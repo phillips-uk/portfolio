@@ -11,3 +11,7 @@ package-lock.json
 # Cloudflare
 .wrangler/
 .dev.vars
+
+# Data service: local keys and wrangler state
+data-service/.keys/
+data-service/.wrangler/

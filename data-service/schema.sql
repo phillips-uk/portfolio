@@ -1,0 +1,72 @@
+-- Phillips. data service (D1). Company-level public data only: never people.
+-- Data tables are loaded as *_next by the ingest job, validated, then swapped in by publish.sql.
+-- The previous copy is kept as *_prev so a bad load can be rolled back with rollback.sql.
+
+CREATE TABLE IF NOT EXISTS companies (
+  number TEXT PRIMARY KEY,          -- Companies House number, 8 characters
+  name TEXT NOT NULL,
+  name_norm TEXT NOT NULL,          -- upper case, letters and digits only, for search
+  status TEXT,                      -- from Companies House; NULL when not in the live register
+  sic_code TEXT, sic_text TEXT,     -- first SIC code
+  division TEXT, section TEXT,      -- SIC 2007 division (2 digits) and section (letter)
+  postcode_area TEXT,               -- letters of the registered office postcode, e.g. CB
+  incorporated TEXT,
+  reports INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS companies_name ON companies(name_norm);
+
+CREATE TABLE IF NOT EXISTS payment_reports (
+  report_id INTEGER PRIMARY KEY,
+  company_number TEXT NOT NULL,
+  regime TEXT,
+  period_start TEXT, period_end TEXT, filed TEXT, year INTEGER,
+  payments_made INTEGER,            -- 0 when the company made no qualifying payments in the period
+  days INTEGER,                     -- average time to pay
+  pct30 INTEGER, pct60 INTEGER, pct_over60 INTEGER,
+  pct_late INTEGER,                 -- share of invoices not paid within agreed terms
+  pct_dispute INTEGER,
+  terms_shortest INTEGER, terms_longest INTEGER, terms_max INTEGER,
+  payment_code TEXT, e_invoicing INTEGER, scf INTEGER
+);
+CREATE INDEX IF NOT EXISTS reports_company ON payment_reports(company_number, period_end);
+
+CREATE TABLE IF NOT EXISTS benchmarks (
+  dataset TEXT NOT NULL,            -- 'payments'
+  group_key TEXT NOT NULL,          -- 'all', 's-C' (section), 'd-29' (division)
+  metric TEXT NOT NULL,             -- 'days', 'pct_late', 'pct30'
+  year INTEGER NOT NULL,            -- year the reporting period ended
+  median REAL, p25 REAL, p75 REAL, n INTEGER NOT NULL,
+  PRIMARY KEY (dataset, group_key, metric, year)
+);
+
+CREATE TABLE IF NOT EXISTS sectors (
+  code TEXT PRIMARY KEY,            -- 's-C' or 'd-29'
+  name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS dataset_versions (
+  dataset TEXT NOT NULL, as_of TEXT NOT NULL, row_count INTEGER NOT NULL, checksum TEXT NOT NULL,
+  validated INTEGER NOT NULL, published_at TEXT, notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS clients (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',      -- active, overdue, suspended
+  plan TEXT, monthly_fee REAL, scopes TEXT NOT NULL DEFAULT '["payments"]',
+  daily_quota INTEGER NOT NULL DEFAULT 5000,
+  billing_ref TEXT, notes TEXT, created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS api_keys (
+  key_hash TEXT PRIMARY KEY,        -- SHA-256 hex of the key; the key itself is never stored
+  client_id TEXT NOT NULL, label TEXT, created_at TEXT NOT NULL, last_used_at TEXT, revoked_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS usage (
+  client_id TEXT NOT NULL, endpoint TEXT NOT NULL, day TEXT NOT NULL, requests INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (client_id, endpoint, day)
+);
+
+CREATE TABLE IF NOT EXISTS audit_log (
+  at TEXT NOT NULL, who TEXT NOT NULL, what TEXT NOT NULL, before TEXT, after TEXT
+);

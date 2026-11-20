@@ -1,0 +1,21 @@
+// Phillips. data service: read-only API at data.phillips-uk.com. Deploy from this folder: npx wrangler deploy
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "phillips-data",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  // Logs sampled at 10%: a busy API is the one place Cloudflare's volume-priced logs could add up.
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "phillips-data", "database_id": "TO_BE_CREATED" }
+  ],
+  // 120 requests a minute per key; the daily quota per client is in the clients table.
+  "ratelimits": [
+    { "name": "PER_KEY", "namespace_id": "4101", "simple": { "limit": 120, "period": 60 } }
+  ],
+  "routes": [
+    { "pattern": "data.phillips-uk.com", "custom_domain": true }
+  ]
+}
