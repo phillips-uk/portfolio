@@ -1,0 +1,59 @@
+# Phillips. data service: weekly group structures (corporate owners) from the Companies House PSC snapshot.
+# Off until the repository variable DATA_SERVICE_ENABLED is 'true'. Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
+# Company data only: groups.py skips every record about an individual.
+name: Data service weekly groups
+on:
+  schedule:
+    - cron: '0 5 * * 0'   # Sundays 05:00 UTC
+  workflow_dispatch:
+    inputs:
+      parts:
+        description: 'Number of snapshot parts to read (empty means all; a small number is for testing and never publishes)'
+        required: false
+        default: ''
+
+jobs:
+  groups:
+    if: vars.DATA_SERVICE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: data-service
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PARTS: ${{ github.event.inputs.parts }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-save --no-audit --no-fund wrangler@4.151.0  # package-lock.json is git-ignored in this repo
+        working-directory: .
+      - name: Download the PSC snapshot
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/psc"
+          files=$(curl -sfL https://download.companieshouse.gov.uk/en_pscdata.html | grep -oE 'psc-snapshot-[0-9-]+_[0-9]+of[0-9]+\.zip' | sort -u -t_ -k2 -V)
+          [ -n "$files" ]
+          [ -n "${PARTS:-}" ] && files=$(echo "$files" | head -n "$PARTS")
+          for f in $files; do curl -sfL --retry 3 -o "$RUNNER_TEMP/psc/$f" "https://download.companieshouse.gov.uk/$f"; done
+          ls "$RUNNER_TEMP/psc" | wc -l
+      - name: Build and validate
+        run: |
+          python3 -I ingest/groups.py "$RUNNER_TEMP/out" "$RUNNER_TEMP"/psc/*.zip
+          rm -rf "$RUNNER_TEMP/psc"
+          python3 -I -c "import json,sys; r=json.load(open('$RUNNER_TEMP/out/report.json')); sys.exit(0 if r['ok'] else 1)"
+      - name: Load and publish
+        if: github.event.inputs.parts == ''
+        run: |
+          set -euo pipefail
+          for f in "$RUNNER_TEMP"/out/owners-*.sql "$RUNNER_TEMP/out/publish.sql"; do
+            for try in 1 2 3; do
+              npx --no-install wrangler d1 execute phillips-data --remote --file "$f" && break
+              [ "$try" = 3 ] && exit 1; echo "retrying $f"; sleep 30
+            done
+          done
+      - name: Delete the downloaded files
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/psc" "$RUNNER_TEMP/out"

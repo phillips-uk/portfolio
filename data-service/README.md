@@ -15,11 +15,12 @@ Brief and decisions: vault `01_Phillips/04_Products/Phillips Data Service/`.
 | `GET /v1/benchmarks?group=s-C&metric=days&year=2025` | medians and quartiles; `group` is `all`, `s-A`..`s-U` or `d-01`..`d-99`; `metric` is `days`, `pct_late` or `pct30` |
 | `GET /v1/companies/{number}/live` | Companies House profile, outstanding charges (lenders named only when they are organisations) and the latest accounts' figures and debtor, stock and creditor days when the accounts are machine-readable; cached 24 hours |
 | `GET /v1/benchmarks?dataset=accounts&group=s-C&metric=debtor_days` | debtor, stock or creditor days from filed accounts of companies with 10+ staff; groups need 30 companies |
+| `GET /v1/companies/{number}/group` | owners that are companies (never individuals), the chain of majority owners up to the top parent, and up to 100 subsidiaries; needs `group` |
 | `GET /v1/sectors` | SIC 2007 sections and divisions (with each division's section), for industry dropdowns; any active key |
 | `GET /v1/rates/sme` | latest Bank of England effective rate on new loans to SMEs (entered by hand) |
 | `GET /v1/rates/fx` | ECB reference rates as units per £1; cached 6 hours |
 
-**Plans (scopes in `clients.scopes`):** `payments` (search, payments, payment benchmarks), `live`, `rates`, `accounts`.
+**Plans (scopes in `clients.scopes`):** `payments` (search, payments, payment benchmarks), `live`, `rates`, `accounts`, `group`.
 Live lookups share a cap of 20 a minute across all clients, to stay inside Companies House's 600 calls per 5 minutes.
 
 **Which calculator uses what:** debtor days and customer checker: `payments`, `rates/sme`. Asset-based lending,
@@ -54,6 +55,12 @@ phillips-data --local --file <out-dir>/load.sql` and `publish.sql`, then `npx wr
 every machine-readable filing of any size (`ingest/accounts.py`), upserts them into `accounts_facts` with SIC codes from
 `register` (no API calls), and rebuilds `accounts_benchmarks` from companies with 10 or more staff (last four years). A manual run can backfill a list of past files.
 `ingest/ixbrl.py` and `src/ixbrl.js` read accounts the same way; change both together.
+
+## Group structures
+
+`.github/workflows/data-service-groups.yml` downloads the Companies House PSC snapshot weekly (33 files of about 80MB),
+runs `ingest/groups.py` (corporate owners only; individual records are skipped), refuses to publish if a check fails,
+loads `owners-NNN.sql` and swaps `company_owners` in.
 
 ## Bank of England SME rate
 

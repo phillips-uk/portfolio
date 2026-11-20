@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS register (
 ) WITHOUT ROWID;
 CREATE INDEX IF NOT EXISTS register_name ON register(name_norm);
 
+-- Current owners of each company that are themselves companies or other legal persons, from the Companies House
+-- PSC snapshot (weekly). Individuals are never stored. owner_number is set when the owner is a UK company.
+CREATE TABLE IF NOT EXISTS company_owners (
+  company_number TEXT NOT NULL, owner_name TEXT, owner_number TEXT, owner_country TEXT, owner_kind TEXT,
+  control TEXT, notified_on TEXT
+);
+CREATE INDEX IF NOT EXISTS company_owners_company ON company_owners(company_number);
+CREATE INDEX IF NOT EXISTS company_owners_owner ON company_owners(owner_number);
+
 CREATE TABLE IF NOT EXISTS payment_reports (
   report_id INTEGER PRIMARY KEY,
   company_number TEXT NOT NULL,

@@ -60,6 +60,8 @@ export default {
       }
       let m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/payments$/);
       if (m) return allow('payments') ? await payments(m[1].toUpperCase(), env) : denied;
+      m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/group$/);
+      if (m) return allow('group') ? await group(m[1].toUpperCase(), env) : denied;
       m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/live$/);
       if (m) {
         if (!allow('live')) return denied;
@@ -115,6 +117,34 @@ async function searchRegister(url, env) {
   const results = [...byNumber.results, ...byName.results].filter(r => !seen.has(r.number) && seen.add(r.number)).slice(0, 8);
   return json({ source: 'Companies House Free Company Data Product',
     licence: 'Contains public sector information licensed under the Open Government Licence v3.0', results });
+}
+
+// GET /v1/companies/{number}/group : owners that are companies, the chain up to the top UK parent, and subsidiaries.
+// From the PSC register (corporate owners only; individuals are never stored).
+async function group(number, env) {
+  const OWNERS = `SELECT o.owner_name AS name, o.owner_number AS number, o.owner_country AS country, o.owner_kind AS kind,
+                         o.control, o.notified_on, r.status
+                  FROM company_owners o LEFT JOIN register r ON r.number = o.owner_number WHERE o.company_number = ?`;
+  const company = await env.DB.prepare('SELECT number, name, status, sic_code, division, section FROM register WHERE number = ?').bind(number).first();
+  if (!company) return json({ error: 'company_not_found', number }, 404);
+  const { results: owners } = await env.DB.prepare(OWNERS).bind(number).all();
+  // Walk up through UK company owners with majority control (shares over 50%) to the top parent; stop on loops.
+  const chain = [], seen = new Set([number]);
+  let cur = owners;
+  for (let i = 0; i < 10; i++) {
+    const up = cur.find(o => o.number && /shares (50|75)-/.test(o.control || '') && !seen.has(o.number));
+    if (!up) { const top = cur.find(o => !o.number && /shares (50|75)-/.test(o.control || '')); if (top) chain.push(top); break; }
+    chain.push(up); seen.add(up.number);
+    cur = (await env.DB.prepare(OWNERS).bind(up.number).all()).results;
+  }
+  const subs = await env.DB.prepare(
+    `SELECT o.company_number AS number, r.name, r.status, o.control FROM company_owners o
+     LEFT JOIN register r ON r.number = o.company_number WHERE o.owner_number = ? ORDER BY r.name LIMIT 100`).bind(number).all();
+  const total = await env.DB.prepare('SELECT COUNT(*) AS n FROM company_owners WHERE owner_number = ?').bind(number).first();
+  const v = await env.DB.prepare("SELECT as_of FROM dataset_versions WHERE dataset = 'groups' AND published_at IS NOT NULL ORDER BY published_at DESC LIMIT 1").first();
+  return json({ as_of: v?.as_of || null, source: 'Companies House register of people with significant control (corporate owners only)',
+    licence: SOURCE.payments.licence, company, owners, parents: chain, top_parent: chain[chain.length - 1] || null,
+    subsidiaries: subs.results, subsidiaries_total: total?.n || 0 });
 }
 
 // GET /v1/sectors : SIC 2007 sections (s-A..s-U) and divisions (d-01..d-99) with the section each division sits in.
