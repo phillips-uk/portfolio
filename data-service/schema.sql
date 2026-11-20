@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS rates (
   PRIMARY KEY (series, month)
 );
 
--- Headline figures from filed accounts of companies with 10 or more staff (bulk iXBRL files). Appended daily;
+-- Headline figures from every machine-readable filed account (bulk iXBRL files, all company sizes). Appended daily;
 -- never swapped, so a monthly payments publish leaves them alone. The live lookup uses these before fetching a document.
 CREATE TABLE IF NOT EXISTS accounts_facts (
   company_number TEXT NOT NULL, period_end TEXT NOT NULL,
@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS accounts_facts (
   PRIMARY KEY (company_number, period_end)
 );
 CREATE INDEX IF NOT EXISTS accounts_facts_section ON accounts_facts(section, period_end);
+CREATE INDEX IF NOT EXISTS accounts_facts_source ON accounts_facts(source_file);
 -- The live lookup reads stored figures first (accounts_facts PRIMARY KEY covers company_number lookups).
 
 -- Debtor, stock and creditor days by group, from accounts_facts. Rebuilt in full by ingest/accounts_benchmarks.py.

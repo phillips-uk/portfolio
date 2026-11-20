@@ -1,7 +1,7 @@
 // Live lookup of one company at Companies House: profile, registered charges and its latest filed accounts.
 // Company data only: charge holders are listed only when they are organisations, never private individuals.
 // Results are cached at the edge for 24 hours. Figures come from our stored copy of the bulk accounts files when we
-// hold that period (companies with 10+ staff), so the document is fetched only for companies we don't store.
+// hold that period (every machine-readable filing since the backfill), so the document is fetched only for companies we don't store.
 import { readAccounts, withRatios } from './ixbrl.js';
 
 const STORED = ['employees', 'turnover', 'cost_of_sales', 'trade_debtors', 'debtors', 'stock', 'trade_creditors', 'cash',

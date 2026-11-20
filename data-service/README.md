@@ -51,8 +51,8 @@ phillips-data --local --file <out-dir>/load.sql` and `publish.sql`, then `npx wr
 ## Accounts figures
 
 `.github/workflows/data-service-accounts-daily.yml` reads each day's Companies House accounts bulk file, keeps
-companies with 10 or more staff (`ingest/accounts.py`), upserts them into `accounts_facts` with SIC codes from
-`register` (no API calls), and rebuilds `accounts_benchmarks`. A manual run can backfill a list of past files.
+every machine-readable filing of any size (`ingest/accounts.py`), upserts them into `accounts_facts` with SIC codes from
+`register` (no API calls), and rebuilds `accounts_benchmarks` from companies with 10 or more staff (last four years). A manual run can backfill a list of past files.
 `ingest/ixbrl.py` and `src/ixbrl.js` read accounts the same way; change both together.
 
 ## Bank of England SME rate

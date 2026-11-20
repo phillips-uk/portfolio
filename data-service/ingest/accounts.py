@@ -1,8 +1,9 @@
 """Turn one Companies House accounts bulk file (daily or monthly zip) into upserts for accounts_facts.
 
-  python3 -I accounts.py <Accounts_Bulk_Data-YYYY-MM-DD.zip> <out.sql> [--min-staff 10]
+  python3 -I accounts.py <Accounts_Bulk_Data-YYYY-MM-DD.zip> <out.sql> [--min-staff N]
 
-Keeps companies whose average staff for the period is at least --min-staff (default 10). Each kept company's SIC
+Keeps every machine-readable filing with at least one figure (all company sizes) unless --min-staff is given.
+Benchmarks use only companies with 10 or more staff (accounts_benchmarks.py). Each kept company's SIC
 code, division and section are filled in by the same SQL from the register table (every company, loaded monthly),
 so no API calls are made.
 Company data only. Source: https://download.companieshouse.gov.uk/en_accountsdata.html
@@ -12,7 +13,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ixbrl import read_accounts
 
 ZIP, OUT = sys.argv[1], sys.argv[2]
-MIN_STAFF = int(sys.argv[sys.argv.index('--min-staff') + 1]) if '--min-staff' in sys.argv else 10
+FIGURES = ['employees', 'turnover', 'cost_of_sales', 'trade_debtors', 'debtors', 'stock', 'trade_creditors', 'cash',
+           'creditors_within_year', 'fixed_assets', 'net_assets']
+MIN_STAFF = int(sys.argv[sys.argv.index('--min-staff') + 1]) if '--min-staff' in sys.argv else 0
 
 
 def lit(v):
@@ -29,11 +32,13 @@ with zipfile.ZipFile(ZIP) as z:
         if not m: continue
         seen += 1
         html = z.read(info).decode('utf-8', 'ignore')
-        if 'AverageNumberEmployees' not in html: continue
+        if MIN_STAFF and 'AverageNumberEmployees' not in html: continue
         facts = read_accounts(html, f'{m.group(2)}-{m.group(3)}-{m.group(4)}')
         if (facts.get('employees') or 0) < MIN_STAFF: continue
+        if not any(facts.get(k) is not None for k in FIGURES): continue  # nothing we can use
         number = m.group(1).upper()
-        rows.append(dict(company_number=number, period_end=facts['period_end'], employees=int(facts['employees']),
+        staff = facts.get('employees')
+        rows.append(dict(company_number=number, period_end=facts['period_end'], employees=int(staff) if staff is not None else None,
                          turnover=facts.get('turnover'), cost_of_sales=facts.get('cost_of_sales'),
                          trade_debtors=facts.get('trade_debtors'), debtors=facts.get('debtors'), stock=facts.get('stock'),
                          trade_creditors=facts.get('trade_creditors'), cash=facts.get('cash'),
