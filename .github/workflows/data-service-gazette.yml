@@ -12,6 +12,11 @@ on:
         required: false
         default: '3'
 
+# One reader at a time, so two runs never add up past the Gazette's request limit.
+concurrency:
+  group: data-service-gazette
+  cancel-in-progress: false
+
 jobs:
   gazette:
     if: vars.DATA_SERVICE_ENABLED == 'true' && vars.GAZETTE_UA != ''
