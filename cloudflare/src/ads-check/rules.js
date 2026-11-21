@@ -1931,8 +1931,8 @@ function ruleDoubleCounting(m, out) {
     priority: h.mixed || h.similar ? 'high' : 'medium',
     title: `${kind === 'sales' ? 'Sales' : 'Leads'} may be counted twice`,
     detail: `${h.list.slice(0, 3).map(desc).join(' and ')} are ${h.list.length === 2 ? 'both' : 'all'} main goals for the same kind of result.${h.similar ? ' Their counts are close, which is what the same result recorded twice looks like.' : ''}${hits.length > 1 ? ` The same applies to ${plural(hits.length - 1, 'other goal type')}.` : ''}`,
-    why: 'If two actions record the same result, the Conversions column shows about twice what really happened, your cost per conversion looks half of what it is, and Smart Bidding bids as if each click were worth more.',
-    start: 'Keep one action for each result as primary (usually the Google Ads tag) and set the copy to secondary.',
+    why: 'If both actions count the same sale or enquiry, Google Ads reports too many conversions and each one looks cheaper than it is. Smart Bidding uses the inflated count too, because both are main goals.',
+    start: 'Check both actions against your real sales or enquiries. Keep the more reliable one as primary and set the other to secondary.',
     startLink: LINKS.ga4,
     fixType: 'tracking',
     items: sum(hits, (x) => x.list.length - 1),
@@ -1991,8 +1991,8 @@ function ruleNegativeConflicts(m, out) {
     priority: blocked.length >= 5 ? 'high' : 'medium',
     title: `${plural(negs.size, 'negative keyword')} ${verb(negs.size, 'blocks', 'block')} your own keywords`,
     detail: `${plural(blocked.length, 'keyword')} can never show because a negative stops ${verb(blocked.length, 'it', 'them')}: ${show.join('; ')}${blocked.length > 3 ? `; and ${blocked.length - 3} more` : ''}.`,
-    why: 'A keyword blocked by your own negative is budget and planning you think is working but never reaches a search.',
-    start: 'Remove or narrow each negative (for example from broad to exact), or pause the keyword if blocking it was the intent.',
+    why: 'A keyword your own negative blocks can never show an ad, so searches you meant to reach are lost without any warning in the account.',
+    start: 'Check where each negative applies and its match type. Narrow or remove it if it blocks searches you want; if the block is intended, pause the keyword.',
     startLink: null,
     fixType: 'negatives',
     items: negs.size,
@@ -2034,9 +2034,9 @@ function reportBudgetWinners(m, out, w) {
     category: 'bidding',
     priority: 'medium',
     title: `${plural(list.length, 'campaign')} ${verb(list.length, 'beats', 'beat')} ${y.source === 'target' ? 'your target' : 'your average'} but ${verb(list.length, 'is', 'are')} held back by budget`,
-    detail: `${list.slice(0, 3).map(line).join('. ')}.${list.length > 3 ? ` And ${list.length - 3} more.` : ''} Judged against ${yardText(m, y)}. If the extra searches convert at today's rate, about ${m.money(extra)} more a month could bring around ${more || 1} more ${verb(more || 1, 'conversion', 'conversions')}.`,
-    why: 'These campaigns already do better than the rest of the account, so they are the safest place for more budget.',
-    start: 'Raise these budgets in steps of about 20% a week, and watch that the cost per conversion holds.',
+    detail: `${list.slice(0, 3).map(line).join('. ')}.${list.length > 3 ? ` And ${list.length - 3} more.` : ''} Judged against ${yardText(m, y)}. At the recent cost per conversion, about ${m.money(extra)} more a month would mean around ${more || 1} more ${verb(more || 1, 'conversion', 'conversions')}, if the extra searches convert as well.`,
+    why: 'These campaigns met the mark over the last 30 days while running out of budget, so they are the first place to test more spend.',
+    start: 'Raise the budget in small steps and check the cost per conversion holds once late conversions have come in.',
     startLink: LINKS.bidding,
     fixType: 'bidding',
     items: list.length,
@@ -2068,10 +2068,10 @@ function ruleOverPinned(m, out) {
     id: 'over-pinned-ads',
     category: 'ads',
     priority: over.length / ads.length >= 0.5 ? 'medium' : 'low',
-    title: `${plural(over.length, 'ad')} with too many pinned headlines`,
+    title: `${plural(over.length, 'ad')} with most headlines pinned`,
     detail: `${someOf(over.length, ads.length, 'responsive search ad')} ${verbOf(over.length, ads.length, 'has', 'have')} headlines pinned so that only a few combinations can show. For example, the ad in "${clean(e.adGroup, 40)}" has ${e.pinned} of its ${e.total} headlines pinned${e.locked >= 2 ? `, with ${e.locked} positions fixed to one headline each` : ''}.`,
-    why: 'Pinning stops Google testing headline combinations, which usually lowers ad strength and the share of searches the ad can win.',
-    start: 'Keep one pin at most (your name or a required line in position 1) and unpin the rest.',
+    why: 'Pinning limits the headline combinations Google can show and test, and it lowers the ad strength rating.',
+    start: 'Keep pins only where wording must appear in a set place, such as a required line, and unpin the rest.',
     startLink: LINKS.ads,
     fixType: 'ad_copy',
     items: over.length,
@@ -2096,9 +2096,9 @@ function ruleBrokenUrls(m, out) {
     id: 'broken-landing-pages',
     category: 'ads',
     priority: 'high',
-    title: `${plural(broken.length, 'landing page')} ${verb(broken.length, "doesn't", "don't")} load`,
+    title: `${plural(broken.length, 'landing page')} returned an error`,
     detail: `Of the ${plural(u.pages.length, 'page')} your ads link to that were checked, ${broken.length === 1 ? 'one' : broken.length} failed: ${broken.slice(0, 3).map((p) => `${clean(p.url, 70)} (${why(p)}${p.ads > 1 ? `, used by ${p.ads} ads` : ''})`).join('; ')}${broken.length > 3 ? `; and ${broken.length - 3} more` : ''}. Checked on ${m.today || 'the day of the report'}.`,
-    why: 'Every click on these ads is paid for and lands on an error. Google may also stop showing ads whose page is broken.',
+    why: 'If visitors see the same error, they cannot buy or enquire, and the clicks are still paid for. Google may also disapprove ads that point to a broken page.',
     start: 'Open each address yourself. If it is broken, point the ads at a working page or redirect the old address.',
     startLink: null,
     fixType: 'ad_copy',
@@ -2150,11 +2150,11 @@ function ruleSegments(m, out, seg) {
       id: 'search-partners-below-average',
       category: 'settings',
       priority: pa.excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
-      title: 'Search Partners cost far more per result',
+      title: 'Search Partners cost far more per conversion',
       detail: `Over 90 days your Search campaigns spent ${m.money(partners.spend)} on Search Partners sites for ${figureText(m, y, pa.figure)}, against ${yardText(m, y)}.`,
       atStake: atStake(pa.excess / 3, `Search Partners spend past ${y.source === 'target' ? 'your target' : 'your average'}`),
-      why: 'Search Partners are other sites that show Google search ads. Results there are often weaker, and the spend is easy to miss because it sits inside your Search campaigns.',
-      start: 'Untick "Include Google search partners" in the network settings of the Search campaigns, or segment by network first to see which campaigns it affects.',
+      why: 'Search Partners are other sites in Google\'s Search Network that show your Search ads. The spend is easy to miss because it sits inside your Search campaigns.',
+      start: 'Segment your Search campaigns by network to see which ones it affects. If the gap holds, untick "Include Google search partners" in those campaigns.',
       startLink: null,
       fixType: 'settings',
       items: Math.max(1, m.campaigns.filter((c) => c.channel === 'SEARCH' && c.spend > 0).length),
@@ -2178,11 +2178,11 @@ function ruleSegments(m, out, seg) {
       id: 'device-below-average',
       category: 'bidding',
       priority: excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
-      title: `${titleCase(names.join(' and '))} ${verb(bad.length, 'costs', 'cost')} far more per result`,
+      title: `${titleCase(names.join(' and '))} ${verb(bad.length, 'costs', 'cost')} far more per conversion`,
       detail: `Over 90 days: ${bad.map((x) => `${(DEVICE_LABEL[x.s.key] || x.s.key).toLowerCase()} took ${pct(x.s.spend / seg.total.spend)} of spend at ${figureText(m, y, x.a.figure)}`).join('; ')}. Judged against ${yardText(m, y)}.`,
       atStake: atStake(excess / 3, `${titleCase(names.join(' and '))} spend past ${y.source === 'target' ? 'your target' : 'your average'}`),
-      why: 'When one device converts much worse, the usual cause is the page or the form on that device, and the bids keep paying full price for it.',
-      start: `Try your own site and enquiry form on ${names.join(' and ')}. On manual bids, lower the bid for ${bad.length === 1 ? 'that device' : 'those devices'}; Smart Bidding adjusts devices itself, so there the fix is the page.`,
+      why: 'When one device converts much worse, the cause is often the page, the form or the tracking on that device.',
+      start: `Try your own site, form and checkout on ${names.join(' and ')}, and check the conversion tag fires there. On manual bids, a lower bid for ${bad.length === 1 ? 'that device' : 'those devices'} is an option; Smart Bidding already weighs devices itself.`,
       startLink: null,
       fixType: 'bidding',
       items: bad.length,
@@ -2227,10 +2227,10 @@ function rulePmaxBrand(m, out) {
     id: 'pmax-brand-terms',
     category: 'search-terms',
     priority: spend >= all * 0.1 ? 'medium' : 'low',
-    title: 'Performance Max is spending on searches for your own name',
-    detail: `${m.money(spend)} of Performance Max search spend in the last 30 days (${pct(spend / (all || 1))} of it) went on searches containing "${brand.join(' ')}", such as ${examples(terms.map((t) => t.term), 3, terms.length)}.${brandSearch ? ` Your brand campaign "${clean(brandSearch.name, 40)}" is there for those searches.` : ''}`,
-    why: 'People searching for your name would mostly find you anyway. Counting those sales in Performance Max makes it look better at finding new customers than it is.',
-    start: 'Add a brand exclusion to the Performance Max campaign, so searches for your name go to your brand Search campaign.',
+    title: 'Performance Max is paying for searches for your own name',
+    detail: `${m.money(spend)} of Performance Max search spend in the last 30 days (${pct(spend / (all || 1))} of it) went on searches containing "${brand.join(' ')}", such as ${examples(terms.map((t) => t.term), 3, terms.length)}.${brandSearch ? ` You also run a brand campaign, "${clean(brandSearch.name, 40)}".` : ''}`,
+    why: 'People searching for your name already know you. Their sales make Performance Max look better at finding new customers than it is.',
+    start: 'If you want Performance Max to work on new customers, add your brand as a brand exclusion in its campaign settings, and decide whether its Shopping ads should still show.',
     startLink: null,
     fixType: 'settings',
     items: camps.size || 1,
@@ -2273,10 +2273,10 @@ function ruleChanges(m, out, ch) {
       id: 'no-recent-changes',
       category: 'structure',
       priority: 'low',
-      title: 'Nobody has changed the account in 28 days',
+      title: 'No changes to the account in 28 days',
       detail: `The change history shows no changes at all in the last 28 days, while the account spent ${m.money(m.totalSpend)} in the last 30.`,
-      why: 'Search terms, competitors and costs move every week. An account left alone slowly drifts from what it was set up to do.',
-      start: 'Set a short weekly slot: read the search terms, add negatives and check budgets against results.',
+      why: 'Searches, competitors and costs move every week, so an account nobody looks at slowly drifts from what it was set up to do.',
+      start: 'Set aside a short slot each week to read the search terms, add negatives and check spend against results.',
       startLink: null,
       fixType: 'structure',
       items: 1,
@@ -2303,12 +2303,12 @@ function ruleChanges(m, out, ch) {
     category: 'structure',
     priority: excess >= m.totalSpend * 0.1 ? 'high' : 'medium',
     title: y.source === 'target'
-      ? `${plural(list.length, 'campaign')} well off your target`
-      : `${plural(list.length, 'campaign')} well below average and left unchanged`,
+      ? `${plural(list.length, 'campaign')} missed your target by a wide margin`
+      : `${plural(list.length, 'campaign')} well below your average, with no recent changes`,
     detail: `${list.slice(0, 3).map((x) => `"${clean(x.c.name, 45)}" at ${figureText(m, y, x.a.figure)}${ch.byCampaign.has(x.c.id) ? '' : ', no changes in 28 days'}`).join('; ')}${list.length > 3 ? `; and ${list.length - 3} more` : ''}. Judged against ${yardText(m, y)} over the last 30 days.${y.source === 'target' && still.length ? ` ${still.length === list.length ? (list.length === 1 ? 'It has' : 'None of them has') : `${still.length} of them ${verb(still.length, 'has', 'have')}`} had no changes in 28 days.` : ''}`,
     atStake: atStake(excess, `Spend past ${y.source === 'target' ? 'your target' : 'your average'} in these campaigns`),
-    why: 'A campaign that costs far more than the rest of the account per result, with nobody adjusting it, keeps spending at that rate.',
-    start: 'Check search terms, bids and the landing page for each one. If nothing explains it, move budget to the campaigns that meet the target.',
+    why: 'These campaigns cost far more per result than the account can afford, and the money at stake is what the same results would have cost at that level.',
+    start: 'For each one, check conversion volume and tracking first, then search terms, bids and the landing page. If nothing explains the gap, move budget to the campaigns that meet it.',
     startLink: LINKS.bidding,
     fixType: 'bidding',
     items: list.length,
@@ -2334,10 +2334,10 @@ function ruleCustomerMatch(m, out) {
     id: 'customer-match-empty',
     category: 'settings',
     priority: 'low',
-    title: `${plural(small.length, 'Customer Match list')} ${verb(small.length, 'is', 'are')} empty or nearly empty`,
+    title: `${plural(small.length, 'Customer Match list')} with few matched members`,
     detail: `${examples(small.map((l) => l.name || 'Unnamed list'))} ${verb(small.length, 'has', 'have')} fewer than 100 matched members.${life.length ? ` Members drop off after ${Math.min(...life)} days unless the list is uploaded again.` : ''}`,
-    why: 'A list this small can do nothing for targeting, bidding or reports. Lists only stay full when your customer data is uploaded regularly.',
-    start: 'Upload a fresh list from your customer records, or connect an automatic upload. Remove lists you no longer use.',
+    why: 'A list this small may be too small to use for ads. Low numbers come from poor matching, members expiring, or uploads that stopped.',
+    start: 'Check the list in Audience manager. If you still use it, refresh it with customer data you have permission to share, or remove it.',
     startLink: null,
     fixType: 'settings',
     items: small.length,
@@ -2454,22 +2454,22 @@ function headline(m, facts, weaknesses, trend) {
   if (facts.spend30 > 0) {
     if (y.kind === 'roas' && facts.conversionValue30 > 0) {
       const r = facts.conversionValue30 / facts.spend30;
-      s.push(`In the last 30 days the account spent ${m.money(facts.spend30)} and recorded ${m.money(facts.conversionValue30)} in sales, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
+      s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded ${m.money(facts.conversionValue30)} in sales, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
     } else if (facts.conversions30 > 0) {
-      s.push(`In the last 30 days the account spent ${m.money(facts.spend30)} for ${facts.conversions30.toLocaleString('en-GB')} ${facts.conversions30 === 1 ? 'conversion' : 'conversions'}, ${m.money(facts.costPerConversion30)} each${m.target && m.target.type === 'cpa' ? `, ${facts.costPerConversion30 <= m.target.value ? 'within' : 'above'} your ${m.money(m.target.value)} target` : ''}.`);
+      s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded ${facts.conversions30.toLocaleString('en-GB')} ${facts.conversions30 === 1 ? 'conversion' : 'conversions'}, ${m.money(facts.costPerConversion30)} each${m.target && m.target.type === 'cpa' ? `, ${facts.costPerConversion30 <= m.target.value ? 'within' : 'above'} your ${m.money(m.target.value)} target` : ''}.`);
     } else {
-      s.push(`In the last 30 days the account spent ${m.money(facts.spend30)} and recorded no conversions.`);
+      s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded no conversions.`);
     }
   }
   if (trend && trend.funnel && trend.funnel.lever && trend.funnel.lever.key) s.push(trend.funnel.lever.text);
   // The single biggest sum, not a total: findings can overlap (a campaign and its products), so adding them up would
   // count the same spend twice.
   const money = weaknesses.filter((w) => w.atStake && w.atStake.amount > 0).sort((a, b) => b.atStake.amount - a.atStake.amount);
-  if (money.length) s.push(`The most money at stake is in "${money[0].title}": up to ${m.money(money[0].atStake.amount)} over the next 30 days if nothing changes.`);
+  if (money.length) s.push(`The most money at stake is in "${money[0].title}": an estimated ${m.money(money[0].atStake.amount)} over the next 30 days if nothing changes (${money[0].atStake.basis.replace(/^(Spend|Searches|Campaigns|Products)\b/, (w) => w.toLowerCase())}).`);
   const first = actionPlan(weaknesses, null, facts.spend30)[0];
-  if (first && first.id !== money[0]?.id) s.push(`First on the list below: "${first.title}".`);
-  else if (first) s.push('It is first on the list below.');
-  else if (facts.spend30 > 0) s.push('Nothing in the checks needs fixing right now.');
+  if (first && first.id !== money[0]?.id) s.push(`I'd start with "${first.title}".`);
+  else if (first) s.push("That's where I'd start.");
+  else if (facts.spend30 > 0) s.push('I found nothing to fix in the checks I could run.');
   return s;
 }
 

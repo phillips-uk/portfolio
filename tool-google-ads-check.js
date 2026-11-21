@@ -57,6 +57,16 @@
     });
   }
 
+  // ---------- the optional target and brand name (21 Nov 2026) ----------
+  // One target (cost per conversion in pounds, or return on ad spend in %) and a brand name. Both optional.
+  $('t-type').addEventListener('change', function () { $('t-value').placeholder = this.value === 'roas' ? 'e.g. 400' : 'e.g. 40'; });
+  function targetInput() {
+    var o = {}, v = $('t-value').value.replace(/[^0-9.]/g, ''), b = $('t-brand').value.trim();
+    if (v && Number(v) > 0) o.target = { type: $('t-type').value, value: v };
+    if (b) o.brand = b;
+    return o;
+  }
+
   // ---------- steps ----------
   // Google sign-in: offered when the page says so (Lewis only until Google verifies the app; google-signin.js)
   var signIn = document.body.getAttribute('data-signin') === '1';
@@ -98,7 +108,7 @@
       if (st === 'ACTIVE' && !preview) throw new Error('This account is already linked to my manager account, so I can’t run the free check on it. Ask me a question below instead.');
       say(st === 'ACTIVE' && !demo ? 'Preview: this account is already linked, so the check reads it and leaves the link as it is.' : 'Invitation found. Running the check: this takes about half a minute.');
       progress(true);
-      return withToken().then(function (t) { return post('/tools/google-ads-check/run', { customerId: cid, token: t }); });
+      return withToken().then(function (t) { var o = targetInput(); o.customerId = cid; o.token = t; return post('/tools/google-ads-check/run', o); });
     }).then(function (res) {
       if (!res) return;
       if (!res.ok || !res.d.report) {
@@ -150,6 +160,7 @@
   // raised panel, since that is what people scan for; what was found and why it matters behind "Why it matters".
   function finding(f) {
     var card = el('article', 'find weak ' + f.priority);
+    card.id = 'find-' + f.id;
     card.appendChild(el('span', 'mk', '!'));
     var body = el('div', 'fb'); card.appendChild(body);
     var h = el('h4', null, f.title);
@@ -253,6 +264,162 @@
         '\n\nMy report: ' + location.origin + '/google-ads-audit/r/' + current.id + '\n\n';
     }
     if (!preview || demo) document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+  }
+
+
+  // ---------- in short: the written headline and the ranked list (rules write both, no AI) ----------
+  var IMPACT = { high: 'Bigger impact', medium: 'Medium impact', low: 'Smaller impact' };
+  var EFFORT = { quick: 'Under an hour', medium: 'A few hours', larger: 'A day or more' };
+  function summary(r, cur) {
+    var sec = $('sec-summary');
+    sec.hidden = !(r.headline && r.headline.length);
+    if (sec.hidden) return;
+    var lede = $('sum-lede'); lede.textContent = '';
+    r.headline.forEach(function (t) { lede.appendChild(el('span', null, t)); });
+    var y = r.yardstick;
+    $('sum-meta').textContent = !y ? '' : 'Judged against ' + (y.source === 'target' ? 'your target' : 'your account’s average') + ' of ' +
+      (y.kind === 'roas' ? Math.round(y.value * 100) + '% return on ad spend' : cur.format(y.value) + ' a conversion') + (y.source === 'target' ? '' : ' over the last 30 days');
+    $('sum-meta').hidden = !y;
+    var plan = r.plan || [], byId = {};
+    r.weaknesses.forEach(function (w) { byId[w.id] = w; });
+    $('sum-plan-box').hidden = !plan.length;
+    function row(p) {
+      var li = el('li'), a = el('a'); a.href = '#find-' + p.id;
+      a.appendChild(el('span', 'n', String(p.rank)));
+      a.appendChild(el('span', 't', p.title));
+      var tags = el('span', 'tags');
+      tags.appendChild(el('span', 'tg imp ' + p.impact, IMPACT[p.impact] || ''));
+      if (p.effort) { var e = el('span', 'tg', EFFORT[p.effort]); e.title = 'Rough time to fix: ' + hrs(p.hours); tags.appendChild(e); }
+      a.appendChild(tags);
+      var m = el('span', 'm');
+      var w = byId[p.id];
+      if (p.atStake) { m.textContent = cur.format(p.atStake); m.appendChild(el('small', null, 'at stake, next 30 days')); if (w && w.atStake) m.title = w.atStake.basis; }
+      a.appendChild(m);
+      li.appendChild(a);
+      return li;
+    }
+    var top = $('sum-plan'), rest = $('sum-plan-rest'), more = $('sum-more'), SHOW = 5;
+    top.textContent = ''; rest.textContent = '';
+    plan.slice(0, SHOW).forEach(function (p) { top.appendChild(row(p)); });
+    plan.slice(SHOW).forEach(function (p) { rest.appendChild(row(p)); });
+    more.hidden = plan.length <= SHOW;
+    more.querySelector('summary').textContent = 'Show all ' + plan.length;
+  }
+
+  // ---------- how it's moving: funnel, 13 months, devices and networks, change history ----------
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var trDraw = null, trWired = false;
+  function pctx(x, dp) { return x == null ? 'n/a' : (x * 100).toFixed(dp == null ? 1 : dp) + '%'; }
+  function trend(r, cur) {
+    var t = r.trend, sec = $('sec-trend');
+    sec.hidden = !t || (!t.funnel && !(t.months && t.months.length));
+    if (sec.hidden) return;
+    var roas = t.kind === 'roas';
+    var f = t.funnel;
+    $('tr-lede').textContent = f && f.lever ? f.lever.text : 'The last 30 days against the 60 days before, and the last 13 months by month.';
+    var box = $('tr-funnel'); box.textContent = ''; box.hidden = !f;
+    if (f) {
+      var R = f.recent, P = f.prior, lev = f.lever && f.lever.key;
+      var parts = [
+        ['ctr', 'Click-through rate', pctx(R.ctr, 2), pctx(P.ctr, 2)],
+        ['cpc', 'Cost per click', R.cpc != null ? cur.format(R.cpc).replace(/\.00$/, '') : 'n/a', P.cpc != null ? cur.format(P.cpc) : 'n/a'],
+        ['cvr', 'Conversion rate', pctx(R.cvr), pctx(P.cvr)],
+        roas ? ['roas', 'Return on ad spend', R.roas != null ? Math.round(R.roas * 100) + '%' : 'n/a', P.roas != null ? Math.round(P.roas * 100) + '%' : 'n/a']
+             : ['cpa', 'Cost per conversion', R.cpa != null ? cur.format(R.cpa) : 'n/a', P.cpa != null ? cur.format(P.cpa) : 'n/a']
+      ];
+      var money2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: r.currency || 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      parts[1][2] = R.cpc != null ? money2.format(R.cpc) : 'n/a'; parts[1][3] = P.cpc != null ? money2.format(P.cpc) : 'n/a';
+      parts.forEach(function (p) {
+        var tl = tile(p[1], p[2], '60 days before: ' + p[3]);
+        if (lev === p[0]) { tl.classList.add('lever'); tl.appendChild(el('em', null, 'Biggest change')); }
+        box.appendChild(tl);
+      });
+    }
+    // the 13 months: spend as bars, cost per conversion (or return) as a line, this month so far lighter
+    var months = t.months || [];
+    $('tr-chart-card').hidden = !months.length;
+    var key = $('tr-key'); key.textContent = '';
+    if (months.length) {
+      var k1 = el('span'); k1.appendChild(el('b')); k1.appendChild(document.createTextNode('Spend')); key.appendChild(k1);
+      var k2 = el('span'); k2.appendChild(el('i')); k2.appendChild(document.createTextNode(roas ? 'Return on ad spend' : 'Cost per conversion')); key.appendChild(k2);
+      key.appendChild(el('span', null, 'This month so far is lighter.'));
+    }
+    function draw() {
+      var host = $('tr-chart'); host.textContent = '';
+      if (!months.length) return;
+      var NS = 'http://www.w3.org/2000/svg';
+      var W = Math.max(300, Math.round(host.clientWidth || 720)), H = W < 480 ? 200 : 240, padB = 26, padT = 16, padX = 6;
+      var svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
+      var n = months.length, slot = (W - padX * 2) / n, bw = Math.max(6, slot * 0.62);
+      var maxS = Math.max.apply(null, months.map(function (m) { return m.spend; })) || 1;
+      var vals = months.map(function (m) { return roas ? m.roas : m.cpa; });
+      var vv = vals.filter(function (v) { return v != null; });
+      var maxV = vv.length ? Math.max.apply(null, vv) * 1.15 : 1;
+      var plotH = H - padB - padT;
+      function mk(tag, attrs, style) { var e = document.createElementNS(NS, tag); for (var a in attrs) e.setAttribute(a, attrs[a]); if (style) e.setAttribute('style', style); return e; }
+      svg.appendChild(mk('line', { x1: 0, x2: W, y1: H - padB + 0.5, y2: H - padB + 0.5 }, 'stroke: var(--line); stroke-width: 1'));
+      var pts = [];
+      months.forEach(function (m, i) {
+        var x = padX + i * slot + (slot - bw) / 2, h = Math.max(1, (m.spend / maxS) * plotH);
+        var bar = mk('rect', { x: x.toFixed(1), y: (H - padB - h).toFixed(1), width: bw.toFixed(1), height: h.toFixed(1), rx: 3 },
+          'fill: color-mix(in oklab, var(--brand) ' + (m.partial ? 18 : 45) + '%, var(--surface))' + (m.partial ? '; stroke: color-mix(in oklab, var(--brand) 45%, var(--surface)); stroke-dasharray: 3 2' : ''));
+        var mo = Number(m.month.slice(5, 7)) - 1, yr = m.month.slice(2, 4);
+        var tip = document.createElementNS(NS, 'title');
+        tip.textContent = MON[mo] + ' 20' + yr + (m.partial ? ' (so far)' : '') + ': ' + cur.format(m.spend) + ' spend, ' + m.conversions + ' conversions' + (vals[i] != null ? ', ' + (roas ? Math.round(vals[i] * 100) + '% return' : cur.format(vals[i]) + ' each') : '');
+        bar.appendChild(tip); svg.appendChild(bar);
+        if (W >= 480 || i % 2 === 0 || i === n - 1) {
+          var lb = mk('text', { x: (x + bw / 2).toFixed(1), y: H - 8, 'text-anchor': 'middle' }, 'font: 500 11px var(--mono, monospace); fill: var(--muted)');
+          lb.textContent = W < 480 ? MON[mo].charAt(0) : MON[mo]; svg.appendChild(lb);
+        }
+        if (vals[i] != null && !m.partial) pts.push([x + bw / 2, padT + plotH - (vals[i] / maxV) * plotH]);
+      });
+      if (pts.length > 1) {
+        svg.appendChild(mk('polyline', { points: pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' '), fill: 'none' }, 'stroke: var(--text); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round'));
+        pts.forEach(function (p) { svg.appendChild(mk('circle', { cx: p[0].toFixed(1), cy: p[1].toFixed(1), r: 3 }, 'fill: var(--surface); stroke: var(--text); stroke-width: 2')); });
+      }
+      host.appendChild(svg);
+      var first = months[0], last = months[n - 1];
+      host.setAttribute('aria-label', 'Spend and ' + (roas ? 'return on ad spend' : 'cost per conversion') + ' by month, ' + MON[Number(first.month.slice(5, 7)) - 1] + ' ' + first.month.slice(0, 4) + ' to ' + MON[Number(last.month.slice(5, 7)) - 1] + ' ' + last.month.slice(0, 4));
+    }
+    trDraw = draw; draw();
+    if (!trWired && narrow.addEventListener) { trWired = true; narrow.addEventListener('change', function () { if (trDraw) trDraw(); }); }
+
+    // devices and networks, 90 days
+    var sg = r.segments, segBox = $('tr-seg');
+    segBox.hidden = !sg || !((sg.devices || []).length);
+    if (!segBox.hidden) {
+      $('tr-seg-k').textContent = roas ? 'Return' : 'Per conversion';
+      var body = $('tr-seg-rows'); body.textContent = '';
+      function sub(label) { var tr = el('tr', 'sub'), td = el('td', null, label); td.colSpan = 5; tr.appendChild(td); body.appendChild(tr); }
+      function line(x) {
+        var tr = el('tr');
+        tr.appendChild(el('td', null, x.label));
+        tr.appendChild(el('td', 'r', cur.format(x.spend)));
+        tr.appendChild(el('td', 'r', Math.round(x.share) + '%'));
+        tr.appendChild(el('td', 'r', String(x.conversions >= 100 ? Math.round(x.conversions) : x.conversions)));
+        tr.appendChild(el('td', 'r', roas ? (x.roas != null ? Math.round(x.roas * 100) + '%' : 'n/a') : (x.cpa != null ? cur.format(x.cpa) : 'none')));
+        body.appendChild(tr);
+      }
+      sub('Devices'); sg.devices.forEach(line);
+      if ((sg.networks || []).length > 1) { sub('Networks'); sg.networks.forEach(line); }
+    }
+
+    // change history, 28 days
+    var ch = r.changes, chBox = $('tr-chg');
+    chBox.hidden = !ch;
+    if (ch) {
+      var txt;
+      if (!ch.total) txt = 'The change history shows no changes in the last 28 days.';
+      else {
+        var types = ch.byType.slice(0, 3).map(function (x) { return x.label.toLowerCase() + ' (' + x.n + ')'; });
+        var list = types.length > 1 ? types.slice(0, -1).join(', ') + ' and ' + types[types.length - 1] : types[0];
+        txt = (ch.truncated ? 'At least ' : '') + ch.total + ' change' + (ch.total === 1 ? '' : 's') + (ch.last ? ', the latest on ' + DATE.format(new Date(ch.last + 'T12:00:00Z')).replace(/ \d{4}$/, '') : '') + '. ' +
+          'Most were to ' + list + '. ' +
+          (ch.auto ? ch.auto + (ch.auto === 1 ? ' was' : ' were') + ' made by Google’s automatically applied recommendations. ' : '') +
+          ch.campaignsChanged + ' of your ' + ch.campaignsSpending + ' campaign' + (ch.campaignsSpending === 1 ? '' : 's') + ' that spent had at least one change.';
+      }
+      $('tr-chg-text').textContent = txt;
+    }
   }
 
   // ---------- how I read your account (ink panel and structure diagram) ----------
@@ -371,7 +538,7 @@
         tr.appendChild(el('td', 'r wide', String(x.terms)));
         tr.appendChild(el('td', 'r wide', String(x.clicks)));
         tr.appendChild(el('td', 'r', cur.format(x.cost)));
-        tr.appendChild(el('td', 'r', String(x.conversions)));
+        tr.appendChild(el('td', 'r', String(x.conversions >= 100 ? Math.round(x.conversions) : x.conversions)));
         body.appendChild(tr);
       });
     }
@@ -430,7 +597,7 @@
     current = r;
     var cur = money(r.currency || 'GBP');
     $('rep-name').textContent = r.accountName;
-    $('rep-meta').textContent = (r.sample ? 'Sample data, not a real account · ' : 'Customer ID ' + r.customerId + ' · ') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + ' · last 30 days' + (r.preview && !demo && r.operations ? ' · ' + r.operations + ' API operations' : '');
+    $('rep-meta').textContent = (r.sample ? 'Sample data, not a real account · ' : 'Customer ID ' + r.customerId + ' · ') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + ' · last 30 days' + (r.trend ? ', trends over 13 months' : '') + (r.preview && !demo && r.operations ? ' · ' + r.operations + ' API operations' : '');
     var f = r.facts || {}, tiles = $('rep-tiles'); tiles.textContent = '';
     tiles.appendChild(tile('Spend, last 30 days', f.spend30 != null ? cur.format(f.spend30) : 'n/a', (f.activeCampaigns || 0) + ' active campaigns'));
     tiles.appendChild(tile('Conversions', f.conversions30 != null ? String(Math.round(f.conversions30 * 10) / 10) : 'n/a', f.costPerConversion30 ? cur.format(f.costPerConversion30) + ' each' : ''));
@@ -445,11 +612,14 @@
     r.strengths.forEach(function (s) { var li = el('li', null, s.title); li.title = s.detail || ''; st.appendChild(li); });
     $('weak-count').textContent = String(r.weaknesses.length); $('strong-count').textContent = String(r.strengths.length);
     $('sec-strong').hidden = !r.strengths.length;
+    summary(r, cur);
     profile(r, cur);
+    trend(r, cur);
     ngrams(r, cur);
     heatmap(r);
     fixes(r);
     $('report').hidden = false;
+    if (trDraw) trDraw(); // the chart needs the report on screen to know its width
     // Paper and white alternate down the sections that are showing, so two of the same never sit together (v3 sec. 5).
     var flip = false;
     document.querySelectorAll('#report > section.rp').forEach(function (sec) {
@@ -552,6 +722,10 @@
     say(SIGNIN_MSG[location.search.match(/[?&]signin=([a-z]+)/)[1]] || '', true);
     history.replaceState(null, '', '/google-ads-audit');
   } else if (preview && /[?&]sample=[a-z0-9]+/.test(location.search)) {
-    post('/tools/google-ads-check/sample', { variant: location.search.match(/[?&]sample=([a-z0-9]+)/)[1] }).then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
+    var qs = function (k) { var x = location.search.match(new RegExp('[?&]' + k + '=([^&]+)')); return x ? decodeURIComponent(x[1]) : ''; };
+    var sb = { variant: qs('sample') };
+    if (qs('cpa')) sb.target = { type: 'cpa', value: qs('cpa') }; else if (qs('roas')) sb.target = { type: 'roas', value: qs('roas') };
+    if (qs('brand')) sb.brand = qs('brand');
+    post('/tools/google-ads-check/sample', sb).then(function (res) { if (res.ok) show(res.d.report, 'jump'); else say(res.d.error, true); });
   }
 })();

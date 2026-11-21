@@ -202,7 +202,7 @@ export function withExtras(base, x = {}, today = iso(new Date())) {
   const devNorm = DEVICES.reduce((a, [k, w]) => a + w * dev[k], 0);
   out.segments90 = [];
   for (const c of camps) {
-    const nets = c.channel === 'SEARCH' ? [['SEARCH', 1 - partners.share, 1], ['SEARCH_PARTNERS', partners.share, partners.conv]] : [[c.channel === 'PERFORMANCE_MAX' ? 'MIXED' : c.channel === 'DISPLAY' ? 'CONTENT' : c.channel === 'VIDEO' ? 'YOUTUBE' : 'SEARCH', 1, 1]];
+    const nets = c.channel === 'SEARCH' ? [['SEARCH', 1 - partners.share, 1], ['SEARCH_PARTNERS', partners.share, partners.conv]] : [[c.channel === 'PERFORMANCE_MAX' ? 'MIXED' : c.channel === 'DISPLAY' ? 'CONTENT' : c.channel === 'VIDEO' || c.channel === 'DEMAND_GEN' ? 'YOUTUBE' : 'SEARCH', 1, 1]];
     const netNorm = nets.reduce((a, n) => a + n[1] * n[2], 0);
     for (const [net, share, nc] of nets) for (const [d, w] of DEVICES) {
       const f = 3 * share * w, cf = f * (nc / netNorm) * (dev[d] / devNorm);
@@ -217,7 +217,7 @@ export function withExtras(base, x = {}, today = iso(new Date())) {
   if (!x.noChanges) camps.filter((c) => c.spend > 0 && !(x.untouched || []).includes(c.id)).forEach((c, ci) => {
     for (let j = 0; j < 3 + (ci % 4); j++) {
       const d = new Date(t.getTime() - ((ci * 3 + j * 5) % 27 + 1) * 86400000);
-      out.changes.push({ changeEvent: { changeDateTime: iso(d) + ' 10:' + pad(j * 7 % 60) + ':00', changeResourceType: TYPES[(ci + j) % TYPES.length], resourceChangeOperation: 'UPDATE', clientType: j < (x.auto || 0) ? 'GOOGLE_ADS_RECOMMENDATIONS_SUBSCRIPTION' : 'GOOGLE_ADS_WEB_CLIENT', campaign: `customers/${cust}/campaigns/${c.id}` } });
+      out.changes.push({ changeEvent: { changeDateTime: iso(d) + ' 10:' + pad(j * 7 % 60) + ':00', changeResourceType: TYPES[(ci + j) % TYPES.length], resourceChangeOperation: 'UPDATE', clientType: ci < 3 && j < (x.auto || 0) ? 'GOOGLE_ADS_RECOMMENDATIONS_SUBSCRIPTION' : 'GOOGLE_ADS_WEB_CLIENT', campaign: `customers/${cust}/campaigns/${c.id}` } });
     }
   });
   // Customer Match lists: [name, matched members, days a member stays].

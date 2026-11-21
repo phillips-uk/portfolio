@@ -9,7 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="stylesheet" href="/agency.css?v=17">
-<link rel="stylesheet" href="/tools.css?v=20">
+<link rel="stylesheet" href="/tools.css?v=21">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/google-ads-audit">
@@ -46,9 +46,9 @@
   "mainEntity": [
     { "@type": "Question", "name": "Is the Google Ads Check free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, for small and medium businesses: one free check per Google Ads account every 30 days. Agencies checking clients' accounts can ask me about a paid audit." } },
     { "@type": "Question", "name": "Can you change anything in my account?", "acceptedAnswer": { "@type": "Answer", "text": "The check only reads. You invite my manager account from inside Google Ads, the check reads the account, and the link is removed as soon as it finishes. Nothing in your account changes unless you buy a fix and approve the exact list of changes first." } },
-    { "@type": "Question", "name": "What does it look at?", "acceptedAnswer": { "@type": "Answer", "text": "Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them." } },
+    { "@type": "Question", "name": "What does it look at?", "acceptedAnswer": { "@type": "Answer", "text": "Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them. It also checks that your landing pages load, lists the changes made in the last 28 days and shows 13 months of results." } },
     { "@type": "Question", "name": "What happens to my data?", "acceptedAnswer": { "@type": "Answer", "text": "The report is saved for 30 days so its link works, then deleted. I keep a scrambled version of the account ID to allow one free check every 30 days." } },
-    { "@type": "Question", "name": "Does it use AI?", "acceptedAnswer": { "@type": "Answer", "text": "No. Every result comes from fixed, written rules, the checks I would run by hand." } },
+    { "@type": "Question", "name": "Does it use AI?", "acceptedAnswer": { "@type": "Answer", "text": "No, on purpose. Every result comes from fixed, written rules, the checks I'd run by hand. The same account always gets the same answer, every figure can be traced back to your account, and your account data never goes to an AI company." } },
     { "@type": "Question", "name": "Is this the same as a Google Ads audit?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, a free one. It covers the main areas of a Google Ads audit: conversion tracking, settings, search terms, keywords, ads, bidding, structure, and Shopping and Performance Max. The report shows what's working, what needs attention and where to start." } },
     { "@type": "Question", "name": "How long does it take, and do I need to sign up?", "acceptedAnswer": { "@type": "Answer", "text": "It takes a few minutes and there is nothing to sign up for. Sign in with Google, or invite my manager account read only from inside Google Ads." } },
     { "@type": "Question", "name": "Can I check my account myself?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. My Google Ads audit checklist takes you through the same checks in the same order and shows you what to fix first: https://www.phillips-uk.com/guides/google-ads-audit-checklist/" } }
@@ -136,6 +136,15 @@
         <button type="submit">Start my check</button>
       </form>
       <p class="hero-note">Your customer ID is the 10-digit number at the top of Google Ads, next to the account name.</p>
+      <details class="target-opt" id="target-opt">
+        <summary>Add a target (optional)</summary>
+        <div class="target-row">
+          <span class="sel"><label for="t-type" style="position:absolute;left:-9999px">Kind of target</label><select id="t-type"><option value="cpa">Target cost per conversion (£)</option><option value="roas">Target return on ad spend (%)</option></select></span>
+          <label for="t-value" style="position:absolute;left:-9999px">Your target</label><input type="text" id="t-value" inputmode="decimal" autocomplete="off" maxlength="8" placeholder="e.g. 40">
+          <label for="t-brand" style="position:absolute;left:-9999px">Your brand name</label><input type="text" id="t-brand" autocomplete="organization" maxlength="40" placeholder="Your brand name (optional)">
+        </div>
+        <p class="hero-note">I'll judge campaigns, devices and budgets against your target. Leave it blank and I'll use your account's own average. The brand name is used to find searches for your name in Performance Max.</p>
+      </details>
     </div>
 
     <div class="steps-card" id="step-invite" hidden>
@@ -156,7 +165,7 @@
       <li>Accepting the invitation</li>
       <li>Reading campaigns, budgets and settings</li>
       <li>Reading conversions, search terms and keywords</li>
-      <li>Reading ads, assets and Shopping</li>
+      <li>Reading ads and Shopping, checking landing pages</li>
       <li>Checking the rules and removing the link</li>
     </ol>
   </div>
@@ -180,6 +189,20 @@
     </div>
   </section>
 
+  <section class="rp rp-white" id="sec-summary" hidden>
+    <div class="page-w">
+      <div class="rp-h"><h3>In short</h3></div>
+      <p class="sum-lede" id="sum-lede"></p>
+      <p class="sum-meta" id="sum-meta"></p>
+      <div id="sum-plan-box">
+        <h4 class="plan-h">What to do, in order</h4>
+        <p class="plan-sub">Biggest likely impact first. Where the impact is similar, quicker fixes come first. Times are rough.</p>
+        <ol class="plan" id="sum-plan"></ol>
+        <details class="plan-more" id="sum-more" hidden><summary></summary><ol class="plan" id="sum-plan-rest"></ol></details>
+      </div>
+    </div>
+  </section>
+
   <section class="rp rp-ink" id="sec-profile" hidden>
     <div class="page-w">
       <span class="eyebrow pf-eyebrow">How I read your account</span>
@@ -187,6 +210,17 @@
       <dl class="pf-facts" id="pf-facts"></dl>
       <div class="pf-split" id="pf-split" role="img"></div>
       <div class="pf-tree" id="pf-tree"></div>
+    </div>
+  </section>
+
+  <section class="rp rp-paper" id="sec-trend" hidden>
+    <div class="page-w">
+      <div class="rp-h"><h3>How it's moving</h3></div>
+      <p class="rp-lede" id="tr-lede"></p>
+      <div class="funnel tiles" id="tr-funnel"></div>
+      <div class="hm-card chart-card" id="tr-chart-card"><div class="chart" id="tr-chart" role="img"></div><div class="chart-key" id="tr-key"></div></div>
+      <details class="rp-more-info" id="tr-seg" hidden><summary>By device and network, last 90 days</summary><div class="seg-wrap"><table class="seg-table"><thead><tr><th></th><th class="r">Spend</th><th class="r">Share</th><th class="r">Conv.</th><th class="r" id="tr-seg-k">Per conversion</th></tr></thead><tbody id="tr-seg-rows"></tbody></table></div></details>
+      <details class="rp-more-info chg" id="tr-chg" hidden><summary>Changes recorded in the last 28 days</summary><p id="tr-chg-text"></p></details>
     </div>
   </section>
 
@@ -238,6 +272,22 @@
     </div>
   </section>
 
+  <section class="rp rp-white" id="sec-noai">
+    <div class="page-w">
+      <div class="noai">
+        <div>
+          <div class="rp-h"><h3>Why there's no AI in this check</h3></div>
+          <p class="rp-lede">Every figure in this report is worked out from your account by fixed, written rules. Run it again on the same data and you get the same report. Nothing is written or guessed by an AI model, so nothing is made up, and your account data never goes to an AI company.</p>
+        </div>
+        <ul>
+          <li><b>Traceable</b>Each finding names the campaigns, keywords or pages it comes from.</li>
+          <li><b>Repeatable</b>The same data and settings always give the same answer.</li>
+          <li><b>Estimates say so</b>Where a figure is an estimate, such as the money at stake, the report says what it's based on.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="rp rp-paper">
     <div class="page-w">
       <div class="rep-cta sd-cta">
@@ -262,7 +312,7 @@
         <ul class="ticks diff-ticks">
           <li>No sales call: the report is yours as soon as it&rsquo;s ready.</li>
           <li>Read-only access. Nothing in your account changes.</li>
-          <li>Fixed written rules, no AI, so the same account gets the same answer.</li>
+          <li>No AI: every figure is worked out from your account by written rules, nothing is made up, and your data never goes to an AI company.</li>
           <li>The link to your account is removed once the report is written.</li>
         </ul>
       </div>
@@ -286,14 +336,16 @@
       <p class="lede">Set-up and structure as well as recent results, so you see what's built right and what's costing you. Fixed written rules, so the same account always gets the same answer.</p>
     </div>
     <ul class="checks-list">
-      <li><b>Conversion tracking</b><span>Whether enquiries and sales are recorded, and whether small actions are counted as if they were sales.</span></li>
+      <li><b>Conversion tracking</b><span>Whether enquiries and sales are recorded, whether small actions are counted as if they were sales, and whether any sale or lead may be counted twice.</span></li>
       <li><b>Campaign settings</b><span>Location targeting, networks, ad rotation and the settings that quietly waste budget.</span></li>
       <li><b>Search terms</b><span>Searches that spend and never convert, and the negatives that would stop them.</span></li>
       <li><b>Keywords</b><span>Quality Score, match types and keywords that spend without results.</span></li>
       <li><b>Ads and assets</b><span>Ad groups without enough ads, and missing sitelinks, callouts and other assets.</span></li>
       <li><b>Bidding and budgets</b><span>Whether the bid strategy suits the conversions you have, and budgets that run out.</span></li>
       <li><b>Account structure</b><span>Campaigns and ad groups that mix unrelated services or are too thin to learn.</span></li>
-      <li><b>Shopping and Performance Max</b><span>Feed and asset group health, where you run them.</span></li>
+      <li><b>Shopping and Performance Max</b><span>Feed and asset group health, and searches for your own name, where you run them.</span></li>
+      <li><b>Landing pages and changes</b><span>Whether each page your ads link to loads, and what's been changed in the account in the last 28 days.</span></li>
+      <li><b>Trends</b><span>13 months of spend and results, and which part of the funnel (cost per click or conversion rate) moved most lately.</span></li>
     </ul>
   </div>
 </section>
@@ -304,7 +356,7 @@
       <span class="eyebrow">Questions</span>
       <h2 class="h2">Questions about the check.</h2>
     </div>
-    <div class="faq"><details><summary>Is this the same as a Google Ads audit?</summary><p>Yes, a free one. It covers the main areas of a Google Ads audit: conversion tracking, settings, search terms, keywords, ads, bidding, structure, and Shopping and Performance Max. The report shows what's working, what needs attention and where to start.</p></details><details><summary>How long does it take, and do I need to sign up?</summary><p>It takes a few minutes and there is nothing to sign up for. Sign in with Google, or invite my manager account read only from inside Google Ads.</p></details><details><summary>Is the Google Ads Check free?</summary><p>Yes, for small and medium businesses: one free check per Google Ads account every 30 days. Agencies checking clients' accounts can ask me about a paid audit.</p></details><details><summary>Can you change anything in my account?</summary><p>The check only reads. You invite my manager account from inside Google Ads, the check reads the account, and the link is removed as soon as it finishes. Nothing in your account changes unless you buy a fix and approve the exact list of changes first.</p></details><details><summary>What does it look at?</summary><p>Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them.</p></details><details><summary>What happens to my data?</summary><p>The report is saved for 30 days so its link works, then deleted. I keep a scrambled version of the account ID to allow one free check every 30 days.</p></details><details><summary>Does it use AI?</summary><p>No. Every result comes from fixed, written rules, the checks I would run by hand.</p></details><details><summary>Can I check my account myself?</summary><p>Yes. My <a href="/guides/google-ads-audit-checklist/">Google Ads audit checklist</a> takes you through the same checks in the same order and shows you what to fix first.</p></details><details><summary>How is it different from Search Desk?</summary><p>The check looks at how the account is set up and built, once. <a href="https://searchdesk.uk/" target="_blank" rel="noopener">Search Desk</a> watches performance every day and shows what changed and what needs fixing.</p></details></div>
+    <div class="faq"><details><summary>Is this the same as a Google Ads audit?</summary><p>Yes, a free one. It covers the main areas of a Google Ads audit: conversion tracking, settings, search terms, keywords, ads, bidding, structure, and Shopping and Performance Max. The report shows what's working, what needs attention and where to start.</p></details><details><summary>How long does it take, and do I need to sign up?</summary><p>It takes a few minutes and there is nothing to sign up for. Sign in with Google, or invite my manager account read only from inside Google Ads.</p></details><details><summary>Is the Google Ads Check free?</summary><p>Yes, for small and medium businesses: one free check per Google Ads account every 30 days. Agencies checking clients' accounts can ask me about a paid audit.</p></details><details><summary>Can you change anything in my account?</summary><p>The check only reads. You invite my manager account from inside Google Ads, the check reads the account, and the link is removed as soon as it finishes. Nothing in your account changes unless you buy a fix and approve the exact list of changes first.</p></details><details><summary>What does it look at?</summary><p>Conversion tracking, campaign settings such as location targeting and networks, search terms and negatives, keywords and Quality Score, ads and assets, bidding and budgets, and Shopping and Performance Max where you run them. It also checks that your landing pages load, lists the changes made in the last 28 days and shows 13 months of results.</p></details><details><summary>What happens to my data?</summary><p>The report is saved for 30 days so its link works, then deleted. I keep a scrambled version of the account ID to allow one free check every 30 days.</p></details><details><summary>Does it use AI?</summary><p>No, on purpose. Every result comes from fixed, written rules, the checks I'd run by hand. The same account always gets the same answer, every figure can be traced back to your account, and your account data never goes to an AI company.</p></details><details><summary>Can I check my account myself?</summary><p>Yes. My <a href="/guides/google-ads-audit-checklist/">Google Ads audit checklist</a> takes you through the same checks in the same order and shows you what to fix first.</p></details><details><summary>How is it different from Search Desk?</summary><p>The check looks at how the account is set up and built, once. <a href="https://searchdesk.uk/" target="_blank" rel="noopener">Search Desk</a> watches performance every day and shows what changed and what needs fixing.</p></details></div>
   </div>
 </section>
 
@@ -366,7 +418,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-google-ads-check.js?v=18" defer></script>
+<script src="/tool-google-ads-check.js?v=19" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
 </body>
