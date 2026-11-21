@@ -2480,7 +2480,8 @@ export function actionPlan(weaknesses, quote, spend30) {
   const E = { quick: 0, medium: 1, larger: 2 };
   // "Fix first" findings lead whatever the money (Lewis, 21 Nov 2026): a tracking fault makes every other figure,
   // including the money at stake, unreliable. Money then orders everything within each level.
-  const first = (p) => (weaknesses[p.i].priority === 'high' ? 0 : 1);
+  // Within those, tracking comes first (Lewis, 21 Nov 2026): every other figure depends on it.
+  const first = (p) => (weaknesses[p.i].priority === 'high' ? (weaknesses[p.i].category === 'tracking' ? 0 : 1) : 2);
   plan.sort((a, b) => first(a) - first(b) || IMPACT_RANK[a.impact] - IMPACT_RANK[b.impact] || (b.atStake || 0) - (a.atStake || 0) || (E[a.effort] ?? 1) - (E[b.effort] ?? 1) || a.i - b.i);
   // Findings can cover the same spend (a campaign off target and the mobile clicks inside it). Going down the list,
   // each campaign keeps the largest sum counted for it so far, and a later item only adds what goes past that: in one

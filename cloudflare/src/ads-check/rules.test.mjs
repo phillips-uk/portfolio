@@ -567,6 +567,8 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   const rd = findDemo('retailer'); const rr = runRules(rd.data('2026-11-21'), { target: rd.target, today: '2026-11-21' });
   const prod = actionPlan(rr.weaknesses, null, rr.facts.spend30).find((x) => x.id === 'products-no-sales' || /products? spent/.test(x.title));
   assert.ok(prod && prod.atStake > 0 && prod.mayOverlap && !prod.overlap, 'products shown in full, marked as possibly overlapping');
+  { const tp = actionPlan([{ id: 'qs', title: 'QS', priority: 'high', category: 'keywords' }, { id: 'trk', title: 'T', priority: 'high', category: 'tracking' }, { id: 'm', title: 'M', priority: 'high', category: 'structure', atStake: { amount: 900 } }, { id: 'lo', title: 'L', priority: 'medium', category: 'tracking' }], { lines: [{ id: 'qs', hours: 0.25 }, { id: 'trk', hours: 3 }] }, 2000);
+    assert.deepEqual(tp.map((x) => x.id), ['trk', 'm', 'qs', 'lo'], 'tracking leads Fix first, ahead of money and quick fixes; other tracking stays in its level'); }
   console.log('action plan: money in a campaign already counted above is left out; products shown in full with a note');
 }
 console.log('All rules tests passed.');
