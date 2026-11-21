@@ -16,10 +16,6 @@ import { cleanupToolRates } from './tools-gate.js';
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
   'auth-callback':              () => import('../../netlify/functions/auth-callback.js'),
-  'creative-analyse-background': () => import('../../netlify/functions/creative-analyse-background.js'),
-  'creative-auth':              () => import('../../netlify/functions/creative-auth.js'),
-  'creative-status':            () => import('../../netlify/functions/creative-status.js'),
-  'creative-upload':            () => import('../../netlify/functions/creative-upload.js'),
   'get-report':                 () => import('../../netlify/functions/get-report.js'),
   'mcc-audit':                  () => import('../../netlify/functions/mcc-audit.js'),
   'mcc-check':                  () => import('../../netlify/functions/mcc-check.js'),
