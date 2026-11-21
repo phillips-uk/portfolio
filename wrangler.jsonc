@@ -12,7 +12,7 @@
     "directory": ".",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none",
+    "not_found_handling": "404-page",
     // The Worker sees every request so it can redirect the apex to www and route the function URLs.
     "run_worker_first": true
   },
