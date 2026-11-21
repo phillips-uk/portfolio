@@ -736,3 +736,17 @@ li.fold > b { display: flex; justify-content: space-between; align-items: baseli
 .photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); margin: var(--s12) auto 0; max-width: 960px; }
 .photo-pair img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--r-lg); box-shadow: var(--e1); }
 @media (max-width: 600px) { .photo-pair { grid-template-columns: 1fr; gap: var(--s4); } .photo-pair img { aspect-ratio: 4 / 3; border-radius: var(--r-md); } }
+
+/* A section heading with a screenshot of our own work beside it (desktop) or above it (phones).
+   Images have a purpose: they show what the section is about (Design Spec v3 section 1a). */
+.sec-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--s12) 64px; align-items: center; margin-bottom: var(--s12); }
+.sec-split > .sec-head { margin: 0; }
+.shot { margin: 0; position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--e2); overflow: hidden; padding-top: 26px; }
+.shot::before { content: ""; position: absolute; top: 10px; left: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); box-shadow: 12px 0 0 var(--line-2), 24px 0 0 var(--line-2); }
+.shot img { display: block; width: 100%; height: auto; max-height: 440px; object-fit: cover; object-position: top center; border-top: 1px solid var(--line-soft); }
+.shot figcaption { padding: 10px 14px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line-soft); background: var(--surface); }
+@media (max-width: 900px) {
+  .sec-split { grid-template-columns: 1fr; gap: var(--s6); }
+  .sec-split > .shot { order: -1; }
+  .shot img { max-height: 320px; }
+}
