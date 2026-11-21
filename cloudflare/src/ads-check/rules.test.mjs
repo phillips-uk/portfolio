@@ -498,7 +498,10 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   // The funnel: the last 30 days against the 60 before, and which lever moved most.
   const daily = []; const t0 = Date.parse('2026-11-16T12:00:00Z');
   for (let i = 90; i >= 1; i--) { const recent = i <= 30; daily.push({ segments: { date: new Date(t0 - i * 86400000).toISOString().slice(0, 10) }, metrics: { impressions: '1000', clicks: '50', costMicros: micros(recent ? 100 : 100), conversions: recent ? 1.5 : 2 } }); }
-  r = run({ campaigns: [healthy.campaigns[0]], daily90: daily });
+  // The last 30 days come from the campaign totals (the same figures as the header): 30 days of the recent rows.
+  const c30 = campaignRow({ id: '10', name: 'Services Ely', bidding: 'MAXIMIZE_CONVERSIONS', targetCpa: 40, systemStatus: 'ENABLED', budget: 150, spend: 3000, conversions: 45, impressions: 30000, clicks: 1500, sis: 0.7 });
+  r = run({ campaigns: [c30], daily90: daily });
+  assert.equal(r.trend.funnel.recent.cpa, r.facts.costPerConversion30, 'the funnel and the header agree on the last 30 days');
   assert.equal(r.trend.funnel.lever.key, 'cvr', 'same cost per click, fewer conversions: conversion rate is the lever');
   assert.match(r.trend.funnel.lever.text, /rose 33%/, 'cost per conversion up a third');
   assert.equal(r.trend.funnel.recent.days, 30); assert.equal(r.trend.funnel.prior.days, 60);

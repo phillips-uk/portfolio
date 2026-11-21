@@ -396,7 +396,8 @@ function ruleConversions(m, out) {
       out.weak({
         id: 'silent-conversion-actions',
         category: 'tracking',
-        priority: all ? 'high' : 'medium',
+        // Fix first either way (Lewis, 21 Nov 2026): a main action gone quiet makes every other figure less reliable.
+        priority: 'high',
         title: all
           ? 'Your conversion tracking has recorded nothing in 30 days'
           : `${plural(silent.length, 'main conversion action')} recorded nothing in 30 days`,
@@ -2421,6 +2422,13 @@ function trendTable(m) {
       seen[k].add(d);
     }
     recent.days = seen.recent.size; prior.days = seen.prior.size;
+    // The last 30 days use the same campaign totals as the report header (Lewis, 21 Nov 2026), so the two never show
+    // different figures for the same days. The daily rows only supply the 60 days before.
+    if (m.campaigns.length) {
+      recent.impressions = sum(m.campaigns, (c) => c.impressions); recent.clicks = sum(m.campaigns, (c) => c.clicks);
+      recent.spend = sum(m.campaigns, (c) => c.spend); recent.conversions = sum(m.campaigns, (c) => c.conversions);
+      recent.value = sum(m.campaigns, (c) => c.convValue); recent.days = 30;
+    }
     const R = rates(recent), P = rates(prior);
     funnel = { recent: R, prior: P, lever: lever(m, R, P) };
   }

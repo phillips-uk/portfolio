@@ -380,7 +380,7 @@
           'fill: color-mix(in oklab, var(--brand) ' + (m.partial ? 18 : 45) + '%, var(--surface))' + (m.partial ? '; stroke: color-mix(in oklab, var(--brand) 45%, var(--surface)); stroke-dasharray: 3 2' : ''));
         var mo = Number(m.month.slice(5, 7)) - 1, yr = m.month.slice(2, 4);
         var tip = document.createElementNS(NS, 'title');
-        tip.textContent = MON[mo] + ' 20' + yr + (m.partial ? ' (so far)' : '') + ': ' + cur.format(m.spend) + ' spend, ' + m.conversions + ' conversions' + (vals[i] != null ? ', ' + (roas ? Math.round(vals[i] * 100) + '% return' : cur.format(vals[i]) + ' each') : '');
+        tip.textContent = MON[mo] + ' 20' + yr + (m.partial ? ' (so far)' : '') + ': ' + cur.format(m.spend) + ' spend, ' + m.conversions + (m.conversions === 1 ? ' conversion' : ' conversions') + (vals[i] != null ? ', ' + (roas ? Math.round(vals[i] * 100) + '% return' : cur.format(vals[i]) + ' each') : '');
         bar.appendChild(tip); svg.appendChild(bar);
         if (W >= 480 || i % 2 === 0 || i === n - 1) {
           var lb = mk('text', { x: (x + bw / 2).toFixed(1), y: H - 8, 'text-anchor': 'middle' }, 'font: 500 11px var(--mono, monospace); fill: var(--muted)');
@@ -614,7 +614,7 @@
     $('rep-name').textContent = r.accountName;
     $('rep-meta').textContent = (r.sample ? 'Sample data, not a real account · ' : 'Customer ID ' + r.customerId + ' · ') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + ' · last 30 days' + (r.trend ? ', trends over 13 months' : '') + (r.preview && !demo && r.operations ? ' · ' + r.operations + ' API operations' : '');
     var f = r.facts || {}, tiles = $('rep-tiles'); tiles.textContent = '';
-    tiles.appendChild(tile('Spend, last 30 days', f.spend30 != null ? cur.format(f.spend30) : 'n/a', (f.activeCampaigns || 0) + ' active campaigns'));
+    tiles.appendChild(tile('Spend, last 30 days', f.spend30 != null ? cur.format(f.spend30) : 'n/a', (f.activeCampaigns || 0) + ((f.activeCampaigns || 0) === 1 ? ' active campaign' : ' active campaigns')));
     tiles.appendChild(tile('Conversions', f.conversions30 != null ? String(Math.round(f.conversions30 * 10) / 10) : 'n/a', f.costPerConversion30 ? cur.format(f.costPerConversion30) + ' each' : ''));
     var high = r.weaknesses.filter(function (w) { return w.priority === 'high'; }).length;
     tiles.appendChild(tile('To fix', String(r.weaknesses.length), high ? high + ' to fix first' : 'none urgent', high ? 'bad' : r.weaknesses.length ? 'warn' : 'good'));
