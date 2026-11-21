@@ -63,7 +63,9 @@ async function read(stream, env, toStatements) {
     while (Date.now() - started < budget) {
       const wait = Math.max(1, idle - (Date.now() - lastEvent));
       const chunk = await Promise.race([reader.read(), new Promise(r => setTimeout(() => r({ idle: true }), wait))]);
-      if (chunk.idle) { if (Date.now() - lastEvent >= idle) break; continue; }
+      // With no saved position yet, stay open for the whole budget: a quiet stream (charges on a weekend)
+      // may take minutes to send its first event, and only then do we have a timepoint to resume from.
+      if (chunk.idle) { if (timepoint && Date.now() - lastEvent >= idle) break; continue; }
       if (chunk.done) break;
       buf += chunk.value;
       let nl;
