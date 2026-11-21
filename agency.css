@@ -715,3 +715,19 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
 .tool-more > h3:first-of-type { margin-top: var(--s4); }
 /* list items folded by fold.js: keep the + on the right (beats .checks-list b and .sd-tools b) */
 li.fold > b { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; cursor: pointer; }
+
+/* Photo credits sit on the photo itself, over a soft dark fade along the bottom (Lewis, 21 Nov 2026) */
+.place-band, .photo-wide { position: relative; }
+.place-band .place-cap, .photo-wide figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; margin: 0;
+  padding: var(--s10) var(--s5) var(--s4); max-width: none;
+  background: linear-gradient(to top, color-mix(in oklab, var(--ink) 72%, transparent), transparent);
+  color: var(--brand-ink); text-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 60%, transparent);
+}
+.place-band .place-cap { padding-left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); padding-right: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); }
+.photo-wide figcaption { border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.place-band .place-cap a, .photo-wide figcaption a { color: inherit; }
+@media (max-width: 600px) {
+  .photo-wide figcaption { border-radius: 0 0 var(--r-md) var(--r-md); padding: var(--s8) var(--s4) var(--s3); }
+  .place-band .place-cap { padding-top: var(--s8); padding-bottom: var(--s3); }
+}
