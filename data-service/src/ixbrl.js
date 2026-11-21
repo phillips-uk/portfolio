@@ -88,3 +88,17 @@ export function withRatios(a) {
   for (const k of ['debtor_days', 'stock_days', 'creditor_days']) if (r[k] === undefined) delete r[k];
   return r;
 }
+
+// Prior-year figures from the comparative column of the same filing (the latest date 300 to 430 days earlier).
+export const PRIOR = ['turnover', 'cash', 'net_assets', 'trade_debtors', 'employees'];
+export function readPrior(html, periodEnd) {
+  if (!periodEnd) return {};
+  const pe = Date.parse(periodEnd);
+  const ends = [...html.matchAll(/<(?:xbrli:)?(?:instant|endDate)>\s*([\d-]{10})/gi)].map(m => m[1])
+    .filter(d => { const gap = (pe - Date.parse(d)) / 864e5; return gap >= 300 && gap <= 430; }).sort();
+  const prior = ends.pop();
+  if (!prior) return {};
+  const f = readAccounts(html, prior);
+  const out = Object.fromEntries(PRIOR.filter(k => f[k] !== undefined && f[k] !== null).map(k => [k, f[k]]));
+  return Object.keys(out).length ? { period_end: prior, ...out } : {};
+}

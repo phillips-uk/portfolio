@@ -90,3 +90,11 @@ The Bank blocks automated downloads. Once a month, check the figure on the Bank'
 `node scripts/new-key.mjs <client-id> "<Client name>" [--remote]` creates the client if new and a key. The key is
 written once to `.keys/` (git-ignored, owner-only) and never printed; only its SHA-256 hash is stored. Suspend a
 client: `UPDATE clients SET status = 'suspended' WHERE id = '...'`. Revoke a key: set `revoked_at`.
+
+## Health signals (`/v1/companies/{n}/signals`, scope `signals`)
+
+Dated facts for one company, grouped into checks: status, filing deadlines, insolvency (Gazette notices and stream cases),
+secured lending (outstanding, created or satisfied in the last 12 months), latest accounts against the year before,
+paying suppliers (payment practices reporters only) and group. Each fact has `notable` (worth a look); there is no score.
+Year-on-year figures come from the comparative column of the same filing (`prior_*` columns in `accounts_facts`, read by
+`readPrior` / `read_prior`). Uses the live lookup, so it shares the Companies House cap. Code: `src/signals.js`.

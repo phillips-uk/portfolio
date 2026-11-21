@@ -85,3 +85,30 @@ def with_ratios(a):
                  ('creditor_days', days(a.get('trade_creditors'), a.get('cost_of_sales')))):
         if v is not None: r[k] = v
     return r
+
+
+PRIOR = ('turnover', 'cash', 'net_assets', 'trade_debtors', 'employees')
+
+
+def prior_end(html, period_end):
+    """The comparative period in the same filing: the latest date at least 300 days before period_end."""
+    from datetime import date
+    if not period_end: return None
+    pe = date.fromisoformat(period_end)
+    ends = set()
+    for _, body in CTX.findall(html):
+        m = END.search(body)
+        if not m: continue
+        try: d = date.fromisoformat(m.group(1))
+        except ValueError: continue
+        if 300 <= (pe - d).days <= 430: ends.add(d)
+    return max(ends).isoformat() if ends else None
+
+
+def read_prior(html, period_end):
+    """Prior-year figures from the comparative column, or {} when the filing has none."""
+    pe = prior_end(html, period_end)
+    if not pe: return {}
+    f = read_accounts(html, pe)
+    out = {k: f[k] for k in PRIOR if f.get(k) is not None}
+    return {'prior_period_end': pe, **{'prior_' + k: v for k, v in out.items()}} if out else {}

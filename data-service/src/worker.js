@@ -5,6 +5,7 @@
 import { liveCompany } from './live.js';
 import { fxRates } from './fx.js';
 import { runStreams } from './stream.js';
+import { healthSignals } from './signals.js';
 
 const SOURCE = {
   payments: {
@@ -63,13 +64,14 @@ export default {
       if (m) return allow('payments') ? await payments(m[1].toUpperCase(), env) : denied;
       m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/group$/);
       if (m) return allow('group') ? await group(m[1].toUpperCase(), env) : denied;
-      m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/live$/);
+      m = path.match(/^\/v1\/companies\/([A-Za-z0-9]{8})\/(live|signals)$/);
       if (m) {
-        if (!allow('live')) return denied;
+        if (!allow(m[2])) return denied;
         // Companies House allows 600 calls per 5 minutes in total; a lookup uses up to 5. Shared cap across all clients.
         if (env.CH_GLOBAL && !(await env.CH_GLOBAL.limit({ key: 'companies-house' })).success)
           return json({ error: 'busy_try_again' }, 429, { 'Retry-After': '60' });
-        const r = await liveCompany(m[1].toUpperCase(), env, ctx);
+        const r = m[2] === 'live' ? await liveCompany(m[1].toUpperCase(), env, ctx)
+          : await healthSignals(m[1].toUpperCase(), env, ctx, { paymentsData, groupData });
         return json(r, r.error ? 404 : 200);
       }
       if (path === '/v1/benchmarks') {
@@ -130,11 +132,16 @@ async function searchRegister(url, env) {
 // GET /v1/companies/{number}/group : owners that are companies, the chain up to the top UK parent, and subsidiaries.
 // From the PSC register (corporate owners only; individuals are never stored).
 async function group(number, env) {
+  const r = await groupData(number, env);
+  return r ? json(r) : json({ error: 'company_not_found', number }, 404);
+}
+
+async function groupData(number, env) {
   const OWNERS = `SELECT o.owner_name AS name, o.owner_number AS number, o.owner_country AS country, o.owner_kind AS kind,
                          o.control, o.notified_on, r.status
                   FROM company_owners o LEFT JOIN register r ON r.number = o.owner_number WHERE o.company_number = ?`;
   const company = await env.DB.prepare('SELECT number, name, status, sic_code, division, section FROM register WHERE number = ?').bind(number).first();
-  if (!company) return json({ error: 'company_not_found', number }, 404);
+  if (!company) return null;
   const { results: owners } = await env.DB.prepare(OWNERS).bind(number).all();
   // Walk up the chain of parents to the top one we can see; stop on loops.
   const chain = [], seen = new Set([number]);
@@ -154,9 +161,9 @@ async function group(number, env) {
      LEFT JOIN register r ON r.number = o.company_number WHERE o.owner_number = ? ORDER BY r.name LIMIT 100`).bind(number).all();
   const total = await env.DB.prepare('SELECT COUNT(*) AS n FROM company_owners WHERE owner_number = ?').bind(number).first();
   const v = await env.DB.prepare("SELECT as_of FROM dataset_versions WHERE dataset = 'groups' AND published_at IS NOT NULL ORDER BY published_at DESC LIMIT 1").first();
-  return json({ as_of: v?.as_of || null, source: 'Companies House register of people with significant control (corporate owners only)',
+  return { as_of: v?.as_of || null, source: 'Companies House register of people with significant control (corporate owners only)',
     licence: SOURCE.payments.licence, company, owners, parents: chain, top_parent: chain[chain.length - 1] || null,
-    subsidiaries: subs.results, subsidiaries_total: total?.n || 0 });
+    subsidiaries: subs.results, subsidiaries_total: total?.n || 0 };
 }
 
 // GET /v1/changes?type=charges|insolvency&since=2026-11-20&section=C : recent events from the Companies House streams,
@@ -199,11 +206,16 @@ const SECTION_OF = Object.fromEntries([['A', 1, 3], ['B', 5, 9], ['C', 10, 33], 
 
 // GET /v1/companies/{number}/payments : latest report, history and the industry benchmark for the same year.
 async function payments(number, env) {
+  const r = await paymentsData(number, env);
+  return r ? json({ ...(await meta(env)), ...r }) : json({ ...(await meta(env)), error: 'no_payment_reports', number }, 404);
+}
+
+async function paymentsData(number, env) {
   const company = await env.DB.prepare(
     `SELECT c.number, c.name, c.status, c.sic_code, c.sic_text, c.division, c.section, s.name AS section_name,
             c.postcode_area, c.incorporated FROM companies c LEFT JOIN sectors s ON s.code = 's-' || c.section
      WHERE c.number = ?`).bind(number).first();
-  if (!company) return json({ ...(await meta(env)), error: 'no_payment_reports', number }, 404);
+  if (!company) return null;
   const { results: reports } = await env.DB.prepare(
     `SELECT report_id, period_start, period_end, filed, payments_made, days, pct30, pct60, pct_over60, pct_late,
             pct_dispute, terms_shortest, terms_longest, terms_max, payment_code, e_invoicing, scf
@@ -227,7 +239,7 @@ async function payments(number, env) {
       }
     }
   }
-  return json({ ...(await meta(env)), company, latest, history: reports.slice(0, 20), reports_total: reports.length, benchmark });
+  return { company, latest, history: reports.slice(0, 20), reports_total: reports.length, benchmark };
 }
 
 // GET /v1/benchmarks?group=s-C&metric=days&year=2025 (group and year optional; metric defaults to days)

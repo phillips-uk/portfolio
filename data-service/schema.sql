@@ -104,6 +104,8 @@ CREATE TABLE IF NOT EXISTS accounts_facts (
   employees INTEGER, turnover REAL, cost_of_sales REAL, trade_debtors REAL, debtors REAL, stock REAL,
   trade_creditors REAL, cash REAL, creditors_within_year REAL, fixed_assets REAL, net_assets REAL,
   sic_code TEXT, division TEXT, section TEXT, source_file TEXT NOT NULL,
+  -- The comparative column of the same filing (about a year earlier), for year-on-year health signals.
+  prior_period_end TEXT, prior_turnover REAL, prior_cash REAL, prior_net_assets REAL, prior_trade_debtors REAL, prior_employees REAL,
   PRIMARY KEY (company_number, period_end)
 );
 CREATE INDEX IF NOT EXISTS accounts_facts_section ON accounts_facts(section, period_end);
