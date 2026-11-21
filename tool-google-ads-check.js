@@ -615,7 +615,7 @@
     $('rep-meta').textContent = (r.sample ? 'Sample data, not a real account · ' : 'Customer ID ' + r.customerId + ' · ') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + ' · last 30 days' + (r.trend ? ', trends over 13 months' : '') + (r.preview && !demo && r.operations ? ' · ' + r.operations + ' API operations' : '');
     var f = r.facts || {}, tiles = $('rep-tiles'); tiles.textContent = '';
     tiles.appendChild(tile('Spend, last 30 days', f.spend30 != null ? cur.format(f.spend30) : 'n/a', (f.activeCampaigns || 0) + ((f.activeCampaigns || 0) === 1 ? ' active campaign' : ' active campaigns')));
-    tiles.appendChild(tile('Conversions', f.conversions30 != null ? String(Math.round(f.conversions30 * 10) / 10) : 'n/a', f.costPerConversion30 ? cur.format(f.costPerConversion30) + ' each' : ''));
+    tiles.appendChild(tile('Conversions', f.conversions30 != null ? (Math.round(f.conversions30 * 10) / 10).toLocaleString('en-GB') : 'n/a', f.costPerConversion30 ? cur.format(f.costPerConversion30) + ' each' : ''));
     var high = r.weaknesses.filter(function (w) { return w.priority === 'high'; }).length;
     tiles.appendChild(tile('To fix', String(r.weaknesses.length), high ? high + ' to fix first' : 'none urgent', high ? 'bad' : r.weaknesses.length ? 'warn' : 'good'));
     tiles.appendChild(tile('Working well', String(r.strengths.length), 'keep these', 'good'));
