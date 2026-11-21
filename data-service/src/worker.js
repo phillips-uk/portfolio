@@ -113,18 +113,38 @@ async function search(url, env) {
   return json({ ...(await meta(env)), results });
 }
 
-// GET /v1/companies/search?q=acme&all=1 : any company on the register (about 5.6 million). Name prefix or number,
-// 8 results at most, in name order (the index answers it without sorting).
+// GET /v1/companies/search?q=acme&all=1 : any company on the register (about 5.7 million). Name or number, 8 results.
+// Ranked: the exact name (with or without Ltd, Limited, PLC or LLP) first, then names that start with the query as whole
+// words, then active companies before dissolved ones, then shorter names. Candidates come from the name index only.
+const SUFFIXES = ['', 'LIMITED', 'LTD', 'PLC', 'PUBLICLIMITEDCOMPANY', 'LLP', 'COMPANYLIMITED', 'GROUPLIMITED', 'GROUPPLC'];
 async function searchRegister(url, env) {
-  const qn = (url.searchParams.get('q') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // Stored names drop "&" (SAVAGE & WHITTEN is SAVAGEWHITTEN), so "and" as a word is also tried without it.
+  const tidy = t => t.toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const raw = tidy(url.searchParams.get('q') || '');
+  const qn = raw.replace(/ /g, '');
+  const variants = [...new Set([qn, raw.split(' ').filter(w => w !== 'AND').join('')])].filter(v => v.length >= 2);
   if (qn.length < 2) return json({ error: 'query_too_short', min_length: 2 }, 400);
-  const cols = 'number, name, status, postcode_area, section, sic_code, incorporated';
+  const cols = 'number, name, name_norm, status, postcode_area, section, sic_code, incorporated';
   const byNumber = /^[A-Z0-9]{8}$/.test(qn)
     ? await env.DB.prepare(`SELECT ${cols} FROM register WHERE number = ?`).bind(qn).all() : { results: [] };
-  const byName = await env.DB.prepare(
-    `SELECT ${cols} FROM register WHERE name_norm >= ? AND name_norm < ? ORDER BY name_norm LIMIT 8`).bind(qn, qn + '~').all();
+  const names = variants.flatMap(v => SUFFIXES.map(x => v + x));
+  const exact = await env.DB.prepare(`SELECT ${cols} FROM register WHERE name_norm IN (${names.map(() => '?').join(',')})`).bind(...names).all();
+  const prefixes = await Promise.all(variants.map(v => env.DB.prepare(
+    `SELECT ${cols} FROM register WHERE name_norm >= ? AND name_norm < ? ORDER BY name_norm LIMIT 200`).bind(v, v + '~').all()));
+  const prefix = { results: prefixes.flatMap(p => p.results) };
+  const rank = r => {
+    const nameWords = tidy(r.name.replace(/&/g, ' AND '));
+    const whole = nameWords === raw || nameWords.startsWith(raw + ' ');
+    return [names.includes(r.name_norm) ? 0 : whole ? 1 : 2,
+            /^active$/i.test(r.status || '') ? 0 : /^active/i.test(r.status || '') ? 1 : 2,
+            r.name.length];
+  };
+  const cmp = (a, b) => { const x = rank(a), y = rank(b); for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] - y[i]; return a.name.localeCompare(b.name); };
   const seen = new Set();
-  const results = [...byNumber.results, ...byName.results].filter(r => !seen.has(r.number) && seen.add(r.number)).slice(0, 8);
+  const pool = [...exact.results, ...prefix.results].filter(r => !seen.has(r.number) && seen.add(r.number)).sort(cmp);
+  const results = [...byNumber.results, ...pool]
+    .filter((r, i, all) => all.findIndex(o => o.number === r.number) === i).slice(0, 8)
+    .map(({ name_norm, ...r }) => r);
   return json({ source: 'Companies House Free Company Data Product',
     licence: 'Contains public sector information licensed under the Open Government Licence v3.0', results });
 }
