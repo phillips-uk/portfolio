@@ -2377,7 +2377,7 @@ function ruleChanges(m, out, ch) {
     category: 'structure',
     priority: excess >= m.totalSpend * 0.1 ? 'high' : 'medium',
     title: leadsIn === list.length
-      ? `${plural(list.length, 'campaign')} without sale values well above the average cost per conversion for that group, with no recent changes`
+      ? `${plural(list.length, 'enquiry campaign')} costing far more per conversion`
       : y.source === 'target' && !leadsIn
         ? `${plural(list.length, 'campaign')} missed your target by a wide margin`
         : y.source === 'target'

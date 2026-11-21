@@ -580,7 +580,7 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   assert.equal(r.trend.kind, 'cpa', 'the funnel reads the whole account on cost per conversion');
   assert.match(r.trend.funnel.lever.text, /^Across all campaigns/);
   const off = r.weaknesses.find((w) => w.id === 'off-target-campaigns');
-  assert.ok(off && /without sale values/.test(off.title) && !/a return of 0%/.test(off.detail), 'enquiry campaigns judged on their own cost per conversion');
+  assert.ok(off && /enquiry campaign costing far more per conversion/.test(off.title) && /without sale values averaged/.test(off.detail) && !/a return of 0%/.test(off.detail), 'enquiry campaigns judged on their own cost per conversion');
   const shop = findDemo('shop'); assert.equal(runRules(shop.data('2026-11-21'), { today: '2026-11-21' }).yardstick.scope, 'all', 'a shop with only sales is not mixed');
   console.log('mixed accounts: return on the sales campaigns, cost per conversion for the rest');
 }
