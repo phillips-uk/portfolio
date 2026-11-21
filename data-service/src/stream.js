@@ -96,7 +96,8 @@ function chargeRows(e, db) {
   if (e.event?.type === 'deleted') return [db.prepare('DELETE FROM charges WHERE charge_id = ?').bind(id)];
   const d = e.data || {};
   const names = (d.persons_entitled || []).map(p => (p.name || '').trim()).filter(Boolean);
-  const kind = (d.classification || []).map(c => c.description).filter(Boolean)[0] || null;
+  const cls = [].concat(d.classification || []);  // an object in the charges resource; accept a list too
+  const kind = cls.map(c => c?.description).filter(Boolean)[0] || null;
   return [db.prepare(
     `INSERT INTO charges (charge_id, company_number, status, created_on, delivered_on, satisfied_on, kind, holders,
        holders_not_listed, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
