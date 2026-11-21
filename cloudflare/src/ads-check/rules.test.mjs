@@ -486,7 +486,7 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   assert.ok(off && /Services Ely.*no changes in 28 days/.test(off.detail), '£22.50 against a £15 target, untouched');
   assert.equal(off.items, 2, 'with a target, every campaign off it is listed, changed or not');
   assert.equal(off.atStake.amount, 600, 'money at stake is the spend past the target: (900 - 40 x 15) + (600 - 20 x 15)');
-  assert.match(off.detail, /1 of them has had no changes/, 'and says which were left alone');
+  assert.match(off.detail, /"Services Ely" at £23 a conversion, no changes in 28 days; "PMax Shop" at £30 a conversion\./, 'and says which were left alone, once');
   assert.equal(r.changes.total, 1); assert.equal(r.changes.campaignsChanged, 1); assert.ok(!('byCampaign' in r.changes), 'the per-campaign map stays inside');
   r = run({ changes: [change('10'), change('20')] });
   assert.ok(!weak(r, 'off-target-campaigns') && !weak(r, 'no-recent-changes'), 'no target and on average: nothing to say');
@@ -570,5 +570,18 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   { const tp = actionPlan([{ id: 'qs', title: 'QS', priority: 'high', category: 'keywords' }, { id: 'trk', title: 'T', priority: 'high', category: 'tracking' }, { id: 'm', title: 'M', priority: 'high', category: 'structure', atStake: { amount: 900 } }, { id: 'lo', title: 'L', priority: 'medium', category: 'tracking' }], { lines: [{ id: 'qs', hours: 0.25 }, { id: 'trk', hours: 3 }] }, 2000);
     assert.deepEqual(tp.map((x) => x.id), ['trk', 'm', 'qs', 'lo'], 'tracking leads Fix first, ahead of money and quick fixes; other tracking stays in its level'); }
   console.log('action plan: money in a campaign already counted above is left out; products shown in full with a note');
+}
+// A mixed account: return on ad spend on the campaigns with sale values only; the others on cost per conversion.
+{
+  const d = findDemo('mixed'); const r = runRules(d.data('2026-11-21'), { today: '2026-11-21' });
+  assert.equal(r.yardstick.scope, 'sales', 'mixed account: return judged on the sales campaigns');
+  assert.ok(r.yardstick.value > r.facts.conversionValue30 / r.facts.spend30, 'their return is higher than the whole account figure');
+  assert.match(r.headline[0], /Campaigns with sale values accounted for/); assert.match(r.headline[1], /Your other campaigns spent .* no sale value/);
+  assert.equal(r.trend.kind, 'cpa', 'the funnel reads the whole account on cost per conversion');
+  assert.match(r.trend.funnel.lever.text, /^Across all campaigns/);
+  const off = r.weaknesses.find((w) => w.id === 'off-target-campaigns');
+  assert.ok(off && /without sale values/.test(off.title) && !/a return of 0%/.test(off.detail), 'enquiry campaigns judged on their own cost per conversion');
+  const shop = findDemo('shop'); assert.equal(runRules(shop.data('2026-11-21'), { today: '2026-11-21' }).yardstick.scope, 'all', 'a shop with only sales is not mixed');
+  console.log('mixed accounts: return on the sales campaigns, cost per conversion for the rest');
 }
 console.log('All rules tests passed.');

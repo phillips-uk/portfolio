@@ -284,7 +284,9 @@
     var lede = $('sum-lede'); lede.textContent = '';
     r.headline.forEach(function (t) { lede.appendChild(el('span', null, t)); });
     var y = r.yardstick;
-    $('sum-meta').textContent = !y ? '' : 'Judged against ' + (y.source === 'target' ? 'your target' : 'your account’s average') + ' of ' +
+    $('sum-meta').textContent = !y ? '' : y.scope === 'sales'
+      ? 'I compare campaigns with sale values against ' + (y.source === 'target' ? 'your ' + Math.round(y.value * 100) + '% return on ad spend target' : 'their 30-day average return on ad spend of ' + Math.round(y.value * 100) + '%') + '. I compare campaigns without sale values against their own 30-day average cost per conversion.'
+      : 'Judged against ' + (y.source === 'target' ? 'your target' : 'your account’s average') + ' of ' +
       (y.kind === 'roas' ? Math.round(y.value * 100) + '% return on ad spend' : cur.format(y.value) + ' a conversion') + (y.source === 'target' ? '' : ' over the last 30 days');
     $('sum-meta').hidden = !y;
     var plan = r.plan || [], byId = {};
@@ -340,7 +342,7 @@
         ['cpc', 'Cost per click', R.cpc != null ? cur.format(R.cpc).replace(/\.00$/, '') : 'n/a', P.cpc != null ? cur.format(P.cpc) : 'n/a'],
         ['cvr', 'Conversion rate', pctx(R.cvr), pctx(P.cvr)],
         roas ? ['roas', 'Return on ad spend', R.roas != null ? Math.round(R.roas * 100) + '%' : 'n/a', P.roas != null ? Math.round(P.roas * 100) + '%' : 'n/a']
-             : ['cpa', 'Cost per conversion', R.cpa != null ? cur.format(R.cpa) : 'n/a', P.cpa != null ? cur.format(P.cpa) : 'n/a']
+             : ['cpa', t.scope === 'all' ? 'Cost per conversion, all campaigns' : 'Cost per conversion', R.cpa != null ? cur.format(R.cpa) : 'n/a', P.cpa != null ? cur.format(P.cpa) : 'n/a']
       ];
       var money2 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: r.currency || 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
       parts[1][2] = R.cpc != null ? money2.format(R.cpc) : 'n/a'; parts[1][3] = P.cpc != null ? money2.format(P.cpc) : 'n/a';

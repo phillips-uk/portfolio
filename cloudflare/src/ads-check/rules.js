@@ -1880,22 +1880,41 @@ const idOf = (resource) => String(resource || '').split('/').pop();
 
 // What the account is judged on: cost per conversion, or return on ad spend for accounts whose conversions carry
 // real sale values. The visitor's target wins; else the account's own 30-day figure.
+// A mixed account (Lewis, 21 Nov 2026): some campaigns record sale values and others, with a real share of the spend,
+// record conversions with no value (enquiries). Return on ad spend is then worked out on the sales campaigns only,
+// since the enquiry spend would drag it down, and the enquiry campaigns are judged by cost per conversion on their own.
+function valueSplit(m) {
+  const spent = m.campaigns.filter((c) => c.spend > 0);
+  const sales = spent.filter((c) => c.convValue > 0);
+  const leads = spent.filter((c) => !(c.convValue > 0) && c.conversions > 0);
+  const salesSpend = sum(sales, (c) => c.spend), leadSpend = sum(leads, (c) => c.spend);
+  const mixed = sales.length > 0 && leads.length > 0 && leadSpend >= m.totalSpend * 0.1;
+  return {
+    mixed, sales, leads, salesSpend, leadSpend,
+    salesValue: sum(sales, (c) => c.convValue), salesIds: new Set(sales.map((c) => String(c.id))),
+    leadConversions: sum(leads, (c) => c.conversions),
+  };
+}
 function yardstick(m) {
+  const vs = valueSplit(m);
   const spend = m.totalSpend;
   const conv = sum(m.campaigns, (c) => c.conversions);
   const value = sum(m.campaigns, (c) => c.convValue);
   const t = m.target;
-  const kind = t ? t.type : (value > 0 && value >= spend * 0.5 ? 'roas' : 'cpa');
+  const base = vs.mixed ? vs.salesSpend : spend;
+  const kind = t ? t.type : (value > 0 && value >= base * 0.5 ? 'roas' : 'cpa');
   if (kind === 'roas') {
-    const avg = spend > 0 && value > 0 ? value / spend : null;
-    return { kind, value: t ? t.value : avg, average: avg, source: t ? 'target' : 'average' };
+    const avg = base > 0 && value > 0 ? value / base : null;
+    return { kind, value: t ? t.value : avg, average: avg, source: t ? 'target' : 'average', scope: vs.mixed ? 'sales' : 'all' };
   }
   const avg = conv > 0 ? spend / conv : null;
   return { kind, value: t ? t.value : avg, average: avg, source: t ? 'target' : 'average' };
 }
 const roasText = (r) => `${Math.round(r * 100)}%`;
 function yardText(m, y) {
+  if (y.kind === 'roas' && y.scope === 'sales' && y.source !== 'target') return `the ${roasText(y.value)} average return on ad spend for campaigns with sale values`;
   if (y.kind === 'roas') return `${y.source === 'target' ? 'your target return on ad spend' : 'your average return on ad spend'} of ${roasText(y.value)}`;
+  if (y.scope === 'leads') return `the ${m.money(y.value)} average cost per conversion of your campaigns without sale values`;
   return `${y.source === 'target' ? 'your target cost per conversion' : 'your average cost per conversion'} of ${m.money(y.value)}`;
 }
 // How a slice (campaign, device, network) does against the yardstick. ratio > 1 is worse; excess is spend past it.
@@ -2156,8 +2175,22 @@ function segmentTable(m) {
 function ruleSegments(m, out, seg) {
   if (!seg || seg.total.conversions < 10) return;
   const y30 = yardstick(m);
+  // Mixed account on return: judge devices and networks on the sales campaigns' rows only.
+  const vs = valueSplit(m);
+  const inScope = y30.kind === 'roas' && y30.scope === 'sales' ? (r) => vs.salesIds.has(String(r.campaign?.id)) : () => true;
+  if (y30.scope === 'sales' && y30.kind === 'roas') {
+    const rows = m.rows('segments90').filter(inScope);
+    const tot = { spend: 0, conversions: 0, value: 0 }, sp = { key: 'SEARCH_PARTNERS', spend: 0, conversions: 0, value: 0 };
+    for (const r of rows) {
+      const sp_ = fromMicros(r.metrics?.costMicros), cv = num(r.metrics?.conversions), vv = num(r.metrics?.conversionsValue);
+      tot.spend += sp_; tot.conversions += cv; tot.value += vv;
+      if (r.campaign?.advertisingChannelType === 'SEARCH' && r.segments?.adNetworkType === 'SEARCH_PARTNERS') { sp.spend += sp_; sp.conversions += cv; sp.value += vv; }
+    }
+    seg = { ...seg, total: tot, search: [sp] };
+    if (seg.total.conversions < 10) return;
+  }
   const avg90 = y30.kind === 'roas' ? (seg.total.spend ? seg.total.value / seg.total.spend : null) : seg.total.spend / seg.total.conversions;
-  const y = { kind: y30.kind, value: m.target ? m.target.value : avg90, source: m.target ? 'target' : 'average' };
+  const y = { kind: y30.kind, value: m.target ? m.target.value : avg90, source: m.target ? 'target' : 'average', scope: y30.scope };
   if (!y.value) return;
   const minSpend = y.kind === 'cpa' ? y.value * 2 : Math.max(50, seg.total.spend * 0.03);
   const weak = (s) => { const a = against(y, s); return a && s.spend >= minSpend && a.ratio >= 1.5 ? a : null; };
@@ -2179,7 +2212,7 @@ function ruleSegments(m, out, seg) {
       priority: pa.excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
       title: 'Search Partners cost far more per conversion',
       detail: `Over 90 days your Search campaigns spent ${m.money(partners.spend)} on Search Partners sites for ${figureText(m, y, pa.figure)}, against ${yardText(m, y)}.`,
-      atStake: atStake(pa.excess / 3, `Search Partners spend past ${y.source === 'target' ? 'your target' : 'your average'}`, splitBy((r) => r.campaign?.advertisingChannelType === 'SEARCH' && r.segments?.adNetworkType === 'SEARCH_PARTNERS')),
+      atStake: atStake(pa.excess / 3, `Search Partners spend past ${y.source === 'target' ? 'your target' : 'your average'}`, splitBy((r) => inScope(r) && r.campaign?.advertisingChannelType === 'SEARCH' && r.segments?.adNetworkType === 'SEARCH_PARTNERS')),
       why: 'Search Partners are other sites in Google\'s Search Network that show your Search ads. The spend is easy to miss because it sits inside your Search campaigns.',
       start: 'Segment your Search campaigns by network to see which ones it affects. If the gap holds, untick "Include Google search partners" in those campaigns.',
       startLink: null,
@@ -2192,6 +2225,7 @@ function ruleSegments(m, out, seg) {
 
   // Devices, all campaigns.
   const raw = new Map(); for (const r of m.rows('segments90')) {
+    if (!inScope(r)) continue;
     const k = r.segments?.device || 'OTHER';
     const s = raw.get(k) || { key: k, spend: 0, conversions: 0, value: 0 };
     s.spend += fromMicros(r.metrics?.costMicros); s.conversions += num(r.metrics?.conversions); s.value += num(r.metrics?.conversionsValue);
@@ -2207,7 +2241,7 @@ function ruleSegments(m, out, seg) {
       priority: excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
       title: `${titleCase(names.join(' and '))} ${verb(bad.length, 'costs', 'cost')} far more per conversion`,
       detail: `Over 90 days: ${bad.map((x) => `${(DEVICE_LABEL[x.s.key] || x.s.key).toLowerCase()} took ${pct(x.s.spend / seg.total.spend)} of spend at ${figureText(m, y, x.a.figure)}`).join('; ')}. Judged against ${yardText(m, y)}.`,
-      atStake: atStake(excess / 3, `${titleCase(names.join(' and '))} spend past ${y.source === 'target' ? 'your target' : 'your average'}`, splitBy((r) => bad.some((x) => x.s.key === (r.segments?.device || 'OTHER')))),
+      atStake: atStake(excess / 3, `${titleCase(names.join(' and '))} spend past ${y.source === 'target' ? 'your target' : 'your average'}`, splitBy((r) => inScope(r) && bad.some((x) => x.s.key === (r.segments?.device || 'OTHER')))),
       why: 'When one device converts much worse, the cause is often the page, the form or the tracking on that device.',
       start: `Try your own site, form and checkout on ${names.join(' and ')}, and check the conversion tag fires there. On manual bids, a lower bid for ${bad.length === 1 ? 'that device' : 'those devices'} is an option; Smart Bidding already weighs devices itself.`,
       startLink: null,
@@ -2320,20 +2354,37 @@ function ruleChanges(m, out, ch) {
     // account have none); campaigns with no conversions at all are reported by spend-no-conversions already.
     .filter((c) => c.spend >= minSpend && !(c.conversions === 0 && c.channel !== 'PERFORMANCE_MAX') && (y.kind !== 'roas' || c.convValue > 0))
     .map((c) => ({ c, a: against(y, { spend: c.spend, conversions: c.conversions, value: c.convValue }) }))
-    .filter((x) => x.a && x.a.ratio >= limit);
+    .filter((x) => x.a && x.a.ratio >= limit)
+    .map((x) => ({ ...x, y }));
+  // Mixed account on return: the campaigns without sale values against their own average cost per conversion.
+  const vs = valueSplit(m);
+  if (y.kind === 'roas' && vs.mixed && vs.leadConversions > 0) {
+    const ly = { kind: 'cpa', value: vs.leadSpend / vs.leadConversions, source: 'average', scope: 'leads' };
+    for (const c of vs.leads) {
+      if (c.spend < ly.value * 2) continue;
+      const a = against(ly, { spend: c.spend, conversions: c.conversions, value: 0 });
+      if (a && a.ratio >= 1.5 && !ch.byCampaign.has(c.id)) off.push({ c, a, y: ly });
+    }
+  }
   const still = off.filter((x) => !ch.byCampaign.has(x.c.id));
   const list = y.source === 'target' ? off : still;
   if (!list.length) return;
+  const leadsIn = list.filter((x) => x.y.scope === 'leads').length;
+  const leadY = leadsIn ? list.find((x) => x.y.scope === 'leads').y : null;
   const excess = sum(list, (x) => x.a.excess);
   out.weak({
     id: 'off-target-campaigns',
     category: 'structure',
     priority: excess >= m.totalSpend * 0.1 ? 'high' : 'medium',
-    title: y.source === 'target'
-      ? `${plural(list.length, 'campaign')} missed your target by a wide margin`
-      : `${plural(list.length, 'campaign')} well below your average, with no recent changes`,
-    detail: `${list.slice(0, 3).map((x) => `"${clean(x.c.name, 45)}" at ${figureText(m, y, x.a.figure)}${ch.byCampaign.has(x.c.id) ? '' : ', no changes in 28 days'}`).join('; ')}${list.length > 3 ? `; and ${list.length - 3} more` : ''}. Judged against ${yardText(m, y)} over the last 30 days.${y.source === 'target' && still.length ? ` ${still.length === list.length ? (list.length === 1 ? 'It has' : 'None of them has') : `${still.length} of them ${verb(still.length, 'has', 'have')}`} had no changes in 28 days.` : ''}`,
-    atStake: atStake(excess, `Spend past ${y.source === 'target' ? 'your target' : 'your average'} in these campaigns`, Object.fromEntries(list.map((x) => [x.c.name, x.a.excess]))),
+    title: leadsIn === list.length
+      ? `${plural(list.length, 'campaign')} without sale values well above the average cost per conversion for that group, with no recent changes`
+      : y.source === 'target' && !leadsIn
+        ? `${plural(list.length, 'campaign')} missed your target by a wide margin`
+        : y.source === 'target'
+          ? `${plural(list.length, 'campaign')} well below your return on ad spend target or well above their group's average cost per conversion`
+          : `${plural(list.length, 'campaign')} well below your average, with no recent changes`,
+    detail: `${list.slice(0, 3).map((x) => `"${clean(x.c.name, 45)}" at ${figureText(m, x.y, x.a.figure)}${ch.byCampaign.has(x.c.id) ? '' : ', no changes in 28 days'}`).join('; ')}${list.length > 3 ? `; and ${list.length - 3} more` : ''}. ${list.length === leadsIn ? `Campaigns without sale values averaged ${m.money(leadY.value)} per conversion` : `Judged against ${yardText(m, y)}${leadsIn ? `, and campaigns without sale values against ${yardText(m, leadY)}` : ''}`} over the last 30 days.${y.source === 'target' && still.length && list.length > 3 ? ` ${still.length === list.length ? 'None of them has' : `${still.length} of them ${verb(still.length, 'has', 'have')}`} had no changes in 28 days.` : ''}`,
+    atStake: atStake(excess, (leadsIn === list.length ? 'Spend above what these campaigns would have spent at their group average cost per conversion' : `Spend past ${y.source === 'target' ? (leadsIn ? 'your target or their group average' : 'your target') : 'your average'} in these campaigns`), Object.fromEntries(list.map((x) => [x.c.name, x.a.excess]))),
     why: 'These campaigns cost far more per result than the account can afford, and the money at stake is what the same results would have cost at that level.',
     start: 'For each one, check conversion volume and tracking first, then search terms, bids and the landing page. If nothing explains the gap, move budget to the campaigns that meet it.',
     startLink: LINKS.bidding,
@@ -2433,14 +2484,17 @@ function trendTable(m) {
     funnel = { recent: R, prior: P, lever: lever(m, R, P) };
   }
   if (!months && !funnel) return null;
-  return { months, funnel, kind: yardstick(m).kind };
+  const yk = yardstick(m);
+  return { months, funnel, kind: yk.scope === 'sales' ? 'cpa' : yk.kind, scope: yk.scope === 'sales' ? 'all' : undefined };
 }
 
 // Which part of the funnel moved the cost per conversion (or the return) most: cost per click, conversion rate or,
 // for sales, the value per sale. Each is a factor of the result, so the change splits cleanly on a log scale.
 function lever(m, R, P) {
   if (!(R.conversions >= 10 && P.conversions >= 10 && R.cpc && P.cpc && R.cvr && P.cvr)) return { key: null, text: 'Too few conversions in one of the two periods to say which part of the funnel moved.' };
-  const y = yardstick(m);
+  const y0 = yardstick(m);
+  const whole = y0.scope === 'sales';
+  const y = whole ? { ...y0, kind: 'cpa' } : y0;
   const parts = [
     { key: 'cpc', name: 'cost per click', d: -Math.log(R.cpc / P.cpc), from: m.money(P.cpc), to: m.money(R.cpc) },
     { key: 'cvr', name: 'conversion rate', d: Math.log(R.cvr / P.cvr), from: `${(P.cvr * 100).toFixed(1)}%`, to: `${(R.cvr * 100).toFixed(1)}%` },
@@ -2451,11 +2505,11 @@ function lever(m, R, P) {
   const top = parts.slice().sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
   const what = y.kind === 'roas' ? 'return on ad spend' : 'cost per conversion';
   const change = y.kind === 'roas' ? Math.exp(total) - 1 : Math.exp(-total) - 1;
-  if (Math.abs(change) < 0.05) return { key: null, text: `Your ${what} has held steady against the 60 days before (within 5%).` };
+  if (Math.abs(change) < 0.05) return { key: null, text: `${whole ? 'Across all campaigns, your cost per conversion' : `Your ${what}`} has held steady against the 60 days before (within 5%).` };
   return {
     key: top.key,
     better: total > 0,
-    text: `Your ${what} ${change > 0 ? 'rose' : 'fell'} ${pct(Math.abs(change))} against the 60 days before. Most of that came from ${top.name}, which went from ${top.from} to ${top.to}.`,
+    text: `${whole ? 'Across all campaigns, your cost per conversion' : `Your ${what}`} ${change > 0 ? 'rose' : 'fell'} ${pct(Math.abs(change))} against the 60 days before. Most of that came from ${top.name}, which went from ${top.from} to ${top.to}.`,
   };
 }
 
@@ -2508,7 +2562,12 @@ function headline(m, facts, weaknesses, trend) {
   const s = [];
   const y = yardstick(m);
   if (facts.spend30 > 0) {
-    if (y.kind === 'roas' && facts.conversionValue30 > 0) {
+    const vs = valueSplit(m);
+    if (y.kind === 'roas' && y.scope === 'sales' && vs.salesValue > 0) {
+      const r = vs.salesValue / vs.salesSpend;
+      s.push(`In the last 30 days you spent ${m.money(facts.spend30)}. Campaigns with sale values accounted for ${m.money(vs.salesSpend)} of that and recorded ${m.money(vs.salesValue)} in conversion value, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
+      s.push(`Your other campaigns spent ${m.money(vs.leadSpend)} and recorded ${vs.leadConversions.toLocaleString('en-GB', { maximumFractionDigits: 1 })} ${vs.leadConversions === 1 ? 'conversion' : 'conversions'} with no sale value, at ${m.money(vs.leadSpend / vs.leadConversions)} per conversion.`);
+    } else if (y.kind === 'roas' && facts.conversionValue30 > 0) {
       const r = facts.conversionValue30 / facts.spend30;
       s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded ${m.money(facts.conversionValue30)} in conversion value, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
     } else if (facts.conversions30 > 0) {
@@ -2653,7 +2712,7 @@ export function runRules(data = {}, ctx = {}) {
     trend, segments: segments ? { days: segments.days, total: segments.total, devices: segments.devices, networks: segments.networks } : null,
     changes: changes ? (({ byCampaign, ...c }) => c)(changes) : null,
     urls: m.urlChecks ? { checked: m.urlChecks.pages.length, total: m.urlChecks.total, broken: m.urlChecks.pages.filter((p) => p.state === 'broken').length, notChecked: m.urlChecks.pages.filter((p) => p.state === 'blocked' || p.state === 'timeout').length } : null,
-    target: m.target, yardstick: y.value ? { kind: y.kind, value: round2(y.value), source: y.source } : null,
+    target: m.target, yardstick: y.value ? { kind: y.kind, value: round2(y.value), source: y.source, scope: y.scope || 'all' } : null,
     headline: headline(m, facts, weaknesses, trend),
   };
 }
