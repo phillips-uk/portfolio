@@ -39,3 +39,8 @@ Cropped and colour graded into the Phillips. tones (Design Spec v3 section 1a, 2
 | marketing-systems-5.jpg | https://stocksnap.io/photo/whiteboard-post-itnotes-YR89OQFMT1 | Startup Stock Photos | CC0 |
 | marketing-systems-6.jpg | https://stocksnap.io/photo/whiteboard-planning-NQQ2PJW1JM | Startup Stock Photos | CC0 |
 | marketing-systems-7.jpg | https://stocksnap.io/photo/blueprint-plan-M7MP0ATTWL | MichaelGaida | CC0 |
+| about-ely.jpg | https://commons.wikimedia.org/wiki/File:Fen_Rivers_Way_at_Ely_Riverside_-_geograph.org.uk_-_6949792.jpg | Peter S | CC BY-SA 2.0 (credited on the page; the edited version is shared under the same licence) |
+| about-desk.jpg | https://stocksnap.io/photo/office-desk-0EFDQKW84D | Cathryn Lavery | CC0 |
+| free-checks-3.jpg | https://stocksnap.io/photo/smartphone-mobile-O4V3KXZI1T | Negative Space | CC0 |
+| ads-check-3.jpg | https://stocksnap.io/photo/smartphone-cellphone-J58JT39MOI | Freestocks.org | CC0 |
+| website-check-3.jpg | https://stocksnap.io/photo/macbook-computer-6UHHE19YG7 | Negative Space | CC0 |

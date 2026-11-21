@@ -731,3 +731,8 @@ li.fold > b { display: flex; justify-content: space-between; align-items: baseli
   .photo-wide figcaption { border-radius: 0 0 var(--r-md) var(--r-md); padding: var(--s8) var(--s4) var(--s3); }
   .place-band .place-cap { padding-top: var(--s8); padding-bottom: var(--s3); }
 }
+
+/* Two photos side by side (free checks hub); stacked on phones */
+.photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); margin: var(--s12) auto 0; max-width: 960px; }
+.photo-pair img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--r-lg); box-shadow: var(--e1); }
+@media (max-width: 600px) { .photo-pair { grid-template-columns: 1fr; gap: var(--s4); } .photo-pair img { aspect-ratio: 4 / 3; border-radius: var(--r-md); } }
