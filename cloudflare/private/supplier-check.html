@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supplier Health Check | Phillips.</title>
+<meta name="description" content="Check a UK supplier or customer before you trade: status, filing, insolvency notices, lenders, latest accounts against the year before and how fast it pays its suppliers, each with a date.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.phillips-uk.com/demo/supplier-check/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<meta name="theme-color" content="#FFFFFF">
+<script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
+<link rel="stylesheet" href="/agency.css?v=17">
+<link rel="stylesheet" href="/motion.css?v=5">
+<link rel="stylesheet" href="/tools.css?v=20">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.phillips-uk.com/demo/supplier-check/">
+<meta property="og:title" content="Supplier Health Check | Phillips.">
+<meta property="og:description" content="Check a UK supplier or customer before you trade. Public records only, each fact with its date.">
+<style>
+  :root { color-scheme: light; }
+  /* Company search: a combobox under the field */
+  .sc-find { position: relative; max-width: 640px; }
+  .sc-find input { width: 100%; font: inherit; font-size: 16px; min-height: 52px; padding: 0 18px; border-radius: var(--r-pill);
+    border: 1px solid var(--line-2); background: var(--surface); color: var(--text); box-shadow: var(--field-shadow); }
+  .sc-find input:hover { border-color: var(--text-2); }
+  .sc-find input:focus { outline: none; border-color: var(--brand); box-shadow: var(--field-shadow), 0 0 0 4px var(--brand-ring); }
+  .sc-find input::placeholder { color: var(--muted); }
+  .sc-list { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px); margin: 0; padding: 6px; list-style: none;
+    background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); box-shadow: var(--e3, var(--e2)); max-height: 360px; overflow: auto; }
+  .sc-list[hidden] { display: none; }
+  .sc-list li { padding: 10px 12px; border-radius: var(--r-sm); cursor: pointer; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .sc-list li[aria-selected="true"], .sc-list li:hover { background: var(--brand-wash); }
+  .sc-list b { font-weight: 700; font-size: 14.5px; overflow-wrap: anywhere; }
+  .sc-list small { flex: none; font: 500 11.5px/1.2 var(--mono); color: var(--muted); letter-spacing: .04em; text-align: right; }
+  .sc-list .sc-empty { cursor: default; color: var(--muted); font-size: 14px; }
+  .sc-list .sc-empty:hover { background: none; }
+  .sc-status { min-height: 22px; margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+
+  /* Example card in the hero (made up) */
+  .sc-ex { margin: 0; padding: var(--s5); border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line-soft); box-shadow: var(--e2); display: grid; gap: var(--s3); }
+  .sc-ex-k { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .sc-ex b { font-size: 15px; font-weight: 800; }
+  .sc-ex ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+  .sc-ex li { display: flex; gap: 10px; align-items: baseline; font-size: 13.5px; padding: 9px 12px; border-radius: var(--r-sm); background: var(--bg); }
+  .sc-ex li::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); transform: translateY(-1px); }
+  .sc-ex li.nb::before { background: var(--brand); }
+  .sc-ex li span { margin-left: auto; font: 500 11px/1.2 var(--mono); color: var(--muted); white-space: nowrap; }
+  @media (max-width: 900px) { .sc-ex { max-width: 420px; } .sc-ex li:nth-child(n+3) { display: none; } }
+
+  /* Result */
+  .sc-result { padding: 64px 0 80px; background: var(--bg); border-top: 1px solid var(--line); }
+  .sc-result[hidden] { display: none; }
+  .sc-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 28px; }
+  .sc-head h2 { font-size: clamp(28px, 3.4vw, 42px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin: 0 0 8px; overflow-wrap: anywhere; }
+  .sc-meta { color: var(--muted); font-size: 14px; margin: 0; }
+  .sc-acts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sc-acts button { font: inherit; font-size: 13.5px; font-weight: 800; min-height: var(--control-h-sm); padding: 0 16px; border-radius: var(--r-pill);
+    border: 1px solid var(--line-2); background: var(--surface); color: var(--text); cursor: pointer; box-shadow: var(--e1); }
+  .sc-acts button:hover { border-color: var(--text-2); box-shadow: var(--e2); transform: translateY(-1px); }
+  .sc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 900px) { .sc-grid { grid-template-columns: 1fr; } }
+  .sc-card { background: var(--card-fill, var(--surface)); border: 1px solid var(--card-rim, var(--line-soft)); border-radius: var(--r-md); box-shadow: var(--e1); padding: 20px 22px; }
+  .sc-card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .sc-card-h h3 { font: 500 12px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin: 0; }
+  .sc-tag { display: inline-flex; align-items: center; gap: 7px; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-2);
+    padding: 6px 10px; border-radius: var(--r-pill); background: var(--brand-wash); white-space: nowrap; }
+  .sc-tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+  .sc-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .sc-facts li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 0; font-size: 14.5px; line-height: 1.45; color: var(--text-2); border-top: 1px solid var(--line-soft); }
+  .sc-facts li:first-child { border-top: 0; }
+  .sc-facts li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line-2); transform: translateY(-2px); }
+  .sc-facts li.nb { color: var(--text); font-weight: 650; }
+  .sc-facts li.nb::before { background: var(--brand); }
+  .sc-facts time, .sc-facts .sc-d { font: 500 11.5px/1.3 var(--mono); color: var(--muted); white-space: nowrap; }
+  .sc-facts a { color: var(--brand-text); font-weight: 700; }
+  .sc-facts small { display: block; color: var(--muted); font-weight: 500; font-size: 12.5px; }
+  .sc-basis { margin: 24px 0 0; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 760px; }
+  .sc-key { display: inline-flex; align-items: center; gap: 7px; margin-right: 14px; }
+  .sc-key::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+
+  /* Who it's for, behind expanders */
+  .sc-for { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; max-width: 900px; }
+  @media (max-width: 900px) { .sc-for { grid-template-columns: 1fr; } }
+  .sc-for details { border: 1px solid var(--line-soft); border-radius: var(--r-md); background: var(--surface); padding: 14px 18px; box-shadow: var(--e1); }
+  .sc-for summary { cursor: pointer; font-weight: 800; font-size: 15.5px; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  .sc-for summary::-webkit-details-marker { display: none; }
+  .sc-for summary::after { content: "+"; color: var(--brand-text); font-weight: 800; }
+  .sc-for details[open] summary::after { content: "\2212"; }
+  .sc-for p { margin: 10px 0 2px; color: var(--text-2); font-size: 14.5px; line-height: 1.6; }
+
+  /* A choice is a centred card */
+  .sc-ask { max-width: 640px; margin: 0 auto; text-align: center; padding: 40px 32px; border-radius: var(--r-md);
+    background: var(--card-fill, var(--surface)); border: 1px solid var(--card-rim, var(--line-soft)); box-shadow: var(--e2); }
+  .sc-ask h2 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 800; letter-spacing: -0.03em; margin: 0 0 var(--s2); }
+  .sc-ask p { color: var(--text-2); margin: 0 0 var(--s6); font-size: 16px; line-height: 1.6; }
+  .sc-ask .btn-row { justify-content: center; }
+  @media (max-width: 560px) { .sc-ask { padding: 28px 20px; } .sc-ask .btn-filled, .sc-ask .btn-outline { width: 100%; justify-content: center; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="/#services" class="nav-link">Services</a>
+      <a href="/work/" class="nav-link">Work</a>
+      <a href="/about/" class="nav-link">About</a>
+      <a href="/guides/" class="nav-link">Insights</a>
+      <a href="/free-checks/" class="nav-cta">Free checks</a>
+    </nav>
+    <button class="nav-hamburger" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <rect y="4" width="22" height="2" rx="1" fill="currentColor"/>
+        <rect y="10" width="22" height="2" rx="1" fill="currentColor"/>
+        <rect y="16" width="22" height="2" rx="1" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</header>
+<div class="nav-drawer" id="nav-drawer" role="dialog" aria-label="Navigation menu">
+  <a href="/#services" class="nav-link">Services</a>
+  <a href="/work/" class="nav-link">Work</a>
+  <a href="/about/" class="nav-link">About</a>
+  <a href="/guides/" class="nav-link">Insights</a>
+  <a href="/free-checks/" class="nav-cta" style="margin-top:8px">Free checks</a>
+</div>
+
+<section class="hero svc-hero tool-hero" data-hero>
+  <div class="hero-inner">
+   <div class="hero-grid">
+   <div>
+    <span class="eyebrow">Supplier health check</span>
+    <h1 class="hero-h1">Check a company <span>before you trade.</span></h1>
+    <p class="hero-body">Type a UK company's name or number. See its status, filing, insolvency notices, lenders, latest accounts against the year before and how fast it pays its suppliers, each with a date.</p>
+    <div class="sc-find">
+      <label for="sc-q" style="position:absolute;left:-9999px">Company name or number</label>
+      <input type="text" id="sc-q" autocomplete="off" spellcheck="false" placeholder="Company name or number" maxlength="60"
+        role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sc-list">
+      <ul class="sc-list" id="sc-list" role="listbox" aria-label="Matching companies" hidden></ul>
+    </div>
+    <p class="sc-status" id="sc-status" role="status" aria-live="polite"></p>
+    <p class="hero-note">A demo of a tool I build into client websites. Public records only: not a credit score.</p>
+   </div>
+   <figure class="sc-ex" aria-label="An example result, made up">
+     <span class="sc-ex-k">Example result</span>
+     <b>Example Wholesale Ltd</b>
+     <ul>
+       <li>Status: Active <span>since 2004</span></li>
+       <li class="nb">Confirmation statement overdue <span>1 Nov</span></li>
+       <li class="nb">New charge registered <span>14 Oct</span></li>
+       <li>Cash £410k, up 12% <span>31 Mar</span></li>
+     </ul>
+   </figure>
+   </div>
+  </div>
+</section>
+
+<section class="sc-result" id="sc-result" hidden aria-live="polite">
+  <div class="page-w">
+    <div class="sc-head">
+      <div>
+        <span class="eyebrow" id="sc-eyebrow">Health check</span>
+        <h2 id="sc-name"></h2>
+        <p class="sc-meta" id="sc-meta"></p>
+      </div>
+      <div class="sc-acts">
+        <button type="button" id="sc-copy">Copy the link</button>
+        <button type="button" id="sc-again">Check another company</button>
+      </div>
+    </div>
+    <div class="sc-grid" id="sc-grid"></div>
+    <p class="sc-basis" id="sc-basis"></p>
+  </div>
+</section>
+
+<section class="sec-white">
+  <div class="page-w">
+    <div class="sec-head">
+      <span class="eyebrow">Who it's for</span>
+      <h2 class="h2">One tool, built into your website.</h2>
+      <p class="lede">Your visitors check a company on your site, and the next step is your enquiry form.</p>
+    </div>
+    <div class="sc-for">
+      <details><summary>Credit controllers and debt recovery</summary><p>Check a customer before extending credit, and see when a winding-up petition, liquidation or new lender appears.</p></details>
+      <details><summary>Invoice and asset-based finance</summary><p>See a prospect's existing lenders, filed debtors and accounts trend before the first call.</p></details>
+      <details><summary>Procurement and supply chain</summary><p>Check a supplier's status, filing and payment record before signing a contract.</p></details>
+      <details><summary>Accountants and trade bodies</summary><p>Give clients or members a quick check they come back to, with your name on it.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec-cream">
+  <div class="page-w">
+    <div class="sc-ask">
+      <h2>Want this on your website?</h2>
+      <p>I build it on your brand, with your enquiry form underneath. Ask me a question and I'll reply myself.</p>
+      <div class="btn-row"><a href="/#contact" class="btn-filled">Ask me a question</a><a href="/free-checks/" class="btn-outline">See the free checks</a></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <img src="/logo/phillips-lockup-reversed.svg" alt="Phillips." style="height:22px;width:auto;display:block">
+      <span class="footer-tagline">I plan the marketing, then I do the work.</span>
+      <span>© 2026 PHILLIPSGROUPUK LIMITED · phillips-uk.com</span>
+    </div>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="/#services">Services</a>
+      <a href="/work/">Work</a>
+      <a href="/about/">About</a>
+      <a href="/guides/">Guides</a>
+      <a href="/updates/">The Monday Brief</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+    </nav>
+  </div>
+  <nav class="footer-services" aria-label="Services"><a href="/web-design/">Web design</a><a href="/local-seo/">Local SEO</a><a href="/google-ads/">Google Ads</a><a href="/marketing-systems/">Marketing systems</a><a href="/consultancy/">Consultancy</a><a href="/google-ads-audit">Google Ads Check</a><a href="/website-check/">Website Check</a></nav>
+  <nav class="group-links" aria-label="Phillips Group of Companies"><a href="https://phillips-group.uk/">Phillips Group</a> of Companies: <span><a href="https://thedirectorsoffice.uk/">The Director's Office</a> &middot;</span> <span>Phillips. &middot;</span> <span><a href="https://beforeyoupay.uk/">Before You Pay</a> &middot;</span> <a href="https://searchdesk.uk/" style="white-space:nowrap">Search Desk</a></nav>
+  <p class="legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, a company registered in England and Wales (company number 17567515). Registered office: 124-128 City Road, London, EC1V 2NX. It handles official post only and doesn't take visitors, so please <a href="/#contact">ask me a question</a> or email <a data-email>contact at phillips-uk dot com</a>.</p>
+</footer>
+
+<script>
+  var toggle = document.getElementById('nav-toggle');
+  var drawer = document.getElementById('nav-drawer');
+  toggle.addEventListener('click', function () {
+    var isOpen = drawer.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen);
+  });
+  drawer.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
+  });
+
+(function () {
+  var API = '/demo/supplier-check/api/';
+  var q = document.getElementById('sc-q'), list = document.getElementById('sc-list'), status = document.getElementById('sc-status');
+  var result = document.getElementById('sc-result'), grid = document.getElementById('sc-grid');
+  var items = [], active = -1, timer = null, seq = 0;
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function ukDate(d) { return d ? Number(d.slice(8, 10)) + ' ' + MONTHS[Number(d.slice(5, 7)) - 1] + ' ' + d.slice(0, 4) : ''; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function say(t) { status.textContent = t || ''; }
+
+  function close() { list.hidden = true; q.setAttribute('aria-expanded', 'false'); active = -1; }
+  function show(rows) {
+    items = rows; active = -1; list.innerHTML = '';
+    if (!rows.length) { var li = el('li', 'sc-empty', 'No company found. Try the start of the name, or the 8-character company number.'); list.appendChild(li); }
+    rows.forEach(function (r, i) {
+      var li = el('li'); li.id = 'sc-opt-' + i; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+      li.appendChild(el('b', null, r.name));
+      li.appendChild(el('small', null, r.number + (r.status && r.status !== 'Active' ? ' · ' + r.status : '')));
+      li.addEventListener('mousedown', function (e) { e.preventDefault(); pick(i); });
+      list.appendChild(li);
+    });
+    list.hidden = false; q.setAttribute('aria-expanded', 'true');
+  }
+  function mark(i) {
+    var opts = list.querySelectorAll('[role=option]');
+    opts.forEach(function (o, k) { o.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+    active = i;
+    if (opts[i]) { q.setAttribute('aria-activedescendant', opts[i].id); opts[i].scrollIntoView({ block: 'nearest' }); }
+  }
+  function pick(i) { var r = items[i]; if (!r) return; q.value = r.name; close(); check(r.number); }
+
+  q.addEventListener('input', function () {
+    clearTimeout(timer);
+    var v = q.value.trim();
+    if (v.replace(/[^A-Za-z0-9]/g, '').length < 2) { close(); return; }
+    timer = setTimeout(function () {
+      var mine = ++seq;
+      fetch(API + 'search?q=' + encodeURIComponent(v)).then(function (r) { return r.json(); }).then(function (d) {
+        if (mine !== seq) return;
+        if (d.error) { say('Search is unavailable just now. Please try again shortly.'); return; }
+        say(''); show(d.results || []);
+      }).catch(function () { say('Search is unavailable just now. Please try again shortly.'); });
+    }, 300);
+  });
+  q.addEventListener('keydown', function (e) {
+    if (list.hidden) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); mark(Math.min(items.length - 1, active + 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); mark(Math.max(0, active - 1)); }
+    else if (e.key === 'Enter') { e.preventDefault(); pick(active >= 0 ? active : 0); }
+    else if (e.key === 'Escape') close();
+  });
+  q.addEventListener('blur', function () { setTimeout(close, 120); });
+
+  function check(number) {
+    say('Checking the records…');
+    fetch(API + 'check/' + encodeURIComponent(number)).then(function (r) { return r.json().then(function (d) { return { s: r.status, d: d }; }); })
+      .then(function (x) {
+        if (x.s === 404) return say('That company number isn’t on the register.');
+        if (x.s === 429) return say(x.d.error || 'Too many checks just now. Please try again later.');
+        if (x.s === 503) return say('Companies House is busy. Please try again in a minute.');
+        if (x.s !== 200) return say('The check is unavailable just now. Please try again shortly.');
+        say(''); render(x.d);
+        try { history.replaceState(null, '', '?n=' + x.d.company.number); } catch (e) {}
+        window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'supplier_check_complete' });
+      }).catch(function () { say('The check is unavailable just now. Please try again shortly.'); });
+  }
+
+  function render(d) {
+    var c = d.company;
+    document.getElementById('sc-name').textContent = c.name;
+    var n = d.summary.with_notable_facts;
+    document.getElementById('sc-meta').textContent = 'Company ' + c.number + (c.postcode_area ? ' · ' + c.postcode_area + ' postcode area' : '') +
+      ' · checked ' + ukDate(d.as_of) + ' · ' + d.summary.checks + ' checks, ' + (n ? n + ' with something worth a look' : 'nothing that stands out');
+    grid.innerHTML = '';
+    d.checks.forEach(function (k) {
+      var card = el('article', 'sc-card'), h = el('div', 'sc-card-h');
+      h.appendChild(el('h3', null, k.label));
+      if (k.found) h.appendChild(el('span', 'sc-tag', 'Worth a look'));
+      card.appendChild(h);
+      var ul = el('ul', 'sc-facts');
+      k.facts.forEach(function (f) {
+        var li = el('li', f.notable ? 'nb' : null), body = el('span');
+        body.appendChild(document.createTextNode(f.text));
+        if (f.url) { body.appendChild(document.createTextNode(' ')); var a = el('a', null, 'Notice'); a.href = f.url; a.target = '_blank'; a.rel = 'noopener'; body.appendChild(a); }
+        if (f.note) body.appendChild(el('small', null, f.note));
+        li.appendChild(body);
+        if (f.date) { var t = el('time', null, ukDate(f.date)); t.dateTime = f.date; li.appendChild(t); } else li.appendChild(el('span', 'sc-d', ''));
+        ul.appendChild(li);
+      });
+      card.appendChild(ul); grid.appendChild(card);
+    });
+    var basis = document.getElementById('sc-basis'); basis.innerHTML = '';
+    basis.appendChild(el('span', 'sc-key', 'Worth a look'));
+    basis.appendChild(document.createTextNode(d.basis + ' Sources: ' + d.source + '. ' + d.licence + '.'));
+    result.hidden = false;
+    result.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  document.getElementById('sc-again').addEventListener('click', function () {
+    q.value = ''; window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(function () { q.focus(); }, 300);
+  });
+  document.getElementById('sc-copy').addEventListener('click', function () {
+    var b = this; navigator.clipboard && navigator.clipboard.writeText(location.href).then(function () { b.textContent = 'Link copied'; setTimeout(function () { b.textContent = 'Copy the link'; }, 2000); });
+  });
+  var n0 = new URLSearchParams(location.search).get('n');
+  if (n0 && /^[A-Za-z0-9]{8}$/.test(n0)) check(n0.toUpperCase());
+})();
+</script>
+<script src="/motion.js?v=5" defer></script>
+<script src="/email.js?v=1" defer></script>
+</body>
+</html>
