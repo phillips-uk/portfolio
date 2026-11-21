@@ -23,7 +23,7 @@
 //   tools/website-check/day/<day>.json         checks run by every visitor that day (the daily ceiling)
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
-import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS } from './website-check-rules.js';
+import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS, internalUrl, pageKey, robotsAllows, pageFacts } from './website-check-rules.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, webQuote } from './pricing.js';
@@ -125,6 +125,95 @@ async function smallText(url) {
   } catch { return null; }
 }
 
+// ---------- the site scan (rules v7) ----------
+const SCAN_PAGES = 25;       // the home page and up to 24 more
+const LINK_CHECKS = 25;      // other links on those pages, checked for a working answer
+const SCAN_AT_ONCE = 4;      // a few requests at a time, so a small site isn't strained
+const SCAN_SECONDS = 35;     // no new request starts after this (Google's speed test usually takes longer anyway)
+const ROBOT = 'PhillipsWebsiteCheck';
+
+// One address, following redirects by hand so the hops can be counted. Reads the body only when asked.
+async function fetchHops(url, withBody) {
+  let current = url;
+  for (let hops = 0; hops <= 5; hops++) {
+    let r;
+    try { r = await timedFetch(current, { redirect: 'manual', headers: { Accept: 'text/html,application/xhtml+xml' } }, 9000); }
+    catch { return { url, status: 0, hops, finalUrl: current }; }
+    const loc = r.headers.get('Location');
+    if (r.status >= 300 && r.status < 400 && loc) {
+      try { await r.body?.cancel(); } catch { /* nothing to read */ }
+      try { current = new URL(loc, current).href; } catch { return { url, status: r.status, hops, finalUrl: current }; }
+      continue;
+    }
+    const isHtml = /html/i.test(r.headers.get('Content-Type') || '');
+    const html = withBody && r.status === 200 && isHtml ? await readText(r, 600_000) : '';
+    if (!html) { try { await r.body?.cancel(); } catch { /* nothing to read */ } }
+    return { url, status: r.status, hops, finalUrl: current, html, isHtml, robotsHeader: r.headers.get('X-Robots-Tag') || '' };
+  }
+  return { url, status: 310, hops: 6, finalUrl: current }; // a redirect loop or a very long chain
+}
+
+// A few at a time; nothing new starts after the deadline, so a slow site can't hold the report up.
+async function inTurns(items, n, fn, deadline) {
+  const out = new Array(items.length).fill(null);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (next < items.length && Date.now() < deadline) { const i = next++; out[i] = await fn(items[i]); } }));
+  return out.filter(Boolean);
+}
+
+// The addresses in the sitemap (a sitemap index is followed to its first three sitemaps), same site only, at most 500.
+async function sitemapLocs(origin, robots) {
+  const read = async u => {
+    try {
+      const r = await timedFetch(u, { redirect: 'follow' }, 9000);
+      if (!r.ok) { try { await r.body?.cancel(); } catch { /* */ } return null; }
+      const t = await readText(r, 1_500_000);
+      return /<(urlset|sitemapindex)\b/i.test(t) ? t : null;
+    } catch { return null; }
+  };
+  const listed = robots ? [...robots.matchAll(/^\s*sitemap:\s*(\S+)/gim)].map(m => m[1]) : [];
+  let xml = null;
+  for (const u of [...listed.slice(0, 2), origin + '/sitemap.xml', origin + '/sitemap_index.xml']) { xml = await read(u); if (xml) break; }
+  if (!xml) return { found: listed.length > 0, locs: [] };
+  const locs = x => [...x.matchAll(/<loc>\s*(?:<!\[CDATA\[)?\s*([^<\]\s]+)/gi)].map(m => m[1].replace(/&amp;/g, '&'));
+  let urls = [];
+  if (/<sitemapindex\b/i.test(xml)) {
+    const children = locs(xml);
+    // Pages before products and posts, so the scan sees the main pages first
+    children.sort((a, b) => (/page/i.test(b) ? 1 : 0) - (/page/i.test(a) ? 1 : 0));
+    for (const c of children.slice(0, 3)) { const t = await read(c); if (t) urls.push(...locs(t)); }
+  } else urls = locs(xml);
+  return { found: true, locs: urls.map(u => internalUrl(u, origin + '/')).filter(Boolean).slice(0, 500) };
+}
+
+// The pages to read after the home page: the home page's own links first (the menu), then the sitemap's, keeping some
+// room for each, in the order they appear. robots.txt is respected.
+async function scanSite(homeUrl, homeHtml, robots, sitemap, started) {
+  const deadline = started + SCAN_SECONDS * 1000;
+  const homeFacts = pageFacts({ url: homeUrl, status: 200, finalUrl: homeUrl, html: homeHtml });
+  const seen = new Set([pageKey(homeUrl)]);
+  const pick = (arr, n, out) => { for (const u of arr) { if (out.length >= n) break; const k = pageKey(u); if (seen.has(k) || !robotsAllows(robots, ROBOT, new URL(u).pathname)) continue; seen.add(k); out.push(u); } return out; };
+  const want = SCAN_PAGES - 1;
+  const fromHome = pick(homeFacts.links || [], sitemap.locs.length ? Math.ceil(want / 2) : want, []);
+  const fromMap = pick(sitemap.locs, want - fromHome.length, []);
+  pick([...(homeFacts.links || []), ...sitemap.locs], want - fromHome.length - fromMap.length, fromHome);
+  const inMap = new Set(sitemap.locs.map(pageKey));
+  const fetched = await inTurns([...fromHome, ...fromMap], SCAN_AT_ONCE, u => fetchHops(u, true), deadline);
+  const pages = [{ ...homeFacts, inSitemap: inMap.has(pageKey(homeUrl)) }, ...fetched.map(f => ({ ...pageFacts(f), inSitemap: inMap.has(pageKey(f.url)) }))];
+  // Other links found on those pages, not read above: checked for a working answer
+  const checked = new Set(pages.flatMap(pg => [pageKey(pg.url), pageKey(pg.finalUrl)]));
+  const others = [];
+  for (const pg of pages) for (const l of pg.links || []) {
+    const k = pageKey(l);
+    if (others.length >= LINK_CHECKS) break;
+    if (checked.has(k) || !robotsAllows(robots, ROBOT, new URL(l).pathname)) continue;
+    checked.add(k); others.push({ url: l, from: pg.url });
+  }
+  const linkChecks = (await inTurns(others, SCAN_AT_ONCE, async o => ({ ...(await fetchHops(o.url, false)), from: o.from }), deadline)).map(({ html, isHtml, robotsHeader, ...c }) => c);
+  // Pages keep only what the rules need (no link lists beyond the scan)
+  return { pages: pages.map(({ links, ...pg }) => pg).map((pg, i) => ({ ...pg, linkTexts: pages[i].linkTexts })), linkChecks, sitemapCount: sitemap.locs.length };
+}
+
 async function pageSpeed(env, url, strategy, withBestPractices = true) {
   const key = env.PAGESPEED_API_KEY || '';
   // The phone run carries every category (best practices since rules v6): still one free call each way.
@@ -146,6 +235,7 @@ async function pageSpeed(env, url, strategy, withBestPractices = true) {
 
 // Fetches everything the rules need. Throws { userMessage } when the page itself can't be read.
 async function gather(env, url) {
+  const started = Date.now();
   const psiP = Promise.all([pageSpeed(env, url, 'mobile'), pageSpeed(env, url, 'desktop')]);
   let res;
   try { res = await timedFetch(url, { redirect: 'follow', headers: { Accept: 'text/html,application/xhtml+xml' } }, 15000); }
@@ -176,18 +266,15 @@ async function gather(env, url) {
   const robotsP = smallText(origin + '/robots.txt');
   const llmsP = smallText(origin + '/llms.txt');
   const robots = await robotsP;
-  const sitemapUrls = robots ? [...robots.matchAll(/^\s*sitemap:\s*(\S+)/gim)].map(m => m[1]) : [];
-  const sitemap = sitemapUrls.length > 0 || await (async () => {
-    for (const p of ['/sitemap.xml', '/sitemap_index.xml']) {
-      const t = await smallText(origin + p);
-      if (t && /<(urlset|sitemapindex)\b/i.test(t)) return true;
-    }
-    return false;
-  })();
-  const [httpRedirects, llms, psi, missingStatus] = await Promise.all([httpCheck, llmsP, psiP, missingP]);
+  const map = await sitemapLocs(origin, robots);
+  // The scan runs while Google's speed test does, so it adds little to the wait
+  const scanP = scanSite(finalUrl, html, robots, map, started).catch(err => { console.warn('website-check: scan', err && err.message); return null; });
+  const [httpRedirects, llms, psi, missingStatus, scan] = await Promise.all([httpCheck, llmsP, psiP, missingP, scanP]);
+  const sitemap = map.found;
   const h = k => res.headers.get(k) || '';
   return {
     url, finalUrl, html, robots, sitemap, httpRedirects,
+    pages: scan ? scan.pages : null, linkChecks: scan ? scan.linkChecks : [], sitemapCount: scan ? scan.sitemapCount : 0,
     llms: !!(llms && llms.trim().length > 20),
     robotsHeader: h('X-Robots-Tag'), missingStatus,
     headers: { hsts: h('Strict-Transport-Security'), nosniff: h('X-Content-Type-Options'), frame: h('X-Frame-Options'), csp: h('Content-Security-Policy'), referrer: h('Referrer-Policy') },
@@ -198,7 +285,7 @@ async function gather(env, url) {
 function publicReport(r) {
   return {
     id: r.id, domain: r.domain, url: r.url, finalUrl: r.finalUrl, checkedAt: r.checkedAt,
-    page: r.page, model: r.model || null, modelFrom: r.modelFrom || null, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
+    page: r.page, scan: r.scan || null, model: r.model || null, modelFrom: r.modelFrom || null, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
     speed: r.speed, groups: GROUPS,
   };
 }

@@ -1,7 +1,7 @@
 // Website Check rules, tested on the demo websites (website-demos.js, the same ones in /admin#demos/web).
 //   node cloudflare/src/website-check.test.mjs
 import assert from 'node:assert/strict';
-import { analyse, readPsi, savingWords } from './website-check-rules.js';
+import { analyse, readPsi, savingWords, robotsAllows, internalUrl, pageKey } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 import { webQuote, WEB_FIX, getPricing, quote, validate, humanMinutes } from './pricing.js';
 
@@ -131,5 +131,26 @@ assert.deepEqual([ps.performance, ps.accessibility, ps.bestPractices], [41, 80, 
 assert.deepEqual(ps.fixes.map((x) => x.id), ['render-blocking-insight', 'image-delivery-insight'], 'fixes ranked by saving, unknown insights left out');
 assert.deepEqual(ps.failed.a11y, ['color-contrast', 'aria'], 'accessibility failures, without the checks the report makes itself');
 assert.deepEqual(ps.failed.bp, ['errors-in-console'], 'informative audits are not failures');
+
+// Rules version 7 (21 Nov 2026, v2 step 3): the site scan
+for (const d of WEBSITE_DEMOS) { const r = run(d.id); assert.ok(r.scan && r.scan.pages >= 6 && r.scan.pages <= 25, `${d.id}: scanned 6 to 25 pages`); }
+for (const id of ['site-broken-links', 'site-titles', 'site-thin', 'site-key-pages']) assert.ok(ids(trades.weaknesses).includes(id), `old trade site flags ${id}`);
+for (const id of ['site-noindex', 'site-sitemap', 'site-redirects']) assert.ok(ids(relaunch.weaknesses).includes(id), `relaunch flags ${id}`);
+assert.equal(relaunch.weaknesses.find((w) => w.id === 'site-redirects').priority, 'medium', 'a two-hop chain is worth fixing');
+assert.ok(ids(run('shop').weaknesses).includes('site-sitemap'), 'a product that redirects is flagged in the sitemap');
+assert.ok(!ids(run('shop').weaknesses).includes('site-key-pages'), 'a shop isn’t asked for an about page');
+assert.ok(!ids(run('restaurant').weaknesses).includes('site-thin'), 'a short booking page is not thin');
+assert.ok(ids(clinicR.strengths).includes('site-broken-links') && ids(clinicR.strengths).includes('site-titles'), 'the clinic’s pages all load with their own titles');
+assert.equal(analyse({ ...findWebsiteDemo('clinic').input(), pages: null }).scan, null, 'no scan, no site findings (one-page reports still work)');
+// robots.txt for the scan, and which links are pages worth reading
+const robotsTxt = 'User-agent: *\nDisallow: /private/\nAllow: /private/open$\nDisallow: /*.pdf$\n';
+assert.ok(robotsAllows(robotsTxt, 'PhillipsWebsiteCheck', '/about/'));
+assert.ok(!robotsAllows(robotsTxt, 'PhillipsWebsiteCheck', '/private/x'));
+assert.ok(robotsAllows(robotsTxt, 'PhillipsWebsiteCheck', '/private/open'), 'the longer Allow wins');
+assert.ok(!robotsAllows('User-agent: PhillipsWebsiteCheck\nDisallow: /\n', 'PhillipsWebsiteCheck', '/'), 'our own group is obeyed');
+assert.equal(internalUrl('/about/#team', 'https://www.a.example/'), 'https://www.a.example/about/');
+assert.equal(internalUrl('https://a.example/x', 'https://www.a.example/'), 'https://a.example/x', 'with or without www is the same site');
+for (const bad of ['https://other.example/', '/brochure.pdf', '/cart', '/search?q=x', 'mailto:a@b.example', '#top']) assert.equal(internalUrl(bad, 'https://www.a.example/'), null, `${bad} is not scanned`);
+assert.equal(pageKey('https://www.a.example/about/'), pageKey('https://a.example/about'), 'one page, one key');
 
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

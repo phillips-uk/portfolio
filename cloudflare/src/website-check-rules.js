@@ -5,13 +5,14 @@
 // A finding: { id, group, status: 'strength' | 'weakness' | 'note', priority: 'high' | 'medium' | 'low', title, detail,
 //              why, start, link: { href, label } }
 
-export const RULES_VERSION = 6; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
+export const RULES_VERSION = 7; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
 // businesses aren't asked for a town, a Maps link or local business details; "Rated 4.8 on Checkatrade" counts as a review. 4
 // (18 Nov 2026): the report carries a profile of the site (siteProfile). 5 (21 Nov 2026): three kinds of business
 // (MODELS), chosen on the form or detected; local checks only for local businesses, delivery and returns for shops. 6
 // (21 Nov 2026, Website Check v2 step 2): what Google's speed test says to fix first, accessibility and best practices
 // from the same test, link previews, canonical, language, hreflang, missing pages, mixed content, security headers,
-// privacy, cookie consent, company details and form length
+// privacy, cookie consent, company details and form length. 7 (21 Nov 2026, step 3): up to 25 pages scanned for broken
+// links, redirects, titles, descriptions, headings, noindex, sitemap, thin pages, images and key pages
 
 // What kind of business the check judges the site as (Lewis, 21 Nov 2026: not everyone who runs it is local). The visitor
 // can pick one on the form; otherwise it is detected from the page (detectModel) and the report offers a switch.
@@ -25,6 +26,7 @@ const LINKS = {
 };
 
 export const GROUPS = [
+  ['site', 'Across the site'],
   ['speed', 'Speed'],
   ['mobile', 'Phones'],
   ['access', 'Accessibility'],
@@ -43,7 +45,9 @@ export const GROUPS = [
 
 const decode = s => String(s || '')
   .replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
-  .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
+  .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+  .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)))
+  .replace(/&(lsaquo|rsaquo|laquo|raquo|ndash|mdash|hellip|lsquo|rsquo|ldquo|rdquo|pound|copy|reg|trade|middot|bull);/gi, (_, k) => ({ lsaquo: '‹', rsaquo: '›', laquo: '«', raquo: '»', ndash: '–', mdash: '\u2014', hellip: '…', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', pound: '£', copy: '©', reg: '®', trade: '™', middot: '·', bull: '•' })[k.toLowerCase()]);
 const squash = s => decode(s).replace(/\s+/g, ' ').trim();
 const stripTags = s => squash(String(s || '').replace(/<[^>]+>/g, ' '));
 
@@ -317,6 +321,150 @@ export function savingWords(fx) {
 }
 
 const secs = ms => (Math.round(ms / 100) / 10).toFixed(1) + ' seconds';
+
+// ---------- the site scan (rules v7, Website Check v2 step 3) ----------
+// Up to 25 pages: the home page, then pages its links lead to (the menu first) and pages from the sitemap. gather()
+// fetches them; pageFacts() keeps what the site-wide rules need, so the report never holds whole pages.
+
+const SKIP_EXT = /\.(pdf|jpe?g|png|gif|webp|avif|svg|ico|zip|rar|docx?|xlsx?|pptx?|csv|mp4|mov|mp3|wav|xml|txt|css|js|json|woff2?|ttf|eot)$/i;
+// Pages a visitor reaches only mid-purchase or signed in: any part of the address
+const SKIP_PATH = /(^|\/)(cart|basket|checkout|account|account-login|login|logout|signin|sign-in|register|my-account|order-summary|wp-admin|wp-login\.php|wp-json|cdn-cgi|search|feed)(\/|$)/i;
+const bareHost = h => String(h || '').toLowerCase().replace(/^www\./, '');
+
+// A link as a page on the same site worth scanning, or null. Query strings are left out (filters, tracking codes).
+export function internalUrl(href, base) {
+  if (!href || /^(#|mailto:|tel:|sms:|javascript:|data:)/i.test(href)) return null;
+  let u;
+  try { u = new URL(href, base); } catch { return null; }
+  const b = new URL(base);
+  if (!/^https?:$/.test(u.protocol) || bareHost(u.hostname) !== bareHost(b.hostname)) return null;
+  if (u.search || SKIP_EXT.test(u.pathname) || SKIP_PATH.test(u.pathname)) return null;
+  u.hash = '';
+  return u.href;
+}
+export const pageKey = url => { try { const u = new URL(url); return bareHost(u.hostname) + (u.pathname.replace(/\/+$/, '') || '/'); } catch { return url; } };
+
+// Does robots.txt let a crawler fetch this path? The crawler's own group, else '*'; longest matching rule wins, Allow on a tie.
+export function robotsAllows(robotsTxt, bot, path) {
+  if (!robotsTxt) return true;
+  const groups = [];
+  let cur = null, lastWasAgent = false;
+  for (const line of String(robotsTxt).split(/\r?\n/)) {
+    const l = line.replace(/#.*/, '').trim();
+    if (!l) continue;
+    const [k, ...rest] = l.split(':');
+    const key = k.trim().toLowerCase(), val = rest.join(':').trim();
+    if (key === 'user-agent') { if (!lastWasAgent || !cur) { cur = { agents: [], rules: [] }; groups.push(cur); } cur.agents.push(val.toLowerCase()); lastWasAgent = true; }
+    else { lastWasAgent = false; if (cur && (key === 'disallow' || key === 'allow') && val) cur.rules.push({ allow: key === 'allow', val }); }
+  }
+  const b = bot.toLowerCase();
+  const group = groups.find(g => g.agents.some(a => a !== '*' && b.includes(a))) || groups.find(g => g.agents.includes('*'));
+  if (!group) return true;
+  let best = null;
+  for (const r of group.rules) {
+    const re = new RegExp('^' + r.val.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\\\$$/, '$'));
+    if (re.test(path) && (!best || r.val.length > best.val.length || (r.val.length === best.val.length && r.allow))) best = r;
+  }
+  return !best || best.allow;
+}
+
+// What the site-wide rules need from one fetched page.
+export function pageFacts({ url, status, finalUrl, hops = 0, html = '', robotsHeader = '', isHtml = true }) {
+  const out = { url, path: new URL(url).pathname, status, hops, finalUrl: finalUrl || url };
+  if (!isHtml || !html || status !== 200) return out;
+  const p = parsePage(html);
+  const links = [...new Set(p.links.map(l => internalUrl(l.href, out.finalUrl)).filter(Boolean))].slice(0, 300);
+  return {
+    ...out, html: true, title: p.title, description: p.description, h1Count: p.h1s.length, h1: (p.h1s[0] || '').slice(0, 120),
+    words: p.text ? p.text.split(/\s+/).length : 0, noindex: /noindex/.test(p.robotsMeta) || /noindex/i.test(robotsHeader),
+    canonical: p.canonical || null, imgs: p.imgs.length, noAlt: p.imgs.filter(t => attr(t, 'alt') === null).length, links,
+    linkTexts: p.links.map(l => (l.text + ' ' + l.href).toLowerCase()).join(' | ').slice(0, 20000),
+  };
+}
+
+// Site-wide findings from the scanned pages (input.pages, home page first) and the extra link checks (input.linkChecks).
+function siteFindings(input, add, model, homeLinksText, hasContact) {
+  const pages = (input.pages || []).filter(Boolean);
+  if (pages.length < 2) return null;
+  const html = pages.filter(pg => pg.html);
+  const shortPath = pg => (pg.path || '/').length > 48 ? pg.path.slice(0, 45) + '…' : (pg.path || '/');
+  // "/a, /b and 2 more": addresses as they are, at most n named
+  const few = (arr, n = 3) => list([...arr.slice(0, n), ...(arr.length > n ? [`${arr.length - n} more`] : [])]);
+  const fromPath = u => { try { return new URL(u).pathname; } catch { return u; } };
+
+  // Broken links: scanned pages and link checks that answered 4xx or 5xx (or not at all)
+  const broken = [...pages.filter(pg => pg.status >= 400), ...(input.linkChecks || []).filter(c => c.status >= 400 || c.status === 0)];
+  if (broken.length) add({ id: 'site-broken-links', group: 'site', status: 'weakness', priority: 'high', title: `${broken.length === 1 ? 'A link leads' : broken.length + ' links lead'} to a page that doesn’t work`,
+    detail: `Not working: ${few(broken.map(b => fromPath(b.url) + (b.status ? ` (${b.status})` : ' (no answer)')))}` + (broken[0].from ? `, linked from ${fromPath(broken[0].from)}` : '') + '.',
+    why: 'Visitors hit a dead end, and search engines see a site that isn’t looked after.', start: 'Fix or remove each broken link, or redirect the old address to the right page.', link: LINKS.web });
+  else add({ id: 'site-broken-links', group: 'site', status: 'strength', priority: 'medium', title: 'No broken links found',
+    detail: `Every page and link I tried (${pages.length + (input.linkChecks || []).length}) answered.`, why: 'None of the links I tried led to a dead end.', start: 'Check again after you move or delete pages.', link: LINKS.web });
+
+  // Links to addresses that redirect, and chains of two or more redirects
+  const redirected = [...pages.slice(1), ...(input.linkChecks || [])].filter(pg => pg.hops > 0 && pg.status < 400);
+  const chains = redirected.filter(pg => pg.hops >= 2);
+  if (chains.length) add({ id: 'site-redirects', group: 'site', status: 'weakness', priority: 'medium', title: 'Some links pass through several redirects',
+    detail: `${few(chains.map(c => fromPath(c.url)))} redirect${chains.length === 1 ? 's' : ''} more than once before reaching a page.`, why: 'Each hop slows the page down, and search engines may stop following.', start: 'Point links and redirects straight at the final address.', link: LINKS.web });
+  else if (redirected.length >= 3) add({ id: 'site-redirects', group: 'site', status: 'weakness', priority: 'low', title: 'Links point to old addresses that redirect',
+    detail: `${redirected.length} links go to an address that redirects, such as ${fromPath(redirected[0].url)}.`, why: 'Each one adds a small delay. Linking to the final address is quicker.', start: 'Update your menu and page links to the final addresses.', link: LINKS.web });
+
+  // Titles and descriptions: missing or the same on several pages
+  const dupes = key => { const m = new Map(); for (const pg of html) { const v = (pg[key] || '').trim().toLowerCase(); if (v) m.set(v, [...(m.get(v) || []), pg]); } return [...m.values()].filter(g => g.length > 1); };
+  const noTitle = html.filter(pg => !pg.title), dupTitles = dupes('title');
+  if (noTitle.length || dupTitles.length) add({ id: 'site-titles', group: 'site', status: 'weakness', priority: 'medium', title: noTitle.length ? `${noTitle.length} page${noTitle.length === 1 ? ' has' : 's have'} no title` : 'Several pages share the same title',
+    detail: [noTitle.length && `No title on ${few(noTitle.map(shortPath))}.`, dupTitles.length && `${dupTitles.reduce((a, g) => a + g.length, 0)} pages share ${dupTitles.length === 1 ? 'one title' : dupTitles.length + ' titles'}, for example “${dupTitles[0][0].title.slice(0, 60)}” on ${few(dupTitles[0].map(shortPath), 2)}.`].filter(Boolean).join(' '),
+    why: 'Google shows the title as the headline in its results. Pages with the same title compete with each other and look alike to searchers.', start: 'Give every page its own title that names what that page is about.', link: LINKS.seo });
+  else add({ id: 'site-titles', group: 'site', status: 'strength', priority: 'low', title: 'Every page I read has its own title',
+    detail: `All ${html.length} pages I read have a title, and no two are the same.`, why: 'Each page can be found for what it is about.', start: 'Keep it that way for new pages.', link: LINKS.seo });
+  const noDesc = html.filter(pg => !pg.description), dupDesc = dupes('description');
+  if (noDesc.length >= 2 || dupDesc.length) add({ id: 'site-descriptions', group: 'site', status: 'weakness', priority: 'low', title: noDesc.length >= 2 ? `${noDesc.length} pages have no meta description` : 'Several pages share the same description',
+    detail: [noDesc.length >= 2 && `No description on ${few(noDesc.map(shortPath))}.`, dupDesc.length && `${dupDesc.reduce((a, g) => a + g.length, 0)} pages share the same description.`].filter(Boolean).join(' '),
+    why: 'Google may show a random line from the page instead of one that makes people click.', start: 'Write one or two sentences for each main page on what it offers.', link: LINKS.seo });
+
+  // Main headings
+  const noH1 = html.filter(pg => !pg.h1Count), manyH1 = html.filter(pg => pg.h1Count > 1);
+  if (noH1.length + manyH1.length >= 2) add({ id: 'site-headings', group: 'site', status: 'weakness', priority: 'low', title: 'Main headings missing or doubled on some pages',
+    detail: [noH1.length && `No main heading on ${few(noH1.map(shortPath))}.`, manyH1.length && `More than one on ${few(manyH1.map(shortPath))}.`].filter(Boolean).join(' '),
+    why: 'One clear main heading tells visitors and search engines what each page is about.', start: 'Give each page one H1 and make the others H2.', link: LINKS.seo });
+
+  // Pages hidden from Google: a fault when the sitemap lists them, a note when they are only linked
+  const hidden = html.slice(1).filter(pg => pg.noindex);
+  const hiddenListed = hidden.filter(pg => pg.inSitemap);
+  if (hiddenListed.length) add({ id: 'site-noindex', group: 'site', status: 'weakness', priority: 'medium', title: 'The sitemap lists pages that ask Google not to list them',
+    detail: `${few(hiddenListed.map(shortPath))} ${hiddenListed.length === 1 ? 'is' : 'are'} in the sitemap but carr${hiddenListed.length === 1 ? 'ies' : 'y'} a “noindex” instruction.`, why: 'It sends Google mixed signals, and a page you want found may be left out.', start: 'Remove noindex from pages you want in Google, or take the others out of the sitemap.', link: LINKS.seo });
+  else if (hidden.length) add({ id: 'site-noindex', group: 'site', status: 'note', priority: 'low', title: `${hidden.length} page${hidden.length === 1 ? ' asks' : 's ask'} Google not to list ${hidden.length === 1 ? 'it' : 'them'}`,
+    detail: `${few(hidden.map(shortPath))} carr${hidden.length === 1 ? 'ies' : 'y'} a “noindex” instruction.`, why: 'Fine for thank-you or private pages, but a mistake on pages you want found.', start: 'Check each one is meant to be hidden.', link: LINKS.seo });
+
+  // Sitemap pages that redirect or fail
+  const badListed = pages.filter(pg => pg.inSitemap && (pg.status >= 400 || pg.hops > 0 || pg.status === 0));
+  if (badListed.length) add({ id: 'site-sitemap', group: 'site', status: 'weakness', priority: 'medium', title: 'The sitemap lists addresses that redirect or fail',
+    detail: `In the sitemap: ${few(badListed.map(pg => fromPath(pg.url) + (pg.status >= 400 ? ` (${pg.status})` : ' (redirects)')))}.`, why: 'Google expects the sitemap to list only live, final addresses, and trusts it less when it doesn’t.', start: 'Regenerate the sitemap so it lists only pages that load directly. Most website builders do this automatically.', link: LINKS.seo });
+
+  // Thin pages: very few words (contact, thank-you and legal pages are expected to be short)
+  const thin = html.slice(1).filter(pg => pg.words < 150 && !/contact|thank|privacy|terms|cookie|legal|login|cart|basket|search|book|404/i.test(pg.path));
+  if (thin.length >= 2) add({ id: 'site-thin', group: 'site', status: 'weakness', priority: 'low', title: `${thin.length} pages have very little text`,
+    detail: `Under 150 words: ${few(thin.map(pg => shortPath(pg) + ` (${pg.words})`))}.`, why: 'Short pages give search engines and AI assistants little to go on.', start: 'Add a few useful paragraphs to each one, or merge it into a fuller page.', link: LINKS.seo });
+
+  // Images without descriptions across the site
+  const imgs = html.reduce((a, pg) => a + (pg.imgs || 0), 0), noAlt = html.reduce((a, pg) => a + (pg.noAlt || 0), 0);
+  if (imgs >= 10 && noAlt / imgs > 0.3) add({ id: 'site-alt', group: 'site', status: 'weakness', priority: 'low', title: 'Many images across the site have no description',
+    detail: `${noAlt} of ${imgs} images on the pages I read have no alt text.`, why: 'Screen readers and image search rely on it.', start: 'Add a short alt description to each image that shows something meaningful.', link: LINKS.web });
+
+  // Key pages: contact, about, privacy (by link text or address on any page read)
+  // A page counts when it is linked or was found (in the sitemap). Contact details on the home page are enough without a
+  // contact page.
+  const allLinks = [homeLinksText, ...html.map(pg => pg.linkTexts || ''), ...pages.map(pg => pg.path || '')].join(' | ');
+  const missingKey = [!hasContact && !/contact|get in touch|enquir/.test(allLinks) && 'a contact page',
+    model !== 'shop' && !/\babout\b|our story|who we are|who-we-are|our-story|meet the team|\/team\b/.test(allLinks) && 'an about page',
+    !/privacy/.test(allLinks) && 'a privacy policy'].filter(Boolean);
+  if (missingKey.length) add({ id: 'site-key-pages', group: 'site', status: 'weakness', priority: missingKey.includes('a contact page') ? 'medium' : 'low', title: missingKey.length === 1 ? `No ${missingKey[0].replace(/^an? /, '')} found` : 'I couldn’t find some pages people look for',
+    detail: `On the ${pages.length} pages I read, I couldn’t find ${list(missingKey)} or a link to one.`, why: 'People look for these before they get in touch or buy, and they help search engines and AI assistants trust the business.', start: 'If they exist, link them from your menu or footer. If not, add them.', link: LINKS.web });
+
+  return {
+    pages: pages.length, sitemapPages: input.sitemapCount || 0,
+    list: pages.map(pg => ({ path: pg.path, status: pg.status, hops: pg.hops || 0, title: pg.title ? pg.title.slice(0, 80) : null, words: pg.words ?? null, noindex: !!pg.noindex, inSitemap: !!pg.inSitemap })),
+  };
+}
 
 // ---------- the rules ----------
 
@@ -805,6 +953,8 @@ export function analyse(input) {
   if (formFields > 6) add({ id: 'form-length', group: 'contact', status: 'weakness', priority: 'low', title: 'The contact form is long',
     detail: `The form asks for ${formFields} things.`, why: 'Each extra field loses some people. A name, a way to reply and a message is usually enough for a first enquiry.', start: 'Cut it to what you need to reply, and ask the rest when you do.', link: LINKS.web });
 
+  const scan = siteFindings(input, add, model, p.links.map(l => (l.text + ' ' + l.href).toLowerCase()).join(' | '), routes.length > 0);
+
   const order = { high: 0, medium: 1, low: 2 };
   const strengths = out.filter(f => f.status === 'strength');
   const weaknesses = out.filter(f => f.status === 'weakness').sort((a, b) => order[a.priority] - order[b.priority]);
@@ -812,7 +962,7 @@ export function analyse(input) {
   return {
     rulesVersion: RULES_VERSION,
     page: { title: p.title, h1, lang: p.lang || null },
-    model, modelFrom, detected,
+    model, modelFrom, detected, scan,
     profile: siteProfile({ p, h1, nodes, types, local, foundPlace: place || (foundPlace === 'a postcode' ? foundPlace : null), wide: wide || (model === 'national' && !place), routes, contactTop, postcodes, finalUrl, platform, shopSigns, model, modelFrom }),
     strengths, weaknesses, notes,
     counts: { strengths: strengths.length, weaknesses: weaknesses.length, high: weaknesses.filter(w => w.priority === 'high').length },

@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Website Audit Tool for UK Businesses | Phillips.</title>
-<meta name="description" content="Run a free website audit on any public page of a UK website. Check speed, mobile layout, search basics and whether AI assistants can read it. No sign-in.">
+<meta name="description" content="Free website audit for UK businesses: speed and phone layout on your page, plus broken links and search basics across up to 25 pages. No sign-in.">
 <link rel="canonical" href="https://www.phillips-uk.com/website-check/">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
 <meta name="theme-color" content="#FFFFFF">
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
 <link rel="stylesheet" href="/agency.css?v=24">
 <link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/tools.css?v=23">
+<link rel="stylesheet" href="/tools.css?v=24">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/website-check/">
 <meta property="og:title" content="Free Website Audit Tool for UK Businesses | Phillips.">
-<meta property="og:description" content="Check a public page for speed, mobile layout, search basics and whether AI assistants can read it. Free, no sign-in.">
+<meta property="og:description" content="Speed and phone layout on your page, plus broken links and search basics across up to 25 pages. Free, no sign-in.">
 <meta property="og:image" content="https://www.phillips-uk.com/images/og-website-check.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -31,7 +31,7 @@
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Any",
   "alternateName": ["Free website audit", "Website checker", "Website health check"],
-  "description": "A free website audit for small and medium UK businesses, one public page at a time: speed and Core Web Vitals, phone layout, contact details, local search basics, AI search access and enquiry tracking, from fixed written rules with no AI.",
+  "description": "A free website audit for small and medium UK businesses, up to 25 pages of a site: speed and Core Web Vitals, broken links and site-wide search basics, phone layout, contact details, local search basics, AI search access and enquiry tracking, from fixed written rules with no AI.",
   "isAccessibleForFree": true,
   "featureList": ["Speed and Core Web Vitals", "Phone layout", "First impression", "Contact details", "Accessibility", "Search basics, canonical tags and structured data", "Link previews", "https, security headers, missing pages, robots.txt and sitemap", "Privacy, cookie consent and company details", "AI crawler access and llms.txt", "Enquiry tracking", "Reviews and proof"],
   "screenshot": "https://www.phillips-uk.com/images/og-website-check.png",
@@ -47,11 +47,11 @@
   "@type": "FAQPage",
   "mainEntity": [
     { "@type": "Question", "name": "Is the Website Check free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is free for small and medium businesses and needs no sign-in. You can run up to five checks a day." } },
-    { "@type": "Question", "name": "What does the Website Check look at?", "acceptedAnswer": { "@type": "Answer", "text": "It reads the public page you enter: its speed on a phone and a computer, how it shows on a phone, accessibility, whether it says what you do and how to get in touch, your contact details, page titles, canonical tag and structured data, link previews, https, security headers and missing pages, robots.txt and sitemap, whether AI assistants can read it, Google Analytics or Tag Manager, a privacy policy and cookie banner, company details, and reviews." } },
+    { "@type": "Question", "name": "What does the Website Check look at?", "acceptedAnswer": { "@type": "Answer", "text": "It reads the public page you enter and up to 24 more from the same site: its speed on a phone and a computer, how it shows on a phone, accessibility, whether it says what you do and how to get in touch, your contact details, page titles, canonical tag and structured data, link previews, https, security headers and missing pages, robots.txt and sitemap, whether AI assistants can read it, Google Analytics or Tag Manager, a privacy policy and cookie banner, company details, and reviews." } },
     { "@type": "Question", "name": "Do you change anything on my website?", "acceptedAnswer": { "@type": "Answer", "text": "No. The check only reads pages anyone can see. It never signs in and never changes anything." } },
     { "@type": "Question", "name": "What happens to the address I enter?", "acceptedAnswer": { "@type": "Answer", "text": "The report is saved for 30 days so its link works, then deleted. Your IP address is not stored; a scrambled version is used only to count checks per day." } },
     { "@type": "Question", "name": "Does it use AI?", "acceptedAnswer": { "@type": "Answer", "text": "No. Every result comes from fixed, written rules. Only Google's speed scores can vary a little between runs." } },
-    { "@type": "Question", "name": "Is this a website audit?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, a free one for one page at a time. It looks at speed and what Google says to fix, the phone layout, accessibility, what the page says and how to get in touch, search basics, link previews, technical set-up, the UK legal basics and whether AI assistants can read the page." } },
+    { "@type": "Question", "name": "Is this a website audit?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, a free one. It reads the page you enter and up to 24 more from the same site. It looks at speed and what Google says to fix, the phone layout, accessibility, what the page says and how to get in touch, search basics, link previews, technical set-up, the UK legal basics and whether AI assistants can read the page." } },
     { "@type": "Question", "name": "How long does it take, and do I need an account?", "acceptedAnswer": { "@type": "Answer", "text": "About a minute, and there is no account or sign-in. Enter the address of a public page on any UK website." } }
   ]
 }
@@ -120,7 +120,7 @@
     <label class="fresh-opt" id="fresh-opt" hidden><input type="checkbox" id="check-fresh"> Run it fresh (preview only: skips the 24-hour reuse)</label>
     <p class="check-status" id="check-status" role="status" aria-live="polite"></p>
     <ol class="progress" id="progress" hidden>
-      <li data-step="0">Reading the page</li>
+      <li data-step="0">Reading the page and up to 24 more</li>
       <li data-step="1">Checking contact details and search basics</li>
       <li data-step="2">Checking robots.txt, the sitemap and AI access</li>
       <li data-step="3">Measuring speed with Google's PageSpeed test</li>
@@ -220,6 +220,14 @@
     </div>
   </section>
 
+  <section class="rp rp-white" id="sec-pages" hidden>
+    <div class="page-w">
+      <div class="rp-h"><h3>The pages I read</h3><span class="rp-count" id="pages-count"></span></div>
+      <p class="rp-lede" id="pages-lede"></p>
+      <details class="rp-more-info"><summary>See the pages I read</summary><div class="scroll"><table class="pg-table"><thead><tr><th>Page</th><th>Answer</th><th class="r">Words</th></tr></thead><tbody id="pages-rows"></tbody></table></div></details>
+    </div>
+  </section>
+
   <section class="rp rp-white" id="sec-fix" hidden>
     <div class="page-w">
       <div class="rp-h"><h3>Prefer me to do them?</h3></div>
@@ -272,6 +280,7 @@
       <figure class="shot"><img src="/images/shots/website-check-read.jpg" alt="How the check reads a made-up builder's homepage: how it looks in Google, the first screen on a phone and a visitor's path to an enquiry" width="1100" height="1160" loading="lazy"><figcaption>From a Website Check report. Made-up website.</figcaption></figure>
     </div>
     <ul class="checks-list">
+      <li><b>Across the site</b><span>Up to 25 pages: broken links, redirects, titles, descriptions, headings, hidden pages, the sitemap, thin pages and the pages people look for.</span></li>
       <li><b>Speed</b><span>Google's PageSpeed test on a phone and a computer, real visitors' Core Web Vitals, and what Google says to fix first.</span></li>
       <li><b>Phones</b><span>The page fits the screen, text is readable and buttons are easy to tap.</span></li>
       <li><b>Accessibility</b><span>Contrast, labels and names a screen reader can say, from Google's own test.</span></li>
@@ -294,7 +303,7 @@
       <span class="eyebrow">Questions</span>
       <h2 class="h2">Questions about the check.</h2>
     </div>
-    <div class="faq"><details><summary>Is this a website audit?</summary><p>Yes, a free one for one page at a time. It looks at speed and what Google says to fix, the phone layout, accessibility, what the page says and how to get in touch, search basics, link previews, technical set-up, the UK legal basics and whether AI assistants can read the page.</p></details><details><summary>How long does it take, and do I need an account?</summary><p>About a minute, and there is no account or sign-in. Enter the address of a public page on any UK website.</p></details><details><summary>Is the Website Check free?</summary><p>Yes. It is free for small and medium businesses and needs no sign-in. You can run up to five checks a day.</p></details><details><summary>What does it look at?</summary><p>The public page you enter: its speed on a phone and a computer, how it shows on a phone, accessibility, whether it says what you do and how to get in touch, your contact details, page titles, canonical tag and structured data, link previews, https, security headers and missing pages, robots.txt and sitemap, whether AI assistants can read it, Google Analytics or Tag Manager, a privacy policy and cookie banner, company details, and reviews.</p></details><details><summary>Do you change anything on my website?</summary><p>No. The check only reads pages anyone can see. It never signs in and never changes anything.</p></details><details><summary>What happens to the address I enter?</summary><p>The report is saved for 30 days so its link works, then deleted. Your IP address is not stored; a scrambled version is used only to count checks per day.</p></details><details><summary>Does it use AI?</summary><p>No. Every result comes from fixed, written rules. Only Google's speed scores can vary a little between runs.</p></details><details><summary>Why check only one page?</summary><p>Most visitors land on the homepage first, so that is where most of the wins are. Enter another address to check a different page.</p></details></div>
+    <div class="faq"><details><summary>Is this a website audit?</summary><p>Yes, a free one. It reads the page you enter and up to 24 more from the same site. It looks at speed and what Google says to fix, the phone layout, accessibility, what the page says and how to get in touch, search basics, link previews, technical set-up, the UK legal basics and whether AI assistants can read the page.</p></details><details><summary>How long does it take, and do I need an account?</summary><p>About a minute, and there is no account or sign-in. Enter the address of a public page on any UK website.</p></details><details><summary>Is the Website Check free?</summary><p>Yes. It is free for small and medium businesses and needs no sign-in. You can run up to five checks a day.</p></details><details><summary>What does it look at?</summary><p>The public page you enter and up to 24 more from the same site: broken links and site-wide search basics, the page’s speed on a phone and a computer, how it shows on a phone, accessibility, whether it says what you do and how to get in touch, your contact details, page titles, canonical tag and structured data, link previews, https, security headers and missing pages, robots.txt and sitemap, whether AI assistants can read it, Google Analytics or Tag Manager, a privacy policy and cookie banner, company details, and reviews.</p></details><details><summary>Do you change anything on my website?</summary><p>No. The check only reads pages anyone can see. It never signs in and never changes anything.</p></details><details><summary>What happens to the address I enter?</summary><p>The report is saved for 30 days so its link works, then deleted. Your IP address is not stored; a scrambled version is used only to count checks per day.</p></details><details><summary>Does it use AI?</summary><p>No. Every result comes from fixed, written rules. Only Google's speed scores can vary a little between runs.</p></details><details><summary>How many pages does it check?</summary><p>The page you enter and up to 24 more: the pages your menu links to first, then pages from your sitemap. Speed is measured on the page you enter. It respects your robots.txt and reads a few pages at a time.</p></details></div>
   </div>
 </section>
 
@@ -357,7 +366,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-website-check.js?v=10" defer></script>
+<script src="/tool-website-check.js?v=11" defer></script>
 <script src="/motion.js?v=5" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>

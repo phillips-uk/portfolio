@@ -47,6 +47,9 @@ export const FIX_TYPES = {
   web_access:   { tool: 'web', label: 'Accessibility',                 item: 'issues',           setup: 30,  perItem: 15, aiSetup: 15, aiPerItem: 5 },
   web_share:    { tool: 'web', label: 'Link previews',                 item: 'tags',             setup: 15,  perItem: 5,  aiSetup: 5,  aiPerItem: 2 },
   web_trust:    { tool: 'web', label: 'Privacy, cookies and company details', item: 'changes',   setup: 30,  perItem: 20, aiSetup: null, aiPerItem: null },
+  // Rules v7 (21 Nov 2026): the site scan. Writing for thin pages and missing key pages needs Lewis's judgement, with
+  // AI drafting the first pass.
+  web_pages:    { tool: 'web', label: 'Page content and key pages',   item: 'pages',            setup: 30,  perItem: 30, aiSetup: 15, aiPerItem: 15 },
 };
 
 // Which Website Check finding is which kind of job. A finding not listed here isn't priced (it stays in the report).
@@ -64,6 +67,9 @@ export const WEB_FIX = {
   proof: 'web_proof',
   accessibility: 'web_access', 'social-tags': 'web_share', 'form-length': 'web_contact',
   privacy: 'web_trust', 'cookie-consent': 'web_trust', 'company-details': 'web_trust',
+  'site-broken-links': 'web_technical', 'site-redirects': 'web_technical', 'site-sitemap': 'web_technical',
+  'site-titles': 'web_search', 'site-descriptions': 'web_search', 'site-headings': 'web_search', 'site-noindex': 'web_search', 'site-alt': 'web_search',
+  'site-thin': 'web_pages', 'site-key-pages': 'web_pages',
 };
 
 // A Website Check report's weaknesses as priced jobs: one per kind, named after its most important finding, with the

@@ -421,6 +421,30 @@
     if (form.requestSubmit) form.requestSubmit(); else go.click();
   }
 
+  // The pages the site scan read (rules v7): one line up front, the full list behind "See every page".
+  function pages(r) {
+    var sc = r.scan, sec = $('sec-pages');
+    sec.hidden = !(sc && sc.list && sc.list.length > 1);
+    if (sec.hidden) return;
+    var broken = sc.list.filter(function (p) { return p.status >= 400 || !p.status; }).length;
+    var moved = sc.list.filter(function (p) { return p.hops > 0 && p.status && p.status < 400; }).length;
+    $('pages-count').textContent = String(sc.pages);
+    $('pages-lede').textContent = 'From your menu' + (sc.sitemapPages ? ' and your sitemap' : '') + '. ' +
+      (broken ? broken + (broken === 1 ? ' doesn’t load' : ' don’t load') : 'All of them load') + (moved ? ', ' + moved + ' redirect' : '') + '.';
+    var tb = $('pages-rows'); tb.textContent = '';
+    sc.list.forEach(function (p) {
+      var tr = el('tr'), td = el('td'); td.appendChild(el('span', 'pg-path', p.path || '/'));
+      if (p.title) td.appendChild(el('span', 'pg-t', cut(p.title, 70)));
+      tr.appendChild(td);
+      var ok = p.status >= 200 && p.status < 400;
+      var ans = !p.status ? 'No answer' : p.status >= 400 ? 'Not working (' + p.status + ')' : p.hops ? 'Redirects' : 'Loads';
+      if (ok && p.noindex) ans += ', asks Google not to list it';
+      tr.appendChild(el('td', ok ? null : 'pg-no', ans));
+      tr.appendChild(el('td', 'r', p.words != null ? String(p.words) : ''));
+      tb.appendChild(tr);
+    });
+  }
+
   function show(r, scroll) {
     current = r;
     (r.groups || []).forEach(function (g) { GROUP[g[0]] = g[1]; });
@@ -445,6 +469,7 @@
     var nt = $('rep-notes'); nt.textContent = '';
     (r.notes || []).forEach(function (f) { var n = el('details', 'wr-note'); n.appendChild(el('summary', null, f.title)); n.appendChild(el('p', null, f.detail)); if (f.start) n.appendChild(el('p', 'why', f.start)); nt.appendChild(n); });
     $('sec-notes').hidden = !(r.notes || []).length;
+    pages(r);
     fixes(r);
     $('report').hidden = false;
     animate();
