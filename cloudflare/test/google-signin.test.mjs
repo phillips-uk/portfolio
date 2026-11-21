@@ -134,4 +134,26 @@ const pageFor = async cookie => { const u = new URL('https://www.phillips-uk.com
 assert.match(await pageFor(admin), /data-signin="1"/);
 assert.doesNotMatch(await pageFor(''), /data-signin/);
 console.log('page: sign-in shown to Lewis only');
+
+// 9. Google's reviewers: the private review link shows sign-in in that browser only; a wrong code changes nothing.
+env.SIGNIN_REVIEW_CODE = 'review-code-test';
+const enter = async code => { const u = new URL('https://www.phillips-uk.com/google-ads-audit?review=' + code); return adsCheck(new Request(u), u, env); };
+const wrong = await enter('nope');
+assert.equal(wrong.status, 200);
+assert.equal(wrong.headers.getSetCookie().length, 0, 'a wrong code sets nothing');
+const right = await enter('review-code-test');
+assert.equal(right.status, 302);
+assert.equal(right.headers.get('Location'), '/google-ads-audit');
+const rc = cookieOf(right, 'ph_gads_review');
+assert.ok(rc, 'review cookie set');
+assert.match(await pageFor(rc), /data-signin="1"/);
+assert.doesNotMatch(await pageFor('ph_gads_review=123.abc'), /data-signin/, 'a forged cookie does nothing');
+r = await go('/tools/google-ads-check/oauth/start', { headers: { Cookie: rc } });
+assert.equal(r.status, 302, 'reviewer can start the sign-in');
+assert.match(r.headers.get('Location'), /prompt=select_account&/, 'reviewers get the normal prompt');
+r = await go('/tools/google-ads-check/oauth/start');
+assert.equal(r.status, 404, 'visitors still cannot');
+delete env.SIGNIN_REVIEW_CODE;
+assert.doesNotMatch(await pageFor(rc), /data-signin/, 'without the secret, review access is off');
+console.log('review link: sign-in for the reviewer only, forged or wrong codes ignored');
 console.log('All sign-in tests passed.');

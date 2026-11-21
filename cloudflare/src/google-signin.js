@@ -22,6 +22,7 @@ import { asVisitor, accessibleAccounts, meter, AdsError } from './ads-check/clie
 import { toolAccessFor, jsonResponse, guard } from './tools-gate.js';
 import { countUse } from './tool-leads.js';
 import { getPricing } from './pricing.js';
+import { isReviewer } from './signin-review.js';
 
 const SCOPE = 'https://www.googleapis.com/auth/adwords';
 const BASE = '/tools/google-ads-check/oauth';
@@ -68,7 +69,9 @@ const redirectUri = url => url.origin + BASE + '/callback';
 
 async function allowed(request, env) {
   const access = await toolAccessFor('google-ads-check', request, env);
-  return { ...access, signIn: !!(FLAGS.googleSignIn ? access.allowed : access.admin && FLAGS.googleSignInPreview) };
+  // Google's reviewers get in through a private review link (signin-review.js) while the app is being verified.
+  const signIn = FLAGS.googleSignIn ? access.allowed : (access.admin && FLAGS.googleSignInPreview) || (access.allowed && await isReviewer(request, env));
+  return { ...access, signIn: !!signIn };
 }
 
 async function start(request, url, env) {

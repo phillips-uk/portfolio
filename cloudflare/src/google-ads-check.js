@@ -23,6 +23,7 @@ import { gaql, linkStatus, acceptLink, endLink, configured, meter, AdsError, MAN
 import { QUERIES, OPTIONAL } from './ads-check/queries.js';
 import { runRules } from './ads-check/rules.js';
 import { DEMOS, findDemo } from './ads-check/demos.js';
+import { isReviewer, reviewEntry } from './signin-review.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, quote } from './pricing.js';
@@ -261,7 +262,8 @@ export async function adsCheck(request, url, env) {
     const access = await toolAccessFor('google-ads-check', request, env);
     if (!access.allowed) return null;
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
-    const signIn = FLAGS.googleSignIn ? access.allowed : !!(access.admin && FLAGS.googleSignInPreview);
+    if (path === '/google-ads-audit') { const entry = await reviewEntry(new URL(request.url), env); if (entry) return entry; }
+    const signIn = FLAGS.googleSignIn ? access.allowed : !!((access.admin && FLAGS.googleSignInPreview) || await isReviewer(request, env));
     const attrs = (access.admin ? ' data-preview="1"' : '') + (signIn ? ' data-signin="1"' : '');
     const html = attrs ? pageHtml.replace('<body>', '<body' + attrs + '>') : pageHtml;
     return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'private, no-store', ...((path !== '/google-ads-audit' || access.admin) ? NO_INDEX : {}) } });
