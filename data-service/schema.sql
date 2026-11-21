@@ -129,7 +129,9 @@ CREATE TABLE IF NOT EXISTS clients (
   status TEXT NOT NULL DEFAULT 'active',      -- active, overdue, suspended
   plan TEXT, monthly_fee REAL, scopes TEXT NOT NULL DEFAULT '["payments"]',
   daily_quota INTEGER NOT NULL DEFAULT 5000,
-  billing_ref TEXT, notes TEXT, created_at TEXT NOT NULL
+  billing_ref TEXT, notes TEXT, created_at TEXT NOT NULL,
+  alert_email TEXT,                           -- insolvency watch digest (a client's own contact)
+  watch_limit INTEGER NOT NULL DEFAULT 500
 );
 
 CREATE TABLE IF NOT EXISTS api_keys (
@@ -144,4 +146,34 @@ CREATE TABLE IF NOT EXISTS usage (
 
 CREATE TABLE IF NOT EXISTS audit_log (
   at TEXT NOT NULL, who TEXT NOT NULL, what TEXT NOT NULL, before TEXT, after TEXT
+);
+
+-- Insolvency watch (src/watch.js). Each client keeps a list of companies; changes are found every 10 minutes from
+-- the data we already hold (Gazette, streams, register, accounts) and emailed as a morning digest.
+CREATE TABLE IF NOT EXISTS watch_lists (
+  client_id TEXT NOT NULL, company_number TEXT NOT NULL, label TEXT, added_at TEXT NOT NULL,
+  PRIMARY KEY (client_id, company_number)
+);
+CREATE INDEX IF NOT EXISTS watch_lists_company ON watch_lists(company_number);
+-- One row per watched company (shared by every client watching it). seeded_at is set once the starting point is read
+-- from Companies House; nothing before it becomes an alert.
+CREATE TABLE IF NOT EXISTS watch_state (
+  company_number TEXT PRIMARY KEY, seeded_at TEXT, status TEXT, accounts_overdue INTEGER DEFAULT 0,
+  cs_overdue INTEGER DEFAULT 0, checked_at TEXT
+);
+-- Filing flags from the companies stream, kept only for watched companies.
+CREATE TABLE IF NOT EXISTS company_flags (
+  number TEXT PRIMARY KEY, accounts_overdue INTEGER, cs_overdue INTEGER, next_accounts_due TEXT, next_cs_due TEXT, updated_at TEXT,
+  status TEXT  -- from Companies House directly: the register's status can be a month old after each rebuild
+);
+-- What changed, once per company and thing (ref), whoever is watching.
+CREATE TABLE IF NOT EXISTS watch_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, company_number TEXT NOT NULL, kind TEXT NOT NULL, ref TEXT NOT NULL,
+  notable INTEGER NOT NULL DEFAULT 1, text TEXT NOT NULL, date TEXT, url TEXT, found_at TEXT NOT NULL,
+  UNIQUE (company_number, kind, ref)
+);
+CREATE INDEX IF NOT EXISTS watch_events_found ON watch_events(found_at);
+-- Morning digests sent, so a client is never emailed the same events twice.
+CREATE TABLE IF NOT EXISTS watch_digests (
+  client_id TEXT NOT NULL, sent_at TEXT NOT NULL, last_event_id INTEGER NOT NULL, events INTEGER NOT NULL
 );

@@ -6,6 +6,7 @@ import { liveCompany } from './live.js';
 import { fxRates } from './fx.js';
 import { runStreams } from './stream.js';
 import { healthSignals } from './signals.js';
+import { watchApi, seedWatch, detectChanges, sendDigests } from './watch.js';
 
 const SOURCE = {
   payments: {
@@ -20,7 +21,8 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, '') || '/';
-    if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
+    const isWatch = path === '/v1/watch' || path.startsWith('/v1/watch/');
+    if (request.method !== 'GET' && !(isWatch && ['POST', 'DELETE'].includes(request.method))) return json({ error: 'method_not_allowed' }, 405);
     if (path === '/v1/health') return json({ ok: true });
     if (!path.startsWith('/v1/')) return json({ error: 'not_found' }, 404);
 
@@ -30,7 +32,7 @@ export default {
     if (key.length < 40) return json({ error: 'missing_or_invalid_key' }, 401);
     const hash = await sha256(key);
     const client = await env.DB.prepare(
-      `SELECT c.id, c.status, c.scopes, c.daily_quota FROM api_keys k JOIN clients c ON c.id = k.client_id
+      `SELECT c.id, c.status, c.scopes, c.daily_quota, c.watch_limit FROM api_keys k JOIN clients c ON c.id = k.client_id
        WHERE k.key_hash = ? AND k.revoked_at IS NULL`).bind(hash).first();
     if (!client) return json({ error: 'missing_or_invalid_key' }, 401);
     if (client.status === 'suspended') return json({ error: 'client_suspended' }, 403);
@@ -41,7 +43,7 @@ export default {
       if (!success) return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
     }
     const day = new Date().toISOString().slice(0, 10);
-    const endpoint = path.replace(/\/[A-Z0-9]{8}(?=\/)/i, '/{number}');
+    const endpoint = (request.method === 'GET' ? '' : request.method + ' ') + path.replace(/\/[A-Z0-9]{8}(?=\/|$)/i, '/{number}');
     const used = await env.DB.prepare('SELECT COALESCE(SUM(requests), 0) AS n FROM usage WHERE client_id = ? AND day = ?')
       .bind(client.id, day).first('n');
     if (used >= client.daily_quota) return json({ error: 'daily_quota_reached' }, 429);
@@ -79,6 +81,7 @@ export default {
         if (dataset === 'accounts') return allow('accounts') ? await accountBenchmarks(url, env) : denied;
         return allow('payments') ? await benchmarks(url, env) : denied;
       }
+      if (isWatch) return allow('watch') ? await watchApi(request, path, url, client, env, json) : denied;
       if (path === '/v1/changes') return allow('live') ? await changes(url, env) : denied;
       if (path === '/v1/sectors') return json(await sectors(env));  // any active key: names for industry dropdowns
       if (path === '/v1/rates/sme') return allow('rates') ? await smeRate(env) : denied;
@@ -91,9 +94,19 @@ export default {
   },
 
   // Every 10 minutes: catch up on the Companies House streams (charges, insolvency cases, company profiles).
+  // 07:30 UTC: the insolvency watch morning digest (no streams in this run: Companies House allows two connections).
   async scheduled(event, env, ctx) {
+    if (event.cron === '30 7 * * *') {
+      const changes = await detectChanges(env);
+      const digests = await sendDigests(env);
+      console.log(JSON.stringify({ watch: changes, digests }));
+      return;
+    }
+    // Watch first (quick), then the streams (minutes); changes the streams bring are picked up on the next run.
+    const seed = await seedWatch(env).catch(e => ({ error: String(e) }));
+    const changes = await detectChanges(env).catch(e => ({ error: String(e) }));
     const result = await runStreams(env);
-    console.log(JSON.stringify({ streams: result }));
+    console.log(JSON.stringify({ streams: result, seed, changes }));
   },
 };
 

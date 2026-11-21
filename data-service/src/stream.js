@@ -133,8 +133,18 @@ function companyRows(e, db) {
   const pc = (d.registered_office_address?.postal_code || '').toUpperCase();
   const name = d.company_name.trim();
   // Status words as in the monthly file (e.g. "Active"); the stream uses lower-case slugs.
-  const status = d.company_status ? d.company_status.replace(/-/g, ' ').replace(/^./, c => c.toUpperCase()) : null;
-  return [db.prepare(
+  // A proposal to strike off is a detail on an active company; the monthly file writes it into the status.
+  const status = d.company_status_detail === 'active-proposal-to-strike-off' ? 'Active - Proposal to Strike off'
+    : d.company_status ? d.company_status.replace(/-/g, ' ').replace(/^./, c => c.toUpperCase()) : null;
+  // Filing flags, kept only for companies someone is watching (insolvency watch).
+  const flags = db.prepare(
+    `INSERT INTO company_flags (number, accounts_overdue, cs_overdue, next_accounts_due, next_cs_due, updated_at, status)
+     SELECT ?, ?, ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM watch_lists WHERE company_number = ?)
+     ON CONFLICT (number) DO UPDATE SET accounts_overdue = excluded.accounts_overdue, cs_overdue = excluded.cs_overdue,
+       next_accounts_due = excluded.next_accounts_due, next_cs_due = excluded.next_cs_due, updated_at = excluded.updated_at, status = excluded.status`)
+    .bind(number, d.accounts?.overdue ? 1 : 0, d.confirmation_statement?.overdue ? 1 : 0, d.accounts?.next_due || null,
+      d.confirmation_statement?.next_due || null, e.event?.published_at || null, status, number);
+  return [flags, db.prepare(
     `INSERT INTO register (number, name, name_norm, status, sic_code, division, section, postcode_area, incorporated)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT (number) DO UPDATE SET name = excluded.name, name_norm = excluded.name_norm, status = excluded.status,
