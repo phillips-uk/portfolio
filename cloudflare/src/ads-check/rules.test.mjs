@@ -560,6 +560,9 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   const total = p.reduce((t, x) => t + (x.atStake || 0), 0);
   assert.ok(p.some((x) => x.overlap), 'national demo has overlapping findings');
   assert.ok(total < p.reduce((t, x) => t + (x.gross || x.atStake || 0), 0) && total <= r.facts.spend30, 'net figures add up to less than the gross and no more than spend');
-  console.log('action plan: money in a campaign already counted above is left out');
+  const rd = findDemo('retailer'); const rr = runRules(rd.data('2026-11-21'), { target: rd.target, today: '2026-11-21' });
+  const prod = actionPlan(rr.weaknesses, null, rr.facts.spend30).find((x) => x.id === 'products-no-sales' || /products? spent/.test(x.title));
+  assert.ok(prod && prod.atStake > 0 && prod.mayOverlap && !prod.overlap, 'products shown in full, marked as possibly overlapping');
+  console.log('action plan: money in a campaign already counted above is left out; products shown in full with a note');
 }
 console.log('All rules tests passed.');

@@ -295,8 +295,8 @@
       var w = byId[p.id];
       if (p.atStake) {
         m.textContent = cur.format(p.atStake);
-        m.appendChild(el('small', null, p.overlap ? 'additional amount at stake' : 'at stake, next 30 days'));
-        if (w && w.atStake) m.title = w.atStake.basis + (p.overlap ? '. ' + cur.format(p.gross) + ' at stake in total over the next 30 days, including the amount already counted above.' : '');
+        m.appendChild(el('small', null, p.overlap ? 'additional amount at stake' : p.mayOverlap ? 'may include spend counted above' : 'at stake, next 30 days'));
+        if (w && w.atStake) m.title = p.mayOverlap ? 'These products each spent more than your account’s average cost per conversion without making a sale. The product report doesn’t show which campaigns the spend came from, so I can’t tell how much is already counted above.' : w.atStake.basis + (p.overlap ? '. ' + cur.format(p.gross) + ' at stake in total over the next 30 days, including the amount already counted above.' : '');
       } else if (p.overlap) {
         m.className = 'm over';
         m.appendChild(el('small', null, 'already counted above'));

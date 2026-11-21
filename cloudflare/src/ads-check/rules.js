@@ -881,9 +881,11 @@ function accountCpa(m) {
 }
 // by: how the amount splits across campaigns, keyed by campaign name ({ name: weight }, scaled to the amount here).
 // The action plan uses it so money in a campaign already counted higher up the list is not counted again.
-function atStake(amount, basis, by) {
+// mayOverlap: the rows don't say which campaign the money sits in (products), so the plan shows it in full with a note.
+function atStake(amount, basis, by, mayOverlap) {
   if (!(amount >= 1)) return null;
   const out = { amount: round2(amount), basis };
+  if (mayOverlap) out.mayOverlap = true;
   if (by) {
     const entries = [...(by instanceof Map ? by.entries() : Object.entries(by))].filter(([, v]) => v > 0);
     const total = entries.reduce((t, [, v]) => t + v, 0);
@@ -1550,7 +1552,7 @@ function ruleShopping(m, out) {
       priority: share > 0.3 && wastedSpend > 15 ? 'high' : 'medium',
       title: `${plural(wasted.length, 'product')} spent ${money(wastedSpend)} with no sales`,
       detail: `${pct(share)} of your product spend in the last 30 days brought no conversions. The biggest are ${examples(wasted.map((p) => clean(p.title, 40)), 3, wasted.length)}.`,
-      atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(wasted.filter((p) => p.spend >= cpa).reduce((s, p) => s + p.spend, 0), 'Products past your cost per conversion with no sale', Object.fromEntries(m.campaigns.filter((c) => c.channel === 'PERFORMANCE_MAX' || c.channel === 'SHOPPING').map((c) => [c.name, c.spend]))) : null; })(),
+      atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(wasted.filter((p) => p.spend >= cpa).reduce((s, p) => s + p.spend, 0), 'Products past your cost per conversion with no sale', null, true) : null; })(),
       why: 'Money spent on products that never sell is money not spent on the ones that do.',
       start: 'Check price and product page for each, then exclude the ones that still do not sell from your listing groups.',
       startLink: null,
@@ -2476,6 +2478,7 @@ export function actionPlan(weaknesses, quote, spend30) {
   const counted = new Map();
   return plan.map(({ i, ...p }, n) => {
     const by = weaknesses[i].atStake && weaknesses[i].atStake.byCampaign;
+    if (p.atStake && weaknesses[i].atStake.mayOverlap && counted.size) p.mayOverlap = true;
     if (p.atStake && by) {
       let fresh = 0;
       for (const [k, v] of Object.entries(by)) { const had = counted.get(k) || 0; if (v > had) { fresh += v - had; counted.set(k, v); } }
