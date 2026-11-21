@@ -921,6 +921,55 @@
 /* ===== end of shared admin menu ===== */
   :root { --gm-accent: #985830; --gm-accent-rgb: 152,88,48; --gm-hi-rgb: 217,146,94; --gm-third-rgb: 205,178,140; --gm-bg: #F6F4EE; }
 </style>
+<style>
+/* ===== v3 refresh (21 Nov 2026): colour by area, text behind (i) and expanders ===== */
+:root { --area: var(--brand); --area-wash: var(--brand-wash); --area-dot: var(--brand); }
+html[data-area="ok"]    { --area: var(--ok);    --area-wash: var(--ok-wash);    --area-dot: var(--ok-dot); }
+html[data-area="info"]  { --area: var(--info);  --area-wash: var(--info-wash);  --area-dot: var(--info-dot); }
+html[data-area="party"] { --area: var(--party); --area-wash: var(--party-wash); --area-dot: var(--party-dot); }
+html[data-area="attn"]  { --area: var(--attn);  --area-wash: var(--attn-wash);  --area-dot: var(--attn-dot); }
+html[data-area="off"]   { --area: var(--off);   --area-wash: var(--off-wash);   --area-dot: var(--off-dot); }
+/* menu icons carry their area colour */
+.gm-item[data-view="overview"] svg { color: var(--brand); }
+.gm-item[data-view="clients"] svg { color: var(--ok-dot); }
+.gm-item[data-view="prospects"] svg, .gm-item[data-view="links"] svg { color: var(--info-dot); }
+.gm-item[data-view="products"] svg, .gm-item[data-view="demos"] svg, .gm-item[data-view="pricing"] svg { color: var(--party-dot); }
+.gm-item[data-view="brief"] svg, .gm-item[data-view="list"] svg { color: var(--attn-dot); }
+.gm-item[data-view="site"] svg { color: var(--off-dot); }
+/* the title marker, tiles and card headings in the area colour */
+.page-head h1 { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+section[data-pane]:not([data-pane="overview"]) > .page-head h1::before { content: ""; width: 12px; height: 12px; border-radius: 4px; background: var(--area-dot); box-shadow: 0 0 0 6px var(--area-wash); flex: none; }
+section[data-pane]:not([data-pane="overview"]) .kpi { border-top: 3px solid var(--area-dot); background: linear-gradient(180deg, var(--area-wash), var(--surface) 72%); }
+section[data-pane]:not([data-pane="overview"]) .kpi small { color: var(--area); font-weight: 600; }
+section[data-pane]:not([data-pane="overview"]) .card-head h2 { display: flex; align-items: center; gap: 10px; }
+section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--area-dot); flex: none; }
+/* prospects: each stage its own colour, grey to green */
+.col { border-top: 3px solid var(--sd, var(--line-2)); }
+.col[data-stage="Lead"] { --sd: var(--off-dot); background: color-mix(in oklab, var(--off-wash), var(--sunk) 40%); }
+.col[data-stage="Talking"] { --sd: var(--info-dot); background: color-mix(in oklab, var(--info-wash), var(--sunk) 40%); }
+.col[data-stage="Proposal drafted"] { --sd: var(--party-dot); background: color-mix(in oklab, var(--party-wash), var(--sunk) 40%); }
+.col[data-stage="Proposal sent"] { --sd: var(--attn-dot); background: color-mix(in oklab, var(--attn-wash), var(--sunk) 40%); }
+.col[data-stage="Refining proposal"] { --sd: var(--brand); background: color-mix(in oklab, var(--brand-wash), var(--sunk) 40%); }
+.col[data-stage="Won"] { --sd: var(--ok-dot); background: color-mix(in oklab, var(--ok-wash), var(--sunk) 40%); }
+.col-head .t::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--sd, var(--line-2)); margin-right: 8px; vertical-align: 1px; }
+/* (i) buttons: the text appears under the title on a tap */
+.ph-i { width: 20px; height: 20px; padding: 0; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: italic 700 11px/1 var(--body); cursor: pointer; display: inline-grid; place-items: center; flex: none; transition: border-color .2s, color .2s; }
+.ph-i::before { content: "i"; }
+.ph-i:hover, .ph-i[aria-expanded="true"] { border-color: var(--area-dot); color: var(--area); }
+.ph-i:focus-visible { outline: 2px solid var(--area-dot); outline-offset: 2px; }
+.ph-lede:not([hidden]), .desk-sub:not([hidden]) { margin-top: 8px; padding: 10px 14px; border-radius: 10px; background: var(--area-wash); color: var(--text-2); max-width: 720px; }
+/* expanders */
+.fold-note { margin-top: 14px; }
+.fold-note > summary, .fold-card > summary { cursor: pointer; list-style: none; }
+.fold-note > summary::-webkit-details-marker, .fold-card > summary::-webkit-details-marker { display: none; }
+.fold-note > summary { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.fold-note > summary::after, .fold-card > summary::after { content: "+"; color: var(--area); font-size: 16px; font-weight: 500; line-height: 1; }
+.fold-note[open] > summary::after, .fold-card[open] > summary::after { content: "\2212"; }
+.pr-more { margin: 4px 20px 16px; }
+.pr-more .pr-note { margin: 8px 0 0; }
+.fold-card:not([open]) > summary { border-bottom: 0; }
+.fold-card > summary h2 { color: var(--text-2); }
+</style>
 </head>
 <body>
 
@@ -983,7 +1032,7 @@
 
     <!-- Clients list -->
     <section data-pane="clients" hidden>
-      <div class="page-head"><div><h1>Clients</h1><p class="lede">From the client folders in Obsidian. Click a client for health, reports and tasks.</p></div></div>
+      <div class="page-head"><div><h1>Clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-1" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-1" hidden>From the client folders in Obsidian. Click a client for health, reports and tasks.</p></div></div>
       <div class="card scroll">
         <table class="table">
           <thead><tr><th>Client</th><th>Status</th><th>Health</th><th id="ads-col">Google Ads this week</th><th>Last report</th><th class="r">Open tasks</th><th></th></tr></thead>
@@ -1037,7 +1086,7 @@
     <!-- Prospects: the sales funnel -->
     <section data-pane="prospects" hidden>
       <div class="page-head">
-        <div><h1>Prospects</h1><p class="lede">Your sales funnel. Drag a card to the next stage, or click it to edit.</p></div>
+        <div><h1>Prospects <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-2" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-2" hidden>Your sales funnel. Drag a card to the next stage, or click it to edit.</p></div>
         <div class="ph-tools">
           <input type="search" id="p-find" placeholder="Find a company or contact" aria-label="Find a company or contact" autocomplete="off">
           <button type="button" class="btn" id="p-lost" aria-pressed="false">Show lost</button>
@@ -1051,13 +1100,13 @@
         <div class="kpi"><small>Won</small><b id="pk-won">–</b><span id="pk-won-s">&nbsp;</span></div>
       </div>
       <div class="board" id="board"></div>
-      <p class="lede p-foot">Cards with the note mark come from <b>03_Clients/00_Prospects</b> in Obsidian and stay linked both ways. <a href="obsidian://open?vault=My%20Brain&amp;file=03_Clients%2F00_Prospects%2F00_How%20prospects%20work">How the notes work</a></p>
+      <details class="fold-note"><summary>How the cards link to Obsidian</summary><p class="p-foot">Cards with the note mark come from <b>03_Clients/00_Prospects</b> in Obsidian and stay linked both ways. <a href="obsidian://open?vault=My%20Brain&amp;file=03_Clients%2F00_Prospects%2F00_How%20prospects%20work">How the notes work</a></p></details>
     </section>
 
     <!-- Rate card links -->
     <!-- Products: Phillips. marketing service tools only (Search Desk). Other Phillips Group businesses stay in the admin switcher. -->
     <section data-pane="products" hidden>
-      <div class="page-head"><div><h1>Products</h1><p class="lede">The tools Phillips. builds for its marketing services. Each one has its own sign-in.</p></div></div>
+      <div class="page-head"><div><h1>Products <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-3" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-3" hidden>The tools Phillips. builds for its marketing services. Each one has its own sign-in.</p></div></div>
       <div class="prods">
         <article class="card prod">
           <div class="prod-top">
@@ -1081,7 +1130,7 @@
 
     <section data-pane="links" hidden>
       <div class="page-head">
-        <div><h1>Invite links</h1><p class="lede">Links to the private rate card, the Search Desk demo (Example Car Hire Co. in the real product) and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
+        <div><h1>Invite links <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-4" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-4" hidden>Links to the private rate card, the Search Desk demo (Example Car Hire Co. in the real product) and prospect prototypes. They can be forwarded, they work only between their dates, and you can switch any of them off.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/rate-card" target="_blank" rel="noopener">Preview rate card</a><a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a><a class="btn" href="/the-loft" target="_blank" rel="noopener">Preview The Loft</a><a class="btn" href="/monument" target="_blank" rel="noopener">Preview Monument</a></div>
       </div>
       <div class="card" style="margin-bottom:20px">
@@ -1098,7 +1147,7 @@
         <p class="msg" id="create-msg"></p>
       </div>
       <div class="card desk-card" style="margin-bottom:20px">
-        <div class="card-head"><div><h2>Search Desk demo links</h2><p class="desk-sub">Each invite that opens the Search Desk demo gets its own share link to Example Car Hire Co., labelled with the prospect's name. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
+        <div class="card-head"><div><h2>Search Desk demo links <button type="button" class="ph-i" aria-expanded="false" aria-controls="desk-sub" aria-label="About demo links"></button></h2><p class="desk-sub" id="desk-sub" hidden>Each invite that opens the Search Desk demo gets its own share link to Example Car Hire Co., labelled with the prospect's name. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
         <p class="desk-status" id="desk-status"></p>
         <div class="desk-acts">
           <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Share links in Search Desk</a>
@@ -1119,7 +1168,7 @@
     <!-- Monday Brief -->
     <section data-pane="brief" hidden>
       <div class="page-head">
-        <div><h1>The Monday Brief</h1><p class="lede">The weekly "what's changed" email and its page at /updates/. Nothing is emailed until you approve it here. Approved issues go out at 07:00 UK time on their Monday.</p></div>
+        <div><h1>The Monday Brief <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-5" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-5" hidden>The weekly "what's changed" email and its page at /updates/. Nothing is emailed until you approve it here. Approved issues go out at 07:00 UK time on their Monday.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/updates/" target="_blank" rel="noopener">Open /updates/</a></div>
       </div>
       <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
@@ -1138,20 +1187,20 @@
           </table>
         </div>
       </div>
-      <div class="card">
-        <div class="card-head"><h2>How a week works</h2></div>
+      <details class="card fold-card">
+        <summary class="card-head"><h2>How a week works</h2></summary>
         <div class="br-how"><ol>
           <li>Friday: the drafting task writes the issue from the platforms' own announcements and uploads it here. At 16:00 you get an email saying it's ready (or that it's missing).</li>
           <li>Preview the page and the email, send yourself a test, then press Approve. Changes: ask a Claude session to edit the draft, then approve again.</li>
           <li>Monday 07:00: it goes to everyone who confirmed, and the page goes live. You get a note when it's sent, or if it wasn't approved.</li>
         </ol></div>
-      </div>
+      </details>
     </section>
 
     <!-- Email list: everyone who signed up to the Monday Brief (GET /admin/api/brief/subscribers) -->
     <section data-pane="list" hidden>
       <div class="page-head">
-        <div><h1>Email list</h1><p class="lede">Everyone who signed up to The Monday Brief. A sign-up only counts once the person confirms by email; unconfirmed ones are deleted after <span id="el-days">7</span> days. Your own addresses are marked and left out of the numbers.</p></div>
+        <div><h1>Email list <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-6" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-6" hidden>Everyone who signed up to The Monday Brief. A sign-up only counts once the person confirms by email; unconfirmed ones are deleted after <span id="el-days">7</span> days. Your own addresses are marked and left out of the numbers.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="el-csv" disabled>Download CSV</button></div>
       </div>
       <div class="kpis">
@@ -1184,7 +1233,7 @@
     <!-- Demo clients: made-up accounts through the real Google Ads Check (cloudflare/src/ads-check/demos.js) -->
     <section data-pane="demos" hidden>
       <div class="page-head">
-        <div><h1>Demo clients</h1><p class="lede">Made-up accounts and websites run through the real free tools: the same page, rules and design a client sees, so what you see here is what they get. Pick one, look at it at each width, then ask for changes.</p></div>
+        <div><h1>Demo clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-7" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-7" hidden>Made-up accounts and websites run through the real free tools: the same page, rules and design a client sees, so what you see here is what they get. Pick one, look at it at each width, then ask for changes.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" id="dm-open" href="/google-ads-audit?sample=trades&amp;demo=1" target="_blank" rel="noopener">Open in a new tab</a></div>
       </div>
       <div class="seg dm-tool" role="group" aria-label="Tool"><button type="button" data-tool="ads" aria-pressed="true">Google Ads Check</button><button type="button" data-tool="web" aria-pressed="false">Website Check</button></div>
@@ -1201,7 +1250,7 @@
     <!-- Pricing: the calculator behind the free tools' reports (cloudflare/src/pricing.js) -->
     <section data-pane="pricing" hidden>
       <div class="page-head">
-        <div><h1>Pricing</h1><p class="lede">Every rate and limit the free tools use. Prices only ever appear inside a private report. Each save is a new version, and a report keeps the version it was priced with.</p></div>
+        <div><h1>Pricing <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-8" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-8" hidden>Every rate and limit the free tools use. Prices only ever appear inside a private report. Each save is a new version, and a report keeps the version it was priced with.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/website-check/" target="_blank" rel="noopener">Open the Website Check</a><a class="btn" href="/google-ads-audit" target="_blank" rel="noopener">Open the Google Ads Check</a></div>
       </div>
       <p class="pr-ver" id="pr-ver">Loading…</p>
@@ -1216,7 +1265,7 @@
               <label>Round each job up to (minutes)<input type="number" name="jobRoundMinutes" min="1" step="1" required></label>
               <label>Shortest job (minutes)<input type="number" name="jobMinMinutes" min="0" step="5" required></label>
             </div>
-            <p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the set-up once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
+            <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the set-up once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p></details>
           </div>
           <div class="card">
             <div class="card-head"><h2>Google Ads monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
@@ -1236,13 +1285,13 @@
               <label>Quotes hold their price for (days)<input type="number" name="quoteValidDays" min="1" step="1" required></label>
             </div>
             <label class="pr-check"><input type="checkbox" name="holdForReview"> Hold quotes for my check (customers see “Lewis will confirm this within one working day”)</label>
-            <p class="pr-note">Monthly fee = the account&rsquo;s estimated hours a month &times; the hourly rate, rounded, and never less than the minimum. Hours come from the campaigns that spent in the last 30 days and the 30-day spend. An empty minimum hides the monthly option.</p>
+            <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Monthly fee = the account&rsquo;s estimated hours a month &times; the hourly rate, rounded, and never less than the minimum. Hours come from the campaigns that spent in the last 30 days and the 30-day spend. An empty minimum hides the monthly option.</p></details>
           </div>
         </div>
         <div class="card" style="margin-top:20px">
           <div class="card-head"><h2>Time per fix</h2><span class="meta">set-up + minutes per item, from the account's own counts</span></div>
           <div class="scroll"><table class="table pr-table"><thead><tr><th>Fix type</th><th>What counts as an item</th><th class="r">By hand: set-up (min)</th><th class="r">By hand: per item (min)</th><th class="r">With AI: set-up (min)</th><th class="r">With AI: per item (min)</th></tr></thead><tbody id="pr-fix"></tbody></table></div>
-          <p class="pr-note">Reports price each job on its AI-assisted time. Leave both AI boxes empty for a job that can't be done quickly with AI: it keeps the time by hand. The hand times are estimates made at build on 16 Nov 2026 and the AI times on 19 Nov 2026; tune both against real jobs.</p>
+          <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Reports price each job on its AI-assisted time. Leave both AI boxes empty for a job that can't be done quickly with AI: it keeps the time by hand. The hand times are estimates made at build on 16 Nov 2026 and the AI times on 19 Nov 2026; tune both against real jobs.</p></details>
         </div>
         <div class="card" style="margin-top:20px">
           <div class="card-head"><h2>Free-use limits</h2></div>
@@ -1254,7 +1303,7 @@
             <label>Treat as an agency above (accounts under a manager)<input type="number" name="l.agencyAccountThreshold" min="0" step="1" required></label>
             <label>Google Ads Checks a day, at most<input type="number" name="l.adsChecksPerDay" min="0" step="1" required></label>
           </div>
-          <p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved.</p>
+          <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved.</p></details>
         </div>
         <div class="card" style="margin-top:20px">
           <div class="card-head"><h2>Preview</h2><span class="meta">uses the numbers above, before you save</span></div>
@@ -1275,7 +1324,7 @@
 
     <!-- Site -->
     <section data-pane="site" hidden>
-      <div class="page-head"><div><h1>Site</h1><p class="lede">The free checks, week by week, and the old landing page audit tool. Traffic and search live in Google Analytics and Search Console.</p></div></div>
+      <div class="page-head"><div><h1>Site <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-9" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-9" hidden>The free checks, week by week, and the old landing page audit tool. Traffic and search live in Google Analytics and Search Console.</p></div></div>
       <div class="card" style="margin-bottom:20px">
         <div class="card-head"><h2>Free checks</h2><span class="meta">completed by visitors, week by week; your own runs aren't counted</span></div>
         <div class="kpis tu-kpis">
@@ -3412,6 +3461,21 @@
   window.addEventListener('hashchange', maybe);
   // Wait until the main script has shown the app (signed in)
   var t = setInterval(function () { if (!document.getElementById('app').hidden) { clearInterval(t); maybe(); } }, 300);
+})();
+</script>
+<script>
+// v3 refresh: the area colour follows the screen; (i) buttons show their note under the title.
+(function () {
+  var AREA = { overview: 'brand', clients: 'ok', client: 'ok', doc: 'ok', prospects: 'info', links: 'info', products: 'party', demos: 'party', pricing: 'party', brief: 'attn', list: 'attn', site: 'off' };
+  function setArea() { var v = (location.hash || '#overview').slice(1).split(/[/?&]/)[0]; document.documentElement.setAttribute('data-area', AREA[v] || 'brand'); }
+  setArea(); window.addEventListener('hashchange', setArea);
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.ph-i'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    var t = document.getElementById(b.getAttribute('aria-controls')); if (!t) return;
+    var open = b.getAttribute('aria-expanded') !== 'true';
+    b.setAttribute('aria-expanded', String(open)); t.hidden = !open;
+  });
 })();
 </script>
 </body>
