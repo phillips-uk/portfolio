@@ -98,3 +98,15 @@ secured lending (outstanding, created or satisfied in the last 12 months), lates
 paying suppliers (payment practices reporters only) and group. Each fact has `notable` (worth a look); there is no score.
 Year-on-year figures come from the comparative column of the same filing (`prior_*` columns in `accounts_facts`, read by
 `readPrior` / `read_prior`). Uses the live lookup, so it shares the Companies House cap. Code: `src/signals.js`.
+
+## Insolvency watch (`/v1/watch`, scope `watch`)
+
+A client keeps a list of companies (`POST /v1/watch` with `{"companies":[{"number":"01672070","label":"..."}]}`,
+`GET /v1/watch`, `DELETE /v1/watch/{number}`; 500 by default, `clients.watch_limit`). Every 10 minutes the scheduled
+run reads a starting point for new companies (one Companies House profile call each, 50 a run) and then finds
+changes from data already held: Gazette notices, stream insolvency cases and charges, status and overdue filing
+(`company_flags`, written by the companies stream for watched companies only, because the register's status can be a
+month old after each rebuild) and new accounts from the daily files (with year-on-year falls). Each change is stored
+once in `watch_events` (unique per company, kind and ref). `GET /v1/watch/changes?since=` lists them for a client.
+At 07:30 UTC a digest goes to `clients.alert_email` through Resend once the `RESEND_API_KEY` secret is set (sender
+`ALERT_FROM`, default `Phillips. data <alerts@phillips-uk.com>`); `watch_digests` records what was sent. Code: `src/watch.js`.
