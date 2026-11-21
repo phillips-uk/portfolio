@@ -957,7 +957,9 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
 .ph-i::before { content: "i"; }
 .ph-i:hover, .ph-i[aria-expanded="true"] { border-color: var(--area-dot); color: var(--area); }
 .ph-i:focus-visible { outline: 2px solid var(--area-dot); outline-offset: 2px; }
-.ph-lede:not([hidden]), .desk-sub:not([hidden]) { margin-top: 8px; padding: 10px 14px; border-radius: 10px; background: var(--area-wash); color: var(--text-2); max-width: 720px; }
+.ph-lede:not([hidden]), .desk-sub:not([hidden]), #br-state:not([hidden]) { margin-top: 8px; padding: 10px 14px; border-radius: 10px; background: var(--area-wash); color: var(--text-2); max-width: 720px; }
+#br-state:not([hidden]) { margin: 12px 20px; max-width: none; border-bottom: 0; }
+.desk-status:not([hidden]) { margin: 12px 20px 0; }
 /* expanders */
 .fold-note { margin-top: 14px; }
 .fold-note > summary, .fold-card > summary { cursor: pointer; list-style: none; }
@@ -1147,8 +1149,8 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
         <p class="msg" id="create-msg"></p>
       </div>
       <div class="card desk-card" style="margin-bottom:20px">
-        <div class="card-head"><div><h2>Search Desk demo links <button type="button" class="ph-i" aria-expanded="false" aria-controls="desk-sub" aria-label="About demo links"></button></h2><p class="desk-sub" id="desk-sub" hidden>Each invite that opens the Search Desk demo gets its own share link to Example Car Hire Co., labelled with the prospect's name. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
-        <p class="desk-status" id="desk-status"></p>
+        <div class="card-head"><div><h2>Search Desk demo links <button type="button" class="ph-i" aria-expanded="false" aria-controls="desk-sub desk-status" aria-label="About demo links"></button></h2><p class="desk-sub" id="desk-sub" hidden>Each invite that opens the Search Desk demo gets its own share link to Example Car Hire Co., labelled with the prospect's name. Prospects never see it.</p></div><span class="pill" id="desk-pill">Loading</span></div>
+        <p class="desk-status" id="desk-status" hidden></p>
         <div class="desk-acts">
           <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Share links in Search Desk</a>
           <a class="btn" href="/search-desk" target="_blank" rel="noopener">Preview Search Desk</a>
@@ -1177,8 +1179,8 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
         <div class="kpi"><small>Issues published</small><b id="br-pub">–</b></div>
       </div>
       <div class="card" style="margin-bottom:20px">
-        <div class="card-head"><h2>Issues</h2><span class="pill" id="br-pill">Loading</span></div>
-        <p class="br-list" id="br-state"></p>
+        <div class="card-head"><h2>Issues <button type="button" class="ph-i" aria-expanded="false" aria-controls="br-state" aria-label="About sending"></button></h2><span class="pill" id="br-pill">Loading</span></div>
+        <p class="br-list" id="br-state" hidden></p>
         <p class="br-list" id="br-list" hidden></p>
         <div class="scroll">
           <table class="table">
@@ -3472,9 +3474,9 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
   document.addEventListener('click', function (e) {
     var b = e.target.closest('.ph-i'); if (!b) return;
     e.preventDefault(); e.stopPropagation();
-    var t = document.getElementById(b.getAttribute('aria-controls')); if (!t) return;
     var open = b.getAttribute('aria-expanded') !== 'true';
-    b.setAttribute('aria-expanded', String(open)); t.hidden = !open;
+    b.setAttribute('aria-expanded', String(open));
+    b.getAttribute('aria-controls').split(' ').forEach(function (id) { var t = document.getElementById(id); if (t) t.hidden = !open; });
   });
 })();
 </script>
