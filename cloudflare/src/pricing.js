@@ -42,6 +42,11 @@ export const FIX_TYPES = {
   web_technical:{ tool: 'web', label: 'Technical set-up',              item: 'changes',          setup: 30,  perItem: 15, aiSetup: 10, aiPerItem: 5 },
   web_tracking: { tool: 'web', label: 'Tracking enquiries',            item: 'changes',          setup: 60,  perItem: 30, aiSetup: null, aiPerItem: null },
   web_proof:    { tool: 'web', label: 'Reviews on the page',           item: 'sections',         setup: 60,  perItem: 0,  aiSetup: null, aiPerItem: null },
+  // Rules v6 (21 Nov 2026): accessibility from Google's test, link previews, and the UK legal basics. Legal wording needs
+  // Lewis's judgement about the business, so that one keeps its time by hand.
+  web_access:   { tool: 'web', label: 'Accessibility',                 item: 'issues',           setup: 30,  perItem: 15, aiSetup: 15, aiPerItem: 5 },
+  web_share:    { tool: 'web', label: 'Link previews',                 item: 'tags',             setup: 15,  perItem: 5,  aiSetup: 5,  aiPerItem: 2 },
+  web_trust:    { tool: 'web', label: 'Privacy, cookies and company details', item: 'changes',   setup: 30,  perItem: 20, aiSetup: null, aiPerItem: null },
 };
 
 // Which Website Check finding is which kind of job. A finding not listed here isn't priced (it stays in the report).
@@ -51,10 +56,14 @@ export const WEB_FIX = {
   'what-you-do': 'web_first', where: 'web_first', 'contact-top': 'web_first', 'delivery-returns': 'web_first',
   'contact-routes': 'web_contact', 'tap-to-call': 'web_contact', consistent: 'web_contact', 'gbp-link': 'web_contact',
   title: 'web_search', description: 'web_search', 'one-heading': 'web_search', 'alt-text': 'web_search', noindex: 'web_search',
+  'link-text': 'web_search', 'crawlable-links': 'web_search', canonical: 'web_search', lang: 'web_search', hreflang: 'web_search',
   'local-schema': 'web_schema', 'schema-broken': 'web_schema',
   https: 'web_technical', robots: 'web_technical', sitemap: 'web_technical', 'ai-search-bots': 'web_technical',
+  'best-practices': 'web_technical', 'robots-errors': 'web_technical', 'soft-404': 'web_technical', 'mixed-content': 'web_technical',
   analytics: 'web_tracking', measurable: 'web_tracking',
   proof: 'web_proof',
+  accessibility: 'web_access', 'social-tags': 'web_share', 'form-length': 'web_contact',
+  privacy: 'web_trust', 'cookie-consent': 'web_trust', 'company-details': 'web_trust',
 };
 
 // A Website Check report's weaknesses as priced jobs: one per kind, named after its most important finding, with the

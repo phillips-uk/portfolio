@@ -1,7 +1,7 @@
 // Website Check rules, tested on the demo websites (website-demos.js, the same ones in /admin#demos/web).
 //   node cloudflare/src/website-check.test.mjs
 import assert from 'node:assert/strict';
-import { analyse } from './website-check-rules.js';
+import { analyse, readPsi, savingWords } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 import { webQuote, WEB_FIX, getPricing, quote, validate, humanMinutes } from './pricing.js';
 
@@ -100,5 +100,36 @@ const lines = [{ id: 'x', title: 'x', fixType: 'web_search', items: 2, priority:
 assert.equal(quote({ settings: noAi.settings }, lines).lines[0].minutes, humanMinutes(noAi.settings, 'web_search', 2), 'no AI time: priced by hand');
 assert.ok(quote(pricing, lines).lines[0].minutes < humanMinutes(pricing.settings, 'web_search', 2), 'with AI time: cheaper');
 assert.ok(validate({ fixTypes: { web_search: { aiSetup: -1 } } }).error, 'a negative AI time is refused');
+
+// Rules version 6 (21 Nov 2026, v2 step 2): what Google says to fix, accessibility, best practices, indexing, security,
+// link previews and the UK legal basics
+const sp = trades.weaknesses.find((w) => w.id === 'speed-mobile');
+assert.equal(sp.items.length, 3, 'slow phone speed lists Google’s top three fixes');
+assert.equal(sp.items[0].text, 'Images are bigger than they need to be', 'biggest saving first');
+assert.match(sp.items[0].note, /^about 2\.4 MB less to download$/, 'saving in plain words');
+assert.equal(sp.start, sp.items.length && 'Resize images to the size they show at, compress them, and save photos as WebP or AVIF.', 'start is the top fix');
+assert.equal(savingWords({ ms: 1000, bytes: 0, tbt: 0 }), 'about 1 second sooner');
+for (const id of ['accessibility', 'best-practices', 'soft-404', 'mixed-content', 'canonical', 'lang', 'link-text', 'social-tags']) assert.ok(ids(trades.weaknesses).includes(id), `old trade site flags ${id}`);
+assert.equal(relaunch.weaknesses.find((w) => w.id === 'canonical').priority, 'high', 'canonical to a test site is a fix-first');
+for (const id of ['privacy', 'cookie-consent']) assert.ok(ids(relaunch.weaknesses).includes(id), `tracking without a banner or privacy link flags ${id}`);
+assert.ok(ids(national.weaknesses).includes('company-details'), 'a Ltd with no company number is asked for it');
+assert.ok(ids(national.weaknesses).includes('form-length'), 'a nine-field form is long');
+assert.ok(ids(national.notes).includes('cookie-consent'), 'Tag Manager only: a note to check the banner, not a fault');
+assert.equal(run('restaurant').weaknesses.find((w) => w.id === 'soft-404').priority, 'low', 'a redirect for missing pages is a small fix');
+const clinicR = run('clinic');
+for (const id of ['accessibility', 'best-practices', 'canonical', 'soft-404', 'security-headers', 'social-tags', 'privacy', 'cookie-consent']) assert.ok(ids(clinicR.strengths).includes(id), `the clinic passes ${id}`);
+assert.ok(ids(run('salon').notes).includes('security-headers'), 'missing security headers are a note, never a fault');
+// Lighthouse 13's shape, read by readPsi: insights with byte savings, a failed accessibility audit, an ARIA one
+const lh = { lighthouseResult: { categories: { performance: { score: 0.41 }, accessibility: { score: 0.8 }, 'best-practices': { score: 0.74 }, seo: { score: 0.9 } },
+  audits: { 'image-delivery-insight': { score: 0.5, scoreDisplayMode: 'metricSavings', numericValue: 300 * 1024, numericUnit: 'byte', metricSavings: { LCP: 0 } },
+    'render-blocking-insight': { score: 0, scoreDisplayMode: 'metricSavings', numericValue: 900, numericUnit: 'millisecond', metricSavings: { FCP: 900, LCP: 900 } },
+    'network-dependency-tree-insight': { score: 0, scoreDisplayMode: 'metricSavings', metricSavings: { LCP: 0 } },
+    'color-contrast': { score: 0, scoreDisplayMode: 'binary' }, 'aria-roles': { score: 0, scoreDisplayMode: 'binary' }, 'image-alt': { score: 0, scoreDisplayMode: 'binary' },
+    'errors-in-console': { score: 0, scoreDisplayMode: 'binary' }, 'csp-xss': { score: 0, scoreDisplayMode: 'informative' } } } };
+const ps = readPsi(lh);
+assert.deepEqual([ps.performance, ps.accessibility, ps.bestPractices], [41, 80, 74], 'four category scores');
+assert.deepEqual(ps.fixes.map((x) => x.id), ['render-blocking-insight', 'image-delivery-insight'], 'fixes ranked by saving, unknown insights left out');
+assert.deepEqual(ps.failed.a11y, ['color-contrast', 'aria'], 'accessibility failures, without the checks the report makes itself');
+assert.deepEqual(ps.failed.bp, ['errors-in-console'], 'informative audits are not failures');
 
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

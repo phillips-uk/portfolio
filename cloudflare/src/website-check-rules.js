@@ -5,10 +5,13 @@
 // A finding: { id, group, status: 'strength' | 'weakness' | 'note', priority: 'high' | 'medium' | 'low', title, detail,
 //              why, start, link: { href, label } }
 
-export const RULES_VERSION = 5; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
+export const RULES_VERSION = 6; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
 // businesses aren't asked for a town, a Maps link or local business details; "Rated 4.8 on Checkatrade" counts as a review. 4
 // (18 Nov 2026): the report carries a profile of the site (siteProfile). 5 (21 Nov 2026): three kinds of business
-// (MODELS), chosen on the form or detected; local checks only for local businesses, delivery and returns for shops
+// (MODELS), chosen on the form or detected; local checks only for local businesses, delivery and returns for shops. 6
+// (21 Nov 2026, Website Check v2 step 2): what Google's speed test says to fix first, accessibility and best practices
+// from the same test, link previews, canonical, language, hreflang, missing pages, mixed content, security headers,
+// privacy, cookie consent, company details and form length
 
 // What kind of business the check judges the site as (Lewis, 21 Nov 2026: not everyone who runs it is local). The visitor
 // can pick one on the form; otherwise it is detected from the page (detectModel) and the report offers a switch.
@@ -24,12 +27,15 @@ const LINKS = {
 export const GROUPS = [
   ['speed', 'Speed'],
   ['mobile', 'Phones'],
+  ['access', 'Accessibility'],
   ['first', 'First impression'],
   ['contact', 'Contact details'],
   ['search', 'Search basics'],
+  ['share', 'Link previews'],
   ['technical', 'Technical'],
   ['ai', 'AI search'],
   ['measure', 'Measuring enquiries'],
+  ['trust', 'Trust and legal'],
   ['proof', 'Reviews and proof'],
 ];
 
@@ -90,6 +96,11 @@ export function parsePage(html) {
     viewport: metaContent(raw, 'viewport'),
     canonical: (() => { const m = raw.match(/<link\b[^>]*rel\s*=\s*["']?canonical["']?[^>]*>/i); return m ? attr(m[0], 'href') : null; })(),
     ogTitle: metaContent(raw, 'og:title'),
+    ogDescription: metaContent(raw, 'og:description'),
+    ogImage: metaContent(raw, 'og:image') || metaContent(raw, 'og:image:url') || metaContent(raw, 'og:image:secure_url'),
+    hreflangs: [...raw.matchAll(/<link\b[^>]*hreflang\s*=[^>]*>/gi)].map(m => ({ lang: attr(m[0], 'hreflang'), href: attr(m[0], 'href') })).filter(h => h.href),
+    // The footer's words (where a company number and a privacy link usually sit), else the page's last lines
+    footer: (() => { const i = body.search(/<footer\b/i); return i >= 0 ? stripTags(body.slice(i)) : text.slice(-1500); })(),
     h1s, links, imgs, forms, jsonLd,
     top: { html: body.slice(0, headerEnd + 3000), text: stripTags(body.slice(0, headerEnd + 3000)).slice(0, 1500), linkLimit: bodyOffset + headerEnd + 3000 },
   };
@@ -167,18 +178,112 @@ const AI_TRAINING_BOTS = ['GPTBot', 'ClaudeBot', 'Google-Extended', 'CCBot', 'Ap
 
 // ---------- PageSpeed Insights ----------
 
+// What Google's test says to fix for speed, in plain words (Lewis, 21 Nov 2026: say what to fix, not just "could be
+// faster"). Lighthouse 13 calls these "insights"; the older audit names are kept in case the API runs an older version.
+// [title, where to start]. Audits not listed here are left out rather than shown in Google's own jargon.
+const IMAGES = ['Images are bigger than they need to be', 'Resize images to the size they show at, compress them, and save photos as WebP or AVIF.'];
+const BLOCKING = ['Some files hold up the first view', 'Load scripts with “defer”, and put the small amount of CSS the first screen needs in the page itself.'];
+const CACHE = ['Files are cached for only a short time', 'Set long cache times for images, CSS and scripts, so return visits load faster.'];
+const SERVER = ['The page is slow to start loading', 'Turn on compression and caching at your host, and remove any redirects before the page.'];
+const LCP_IMG = ['The main image is found late', 'Don’t lazy-load the main image at the top of the page, and mark it as high priority.'];
+const FONTS = ['Text waits for web fonts to load', 'Use font-display: swap, so text shows straight away in a standard font.'];
+const THIRD = ['Third-party scripts slow the page', 'Remove add-ons, chat widgets and trackers you don’t use, and load the rest after the page.'];
+const BUSY = ['Scripts keep the phone busy', 'Cut heavy scripts and add-ons: they delay taps and scrolling.'];
+const SHIFT = ['Parts of the page jump while loading', 'Give images and embeds a fixed width and height, and reserve space for banners.'];
+const MINIFY = ['Code files aren’t minified', 'Turn on minification in your website builder, host or plugin.'];
+export const SPEED_FIXES = {
+  'image-delivery-insight': IMAGES, 'uses-optimized-images': IMAGES, 'modern-image-formats': IMAGES, 'uses-responsive-images': IMAGES,
+  'offscreen-images': ['Images further down load straight away', 'Lazy-load the images below the first screen.'],
+  'render-blocking-insight': BLOCKING, 'render-blocking-resources': BLOCKING,
+  'cache-insight': CACHE, 'uses-long-cache-ttl': CACHE,
+  'document-latency-insight': SERVER, 'server-response-time': SERVER, 'uses-text-compression': SERVER, redirects: SERVER,
+  'lcp-discovery-insight': LCP_IMG, 'prioritize-lcp-image': LCP_IMG, 'lcp-lazy-loaded': LCP_IMG,
+  'font-display-insight': FONTS, 'font-display': FONTS,
+  'third-parties-insight': THIRD, 'third-party-summary': THIRD,
+  'unused-javascript': ['The page loads code it doesn’t use', 'Remove unused apps and plugins, and load scripts only on the pages that need them.'],
+  'unused-css-rules': ['The page loads styles it doesn’t use', 'Remove unused CSS, often left behind by themes and plugins.'],
+  'unminified-css': MINIFY, 'unminified-javascript': MINIFY,
+  'legacy-javascript-insight': ['Code for old browsers is sent to every visitor', 'Ask your developer to stop sending code meant for old browsers to modern ones.'],
+  'legacy-javascript': ['Code for old browsers is sent to every visitor', 'Ask your developer to stop sending code meant for old browsers to modern ones.'],
+  'duplicated-javascript-insight': ['The same code is loaded twice', 'Remove the duplicate scripts.'], 'duplicated-javascript': ['The same code is loaded twice', 'Remove the duplicate scripts.'],
+  'bootup-time': BUSY, 'mainthread-work-breakdown': BUSY,
+  'cls-culprits-insight': SHIFT, 'layout-shift-elements': SHIFT, 'unsized-images': SHIFT,
+  'dom-size-insight': ['The page is built from a very large number of parts', 'Simplify the page: fewer nested blocks, sliders and hidden sections.'],
+  'dom-size': ['The page is built from a very large number of parts', 'Simplify the page: fewer nested blocks, sliders and hidden sections.'],
+  'modern-http-insight': ['The server uses an older connection type', 'Ask your host to turn on HTTP/2 or HTTP/3.'],
+};
+
+// Accessibility and best-practice audits Google's test failed, in plain words. Checks the report already makes itself
+// (alt text, page language, page title, zoom, tap size, https) are left out so nothing is said twice.
+const A11Y_WORDS = {
+  'color-contrast': ['some text is hard to read against its background', 'Darken light grey text, and check text placed over images.'],
+  'link-in-text-block': ['links in the text stand out by colour alone', 'Underline links in paragraphs.'],
+  label: ['some form fields have no label', 'Give every form field a visible label.'],
+  'form-field-multiple-labels': ['some form fields have more than one label', 'Give each form field one label.'],
+  'select-name': ['some form fields have no label', 'Give every form field a visible label.'],
+  'button-name': ['some buttons have no name a screen reader can say', 'Give icon-only buttons a text label (aria-label).'],
+  'input-button-name': ['some buttons have no name a screen reader can say', 'Give icon-only buttons a text label (aria-label).'],
+  'link-name': ['some links have no text a screen reader can say', 'Give icon-only links a text label (aria-label).'],
+  'heading-order': ['headings skip levels', 'Use headings in order: one H1, then H2s, then H3s.'],
+  'empty-heading': ['some headings are empty', 'Remove empty headings or put text in them.'],
+  'landmark-one-main': ['the main content isn’t marked as such for screen readers', 'Wrap the main content in a <main> element.'],
+  'frame-title': ['embedded maps or videos have no title', 'Add a title to each embedded frame.'],
+  'html-lang-valid': ['the page language code isn’t valid', 'Use a standard code such as lang="en-GB".'],
+  list: ['some lists are built wrongly', 'Use ul or ol with li items only.'], listitem: ['some lists are built wrongly', 'Use ul or ol with li items only.'],
+  'video-caption': ['videos have no captions', 'Add captions to videos.'],
+  bypass: ['there is no way to skip straight to the main content', 'Add a “Skip to content” link at the top.'],
+  tabindex: ['the keyboard order is forced in places', 'Remove positive tabindex values.'],
+  'meta-refresh': ['the page reloads or moves on by itself', 'Remove the timed refresh.'],
+  'svg-img-alt': ['some images have no description', 'Add a title or aria-label to images drawn in SVG.'],
+};
+const ARIA = ['some accessibility attributes (ARIA) are used wrongly', 'Correct or remove the ARIA attributes Google’s test lists.'];
+const BP_WORDS = {
+  'errors-in-console': 'errors show in the browser’s console',
+  deprecations: 'the page uses browser features that are being removed',
+  'image-aspect-ratio': 'some images are stretched or squashed',
+  'image-size-responsive': 'some images look blurry on sharp screens',
+  'paste-preventing-inputs': 'some fields stop visitors pasting',
+  doctype: 'the page has no doctype, so browsers may show it in an older mode',
+  charset: 'the page doesn’t declare its character set',
+  'geolocation-on-start': 'it asks for the visitor’s location as soon as it opens',
+  'notification-on-start': 'it asks to send notifications as soon as it opens',
+  'third-party-cookies': 'it sets third-party cookies, which some browsers block',
+  'inspector-issues': 'the browser flags problems with the page in its developer tools',
+};
+
+const KIB = 1024;
+function speedFixes(a) {
+  const found = [];
+  for (const [id, words] of Object.entries(SPEED_FIXES)) {
+    const x = a[id];
+    if (!x || typeof x.score !== 'number' || x.score >= 0.9) continue;
+    const ms = x.metricSavings || {};
+    const save = Math.max(ms.LCP || 0, ms.FCP || 0);
+    const tbt = ms.TBT || 0;
+    const bytes = x.numericUnit === 'byte' ? x.numericValue || 0 : (x.details && x.details.overallSavingsBytes) || 0;
+    const shift = ms.CLS || 0;
+    if (save < 50 && tbt < 100 && bytes < 10 * KIB && shift < 0.05 && !(x.score < 0.5 && /dom-size|modern-http/.test(id))) continue;
+    found.push({ id, title: words[0], start: words[1], ms: Math.round(save), tbt: Math.round(tbt), bytes: Math.round(bytes), shift, weight: save + tbt / 2 + bytes / KIB / 2 + shift * 2000 });
+  }
+  // One line per plain-words title (the old and new names, or two script audits, say the same thing)
+  const seen = new Set();
+  return found.sort((x, y) => y.weight - x.weight).filter(f => !seen.has(f.title) && seen.add(f.title)).slice(0, 5).map(({ weight, ...f }) => f);
+}
+
+const failed = (a, ids) => ids.filter(id => a[id] && typeof a[id].score === 'number' && a[id].score < 1 && a[id].scoreDisplayMode !== 'informative' && a[id].scoreDisplayMode !== 'notApplicable' && a[id].scoreDisplayMode !== 'manual');
+
 export function readPsi(json) {
   if (!json || !json.lighthouseResult) return null;
   const lh = json.lighthouseResult;
   const a = lh.audits || {};
   const n = id => (a[id] && typeof a[id].numericValue === 'number') ? a[id].numericValue : null;
   const score = id => (a[id] && typeof a[id].score === 'number') ? a[id].score : null;
+  const cat = k => lh.categories && lh.categories[k] && typeof lh.categories[k].score === 'number' ? Math.round(lh.categories[k].score * 100) : null;
   const field = (json.loadingExperience && json.loadingExperience.metrics && json.loadingExperience.origin_fallback !== true) ? json.loadingExperience.metrics : null;
   const f = k => field && field[k] && typeof field[k].percentile === 'number' ? field[k].percentile : null;
+  const ariaIds = Object.keys(a).filter(id => /^aria-|^duplicate-id-aria$/.test(id));
   return {
-    performance: lh.categories && lh.categories.performance && typeof lh.categories.performance.score === 'number' ? Math.round(lh.categories.performance.score * 100) : null,
-    seo: lh.categories && lh.categories.seo && typeof lh.categories.seo.score === 'number' ? Math.round(lh.categories.seo.score * 100) : null,
-    accessibility: lh.categories && lh.categories.accessibility && typeof lh.categories.accessibility.score === 'number' ? Math.round(lh.categories.accessibility.score * 100) : null,
+    performance: cat('performance'), seo: cat('seo'), accessibility: cat('accessibility'), bestPractices: cat('best-practices'),
     lcp: n('largest-contentful-paint'),
     cls: n('cumulative-layout-shift'),
     tbt: n('total-blocking-time'),
@@ -186,6 +291,13 @@ export function readPsi(json) {
     bytes: n('total-byte-weight'),
     targetSize: score('target-size'),
     fontSize: score('font-size'),
+    fixes: speedFixes(a),
+    failed: {
+      a11y: [...failed(a, Object.keys(A11Y_WORDS)), ...(failed(a, ariaIds).length ? ['aria'] : [])],
+      bp: failed(a, Object.keys(BP_WORDS)),
+      robotsTxt: score('robots-txt') === 0,
+      crawlable: score('crawlable-anchors') === 0,
+    },
     field: field ? {
       lcp: f('LARGEST_CONTENTFUL_PAINT_MS'),
       inp: f('INTERACTION_TO_NEXT_PAINT'),
@@ -193,6 +305,15 @@ export function readPsi(json) {
       category: json.loadingExperience.overall_category || null,
     } : null,
   };
+}
+
+// "about 300 KB less to download" or "about 1.2 seconds sooner", from Google's own estimate
+const aboutSecs = ms => { const v = Math.round(ms / 100) / 10; return v === 1 ? '1 second' : String(v) + ' seconds'; };
+export function savingWords(fx) {
+  if (fx.ms >= 100) return `about ${aboutSecs(fx.ms)} sooner`;
+  if (fx.bytes >= 10 * KIB) { const kb = fx.bytes / 1000; return `about ${kb >= 1000 ? (Math.round(kb / 100) / 10).toFixed(1) + ' MB' : (kb >= 100 ? Math.round(kb / 10) * 10 : Math.round(kb)) + ' KB'} less to download`; }
+  if (fx.tbt >= 100) return `about ${aboutSecs(fx.tbt)} less waiting`;
+  return null;
 }
 
 const secs = ms => (Math.round(ms / 100) / 10).toFixed(1) + ' seconds';
@@ -305,11 +426,17 @@ export function analyse(input) {
       if (ms >= 90) add({ id: 'speed-mobile', group: 'speed', status: 'strength', priority: 'medium', title: 'Fast on a phone',
         detail: `Google’s speed test scores the page ${ms} out of 100 on a phone.${lcpNote}`,
         why: isLocal ? 'Most local searches happen on a phone, and a fast page keeps people reading.' : 'Most visitors arrive on a phone, and a fast page keeps people reading.', start: 'Keep new images and add-ons light so it stays this way.', link: LINKS.web });
-      else add({ id: 'speed-mobile', group: 'speed', status: 'weakness', priority: ms < 50 ? 'high' : 'medium',
-        title: ms < 50 ? 'Slow on a phone' : 'Could be faster on a phone',
-        detail: `Google’s speed test scores the page ${ms} out of 100 on a phone (90 or more is good).${lcpNote}`,
-        why: 'People on phones leave slow pages before they read anything, and Google takes speed into account.',
-        start: 'Start with the largest images: resize and compress them, and remove add-ons and scripts the page doesn’t need.', link: LINKS.web });
+      else {
+        // What Google's own test says would help most, with its estimated saving (rules v6)
+        const fixes = (m.fixes || []).slice(0, 3);
+        add({ id: 'speed-mobile', group: 'speed', status: 'weakness', priority: ms < 50 ? 'high' : 'medium',
+          title: ms < 50 ? 'Slow on a phone' : 'Could be faster on a phone',
+          detail: `Google’s speed test scores the page ${ms} out of 100 on a phone (90 or more is good).${lcpNote}`,
+          why: 'People on phones leave slow pages before they read anything, and Google takes speed into account.',
+          start: fixes.length ? fixes[0].start : 'Start with the largest images: resize and compress them, and remove add-ons and scripts the page doesn’t need.',
+          items: fixes.length ? fixes.map(fx => ({ text: fx.title, note: savingWords(fx) })) : undefined,
+          itemsLabel: fixes.length ? 'What Google’s test says to fix first' : undefined, link: LINKS.web });
+      }
     }
     const ds = d && d.performance;
     if (ds != null) {
@@ -523,6 +650,160 @@ export function analyse(input) {
     why: model === 'shop' ? 'Shoppers trust a shop more when they can see others were happy.' : 'New customers look for proof that others were happy.', start: 'Keep them recent, and link to where people can read more.', link: LINKS.seo });
   else add({ id: 'proof', group: 'proof', status: 'weakness', priority: 'medium', title: 'No reviews or testimonials on the page',
     detail: 'I couldn’t find reviews, testimonials, star ratings or a review service on the page.', why: W.proofWhy, start: W.proofStart, link: LINKS.seo });
+
+  // ---------- rules v6 (Website Check v2 step 2, 21 Nov 2026) ----------
+
+  // Accessibility, from Google's test (the phone run), in plain words; checks made elsewhere in the report are left out
+  if (m && m.accessibility != null) {
+    const seenA = new Set();
+    const a11y = (m.failed && m.failed.a11y || []).map(id => id === 'aria' ? ARIA : A11Y_WORDS[id]).filter(w => w && !seenA.has(w[0]) && seenA.add(w[0]));
+    const sA = m.accessibility;
+    if (sA >= 90 && !a11y.length) add({ id: 'accessibility', group: 'access', status: 'strength', priority: 'low', title: 'Passes Google’s accessibility checks',
+      detail: `Google’s accessibility test scores the page ${sA} out of 100.`, why: 'Google’s automated test found nothing to fix.', start: 'Nothing to do here.', link: LINKS.web });
+    else if (sA < 90 || a11y.length) add({ id: 'accessibility', group: 'access', status: 'weakness', priority: sA < 70 ? 'medium' : 'low',
+      title: sA < 70 ? 'Hard to use for some visitors' : 'A few accessibility gaps',
+      detail: `Google’s accessibility test scores the page ${sA} out of 100 (90 or more is good).` + (a11y.length ? ` It found that ${list(a11y.slice(0, 3).map(w => w[0]))}.` : ''),
+      why: 'Many visitors have poor eyesight or use a keyboard or a screen reader, and the same fixes make the page easier for everyone.',
+      start: a11y.length ? a11y[0][1] : 'Run the page through pagespeed.web.dev and fix the accessibility items it lists.',
+      items: a11y.length > 1 ? a11y.slice(1, 3).map(w => ({ text: w[1] })) : undefined, itemsLabel: a11y.length > 1 ? 'Then' : undefined, link: LINKS.web });
+  }
+
+  // Best practices, from the same test (browser errors, stretched images, old features)
+  if (m && m.bestPractices != null) {
+    const bp = (m.failed && m.failed.bp || []).map(id => BP_WORDS[id]).filter(Boolean);
+    if (m.bestPractices >= 90 && !bp.length) add({ id: 'best-practices', group: 'technical', status: 'strength', priority: 'low', title: 'Passes Google’s best-practice checks',
+      detail: `Google’s best-practice test scores the page ${m.bestPractices} out of 100.`, why: 'Google’s test found no browser errors, stretched images or outdated features.', start: 'Nothing to do here.', link: LINKS.web });
+    else add({ id: 'best-practices', group: 'technical', status: 'weakness', priority: 'low', title: 'Some browser warnings',
+      detail: `Google’s best-practice test scores the page ${m.bestPractices} out of 100 (90 or more is good).` + (bp.length ? ` It found that ${list(bp.slice(0, 3))}.` : ''),
+      why: 'These are often small bugs that make the page look or work worse in some browsers.', start: 'Ask whoever built the site to fix the items listed under Best practices at pagespeed.web.dev.', link: LINKS.web });
+    if (m.failed && m.failed.robotsTxt && input.robots != null) add({ id: 'robots-errors', group: 'technical', status: 'weakness', priority: 'low', title: 'robots.txt has errors',
+      detail: 'Google’s test found lines in robots.txt it can’t read.', why: 'Search engines may ignore rules you meant them to follow.', start: 'Check the file in Google Search Console’s robots.txt report and fix the lines it flags.', link: LINKS.seo });
+  }
+
+  // Link text and links search engines can't follow
+  const VAGUE = /^(click here|click|here|read more|more|learn more|find out more|more info|more information|see more|this|link|go|details)$/i;
+  const realLinks = p.links.filter(l => l.href && !/^#/.test(l.href) && !/^(tel|mailto|sms):/i.test(l.href));
+  const vague = realLinks.filter(l => VAGUE.test(l.text.replace(/[.›»→>\s]+$/, '').trim()));
+  if (vague.length) add({ id: 'link-text', group: 'search', status: 'weakness', priority: 'low', title: `${vague.length === 1 ? 'A link says' : vague.length + ' links say'} only “${vague[0].text.slice(0, 20)}”`,
+    detail: `Links such as “${vague[0].text.slice(0, 20)}” don’t say where they go.`, why: 'Search engines and screen readers use link text to understand the page they lead to.', start: 'Rewrite them to name the page, for example “See our boiler prices”.', link: LINKS.seo });
+  const jsLinks = p.links.filter(l => /^javascript:/i.test(l.href));
+  if (jsLinks.length) add({ id: 'crawlable-links', group: 'search', status: 'weakness', priority: 'low', title: 'Some links can’t be followed by search engines',
+    detail: `${jsLinks.length} link${jsLinks.length === 1 ? ' uses' : 's use'} “javascript:” instead of a web address.`, why: 'Search engines only follow real addresses, so the pages behind these links may not be found.', start: 'Give each link a real href to the page it opens.', link: LINKS.seo });
+
+  // Indexing: canonical, language, language versions, missing pages
+  const bare = h => String(h || '').toLowerCase().replace(/^www\./, '');
+  const path = u => u.pathname.replace(/\/+$/, '') || '/';
+  let canon = null;
+  try { canon = p.canonical ? new URL(p.canonical, finalUrl) : null; } catch { canon = 'bad'; }
+  if (!p.canonical) add({ id: 'canonical', group: 'search', status: 'weakness', priority: 'low', title: 'No canonical tag',
+    detail: 'The page doesn’t say which address is its main one.', why: 'The same page can often be reached at several addresses (with and without www, with tracking codes). The tag tells Google which one to list.', start: 'Add <link rel="canonical" href="…"> with the page’s own address. Most website builders have a setting for it.', link: LINKS.seo });
+  else if (canon === 'bad') add({ id: 'canonical', group: 'search', status: 'weakness', priority: 'medium', title: 'The canonical tag isn’t a valid address',
+    detail: `It reads “${String(p.canonical).slice(0, 80)}”.`, why: 'Google ignores it, so it may pick a different address to list.', start: 'Set it to the page’s own full address.', link: LINKS.seo });
+  else if (bare(canon.hostname) !== bare(finalUrl.hostname)) add({ id: 'canonical', group: 'search', status: 'weakness', priority: 'high', title: 'The canonical tag points to another website',
+    detail: `It points to ${canon.hostname}, not ${finalUrl.hostname}.`, why: 'Google may treat that address as the real page and leave this one out of its results. It is a common mistake after moving from a test site.', start: 'Change the canonical tag to this site’s own address.', link: LINKS.seo });
+  else if (canon.protocol !== finalUrl.protocol) add({ id: 'canonical', group: 'search', status: 'weakness', priority: 'medium', title: 'The canonical tag points to the insecure (http) address',
+    detail: `It points to ${canon.href.slice(0, 80)}.`, why: 'It asks Google to list the http version, which redirects or shows as “Not secure”.', start: 'Change it to the https address.', link: LINKS.seo });
+  else if (path(canon) !== path(finalUrl)) add({ id: 'canonical', group: 'search', status: 'weakness', priority: 'medium', title: 'The canonical tag points to a different page',
+    detail: `This page’s canonical tag points to ${path(canon)}.`, why: 'Google may list that page instead of this one, or not list this one at all.', start: 'Point it to this page’s own address, unless it is deliberately a copy.', link: LINKS.seo });
+  else if (canon.hostname !== finalUrl.hostname) add({ id: 'canonical', group: 'search', status: 'weakness', priority: 'low', title: 'The canonical tag uses the other version of your address',
+    detail: `The page is at ${finalUrl.hostname}, but the canonical tag says ${canon.hostname}.`, why: 'Search engines get mixed signals about which version to list.', start: 'Use the same version (with or without www) everywhere, and redirect the other.', link: LINKS.seo });
+  else add({ id: 'canonical', group: 'search', status: 'strength', priority: 'low', title: 'The canonical tag points to this page',
+    detail: 'The page names its own address as the main one.', why: 'It tells Google which address you want listed.', start: 'Nothing to do here.', link: LINKS.seo });
+
+  if (!p.lang) add({ id: 'lang', group: 'search', status: 'weakness', priority: 'low', title: 'The page doesn’t say what language it is in',
+    detail: 'The <html> tag has no lang attribute.', why: 'Screen readers use it to pronounce words, and browsers and search engines use it to offer translation.', start: 'Add lang="en-GB" to the <html> tag.', link: LINKS.web });
+  else add({ id: 'lang', group: 'search', status: 'strength', priority: 'low', title: 'The page language is set',
+    detail: `The page says it is in “${p.lang}”.`, why: 'Screen readers pronounce words correctly and translation works.', start: 'Nothing to do here.', link: LINKS.web });
+
+  if (p.hreflangs.length) {
+    const self = p.hreflangs.some(h => { try { const u = new URL(h.href, finalUrl); return bare(u.hostname) === bare(finalUrl.hostname) && path(u) === path(finalUrl); } catch { return false; } });
+    if (self) add({ id: 'hreflang', group: 'search', status: 'strength', priority: 'low', title: 'Language versions are listed',
+      detail: `The page lists ${p.hreflangs.length} language or country version${p.hreflangs.length === 1 ? '' : 's'}, including itself.`, why: 'Google can show each visitor the right version.', start: 'Make sure every version lists all the others too.', link: LINKS.seo });
+    else add({ id: 'hreflang', group: 'search', status: 'weakness', priority: 'low', title: 'The language versions don’t include this page',
+      detail: `The page lists ${p.hreflangs.length} language or country version${p.hreflangs.length === 1 ? '' : 's'} (hreflang), but not its own address.`, why: 'Google ignores hreflang tags that don’t include the page itself.', start: 'Add an hreflang line for this page’s own address.', link: LINKS.seo });
+  }
+
+  if (input.missingStatus === 200) add({ id: 'soft-404', group: 'technical', status: 'weakness', priority: 'medium', title: 'Missing pages look like normal pages',
+    detail: 'I asked for a page that doesn’t exist, and the site answered as if it did (status 200, not 404).', why: 'Google can waste time on pages that aren’t there, and visitors following a broken link don’t get a clear “page not found”.', start: 'Set the site to answer missing pages with a 404 status and a helpful “page not found” page.', link: LINKS.web });
+  else if (input.missingStatus >= 300 && input.missingStatus < 400) add({ id: 'soft-404', group: 'technical', status: 'weakness', priority: 'low', title: 'Missing pages redirect instead of saying “not found”',
+    detail: `I asked for a page that doesn’t exist, and the site redirected (status ${input.missingStatus}).`, why: 'Google treats a redirect to the home page as a missing page anyway, and visitors are left wondering where they are.', start: 'Answer missing pages with a 404 status and a page that helps people find what they wanted.', link: LINKS.web });
+  else if (input.missingStatus === 404 || input.missingStatus === 410) add({ id: 'soft-404', group: 'technical', status: 'strength', priority: 'low', title: 'Missing pages say “not found”',
+    detail: `A page that doesn’t exist answers with status ${input.missingStatus}.`, why: 'Search engines drop missing pages cleanly.', start: 'Make sure the page-not-found page links to your main pages.', link: LINKS.web });
+
+  // Security: files loaded over http on an https page, and the basic security headers (a note, never a fault)
+  if (finalUrl.protocol === 'https:') {
+    const insecure = [];
+    for (const t of p.raw.matchAll(/<(img|script|iframe|source|video|audio|embed|link)\b[^>]*>/gi)) {
+      const tag = t[0];
+      const url = t[1].toLowerCase() === 'link' ? (/stylesheet/i.test(attr(tag, 'rel') || '') ? attr(tag, 'href') : null) : attr(tag, 'src');
+      if (url && /^http:\/\//i.test(url)) insecure.push(url);
+    }
+    if (insecure.length) add({ id: 'mixed-content', group: 'technical', status: 'weakness', priority: 'medium', title: 'Some files load over insecure http',
+      detail: `${insecure.length} image${insecure.length === 1 ? ', script or other file loads' : 's, scripts or other files load'} from an http address, for example ${insecure[0].slice(0, 70)}.`,
+      why: 'Browsers block or warn about these on a secure page, so images can go missing and the padlock can show a warning.', start: 'Change those addresses to https.', link: LINKS.web });
+    const hd = input.headers;
+    if (hd) {
+      const missingH = [!hd.hsts && 'HSTS (tells browsers to always use https)', !/nosniff/i.test(hd.nosniff) && 'X-Content-Type-Options', !hd.frame && !/frame-ancestors/i.test(hd.csp) && 'protection against being shown inside other sites', !hd.referrer && 'a Referrer-Policy'].filter(Boolean);
+      if (!missingH.length) add({ id: 'security-headers', group: 'technical', status: 'strength', priority: 'low', title: 'Security headers in place',
+        detail: 'The site sends HSTS, X-Content-Type-Options, frame protection and a Referrer-Policy.', why: 'They make some common attacks harder.', start: 'Nothing to do here.', link: LINKS.web });
+      else add({ id: 'security-headers', group: 'technical', status: 'note', priority: 'low', title: 'Some security headers are missing',
+        detail: `The site doesn’t send ${list(missingH)}.`, why: 'They are small settings at your host that make some attacks harder. Many small sites don’t have them all, so this is a note, not a fault.', start: 'Ask your host or developer to add them.', link: LINKS.web });
+    }
+  }
+
+  // Link previews (Open Graph): how the page looks when shared on LinkedIn, WhatsApp or Facebook
+  const og = [['a title', p.ogTitle], ['a description', p.ogDescription], ['an image', p.ogImage]];
+  const ogMissing = og.filter(([, v]) => !v).map(([k]) => k);
+  if (!ogMissing.length) add({ id: 'social-tags', group: 'share', status: 'strength', priority: 'low', title: 'Link previews set up',
+    detail: 'The page has an Open Graph title, description and image.', why: 'LinkedIn, WhatsApp and Facebook can show your picture and words when someone shares the page.', start: 'Check the image still looks right at 1200 by 630 pixels.', link: LINKS.web });
+  else add({ id: 'social-tags', group: 'share', status: 'weakness', priority: 'low', title: ogMissing.length === 3 ? 'No link preview set up' : 'The link preview is incomplete',
+    detail: ogMissing.length === 3 ? 'I couldn’t find an Open Graph title, description or image.' : `The page’s Open Graph tags have no ${list(ogMissing.map(k => k.replace(/^an? /, '')))}.`,
+    why: 'When someone shares the page on LinkedIn, WhatsApp or Facebook, the preview is what they see first. Without these tags the app guesses, often badly.',
+    start: 'Add og:title, og:description and og:image (1200 by 630 pixels). Most website builders have a social sharing setting.', link: LINKS.web });
+
+  // Trust and UK basics: privacy policy, cookie consent, company details
+  const ga4Tag = /googletagmanager\.com\/gtag\/js\?id=G-|gtag\(\s*['"]config['"]\s*,\s*['"]G-/i.test(p.raw);
+  const gtmTag = /googletagmanager\.com\/gtm\.js|GTM-[A-Z0-9]{4,}/i.test(p.raw);
+  const otherTrackers = [/connect\.facebook\.net\/[^"']*fbevents\.js|fbq\(\s*['"]init/i, /static\.hotjar\.com|hotjar\.com\/c\/hotjar/i, /clarity\.ms\/tag/i, /analytics\.tiktok\.com/i, /snap\.licdn\.com\/li\.lms-analytics/i, /googleadservices\.com\/pagead\/conversion|gtag\(\s*['"]config['"]\s*,\s*['"]AW-/i]
+    .some(re => re.test(p.raw));
+  const tracking = ga4Tag || gtmTag || otherTrackers;
+  const collects = tracking || p.forms.some(fm => /type\s*=\s*["']?(email|tel)|<textarea/i.test(fm));
+  const privacyLink = p.links.find(l => /privacy/i.test(l.text) || /privacy/i.test(l.href));
+  if (privacyLink) add({ id: 'privacy', group: 'trust', status: 'strength', priority: 'low', title: 'A privacy policy is linked',
+    detail: `The page links to “${(privacyLink.text || privacyLink.href).slice(0, 40)}”.`, why: 'Visitors can see how their details are used.', start: 'Keep it up to date when you add new forms or tracking.', link: LINKS.web });
+  else if (collects) add({ id: 'privacy', group: 'trust', status: 'weakness', priority: 'medium', title: 'No privacy policy linked from this page',
+    detail: `The page ${tracking ? 'uses tracking' : 'has a form'}, but I couldn’t find a link to a privacy policy.`, why: 'Under UK GDPR, people must be told how their personal details are used when you collect them. It also reassures them.', start: 'Add a privacy notice and link it from the footer and beside your enquiry form.', link: LINKS.web });
+
+  const CONSENT = /cookiebot|onetrust|otSDKStub|cookieyes|cookie-script|termly|iubenda|complianz|usercentrics|quantcast\.mgr|didomi|osano|cookiefirst|cookiecontrol|civicuk|cookie-law-info|cookie-notice|borlabs|klaro|tarteaucitron|cmp\.|consentmanager|gtag\(\s*['"]consent['"]\s*,\s*['"]default|Shopify\.customerPrivacy|privacy-banner/i;
+  const consentText = /\b(we use cookies|this (?:site|website) uses cookies|accept (?:all )?cookies|reject (?:all )?(?:non-essential )?cookies|cookie (?:settings|preferences|consent)|manage cookies)\b/i;
+  const consent = CONSENT.test(p.raw) || consentText.test(p.text);
+  if (tracking && consent) add({ id: 'cookie-consent', group: 'trust', status: 'strength', priority: 'low', title: 'A cookie consent tool',
+    detail: 'The page has tracking and signs of a cookie consent tool.', why: 'Visitors can be asked before tracking starts.', start: 'Check that rejecting is as easy as accepting, and that tracking waits for a yes.', link: LINKS.tracking });
+  else if (tracking && !ga4Tag && !otherTrackers) add({ id: 'cookie-consent', group: 'trust', status: 'note', priority: 'low', title: 'Check your cookie banner',
+    detail: 'The page loads Google Tag Manager, but I couldn’t see a cookie banner in its code. Banners added through Tag Manager don’t show from outside.', why: 'UK rules require consent before advertising cookies and most other tracking, with a few exceptions.', start: 'Open the site in a private window and check a banner appears before tracking starts.', link: LINKS.tracking });
+  else if (tracking) add({ id: 'cookie-consent', group: 'trust', status: 'weakness', priority: 'medium', title: 'Tracking, but no cookie banner I can see',
+    detail: 'The page loads tracking, but I couldn’t find a cookie banner or consent tool in its code.', why: 'UK rules require consent before advertising cookies and most other tracking, with a few exceptions.', start: 'Add a consent tool so tracking waits until visitors accept, with rejecting as easy as accepting.', link: LINKS.tracking });
+
+  // A limited company's website must show its registered name, number, place of registration and registered office
+  // (the Company, LLP and Business (Names and Trading Disclosures) Regulations 2015). Judged on this page's footer and the
+  // business's structured data, so a supplier named in the text doesn't count.
+  const orgName = String((nodes.find(n => n.legalName) || {}).legalName || (local && local.name) || (nodes.find(n => typesOf(n).some(t => /^(Organization|Corporation)$/.test(t))) || {}).name || '');
+  const ltd = (p.footer.match(/\b[A-Z][\w&'.-]*(?:\s[A-Z][\w&'.-]*){0,4}\s(?:Ltd|Limited|LLP|PLC|plc)\b\.?/) || orgName.match(/^.*\b(?:Ltd|Limited|LLP|PLC|plc)\b\.?/) || [])[0];
+  if (ltd) {
+    const number = /\b(?:company|registration|registered|reg\.?)\s*(?:no\.?|number|num\.?|#)?\s*[:.]?\s*(?:SC|NI|OC|SO|NC|R0)?\d{6,8}\b/i.test(p.text) || /registered in (?:england|scotland|wales|northern ireland)[^.]{0,80}?\b(?:SC|NI|OC|SO|NC)?\d{6,8}\b/i.test(p.text);
+    const office = /registered (?:office|address)/i.test(p.text);
+    if (number && office) add({ id: 'company-details', group: 'trust', status: 'strength', priority: 'low', title: 'Company details shown',
+      detail: 'I found a company number and a registered office.', why: 'UK law requires them on a company’s website, and they reassure customers.', start: 'Check the full registered name and where it is registered are there too.', link: LINKS.web });
+    else add({ id: 'company-details', group: 'trust', status: 'weakness', priority: number ? 'low' : 'medium', title: number ? 'No registered office address found' : 'No company number on this page',
+      detail: `The page names a company (“${ltd.trim().slice(0, 50)}”) but I couldn’t find its ${number ? 'registered office address' : 'company number or registered office'}.`,
+      why: 'UK companies and LLPs must show their registered name, number, where they are registered and their registered office address on their website. It also reassures customers.',
+      start: 'Add one line to the footer: the company name, “registered in England and Wales” (or Scotland, or Northern Ireland), the company number and the registered office address.', link: LINKS.web });
+  }
+
+  // Conversion: a long contact form loses people
+  const formFields = contactForm ? [...contactForm.matchAll(/<(input|select|textarea)\b[^>]*>/gi)].filter(t => t[1].toLowerCase() !== 'input' || !/type\s*=\s*["']?(hidden|submit|button|image|reset|checkbox|radio)\b/i.test(t[0])).length : 0;
+  if (formFields > 6) add({ id: 'form-length', group: 'contact', status: 'weakness', priority: 'low', title: 'The contact form is long',
+    detail: `The form asks for ${formFields} things.`, why: 'Each extra field loses some people. A name, a way to reply and a message is usually enough for a first enquiry.', start: 'Cut it to what you need to reply, and ask the rest when you do.', link: LINKS.web });
 
   const order = { high: 0, medium: 1, low: 2 };
   const strengths = out.filter(f => f.status === 'strength');

@@ -10,8 +10,8 @@
 //   POST /tools/website-check/sample    Lewis only: { variant } a report for a made-up demo website (website-demos.js)
 //   GET  /tools/website-check/demos     Lewis only: the demo websites, for /admin#demos/web
 //
-// What it fetches from the visitor's site: the page itself, the http version (to see if it redirects to https),
-// robots.txt, the sitemap and llms.txt. Speed comes from Google's PageSpeed Insights API, which is free, with the
+// What it fetches from the visitor's site: the page itself (and its response headers), the http version (to see if it
+// redirects to https), a made-up address (to see that missing pages answer 404), robots.txt, the sitemap and llms.txt. Speed comes from Google's PageSpeed Insights API, which is free, with the
 // PAGESPEED_API_KEY secret (key "Website Check PageSpeed" in the Phillips Tools Cloud project, since 16 Nov 2026).
 // Without it the call goes keyless, which Google throttles.
 //
@@ -124,14 +124,17 @@ async function smallText(url) {
   } catch { return null; }
 }
 
-async function pageSpeed(env, url, strategy) {
+async function pageSpeed(env, url, strategy, withBestPractices = true) {
   const key = env.PAGESPEED_API_KEY || '';
-  const cats = strategy === 'mobile' ? ['performance', 'seo', 'accessibility'] : ['performance'];
+  // The phone run carries every category (best practices since rules v6): still one free call each way.
+  const cats = strategy === 'mobile' ? ['performance', 'seo', 'accessibility', ...(withBestPractices ? ['BEST_PRACTICES'] : [])] : ['performance'];
   const q = new URLSearchParams({ url, strategy });
   cats.forEach(c => q.append('category', c));
   if (key) q.set('key', key);
   try {
     const res = await timedFetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?' + q, {}, 55000);
+    // A refused category must never cost the speed scores: ask again with the three that worked before v6
+    if (res.status === 400 && strategy === 'mobile' && withBestPractices) { console.warn('website-check: pagespeed refused best practices'); return pageSpeed(env, url, strategy, false); }
     if (!res.ok) { console.warn('website-check: pagespeed', strategy, res.status); return null; }
     return readPsi(await res.json());
   } catch (err) {
@@ -161,6 +164,14 @@ async function gather(env, url) {
       return false;
     } catch { return null; }
   })();
+  // A made-up address on the same site: a real "not found" answers 404 (or 410); 200 means a soft 404 (rules v6)
+  const missingP = (async () => {
+    try {
+      const r = await timedFetch(origin + '/phillips-check-' + crypto.randomUUID().slice(0, 8), { redirect: 'manual' }, 8000);
+      try { await r.body?.cancel(); } catch { /* nothing to read */ }
+      return r.status;
+    } catch { return null; }
+  })();
   const robotsP = smallText(origin + '/robots.txt');
   const llmsP = smallText(origin + '/llms.txt');
   const robots = await robotsP;
@@ -172,11 +183,13 @@ async function gather(env, url) {
     }
     return false;
   })();
-  const [httpRedirects, llms, psi] = await Promise.all([httpCheck, llmsP, psiP]);
+  const [httpRedirects, llms, psi, missingStatus] = await Promise.all([httpCheck, llmsP, psiP, missingP]);
+  const h = k => res.headers.get(k) || '';
   return {
     url, finalUrl, html, robots, sitemap, httpRedirects,
     llms: !!(llms && llms.trim().length > 20),
-    robotsHeader: res.headers.get('X-Robots-Tag') || '',
+    robotsHeader: h('X-Robots-Tag'), missingStatus,
+    headers: { hsts: h('Strict-Transport-Security'), nosniff: h('X-Content-Type-Options'), frame: h('X-Frame-Options'), csp: h('Content-Security-Policy'), referrer: h('Referrer-Policy') },
     psi: { mobile: psi[0], desktop: psi[1] },
   };
 }
@@ -277,7 +290,7 @@ async function run(request, env) {
   return jsonResponse({ report: out, reused: false });
 }
 
-const pick = s => ({ performance: s.performance, lcp: s.lcp, cls: s.cls, tbt: s.tbt, field: s.field });
+const pick = s => ({ performance: s.performance, accessibility: s.accessibility ?? null, bestPractices: s.bestPractices ?? null, seo: s.seo ?? null, lcp: s.lcp, cls: s.cls, tbt: s.tbt, field: s.field });
 
 async function reportById(env, id) {
   const r = await getJson(env, PREFIX + 'reports/' + id + '.json');

@@ -145,6 +145,13 @@
     body.appendChild(h);
     if (f.start) {
       var sb = el('div', 'start-box'); sb.appendChild(el('span', 'sb-k', 'Start here')); sb.appendChild(el('p', null, f.start));
+      // Rules v6: Google's own list for speed (with its estimated saving), or the next accessibility fixes
+      if (f.items && f.items.length) {
+        if (f.itemsLabel) sb.appendChild(el('span', 'sb-k sb-sub', f.itemsLabel));
+        var ol = el('ol', 'sb-list');
+        f.items.forEach(function (it) { var li = el('li', null, it.text); if (it.note) li.appendChild(el('span', 'sb-n', it.note)); ol.appendChild(li); });
+        sb.appendChild(ol);
+      }
       body.appendChild(sb);
     }
     var d = el('details'); d.appendChild(el('summary', null, 'Why it matters'));
@@ -265,7 +272,7 @@
     var g = $('wr-gauges'); g.textContent = '';
     g.appendChild(gauge('On a phone', m)); g.appendChild(gauge('On a computer', d));
     var ms = m && m.performance;
-    $('sp-lede').textContent = ms == null ? 'Google’s speed test, on a phone and a computer.' : ms >= 90 ? 'Quick on a phone, where most local searches happen.' : 'Most visitors arrive on a phone, and slow pages lose them before they read anything.';
+    $('sp-lede').textContent = ms == null ? 'Google’s speed test, on a phone and a computer.' : ms >= 90 ? ((r.model || (r.profile && r.profile.model)) === 'local' ? 'Quick on a phone, where most local searches happen.' : 'Quick on a phone, where most visitors arrive.') : 'Most visitors arrive on a phone, and slow pages lose them before they read anything.';
     var f = m && m.field, box = $('wr-field'); box.textContent = '';
     box.hidden = !(f && (f.lcp != null || f.inp != null || f.cls != null));
     if (box.hidden) return;

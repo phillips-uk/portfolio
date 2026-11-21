@@ -358,6 +358,10 @@
 .adsr .find .start-box { margin-top: 12px; padding: 12px 14px; border-radius: var(--r-nest); background: var(--brand-wash); border: 1px solid var(--brand-line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), var(--e2); transform: translateY(-1px); }
 .adsr .find .start-box .sb-k { display: block; font: 500 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); margin-bottom: 4px; }
 .adsr .find .start-box p { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.5; color: var(--text); }
+.adsr .find .start-box .sb-sub { margin: 12px 0 6px; }
+.adsr .find .sb-list { margin: 0; padding: 0 0 0 20px; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.45; color: var(--text); }
+.adsr .find .sb-list li::marker { color: var(--brand-text); font: 500 12px var(--mono); }
+.adsr .find .sb-list .sb-n { display: block; font-size: 13px; color: var(--muted); }
 .adsr .find details { margin-top: 10px; }
 .adsr .find .px { grid-column: 3; text-align: right; white-space: normal; }
 .adsr .find .px .px-k { display: block; font: 500 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }

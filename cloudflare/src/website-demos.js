@@ -7,6 +7,8 @@
 // A demo is a short description turned into the page's HTML plus what the check fetches around it (robots.txt,
 // sitemap, the http redirect, llms.txt and Google's speed scores), the same input gather() hands to analyse().
 
+import { SPEED_FIXES } from './website-check-rules.js';
+
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
 function page(s) {
@@ -16,8 +18,10 @@ function page(s) {
     s.title != null ? `<title>${esc(s.title)}</title>` : '',
     s.desc ? `<meta name="description" content="${esc(s.desc)}">` : '',
     s.noindex ? '<meta name="robots" content="noindex, nofollow">' : '',
-    s.canonical !== false ? `<link rel="canonical" href="https://www.${s.domain}/">` : '',
+    s.canonical !== false ? `<link rel="canonical" href="${s.canonicalTo || `https://www.${s.domain}/`}">` : '',
     s.og ? `<meta property="og:title" content="${esc(s.title || '')}">` : '',
+    s.og === true ? `<meta property="og:description" content="${esc(s.desc || '')}"><meta property="og:image" content="https://www.${s.domain}/share.jpg">` : '',
+    s.consent ? '<script>gtag("consent","default",{ad_storage:"denied",analytics_storage:"denied"});</script>' : '',
     s.ga4 === 'gtm' ? '<script>(function(w,d,s,l,i){})(window,document,"script","dataLayer","GTM-AB12CD3");</script>' : s.ga4 ? '<script async src="https://www.googletagmanager.com/gtag/js?id=G-DEMO12345"></script>' : '',
     s.platform === 'shopify' ? '<link rel="preconnect" href="https://cdn.shopify.com">' : s.platform === 'wix' ? '<link rel="preconnect" href="https://static.wixstatic.com">' : '',
     ...(s.schema || []).map((j) => `<script type="application/ld+json">${typeof j === 'string' ? j : JSON.stringify(j)}</script>`),
@@ -31,6 +35,8 @@ function page(s) {
     '</header><main>',
     ...(s.h1s || []).map((h) => `<h1>${esc(h)}</h1>`),
     s.intro ? `<p>${esc(s.intro)}</p>` : '',
+    s.vagueLink ? '<p>See our prices: <a href="/prices/">Click here</a></p>' : '',
+    s.mixedImg ? `<img src="http://www.${s.domain}/img/old-logo.gif" alt="${esc(s.name)} logo">` : '',
   ].join('\n');
   const imgs = Array.from({ length: s.images || 0 }, (_, i) => (i < (s.images || 0) * (s.altShare ?? 1) ? `<img src="/img/${i}.jpg" alt="${esc(s.name)} photo ${i + 1}">` : `<img src="/img/${i}.jpg">`)).join('\n');
   const filler = (s.sections || []).map(([h, t]) => `<section><h2>${esc(h)}</h2><p>${esc(t)}</p></section>`).join('\n');
@@ -40,7 +46,8 @@ function page(s) {
     s.phone ? (s.telLink ? `<p>Call <a href="tel:${s.phone.replace(/\s/g, '')}">${s.phone}</a></p>` : `<p>Call ${s.phone}</p>`) : '',
     ...(s.extraPhones || []).map((p) => `<p><a href="tel:${p.replace(/\s/g, '')}">${p}</a></p>`),
     s.email ? `<p>Email <a href="mailto:${s.email}">${s.email}</a></p>` : '',
-    s.form ? '<form action="/send"><input type="text" name="name"><input type="email" name="email"><textarea name="message"></textarea><button>Send</button></form>' : '',
+    s.form === 'long' ? '<form action="/send"><input type="text" name="first"><input type="text" name="last"><input type="email" name="email"><input type="tel" name="phone"><input type="text" name="company"><input type="text" name="role"><select name="size"><option>1 to 10</option></select><input type="text" name="heard"><textarea name="message"></textarea><button>Send</button></form>'
+      : s.form ? '<form action="/send"><input type="text" name="name"><input type="email" name="email"><textarea name="message"></textarea><button>Send</button></form>' : '',
     s.address ? `<p>${esc(s.address)}</p>` : '',
     s.gbp === 'map' ? '<iframe src="https://www.google.com/maps/embed?pb=demo"></iframe>' : s.gbp ? '<p><a href="https://maps.app.goo.gl/demo123">Find us on Google Maps</a></p>' : '',
     '</section>',
@@ -48,8 +55,10 @@ function page(s) {
   return [head, top, imgs, filler, proof, contact, '</main><footer>', ...(s.footerLinks || []).map(([h, x]) => `<a href="${h}">${esc(x)}</a>`), `<p>&copy; ${esc(s.name)}</p>`, '</footer></body></html>'].join('\n');
 }
 
-// Google's speed scores in the shape readPsi() returns.
-const speed = (perf, o = {}) => ({ performance: perf, seo: o.seo ?? 92, accessibility: o.a11y ?? 88, lcp: o.lcp ?? (perf >= 90 ? 1800 : perf >= 50 ? 3600 : 7400), cls: o.cls ?? 0.04, tbt: o.tbt ?? (perf >= 90 ? 80 : 420), fcp: 1500, bytes: o.bytes ?? 1800000, targetSize: o.targetSize ?? 1, fontSize: o.fontSize ?? 1, field: o.field ?? null });
+// Google's speed scores in the shape readPsi() returns. fixes: [audit id, { ms, bytes, tbt, shift }], made-up savings.
+const fixes = (list) => list.map(([id, v]) => ({ id, title: SPEED_FIXES[id][0], start: SPEED_FIXES[id][1], ms: v.ms || 0, tbt: v.tbt || 0, bytes: v.bytes || 0, shift: v.shift || 0 }));
+const speed = (perf, o = {}) => ({ performance: perf, seo: o.seo ?? 92, accessibility: o.a11y ?? 92, bestPractices: o.bp ?? 96,
+  fixes: fixes(o.fixes || []), failed: { a11y: o.a11yFails || [], bp: o.bpFails || [], robotsTxt: false, crawlable: false }, lcp: o.lcp ?? (perf >= 90 ? 1800 : perf >= 50 ? 3600 : 7400), cls: o.cls ?? 0.04, tbt: o.tbt ?? (perf >= 90 ? 80 : 420), fcp: 1500, bytes: o.bytes ?? 1800000, targetSize: o.targetSize ?? 1, fontSize: o.fontSize ?? 1, field: o.field ?? null });
 
 function input(s) {
   const url = `${s.https === false ? 'http' : 'https'}://www.${s.domain}/`;
@@ -57,7 +66,8 @@ function input(s) {
     url, finalUrl: url, html: page(s),
     robots: s.robots === undefined ? `User-agent: *\nAllow: /\nSitemap: https://www.${s.domain}/sitemap.xml\n` : s.robots,
     sitemap: s.sitemap !== false, httpRedirects: s.https === false ? false : s.httpRedirects !== false,
-    llms: Boolean(s.llms), robotsHeader: '',
+    llms: Boolean(s.llms), robotsHeader: '', missingStatus: s.missingStatus ?? 404,
+    headers: s.secure ? { hsts: 'max-age=31536000', nosniff: 'nosniff', frame: 'SAMEORIGIN', csp: '', referrer: 'strict-origin-when-cross-origin' } : { hsts: '', nosniff: '', frame: '', csp: '', referrer: '' },
     psi: { mobile: s.psi[0], desktop: s.psi[1] },
   };
 }
@@ -70,8 +80,9 @@ const TRADES = {
   h1s: ['Welcome'], intro: 'We have been in business for over 20 years. No job too small.',
   phone: '01353 000 111', telLink: false, email: 'info@plumbing-demo.example', address: '1 High Street, Ely CB7 4AA',
   images: 8, altShare: 0.2, sections: [['Our services', 'Boilers, bathrooms, leaks and more.']],
-  https: true, httpRedirects: false, robots: null, sitemap: false,
-  psi: [speed(24, { lcp: 8900, targetSize: 0, fontSize: 0, a11y: 61 }), speed(58)],
+  https: true, httpRedirects: false, robots: null, sitemap: false, missingStatus: 200, vagueLink: true, mixedImg: true,
+  psi: [speed(24, { lcp: 8900, targetSize: 0, fontSize: 0, a11y: 61, bp: 75, a11yFails: ['color-contrast', 'label', 'link-name'], bpFails: ['errors-in-console', 'image-aspect-ratio'],
+    fixes: [['image-delivery-insight', { bytes: 2400000 }], ['render-blocking-insight', { ms: 1200 }], ['cache-insight', { bytes: 610000 }]] }), speed(58)],
 };
 
 // 2. A salon on a website builder: tidy enough, booking link at the top, but no reviews, no Maps link, no analytics.
@@ -82,7 +93,7 @@ const SALON = {
   topContact: ['/book/', 'Book now'], phone: '01223 000 222', telLink: true,
   images: 12, altShare: 0.9, sections: [['Prices', 'Cut and finish from £45.'], ['The team', 'Four stylists, each with ten years or more.']],
   schema: [local({ type: 'HairSalon', name: 'Demo Hair Studio', domain: 'salon-demo.example', town: 'Cambridge', postcode: 'CB1 1AA' })],
-  psi: [speed(54, { lcp: 4100 }), speed(81)],
+  psi: [speed(54, { lcp: 4100, a11y: 88, a11yFails: ['button-name'], fixes: [['image-delivery-insight', { bytes: 910000 }], ['third-parties-insight', { tbt: 640 }], ['unused-javascript', { bytes: 420000 }]] }), speed(81)],
 };
 
 // 3. An online shop on Shopify: reviews and tracking in place, but heavy apps make it slow, and images lack text.
@@ -90,11 +101,14 @@ const SHOP = {
   domain: 'candles-demo.example', name: 'Demo Candle Co.', platform: 'shopify', ga4: 'gtm', og: true,
   title: 'Demo Candle Co. | Hand-poured soy candles, made in Suffolk', desc: 'Hand-poured soy candles, reed diffusers and gift sets. Free UK delivery over £40.',
   viewport: 'width=device-width, initial-scale=1', h1s: ['Hand-poured soy candles', 'Bestsellers'], intro: 'Made in small batches in Suffolk and sent all over the UK.',
-  topContact: ['/pages/contact', 'Contact'], email: 'hello@candles-demo.example', form: true, footerLinks: [['/policies/shipping-policy', 'Shipping'], ['/pages/faq', 'FAQ']],
+  topContact: ['/pages/contact', 'Contact'], email: 'hello@candles-demo.example', form: true, consent: true,
+  footerLinks: [['/policies/shipping-policy', 'Shipping'], ['/pages/faq', 'FAQ'], ['/policies/privacy-policy', 'Privacy policy']],
   images: 24, altShare: 0.35, reviews: '"Beautiful scent and lovely packaging." 4.9 out of 5 from 1,200 reviews',
   schema: [{ '@context': 'https://schema.org', '@type': 'Organization', name: 'Demo Candle Co.', url: 'https://www.candles-demo.example/', aggregateRating: { '@type': 'AggregateRating', ratingValue: 4.9, reviewCount: 1200 } }],
   llms: false,
-  psi: [speed(38, { lcp: 6200, tbt: 1300, bytes: 6400000, field: { lcp: 3900, inp: 310, cls: 0.06, category: 'SLOW' } }), speed(72)],
+  psi: [speed(38, { lcp: 6200, tbt: 1300, bytes: 6400000, field: { lcp: 3900, inp: 310, cls: 0.06, category: 'SLOW' }, a11y: 82, bp: 78,
+    a11yFails: ['heading-order', 'aria'], bpFails: ['third-party-cookies', 'deprecations'],
+    fixes: [['third-parties-insight', { tbt: 1500 }], ['image-delivery-insight', { bytes: 3100000 }], ['unused-javascript', { bytes: 720000 }], ['legacy-javascript-insight', { bytes: 64000 }]] }), speed(72)],
 };
 
 // 4. A clinic built properly: fast, clear, tracked, local details right everywhere. The report should lead with good news.
@@ -103,23 +117,23 @@ const CLINIC = {
   title: 'Demo Dental | Private dentist in Ely, Cambridgeshire', desc: 'Private dentist in Ely: implants, Invisalign, emergency appointments. New patients welcome. Book online or call.',
   viewport: 'width=device-width, initial-scale=1', h1s: ['Private dentist in Ely, Cambridgeshire'], intro: 'Implants, Invisalign and emergency appointments, with evening and Saturday slots.',
   topContact: ['tel:01353000333', 'Call 01353 000 333'], phone: '01353 000 333', telLink: true, email: 'hello@dental-demo.example', form: true,
-  address: '2 Market Street, Ely CB7 4BB', gbp: true, images: 10, altShare: 1,
+  address: '2 Market Street, Ely CB7 4BB', gbp: true, images: 10, altShare: 1, consent: true, secure: true, footerLinks: [['/privacy/', 'Privacy']],
   reviews: '"Calm, kind and on time." 4.9 out of 5 from 310 Google reviews',
   sections: [['Treatments', 'Implants, Invisalign, whitening and check-ups.'], ['New patients', 'Book online and we will call to confirm.']],
   schema: [local({ type: 'Dentist', name: 'Demo Dental', domain: 'dental-demo.example', phone: '01353 000 333', town: 'Ely', street: '2 Market Street', postcode: 'CB7 4BB', rating: 4.9, count: 310 })],
-  psi: [speed(94, { field: { lcp: 1900, inp: 120, cls: 0.02, category: 'FAST' } }), speed(99)],
+  psi: [speed(94, { field: { lcp: 1900, inp: 120, cls: 0.02, category: 'FAST' }, a11y: 97, bp: 100 }), speed(99)],
 };
 
 // 5. A site relaunched with launch-day mistakes: still set to noindex, AI assistants blocked, schema broken, two phone numbers.
 const RELAUNCH = {
   domain: 'builders-demo.example', name: 'Demo Builders', ga4: true,
   title: 'Demo Builders | Extensions and loft conversions in Peterborough', desc: 'Extensions, loft conversions and renovations across Peterborough. Free quotes.',
-  viewport: 'width=device-width, initial-scale=1', noindex: true, h1s: ['Extensions and loft conversions in Peterborough'],
+  viewport: 'width=device-width, initial-scale=1', noindex: true, canonicalTo: 'https://staging.builders-demo.example/', h1s: ['Extensions and loft conversions in Peterborough'],
   topContact: ['/quote/', 'Get a free quote'], phone: '01733 000 444', telLink: true, form: true, address: 'Unit 3, Example Park, Peterborough PE1 1AA',
   images: 14, altShare: 0.8, reviews: '"Finished on time and on budget." Rated 4.8 on Checkatrade',
   schema: [local({ type: 'HomeAndConstructionBusiness', name: 'Demo Builders', domain: 'builders-demo.example', phone: '01733 000 999', town: 'Peterborough', postcode: 'PE1 1AA' }), '{ "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [ ]'],
   robots: 'User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nDisallow: /\n\nUser-agent: PerplexityBot\nDisallow: /\n\nUser-agent: Google-Extended\nDisallow: /\n',
-  psi: [speed(71), speed(93)],
+  psi: [speed(71, { fixes: [['image-delivery-insight', { bytes: 1200000 }], ['render-blocking-insight', { ms: 800 }]] }), speed(93)],
 };
 
 // 6. A busy restaurant: a map and reviews, but zoom is switched off, buttons are small and real visitors find it slow.
@@ -128,34 +142,35 @@ const RESTAURANT = {
   title: 'Demo Bistro | Restaurant in Bury St Edmunds, open seven days for lunch and dinner', desc: 'Seasonal food in Bury St Edmunds.',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', h1s: ['Seasonal food in Bury St Edmunds'],
   topContact: ['/book/', 'Book a table'], phone: '01284 000 555', telLink: true, extraPhones: ['01284 000 556', '07700 900 557'],
-  address: '5 Abbeygate Street, Bury St Edmunds IP33 1AA', gbp: 'map', images: 20, altShare: 0.5,
+  address: '5 Abbeygate Street, Bury St Edmunds IP33 1AA', gbp: 'map', images: 20, altShare: 0.5, missingStatus: 302,
   reviews: '"The best Sunday lunch in town." 4.7 out of 5 on Google',
   schema: [local({ type: 'Restaurant', name: 'Demo Bistro', domain: 'bistro-demo.example', phone: '01284 000 555', town: 'Bury St Edmunds', postcode: 'IP33 1AA' })],
-  psi: [speed(63, { targetSize: 0, field: { lcp: 3100, inp: 260, cls: 0.21, category: 'AVERAGE' } }), speed(88)],
+  psi: [speed(63, { targetSize: 0, field: { lcp: 3100, inp: 260, cls: 0.21, category: 'AVERAGE' }, a11y: 79, a11yFails: ['color-contrast', 'frame-title'],
+    fixes: [['cls-culprits-insight', { shift: 0.2 }], ['image-delivery-insight', { bytes: 1600000 }], ['font-display-insight', { ms: 400 }]] }), speed(88)],
 };
 
 // 7. A national company: fast on a computer, slower on a phone, no place named (it works everywhere), contact form only.
 const NATIONAL = {
-  domain: 'software-demo.example', name: 'Demo Software Ltd', ga4: 'gtm', og: true, llms: true,
+  domain: 'software-demo.example', name: 'Demo Software Ltd', ga4: 'gtm', og: 'title', llms: true, footerLinks: [['/privacy/', 'Privacy notice']],
   title: 'Demo Software | Rota and payroll software for care homes, trusted by 900 UK care providers', desc: 'Rota, timesheets and payroll in one place for care homes and home care agencies across the UK. Book a demo, see pricing, or start a free 30-day trial with your own data and team today.',
   viewport: 'width=device-width, initial-scale=1', h1s: ['Rota and payroll software for care homes'], intro: 'Used by 900 care providers across the UK.',
-  topContact: ['/demo/', 'Book a demo'], form: true, images: 16, altShare: 0.9,
+  topContact: ['/demo/', 'Book a demo'], form: 'long', images: 16, altShare: 0.9,
   reviews: '"Saved our managers a day a week." Rated 4.6 on Capterra',
   schema: [{ '@context': 'https://schema.org', '@type': 'Organization', name: 'Demo Software Ltd', url: 'https://www.software-demo.example/' }],
-  psi: [speed(61, { tbt: 690 }), speed(96)],
+  psi: [speed(61, { tbt: 690, fixes: [['bootup-time', { tbt: 700 }], ['unused-javascript', { bytes: 520000 }], ['legacy-javascript-insight', { bytes: 60000 }]] }), speed(96)],
 };
 
 const SITES = { trades: TRADES, salon: SALON, shop: SHOP, clinic: CLINIC, relaunch: RELAUNCH, restaurant: RESTAURANT, national: NATIONAL };
 
 // The list shown in /admin#demos/web.
 export const WEBSITE_DEMOS = [
-  { id: 'trades', name: 'Local trade, old site', size: 'Small', model: 'Local service', build: 'Old', note: 'Built years ago and left: no phone layout, not tap-to-call, slow, no tracking, no sitemap.' },
+  { id: 'trades', name: 'Local trade, old site', size: 'Small', model: 'Local service', build: 'Old', note: 'Built years ago and left: no phone layout, not tap-to-call, slow, no tracking, no sitemap, missing pages show as normal pages.' },
   { id: 'salon', name: 'Salon on a website builder', size: 'Small', model: 'Local service', build: 'Template', note: 'Tidy, with booking at the top, but no reviews, no Maps link and no analytics.' },
   { id: 'shop', name: 'Online shop on Shopify', size: 'Small', model: 'Online sales', build: 'Template', note: 'Reviews and tracking in place, but heavy apps make it slow, images lack text and no returns policy is linked.' },
   { id: 'clinic', name: 'Clinic, built properly', size: 'Mid', model: 'Local service', build: 'Custom', note: 'Fast, clear and tracked, local details right. The report should lead with good news.' },
-  { id: 'relaunch', name: 'Builder after a relaunch', size: 'Mid', model: 'Local service', build: 'Custom', note: 'Launch-day mistakes: still set to noindex, AI assistants blocked, broken schema, two phone numbers.' },
+  { id: 'relaunch', name: 'Builder after a relaunch', size: 'Mid', model: 'Local service', build: 'Custom', note: 'Launch-day mistakes: still set to noindex, canonical pointing at the test site, AI assistants blocked, broken schema, two phone numbers, tracking with no cookie banner.' },
   { id: 'restaurant', name: 'Busy restaurant', size: 'Mid', model: 'Local service', build: 'Template', note: 'Map and reviews, but zoom is off, buttons are small and real visitors find it slow.' },
-  { id: 'national', name: 'National software company', size: 'Large', model: 'Leads, nationwide', build: 'Custom', note: 'Fast on a computer, slower on a phone, no place named, form only, long title and description.' },
+  { id: 'national', name: 'National software company', size: 'Large', model: 'Leads, nationwide', build: 'Custom', note: 'Fast on a computer, slower on a phone, no place named, a long form, long title and description, no company number.' },
 ].map((d) => ({ ...d, input: () => input({ ...SITES[d.id] }) }));
 
 export function findWebsiteDemo(id) {
