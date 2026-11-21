@@ -683,3 +683,25 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
   .who-strip figure:first-child img { aspect-ratio: 16 / 9; }
   .tip-pop { left: auto; right: -8px; transform: none; }
 }
+
+/* Service pages: "Read more" under the why-me text, and tap-to-open cards on phones (fold.js) */
+.more-text { margin-top: var(--s4); }
+.more-text summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--brand-text); }
+.more-text summary::-webkit-details-marker { display: none; }
+.more-text summary::after { content: "+"; font-size: 18px; font-weight: 500; line-height: 1; }
+.more-text[open] summary { margin-bottom: var(--s4); }
+.more-text[open] summary::after { content: "\2212"; }
+.more-text p + p { margin-top: var(--s4); }
+.fold h3 { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.fold h3::after { content: "+"; color: var(--brand-text); font-size: 20px; font-weight: 500; line-height: 1; flex: none; }
+.fold.open h3::after { content: "\2212"; }
+.fold h3:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 4px; }
+.fold:not(.open) p, .fold:not(.open) .flow-set, .fold:not(.open) .analysis-tags { display: none; }
+@media (max-width: 760px) {
+  .svc-fold .work-card > p:not(.work-role) { display: none; }
+}
+.photo-wide { margin: var(--s12) auto 0; max-width: 960px; }
+.photo-wide img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; border-radius: var(--r-lg); box-shadow: var(--e1); }
+.photo-wide figcaption { margin-top: var(--s3); color: var(--muted); }
+.photo-wide figcaption a { color: inherit; }
+@media (max-width: 600px) { .photo-wide img { aspect-ratio: 4 / 3; border-radius: var(--r-md); } }
