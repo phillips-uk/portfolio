@@ -34,7 +34,7 @@ async function bump(env, change) {
   return null;
 }
 
-// what: 'completed' | 'reused' | 'failed' | 'blocked' (with a reason: bot, turnstile, rate, origin, account, daily)
+// what: 'completed' | 'reused' | 'failed' | 'blocked' (with a reason: bot, turnstile, rate, origin, account, daily, ceiling)
 export async function countUse(env, tool, what, reason) {
   try {
     await bump(env, day => {

@@ -20,6 +20,7 @@
 //   tools/website-check/reports/<id>.json      the report, served for 30 days, then deleted by the weekly clean-up
 //   tools/website-check/domain/<domain>.json   the domain's latest report id (reused for websiteCacheHours)
 //   tools/website-check/ip/<hash>/<day>.json   checks run from one connection that day (the IP is hashed, never stored)
+//   tools/website-check/day/<day>.json         checks run by every visitor that day (the daily ceiling)
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
 import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS } from './website-check-rules.js';
@@ -247,7 +248,16 @@ async function run(request, env) {
     }
   }
 
-  // Checks per connection per London day. Lewis's own preview runs aren't counted.
+  // The ceiling across every visitor per London day, then checks per connection. Lewis's own preview runs aren't counted,
+  // and nor are reused reports (above), which cost nothing.
+  const dayKey = PREFIX + 'day/' + londonDay() + '.json';
+  if (!access.admin) {
+    const day = (await getJson(env, dayKey)) || { n: 0 };
+    if (day.n >= L.websiteChecksPerDay) {
+      await countUse(env, TOOL, 'blocked', 'ceiling');
+      return jsonResponse({ error: 'I’m busy today: the free checks for today have all been used. Please try again tomorrow, or ask me a question below.', limit: true }, 429);
+    }
+  }
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
   const ipKey = PREFIX + 'ip/' + await sha(ip + '|' + (env.WORKER_SECRET || 'phillips')) + '/' + londonDay() + '.json';
   if (!access.admin) {
@@ -257,6 +267,8 @@ async function run(request, env) {
       return jsonResponse({ error: `That’s ${L.websiteChecksPerIpPerDay} checks from this connection today, the most I allow. Please come back tomorrow, or ask me a question below.`, limit: true }, 429);
     }
     await put(env, ipKey, { n: used.n + 1 });
+    const day = (await getJson(env, dayKey)) || { n: 0 };
+    await put(env, dayKey, { n: day.n + 1 });
   }
 
   let input;
@@ -351,7 +363,7 @@ export async function websiteCheck(request, url, env) {
 export async function cleanupWebsiteChecks(env) {
   const cutoff = Date.now() - REPORT_DAYS * 86400000;
   const dayCutoff = londonDay(new Date(Date.now() - 2 * 86400000));
-  for (const prefix of ['reports/', 'ip/', 'domain/']) {
+  for (const prefix of ['reports/', 'ip/', 'domain/', 'day/']) {
     let cursor;
     do {
       const page = await env.BLOBS.list({ prefix: PREFIX + prefix, cursor });

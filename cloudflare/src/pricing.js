@@ -118,6 +118,8 @@ export const DEFAULTS = {
   fixTypes: FIX_TYPES,
   limits: {
     websiteChecksPerIpPerDay: 5,
+    websiteChecksPerDay: 300,     // daily ceiling across every visitor (Lewis, 21 Nov 2026: spammers with many connections).
+                                  // Each check is two PageSpeed calls; the key's free quota is 25,000 a day
     websiteCacheHours: 24,        // the same domain reuses its last result for this long
     adsChecksPerAccountDays: 30,  // one free check per Google Ads account in this many days
     adsAccountsPerLogin: 3,       // accounts per Google login or company domain, per 30 days

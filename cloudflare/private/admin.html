@@ -1299,13 +1299,14 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
           <div class="card-head"><h2>Free-use limits</h2></div>
           <div class="pr-fields four">
             <label>Website Checks per connection a day<input type="number" name="l.websiteChecksPerIpPerDay" min="0" step="1" required></label>
+            <label>Website Checks a day, at most<input type="number" name="l.websiteChecksPerDay" min="0" step="1" required></label>
             <label>Same website reuses its result for (hours)<input type="number" name="l.websiteCacheHours" min="0" step="1" required></label>
             <label>One Google Ads Check per account every (days)<input type="number" name="l.adsChecksPerAccountDays" min="0" step="1" required></label>
             <label>Accounts per login or company, per 30 days<input type="number" name="l.adsAccountsPerLogin" min="0" step="1" required></label>
             <label>Treat as an agency above (accounts under a manager)<input type="number" name="l.agencyAccountThreshold" min="0" step="1" required></label>
             <label>Google Ads Checks a day, at most<input type="number" name="l.adsChecksPerDay" min="0" step="1" required></label>
           </div>
-          <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved.</p></details>
+          <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved. Each Website Check uses two of Google's free PageSpeed calls (25,000 a day), and a site checked again within the reuse window costs nothing.</p></details>
         </div>
         <div class="card" style="margin-top:20px">
           <div class="card-head"><h2>Preview</h2><span class="meta">uses the numbers above, before you save</span></div>
@@ -3260,7 +3261,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
 
   // Free checks per week (cloudflare/src/tool-leads.js): completed visitor checks per tool, the Lead cards they made, and
   // what was refused (crawlers, spam checks, rate and free-use limits), with the reasons on hover.
-  var REFUSED = { bot: 'crawler or script', turnstile: 'spam check failed', rate: 'too many tries from one connection', origin: 'not from the page', account: 'account had its free check', daily: 'daily limit reached', other: 'other' };
+  var REFUSED = { bot: 'crawler or script', turnstile: 'spam check failed', rate: 'too many tries from one connection', origin: 'not from the page', account: 'account had its free check', daily: 'daily limit reached', ceiling: 'busy: every free check for the day used', other: 'other' };
   function renderToolUsage() {
     var weeks = state.toolUsage, body = $('tu-rows');
     if (!body) return;
