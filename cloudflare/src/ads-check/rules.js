@@ -303,11 +303,19 @@ function buildModel(data, ctx) {
   }
   const products = [...productMap.values()].sort((a, b) => b.spend - a.spend);
 
+  // The visitor's own target (optional, 21 Nov 2026): { type: 'cpa' | 'roas', value }. ROAS as a ratio (4 = 400%).
+  const t = ctx.target;
+  const target = t && (t.type === 'cpa' || t.type === 'roas') && Number(t.value) > 0 ? { type: t.type, value: Number(t.value) } : null;
+
   return {
     has,
     rows,
     customer,
     currency,
+    target,
+    brand: ctx.brand ? String(ctx.brand).slice(0, 40) : null,
+    today: ctx.today || null,
+    urlChecks: data.urlChecks || null,
     money: moneyFormatter(currency),
     campaigns,
     keywords,
@@ -576,14 +584,21 @@ function ruleCampaigns(m, out) {
     b.campaigns.push(c);
     byBudget.set(key, b);
   }
-  const constrained = [];
+  // Held back but beating the target or average (13c): reported on their own with a suggested budget, and left out here.
+  const winners = budgetWinners(m);
+  const winIds = new Set(winners.list.map((w) => w.c.id));
+  reportBudgetWinners(m, out, winners);
+  let constrained = [];
   for (const b of byBudget.values()) {
     const daily = b.spend / 30;
     if (b.budget > 30 && daily > 0 && daily >= b.budget * 0.98) constrained.push(...b.campaigns);
   }
+  constrained = constrained.filter((c) => !winIds.has(c.id));
   const search = camps.filter((c) => c.channel === 'SEARCH');
-  const lowSis = search.filter((c) => c.sis > 0 && c.sis < 0.4 && c.spend > 5);
-  if (constrained.length) {
+  const lowSis = search.filter((c) => c.sis > 0 && c.sis < 0.4 && c.spend > 5 && !winIds.has(c.id));
+  if (winIds.size && !constrained.length && !lowSis.length) {
+    // nothing more to say about budgets
+  } else if (constrained.length) {
     const c0 = constrained[0];
     out.weak({
       id: 'budget-limited',
@@ -1835,6 +1850,630 @@ function accountProfile(m) {
 }
 
 // ---------------------------------------------------------------------------
+// 13. Deeper checks (21 Nov 2026, from the Propel Max review "What we should do"). Same fixed-rule approach, same
+// Google Ads reads, nothing guessed. Where a check needs a yardstick it uses the visitor's own target when they gave
+// one, else the account's own average, and says which.
+// ---------------------------------------------------------------------------
+
+const sum = (list, f) => list.reduce((s, x) => s + (f(x) || 0), 0);
+const idOf = (resource) => String(resource || '').split('/').pop();
+
+// What the account is judged on: cost per conversion, or return on ad spend for accounts whose conversions carry
+// real sale values. The visitor's target wins; else the account's own 30-day figure.
+function yardstick(m) {
+  const spend = m.totalSpend;
+  const conv = sum(m.campaigns, (c) => c.conversions);
+  const value = sum(m.campaigns, (c) => c.convValue);
+  const t = m.target;
+  const kind = t ? t.type : (value > 0 && value >= spend * 0.5 ? 'roas' : 'cpa');
+  if (kind === 'roas') {
+    const avg = spend > 0 && value > 0 ? value / spend : null;
+    return { kind, value: t ? t.value : avg, average: avg, source: t ? 'target' : 'average' };
+  }
+  const avg = conv > 0 ? spend / conv : null;
+  return { kind, value: t ? t.value : avg, average: avg, source: t ? 'target' : 'average' };
+}
+const roasText = (r) => `${Math.round(r * 100)}%`;
+function yardText(m, y) {
+  if (y.kind === 'roas') return `${y.source === 'target' ? 'your target return on ad spend' : 'your average return on ad spend'} of ${roasText(y.value)}`;
+  return `${y.source === 'target' ? 'your target cost per conversion' : 'your average cost per conversion'} of ${m.money(y.value)}`;
+}
+// How a slice (campaign, device, network) does against the yardstick. ratio > 1 is worse; excess is spend past it.
+function against(y, s) {
+  if (!y.value) return null;
+  if (y.kind === 'roas') {
+    const roas = s.spend > 0 ? s.value / s.spend : 0;
+    return { ratio: roas > 0 ? y.value / roas : Infinity, excess: Math.max(0, s.spend - s.value / y.value), figure: roas };
+  }
+  const cpa = s.conversions > 0 ? s.spend / s.conversions : Infinity;
+  return { ratio: cpa / y.value, excess: Math.max(0, s.spend - s.conversions * y.value), figure: cpa };
+}
+const figureText = (m, y, f) => (y.kind === 'roas' ? `a return of ${roasText(f)}` : Number.isFinite(f) ? `${m.money(f)} a conversion` : 'no conversions');
+
+// 13a. Double-counted conversions: two primary actions recording the same kind of result, worst when one is the
+// Google Ads tag and the other a Google Analytics 4 import of the same event.
+const ACTION_SOURCE = (t) => (/^GOOGLE_ANALYTICS_4/.test(t) ? 'ga4' : /^UNIVERSAL_ANALYTICS/.test(t) ? 'ua' : /^WEBPAGE/.test(t) ? 'tag' : /^UPLOAD/.test(t) ? 'import' : /CALL/.test(t) ? 'call' : 'other');
+const SOURCE_LABEL = { ga4: 'Google Analytics 4 import', ua: 'Analytics import', tag: 'Google Ads tag', import: 'offline import', call: 'calls', other: 'other source' };
+function ruleDoubleCounting(m, out) {
+  if (!m.has('conversionActions') || !m.has('conversionStats')) return;
+  const live = m.conversionActions.filter((a) => a.status === 'ENABLED' && a.primary && a.allConversions > 0);
+  const groups = new Map();
+  for (const a of live) {
+    const key = a.category === 'PURCHASE' ? 'PURCHASE' : LEAD_CATS.has(a.category) ? a.category : null;
+    if (!key) continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(a);
+  }
+  const hits = [];
+  for (const [cat, list] of groups) {
+    if (list.length < 2) continue;
+    const sources = new Set(list.map((a) => ACTION_SOURCE(a.type)));
+    const mixed = (sources.has('ga4') || sources.has('ua')) && sources.has('tag');
+    // Two lead forms can be two real forms; two purchase actions, or a tag plus an Analytics copy, rarely are.
+    if (cat !== 'PURCHASE' && !mixed) continue;
+    const counts = list.map((a) => a.allConversions).sort((a, b) => b - a);
+    const similar = counts[1] >= counts[0] * 0.5;
+    hits.push({ cat, list, mixed, similar });
+  }
+  const purchases = groups.get('PURCHASE') || [];
+  if (!hits.length) {
+    if (purchases.length === 1) {
+      out.strong({ id: 'double-counting', category: 'tracking', priority: 'high', title: 'Each sale is counted once', detail: `One primary purchase action, "${clean(purchases[0].name)}", records your sales, so none is counted twice.` });
+    }
+    return;
+  }
+  const h = hits[0];
+  const desc = (a) => `"${clean(a.name)}" (${SOURCE_LABEL[ACTION_SOURCE(a.type)]}, ${Math.round(a.allConversions)} in 30 days)`;
+  const kind = h.cat === 'PURCHASE' ? 'sales' : 'leads';
+  out.weak({
+    id: 'double-counting',
+    category: 'tracking',
+    priority: h.mixed || h.similar ? 'high' : 'medium',
+    title: `${kind === 'sales' ? 'Sales' : 'Leads'} may be counted twice`,
+    detail: `${h.list.slice(0, 3).map(desc).join(' and ')} are ${h.list.length === 2 ? 'both' : 'all'} main goals for the same kind of result.${h.similar ? ' Their counts are close, which is what the same result recorded twice looks like.' : ''}${hits.length > 1 ? ` The same applies to ${plural(hits.length - 1, 'other goal type')}.` : ''}`,
+    why: 'If two actions record the same result, the Conversions column shows about twice what really happened, your cost per conversion looks half of what it is, and Smart Bidding bids as if each click were worth more.',
+    start: 'Keep one action for each result as primary (usually the Google Ads tag) and set the copy to secondary.',
+    startLink: LINKS.ga4,
+    fixType: 'tracking',
+    items: sum(hits, (x) => x.list.length - 1),
+    itemLabel: 'conversion actions',
+    fromPrice: false,
+  });
+}
+
+// 13b. Negative keywords that block the account's own keywords. Matching follows Google's rules for negatives:
+// exact blocks only the same words, phrase blocks the words in that order, broad blocks all the words in any order.
+const kwWords = (t) => String(t || '').toLowerCase().replace(/^[+\s]+/, '').replace(/[^\p{L}\p{N}'&]+/gu, ' ').trim().split(/\s+/).filter(Boolean).map((w) => w.replace(/^\+/, ''));
+function negBlocks(neg, kw) {
+  const n = neg.words, k = kw;
+  if (!n.length || !k.length) return false;
+  if (neg.match === 'EXACT') return n.join(' ') === k.join(' ');
+  if (neg.match === 'PHRASE') {
+    for (let i = 0; i + n.length <= k.length; i++) if (n.every((w, j) => k[i + j] === w)) return true;
+    return false;
+  }
+  const set = new Set(k);
+  return n.every((w) => set.has(w));
+}
+function ruleNegativeConflicts(m, out) {
+  if (!m.has('campaignNegatives') && !m.has('adGroupNegatives') && !m.has('sharedNegatives')) return;
+  const neg = (text, match, level) => ({ text: clean(text, 50), words: kwWords(text), match: match || 'BROAD', level });
+  const byCampaign = new Map(), byAdGroup = new Map(), byList = new Map();
+  const push = (map, key, v) => { if (!map.has(key)) map.set(key, []); map.get(key).push(v); };
+  for (const r of m.rows('campaignNegatives')) if (r.campaignCriterion?.keyword?.text) push(byCampaign, String(r.campaign?.id), neg(r.campaignCriterion.keyword.text, r.campaignCriterion.keyword.matchType, 'campaign'));
+  for (const r of m.rows('adGroupNegatives')) if (r.adGroupCriterion?.keyword?.text) push(byAdGroup, String(r.adGroup?.id), neg(r.adGroupCriterion.keyword.text, r.adGroupCriterion.keyword.matchType, 'ad group'));
+  for (const r of m.rows('sharedNegatives')) if (r.sharedCriterion?.keyword?.text) push(byList, String(r.sharedSet?.id), neg(r.sharedCriterion.keyword.text, r.sharedCriterion.keyword.matchType, 'list'));
+  const listsByCampaign = new Map();
+  for (const r of m.rows('negativeKeywordLists')) push(listsByCampaign, String(r.campaign?.id), String(r.sharedSet?.id));
+  const accountLists = m.rows('accountNegativeLists').map((r) => idOf(r.customerNegativeCriterion?.negativeKeywordList?.sharedSet)).filter(Boolean);
+  const blocked = [];
+  for (const k of m.keywords) {
+    const words = kwWords(k.text);
+    const lists = [...(listsByCampaign.get(k.campaignId) || []), ...accountLists];
+    const candidates = [
+      ...(byCampaign.get(k.campaignId) || []),
+      ...(byAdGroup.get(k.agId) || []),
+      ...lists.flatMap((id) => (byList.get(id) || []).map((n) => ({ ...n, level: accountLists.includes(id) ? 'account list' : 'list' }))),
+    ];
+    const hit = candidates.find((n) => negBlocks(n, words));
+    if (hit) blocked.push({ k, n: hit });
+  }
+  const anyNegatives = byCampaign.size + byAdGroup.size + byList.size > 0;
+  if (!blocked.length) {
+    if (anyNegatives && m.keywords.length) out.strong({ id: 'negatives-block-keywords', category: 'keywords', priority: 'medium', title: 'Your negatives leave your own keywords alone', detail: `None of your negative keywords blocks any of your ${m.keywords.length.toLocaleString('en-GB')} keywords.` });
+    return;
+  }
+  const show = blocked.slice(0, 3).map(({ k, n }) => `"${clean(k.text, 40)}" in "${clean(k.campaign, 40)}" (blocked by "${n.text}", a ${n.match.toLowerCase()} match negative on the ${n.level})`);
+  const negs = new Set(blocked.map((b) => `${b.n.level}|${b.n.text}|${b.n.match}`));
+  out.weak({
+    id: 'negatives-block-keywords',
+    category: 'keywords',
+    priority: blocked.length >= 5 ? 'high' : 'medium',
+    title: `${plural(negs.size, 'negative keyword')} ${verb(negs.size, 'blocks', 'block')} your own keywords`,
+    detail: `${plural(blocked.length, 'keyword')} can never show because a negative stops ${verb(blocked.length, 'it', 'them')}: ${show.join('; ')}${blocked.length > 3 ? `; and ${blocked.length - 3} more` : ''}.`,
+    why: 'A keyword blocked by your own negative is budget and planning you think is working but never reaches a search.',
+    start: 'Remove or narrow each negative (for example from broad to exact), or pause the keyword if blocking it was the intent.',
+    startLink: null,
+    fixType: 'negatives',
+    items: negs.size,
+    itemLabel: 'negative keywords',
+    fromPrice: false,
+  });
+}
+
+// 13c. Budget-limited campaigns that beat the target (or the account's average): the clean growth move. Called from
+// ruleCampaigns so the older "held back by budget" finding leaves these out. A campaign counts as held back when it
+// spends its whole daily budget, or loses 10% or more of its searches to budget.
+function budgetWinners(m) {
+  const y = yardstick(m);
+  if (!y.value) return { y, list: [] };
+  const list = [];
+  for (const c of m.campaigns) {
+    if (c.conversions < 5 || c.budget <= 0) continue;
+    const full = c.budget > 0 && c.spend / 30 >= c.budget * 0.98;
+    const lost = c.channel === 'SEARCH' ? c.sisBudgetLost : 0;
+    if (!full && lost < 0.1) continue;
+    const a = against(y, { spend: c.spend, conversions: c.conversions, value: c.convValue });
+    if (!a || a.ratio > 0.9) continue;
+    // How far the budget could go: the searches lost to budget, as a share of the ones it already gets, capped at half again.
+    const factor = c.channel === 'SEARCH' && c.sis > 0 && lost > 0 ? Math.min(1.5, (c.sis + lost) / c.sis) : 1.2;
+    const suggested = Math.ceil(c.budget * factor);
+    list.push({ c, a, lost, factor, suggested, more: c.conversions * (factor - 1) });
+  }
+  list.sort((p, q) => q.more - p.more);
+  return { y, list };
+}
+function reportBudgetWinners(m, out, w) {
+  const { y, list } = w;
+  if (!list.length) return;
+  const line = ({ c, a, lost, suggested }) => `"${clean(c.name, 45)}": ${figureText(m, y, a.figure)}${lost >= 0.1 ? `, ${pct(lost)} of searches lost to budget` : ', spending its full budget'}. Suggested daily budget ${m.money(suggested)} (now ${m.money(c.budget)})`;
+  const more = Math.round(sum(list, (x) => x.more));
+  const extra = sum(list, (x) => (x.suggested - x.c.budget) * 30.4);
+  out.weak({
+    id: 'budget-limited-winners',
+    category: 'bidding',
+    priority: 'medium',
+    title: `${plural(list.length, 'campaign')} ${verb(list.length, 'beats', 'beat')} ${y.source === 'target' ? 'your target' : 'your average'} but ${verb(list.length, 'is', 'are')} held back by budget`,
+    detail: `${list.slice(0, 3).map(line).join('. ')}.${list.length > 3 ? ` And ${list.length - 3} more.` : ''} Judged against ${yardText(m, y)}. If the extra searches convert at today's rate, about ${m.money(extra)} more a month could bring around ${more || 1} more ${verb(more || 1, 'conversion', 'conversions')}.`,
+    why: 'These campaigns already do better than the rest of the account, so they are the safest place for more budget.',
+    start: 'Raise these budgets in steps of about 20% a week, and watch that the cost per conversion holds.',
+    startLink: LINKS.bidding,
+    fixType: 'bidding',
+    items: list.length,
+    itemLabel: 'campaigns',
+    fromPrice: false,
+  });
+}
+
+// 13d. Over-pinned responsive search ads: two or more of the three headline positions locked to one headline each, or
+// three quarters or more of the headlines pinned.
+function ruleOverPinned(m, out) {
+  if (!m.has('rsaHeadlines')) return;
+  const ads = m.rows('rsaHeadlines').map((r) => {
+    const hs = r.adGroupAd?.ad?.responsiveSearchAd?.headlines || [];
+    const pins = {};
+    for (const h of hs) if (h.pinnedField && /^HEADLINE_\d$/.test(h.pinnedField)) pins[h.pinnedField] = (pins[h.pinnedField] || 0) + 1;
+    const pinned = Object.values(pins).reduce((a, b) => a + b, 0);
+    const locked = Object.values(pins).filter((n) => n === 1).length;
+    return { adGroup: r.adGroup?.name || '', campaign: r.campaign?.name || '', total: hs.length, pinned, locked };
+  }).filter((a) => a.total > 0);
+  if (!ads.length) return;
+  const over = ads.filter((a) => a.locked >= 2 || (a.total >= 3 && a.pinned / a.total >= 0.75));
+  if (!over.length) {
+    out.strong({ id: 'over-pinned-ads', category: 'ads', priority: 'low', title: 'Your ads leave Google room to test headlines', detail: `None of your ${plural(ads.length, 'responsive search ad')} ${verb(ads.length, 'has', 'have')} its headlines pinned so tightly that only a few combinations can show.` });
+    return;
+  }
+  const e = over[0];
+  out.weak({
+    id: 'over-pinned-ads',
+    category: 'ads',
+    priority: over.length / ads.length >= 0.5 ? 'medium' : 'low',
+    title: `${plural(over.length, 'ad')} with too many pinned headlines`,
+    detail: `${someOf(over.length, ads.length, 'responsive search ad')} ${verbOf(over.length, ads.length, 'has', 'have')} headlines pinned so that only a few combinations can show. For example, the ad in "${clean(e.adGroup, 40)}" has ${e.pinned} of its ${e.total} headlines pinned${e.locked >= 2 ? `, with ${e.locked} positions fixed to one headline each` : ''}.`,
+    why: 'Pinning stops Google testing headline combinations, which usually lowers ad strength and the share of searches the ad can win.',
+    start: 'Keep one pin at most (your name or a required line in position 1) and unpin the rest.',
+    startLink: LINKS.ads,
+    fixType: 'ad_copy',
+    items: over.length,
+    itemLabel: 'ads',
+    fromPrice: false,
+  });
+}
+
+// 13e. Landing pages that don't load. The status check itself runs in google-ads-check.js (urls.js) and hands its
+// result in as data.urlChecks; the demo accounts carry made-up results.
+function ruleBrokenUrls(m, out) {
+  const u = m.urlChecks;
+  if (!u || !Array.isArray(u.pages) || !u.pages.length) return;
+  const broken = u.pages.filter((p) => p.state === 'broken');
+  const checked = u.pages.filter((p) => p.state === 'ok' || p.state === 'broken').length;
+  if (!broken.length) {
+    if (checked) out.strong({ id: 'broken-landing-pages', category: 'ads', priority: 'high', title: 'Your landing pages load', detail: `All ${plural(checked, 'landing page')} checked answered normally${u.skipped ? ` (the ${checked} your ads use most)` : ''}.` });
+    return;
+  }
+  const why = (p) => (p.status === 404 ? 'not found' : p.status === 410 ? 'gone' : p.status >= 500 ? `server error ${p.status}` : 'no answer');
+  out.weak({
+    id: 'broken-landing-pages',
+    category: 'ads',
+    priority: 'high',
+    title: `${plural(broken.length, 'landing page')} ${verb(broken.length, "doesn't", "don't")} load`,
+    detail: `Of the ${plural(u.pages.length, 'page')} your ads link to that were checked, ${broken.length === 1 ? 'one' : broken.length} failed: ${broken.slice(0, 3).map((p) => `${clean(p.url, 70)} (${why(p)}${p.ads > 1 ? `, used by ${p.ads} ads` : ''})`).join('; ')}${broken.length > 3 ? `; and ${broken.length - 3} more` : ''}. Checked on ${m.today || 'the day of the report'}.`,
+    why: 'Every click on these ads is paid for and lands on an error. Google may also stop showing ads whose page is broken.',
+    start: 'Open each address yourself. If it is broken, point the ads at a working page or redirect the old address.',
+    startLink: null,
+    fixType: 'ad_copy',
+    items: broken.length,
+    itemLabel: 'pages',
+    fromPrice: false,
+  });
+}
+
+// 13f. Search Partners and devices, 90 days, against the yardstick (the visitor's target, else the 90-day average).
+const DEVICE_LABEL = { MOBILE: 'Mobile', DESKTOP: 'Computers', TABLET: 'Tablets', CONNECTED_TV: 'TV screens', OTHER: 'Other devices' };
+const NETWORK_LABEL = { SEARCH: 'Google Search', SEARCH_PARTNERS: 'Search Partners', CONTENT: 'Display Network', YOUTUBE_SEARCH: 'YouTube', YOUTUBE_WATCH: 'YouTube', YOUTUBE: 'YouTube', MIXED: 'Performance Max (mixed)', GOOGLE_TV: 'Google TV' };
+function segmentTable(m) {
+  if (!m.has('segments90')) return null;
+  const rows = m.rows('segments90');
+  if (!rows.length) return null;
+  const add = (map, key, channel, r) => {
+    const s = map.get(key) || { key, spend: 0, conversions: 0, value: 0, clicks: 0, impressions: 0 };
+    s.spend += fromMicros(r.metrics?.costMicros); s.conversions += num(r.metrics?.conversions); s.value += num(r.metrics?.conversionsValue);
+    s.clicks += num(r.metrics?.clicks); s.impressions += num(r.metrics?.impressions);
+    map.set(key, s);
+  };
+  const devices = new Map(), networks = new Map(), searchOnly = new Map();
+  for (const r of rows) {
+    const ch = r.campaign?.advertisingChannelType;
+    add(devices, r.segments?.device || 'OTHER', ch, r);
+    add(networks, r.segments?.adNetworkType || 'MIXED', ch, r);
+    if (ch === 'SEARCH') add(searchOnly, r.segments?.adNetworkType || 'SEARCH', ch, r);
+  }
+  const total = { spend: sum([...devices.values()], (s) => s.spend), conversions: sum([...devices.values()], (s) => s.conversions), value: sum([...devices.values()], (s) => s.value) };
+  const shape = (s, labels) => ({ label: labels[s.key] || titleCase(String(s.key).toLowerCase().replace(/_/g, ' ')), key: s.key, spend: round2(s.spend), conversions: Math.round(s.conversions * 10) / 10, value: round2(s.value), clicks: s.clicks, share: total.spend ? Math.round((s.spend / total.spend) * 1000) / 10 : 0, cpa: s.conversions > 0 ? round2(s.spend / s.conversions) : null, roas: s.spend > 0 && s.value > 0 ? Math.round((s.value / s.spend) * 100) / 100 : null });
+  const order = (map, labels) => [...map.values()].filter((s) => s.spend > 0 || s.conversions > 0).sort((a, b) => b.spend - a.spend).map((s) => shape(s, labels));
+  return { days: 90, total: { spend: round2(total.spend), conversions: Math.round(total.conversions * 10) / 10, value: round2(total.value) }, devices: order(devices, DEVICE_LABEL), networks: order(networks, NETWORK_LABEL), search: [...searchOnly.values()] };
+}
+function ruleSegments(m, out, seg) {
+  if (!seg || seg.total.conversions < 10) return;
+  const y30 = yardstick(m);
+  const avg90 = y30.kind === 'roas' ? (seg.total.spend ? seg.total.value / seg.total.spend : null) : seg.total.spend / seg.total.conversions;
+  const y = { kind: y30.kind, value: m.target ? m.target.value : avg90, source: m.target ? 'target' : 'average' };
+  if (!y.value) return;
+  const minSpend = y.kind === 'cpa' ? y.value * 2 : Math.max(50, seg.total.spend * 0.03);
+  const weak = (s) => { const a = against(y, s); return a && s.spend >= minSpend && a.ratio >= 1.5 ? a : null; };
+
+  // Search Partners, Search campaigns only.
+  const partners = seg.search.find((s) => s.key === 'SEARCH_PARTNERS');
+  const pa = partners && weak(partners);
+  if (pa) {
+    out.weak({
+      id: 'search-partners-below-average',
+      category: 'settings',
+      priority: pa.excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
+      title: 'Search Partners cost far more per result',
+      detail: `Over 90 days your Search campaigns spent ${m.money(partners.spend)} on Search Partners sites for ${figureText(m, y, pa.figure)}, against ${yardText(m, y)}.`,
+      atStake: atStake(pa.excess / 3, `Search Partners spend past ${y.source === 'target' ? 'your target' : 'your average'}`),
+      why: 'Search Partners are other sites that show Google search ads. Results there are often weaker, and the spend is easy to miss because it sits inside your Search campaigns.',
+      start: 'Untick "Include Google search partners" in the network settings of the Search campaigns, or segment by network first to see which campaigns it affects.',
+      startLink: null,
+      fixType: 'settings',
+      items: Math.max(1, m.campaigns.filter((c) => c.channel === 'SEARCH' && c.spend > 0).length),
+      itemLabel: 'campaigns',
+      fromPrice: false,
+    });
+  }
+
+  // Devices, all campaigns.
+  const raw = new Map(); for (const r of m.rows('segments90')) {
+    const k = r.segments?.device || 'OTHER';
+    const s = raw.get(k) || { key: k, spend: 0, conversions: 0, value: 0 };
+    s.spend += fromMicros(r.metrics?.costMicros); s.conversions += num(r.metrics?.conversions); s.value += num(r.metrics?.conversionsValue);
+    raw.set(k, s);
+  }
+  const bad = [...raw.values()].filter((s) => s.spend >= seg.total.spend * 0.1).map((s) => ({ s, a: weak(s) })).filter((x) => x.a);
+  if (bad.length && bad.length < raw.size) {
+    const excess = sum(bad, (x) => x.a.excess);
+    const names = bad.map((x) => (DEVICE_LABEL[x.s.key] || x.s.key).toLowerCase());
+    out.weak({
+      id: 'device-below-average',
+      category: 'bidding',
+      priority: excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
+      title: `${titleCase(names.join(' and '))} ${verb(bad.length, 'costs', 'cost')} far more per result`,
+      detail: `Over 90 days: ${bad.map((x) => `${(DEVICE_LABEL[x.s.key] || x.s.key).toLowerCase()} took ${pct(x.s.spend / seg.total.spend)} of spend at ${figureText(m, y, x.a.figure)}`).join('; ')}. Judged against ${yardText(m, y)}.`,
+      atStake: atStake(excess / 3, `${titleCase(names.join(' and '))} spend past ${y.source === 'target' ? 'your target' : 'your average'}`),
+      why: 'When one device converts much worse, the usual cause is the page or the form on that device, and the bids keep paying full price for it.',
+      start: `Try your own site and enquiry form on ${names.join(' and ')}. On manual bids, lower the bid for ${bad.length === 1 ? 'that device' : 'those devices'}; Smart Bidding adjusts devices itself, so there the fix is the page.`,
+      startLink: null,
+      fixType: 'bidding',
+      items: bad.length,
+      itemLabel: 'devices',
+      fromPrice: false,
+    });
+  }
+}
+
+// 13g. Brand searches inside Performance Max. The brand is the name the visitor typed, else the words every brand
+// Search keyword starts with. Only reported when there is a brand to compare with.
+function brandPhrase(m) {
+  if (m.brand) return kwWords(m.brand).map(plainWord);
+  const kwTokens = new Map();
+  for (const k of m.keywords) { if (!kwTokens.has(k.campaignId)) kwTokens.set(k.campaignId, new Set()); nameTokens(k.text).forEach((t) => kwTokens.get(k.campaignId).add(t)); }
+  const brandIds = new Set(m.campaigns.filter((c) => campaignRole(c, kwTokens) === 'Brand').map((c) => c.id));
+  const lists = m.keywords.filter((k) => brandIds.has(k.campaignId)).map((k) => kwWords(k.text).map(plainWord));
+  if (lists.length < 2) return null;
+  const prefix = [];
+  for (let i = 0; ; i++) {
+    const w = lists[0][i];
+    if (!w || !lists.every((l) => l[i] === w)) break;
+    prefix.push(w);
+  }
+  const phrase = prefix.length ? prefix : null;
+  return phrase && phrase.join(' ').length >= 3 ? phrase : null;
+}
+function rulePmaxBrand(m, out) {
+  if (!m.has('pmaxSearchTerms') || !m.pmaxSearchTerms.length) return;
+  const brand = brandPhrase(m);
+  if (!brand) return;
+  const hit = (t) => { const w = kwWords(t).map(plainWord); for (let i = 0; i + brand.length <= w.length; i++) if (brand.every((b, j) => w[i + j] === b)) return true; return false; };
+  const terms = m.pmaxSearchTerms.filter((t) => hit(t.term));
+  const spend = sum(terms, (t) => t.cost);
+  const all = sum(m.pmaxSearchTerms, (t) => t.cost);
+  if (spend < 20) return;
+  const kwTokens = new Map();
+  for (const k of m.keywords) { if (!kwTokens.has(k.campaignId)) kwTokens.set(k.campaignId, new Set()); nameTokens(k.text).forEach((t) => kwTokens.get(k.campaignId).add(t)); }
+  const brandSearch = m.campaigns.find((c) => c.channel === 'SEARCH' && campaignRole(c, kwTokens) === 'Brand' && c.spend > 0);
+  const camps = new Set(terms.flatMap((t) => [...t.campaigns]));
+  out.weak({
+    id: 'pmax-brand-terms',
+    category: 'search-terms',
+    priority: spend >= all * 0.1 ? 'medium' : 'low',
+    title: 'Performance Max is spending on searches for your own name',
+    detail: `${m.money(spend)} of Performance Max search spend in the last 30 days (${pct(spend / (all || 1))} of it) went on searches containing "${brand.join(' ')}", such as ${examples(terms.map((t) => t.term), 3, terms.length)}.${brandSearch ? ` Your brand campaign "${clean(brandSearch.name, 40)}" is there for those searches.` : ''}`,
+    why: 'People searching for your name would mostly find you anyway. Counting those sales in Performance Max makes it look better at finding new customers than it is.',
+    start: 'Add a brand exclusion to the Performance Max campaign, so searches for your name go to your brand Search campaign.',
+    startLink: null,
+    fixType: 'settings',
+    items: camps.size || 1,
+    itemLabel: 'campaigns',
+    fromPrice: false,
+  });
+}
+
+// 13h. Change history, last 28 days: a short summary for the report, and two findings. Campaigns well off the
+// yardstick that nobody changed in 28 days, and an account nobody changed at all.
+const CHANGE_LABEL = { CAMPAIGN_BUDGET: 'Budgets', CAMPAIGN: 'Campaign settings', AD_GROUP: 'Ad groups', AD_GROUP_CRITERION: 'Keywords and targeting', CAMPAIGN_CRITERION: 'Campaign targeting', AD_GROUP_AD: 'Ads', AD: 'Ads', AD_GROUP_BID_MODIFIER: 'Bid adjustments', ASSET: 'Assets', CAMPAIGN_ASSET: 'Assets', AD_GROUP_ASSET: 'Assets', CUSTOMER_ASSET: 'Assets', ASSET_SET: 'Assets', ASSET_SET_ASSET: 'Assets', CAMPAIGN_ASSET_SET: 'Assets', ASSET_GROUP: 'Asset groups', ASSET_GROUP_ASSET: 'Asset groups', CAMPAIGN_SHARED_SET: 'Negative lists', SHARED_SET: 'Negative lists', SHARED_CRITERION: 'Negative lists' };
+const AUTO_CLIENTS = new Set(['GOOGLE_ADS_RECOMMENDATIONS_SUBSCRIPTION', 'GOOGLE_ADS_AUTOMATED_RULE']);
+function changeSummary(m) {
+  if (!m.has('changes')) return null;
+  const rows = m.rows('changes');
+  const byType = new Map(), byCampaign = new Map();
+  let last = null, auto = 0;
+  for (const r of rows) {
+    const e = r.changeEvent || {};
+    const label = CHANGE_LABEL[e.changeResourceType] || 'Other';
+    byType.set(label, (byType.get(label) || 0) + 1);
+    const cid = idOf(e.campaign);
+    if (cid) byCampaign.set(cid, (byCampaign.get(cid) || 0) + 1);
+    if (AUTO_CLIENTS.has(e.clientType)) auto++;
+    const at = String(e.changeDateTime || '').slice(0, 10);
+    if (at && (!last || at > last)) last = at;
+  }
+  return {
+    days: 28, total: rows.length, truncated: rows.length >= 1000, last, auto,
+    byType: [...byType.entries()].sort((a, b) => b[1] - a[1]).map(([label, n]) => ({ label, n })),
+    campaignsChanged: m.campaigns.filter((c) => c.spend > 0 && byCampaign.has(c.id)).length,
+    campaignsSpending: m.campaigns.filter((c) => c.spend > 0).length,
+    byCampaign,
+  };
+}
+function ruleChanges(m, out, ch) {
+  if (!ch) return;
+  if (ch.total === 0 && m.totalSpend >= 300) {
+    out.weak({
+      id: 'no-recent-changes',
+      category: 'structure',
+      priority: 'low',
+      title: 'Nobody has changed the account in 28 days',
+      detail: `The change history shows no changes at all in the last 28 days, while the account spent ${m.money(m.totalSpend)} in the last 30.`,
+      why: 'Search terms, competitors and costs move every week. An account left alone slowly drifts from what it was set up to do.',
+      start: 'Set a short weekly slot: read the search terms, add negatives and check budgets against results.',
+      startLink: null,
+      fixType: 'structure',
+      items: 1,
+      itemLabel: 'accounts',
+      fromPrice: false,
+    });
+  }
+  const y = yardstick(m);
+  if (!y.value || ch.truncated) return;
+  const limit = y.source === 'target' ? 1.3 : 1.5;
+  const minSpend = y.kind === 'cpa' ? y.value * 2 : 100;
+  const off = m.campaigns
+    // On return on ad spend, only campaigns whose conversions carry a value are judged (lead campaigns in a mixed
+    // account have none); campaigns with no conversions at all are reported by spend-no-conversions already.
+    .filter((c) => c.spend >= minSpend && !(c.conversions === 0 && c.channel !== 'PERFORMANCE_MAX') && (y.kind !== 'roas' || c.convValue > 0))
+    .map((c) => ({ c, a: against(y, { spend: c.spend, conversions: c.conversions, value: c.convValue }) }))
+    .filter((x) => x.a && x.a.ratio >= limit);
+  const still = off.filter((x) => !ch.byCampaign.has(x.c.id));
+  const list = y.source === 'target' ? off : still;
+  if (!list.length) return;
+  const excess = sum(list, (x) => x.a.excess);
+  out.weak({
+    id: 'off-target-campaigns',
+    category: 'structure',
+    priority: excess >= m.totalSpend * 0.1 ? 'high' : 'medium',
+    title: y.source === 'target'
+      ? `${plural(list.length, 'campaign')} well off your target`
+      : `${plural(list.length, 'campaign')} well below average and left unchanged`,
+    detail: `${list.slice(0, 3).map((x) => `"${clean(x.c.name, 45)}" at ${figureText(m, y, x.a.figure)}${ch.byCampaign.has(x.c.id) ? '' : ', no changes in 28 days'}`).join('; ')}${list.length > 3 ? `; and ${list.length - 3} more` : ''}. Judged against ${yardText(m, y)} over the last 30 days.${y.source === 'target' && still.length ? ` ${still.length === list.length ? (list.length === 1 ? 'It has' : 'None of them has') : `${still.length} of them ${verb(still.length, 'has', 'have')}`} had no changes in 28 days.` : ''}`,
+    atStake: atStake(excess, `Spend past ${y.source === 'target' ? 'your target' : 'your average'} in these campaigns`),
+    why: 'A campaign that costs far more than the rest of the account per result, with nobody adjusting it, keeps spending at that rate.',
+    start: 'Check search terms, bids and the landing page for each one. If nothing explains it, move budget to the campaigns that meet the target.',
+    startLink: LINKS.bidding,
+    fixType: 'bidding',
+    items: list.length,
+    itemLabel: 'campaigns',
+    fromPrice: false,
+  });
+}
+
+// 13i. Customer Match lists with almost no matched members: the uploads have stopped or never matched. (The API has
+// no "last uploaded" date, so this reads the matched size and, where set, how long members stay on the list.)
+function ruleCustomerMatch(m, out) {
+  if (!m.has('customerMatch')) return;
+  const lists = m.rows('customerMatch').map((r) => r.userList || {}).filter((l) => l.membershipStatus !== 'CLOSED');
+  if (!lists.length) return;
+  const size = (l) => Math.max(num(l.sizeForSearch), num(l.sizeForDisplay));
+  const small = lists.filter((l) => size(l) < 100);
+  if (!small.length) {
+    out.strong({ id: 'customer-match-empty', category: 'settings', priority: 'low', title: 'Your Customer Match lists have members', detail: `${allOf(lists.length, 'Customer Match list')} ${verb(lists.length, 'has', 'have')} 100 or more matched members.` });
+    return;
+  }
+  const life = small.map((l) => num(l.membershipLifeSpan)).filter((d) => d > 0 && d < 10000);
+  out.weak({
+    id: 'customer-match-empty',
+    category: 'settings',
+    priority: 'low',
+    title: `${plural(small.length, 'Customer Match list')} ${verb(small.length, 'is', 'are')} empty or nearly empty`,
+    detail: `${examples(small.map((l) => l.name || 'Unnamed list'))} ${verb(small.length, 'has', 'have')} fewer than 100 matched members.${life.length ? ` Members drop off after ${Math.min(...life)} days unless the list is uploaded again.` : ''}`,
+    why: 'A list this small can do nothing for targeting, bidding or reports. Lists only stay full when your customer data is uploaded regularly.',
+    start: 'Upload a fresh list from your customer records, or connect an automatic upload. Remove lists you no longer use.',
+    startLink: null,
+    fixType: 'settings',
+    items: small.length,
+    itemLabel: 'lists',
+    fromPrice: false,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// The longer view: 13 months by month, and the funnel for the last 30 days against the 60 before.
+// ---------------------------------------------------------------------------
+
+function rates(s) {
+  return {
+    ...s,
+    spend: round2(s.spend), value: round2(s.value), conversions: Math.round(s.conversions * 10) / 10,
+    ctr: s.impressions > 0 ? s.clicks / s.impressions : null,
+    cpc: s.clicks > 0 ? s.spend / s.clicks : null,
+    cvr: s.clicks > 0 ? s.conversions / s.clicks : null,
+    cpa: s.conversions > 0 ? round2(s.spend / s.conversions) : null,
+    roas: s.spend > 0 && s.value > 0 ? Math.round((s.value / s.spend) * 100) / 100 : null,
+    aov: s.conversions > 0 && s.value > 0 ? round2(s.value / s.conversions) : null,
+  };
+}
+const blank = () => ({ impressions: 0, clicks: 0, spend: 0, conversions: 0, value: 0, days: 0 });
+const addRow = (s, r) => { s.impressions += num(r.metrics?.impressions); s.clicks += num(r.metrics?.clicks); s.spend += fromMicros(r.metrics?.costMicros); s.conversions += num(r.metrics?.conversions); s.value += num(r.metrics?.conversionsValue); };
+
+function trendTable(m) {
+  const today = m.today;
+  let months = null;
+  if (m.has('monthly13') && m.rows('monthly13').length) {
+    const by = new Map();
+    for (const r of m.rows('monthly13')) {
+      const k = String(r.segments?.month || '').slice(0, 7);
+      if (!k) continue;
+      if (!by.has(k)) by.set(k, blank());
+      addRow(by.get(k), r);
+    }
+    const thisMonth = today ? today.slice(0, 7) : null;
+    months = [...by.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([month, s]) => {
+      const r = rates(s);
+      return { month, spend: r.spend, conversions: r.conversions, value: r.value, cpa: r.cpa, roas: r.roas, partial: month === thisMonth };
+    });
+  }
+  let funnel = null;
+  if (m.has('daily90') && m.rows('daily90').length && today) {
+    const cut = new Date(new Date(today + 'T12:00:00Z').getTime() - 30 * 86400000).toISOString().slice(0, 10);
+    const recent = blank(), prior = blank();
+    const seen = { recent: new Set(), prior: new Set() };
+    for (const r of m.rows('daily90')) {
+      const d = String(r.segments?.date || '');
+      if (!d) continue;
+      const k = d >= cut ? 'recent' : 'prior';
+      addRow(k === 'recent' ? recent : prior, r);
+      seen[k].add(d);
+    }
+    recent.days = seen.recent.size; prior.days = seen.prior.size;
+    const R = rates(recent), P = rates(prior);
+    funnel = { recent: R, prior: P, lever: lever(m, R, P) };
+  }
+  if (!months && !funnel) return null;
+  return { months, funnel, kind: yardstick(m).kind };
+}
+
+// Which part of the funnel moved the cost per conversion (or the return) most: cost per click, conversion rate or,
+// for sales, the value per sale. Each is a factor of the result, so the change splits cleanly on a log scale.
+function lever(m, R, P) {
+  if (!(R.conversions >= 10 && P.conversions >= 10 && R.cpc && P.cpc && R.cvr && P.cvr)) return { key: null, text: 'Too few conversions in one of the two periods to say which part of the funnel moved.' };
+  const y = yardstick(m);
+  const parts = [
+    { key: 'cpc', name: 'cost per click', d: -Math.log(R.cpc / P.cpc), from: m.money(P.cpc), to: m.money(R.cpc) },
+    { key: 'cvr', name: 'conversion rate', d: Math.log(R.cvr / P.cvr), from: `${(P.cvr * 100).toFixed(1)}%`, to: `${(R.cvr * 100).toFixed(1)}%` },
+  ];
+  if (y.kind === 'roas' && R.aov && P.aov) parts.push({ key: 'aov', name: 'value per sale', d: Math.log(R.aov / P.aov), from: m.money(P.aov), to: m.money(R.aov) });
+  // Each d is how much better that part made the result, on a log scale; together they are the whole change.
+  const total = sum(parts, (p) => p.d);
+  const top = parts.slice().sort((a, b) => Math.abs(b.d) - Math.abs(a.d))[0];
+  const what = y.kind === 'roas' ? 'return on ad spend' : 'cost per conversion';
+  const change = y.kind === 'roas' ? Math.exp(total) - 1 : Math.exp(-total) - 1;
+  if (Math.abs(change) < 0.05) return { key: null, text: `Your ${what} has held steady against the 60 days before (within 5%).` };
+  return {
+    key: top.key,
+    better: total > 0,
+    text: `Your ${what} ${change > 0 ? 'rose' : 'fell'} ${pct(Math.abs(change))} against the 60 days before. Most of that came from ${top.name}, which went from ${top.from} to ${top.to}.`,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// The written headline and the ranked action list (rules write them, no AI).
+// ---------------------------------------------------------------------------
+
+// Impact from the money at stake against the monthly spend, never below what the finding's priority says.
+const IMPACT_RANK = { high: 0, medium: 1, low: 2 };
+export function actionPlan(weaknesses, quote, spend30) {
+  const lines = new Map(((quote && quote.lines) || []).map((l) => [l.id, l]));
+  const plan = weaknesses.map((w, i) => {
+    const amount = w.atStake ? w.atStake.amount : 0;
+    const share = spend30 > 0 ? amount / spend30 : 0;
+    const byMoney = share >= 0.1 ? 'high' : share >= 0.03 ? 'medium' : 'low';
+    const impact = IMPACT_RANK[byMoney] < IMPACT_RANK[w.priority] ? byMoney : w.priority;
+    const l = lines.get(w.id);
+    const hours = l ? Math.round(l.hours * 100) / 100 : null;
+    const effort = hours == null ? null : hours <= 1 ? 'quick' : hours <= 4 ? 'medium' : 'larger';
+    return { id: w.id, title: w.title, impact, atStake: amount || null, hours, effort, i };
+  });
+  const E = { quick: 0, medium: 1, larger: 2 };
+  plan.sort((a, b) => IMPACT_RANK[a.impact] - IMPACT_RANK[b.impact] || (b.atStake || 0) - (a.atStake || 0) || (E[a.effort] ?? 1) - (E[b.effort] ?? 1) || a.i - b.i);
+  return plan.map(({ i, ...p }, n) => ({ rank: n + 1, ...p }));
+}
+
+function headline(m, facts, weaknesses, trend) {
+  const s = [];
+  const y = yardstick(m);
+  if (facts.spend30 > 0) {
+    if (y.kind === 'roas' && facts.conversionValue30 > 0) {
+      const r = facts.conversionValue30 / facts.spend30;
+      s.push(`In the last 30 days the account spent ${m.money(facts.spend30)} and recorded ${m.money(facts.conversionValue30)} in sales, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
+    } else if (facts.conversions30 > 0) {
+      s.push(`In the last 30 days the account spent ${m.money(facts.spend30)} for ${facts.conversions30.toLocaleString('en-GB')} ${facts.conversions30 === 1 ? 'conversion' : 'conversions'}, ${m.money(facts.costPerConversion30)} each${m.target && m.target.type === 'cpa' ? `, ${facts.costPerConversion30 <= m.target.value ? 'within' : 'above'} your ${m.money(m.target.value)} target` : ''}.`);
+    } else {
+      s.push(`In the last 30 days the account spent ${m.money(facts.spend30)} and recorded no conversions.`);
+    }
+  }
+  if (trend && trend.funnel && trend.funnel.lever && trend.funnel.lever.key) s.push(trend.funnel.lever.text);
+  // The single biggest sum, not a total: findings can overlap (a campaign and its products), so adding them up would
+  // count the same spend twice.
+  const money = weaknesses.filter((w) => w.atStake && w.atStake.amount > 0).sort((a, b) => b.atStake.amount - a.atStake.amount);
+  if (money.length) s.push(`The most money at stake is in "${money[0].title}": up to ${m.money(money[0].atStake.amount)} over the next 30 days if nothing changes.`);
+  const first = actionPlan(weaknesses, null, facts.spend30)[0];
+  if (first && first.id !== money[0]?.id) s.push(`First on the list below: "${first.title}".`);
+  else if (first) s.push('It is first on the list below.');
+  else if (facts.spend30 > 0) s.push('Nothing in the checks needs fixing right now.');
+  return s;
+}
+
+// ---------------------------------------------------------------------------
 // Facts for the report header and the estimates
 // ---------------------------------------------------------------------------
 
@@ -1911,6 +2550,7 @@ export function runRules(data = {}, ctx = {}) {
   };
 
   ruleConversions(m, out);
+  ruleDoubleCounting(m, out);
   ruleCampaigns(m, out);
   ruleSettings(m, out);
   ruleKeywords(m, out);
@@ -1922,9 +2562,28 @@ export function runRules(data = {}, ctx = {}) {
   ruleAudiences(m, out);
   ruleBidAdjustments(m, out);
   ruleShopping(m, out);
+  ruleNegativeConflicts(m, out);
+  ruleOverPinned(m, out);
+  ruleBrokenUrls(m, out);
+  const segments = segmentTable(m);
+  ruleSegments(m, out, segments);
+  rulePmaxBrand(m, out);
+  const changes = changeSummary(m);
+  ruleChanges(m, out, changes);
+  ruleCustomerMatch(m, out);
 
   // Stable sort: high, medium, low, keeping rule order within each.
   weaknesses.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 
-  return { strengths, weaknesses, facts: buildFacts(m), profile: accountProfile(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour), workload: workload(m) };
+  const facts = buildFacts(m);
+  const trend = trendTable(m);
+  const y = yardstick(m);
+  return {
+    strengths, weaknesses, facts, profile: accountProfile(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour), workload: workload(m),
+    trend, segments: segments ? { days: segments.days, total: segments.total, devices: segments.devices, networks: segments.networks } : null,
+    changes: changes ? (({ byCampaign, ...c }) => c)(changes) : null,
+    urls: m.urlChecks ? { checked: m.urlChecks.pages.length, total: m.urlChecks.total, broken: m.urlChecks.pages.filter((p) => p.state === 'broken').length, notChecked: m.urlChecks.pages.filter((p) => p.state === 'blocked' || p.state === 'timeout').length } : null,
+    target: m.target, yardstick: y.value ? { kind: y.kind, value: round2(y.value), source: y.source } : null,
+    headline: headline(m, facts, weaknesses, trend),
+  };
 }

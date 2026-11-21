@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { adsCheck } from '../src/google-ads-check.js';
 import { TOOLS_PUBLIC } from '../src/tools-gate.js';
-import { QUERIES } from '../src/ads-check/queries.js';
+import { QUERIES, queriesFor } from '../src/ads-check/queries.js';
+import { londonDay } from '../src/tools-gate.js';
 import { SAMPLE_DATA } from '../src/ads-check/sample.js';
 
 const CID = '1234567890';
@@ -38,11 +39,13 @@ async function cookie(key, email) {
 
 // Stubbed Google: records every call in order
 let calls, linkState, failQuery;
-const byQuery = Object.fromEntries(Object.entries(QUERIES).map(([name, q]) => [q.trim(), name]));
+const byQuery = Object.fromEntries(Object.entries(queriesFor(londonDay())).map(([name, q]) => [q.trim(), name]));
 globalThis.fetch = async (input, init = {}) => {
   const url = String(input);
   const body = init.body && typeof init.body === 'string' ? JSON.parse(init.body) : null;
   const ok = obj => new Response(JSON.stringify(obj), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  // The landing page check (ads-check/urls.js): the sample's pages answer, one GET each
+  if (/^https:\/\/(www\.)?example\.co\.uk/.test(url)) { calls.push('page'); assert.equal(init.method, 'GET'); return new Response('', { status: url.includes('/emergency/') ? 404 : 200 }); }
   if (url.includes('challenges.cloudflare.com')) { calls.push('turnstile'); return ok({ success: true, hostname: 'www.phillips-uk.com', action: 'ads_check' }); }
   if (url.includes('oauth2.googleapis.com/token')) { calls.push('token'); return ok({ access_token: 'stub', expires_in: 3600 }); }
   if (url.includes('customerClientLinks:mutate')) { calls.push('accept'); assert.equal(body.operation.update.status, 'ACTIVE'); assert.match(body.operation.update.resourceName, new RegExp(`/customerClientLinks/${CID}~${LINK}$`)); linkState = 'ACTIVE'; return ok({ result: {} }); }
@@ -68,7 +71,7 @@ const admin = await cookie(env.ADMIN_SESSION_KEY, 'tester@example.test');
 const BROWSER = { Origin: 'http://localhost', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36', 'CF-Connecting-IP': '203.0.113.7' };
 async function run(headers = {}, bare = false) {
   const url = new URL('http://localhost/tools/google-ads-check/run');
-  const req = new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(bare ? {} : BROWSER), ...headers }, body: JSON.stringify({ customerId: '123-456-7890', token: 't' }) });
+  const req = new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(bare ? {} : BROWSER), ...headers }, body: JSON.stringify({ customerId: '123-456-7890', token: 't', target: { type: 'cpa', value: '£40' }, brand: 'Example <b>Heating</b>' }) });
   const res = await adsCheck(req, url, env);
   return { status: res.status, body: await res.json() };
 }
@@ -91,6 +94,16 @@ assert.ok(r.body.report.weaknesses.length > 0 && r.body.report.quote.lines.lengt
   assert.equal(ret.fee % 50, 0, 'monthly fee rounds to £50'); }
 assert.equal(r.body.report.operations, undefined, 'operations are shown only to Lewis');
 assert.equal(r.body.report.customerId, '123-456-7890');
+// The deeper report (21 Nov 2026): landing pages checked while reading, the target applied, a headline and a ranked plan.
+{ const rep = r.body.report;
+  assert.ok(calls.filter(c => c === 'page').length >= 1 && calls.indexOf('page') < calls.indexOf('unlink'), 'landing pages checked before the link ends');
+  assert.ok(rep.weaknesses.some(w => w.id === 'broken-landing-pages'), 'the 404 page is reported');
+  assert.deepEqual(rep.target, { type: 'cpa', value: 40 }, 'target read from "£40"');
+  assert.equal(rep.brand, 'Example bHeatingb', 'brand name stripped of markup characters');
+  assert.ok(Array.isArray(rep.headline) && rep.headline.length >= 2, 'a written headline');
+  assert.equal(rep.plan.length, rep.weaknesses.length, 'every finding is in the plan');
+  assert.ok(rep.plan.every((p, i) => p.rank === i + 1 && ['high', 'medium', 'low'].includes(p.impact)), 'ranked, with an impact');
+  assert.ok(rep.plan.some(p => p.hours > 0 && p.effort), 'effort from the priced time'); }
 console.log('pending invite: accepted, read', queryCalls().length, 'queries, unlinked last; total', r.body.report.quote.total);
 
 // 1a. That visitor run is a Lead card in the /admin funnel (tool-leads.js), anonymous, with the report link, and counted.

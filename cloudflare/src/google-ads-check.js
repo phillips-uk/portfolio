@@ -20,8 +20,9 @@
 //   tools/google-ads-check/day/<day>.json         checks run that day, for the daily ceiling
 import pageHtml from '../private/google-ads-check.html';
 import { gaql, linkStatus, acceptLink, endLink, configured, meter, AdsError, MANAGER_ID_SHOWN } from './ads-check/client.js';
-import { QUERIES, OPTIONAL } from './ads-check/queries.js';
-import { runRules } from './ads-check/rules.js';
+import { OPTIONAL, queriesFor } from './ads-check/queries.js';
+import { runRules, actionPlan } from './ads-check/rules.js';
+import { checkUrls } from './ads-check/urls.js';
 import { DEMOS, findDemo } from './ads-check/demos.js';
 import { isReviewer, reviewEntry } from './signin-review.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
@@ -65,6 +66,7 @@ function sameOrigin(request) {
 
 // Runs every query, a few at a time. A failed optional query (e.g. Shopping on an account without it) is "no data".
 async function readAccount(env, m, customerId) {
+  const QUERIES = queriesFor(londonDay());
   const names = Object.keys(QUERIES);
   const data = {};
   const diag = {}; // rows per query, or the error code: shown only in Lewis's preview
@@ -92,6 +94,9 @@ function publicReport(r, admin) {
     id: r.id, checkedAt: r.checkedAt, accountName: r.accountName, customerId: shownId(r.customerId), currency: r.currency,
     facts: r.facts, strengths: r.strengths, weaknesses: r.weaknesses, quote: r.quote,
     profile: r.profile || null, ngrams: r.ngrams || null, dayHour: r.dayHour || null,
+    // Since 21 Nov 2026 (older reports have none of these, and the page leaves those sections out)
+    headline: r.headline || null, plan: r.plan || null, trend: r.trend || null, segments: r.segments || null,
+    changes: r.changes || null, urls: r.urls || null, target: r.target || null, yardstick: r.yardstick || null, brand: r.brand || null,
     flags: FLAGS, preview: !!admin, operations: admin ? r.operations : undefined, queryRows: admin ? r.queryRows : undefined,
   };
 }
@@ -113,9 +118,23 @@ export async function freeLimits(env, access, customerId, pricing) {
   return { accountKey, dayKey };
 }
 
+// The visitor's optional target and brand name (21 Nov 2026): one target (cost per conversion, or return on ad spend
+// as a percentage like 400 or a ratio like 4) and a brand name. Anything else is ignored.
+export function readTarget(body) {
+  const t = body && body.target;
+  let target = null;
+  if (t && (t.type === 'cpa' || t.type === 'roas')) {
+    let v = Number(String(t.value ?? '').replace(/[^0-9.]/g, ''));
+    if (t.type === 'roas' && v > 20) v = v / 100;
+    if (Number.isFinite(v) && v > 0 && v <= (t.type === 'cpa' ? 100000 : 100)) target = { type: t.type, value: Math.round(v * 100) / 100 };
+  }
+  const brand = String((body && body.brand) || '').replace(/[^\p{L}\p{N} &'.-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 40) || null;
+  return { target, brand };
+}
+
 // Reads one account, applies the rules, prices the weaknesses and saves the report. readEnv decides whose access the
 // reads use: the manager account's (env) or a signed-in visitor's (asVisitor). Returns { report } or { error } (a response).
-export async function buildReport(readEnv, env, m, customerId, access, pricing, limit, route) {
+export async function buildReport(readEnv, env, m, customerId, access, pricing, limit, route, opts = {}) {
   const head = (await gaql(readEnv, m, customerId, 'SELECT customer.id, customer.descriptive_name, customer.currency_code, customer.manager, customer.time_zone FROM customer'))[0] || {};
   const c = head.customer || {};
   if (c.manager) {
@@ -123,13 +142,18 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
     return { error: jsonResponse({ error: 'That’s a manager account. Checking accounts for clients? Ask me about a paid audit below. If it’s your own business, choose the advertising account itself.', agency: true }, 409) };
   }
   const data = await readAccount(readEnv, m, customerId);
-  const result = runRules(data, { currency: c.currencyCode || 'GBP', today: londonDay() });
+  // Does each landing page load? One GET per distinct page, capped and timed out (ads-check/urls.js). Never fails the report.
+  try { data.urlChecks = await checkUrls(data); } catch (err) { console.warn('ads-check: landing page check failed', err && err.message); }
+  const result = runRules(data, { currency: c.currencyCode || 'GBP', today: londonDay(), target: opts.target, brand: opts.brand });
   const q = quote(pricing, result.weaknesses, new Date(), result.workload);
+  const plan = actionPlan(result.weaknesses, q, result.facts.spend30);
   const id = crypto.randomUUID().replace(/-/g, '');
   const report = {
     id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
     currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
     profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour, workload: result.workload,
+    headline: result.headline, plan, trend: result.trend, segments: result.segments, changes: result.changes, urls: result.urls,
+    target: result.target, yardstick: result.yardstick, brand: opts.brand || null,
     quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin, route,
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
@@ -207,7 +231,7 @@ async function run(request, env) {
   try {
     if (s.status === 'PENDING') { await acceptLink(env, m, customerId, s.managerLinkId); accepted = true; }
 
-    const out = await buildReport(env, env, m, customerId, access, pricing, limit, accepted ? 'manager-link' : 'already-linked');
+    const out = await buildReport(env, env, m, customerId, access, pricing, limit, accepted ? 'manager-link' : 'already-linked', readTarget(body));
     return out.error || jsonResponse({ report: publicReport(out.report, access.admin) });
   } catch (err) {
     console.error('ads-check: run failed', err && (err.code || err.message));
@@ -233,13 +257,20 @@ async function sample(request, env) {
   if (!access.admin) return jsonResponse({ error: 'Not found' }, 404);
   const pricing = await getPricing(env);
   // ?sample=<demo id> (demos.js, listed in /admin#demos). 1 and 2 are the first two samples' old names.
-  const demo = findDemo(String((await readBody(request)).variant || ''));
-  const result = runRules(demo.data(), { currency: 'GBP', today: londonDay() });
+  const body = await readBody(request);
+  const demo = findDemo(String(body.variant || ''));
+  // A target from the page (?cpa= or ?roas=) wins, else the demo's own; the brand the same way.
+  const given = readTarget(body);
+  const target = given.target || demo.target || null;
+  const result = runRules(demo.data(londonDay()), { currency: 'GBP', today: londonDay(), target, brand: given.brand });
+  const q = quote(pricing, result.weaknesses, new Date(), result.workload);
   const report = {
     id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: `Demo: ${demo.name} (made up)`,
     currency: 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
     profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour, workload: result.workload,
-    quote: quote(pricing, result.weaknesses, new Date(), result.workload), pricingVersion: pricing.version || 0, operations: 0, sample: true,
+    headline: result.headline, plan: actionPlan(result.weaknesses, q, result.facts.spend30), trend: result.trend, segments: result.segments,
+    changes: result.changes, urls: result.urls, target: result.target, yardstick: result.yardstick, brand: given.brand,
+    quote: q, pricingVersion: pricing.version || 0, operations: 0, sample: true,
   };
   return jsonResponse({ report: { ...publicReport(report, true), sample: true } });
 }

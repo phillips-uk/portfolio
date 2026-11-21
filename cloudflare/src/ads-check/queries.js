@@ -7,7 +7,9 @@
 //   campaign.learning_stage_info  -> campaign.bidding_strategy_system_status
 //   customer_asset.asset_type     -> customer_asset.field_type
 //
-// Performance data covers the last 30 days, as the old audit did.
+// Performance data covers the last 30 days, as the old audit did. Since 21 Nov 2026 a few reads look further back:
+// 90 days for the network and device split and the funnel, 13 months for the monthly trend, 28 days of change
+// history. Those carry date placeholders ({TODAY}, {YESTERDAY}, {D28}, {D90}, {M13}) that queriesFor() fills in.
 // Settings and structure queries have no date range, so they list everything
 // that is switched on today, whether or not it spent.
 
@@ -183,6 +185,7 @@ export const QUERIES = {
   // Performance Max asset groups and their ad strength.
   assetGroups: q(`
     SELECT asset_group.id, asset_group.name, asset_group.ad_strength,
+           asset_group.final_urls,
            campaign.id, campaign.name
     FROM asset_group
     WHERE campaign.advertising_channel_type = 'PERFORMANCE_MAX'
@@ -267,6 +270,93 @@ export const QUERIES = {
     ORDER BY metrics.cost_micros DESC
     LIMIT 500
   `),
+  // ---- Added 21 Nov 2026 (Propel Max review, "What we should do"). All read only, all optional. ----
+
+  // Negative keywords with their text, at campaign, ad group and shared-list level: do any block the account's own
+  // keywords? (The older negativeKeywords read only counts them per campaign.)
+  campaignNegatives: q(`
+    SELECT campaign.id, campaign_criterion.keyword.text, campaign_criterion.keyword.match_type
+    FROM campaign_criterion
+    WHERE campaign_criterion.negative = TRUE
+      AND campaign_criterion.type = 'KEYWORD'
+      AND campaign.status = 'ENABLED'
+  `),
+  adGroupNegatives: q(`
+    SELECT campaign.id, ad_group.id, ad_group_criterion.keyword.text, ad_group_criterion.keyword.match_type
+    FROM ad_group_criterion
+    WHERE ad_group_criterion.type = 'KEYWORD'
+      AND ad_group_criterion.negative = TRUE
+      AND ad_group.status = 'ENABLED'
+      AND campaign.status = 'ENABLED'
+  `),
+  sharedNegatives: q(`
+    SELECT shared_set.id, shared_criterion.keyword.text, shared_criterion.keyword.match_type
+    FROM shared_criterion
+    WHERE shared_criterion.type = 'KEYWORD'
+      AND shared_set.type = 'NEGATIVE_KEYWORDS'
+      AND shared_set.status = 'ENABLED'
+    LIMIT 10000
+  `),
+
+  // Responsive search ad headlines with their pins, for the over-pinned check.
+  rsaHeadlines: q(`
+    SELECT ad_group_ad.ad.id, ad_group.id, ad_group.name, campaign.id, campaign.name,
+           ad_group_ad.ad.responsive_search_ad.headlines
+    FROM ad_group_ad
+    WHERE ad_group_ad.ad.type = 'RESPONSIVE_SEARCH_AD'
+      AND ad_group_ad.status = 'ENABLED'
+      AND ad_group.status = 'ENABLED'
+      AND campaign.status = 'ENABLED'
+  `),
+
+  // 90 days by network (Google Search or Search Partners) and device, per campaign.
+  segments90: q(`
+    SELECT campaign.id, campaign.advertising_channel_type,
+           segments.ad_network_type, segments.device,
+           metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions, metrics.conversions_value
+    FROM campaign
+    WHERE segments.date BETWEEN '{D90}' AND '{YESTERDAY}'
+      AND campaign.status = 'ENABLED'
+      AND metrics.impressions > 0
+  `),
+
+  // The whole account by day for 90 days: the funnel (CTR, CPC, conversion rate), last 30 days against the 60 before.
+  daily90: q(`
+    SELECT segments.date, metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions, metrics.conversions_value
+    FROM customer
+    WHERE segments.date BETWEEN '{D90}' AND '{YESTERDAY}'
+  `),
+
+  // The whole account by month for 13 months (this month so far included), for the trend.
+  monthly13: q(`
+    SELECT segments.month, metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions, metrics.conversions_value
+    FROM customer
+    WHERE segments.date BETWEEN '{M13}' AND '{YESTERDAY}'
+  `),
+
+  // Change history, last 28 days (the API allows up to 30). The user's email is deliberately not read.
+  changes: q(`
+    SELECT change_event.change_date_time, change_event.change_resource_type,
+           change_event.resource_change_operation, change_event.client_type,
+           change_event.campaign
+    FROM change_event
+    WHERE change_event.change_date_time >= '{D28} 00:00:00'
+      AND change_event.change_date_time <= '{TODAY} 23:59:59'
+    ORDER BY change_event.change_date_time DESC
+    LIMIT 1000
+  `),
+
+  // Customer Match lists and how many matched members they have.
+  customerMatch: q(`
+    SELECT user_list.id, user_list.name, user_list.membership_status,
+           user_list.size_for_search, user_list.size_for_display,
+           user_list.membership_life_span
+    FROM user_list
+    WHERE user_list.type = 'CRM_BASED'
+  `),
 };
 
 // Queries that can fail on some accounts (no Shopping, no Performance Max,
@@ -284,4 +374,29 @@ export const OPTIONAL = new Set([
   'audienceCriteria',
   'campaignCriteria',
   'products',
+  'campaignNegatives',
+  'adGroupNegatives',
+  'sharedNegatives',
+  'rsaHeadlines',
+  'segments90',
+  'daily90',
+  'monthly13',
+  'changes',
+  'customerMatch',
 ]);
+
+// The dates the dated queries need, from today's date in London ('YYYY-MM-DD').
+export function datesFor(today) {
+  const d = new Date(today + 'T12:00:00Z');
+  const day = (n) => new Date(d.getTime() - n * 86400000).toISOString().slice(0, 10);
+  const m13 = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 12, 1)).toISOString().slice(0, 10);
+  return { TODAY: today, YESTERDAY: day(1), D28: day(28), D90: day(90), M13: m13 };
+}
+
+// Every query with its dates filled in.
+export function queriesFor(today) {
+  const dates = datesFor(today);
+  const out = {};
+  for (const [name, gaql] of Object.entries(QUERIES)) out[name] = gaql.replace(/\{([A-Z0-9]+)\}/g, (all, k) => dates[k] ?? all);
+  return out;
+}

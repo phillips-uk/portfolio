@@ -153,13 +153,106 @@ export function buildAccount(spec) {
   return out;
 }
 
+
+// ---------------------------------------------------------------------------------------------------------------
+// The longer reads added on 21 Nov 2026 (queries.js): 90 days by network and device and by day, 13 months by month,
+// 28 days of change history, Customer Match lists, pinned headlines, negatives with their text, a duplicate
+// conversion action and the landing page check. Made up from each account's own 30-day campaigns, so the figures
+// line up; `x` in a demo spec says where an account differs from the default (all of it invented).
+// ---------------------------------------------------------------------------------------------------------------
+const DEVICES = [['MOBILE', 0.58], ['DESKTOP', 0.34], ['TABLET', 0.08]];
+const SEASON = [0.9, 0.85, 0.95, 1, 1.05, 1.1, 1.05, 1, 1, 1.05, 1.1, 1.15, 1];
+const iso = (d) => d.toISOString().slice(0, 10);
+
+export function withExtras(base, x = {}, today = iso(new Date())) {
+  const out = { ...base };
+  const camps = (base.campaigns || []).map((r) => ({
+    id: String(r.campaign.id), name: r.campaign.name, channel: r.campaign.advertisingChannelType,
+    spend: Number(r.metrics.costMicros) / 1e6, conv: Number(r.metrics.conversions) || 0, value: Number(r.metrics.conversionsValue) || 0,
+    clicks: Number(r.metrics.clicks) || 0, imps: Number(r.metrics.impressions) || 0,
+  }));
+  const tot = camps.reduce((a, c) => ({ spend: a.spend + c.spend, conv: a.conv + c.conv, value: a.value + c.value, clicks: a.clicks + c.clicks, imps: a.imps + c.imps }), { spend: 0, conv: 0, value: 0, clicks: 0, imps: 0 });
+  const metrics = (f, cf = f, vf = cf) => ({ impressions: String(Math.round(tot.imps * f)), clicks: String(Math.round(tot.clicks * f)), costMicros: micros(tot.spend * f), conversions: r1(tot.conv * cf), conversionsValue: Math.round(tot.value * vf) });
+
+  // By day for 90 days. x.recent: how the last 30 days differ from the 60 before ({ cpc, cvr }: 1.2 is 20% higher).
+  const t = new Date(today + 'T12:00:00Z');
+  const rc = { cpc: 1, cvr: 1, ...(x.recent || {}) };
+  out.daily90 = [];
+  for (let i = 90; i >= 1; i--) {
+    const d = new Date(t.getTime() - i * 86400000), recent = i <= 30;
+    const day = 1 / 30 * (d.getUTCDay() === 0 ? 0.8 : 1.04);
+    // Recent days: the same clicks; cost scales with the cost per click, conversions with the conversion rate.
+    const f = recent ? day : day * 0.96;
+    const cpc = recent ? 1 : 1 / rc.cpc, cvr = recent ? 1 : 1 / rc.cvr;
+    out.daily90.push({ segments: { date: iso(d) }, metrics: { impressions: String(Math.round(tot.imps * f)), clicks: String(Math.round(tot.clicks * f)), costMicros: micros(tot.spend * f * cpc), conversions: r1(tot.conv * f * cvr), conversionsValue: Math.round(tot.value * f * cvr) } });
+  }
+  // By month for 13 months, this month so far last. x.season overrides the shape; x.growth is the change over the year.
+  const season = x.season || SEASON, growth = x.growth ?? 0.15;
+  out.monthly13 = [];
+  for (let k = 12; k >= 0; k--) {
+    const m = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() - k, 1));
+    const sofar = k === 0 ? (t.getUTCDate() - 1) / 30 : 1;
+    const f = season[12 - k] * (1 - growth * k / 12) * sofar;
+    const cpaDrift = 1 + (x.cpaDrift ?? 0) * (12 - k) / 12; // above 0: cost per conversion creeping up over the year
+    out.monthly13.push({ segments: { month: iso(m) }, metrics: metrics(f, f / cpaDrift) });
+  }
+  // 90 days by device and network, per campaign. x.partners: { share, conv }; x.devices: conversion rate per device.
+  const partners = { share: 0.06, conv: 0.9, ...(x.partners || {}) };
+  const dev = { MOBILE: 1, DESKTOP: 1, TABLET: 1, ...(x.devices || {}) };
+  const devNorm = DEVICES.reduce((a, [k, w]) => a + w * dev[k], 0);
+  out.segments90 = [];
+  for (const c of camps) {
+    const nets = c.channel === 'SEARCH' ? [['SEARCH', 1 - partners.share, 1], ['SEARCH_PARTNERS', partners.share, partners.conv]] : [[c.channel === 'PERFORMANCE_MAX' ? 'MIXED' : c.channel === 'DISPLAY' ? 'CONTENT' : c.channel === 'VIDEO' ? 'YOUTUBE' : 'SEARCH', 1, 1]];
+    const netNorm = nets.reduce((a, n) => a + n[1] * n[2], 0);
+    for (const [net, share, nc] of nets) for (const [d, w] of DEVICES) {
+      const f = 3 * share * w, cf = f * (nc / netNorm) * (dev[d] / devNorm);
+      out.segments90.push({ campaign: { id: c.id, advertisingChannelType: c.channel }, segments: { adNetworkType: net, device: d }, metrics: { impressions: String(Math.round(c.imps * f)), clicks: String(Math.round(c.clicks * f)), costMicros: micros(c.spend * f), conversions: r1(c.conv * cf), conversionsValue: Math.round(c.value * cf) } });
+    }
+  }
+  // Change history: by default a few changes a week on every campaign that spends. x.untouched: campaign ids nobody
+  // changed; x.noChanges: nobody changed anything; x.auto: changes made by auto-applied recommendations.
+  const cust = String((base.customer?.[0]?.customer?.id) || '1');
+  const TYPES = ['CAMPAIGN_BUDGET', 'AD_GROUP_CRITERION', 'AD_GROUP_AD', 'CAMPAIGN', 'CAMPAIGN_CRITERION', 'ASSET'];
+  out.changes = [];
+  if (!x.noChanges) camps.filter((c) => c.spend > 0 && !(x.untouched || []).includes(c.id)).forEach((c, ci) => {
+    for (let j = 0; j < 3 + (ci % 4); j++) {
+      const d = new Date(t.getTime() - ((ci * 3 + j * 5) % 27 + 1) * 86400000);
+      out.changes.push({ changeEvent: { changeDateTime: iso(d) + ' 10:' + pad(j * 7 % 60) + ':00', changeResourceType: TYPES[(ci + j) % TYPES.length], resourceChangeOperation: 'UPDATE', clientType: j < (x.auto || 0) ? 'GOOGLE_ADS_RECOMMENDATIONS_SUBSCRIPTION' : 'GOOGLE_ADS_WEB_CLIENT', campaign: `customers/${cust}/campaigns/${c.id}` } });
+    }
+  });
+  // Customer Match lists: [name, matched members, days a member stays].
+  out.customerMatch = (x.lists || []).map(([name, size, life], i) => ({ userList: { id: String(900 + i), name, membershipStatus: 'OPEN', sizeForSearch: String(size), sizeForDisplay: String(size), membershipLifeSpan: String(life || 540) } }));
+  // Headlines with pins: eight per ad, and the ad groups named in x.pinned have all three positions fixed.
+  out.rsaHeadlines = (base.ads || []).filter((r) => String(r.adGroupAd?.ad?.type || '').includes('RESPONSIVE_SEARCH')).map((r) => ({
+    adGroupAd: { ad: { id: r.adGroupAd.ad.id, responsiveSearchAd: { headlines: Array.from({ length: 8 }, (_, h) => ({ text: `Headline ${h + 1}`, ...((x.pinned || []).includes(r.adGroup?.name) && h < 3 ? { pinnedField: `HEADLINE_${h + 1}` } : {}) })) } } },
+    adGroup: r.adGroup, campaign: r.campaign,
+  }));
+  // Negatives with their text: [campaign id, text, match type].
+  out.campaignNegatives = (x.negs || []).map(([cid, text, match]) => ({ campaign: { id: cid }, campaignCriterion: { keyword: { text, matchType: match } } }));
+  out.adGroupNegatives = []; out.sharedNegatives = [];
+  // A second primary action recording the same result: x.dup = { name, type, category, share of the first's count }.
+  if (x.dup && base.conversionActions?.length) {
+    const first = base.conversionActions.find((a) => a.conversionAction.category === x.dup.category) || base.conversionActions[0];
+    const prefix = first.conversionAction.resourceName.replace(/\/conversionActions\/.*$/, '');
+    const rn = `${prefix}/conversionActions/99`;
+    out.conversionActions = [...base.conversionActions, { conversionAction: { resourceName: rn, id: '99', name: x.dup.name, status: 'ENABLED', type: x.dup.type, category: x.dup.category, primaryForGoal: true, includeInConversionsMetric: true, attributionModelSettings: { attributionModel: ATTR.dda } } }];
+    const n = (base.conversionStats || []).filter((r) => r.segments.conversionAction === first.conversionAction.resourceName).reduce((a, r) => a + Number(r.metrics.allConversions || 0), 0);
+    out.conversionStats = [...(base.conversionStats || []), { campaign: { id: camps[0].id }, segments: { conversionAction: rn }, metrics: { allConversions: r1(n * x.dup.share), conversions: r1(n * x.dup.share) } }];
+  }
+  // The landing page check: every page answers 200, apart from paths in x.broken (404).
+  const pages = new Map();
+  for (const r of base.ads || []) for (const u of r.adGroupAd?.ad?.finalUrls || []) { try { const k = new URL(u); const key = k.origin + k.pathname; pages.set(key, (pages.get(key) || 0) + 1); } catch { /* skip */ } }
+  out.urlChecks = { pages: [...pages.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20).map(([url, ads]) => { const bad = (x.broken || []).some((b) => url.endsWith(b)); return { url, ads, status: bad ? 404 : 200, state: bad ? 'broken' : 'ok' }; }), total: pages.size, skipped: Math.max(0, pages.size - 20) };
+  return out;
+}
+
 // ---------------------------------------------------------------------------------------------------------------
 // The demo clients
 // ---------------------------------------------------------------------------------------------------------------
 
 // 1. A local trade, one campaign, set up years ago and left: small, enquiries, basic, lots to fix.
 const TRADES = {
-  key: 'trades', customerId: '501', enhancedLeads: false, dayHour: 'office', weekend: [0.5, 0.2],
+  key: 'trades', x: { noChanges: true, recent: { cvr: 0.75 }, partners: { share: 0.14, conv: 0.2 }, pinned: ['Ad group 1'], growth: -0.1 }, customerId: '501', enhancedLeads: false, dayHour: 'office', weekend: [0.5, 0.2],
   goals: [
     { id: '1', name: 'Contact form', category: 'SUBMIT_LEAD_FORM', attribution: 'last' },
     { id: '2', name: 'Calls from ads', category: 'PHONE_CALL_LEAD', type: 'AD_CALL', attribution: 'last' },
@@ -174,7 +267,7 @@ const TRADES = {
 
 // 2. A small online shop: Performance Max and brand Search, mostly sound, a few feed and asset gaps.
 const SHOP = {
-  key: 'shop', customerId: '502', enhancedLeads: false, dayHour: 'shop', weekend: [1, 1.1], sitelinks: true,
+  key: 'shop', x: { dup: { name: 'GA4 purchase', type: 'GOOGLE_ANALYTICS_4_PURCHASE', category: 'PURCHASE', share: 0.93 }, recent: { cpc: 1.12 }, lists: [['Past customers', 60, 540]] }, customerId: '502', enhancedLeads: false, dayHour: 'shop', weekend: [1, 1.1], sitelinks: true,
   goals: [{ id: '1', name: 'Purchase', category: 'PURCHASE' }, { id: '2', name: 'Add to basket', category: 'ADD_TO_CART', primary: false }],
   products: { brand: 'Example', types: ['Candles', 'Diffusers', 'Gift sets'], count: 42, short: 6, wasted: 5, wasteCost: 45, avgCost: 28, price: 32, labels: false, detail: 'hand poured, 40 hour burn, gift boxed' },
   campaigns: [
@@ -184,12 +277,12 @@ const SHOP = {
       groups: [{ name: 'Brand', url: '/', kw: ['example candles', 'example candle company', 'example candles discount code'] }] },
   ],
   terms: [['example candles', '2', 160, 15], ['example candle company', '2', 88, 8]],
-  pmaxTerms: [['soy candles', '1', 180, 9], ['luxury scented candles', '1', 150, 7], ['reed diffuser', '1', 120, 4], ['candle gift set', '1', 96, 6], ['candle making kit', '1', 64, 0], ['how to make candles', '1', 41, 0], ['candle wax wholesale', '1', 38, 0]],
+  pmaxTerms: [['example candles', '1', 140, 12], ['example candles discount', '1', 60, 5], ['soy candles', '1', 180, 9], ['luxury scented candles', '1', 150, 7], ['reed diffuser', '1', 120, 4], ['candle gift set', '1', 96, 6], ['candle making kit', '1', 64, 0], ['how to make candles', '1', 41, 0], ['candle wax wholesale', '1', 38, 0]],
 };
 
 // 3. A new account with no conversion tracking yet: the report has to cope with no conversions at all.
 const NEW = {
-  key: 'new', customerId: '503', noGoals: true, dayHour: 'office', weekend: [0.4, 0.2],
+  key: 'new', x: { growth: 0.6 }, customerId: '503', noGoals: true, dayHour: 'office', weekend: [0.4, 0.2],
   campaigns: [
     { id: '1', name: 'Physio - Search - Back pain', bid: 'MAXIMIZE_CLICKS', budget: 8, spend: 228, conv: 0, sis: 0.35, lostBudget: 0.3,
       groups: [{ name: 'Back pain', url: '/back-pain/', kw: ['back pain physio', 'sports massage', 'physiotherapist near me'], qs: [6, 5, 7] }] },
@@ -202,7 +295,7 @@ const NEW = {
 // 5. A clinic that's run well: mid-size, enquiries, mostly healthy, so the report leads with what's working.
 const CLINIC_SERVICES = [['Implants', 1650, 21], ['Invisalign', 1420, 24], ['Emergency', 760, 31], ['Whitening', 520, 14]];
 const CLINIC = {
-  key: 'clinic', customerId: '505', enhancedLeads: true, dayHour: 'evening', weekend: [0.7, 0.4], sitelinks: true,
+  key: 'clinic', x: { recent: { cvr: 1.08 } }, customerId: '505', enhancedLeads: true, dayHour: 'evening', weekend: [0.7, 0.4], sitelinks: true,
   goals: [
     { id: '1', name: 'Booking request', category: 'BOOK_APPOINTMENT' },
     { id: '2', name: 'Calls from ads', category: 'PHONE_CALL_LEAD', type: 'AD_CALL' },
@@ -223,7 +316,7 @@ const CLINIC = {
 const CATS = ['Tents', 'Jackets', 'Boots', 'Backpacks', 'Sleeping bags', 'Climbing'];
 const STR = ['EXCELLENT', 'GOOD', 'GOOD', 'AVERAGE', 'GOOD', 'POOR', 'AVERAGE', 'GOOD', 'EXCELLENT'];
 const RETAILER = {
-  key: 'retailer', customerId: '507', enhancedLeads: false, dayHour: 'shop', weekend: [1.1, 1.2], sitelinks: true,
+  key: 'retailer', x: { broken: ['/compare/'], pinned: ['Competitors'], partners: { share: 0.1, conv: 0.35 }, lists: [['Loyalty members', 80, 540], ['All customers', 48000, 540]], recent: { cvr: 0.9 } }, customerId: '507', enhancedLeads: false, dayHour: 'shop', weekend: [1.1, 1.2], sitelinks: true,
   goals: [
     { id: '1', name: 'Purchase', category: 'PURCHASE' },
     { id: '2', name: 'Store visits', category: 'STORE_VISIT', type: 'STORE_VISITS', primary: false },
@@ -251,7 +344,7 @@ const RETAILER = {
       groups: [{ name: 'Stoves', url: '/', match: 'BROAD', kw: ['camping stove', 'gas stove', 'stove', 'cooker'], qs: [5, 4, 3, 4], ads: ['POOR'] }] },
   ],
   terms: [['4 man tent', '3', 210, 6], ['waterproof jacket women', '4', 190, 7], ['walking boots men', '5', 170, 5], ['tent pegs', '3', 60, 1], ['tent repair kit diy', '3', 44, 0], ['jacket size guide', '4', 38, 0], ['boot polish', '5', 31, 0], ['camping stove', '26', 96, 0], ['stove repair', '26', 74, 0], ['used tents for sale', '3', 52, 0], ['trailpeak tents', '9', 120, 1]],
-  pmaxTerms: [['family tent', '10', 420, 14], ['tent sale', '10', 380, 11], ['rain jacket', '11', 350, 13], ['hiking boots', '12', 330, 10], ['tent hire', '10', 120, 0], ['camping near me', '10', 96, 0], ['boot repair shop', '12', 70, 0], ['jacket alterations', '11', 58, 0], ['backpack', '13', 210, 6], ['sleeping bag', '14', 160, 4]],
+  pmaxTerms: [['example outdoor jackets', '11', 180, 9], ['example outdoor sale', '10', 150, 8], ['family tent', '10', 420, 14], ['tent sale', '10', 380, 11], ['rain jacket', '11', 350, 13], ['hiking boots', '12', 330, 10], ['tent hire', '10', 120, 0], ['camping near me', '10', 96, 0], ['boot repair shop', '12', 70, 0], ['jacket alterations', '11', 58, 0], ['backpack', '13', 210, 6], ['sleeping bag', '14', 160, 4]],
 };
 
 // 8. A national home improvements firm: big, enquiries, complex. Services by region, imported qualified leads.
@@ -259,7 +352,7 @@ const SERVICES = ['Windows', 'Doors', 'Conservatories', 'Roofing', 'Solar'];
 const REGIONS = ['North', 'Midlands', 'South'];
 let nid = 3;
 const NATIONAL = {
-  key: 'national', customerId: '508', enhancedLeads: true, dayHour: 'evening', weekend: [0.9, 0.6], sitelinks: true,
+  key: 'national', x: { negs: [['3', 'prices', 'PHRASE']], devices: { MOBILE: 0.5 }, untouched: ['14', '15'], auto: 2, cpaDrift: 0.18, recent: { cpc: 1.16 } }, customerId: '508', enhancedLeads: true, dayHour: 'evening', weekend: [0.9, 0.6], sitelinks: true,
   goals: [
     { id: '1', name: 'Quote form', category: 'REQUEST_QUOTE' },
     { id: '2', name: 'Calls from ads', category: 'PHONE_CALL_LEAD', type: 'AD_CALL' },
@@ -292,15 +385,18 @@ const NATIONAL = {
 };
 
 // The list shown in /admin#demos, in the order Lewis reads it: small to big.
+const PROBLEM_X = { negs: [['3', 'boiler repair', 'PHRASE']], broken: ['/emergency/'], lists: [['Past customers 2023', 40, 540]], recent: { cvr: 0.8 } };
+const MIXED_X = { pinned: ['Combi boiler install', 'Boiler replacement'], recent: { cpc: 1.15 }, lists: [['Newsletter subscribers', 4200, 540]], untouched: ['4'] };
+
 export const DEMOS = [
-  { id: 'trades', name: 'Local trade, one campaign', size: 'Small', model: 'Enquiries', build: 'Basic', note: 'One Search campaign set up years ago: manual bids, broad match, no negatives. Lots to fix.', data: () => buildAccount(TRADES) },
-  { id: 'new', name: 'New account, no tracking', size: 'Small', model: 'Enquiries', build: 'Basic', note: 'Two Search campaigns and no conversion tracking at all. Tests the report with no conversions.', data: () => buildAccount(NEW) },
-  { id: 'shop', name: 'Small online shop', size: 'Small', model: 'Online sales', build: 'Basic', note: 'Performance Max and brand Search on a 42-product feed. Mostly sound, some feed and asset gaps.', data: () => buildAccount(SHOP) },
-  { id: 'problem', name: 'Service business, problems', size: 'Small', model: 'Enquiries', build: 'Mixed', note: 'The original sample: three Search campaigns and a Performance Max one, with tracking and bidding problems.', data: () => SAMPLE_DATA },
-  { id: 'clinic', name: 'Clinic, run well', size: 'Mid', model: 'Enquiries', build: 'Mixed', note: 'Six campaigns, tidy and healthy. The report should lead with what is working.', data: () => buildAccount(CLINIC) },
-  { id: 'mixed', name: 'Shop and services, ten campaigns', size: 'Mid', model: 'Sales and enquiries', build: 'Complex', note: 'Ten campaigns of six types, mostly healthy, a few things to fix.', data: () => SAMPLE_MULTI },
-  { id: 'national', name: 'National home improvements', size: 'Large', model: 'Enquiries', build: 'Complex', note: '21 campaigns: services by region, imported qualified leads, budget limits, a learning campaign.', data: () => buildAccount(NATIONAL) },
-  { id: 'retailer', name: 'National outdoor retailer', size: 'Large', model: 'Online sales', build: 'Complex', note: '26 campaigns of six types, a 640-product feed, 40 asset groups, about £90k a month.', data: () => buildAccount(RETAILER) },
+  { id: 'trades', name: 'Local trade, one campaign', size: 'Small', model: 'Enquiries', build: 'Basic', note: 'One Search campaign set up years ago: manual bids, broad match, no negatives. Lots to fix.', data: (today) => withExtras(buildAccount(TRADES), TRADES.x, today) },
+  { id: 'new', name: 'New account, no tracking', size: 'Small', model: 'Enquiries', build: 'Basic', note: 'Two Search campaigns and no conversion tracking at all. Tests the report with no conversions.', data: (today) => withExtras(buildAccount(NEW), NEW.x, today) },
+  { id: 'shop', name: 'Small online shop', size: 'Small', model: 'Online sales', build: 'Basic', note: 'Performance Max and brand Search on a 42-product feed. Mostly sound, some feed and asset gaps.', data: (today) => withExtras(buildAccount(SHOP), SHOP.x, today) },
+  { id: 'problem', name: 'Service business, problems', size: 'Small', model: 'Enquiries', build: 'Mixed', note: 'The original sample: three Search campaigns and a Performance Max one, with tracking and bidding problems.', data: (today) => withExtras(SAMPLE_DATA, PROBLEM_X, today) },
+  { id: 'clinic', name: 'Clinic, run well', size: 'Mid', model: 'Enquiries', build: 'Mixed', note: 'Six campaigns, tidy and healthy. The report should lead with what is working.', data: (today) => withExtras(buildAccount(CLINIC), CLINIC.x, today) },
+  { id: 'mixed', name: 'Shop and services, ten campaigns', size: 'Mid', model: 'Sales and enquiries', build: 'Complex', note: 'Ten campaigns of six types, mostly healthy, a few things to fix.', data: (today) => withExtras(SAMPLE_MULTI, MIXED_X, today) },
+  { id: 'national', name: 'National home improvements', size: 'Large', model: 'Enquiries', build: 'Complex', note: '21 campaigns: services by region, imported qualified leads, budget limits, a learning campaign. Judged against a £45 target cost per conversion.', target: { type: 'cpa', value: 45 }, data: (today) => withExtras(buildAccount(NATIONAL), NATIONAL.x, today) },
+  { id: 'retailer', name: 'National outdoor retailer', size: 'Large', model: 'Online sales', build: 'Complex', note: '26 campaigns of six types, a 640-product feed, 40 asset groups, about £90k a month. Judged against a 400% target return on ad spend.', target: { type: 'roas', value: 4 }, data: (today) => withExtras(buildAccount(RETAILER), RETAILER.x, today) },
 ];
 
 // ?sample=1 and ?sample=2 from before the demo list still work.

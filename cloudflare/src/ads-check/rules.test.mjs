@@ -2,8 +2,9 @@
 // Run: node cloudflare/src/ads-check/rules.test.mjs
 
 import assert from 'node:assert/strict';
-import { runRules } from './rules.js';
-import { QUERIES, OPTIONAL } from './queries.js';
+import { runRules, actionPlan } from './rules.js';
+import { QUERIES, OPTIONAL, queriesFor } from './queries.js';
+import { checkUrls, landingPages, MAX as URL_MAX } from './urls.js';
 import { DEMOS, findDemo } from './demos.js';
 
 const CTX = { currency: 'GBP', today: '2026-11-16' };
@@ -258,7 +259,7 @@ function checkShape(result, label) {
 const ids = (list) => list.map((f) => f.id);
 
 // Queries file sanity.
-assert.ok(Object.keys(QUERIES).length >= 15 && Object.keys(QUERIES).length <= 25, 'between 15 and 25 queries');
+assert.ok(Object.keys(QUERIES).length >= 15 && Object.keys(QUERIES).length <= 32, 'between 15 and 32 queries');
 for (const name of OPTIONAL) assert.ok(QUERIES[name], `optional query ${name} exists`);
 for (const [name, gaql] of Object.entries(QUERIES)) {
   assert.match(gaql, /^SELECT .+ FROM [a-z_]+/, `${name} looks like GAQL`);
@@ -389,5 +390,160 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   }
   assert.ok(cheap > 0, 'some AI-assisted fixes cost less than an hour');
   console.log(`pricing: ${cheap} AI-assisted fixes under an hour across the demos`);
+}
+
+// ---------------------------------------------------------------------------
+// The deeper checks (21 Nov 2026): one test each, on the healthy account with one thing changed.
+// ---------------------------------------------------------------------------
+{
+  const run = (extra, ctx = {}) => { const r = runRules({ ...healthy, ...extra }, { ...CTX, ...ctx }); checkShape(r, 'deep'); return r; };
+  const weak = (r, id) => r.weaknesses.find((w) => w.id === id);
+  const strong = (r, id) => r.strengths.find((w) => w.id === id);
+
+  // Every dated query gets its dates; nothing is left as a placeholder.
+  const dated = queriesFor('2026-11-21');
+  for (const [name, g] of Object.entries(dated)) assert.ok(!/\{[A-Z0-9]+\}/.test(g), `${name}: dates filled in`);
+  assert.match(dated.monthly13, /BETWEEN '2025-11-01' AND '2026-11-20'/, '13 months from the first of the month a year ago to yesterday');
+  assert.match(dated.segments90, /BETWEEN '2026-08-23' AND '2026-11-20'/, '90 days to yesterday');
+  assert.match(dated.changes, />= '2026-10-24 00:00:00'/, '28 days of change history');
+  assert.ok(!/user_email/.test(dated.changes), 'change history never reads who made the change');
+
+  // 13a. Double-counted conversions: a GA4 copy of the purchase, with a close count, is high; one purchase action is a strength.
+  assert.ok(strong(run({}), 'double-counting'), 'one purchase action: counted once');
+  const ga4 = { conversionAction: { resourceName: CA(13), id: '13', name: 'GA4 purchase', status: 'ENABLED', type: 'GOOGLE_ANALYTICS_4_PURCHASE', category: 'PURCHASE', primaryForGoal: true, includeInConversionsMetric: true } };
+  let r = run({ conversionActions: [...healthy.conversionActions, ga4], conversionStats: [...healthy.conversionStats, { campaign: { id: '20' }, segments: { conversionAction: CA(13) }, metrics: { allConversions: 19, conversions: 19 } }] });
+  assert.equal(weak(r, 'double-counting')?.priority, 'high', 'tag plus GA4 purchase: high');
+  assert.match(weak(r, 'double-counting').detail, /Google Ads tag.*Google Analytics 4 import/, 'names both sources');
+  // Two different lead forms from the tag are normal, not double counting.
+  const form2 = { conversionAction: { resourceName: CA(14), id: '14', name: 'Quote form', status: 'ENABLED', type: 'WEBPAGE', category: 'SUBMIT_LEAD_FORM', primaryForGoal: true, includeInConversionsMetric: true } };
+  r = run({ conversionActions: [...healthy.conversionActions, form2], conversionStats: [...healthy.conversionStats, { campaign: { id: '10' }, segments: { conversionAction: CA(14) }, metrics: { allConversions: 12, conversions: 12 } }] });
+  assert.ok(!weak(r, 'double-counting'), 'two tag lead forms are not flagged');
+
+  // 13b. Negatives against the account's own keywords, by Google's matching rules.
+  const neg = (text, matchType) => ({ campaign: { id: '10' }, campaignCriterion: { keyword: { text, matchType } } });
+  r = run({ campaignNegatives: [neg('boiler service', 'PHRASE')] });
+  assert.equal(weak(r, 'negatives-block-keywords')?.items, 1, 'one negative');
+  assert.match(weak(r, 'negatives-block-keywords').detail, /^3 keywords/, 'phrase "boiler service" blocks 3 keywords (not "boiler servicing near me")');
+  r = run({ campaignNegatives: [neg('ely boiler', 'BROAD')] });
+  assert.match(weak(r, 'negatives-block-keywords').detail, /^1 keyword /, 'broad: all the words in any order');
+  r = run({ campaignNegatives: [neg('plumber ely', 'EXACT'), neg('jobs', 'BROAD')] });
+  assert.match(weak(r, 'negatives-block-keywords').detail, /^1 keyword /, 'exact blocks only the same words');
+  r = run({ campaignNegatives: [neg('jobs', 'PHRASE')], adGroupNegatives: [{ adGroup: { id: '11' }, campaign: { id: '10' }, adGroupCriterion: { keyword: { text: 'boiler', matchType: 'BROAD' } } }] });
+  assert.ok(!weak(r, 'negatives-block-keywords') && strong(r, 'negatives-block-keywords'), 'an ad group negative only applies to its ad group');
+  r = run({ negativeKeywordLists: [{ campaign: { id: '10' }, sharedSet: { id: '77' } }], sharedNegatives: [{ sharedSet: { id: '77' }, sharedCriterion: { keyword: { text: 'emergency', matchType: 'BROAD' } } }] });
+  assert.ok(weak(r, 'negatives-block-keywords'), 'a shared list attached to the campaign counts');
+
+  // 13c. Held back by budget and beating the target: its own finding, with a suggested budget, and not repeated.
+  const capped = campaignRow({ id: '10', name: 'Services Ely', bidding: 'MAXIMIZE_CONVERSIONS', targetCpa: 40, systemStatus: 'ENABLED', budget: 50, spend: 900, conversions: 40, sis: 0.6 });
+  capped.metrics.searchBudgetLostImpressionShare = 0.2;
+  r = run({ campaigns: [capped, healthy.campaigns[1]] }, { target: { type: 'cpa', value: 30 } });
+  const bw = weak(r, 'budget-limited-winners');
+  assert.ok(bw, 'beats the £30 target (£22.50) and loses 20% to budget');
+  assert.match(bw.detail, /Suggested daily budget £67 \(now £50\)/, 'budget raised by the share lost: 50 x 0.8 / 0.6');
+  assert.ok(!weak(r, 'budget-limited') && !weak(r, 'low-impression-share'), 'not reported twice');
+  r = run({ campaigns: [capped, healthy.campaigns[1]] }, { target: { type: 'cpa', value: 15 } });
+  assert.ok(!weak(r, 'budget-limited-winners'), 'misses a £15 target: no growth finding');
+
+  // 13d. Over-pinned headlines.
+  const rsa = (pins) => ({ adGroupAd: { ad: { id: '1', responsiveSearchAd: { headlines: Array.from({ length: 8 }, (_, i) => ({ text: 'H' + i, ...(pins[i] ? { pinnedField: pins[i] } : {}) })) } } }, adGroup: { id: '10', name: 'Boiler Service' }, campaign: { id: '10', name: 'Services Ely' } });
+  r = run({ rsaHeadlines: [rsa(['HEADLINE_1'])] });
+  assert.ok(strong(r, 'over-pinned-ads'), 'one pin (the brand in position 1) is fine');
+  r = run({ rsaHeadlines: [rsa(['HEADLINE_1', 'HEADLINE_2']), rsa([])] });
+  assert.equal(weak(r, 'over-pinned-ads')?.priority, 'medium', 'two positions locked to one headline each, on half the ads');
+
+  // 13e. Landing pages: 404 and 5xx are broken, a 403 (a site turning bots away) is not.
+  r = run({ urlChecks: { pages: [{ url: 'https://example.co.uk/a/', ads: 3, status: 404, state: 'broken' }, { url: 'https://example.co.uk/b/', ads: 1, status: 403, state: 'blocked' }, { url: 'https://example.co.uk/', ads: 2, status: 200, state: 'ok' }], total: 3, skipped: 0 } });
+  assert.equal(weak(r, 'broken-landing-pages')?.items, 1, 'one broken page');
+  assert.match(weak(r, 'broken-landing-pages').detail, /not found, used by 3 ads/, 'says why and how many ads');
+  r = run({ urlChecks: { pages: [{ url: 'https://example.co.uk/', ads: 2, status: 200, state: 'ok' }], total: 1, skipped: 0 } });
+  assert.ok(strong(r, 'broken-landing-pages'), 'all pages load');
+
+  // 13f. Search Partners and devices, 90 days, against the 90-day average (or the target). The Search campaign
+  // alone, so the account is judged on cost per conversion.
+  const seg = (net, device, spend, conv, ch = 'SEARCH') => ({ campaign: { id: '10', advertisingChannelType: ch }, segments: { adNetworkType: net, device }, metrics: { impressions: '1000', clicks: String(Math.round(spend / 2)), costMicros: micros(spend), conversions: conv, conversionsValue: 0 } });
+  r = run({ campaigns: [healthy.campaigns[0]], segments90: [seg('SEARCH', 'MOBILE', 1500, 50), seg('SEARCH', 'DESKTOP', 1200, 45), seg('SEARCH_PARTNERS', 'MOBILE', 400, 2)] });
+  const sp = weak(r, 'search-partners-below-average');
+  assert.ok(sp && sp.atStake && sp.atStake.amount > 0, 'Search Partners at £200 a conversion against about £32: flagged with money at stake');
+  assert.ok(!weak(r, 'device-below-average'), 'devices within range');
+  r = run({ campaigns: [healthy.campaigns[0]], segments90: [seg('SEARCH', 'MOBILE', 1500, 15), seg('SEARCH', 'DESKTOP', 1200, 60)] });
+  assert.match(weak(r, 'device-below-average')?.title || '', /^Mobile costs far more/, 'mobile at £100 against £36 average');
+  r = run({ campaigns: [healthy.campaigns[0]], segments90: [seg('SEARCH', 'MOBILE', 150, 2), seg('SEARCH', 'DESKTOP', 120, 4)] });
+  assert.ok(!weak(r, 'device-below-average'), 'under 10 conversions in 90 days: no call');
+
+  // 13g. Brand searches in Performance Max, from the brand name the visitor gives.
+  const pm = (t, cost, conv) => ({ campaignSearchTermView: { searchTerm: t }, campaign: { id: '20', name: 'PMax Shop' }, metrics: { impressions: '100', clicks: '10', costMicros: micros(cost), conversions: conv } });
+  const pmaxSearchTerms = [pm('acme heating', 60, 6), pm('acme heating reviews', 25, 1), pm('boiler parts', 200, 8)];
+  assert.ok(!weak(run({ pmaxSearchTerms }), 'pmax-brand-terms'), 'no brand campaign and no brand name: not judged');
+  r = run({ pmaxSearchTerms }, { brand: 'Acme Heating' });
+  assert.match(weak(r, 'pmax-brand-terms')?.detail || '', /£85 .*"acme heating"/, 'the brand name finds £85 of brand searches');
+
+  // 13h. Change history: none at all, and campaigns off target that nobody changed.
+  r = run({ changes: [] });
+  assert.ok(weak(r, 'no-recent-changes'), 'no changes in 28 days on £1,500 of spend');
+  const change = (cid) => ({ changeEvent: { changeDateTime: '2026-11-10 10:00:00', changeResourceType: 'CAMPAIGN_BUDGET', resourceChangeOperation: 'UPDATE', clientType: 'GOOGLE_ADS_WEB_CLIENT', campaign: `customers/222/campaigns/${cid}` } });
+  r = run({ changes: [change('20')] }, { target: { type: 'cpa', value: 15 } });
+  const off = weak(r, 'off-target-campaigns');
+  assert.ok(off && /Services Ely.*no changes in 28 days/.test(off.detail), '£22.50 against a £15 target, untouched');
+  assert.equal(off.items, 2, 'with a target, every campaign off it is listed, changed or not');
+  assert.equal(off.atStake.amount, 600, 'money at stake is the spend past the target: (900 - 40 x 15) + (600 - 20 x 15)');
+  assert.match(off.detail, /1 of them has had no changes/, 'and says which were left alone');
+  assert.equal(r.changes.total, 1); assert.equal(r.changes.campaignsChanged, 1); assert.ok(!('byCampaign' in r.changes), 'the per-campaign map stays inside');
+  r = run({ changes: [change('10'), change('20')] });
+  assert.ok(!weak(r, 'off-target-campaigns') && !weak(r, 'no-recent-changes'), 'no target and on average: nothing to say');
+
+  // 13i. Customer Match lists with almost no members.
+  r = run({ customerMatch: [{ userList: { name: 'Old customers', membershipStatus: 'OPEN', sizeForSearch: '0', sizeForDisplay: '40', membershipLifeSpan: '540' } }, { userList: { name: 'All customers', membershipStatus: 'OPEN', sizeForSearch: '5200', sizeForDisplay: '6100' } }] });
+  assert.match(weak(r, 'customer-match-empty')?.detail || '', /"Old customers" has fewer than 100.*540 days/, 'the small list, and how long members stay');
+
+  // The funnel: the last 30 days against the 60 before, and which lever moved most.
+  const daily = []; const t0 = Date.parse('2026-11-16T12:00:00Z');
+  for (let i = 90; i >= 1; i--) { const recent = i <= 30; daily.push({ segments: { date: new Date(t0 - i * 86400000).toISOString().slice(0, 10) }, metrics: { impressions: '1000', clicks: '50', costMicros: micros(recent ? 100 : 100), conversions: recent ? 1.5 : 2 } }); }
+  r = run({ campaigns: [healthy.campaigns[0]], daily90: daily });
+  assert.equal(r.trend.funnel.lever.key, 'cvr', 'same cost per click, fewer conversions: conversion rate is the lever');
+  assert.match(r.trend.funnel.lever.text, /rose 33%/, 'cost per conversion up a third');
+  assert.equal(r.trend.funnel.recent.days, 30); assert.equal(r.trend.funnel.prior.days, 60);
+  assert.ok(r.headline.some((x) => /conversion rate/.test(x)), 'the headline mentions it');
+
+  // Headline and plan: rules write them; the plan ranks by impact (money against spend), then money, then effort.
+  const ws = [
+    { id: 'a', title: 'A', priority: 'low', atStake: { amount: 400 } },
+    { id: 'b', title: 'B', priority: 'high' },
+    { id: 'c', title: 'C', priority: 'medium', atStake: { amount: 20 } },
+    { id: 'd', title: 'D', priority: 'high', atStake: { amount: 50 } },
+  ];
+  const plan = actionPlan(ws, { lines: [{ id: 'b', hours: 3 }, { id: 'd', hours: 0.5 }] }, 2000);
+  assert.deepEqual(plan.map((p) => p.id), ['a', 'd', 'b', 'c'], '£400 on £2,000 of spend is high impact and first');
+  assert.equal(plan[1].effort, 'quick'); assert.equal(plan[2].effort, 'medium'); assert.equal(plan[0].effort, null);
+  for (const d of DEMOS) {
+    const rr = runRules(d.data('2026-11-16'), { ...CTX, target: d.target });
+    assert.ok(rr.headline.length >= 2 && rr.headline.every((x) => !/[–—]/.test(x)), `${d.id}: a headline with no long dashes`);
+    assert.ok(rr.trend && rr.trend.months.length === 13, `${d.id}: 13 months of trend`);
+  }
+  console.log('deeper checks: double counting, negatives, budget winners, pins, landing pages, segments, brand in PMax, change history, Customer Match, funnel, plan');
+}
+
+// The demo reports show the new checks (so Lewis can review them in /admin#demos).
+{
+  const found = new Set();
+  for (const d of DEMOS) { const rr = runRules(d.data('2026-11-16'), { ...CTX, target: d.target }); rr.weaknesses.forEach((w) => found.add(w.id)); }
+  for (const id of ['double-counting', 'negatives-block-keywords', 'budget-limited-winners', 'over-pinned-ads', 'broken-landing-pages', 'search-partners-below-average', 'device-below-average', 'pmax-brand-terms', 'no-recent-changes', 'off-target-campaigns', 'customer-match-empty']) assert.ok(found.has(id), `a demo shows ${id}`);
+  console.log('demo clients show all 11 new findings');
+}
+
+// The landing page check itself, with a stubbed fetch: one request per page, query strings ignored, capped.
+{
+  const seen = [];
+  const fake = async (url) => { seen.push(url); if (url.includes('/gone')) return new Response('', { status: 404 }); if (url.includes('/bot')) return new Response('', { status: 403 }); if (url.includes('/down')) throw new Error('dns'); return new Response('', { status: 200 }); };
+  const ad = (u) => ({ adGroupAd: { ad: { finalUrls: [u] } } });
+  const data = { ads: [ad('https://a.example/?gclid=1'), ad('https://a.example/?utm=2'), ad('https://a.example/gone'), ad('https://a.example/bot'), ad('https://a.example/down'), ad('http://localhost/x'), ad('ftp://a.example/f')], assetGroups: [{ assetGroup: { finalUrls: ['https://a.example/'] } }] };
+  assert.deepEqual(landingPages(data).map((p) => p.url), ['https://a.example/', 'https://a.example/gone', 'https://a.example/bot', 'https://a.example/down'], 'one page per address, most used first, no local or non-web addresses');
+  const res = await checkUrls(data, fake);
+  assert.equal(seen.length, 4, 'one request each');
+  const st = Object.fromEntries(res.pages.map((p) => [p.url.split('/').pop() || 'home', p.state]));
+  assert.deepEqual(st, { home: 'ok', gone: 'broken', bot: 'blocked', down: 'broken' });
+  const many = { ads: Array.from({ length: URL_MAX + 7 }, (_, i) => ad('https://a.example/p' + i)) };
+  const capped = await checkUrls(many, async () => new Response('', { status: 200 }));
+  assert.equal(capped.pages.length, URL_MAX); assert.equal(capped.skipped, 7);
+  console.log(`landing page check: 404 and no answer are broken, 403 is not checked, capped at ${URL_MAX}`);
 }
 console.log('All rules tests passed.');
