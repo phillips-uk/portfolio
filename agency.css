@@ -745,6 +745,8 @@ li.fold > b { display: flex; justify-content: space-between; align-items: baseli
 .shot::before { content: ""; position: absolute; top: 10px; left: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); box-shadow: 12px 0 0 var(--line-2), 24px 0 0 var(--line-2); }
 .shot img { display: block; width: 100%; height: auto; max-height: 440px; object-fit: cover; object-position: top center; border-top: 1px solid var(--line-soft); }
 .shot figcaption { padding: 10px 14px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line-soft); background: var(--surface); }
+.shot.shot-card { margin: var(--s6) 0; box-shadow: var(--e1, none); }
+.shot.shot-card img { max-height: 240px; }
 @media (max-width: 900px) {
   .sec-split { grid-template-columns: 1fr; gap: var(--s6); }
   .sec-split > .shot { order: -1; }
