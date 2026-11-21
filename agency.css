@@ -692,11 +692,11 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
 .more-text[open] summary { margin-bottom: var(--s4); }
 .more-text[open] summary::after { content: "\2212"; }
 .more-text p + p { margin-top: var(--s4); }
-.fold h3, .fold .t-org { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.fold h3::after, .fold .t-org::after { content: "+"; color: var(--brand-text); font-size: 20px; font-weight: 500; line-height: 1; flex: none; }
-.fold.open h3::after, .fold.open .t-org::after { content: "\2212"; }
-.fold h3:focus-visible, .fold .t-org:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 4px; }
-.fold:not(.open) p:not(.work-role):not(blockquote p), .fold:not(.open) .flow-set, .fold:not(.open) .analysis-tags, .fold:not(.open) .stages-tags { display: none; }
+.fold h3, .fold .t-org, .fold > b { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.fold h3::after, .fold .t-org::after, .fold > b::after { content: "+"; color: var(--brand-text); font-size: 20px; font-weight: 500; line-height: 1; flex: none; }
+.fold.open h3::after, .fold.open .t-org::after, .fold.open > b::after { content: "\2212"; }
+.fold h3:focus-visible, .fold .t-org:focus-visible, .fold > b:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 4px; }
+.fold:not(.open) p:not(.work-role):not(blockquote p), .fold:not(.open) .flow-set, .fold:not(.open) .analysis-tags, .fold:not(.open) .stages-tags, .fold:not(.open) > span { display: none; }
 @media (max-width: 760px) {
   .svc-fold a.work-card > p:not(.work-role) { display: none; }
 }
@@ -705,3 +705,13 @@ a.card:hover { box-shadow: var(--e2); transform: translateY(-3px); }
 .photo-wide figcaption { margin-top: var(--s3); color: var(--muted); }
 .photo-wide figcaption a { color: inherit; }
 @media (max-width: 600px) { .photo-wide img { aspect-ratio: 4 / 3; border-radius: var(--r-md); } }
+
+/* Free checks hub: one expander per tool card */
+.tool-more > summary { list-style: none; display: inline-flex; align-items: center; gap: 8px; }
+.tool-more > summary::-webkit-details-marker { display: none; }
+.tool-more > summary::after { content: "+"; color: var(--brand-text); font-size: 18px; font-weight: 500; line-height: 1; }
+.tool-more[open] > summary::after { content: "\2212"; }
+.tool-more > p { margin: 6px 0 0; }
+.tool-more > h3:first-of-type { margin-top: var(--s4); }
+/* list items folded by fold.js: keep the + on the right (beats .checks-list b and .sd-tools b) */
+li.fold > b { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; cursor: pointer; }

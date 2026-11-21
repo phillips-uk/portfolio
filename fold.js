@@ -1,7 +1,7 @@
 // Phones: feature, point, step, flow, analysis, timeline and case cards show their title only; tap the title to open the text.
 // Design Spec v3 section 1a (less text). Without this script, or on wider screens, everything shows.
 (function () {
-  var SEL = '.features .feature, .why-points .why-point, .engage .card, .steps .step, .flow-node, .grid-2 > .card:not(.work-card), .timeline li, div.work-card:not(.wip-card)';
+  var SEL = '.features .feature, .why-points .why-point, .engage .card, .steps .step, .flow-node, .grid-2 > .card:not(.work-card), .timeline li, div.work-card:not(.wip-card), .checks-list li, .sd-tools li';
   var mq = window.matchMedia('(max-width: 760px)');
   document.documentElement.classList.add('svc-fold');
   function toggle(item, h) {
@@ -11,8 +11,8 @@
   }
   function setup() {
     document.querySelectorAll(SEL).forEach(function (item) {
-      var h = item.querySelector('h3, .t-org');
-      if (!h || !item.querySelector('p')) return;
+      var h = item.querySelector('h3, .t-org') || item.querySelector(':scope > b');
+      if (!h || !item.querySelector('p, :scope > span')) return;
       if (mq.matches) {
         if (item.classList.contains('fold')) return;
         item.classList.add('fold');
