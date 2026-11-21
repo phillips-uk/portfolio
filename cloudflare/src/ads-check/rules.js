@@ -2454,7 +2454,7 @@ function headline(m, facts, weaknesses, trend) {
   if (facts.spend30 > 0) {
     if (y.kind === 'roas' && facts.conversionValue30 > 0) {
       const r = facts.conversionValue30 / facts.spend30;
-      s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded ${m.money(facts.conversionValue30)} in sales, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
+      s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded ${m.money(facts.conversionValue30)} in conversion value, a return on ad spend of ${roasText(r)}${m.target ? `, ${r >= m.target.value ? 'at or above' : 'below'} your ${roasText(m.target.value)} target` : ''}.`);
     } else if (facts.conversions30 > 0) {
       s.push(`In the last 30 days you spent ${m.money(facts.spend30)} and Google Ads recorded ${facts.conversions30.toLocaleString('en-GB')} ${facts.conversions30 === 1 ? 'conversion' : 'conversions'}, ${m.money(facts.costPerConversion30)} each${m.target && m.target.type === 'cpa' ? `, ${facts.costPerConversion30 <= m.target.value ? 'within' : 'above'} your ${m.money(m.target.value)} target` : ''}.`);
     } else {
