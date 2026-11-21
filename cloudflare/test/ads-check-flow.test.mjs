@@ -103,6 +103,8 @@ assert.equal(r.body.report.customerId, '123-456-7890');
   assert.ok(Array.isArray(rep.headline) && rep.headline.length >= 2, 'a written headline');
   assert.equal(rep.plan.length, rep.weaknesses.length, 'every finding is in the plan');
   assert.ok(rep.plan.every((p, i) => p.rank === i + 1 && ['high', 'medium', 'low'].includes(p.impact)), 'ranked, with an impact');
+  { const end = rep.headline[rep.headline.length - 1]; const first = rep.plan[0];
+    assert.ok(end === "That's where I'd start." || end === `I'd start with "${first.title}".`, '"In short" starts where the plan starts'); }
   assert.ok(rep.plan.some(p => p.hours > 0 && p.effort), 'effort from the priced time'); }
 console.log('pending invite: accepted, read', queryCalls().length, 'queries, unlinked last; total', r.body.report.quote.total);
 

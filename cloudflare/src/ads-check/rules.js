@@ -2521,11 +2521,25 @@ function headline(m, facts, weaknesses, trend) {
   // count the same spend twice.
   const money = weaknesses.filter((w) => w.atStake && w.atStake.amount > 0).sort((a, b) => b.atStake.amount - a.atStake.amount);
   if (money.length) s.push(`The most money at stake is in "${money[0].title}": an estimated ${m.money(money[0].atStake.amount)} over the next 30 days if nothing changes (${money[0].atStake.basis.replace(/^(Spend|Searches|Campaigns|Products)\b/, (w) => w.toLowerCase())}).`);
-  const first = actionPlan(weaknesses, null, facts.spend30)[0];
-  if (first && first.id !== money[0]?.id) s.push(`I'd start with "${first.title}".`);
-  else if (first) s.push("That's where I'd start.");
+  const end = startLine(actionPlan(weaknesses, null, facts.spend30), weaknesses);
+  if (end) s.push(end);
   else if (facts.spend30 > 0) s.push('I found nothing to fix in the checks I could run.');
   return s;
+}
+
+// The headline's last sentence names the plan's first item. The report rebuilds it with the priced plan (whose times
+// can reorder items of equal weight), so "In short" and "What to do, in order" always start in the same place.
+function startLine(plan, weaknesses) {
+  const first = plan[0];
+  if (!first) return null;
+  const money = weaknesses.filter((w) => w.atStake && w.atStake.amount > 0).sort((a, b) => b.atStake.amount - a.atStake.amount);
+  return first.id !== money[0]?.id ? `I'd start with "${first.title}".` : "That's where I'd start.";
+}
+export function headlineFor(headline, plan, weaknesses) {
+  if (!headline || !headline.length || !plan || !plan.length) return headline;
+  const last = headline[headline.length - 1];
+  if (!/^I'd start with |^That's where I'd start\.$/.test(last)) return headline;
+  return [...headline.slice(0, -1), startLine(plan, weaknesses)];
 }
 
 // ---------------------------------------------------------------------------

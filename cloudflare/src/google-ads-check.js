@@ -21,7 +21,7 @@
 import pageHtml from '../private/google-ads-check.html';
 import { gaql, linkStatus, acceptLink, endLink, configured, meter, AdsError, MANAGER_ID_SHOWN } from './ads-check/client.js';
 import { OPTIONAL, queriesFor } from './ads-check/queries.js';
-import { runRules, actionPlan } from './ads-check/rules.js';
+import { runRules, actionPlan, headlineFor } from './ads-check/rules.js';
 import { checkUrls } from './ads-check/urls.js';
 import { DEMOS, findDemo } from './ads-check/demos.js';
 import { isReviewer, reviewEntry } from './signin-review.js';
@@ -152,7 +152,7 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
     id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
     currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
     profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour, workload: result.workload,
-    headline: result.headline, plan, trend: result.trend, segments: result.segments, changes: result.changes, urls: result.urls,
+    headline: headlineFor(result.headline, plan, result.weaknesses), plan, trend: result.trend, segments: result.segments, changes: result.changes, urls: result.urls,
     target: result.target, yardstick: result.yardstick, brand: opts.brand || null,
     quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin, route,
   };
@@ -264,11 +264,12 @@ async function sample(request, env) {
   const target = given.target || demo.target || null;
   const result = runRules(demo.data(londonDay()), { currency: 'GBP', today: londonDay(), target, brand: given.brand });
   const q = quote(pricing, result.weaknesses, new Date(), result.workload);
+  const plan = actionPlan(result.weaknesses, q, result.facts.spend30);
   const report = {
     id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: `Demo: ${demo.name} (made up)`,
     currency: 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
     profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour, workload: result.workload,
-    headline: result.headline, plan: actionPlan(result.weaknesses, q, result.facts.spend30), trend: result.trend, segments: result.segments,
+    headline: headlineFor(result.headline, plan, result.weaknesses), plan, trend: result.trend, segments: result.segments,
     changes: result.changes, urls: result.urls, target: result.target, yardstick: result.yardstick, brand: given.brand,
     quote: q, pricingVersion: pricing.version || 0, operations: 0, sample: true,
   };
