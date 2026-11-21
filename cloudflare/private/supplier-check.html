@@ -26,8 +26,8 @@
   .sc-find input:hover { border-color: var(--text-2); }
   .sc-find input:focus { outline: none; border-color: var(--brand); box-shadow: var(--field-shadow), 0 0 0 4px var(--brand-ring); }
   .sc-find input::placeholder { color: var(--muted); }
-  .sc-list { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px); margin: 0; padding: 6px; list-style: none;
-    background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); box-shadow: var(--e3, var(--e2)); max-height: 360px; overflow: auto; }
+  .sc-list { position: relative; margin: 6px 0 0; padding: 6px; list-style: none;
+    background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); box-shadow: var(--e3, var(--e2)); max-height: 320px; overflow: auto; }
   .sc-list[hidden] { display: none; }
   .sc-list li { padding: 10px 12px; border-radius: var(--r-sm); cursor: pointer; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
   .sc-list li[aria-selected="true"], .sc-list li:hover { background: var(--brand-wash); }
@@ -320,7 +320,7 @@
         if (f.url) { body.appendChild(document.createTextNode(' ')); var a = el('a', null, 'Notice'); a.href = f.url; a.target = '_blank'; a.rel = 'noopener'; body.appendChild(a); }
         if (f.note) body.appendChild(el('small', null, f.note));
         li.appendChild(body);
-        if (f.date) { var t = el('time', null, ukDate(f.date)); t.dateTime = f.date; li.appendChild(t); } else li.appendChild(el('span', 'sc-d', ''));
+        if (f.date && f.text.indexOf(ukDate(f.date)) < 0) { var t = el('time', null, ukDate(f.date)); t.dateTime = f.date; li.appendChild(t); } else li.appendChild(el('span', 'sc-d', ''));
         ul.appendChild(li);
       });
       card.appendChild(ul); grid.appendChild(card);
