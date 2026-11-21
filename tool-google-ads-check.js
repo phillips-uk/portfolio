@@ -194,13 +194,20 @@
     if (q.start && q.start.price) rows.appendChild(startRow(q));
     q.lines.slice().sort(function (a, b) { return a.price - b.price; }).forEach(function (l) {
       var row = el('label', 'fix-row');
-      var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!l.ticked; cb.value = l.id; row.appendChild(cb);
+      var cb = el('input'); cb.type = 'checkbox'; cb.checked = false; cb.value = l.id; row.appendChild(cb);
       var t = el('span'); t.appendChild(el('span', 't', l.title)); var sub = el('span', 's', l.fixLabel); sub.style.display = 'block'; var tag = aiTag(l); if (tag) sub.appendChild(tag); t.appendChild(sub); row.appendChild(t);
       row.appendChild(el('span', 'h', hrs(l.hours)));
       row.appendChild(el('span', 'p', (l.fromPrice ? 'from ' : '') + GBP.format(l.price)));
       rows.appendChild(row);
       cb.addEventListener('change', function () { options(r); track('ads_check_fix_select'); });
     });
+    // Nothing ticked to start with (Lewis, 21 Nov 2026); Select all and Deselect all above the list.
+    function setAll(on) {
+      Array.prototype.forEach.call(document.querySelectorAll('#fix-rows input[type=checkbox]'), function (i) { i.checked = on; });
+      options(r); track('ads_check_fix_select');
+    }
+    if ($('fix-all')) $('fix-all').onclick = function () { setAll(true); };
+    if ($('fix-none')) $('fix-none').onclick = function () { setAll(false); };
     options(r);
   }
   function ticked(r) {

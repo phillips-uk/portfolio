@@ -111,6 +111,7 @@
 .fixes { border-radius: var(--r-md); overflow: hidden; }
 .fix-row { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line-soft); }
 .fix-row:last-child { border-bottom: 0; }
+.fix-acts { margin: 0 0 12px; }
 .fix-row input { width: 20px; height: 20px; accent-color: var(--brand); }
 .fix-row .t { font-weight: 700; font-size: 15px; }
 .fix-row .s { font-size: 13px; color: var(--muted); }

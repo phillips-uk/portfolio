@@ -504,7 +504,8 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   assert.equal(r.trend.funnel.recent.days, 30); assert.equal(r.trend.funnel.prior.days, 60);
   assert.ok(r.headline.some((x) => /conversion rate/.test(x)), 'the headline mentions it');
 
-  // Headline and plan: rules write them; the plan ranks by impact (money against spend), then money, then effort.
+  // Headline and plan: rules write them; "Fix first" findings lead, then the plan ranks by impact (money against
+  // spend), then money, then effort.
   const ws = [
     { id: 'a', title: 'A', priority: 'low', atStake: { amount: 400 } },
     { id: 'b', title: 'B', priority: 'high' },
@@ -512,8 +513,8 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
     { id: 'd', title: 'D', priority: 'high', atStake: { amount: 50 } },
   ];
   const plan = actionPlan(ws, { lines: [{ id: 'b', hours: 3 }, { id: 'd', hours: 0.5 }] }, 2000);
-  assert.deepEqual(plan.map((p) => p.id), ['a', 'd', 'b', 'c'], '£400 on £2,000 of spend is high impact and first');
-  assert.equal(plan[1].effort, 'quick'); assert.equal(plan[2].effort, 'medium'); assert.equal(plan[0].effort, null);
+  assert.deepEqual(plan.map((p) => p.id), ['d', 'b', 'a', 'c'], 'Fix first leads (money then effort within it); £400 on £2,000 is high impact and leads the rest');
+  assert.equal(plan[0].effort, 'quick'); assert.equal(plan[1].effort, 'medium'); assert.equal(plan[2].effort, null);
   for (const d of DEMOS) {
     const rr = runRules(d.data('2026-11-16'), { ...CTX, target: d.target });
     assert.ok(rr.headline.length >= 2 && rr.headline.every((x) => !/[–—]/.test(x)), `${d.id}: a headline with no long dashes`);
