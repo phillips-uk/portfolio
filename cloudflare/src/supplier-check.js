@@ -1,5 +1,6 @@
-// Supplier health check: a demo of the tool we build into client websites (Lewis, 21 Nov 2026), on the Phillips. data
-// service's health signals. Not linked from the site and kept out of search (noindex) until Lewis decides to launch it.
+// Supplier health check: a demo of the tool we build into client websites (Lewis, 21 Nov 2026), on Index Point's
+// health signals (api.indexpoint.uk, formerly the Phillips. data service). Not linked from the site and kept out of
+// search (noindex) until Lewis decides to launch it.
 //
 // Routes
 //   GET /demo/supplier-check                 the page
@@ -13,7 +14,7 @@
 import pageHtml from '../private/supplier-check.html';
 import { jsonResponse, looksLikeBot, overRate, NO_INDEX } from './tools-gate.js';
 
-const API = 'https://data.phillips-uk.com/v1';
+const API = 'https://api.indexpoint.uk/v1';
 const BASE = '/demo/supplier-check';
 const HOURS = { search: 24, check: 6 };
 

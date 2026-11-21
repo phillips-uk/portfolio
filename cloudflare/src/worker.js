@@ -190,7 +190,7 @@ async function route(request, env, ctx) {
   // The Insights hub shows the latest Monday Brief issue
   if (path === '/guides') return withGtm(await withLatestIssue(await env.ASSETS.fetch(request), env));
 
-  // Supplier health check demo, on the Phillips. data service (cloudflare/src/supplier-check.js); noindex, not linked yet
+  // Supplier health check demo, on Index Point's API (cloudflare/src/supplier-check.js); noindex, not linked yet
   if (isSupplierCheckPath(url.pathname.replace(/\/+$/, '') || '/')) {
     const res = await supplierCheck(request, url, env, ctx);
     return (res.headers.get('Content-Type') || '').startsWith('text/html') ? withGtm(res) : res;

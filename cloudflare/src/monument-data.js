@@ -1,4 +1,4 @@
-// Monument's draft: the tools' data, from the Phillips. data service (data.phillips-uk.com).
+// Monument's draft: the tools' data, from Index Point (api.indexpoint.uk, formerly the Phillips. data service).
 //   GET /monument/api/search?q=tesco        companies that have filed payment reports (debtor days customer search)
 //   GET /monument/api/company/04780736      one company's latest payment report and its past reports
 //   GET /monument/api/register?q=acme       any company on the register, for "fill in from your accounts"
@@ -12,7 +12,7 @@
 import { getInvite, inviteState, invitePages } from './rate-card.js';
 import { adminEmail } from './admin.js';
 
-const API = 'https://data.phillips-uk.com/v1';
+const API = 'https://api.indexpoint.uk/v1';
 const COOKIE = 'ph_mcf';
 const HOURS = { search: 6, company: 6, register: 24, lookup: 24, benchmarks: 24 };
 const METRICS = ['debtor_days', 'stock_days', 'creditor_days'];
