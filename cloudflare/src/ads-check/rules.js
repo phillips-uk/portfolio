@@ -326,6 +326,13 @@ function buildModel(data, ctx) {
 // Rules. Each one calls out.weak(...) and/or out.strong(...).
 // ---------------------------------------------------------------------------
 
+// What the account takes to run each month, for the monthly fee (pricing.js monthlyEstimate): campaigns that spent in
+// the last 30 days, by type, and the 30-day spend. Brand Search counts separately because it needs little time.
+function workload(m) {
+  const live = m.campaigns.filter((c) => c.spend > 0);
+  return { spend: Math.round(m.totalSpend), campaigns: live.map((c) => ({ channel: c.channel, brand: c.channel === 'SEARCH' && isBrandName(c.name) })) };
+}
+
 // 1. Conversion foundation (audit.py check_conversions)
 function ruleConversions(m, out) {
   if (!m.has('conversionActions')) return;
@@ -1919,5 +1926,5 @@ export function runRules(data = {}, ctx = {}) {
   // Stable sort: high, medium, low, keeping rule order within each.
   weaknesses.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 
-  return { strengths, weaknesses, facts: buildFacts(m), profile: accountProfile(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour) };
+  return { strengths, weaknesses, facts: buildFacts(m), profile: accountProfile(m), ngrams: ngramTable(m), dayHour: dayHourTable(data && data.dayHour), workload: workload(m) };
 }

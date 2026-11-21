@@ -302,14 +302,15 @@ async function pricingAdmin(request, path, env, email) {
     if (v.error) return json({ error: v.error }, 400);
     let weaknesses = null, label = '';
     const sample = String(body.sample || 'small');
-    if (SAMPLES[sample]) { weaknesses = SAMPLES[sample].weaknesses; label = SAMPLES[sample].label; }
+    let workload = null;
+    if (SAMPLES[sample]) { weaknesses = SAMPLES[sample].weaknesses; label = SAMPLES[sample].label; workload = SAMPLES[sample].workload || null; }
     const rep = sample.match(/^report:([a-f0-9]{32})$/);
     if (rep) {
       const obj = await env.BLOBS.get('tools/google-ads-check/reports/' + rep[1] + '.json');
-      if (obj) { const r = await obj.json(); weaknesses = r.weaknesses || []; label = 'Report for ' + (r.accountName || r.customerId || 'an account'); }
+      if (obj) { const r = await obj.json(); weaknesses = r.weaknesses || []; workload = r.workload || null; label = 'Report for ' + (r.accountName || r.customerId || 'an account'); }
     }
     if (!weaknesses) return json({ error: 'Choose a sample account or a report.' }, 400);
-    return json({ label, quote: quote({ version: 'preview', settings: v.settings }, weaknesses), hourlyRate: Math.round(hourlyRate(v.settings) * 100) / 100 });
+    return json({ label, quote: quote({ version: 'preview', settings: v.settings }, weaknesses, new Date(), workload), hourlyRate: Math.round(hourlyRate(v.settings) * 100) / 100 });
   }
   const one = path.match(/^\/admin\/api\/pricing\/versions\/(\d{1,6})$/);
   if (one && method === 'GET') {

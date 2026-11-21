@@ -7,7 +7,9 @@
 //   admin/pricing/versions/<n>.json     every saved version, kept for good (a report records the version it used)
 // A version is never edited after it is saved: a change is a new version, logged with who and when.
 //
-// The retainer fee is not set yet (Lewis, 16 Nov 2026). While it is empty, reports hide the monthly option.
+// Monthly management (Lewis, 21 Nov 2026): the fee is the account's estimated hours a month at the hourly rate, with a
+// £500 minimum. Hours come from the account itself (a base, time per campaign by type, and time for spend), so the fee
+// scales at the normal rate once the work is worth more than the minimum. An empty minimum hides the monthly option.
 
 const CURRENT = 'admin/pricing/current.json';
 const VERSIONS = 'admin/pricing/versions/';
@@ -87,7 +89,19 @@ export const DEFAULTS = {
   startMinutes: 60,           // charged once per order, whatever is ticked
   jobRoundMinutes: 15,        // each job's time rounds up to the next quarter hour
   jobMinMinutes: 15,          // and is at least this long
-  retainerFee: null,          // £ a month. Not set yet: the report hides the monthly option until it is
+  monthlyMin: 500,            // £ a month, the least a monthly plan costs (Lewis, 21 Nov 2026). Empty hides the monthly option
+  monthlyRound: 50,           // the monthly fee rounds to the nearest this many pounds
+  // Estimated hours a month for an account, from the Google Ads Pricing Proposal (18 Nov 2026), without its AI share.
+  monthlyHours: {
+    base: 2,        // monthly note, check-in, tracking check
+    search: 1.5,    // each non-brand or competitor Search campaign
+    pmax: 1.5,      // each Performance Max campaign
+    shopping: 1,    // each Shopping campaign
+    other: 0.75,    // each Display, Demand Gen, Video or other campaign
+    brand: 0.5,     // each brand Search campaign
+    spendStep: 2500, // £ of monthly spend
+    perStep: 0.5,   // hours for each spendStep above the first one
+  },
   retainerMinMonths: 3,
   suggestRetainerMonths: 2,   // suggest the retainer when the one-off total is more than this many months of the fee
   quoteValidDays: 14,
@@ -125,7 +139,12 @@ export function validate(input) {
   set('startMinutes', 0, 2400);
   set('jobRoundMinutes', 1, 240);
   set('jobMinMinutes', 0, 2400);
-  set('retainerFee', 1, 100000, { optional: true });
+  set('monthlyMin', 1, 100000, { optional: true });
+  set('monthlyRound', 1, 1000);
+  if (input.monthlyHours && typeof input.monthlyHours === 'object') {
+    for (const k of Object.keys(DEFAULTS.monthlyHours)) set(k, 0, k === 'spendStep' ? 1000000 : 1000, { target: s.monthlyHours, from: input.monthlyHours });
+    if (!(s.monthlyHours.spendStep > 0)) errors.push('spendStep');
+  }
   set('retainerMinMonths', 1, 36);
   set('suggestRetainerMonths', 0, 36);
   set('quoteValidDays', 1, 365);
@@ -156,6 +175,8 @@ export const hourlyRate = s => s.dayRate / s.hoursPerDay;
 function withDefaults(saved) {
   const s = { ...JSON.parse(JSON.stringify(DEFAULTS)), ...saved };
   s.limits = { ...DEFAULTS.limits, ...(saved && saved.limits) };
+  s.monthlyHours = { ...DEFAULTS.monthlyHours, ...(saved && saved.monthlyHours) };
+  delete s.retainerFee; // replaced by monthlyMin on 21 Nov 2026
   s.fixTypes = {};
   for (const [id, ft] of Object.entries(DEFAULTS.fixTypes)) s.fixTypes[id] = { ...ft, ...(saved && saved.fixTypes && saved.fixTypes[id]) };
   return s;
@@ -227,11 +248,29 @@ export function fixMinutes(s, fixType, items) {
   return Math.min(humanMinutes(s, fixType, items), roundUp(s, Number(ft.aiSetup) + Number(ft.aiPerItem) * Math.max(1, Math.round(Number(items) || 1))));
 }
 
+// Estimated monthly management for an account: { hours, fee, atMinimum, campaigns }. workload is { spend, campaigns:
+// [{ channel, brand }] } from the rules (runRules().workload). Without one (older reports), only the base hours count.
+const CHANNEL = { SEARCH: 'search', PERFORMANCE_MAX: 'pmax', SHOPPING: 'shopping' };
+export function monthlyEstimate(s, workload) {
+  if (s.monthlyMin == null) return null;
+  const h = s.monthlyHours;
+  const camps = (workload && workload.campaigns) || [];
+  let hours = h.base;
+  for (const c of camps) hours += c.brand ? h.brand : (h[CHANNEL[c.channel]] ?? h.other);
+  const spend = Number(workload && workload.spend) || 0;
+  if (h.spendStep > 0 && spend > h.spendStep) hours += h.perStep * (spend - h.spendStep) / h.spendStep;
+  hours = Math.round(hours * 10) / 10;
+  const step = s.monthlyRound || 1;
+  const byHours = Math.round(hours * hourlyRate(s) / step) * step;
+  const fee = Math.max(s.monthlyMin, byHours);
+  return { hours, fee, atMinimum: byHours <= s.monthlyMin, campaigns: camps.length, estimated: !!workload };
+}
+
 // Prices a list of weaknesses: [{ id, title, fixType, items, fromPrice, priority }].
 // Returns the one-hour start (charged once when anything is ticked), the lines, the total for everything, and whether to
 // show and suggest the monthly option. Each line also carries its time by hand (humanMinutes) so the admin preview can
 // show the saving.
-export function quote(pricing, weaknesses, now = new Date()) {
+export function quote(pricing, weaknesses, now = new Date(), workload = null) {
   const s = pricing.settings;
   const rate = hourlyRate(s);
   const lines = [];
@@ -252,10 +291,11 @@ export function quote(pricing, weaknesses, now = new Date()) {
   const start = { minutes: startMinutes, hours: startMinutes / 60, price: Math.round(startMinutes / 60 * rate) };
   const jobs = lines.reduce((a, l) => a + l.price, 0);
   const total = lines.length ? start.price + jobs : 0;
-  const fee = s.retainerFee;
-  const retainer = fee ? {
-    fee, minMonths: s.retainerMinMonths, suggestMonths: s.suggestRetainerMonths,
-    suggested: total > fee * s.suggestRetainerMonths,
+  const est = monthlyEstimate(s, workload);
+  const retainer = est ? {
+    fee: est.fee, hours: est.hours, atMinimum: est.atMinimum, minimum: s.monthlyMin, estimated: est.estimated,
+    minMonths: s.retainerMinMonths, suggestMonths: s.suggestRetainerMonths,
+    suggested: total > est.fee * s.suggestRetainerMonths,
   } : null;
   return {
     version: pricing.version || 0,
@@ -284,6 +324,7 @@ export const SAMPLES = {
   },
   small: {
     label: 'Small account (sample)',
+    workload: { spend: 1000, campaigns: [{ channel: 'SEARCH', brand: false }] },
     weaknesses: [
       { id: 'sample-location', title: 'Location targeting reaches people outside your area', fixType: 'settings', items: 2, priority: 'high' },
       { id: 'sample-negatives', title: 'Search terms that never turn into enquiries', fixType: 'negatives', items: 60, priority: 'high' },
@@ -293,6 +334,11 @@ export const SAMPLES = {
   },
   medium: {
     label: 'Medium account (sample)',
+    workload: { spend: 15540, campaigns: [
+      { channel: 'SEARCH', brand: false }, { channel: 'SEARCH', brand: false }, { channel: 'SEARCH', brand: false }, { channel: 'SEARCH', brand: false },
+      { channel: 'PERFORMANCE_MAX' }, { channel: 'PERFORMANCE_MAX' }, { channel: 'SHOPPING' }, { channel: 'DISPLAY' }, { channel: 'DEMAND_GEN' },
+      { channel: 'SEARCH', brand: true },
+    ] },
     weaknesses: [
       { id: 'sample-location', title: 'Location targeting reaches people outside your area', fixType: 'settings', items: 6, priority: 'high' },
       { id: 'sample-negatives', title: 'Search terms that never turn into enquiries', fixType: 'negatives', items: 300, priority: 'high' },

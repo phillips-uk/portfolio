@@ -85,7 +85,10 @@ assert.equal(queryCalls().length, Object.keys(QUERIES).length);
 assert.ok(calls.indexOf('accept') < calls.indexOf(queryCalls()[0]));
 assert.equal(linkState, 'INACTIVE');
 assert.ok(r.body.report.weaknesses.length > 0 && r.body.report.quote.lines.length > 0);
-assert.equal(r.body.report.quote.retainer, null, 'no retainer fee set, so no monthly option');
+// Monthly fee since 21 Nov 2026: estimated hours at the hourly rate, never under the £500 minimum
+{ const ret = r.body.report.quote.retainer;
+  assert.ok(ret && ret.fee >= 500 && ret.hours > 0, 'monthly option priced on hours, with the minimum');
+  assert.equal(ret.fee % 50, 0, 'monthly fee rounds to £50'); }
 assert.equal(r.body.report.operations, undefined, 'operations are shown only to Lewis');
 assert.equal(r.body.report.customerId, '123-456-7890');
 console.log('pending invite: accepted, read', queryCalls().length, 'queries, unlinked last; total', r.body.report.quote.total);

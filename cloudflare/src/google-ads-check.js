@@ -124,12 +124,12 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
   }
   const data = await readAccount(readEnv, m, customerId);
   const result = runRules(data, { currency: c.currencyCode || 'GBP', today: londonDay() });
-  const q = quote(pricing, result.weaknesses);
+  const q = quote(pricing, result.weaknesses, new Date(), result.workload);
   const id = crypto.randomUUID().replace(/-/g, '');
   const report = {
     id, checkedAt: new Date().toISOString(), customerId, accountName: c.descriptiveName || 'Your Google Ads account',
     currency: c.currencyCode || 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
-    profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour,
+    profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour, workload: result.workload,
     quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin, route,
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
@@ -238,8 +238,8 @@ async function sample(request, env) {
   const report = {
     id: '0'.repeat(32), checkedAt: new Date().toISOString(), customerId: '0000000000', accountName: `Demo: ${demo.name} (made up)`,
     currency: 'GBP', facts: result.facts, strengths: result.strengths, weaknesses: result.weaknesses,
-    profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour,
-    quote: quote(pricing, result.weaknesses), pricingVersion: pricing.version || 0, operations: 0, sample: true,
+    profile: result.profile, ngrams: result.ngrams, dayHour: result.dayHour, workload: result.workload,
+    quote: quote(pricing, result.weaknesses, new Date(), result.workload), pricingVersion: pricing.version || 0, operations: 0, sample: true,
   };
   return jsonResponse({ report: { ...publicReport(report, true), sample: true } });
 }

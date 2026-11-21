@@ -1219,15 +1219,24 @@
             <p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the set-up once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p>
           </div>
           <div class="card">
-            <div class="card-head"><h2>Small business monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
+            <div class="card-head"><h2>Google Ads monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
             <div class="pr-fields">
-              <label>Monthly fee (£)<input type="number" name="retainerFee" min="1" step="1" placeholder="Not set yet"></label>
+              <label>Monthly minimum (£)<input type="number" name="monthlyMin" min="1" step="1" placeholder="Empty hides monthly"></label>
+              <label>Round the monthly fee to (£)<input type="number" name="monthlyRound" min="1" step="1" required></label>
+              <label>Base hours a month<input type="number" name="mh.base" min="0" step="0.25" required></label>
+              <label>Hours per non-brand Search campaign<input type="number" name="mh.search" min="0" step="0.25" required></label>
+              <label>Hours per Performance Max campaign<input type="number" name="mh.pmax" min="0" step="0.25" required></label>
+              <label>Hours per Shopping campaign<input type="number" name="mh.shopping" min="0" step="0.25" required></label>
+              <label>Hours per Display, Demand Gen or Video campaign<input type="number" name="mh.other" min="0" step="0.25" required></label>
+              <label>Hours per brand Search campaign<input type="number" name="mh.brand" min="0" step="0.25" required></label>
+              <label>Spend step (£ a month)<input type="number" name="mh.spendStep" min="1" step="100" required></label>
+              <label>Hours for each spend step above the first<input type="number" name="mh.perStep" min="0" step="0.25" required></label>
               <label>Minimum term (months)<input type="number" name="retainerMinMonths" min="1" step="1" required></label>
               <label>Suggest it when one-off fixes cost more than (months of the fee)<input type="number" name="suggestRetainerMonths" min="0" step="0.5" required></label>
               <label>Quotes hold their price for (days)<input type="number" name="quoteValidDays" min="1" step="1" required></label>
             </div>
             <label class="pr-check"><input type="checkbox" name="holdForReview"> Hold quotes for my check (customers see “Lewis will confirm this within one working day”)</label>
-            <p class="pr-note">While the monthly fee is empty, reports show only the one-off option.</p>
+            <p class="pr-note">Monthly fee = the account&rsquo;s estimated hours a month &times; the hourly rate, rounded, and never less than the minimum. Hours come from the campaigns that spent in the last 30 days and the 30-day spend. An empty minimum hides the monthly option.</p>
           </div>
         </div>
         <div class="card" style="margin-top:20px">
@@ -3280,7 +3289,9 @@
 
   function fill(s) {
     ['dayRate', 'hoursPerDay', 'startMinutes', 'jobRoundMinutes', 'jobMinMinutes', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { field(k).value = s[k]; });
-    field('retainerFee').value = s.retainerFee == null ? '' : s.retainerFee;
+    field('monthlyMin').value = s.monthlyMin == null ? '' : s.monthlyMin;
+    field('monthlyRound').value = s.monthlyRound;
+    Object.keys(s.monthlyHours || {}).forEach(function (k) { var f = field('mh.' + k); if (f) f.value = s.monthlyHours[k]; });
     field('holdForReview').checked = !!s.holdForReview;
     Object.keys(s.limits).forEach(function (k) { var f = field('l.' + k); if (f) f.value = s.limits[k]; });
     var tb = $('pr-fix'); tb.textContent = '';
@@ -3305,7 +3316,9 @@
   function read() {
     var s = { limits: {}, fixTypes: {} };
     ['dayRate', 'hoursPerDay', 'startMinutes', 'jobRoundMinutes', 'jobMinMinutes', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { s[k] = field(k).value; });
-    s.retainerFee = field('retainerFee').value.trim() === '' ? null : field('retainerFee').value;
+    s.monthlyMin = field('monthlyMin').value.trim() === '' ? null : field('monthlyMin').value;
+    s.monthlyRound = field('monthlyRound').value;
+    s.monthlyHours = {}; form.querySelectorAll('[name^="mh."]').forEach(function (f) { s.monthlyHours[f.name.slice(3)] = f.value; });
     s.holdForReview = field('holdForReview').checked;
     form.querySelectorAll('[name^="l."]').forEach(function (f) { s.limits[f.name.slice(2)] = f.value; });
     form.querySelectorAll('[data-ft]').forEach(function (f) { var id = f.getAttribute('data-ft'); s.fixTypes[id] = s.fixTypes[id] || {}; s.fixTypes[id][f.getAttribute('data-k')] = f.value; });
@@ -3314,8 +3327,8 @@
   function refresh() {
     var d = Number(field('dayRate').value), h = Number(field('hoursPerDay').value);
     $('pr-hourly').textContent = d > 0 && h > 0 ? GBP2.format(d / h) + ' an hour' : '£–';
-    var fee = field('retainerFee').value.trim();
-    $('pr-ret-state').textContent = fee ? GBP.format(Number(fee)) + ' a month' : 'Not set: hidden in reports';
+    var fee = field('monthlyMin').value.trim();
+    $('pr-ret-state').textContent = fee ? 'From ' + GBP.format(Number(fee)) + ' a month' : 'Not set: hidden in reports';
     $('pr-ret-state').className = 'pill ' + (fee ? 'good' : 'warn');
   }
   form.addEventListener('input', refresh);
@@ -3378,7 +3391,7 @@
       box.appendChild(t);
       box.appendChild(el('p', null, d.label + ' at ' + GBP2.format(d.hourlyRate) + ' an hour. ' +
         (q.humanTotal != null && q.lines.length ? 'Every job by hand, without the set-up, would be ' + GBP.format(q.humanTotal) + '. ' : '') + 'Quote holds until ' + q.validUntil + '.' +
-        (q.retainer ? ' Monthly option: ' + GBP.format(q.retainer.fee) + ' a month, ' + q.retainer.minMonths + '-month minimum' + (q.retainer.suggested ? ', shown as the better choice for this account.' : '.') : ' The monthly option is hidden until its fee is set.') +
+        (q.retainer ? ' Monthly option: ' + GBP.format(q.retainer.fee) + ' a month (about ' + q.retainer.hours + ' hours' + (q.retainer.atMinimum ? ', so the minimum applies' : '') + (q.retainer.estimated ? '' : '; this report predates the estimate, so only the base hours count') + '), ' + q.retainer.minMonths + '-month minimum' + (q.retainer.suggested ? ', shown as the better choice for this account.' : '.') : ' The monthly option is hidden until a minimum is set.') +
         (q.holdForReview ? ' Quotes are held for your check.' : '')));
     }).catch(function (e) { box.textContent = e.message; });
   });
