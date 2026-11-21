@@ -2108,7 +2108,7 @@ function ruleBrokenUrls(m, out) {
   const broken = u.pages.filter((p) => p.state === 'broken');
   const checked = u.pages.filter((p) => p.state === 'ok' || p.state === 'broken').length;
   if (!broken.length) {
-    if (checked) out.strong({ id: 'broken-landing-pages', category: 'ads', priority: 'high', title: 'Your landing pages load', detail: `All ${plural(checked, 'landing page')} checked answered normally${u.skipped ? ` (the ${checked} your ads use most)` : ''}.` });
+    if (checked) out.strong({ id: 'broken-landing-pages', category: 'ads', priority: 'high', title: 'Your landing pages load', detail: `${checked === 1 ? 'The one landing page' : checked === 2 ? 'Both landing pages' : `All ${checked} landing pages`} checked answered normally${u.skipped ? ` (the ${checked} your ads use most)` : ''}.` });
     return;
   }
   const why = (p) => (p.status === 404 ? 'not found' : p.status === 410 ? 'gone' : p.status >= 500 ? `server error ${p.status}` : 'no answer');
