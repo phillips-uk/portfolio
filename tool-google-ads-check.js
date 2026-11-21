@@ -230,7 +230,7 @@
       if (monthlyBetter) mo.appendChild(el('span', 'tag', 'Better value for this account'));
       mo.appendChild(el('h4', null, 'Monthly management'));
       mo.appendChild(el('div', 'big', GBP.format(q.retainer.fee) + ' a month'));
-      mo.appendChild(el('p', null, 'I become your Google Ads specialist: a plan for the next 3 to 6 months, these fixes over time, and the account kept in shape. ' + (q.retainer.atMinimum ? 'This is my minimum monthly fee. ' : 'For an account this size, the fee is based on about ' + hrs(q.retainer.hours) + ' of work a month. ') + q.retainer.minMonths + '-month minimum, paid monthly in advance, then cancel any time.'));
+      mo.appendChild(el('p', null, 'I become your Google Ads specialist: a plan for the next 3 to 6 months, these fixes over time, and the account kept in shape. ' + (q.retainer.atMinimum ? 'This is my minimum monthly fee. ' : 'For an account this size, the fee is based on about ' + (function (h) { h = Math.max(1, Math.round(h)); return h + (h === 1 ? ' hour' : ' hours'); })(q.retainer.hours) + ' of work a month. ') + q.retainer.minMonths + '-month minimum, paid monthly in advance, then cancel any time.'));
       var b2 = el('button', null, r.flags && r.flags.checkout ? 'Start monthly' : 'Ask me about monthly'); b2.type = 'button';
       b2.addEventListener('click', function () { buy('monthly', chosen, q.retainer.fee); });
       mo.appendChild(b2);
