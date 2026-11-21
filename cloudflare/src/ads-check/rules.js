@@ -1391,7 +1391,7 @@ function ruleLandingPages(m, out) {
       category: 'ads',
       priority: 'high',
       title: `${pct(share)} of your non-brand ads go to the homepage`,
-      detail: `${home.length} of ${scored.length} final URLs on non-brand Search ads point to your homepage, across ${plural(groups.length, 'ad group')}.${brandNote}`,
+      detail: `${someOf(home.length, scored.length, 'final URL')} on non-brand Search ads ${verb(home.length, 'points', 'point')} to your homepage, across ${plural(groups.length, 'ad group')}.${brandNote}`,
       why: 'People who click an ad for one service and land on a general page often leave before they find it.',
       start: 'Point each ad group at the page that matches its keywords, and build one where none exists.',
       startLink: LINKS.quality,
@@ -1406,7 +1406,7 @@ function ruleLandingPages(m, out) {
       category: 'ads',
       priority: 'high',
       title: 'Ads send people to the right pages',
-      detail: `${scored.length - home.length} of ${scored.length} final URLs on non-brand Search ads go to a specific page rather than the homepage.${brandNote}`,
+      detail: `${someOf(scored.length - home.length, scored.length, 'final URL')} on non-brand Search ads ${verb(scored.length - home.length, 'goes', 'go')} to a specific page rather than the homepage.${brandNote}`,
     });
   }
 }
