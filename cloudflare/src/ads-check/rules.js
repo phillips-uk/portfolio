@@ -235,8 +235,9 @@ function buildModel(data, ctx) {
   for (const r of rows('searchTerms')) {
     const text = r.searchTermView?.searchTerm;
     if (!text) continue;
-    const t = termMap.get(text) || { term: text, campaigns: new Set(), impressions: 0, clicks: 0, cost: 0, conversions: 0, convValue: 0 };
+    const t = termMap.get(text) || { term: text, campaigns: new Set(), byCampaign: new Map(), impressions: 0, clicks: 0, cost: 0, conversions: 0, convValue: 0 };
     t.campaigns.add(r.campaign?.name || '');
+    t.byCampaign.set(r.campaign?.name || '', (t.byCampaign.get(r.campaign?.name || '') || 0) + fromMicros(r.metrics?.costMicros));
     t.impressions += num(r.metrics?.impressions);
     t.clicks += num(r.metrics?.clicks);
     t.cost += fromMicros(r.metrics?.costMicros);
@@ -252,8 +253,9 @@ function buildModel(data, ctx) {
   for (const r of rows('pmaxSearchTerms')) {
     const text = r.campaignSearchTermView?.searchTerm;
     if (!text) continue;
-    const t = pmaxMap.get(text) || { term: text, campaigns: new Set(), impressions: 0, clicks: 0, cost: 0, conversions: 0, convValue: 0 };
+    const t = pmaxMap.get(text) || { term: text, campaigns: new Set(), byCampaign: new Map(), impressions: 0, clicks: 0, cost: 0, conversions: 0, convValue: 0 };
     t.campaigns.add(r.campaign?.name || '');
+    t.byCampaign.set(r.campaign?.name || '', (t.byCampaign.get(r.campaign?.name || '') || 0) + fromMicros(r.metrics?.costMicros));
     t.impressions += num(r.metrics?.impressions);
     t.clicks += num(r.metrics?.clicks);
     t.cost += fromMicros(r.metrics?.costMicros);
@@ -553,7 +555,7 @@ function ruleCampaigns(m, out) {
         priority: 'high',
         title: `${plural(zero.length, 'campaign')} spending with no conversions`,
         detail: `${money(wasted)} spent in the last 30 days with no recorded conversions: ${examples(zero.map((c) => c.name))}.`,
-        atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(zero.filter((c) => c.spend >= cpa).reduce((s, c) => s + c.spend, 0), 'Campaigns past your cost per conversion with none') : null; })(),
+        atStake: (() => { const cpa = accountCpa(m); const hit = cpa ? zero.filter((c) => c.spend >= cpa) : []; return cpa ? atStake(hit.reduce((s, c) => s + c.spend, 0), 'Campaigns past your cost per conversion with none', Object.fromEntries(hit.map((c) => [c.name, c.spend]))) : null; })(),
         why: 'Either the targeting is wrong or the tracking is broken, and in both cases that money is not traceable to any business.',
         start: 'Check the tracking fires for these campaigns first, then pause or rebuild the ones that still show nothing.',
         startLink: LINKS.tracking,
@@ -877,8 +879,23 @@ function accountCpa(m) {
   const conv = m.campaigns.reduce((s, c) => s + c.conversions, 0);
   return conv > 0 ? m.totalSpend / conv : null;
 }
-function atStake(amount, basis) {
-  return amount >= 1 ? { amount: round2(amount), basis } : null;
+// by: how the amount splits across campaigns, keyed by campaign name ({ name: weight }, scaled to the amount here).
+// The action plan uses it so money in a campaign already counted higher up the list is not counted again.
+function atStake(amount, basis, by) {
+  if (!(amount >= 1)) return null;
+  const out = { amount: round2(amount), basis };
+  if (by) {
+    const entries = [...(by instanceof Map ? by.entries() : Object.entries(by))].filter(([, v]) => v > 0);
+    const total = entries.reduce((t, [, v]) => t + v, 0);
+    if (total > 0) out.byCampaign = Object.fromEntries(entries.map(([k, v]) => [k, round2((amount * v) / total)]));
+  }
+  return out;
+}
+// Adds up search-term cost per campaign name.
+function termSplit(terms) {
+  const by = new Map();
+  for (const t of terms) for (const [k, v] of t.byCampaign || []) by.set(k, (by.get(k) || 0) + v);
+  return by;
 }
 
 function ngramTerms(m) { return m.searchTerms.concat(m.pmaxSearchTerms || []); }
@@ -988,7 +1005,7 @@ function ruleSearchTerms(m, out) {
           ? `${plural(irrelevant.length, 'off-target search term')} with no conversions`
           : `${plural(irrelevant.length, 'search term')} spending with no conversions`,
         detail: `${money(waste)}${shareText} spent in 30 days on searches ${kwTokens.size ? 'that share no words with your keywords' : 'that brought no conversions'}, such as ${examples(irrelevant.map((t) => t.term), 4)}.${relatedText}`,
-        atStake: kwTokens.size ? atStake(waste, 'Searches with no link to your keywords') : null,
+        atStake: kwTokens.size ? atStake(waste, 'Searches with no link to your keywords', termSplit(irrelevant)) : null,
         why: 'These searches have cost money, brought nothing and have no link to what you sell, so blocking them saves budget straight away.',
         start: 'Add these searches as negative keywords, then check the search terms report every week.',
         startLink: null,
@@ -1029,7 +1046,7 @@ function ruleSearchTerms(m, out) {
       priority: 'low',
       title: `${plural(wasted.length, 'repeated word', 'repeated words and phrases')} with spend and no conversions`,
       detail: `Across ${plural(ngramTerms(m).length, 'search term')}${(m.pmaxSearchTerms || []).length ? ' in Search and Performance Max' : ''}, these words keep coming up in searches that never convert: ${top}.`,
-      atStake: atStake(ngramTerms(m).filter((t) => t.conversions === 0 && wasted.some((a) => (' ' + ngramWords(t.term).join(' ') + ' ').includes(' ' + a.ngram + ' '))).reduce((s, t) => s + t.cost, 0), 'Searches containing these words'),
+      atStake: (() => { const hit = ngramTerms(m).filter((t) => t.conversions === 0 && wasted.some((a) => (' ' + ngramWords(t.term).join(' ') + ' ').includes(' ' + a.ngram + ' '))); return atStake(hit.reduce((s, t) => s + t.cost, 0), 'Searches containing these words', termSplit(hit)); })(),
       why: 'One negative keyword on a repeated word blocks every search that contains it, including ones you have not seen yet.',
       start: 'Check each word is never useful to you, then add it as a negative keyword at account level.',
       startLink: null,
@@ -1533,7 +1550,7 @@ function ruleShopping(m, out) {
       priority: share > 0.3 && wastedSpend > 15 ? 'high' : 'medium',
       title: `${plural(wasted.length, 'product')} spent ${money(wastedSpend)} with no sales`,
       detail: `${pct(share)} of your product spend in the last 30 days brought no conversions. The biggest are ${examples(wasted.map((p) => clean(p.title, 40)), 3, wasted.length)}.`,
-      atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(wasted.filter((p) => p.spend >= cpa).reduce((s, p) => s + p.spend, 0), 'Products past your cost per conversion with no sale') : null; })(),
+      atStake: (() => { const cpa = accountCpa(m); return cpa ? atStake(wasted.filter((p) => p.spend >= cpa).reduce((s, p) => s + p.spend, 0), 'Products past your cost per conversion with no sale', Object.fromEntries(m.campaigns.filter((c) => c.channel === 'PERFORMANCE_MAX' || c.channel === 'SHOPPING').map((c) => [c.name, c.spend]))) : null; })(),
       why: 'Money spent on products that never sell is money not spent on the ones that do.',
       start: 'Check price and product page for each, then exclude the ones that still do not sell from your listing groups.',
       startLink: null,
@@ -2141,6 +2158,13 @@ function ruleSegments(m, out, seg) {
   if (!y.value) return;
   const minSpend = y.kind === 'cpa' ? y.value * 2 : Math.max(50, seg.total.spend * 0.03);
   const weak = (s) => { const a = against(y, s); return a && s.spend >= minSpend && a.ratio >= 1.5 ? a : null; };
+  // Spend per campaign name for the rows that match, so the plan can tell where this money overlaps other findings.
+  const nameOf = new Map(m.campaigns.map((c) => [String(c.id), c.name]));
+  const splitBy = (test) => {
+    const by = new Map();
+    for (const r of m.rows('segments90')) if (test(r)) { const k = nameOf.get(String(r.campaign?.id)) || String(r.campaign?.id); by.set(k, (by.get(k) || 0) + fromMicros(r.metrics?.costMicros)); }
+    return by;
+  };
 
   // Search Partners, Search campaigns only.
   const partners = seg.search.find((s) => s.key === 'SEARCH_PARTNERS');
@@ -2152,7 +2176,7 @@ function ruleSegments(m, out, seg) {
       priority: pa.excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
       title: 'Search Partners cost far more per conversion',
       detail: `Over 90 days your Search campaigns spent ${m.money(partners.spend)} on Search Partners sites for ${figureText(m, y, pa.figure)}, against ${yardText(m, y)}.`,
-      atStake: atStake(pa.excess / 3, `Search Partners spend past ${y.source === 'target' ? 'your target' : 'your average'}`),
+      atStake: atStake(pa.excess / 3, `Search Partners spend past ${y.source === 'target' ? 'your target' : 'your average'}`, splitBy((r) => r.campaign?.advertisingChannelType === 'SEARCH' && r.segments?.adNetworkType === 'SEARCH_PARTNERS')),
       why: 'Search Partners are other sites in Google\'s Search Network that show your Search ads. The spend is easy to miss because it sits inside your Search campaigns.',
       start: 'Segment your Search campaigns by network to see which ones it affects. If the gap holds, untick "Include Google search partners" in those campaigns.',
       startLink: null,
@@ -2180,7 +2204,7 @@ function ruleSegments(m, out, seg) {
       priority: excess / 3 >= m.totalSpend * 0.05 ? 'medium' : 'low',
       title: `${titleCase(names.join(' and '))} ${verb(bad.length, 'costs', 'cost')} far more per conversion`,
       detail: `Over 90 days: ${bad.map((x) => `${(DEVICE_LABEL[x.s.key] || x.s.key).toLowerCase()} took ${pct(x.s.spend / seg.total.spend)} of spend at ${figureText(m, y, x.a.figure)}`).join('; ')}. Judged against ${yardText(m, y)}.`,
-      atStake: atStake(excess / 3, `${titleCase(names.join(' and '))} spend past ${y.source === 'target' ? 'your target' : 'your average'}`),
+      atStake: atStake(excess / 3, `${titleCase(names.join(' and '))} spend past ${y.source === 'target' ? 'your target' : 'your average'}`, splitBy((r) => bad.some((x) => x.s.key === (r.segments?.device || 'OTHER')))),
       why: 'When one device converts much worse, the cause is often the page, the form or the tracking on that device.',
       start: `Try your own site, form and checkout on ${names.join(' and ')}, and check the conversion tag fires there. On manual bids, a lower bid for ${bad.length === 1 ? 'that device' : 'those devices'} is an option; Smart Bidding already weighs devices itself.`,
       startLink: null,
@@ -2306,7 +2330,7 @@ function ruleChanges(m, out, ch) {
       ? `${plural(list.length, 'campaign')} missed your target by a wide margin`
       : `${plural(list.length, 'campaign')} well below your average, with no recent changes`,
     detail: `${list.slice(0, 3).map((x) => `"${clean(x.c.name, 45)}" at ${figureText(m, y, x.a.figure)}${ch.byCampaign.has(x.c.id) ? '' : ', no changes in 28 days'}`).join('; ')}${list.length > 3 ? `; and ${list.length - 3} more` : ''}. Judged against ${yardText(m, y)} over the last 30 days.${y.source === 'target' && still.length ? ` ${still.length === list.length ? (list.length === 1 ? 'It has' : 'None of them has') : `${still.length} of them ${verb(still.length, 'has', 'have')}`} had no changes in 28 days.` : ''}`,
-    atStake: atStake(excess, `Spend past ${y.source === 'target' ? 'your target' : 'your average'} in these campaigns`),
+    atStake: atStake(excess, `Spend past ${y.source === 'target' ? 'your target' : 'your average'} in these campaigns`, Object.fromEntries(list.map((x) => [x.c.name, x.a.excess]))),
     why: 'These campaigns cost far more per result than the account can afford, and the money at stake is what the same results would have cost at that level.',
     start: 'For each one, check conversion volume and tracking first, then search terms, bids and the landing page. If nothing explains the gap, move budget to the campaigns that meet it.',
     startLink: LINKS.bidding,
@@ -2445,7 +2469,24 @@ export function actionPlan(weaknesses, quote, spend30) {
   });
   const E = { quick: 0, medium: 1, larger: 2 };
   plan.sort((a, b) => IMPACT_RANK[a.impact] - IMPACT_RANK[b.impact] || (b.atStake || 0) - (a.atStake || 0) || (E[a.effort] ?? 1) - (E[b.effort] ?? 1) || a.i - b.i);
-  return plan.map(({ i, ...p }, n) => ({ rank: n + 1, ...p }));
+  // Findings can cover the same spend (a campaign off target and the mobile clicks inside it). Going down the list,
+  // each campaign keeps the largest sum counted for it so far, and a later item only adds what goes past that: in one
+  // campaign the bigger estimate is taken to include the smaller. So the figures can be read one after another
+  // without counting the same money twice. A finding with no campaign split is shown in full.
+  const counted = new Map();
+  return plan.map(({ i, ...p }, n) => {
+    const by = weaknesses[i].atStake && weaknesses[i].atStake.byCampaign;
+    if (p.atStake && by) {
+      let fresh = 0;
+      for (const [k, v] of Object.entries(by)) { const had = counted.get(k) || 0; if (v > had) { fresh += v - had; counted.set(k, v); } }
+      if (fresh < p.atStake - 0.5) {
+        p.gross = p.atStake;
+        p.atStake = fresh >= 1 ? Math.round(fresh * 100) / 100 : null;
+        p.overlap = true;
+      }
+    }
+    return { rank: n + 1, ...p };
+  });
 }
 
 function headline(m, facts, weaknesses, trend) {

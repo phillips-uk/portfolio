@@ -293,7 +293,15 @@
       a.appendChild(tags);
       var m = el('span', 'm');
       var w = byId[p.id];
-      if (p.atStake) { m.textContent = cur.format(p.atStake); m.appendChild(el('small', null, 'at stake, next 30 days')); if (w && w.atStake) m.title = w.atStake.basis; }
+      if (p.atStake) {
+        m.textContent = cur.format(p.atStake);
+        m.appendChild(el('small', null, p.overlap ? 'additional amount at stake' : 'at stake, next 30 days'));
+        if (w && w.atStake) m.title = w.atStake.basis + (p.overlap ? '. ' + cur.format(p.gross) + ' at stake in total over the next 30 days, including the amount already counted above.' : '');
+      } else if (p.overlap) {
+        m.className = 'm over';
+        m.appendChild(el('small', null, 'already counted above'));
+        m.title = cur.format(p.gross) + ' at stake over the next 30 days. The full amount was already counted above.';
+      }
       a.appendChild(m);
       li.appendChild(a);
       return li;

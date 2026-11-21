@@ -546,4 +546,20 @@ console.log(`demo clients: ${DEMOS.length} run cleanly`);
   assert.equal(capped.pages.length, URL_MAX); assert.equal(capped.skipped, 7);
   console.log(`landing page check: 404 and no answer are broken, 403 is not checked, capped at ${URL_MAX}`);
 }
+// The plan never counts the same campaign's money twice.
+{
+  const w = (id, amount, by) => ({ id, title: id, priority: 'high', atStake: { amount, basis: id, byCampaign: by } });
+  const plan = actionPlan([w('a', 1000, { A: 700, B: 300 }), w('b', 500, { A: 400, C: 100 }), w('c', 200, { A: 200 }), w('d', 50)], null, 2000);
+  const by = Object.fromEntries(plan.map((p) => [p.id, p]));
+  assert.equal(by.a.atStake, 1000); assert.ok(!by.a.overlap);
+  assert.equal(by.b.atStake, 100, 'A is already counted at 700, so only C is new'); assert.equal(by.b.gross, 500);
+  assert.equal(by.c.atStake, null, 'all inside A'); assert.ok(by.c.overlap);
+  assert.equal(by.d.atStake, 50, 'no campaign split: shown in full');
+  const d = findDemo('national'); const r = runRules(d.data('2026-11-21'), { target: d.target, today: '2026-11-21' });
+  const p = actionPlan(r.weaknesses, null, r.facts.spend30);
+  const total = p.reduce((t, x) => t + (x.atStake || 0), 0);
+  assert.ok(p.some((x) => x.overlap), 'national demo has overlapping findings');
+  assert.ok(total < p.reduce((t, x) => t + (x.gross || x.atStake || 0), 0) && total <= r.facts.spend30, 'net figures add up to less than the gross and no more than spend');
+  console.log('action plan: money in a campaign already counted above is left out');
+}
 console.log('All rules tests passed.');
