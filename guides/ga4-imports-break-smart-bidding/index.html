@@ -43,7 +43,7 @@
     "url": "https://www.phillips-uk.com"
   },
   "datePublished": "2026-05-27",
-  "dateModified": "2026-11-19",
+  "dateModified": "2026-11-21",
   "url": "https://www.phillips-uk.com/guides/ga4-imports-break-smart-bidding/"
 }
 </script>
@@ -74,7 +74,7 @@
     {
       "@type": "HowToStep",
       "name": "Enable Enhanced Conversions",
-      "text": "Enable enhanced conversions for web at account level under Goals → Conversions → Settings and choose Google Tag Manager. Configure GTM to collect eligible customer data, such as an email address. GTM hashes the data using SHA-256 before sending it."
+      "text": "Go to Goals → Settings and turn on Enhanced conversions, then finish the setup in Google Tag Manager. Configure GTM to collect eligible customer data, such as an email address. GTM hashes the data using SHA-256 before sending it."
     }
   ]
 }
@@ -609,7 +609,7 @@
       <span class="article-readtime">11 min read</span>
     </div>
     <h1 class="article-h1">Why GA4 Imports Can Break Smart Bidding</h1>
-    <div class="article-byline">Lewis Phillips &middot; 27 May 2026 &middot; Updated 19 Nov 2026 &middot; 11 min read</div>
+    <div class="article-byline">Lewis Phillips &middot; 27 May 2026 &middot; Updated 21 Nov 2026 &middot; 11 min read</div>
     <p class="article-lede">Smart Bidding can use conversions from GA4 or a native Google Ads tag. Problems arise when the campaign counts the same purchase twice, bids towards engagement events you only wanted to report on, or relies on an action that poorly measures the outcome you want.</p>
 
     <!-- Quick Answer -->
@@ -738,7 +738,7 @@
       <div class="article-body">
         <p>A native Google Ads action and a GA4 import can both record the same purchase. If both are Primary and their standard goal is in use, the same purchase can count twice. A custom goal can also cause duplication if it includes both actions.</p>
         <p>If both actions count the same purchase towards the campaign&rsquo;s goals, reported conversions rise and reported CPA falls at the same spend. That can distort bidding.</p>
-        <p>Identifying this: compare the Conversions column in Google Ads against actual order volume in your ecommerce platform for the same date range. Some natural variance exists (cross-device journeys, different attribution windows), but a ratio significantly above 1:1 is a signal of structural duplication. You can also check by looking at the Source column in your Conversions table: if you see both <code>Google Analytics</code> and <code>Website</code> for the same event category, both may be Primary.</p>
+        <p>Identifying this: compare the Conversions column in Google Ads against actual order volume in your ecommerce platform for the same date range. Some natural variance exists (cross-device journeys, different attribution windows), but in my experience, if Google Ads shows far more conversions than you have orders, it&rsquo;s usually counting some of them twice. You can also check by looking at the Source column in your Conversions table: if you see both <code>Google Analytics</code> and <code>Website</code> for the same event category, both may be Primary.</p>
       </div>
     </div>
 
@@ -839,7 +839,7 @@
       </div>
       <div class="article-body">
         <p>Enhanced Conversions supplements the native tag by sending a hashed first-party data signal (typically a hashed email address from the purchase confirmation page) alongside the conversion event. When Google can match that hash to a signed-in Google account, it can attribute conversions that would otherwise be missed due to cookie restrictions, ITP, or iOS privacy controls.</p>
-        <p>Enable enhanced conversions for web at account level under <strong>Goals &rarr; Conversions &rarr; Settings</strong> and choose Google Tag Manager. Configure GTM to collect eligible customer data, such as the customer&rsquo;s email address. GTM hashes the data using SHA-256 before sending it.</p>
+        <p>Go to <strong>Goals &rarr; Settings</strong> and turn on Enhanced conversions, then finish the setup in Google Tag Manager. Configure GTM to collect eligible customer data, such as the customer&rsquo;s email address. GTM hashes the data using SHA-256 before sending it.</p>
         <p>Enhanced Conversions supplements the native tag and can improve attribution where cookies are restricted.</p>
       </div>
     </div>

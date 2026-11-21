@@ -30,7 +30,7 @@
   "headline": "Google Ads Conversion Tracking Not Working? How to Fix It",
   "description": "Google Ads conversions not showing, double-counting or stuck inactive? Every common cause covered, with step-by-step fixes for Enhanced Conversions, GA4 imports, Consent Mode v2, auto-tagging.",
   "author": {"@type": "Person", "name": "Lewis Phillips", "url": "https://www.phillips-uk.com"},
-  "datePublished": "2026-05-21",
+  "datePublished": "2026-05-21", "dateModified": "2026-11-21",
   "publisher": {"@type": "Organization", "name": "Phillips.", "url": "https://www.phillips-uk.com"}
 }
 </script>
@@ -64,7 +64,7 @@
     {
       "@type": "Question",
       "name": "What does 'Inactive' mean in Google Ads conversions?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Inactive is one of the labels Google Ads uses when it can't see recent conversions from an action. The Summary page now shows Misconfigured when conversions have stopped recording because of a setup error or broken tag, and Awaiting conversions when none were recorded in the past seven days, which can simply mean the action is new, campaigns are paused or traffic is low. If it should be recording, the tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match."}
     },
     {
       "@type": "Question",
@@ -694,7 +694,7 @@
       <span class="article-readtime">12 min read</span>
     </div>
     <h1 class="article-h1">How to Fix Google Ads Conversion Tracking</h1>
-    <div class="article-byline">Lewis Phillips &middot; 21 May 2026 &middot; 12 min read</div>
+    <div class="article-byline">Lewis Phillips &middot; 21 May 2026 &middot; Updated 21 Nov 2026 &middot; 12 min read</div>
     <p class="article-lede">Broken conversion tracking isn&rsquo;t a reporting problem. Smart Bidding uses your conversion data as its primary signal: if the data is wrong, your bids are wrong. This guide covers every common cause, from basic installation issues to the architecture mistakes that silently degrade bidding performance.</p>
   </div>
 </header>
@@ -811,7 +811,7 @@
         <div class="priority-items">
           <a href="#issue-1" class="priority-item">
             <span class="priority-num">1</span>
-            <span class="priority-text">Inactive or &ldquo;Needs attention&rdquo;</span>
+            <span class="priority-text">Misconfigured, inactive or &ldquo;Needs attention&rdquo;</span>
           </a>
         </div>
       </div>
@@ -821,11 +821,11 @@
     <div class="issue-block" id="issue-1">
       <div class="issue-header">
         <span class="issue-num">01</span>
-        <h3 class="issue-title">Conversion action is inactive or shows &lsquo;Needs attention&rsquo;</h3>
+        <h3 class="issue-title">Conversion action is misconfigured, inactive or shows &lsquo;Needs attention&rsquo;</h3>
       </div>
       <div class="article-body">
-        <p>Usually the first warning you see. <strong>Inactive</strong> means the conversion tag has not fired within the conversion window (typically 30 days). <strong>Needs attention</strong> flags a configuration issue, often Enhanced Conversions failing or a consent mode conflict.</p>
-        <p><strong>Fix:</strong> Run Tag Assistant on the conversion page to confirm whether the tag fires at all. If the tag fires but status remains inactive, check that the Conversion ID and Label in the tag exactly match the values in your Google Ads conversion action: a single character difference causes a silent mismatch. For Needs attention errors, go to <strong>Goals &rsaquo; Conversions &rsaquo; Diagnostics</strong> and Google will flag the specific field. Common causes: a phone number not in E.164 format (<code>+44xxxxxxxxxx</code>), or <code>user_data</code> being passed before the consent tag fires.</p>
+        <p>Usually the first warning you see. <strong>Misconfigured</strong> means conversions have stopped recording entirely, usually because of a setup error or a broken tag. <strong>Needs attention</strong> means conversions are still recording, but there&rsquo;s a problem to fix, often an Enhanced Conversions error or a consent mode conflict. <strong>Awaiting conversions</strong> means Google Ads hasn&rsquo;t recorded any conversions in the past seven days: the action may be new, your campaigns may be paused or traffic may be low. Some screens still say <strong>Inactive</strong>.</p>
+        <p><strong>Fix:</strong> Run Tag Assistant on the conversion page to confirm whether the tag fires at all. If the tag fires but the status doesn&rsquo;t change, check that the Conversion ID and Label in the tag exactly match the values in your Google Ads conversion action: a single character difference causes a silent mismatch. For Needs attention errors, go to <strong>Goals &rsaquo; Conversions &rsaquo; Diagnostics</strong> and Google will flag the specific field. Common causes: a phone number not in E.164 format (<code>+44xxxxxxxxxx</code>), or <code>user_data</code> being passed before the consent tag fires.</p>
       </div>
     </div>
 
@@ -892,7 +892,7 @@
           </div>
         </div>
       </div>
-      <div class="arch-caption">Primary actions feed Smart Bidding. Secondary actions are recorded for reporting but don&rsquo;t influence bid decisions. Never run two primary sources for the same event.</div>
+      <div class="arch-caption">Primary actions feed Smart Bidding. Secondary actions are for reporting only, unless they sit in a custom goal the campaign uses. Never run two primary sources for the same event.</div>
     </div>
 
     <div class="article-body">
@@ -990,7 +990,7 @@
       </div>
       <div class="article-body">
         <p>Standard browser-side conversion tracking misses a growing share of conversions to ad blockers, iOS ITP, and cookie consent restrictions. Enhanced Conversions recovers a portion by sending hashed customer data alongside the conversion signal, which Google matches to signed-in Google accounts.</p>
-        <p>The common misconfiguration: the Google Ads Conversion Tag is set to <strong>Automatic</strong> user data collection, which scrapes email addresses from the DOM. It&rsquo;s unreliable: it misses users who type slowly, fails on single-page apps, doesn&rsquo;t capture phone numbers. The correct approach is <strong>Code mode</strong>: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and read it via a Data Layer Variable.</p>
+        <p>The common misconfiguration: the Google Ads Conversion Tag is set to <strong>Automatic</strong> user data collection, which scrapes email addresses from the DOM. It can pick up email addresses and phone numbers shown on the page, but you don&rsquo;t control which field it reads, so test what it captures. The more reliable approach is <strong>Code mode</strong>: push a structured <code>user_data</code> object to the dataLayer at the point of conversion, and read it via a Data Layer Variable.</p>
       </div>
     </div>
 
@@ -1027,7 +1027,7 @@
       </div>
       <div class="article-body">
         <p>The hardest issue to diagnose because there&rsquo;s no error. For advertisers in EEA/UK, Consent Mode v2 is now core to Google Ads measurement. Configured correctly, it signals consent state to Google tags so they can behave appropriately for each user. Configured incorrectly, remarketing and attribution signals can be restricted, conversion modelling degraded, and data blocked silently for users who haven&rsquo;t consented.</p>
-        <p>The failure mode: the Consent Mode default state tag is missing, fires too late, or sets the wrong consent types. Tags that require <code>ad_storage</code> fire before consent is granted on page load, then the consent signal never updates to granted even after the user accepts. Google tags interpret this as a permanently denied state and suppress the conversion.</p>
+        <p>The failure mode: the Consent Mode default state tag is missing, fires too late, or sets the wrong consent types. Tags that require <code>ad_storage</code> fire before consent is granted on page load, then the consent signal never updates to granted even after the user accepts. If the conversion tag fires in that state, the conversion can be lost.</p>
       </div>
     </div>
 
@@ -1097,12 +1097,12 @@
         </div>
       </div>
       <div class="consent-warning">
-        If steps 1&ndash;2 happen <em style="color:var(--brand-text);font-style:italic;">after</em> step 3, the consent signal is permanently denied for that page load, even if the user accepts.
+        If steps 1&ndash;2 happen <em style="color:var(--brand-text);font-style:italic;">after</em> step 3, Google tags run before consent is known, and a conversion can be lost even if the user accepts.
       </div>
     </div>
 
     <div class="article-body">
-      <p><strong>Fix:</strong> Your Consent Mode default state tag must fire <strong>before any other Google tag</strong> on every page. Set it to fire on Consent Initialization, with <code>ad_storage</code> and <code>ad_user_data</code> denied by default. Your CMP must push a consent update to the dataLayer when the user accepts. Verify in Tag Assistant that consent state shows granted before the conversion tag fires.</p>
+      <p><strong>Fix:</strong> Your Consent Mode default state tag must fire <strong>before any other Google tag</strong> on every page. Set it to fire on Consent Initialization, with <code>ad_storage</code> and <code>ad_user_data</code> denied by default. When the user accepts, your CMP must send an update through its Tag Manager template or <code>gtag('consent', 'update')</code>. Verify in Tag Assistant that consent state shows granted before the conversion tag fires.</p>
     </div>
 
     <!-- Issue 07 -->
@@ -1113,7 +1113,7 @@
       </div>
       <div class="article-body">
         <p>Without auto-tagging, Google Ads doesn&rsquo;t append a GCLID parameter to landing page URLs. GCLID is how Google Ads connects an ad click to a subsequent conversion. Disable it and click-based attribution stops working entirely. Most often turned off accidentally after a URL rewrite, or by a developer who thought the parameters were tracking spam.</p>
-        <p><strong>Fix:</strong> Google Ads: <strong>Admin &rsaquo; Account settings &rsaquo; Auto-tagging</strong>. Toggle it on. If your website strips URL parameters (some CMSs do this), whitelist GCLID in your URL parameter handling, or move to server-side auto-tagging.</p>
+        <p><strong>Fix:</strong> Google Ads: <strong>Admin &rsaquo; Account settings &rsaquo; Auto-tagging</strong>. Toggle it on. If your website strips URL parameters (some CMSs do this), make sure it keeps the GCLID parameter, and check that any redirects carry it through to the final landing page.</p>
       </div>
     </div>
 
@@ -1229,8 +1229,8 @@
           <span class="dark-callout-badge-dot"></span>
           2026 Update
         </div>
-        <h3>Enhanced Conversions for web and leads are merging into a single on/off setting.</h3>
-        <p>Google Ads now accepts user-provided data simultaneously from website tags, Data Manager, and API connections. Previously these operated more separately.</p>
+        <h3>Since June 2026, Enhanced Conversions for web and leads share a single on/off setting.</h3>
+        <p>Since April 2026, Google Ads accepts user-provided data from website tags, Data Manager and API connections at the same time.</p>
         <p>In practice: if you have EC enabled for web and are also sending data through Data Manager or an API integration, Google will now combine those signals. Check your Diagnostics report to confirm data is arriving correctly from each source and match quality is healthy.</p>
       </div>
     </div>
@@ -1253,7 +1253,7 @@
           <span class="faq-q">What does &lsquo;Inactive&rsquo; mean in Google Ads conversions?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Inactive means Google Ads has not received a signal from that conversion action within the conversion window (typically 30 days). The tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match. It doesn&rsquo;t necessarily mean conversions are not happening; it means Google can&rsquo;t see them.</div>
+        <div class="faq-answer">Inactive is one of the labels Google Ads uses when it can&rsquo;t see recent conversions from an action. The Summary page now shows Misconfigured when conversions have stopped recording because of a setup error or broken tag, and Awaiting conversions when none were recorded in the past seven days, which can simply mean the action is new, campaigns are paused or traffic is low. If it should be recording, the tag may not be installed, the trigger may not be firing, or the Conversion ID and Label may not match. It doesn&rsquo;t necessarily mean conversions are not happening; it means Google can&rsquo;t see them.</div>
       </div>
       <div class="faq-item">
         <button class="faq-btn" aria-expanded="false">
