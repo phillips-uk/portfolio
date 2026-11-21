@@ -27,3 +27,15 @@ Cropped and colour graded into the Phillips. tones (Design Spec v3 section 1a, 2
 | marketing-systems-4.jpg | https://stocksnap.io/photo/calculator-numbers-Y2GUBQIPXD | Negative Space | CC0 |
 | website-check-1.jpg | https://stocksnap.io/photo/laptop-computer-4O4FZUVSIU | Startup Stock Photos | CC0 |
 | website-check-2.jpg | https://stocksnap.io/photo/macbook-laptop-R66E2T133W | Pawel Kadysz | CC0 |
+| consultancy-5.jpg | https://stocksnap.io/photo/business-presenting-XDAR6MIG75 | Direct Media | CC0 |
+| consultancy-6.jpg | https://stocksnap.io/photo/whiteboard-meeting-U6KBZWMU72 | Kristin Hardwick | CC0 |
+| consultancy-7.jpg | https://stocksnap.io/photo/whiteboard-planning-THWKGLDS2M | Startup Stock Photos | CC0 |
+| google-ads-5.jpg | https://stocksnap.io/photo/mobile-smartphone-DLITZEAVJJ | JESHOOTS.com | CC0 |
+| google-ads-6.jpg | https://stocksnap.io/photo/smartphone-mobile-2ZHFKWXCTQ | JESHOOTS.com | CC0 |
+| google-ads-7.jpg | https://stocksnap.io/photo/working-women-Y1PI6GQXG1 | Kristin Hardwick | CC0 |
+| local-seo-5.jpg | https://stocksnap.io/photo/open-sign-C6YGDZ1DSW | %C1lvaro%20Serrano | CC0 |
+| local-seo-6.jpg | https://stocksnap.io/photo/shop-store-I93PW8NE0F | Mike Petrucci | CC0 |
+| local-seo-7.jpg | https://stocksnap.io/photo/construction-plans-69YZFGFBSY | Burst | CC0 |
+| marketing-systems-5.jpg | https://stocksnap.io/photo/whiteboard-post-itnotes-YR89OQFMT1 | Startup Stock Photos | CC0 |
+| marketing-systems-6.jpg | https://stocksnap.io/photo/whiteboard-planning-NQQ2PJW1JM | Startup Stock Photos | CC0 |
+| marketing-systems-7.jpg | https://stocksnap.io/photo/blueprint-plan-M7MP0ATTWL | MichaelGaida | CC0 |
