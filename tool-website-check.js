@@ -67,6 +67,18 @@
     });
   }
 
+  // The kind of business (rules v5, Lewis 21 Nov 2026): optional on the form; left blank, the check detects it and the
+  // report offers a switch. A chip can be tapped again to clear it.
+  var KINDS = { local: 'a local business', national: 'a business working across the UK', shop: 'an online shop' };
+  var kindInputs = Array.prototype.slice.call(document.querySelectorAll('#wc-kind input'));
+  kindInputs.forEach(function (k) {
+    var was = false;
+    k.parentNode.addEventListener('pointerdown', function () { was = k.checked; });
+    k.addEventListener('click', function () { if (was) { k.checked = false; was = false; } });
+  });
+  function kind() { var c = kindInputs.filter(function (k) { return k.checked; })[0]; return c ? c.value : ''; }
+  function setKind(v) { kindInputs.forEach(function (k) { k.checked = k.value === v; }); }
+
   function say(msg, err) { status.textContent = msg || ''; status.className = 'check-status' + (err ? ' err' : ''); }
 
   form.addEventListener('submit', function (e) {
@@ -80,7 +92,7 @@
     withToken().then(function (t) {
       return fetch('/tools/website-check/run', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
-        body: JSON.stringify({ url: url, token: t, fresh: preview && $('check-fresh').checked })
+        body: JSON.stringify({ url: url, token: t, fresh: preview && $('check-fresh').checked, model: kind() || undefined })
       });
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, status: r.status, d: d }; });
@@ -151,6 +163,19 @@
     sec.hidden = !p;
     if (!p) return;
     $('pf-summary').textContent = p.summary;
+    // Which kind of business it was checked as, and a switch to the others (a re-run, or the demo again for a sample)
+    var pk = $('pf-kind'); pk.textContent = '';
+    var m = r.model || p.model;
+    if (m && KINDS[m]) {
+      var line = el('span'); line.appendChild(document.createTextNode('Checked as ')); line.appendChild(el('b', null, KINDS[m]));
+      line.appendChild(document.createTextNode((r.modelFrom || p.modelFrom) === 'chosen' ? ', as you chose.' : ', from what the page shows.'));
+      pk.appendChild(line); pk.appendChild(el('span', null, 'Not right?'));
+      Object.keys(KINDS).filter(function (k) { return k !== m; }).forEach(function (k) {
+        var b = el('button', null, { local: 'Check as local', national: 'Check as UK-wide', shop: 'Check as a shop' }[k]); b.type = 'button';
+        b.addEventListener('click', function () { recheck(r, k); });
+        pk.appendChild(b);
+      });
+    }
     var facts = $('pf-facts'); facts.textContent = '';
     function fact(k, v, sub) { var d = el('div'); d.appendChild(el('dt', null, k)); var dd = el('dd', null, v); if (sub) dd.appendChild(el('small', null, sub)); d.appendChild(dd); facts.appendChild(d); }
     fact('Business', p.kind || 'Not clear from the page', p.kindFrom === 'structured data' ? 'From your structured data' : p.kindFrom === 'Shopify' ? 'From your Shopify store' : p.kindFrom ? 'From the page' : 'No business type in the page code');
@@ -187,7 +212,7 @@
     // A visitor's path
     var STAGES = [
       ['Found', 'Google and AI assistants can find and read it', ['search', 'technical', 'ai']],
-      ['First look', 'Fast, fits the phone, says what and where', ['speed', 'mobile', 'first']],
+      ['First look', 'Fast, fits the phone, says what you do', ['speed', 'mobile', 'first']],
       ['Trust', 'Reviews and proof on the page', ['proof']],
       ['Get in touch', 'Easy to call, email or ask', ['contact']],
       ['Counted', 'Enquiries can be measured', ['measure']]
@@ -380,6 +405,15 @@
     var c = document.getElementById('contact'); if (c) c.scrollIntoView({ behavior: 'smooth' });
   }
 
+  function recheck(r, k) {
+    setKind(k);
+    track('website_check_switch_kind', { kind: k });
+    if (r.sample) { loadSample(k); return; }
+    if (!input.value.trim()) input.value = r.url || r.domain;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (form.requestSubmit) form.requestSubmit(); else go.click();
+  }
+
   function show(r, scroll) {
     current = r;
     (r.groups || []).forEach(function (g) { GROUP[g[0]] = g[1]; });
@@ -452,13 +486,15 @@
 
   // A demo website's report (Lewis's preview only)
   var sm = preview && location.search.match(/[?&]sample=([a-z0-9]+)/);
-  if (sm) {
+  function loadSample(k) {
+    if (!sm) return;
     say('Loading the demo…');
-    fetch('/tools/website-check/sample', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ variant: sm[1] }) })
+    fetch('/tools/website-check/sample', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ variant: sm[1], model: k || undefined }) })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) { if (!res.ok) throw new Error(res.d.error || 'The demo could not be loaded.'); say(''); show(res.d.report, 'jump'); })
       .catch(function (err) { say(err.message, true); });
   }
+  loadSample();
 
   // A saved report (the share link)
   var m = location.pathname.match(/^\/website-check\/r\/([a-f0-9]{32})\/?$/);

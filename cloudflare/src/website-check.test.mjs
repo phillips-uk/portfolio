@@ -5,7 +5,7 @@ import { analyse } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 import { webQuote, WEB_FIX, getPricing, quote, validate, humanMinutes } from './pricing.js';
 
-const run = (id) => analyse(findWebsiteDemo(id).input());
+const run = (id, model) => analyse({ ...findWebsiteDemo(id).input(), ...(model ? { model } : {}) });
 const ids = (list) => list.map((f) => f.id);
 
 for (const d of WEBSITE_DEMOS) {
@@ -28,10 +28,10 @@ for (const id of ['zoom-blocked', 'tap-targets', 'web-vitals']) assert.ok(ids(re
 
 // Rules version 3 (18 Nov 2026): UK-wide businesses, and review lines like "Rated 4.8 on Checkatrade"
 const national = run('national');
-assert.ok(ids(national.strengths).includes('where'), 'a UK-wide company is not asked for a town');
-assert.ok(!ids(national.weaknesses).includes('gbp-link') && ids(national.notes).includes('gbp-link'), 'a Maps link is only a note for a UK-wide company');
+assert.ok(!ids(national.weaknesses).includes('where'), 'a UK-wide company is not asked for a town');
+assert.ok(!ids([...national.weaknesses, ...national.notes]).includes('gbp-link'), 'a UK-wide company is not asked for a Maps link');
 assert.ok(ids(national.strengths).includes('local-schema'), 'Organization schema counts for a UK-wide company');
-assert.ok(ids(run('shop').notes).includes('gbp-link'), 'an online shop delivering across the UK gets the Maps link as a note');
+assert.ok(!ids([...run('shop').weaknesses, ...run('shop').notes]).includes('gbp-link'), 'an online shop is not asked for a Maps link');
 assert.ok(ids(relaunch.strengths).includes('proof'), '"Rated 4.8 on Checkatrade" counts as proof');
 assert.ok(ids(national.strengths).includes('proof'), '"Rated 4.6 on Capterra" counts as proof');
 assert.ok(ids(run('salon').weaknesses).includes('gbp-link'), 'a local salon with an address is still asked for its Maps link');
@@ -46,6 +46,29 @@ assert.equal(prof('shop').place, 'Suffolk', 'the title and heading are not joine
 assert.equal(prof('shop').platform, 'Shopify'); assert.equal(prof('salon').platform, 'Wix');
 assert.deepEqual(prof('clinic').firstScreen.cta, { text: 'Call 01353 000 333', kind: 'call' });
 assert.ok(prof('relaunch').google.title && prof('relaunch').google.description, 'Google preview has a title and description');
+
+// Rules version 5 (21 Nov 2026): three kinds of business, chosen or detected
+const kinds = Object.fromEntries(WEBSITE_DEMOS.map((d) => [d.id, run(d.id).model]));
+assert.deepEqual(kinds, { trades: 'local', salon: 'local', shop: 'shop', clinic: 'local', relaunch: 'local', restaurant: 'local', national: 'national' }, 'each demo is detected as the right kind');
+assert.equal(run('trades').modelFrom, 'detected');
+const tradesAsNational = run('trades', 'national');
+assert.equal(tradesAsNational.modelFrom, 'chosen');
+for (const id of ['where', 'gbp-link']) assert.ok(!ids([...tradesAsNational.weaknesses, ...tradesAsNational.notes]).includes(id), `a business that says it works UK-wide is not asked for ${id}`);
+assert.ok(!ids(tradesAsNational.weaknesses).some((id) => id === 'local-schema' && tradesAsNational.weaknesses.find((w) => w.id === id).title.includes('local')), 'no "local business details" ask for a UK-wide business');
+const nationalAsLocal = run('national', 'local');
+for (const id of ['where', 'gbp-link', 'local-schema']) assert.ok(ids(nationalAsLocal.weaknesses).includes(id), `a business that says it is local is asked for ${id}`);
+const shop = run('shop');
+assert.ok(ids(shop.weaknesses).includes('delivery-returns') && /returns/.test(shop.weaknesses.find((w) => w.id === 'delivery-returns').title) && !/delivery or/.test(shop.weaknesses.find((w) => w.id === 'delivery-returns').title), 'the shop links delivery but not returns');
+assert.ok(!ids([...run('clinic').weaknesses, ...run('clinic').strengths]).includes('delivery-returns'), 'delivery and returns only for shops');
+assert.equal(shop.profile.model, 'shop'); assert.equal(prof('national').summary, 'A company working across the UK, reached by a contact form.');
+for (const d of WEBSITE_DEMOS) for (const m of ['local', 'national', 'shop']) {
+  const r = run(d.id, m);
+  for (const f of [...r.strengths, ...r.weaknesses, ...r.notes]) {
+    assert.ok(!/undefined/.test(f.title + f.detail + f.why + f.start), `${d.id} as ${m}: ${f.id} reads cleanly`);
+    if (m !== 'local') assert.ok(!/Google Business Profile/.test(f.start) || f.id === 'gbp-link', `${d.id} as ${m}: ${f.id} doesn't send a non-local business to its Business Profile`);
+  }
+  for (const w of r.weaknesses) assert.ok(WEB_FIX[w.id], `${d.id} as ${m}: ${w.id} has a price`);
+}
 
 // Pricing (18 Nov 2026): every weakness a demo can raise is a priced job; same-kind findings are one job
 const pricing = await getPricing({});

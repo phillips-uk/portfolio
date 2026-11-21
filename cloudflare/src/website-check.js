@@ -4,7 +4,8 @@
 // Routes
 //   GET  /website-check                 the page (private preview until Lewis says go: tools-gate.js)
 //   GET  /website-check/r/<id>          the same page, showing a saved report (the share link)
-//   POST /tools/website-check/run       { url, token, fresh? } runs a check, or reuses the domain's last one
+//   POST /tools/website-check/run       { url, token, fresh?, model? } runs a check, or reuses the domain's last one
+//                                       (model: local | national | shop, the kind of business; detected when left out)
 //   GET  /tools/website-check/report/<id>
 //   POST /tools/website-check/sample    Lewis only: { variant } a report for a made-up demo website (website-demos.js)
 //   GET  /tools/website-check/demos     Lewis only: the demo websites, for /admin#demos/web
@@ -21,7 +22,7 @@
 //   tools/website-check/ip/<hash>/<day>.json   checks run from one connection that day (the IP is hashed, never stored)
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
-import { analyse, readPsi, GROUPS, RULES_VERSION } from './website-check-rules.js';
+import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS } from './website-check-rules.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, webQuote } from './pricing.js';
@@ -183,7 +184,7 @@ async function gather(env, url) {
 function publicReport(r) {
   return {
     id: r.id, domain: r.domain, url: r.url, finalUrl: r.finalUrl, checkedAt: r.checkedAt,
-    page: r.page, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
+    page: r.page, model: r.model || null, modelFrom: r.modelFrom || null, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
     speed: r.speed, groups: GROUPS,
   };
 }
@@ -209,6 +210,7 @@ async function run(request, env) {
   try { body = await request.json(); } catch { /* empty */ }
   const n = normaliseUrl(body.url);
   if (n.error) return jsonResponse({ error: n.error }, 400);
+  const model = MODELS[body.model] ? body.model : null;
   // Lewis's own preview is already signed in to /admin, so it skips the bot check; visitors always get it.
   if (!access.admin && !(await turnstileOk(env, request, body.token, 'website_check'))) {
     await countUse(env, TOOL, 'blocked', 'turnstile');
@@ -221,7 +223,9 @@ async function run(request, env) {
   // The same domain reuses its last result for a while (Lewis can ask for a fresh run from the preview).
   const last = await getJson(env, PREFIX + 'domain/' + n.domain + '.json');
   const wantFresh = !!(body.fresh && access.admin);
-  if (last && !wantFresh && Date.now() - Date.parse(last.checkedAt) < L.websiteCacheHours * 3600000) {
+  // A report reused for the same kind of business only: switching the kind re-runs the rules on a fresh fetch.
+  const sameKind = last && (!model || model === last.model);
+  if (last && sameKind && !wantFresh && Date.now() - Date.parse(last.checkedAt) < L.websiteCacheHours * 3600000) {
     const r = await getJson(env, PREFIX + 'reports/' + last.id + '.json');
     if (fresh(r) && r.rulesVersion === RULES_VERSION) { // a rules change re-runs the check
       // A reused report already has its Lead card from the run that made it, so it is only counted.
@@ -249,7 +253,7 @@ async function run(request, env) {
     return jsonResponse({ error: (err && err.userMessage) || 'Something went wrong while checking that site. Please try again.' }, 422);
   }
 
-  const result = analyse(input);
+  const result = analyse({ ...input, model });
   const id = crypto.randomUUID().replace(/-/g, '');
   const report = {
     id, domain: n.domain, url: n.url, finalUrl: input.finalUrl, checkedAt: new Date().toISOString(),
@@ -258,7 +262,7 @@ async function run(request, env) {
     preview: !!access.admin,
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report);
-  await put(env, PREFIX + 'domain/' + n.domain + '.json', { id, checkedAt: report.checkedAt });
+  await put(env, PREFIX + 'domain/' + n.domain + '.json', { id, checkedAt: report.checkedAt, model: result.model });
   const out = await priced(env, report);
   if (!access.admin) {
     // Every completed visitor check is a Lead card in /admin#prospects (tool-leads.js). Lewis's preview makes none.
@@ -294,7 +298,7 @@ export async function websiteCheck(request, url, env) {
     // A made-up site through the same rules a visitor's site goes through. Not saved, never counted.
     const demo = findWebsiteDemo(String(body.variant || ''));
     const input = demo.input();
-    const result = analyse(input);
+    const result = analyse({ ...input, model: MODELS[body.model] ? body.model : null });
     const report = {
       id: '0'.repeat(32), domain: new URL(input.finalUrl).hostname.replace(/^www\./, ''), url: input.url, finalUrl: input.finalUrl,
       checkedAt: new Date().toISOString(), rulesVersion: RULES_VERSION, ...result,

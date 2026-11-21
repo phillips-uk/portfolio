@@ -17,6 +17,19 @@
 .check-form button:hover { background: linear-gradient(180deg, var(--brand), var(--brand-hover)); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 2px 4px rgba(20, 25, 31, .2), 0 14px 26px -12px var(--brand-glow); }
 .check-form button:active { transform: scale(.97); transition-duration: var(--d1); }
 .check-form button:disabled { opacity: .45; cursor: default; transform: none; }
+.wc-kind { border: 0; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 640px; }
+.wc-kind legend { float: left; padding: 0; margin: 0 6px 0 0; font-size: 14px; color: var(--text-2); }
+.wc-kind legend span { color: var(--muted); }
+.wc-kind label { position: relative; cursor: pointer; }
+.wc-kind input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.wc-kind label span { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface); font-size: 14px; font-weight: 600; color: var(--text-2); transition: border-color var(--d1), color var(--d1), background var(--d1); }
+.wc-kind label:hover span { border-color: var(--text-2); }
+.wc-kind input:checked + span { border-color: var(--brand); color: var(--brand-text); background: var(--brand-wash); }
+.wc-kind input:focus-visible + span { box-shadow: 0 0 0 4px var(--brand-ring); }
+.adsr .pf-kind { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: calc(var(--s10) * -1 + 16px) 0 var(--s10); font-size: 14px; color: var(--ink-muted); }
+.adsr .pf-kind b { color: var(--ink-text); font-weight: 700; }
+.adsr .pf-kind button { font: inherit; font-size: 13px; font-weight: 700; min-height: 32px; padding: 0 12px; border-radius: var(--r-pill); border: 1px solid var(--ink-line); background: transparent; color: var(--ink-text); cursor: pointer; }
+.adsr .pf-kind button:hover { border-color: var(--brand-on-ink); color: var(--brand-on-ink); }
 .check-ts { flex-basis: 100%; }
 .check-ts:empty { display: none; }
 .check-status { min-height: 22px; margin: 12px 0 0; font-size: 14px; color: var(--muted); }

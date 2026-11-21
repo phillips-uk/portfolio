@@ -45,7 +45,7 @@ function page(s) {
     s.gbp === 'map' ? '<iframe src="https://www.google.com/maps/embed?pb=demo"></iframe>' : s.gbp ? '<p><a href="https://maps.app.goo.gl/demo123">Find us on Google Maps</a></p>' : '',
     '</section>',
   ].join('\n');
-  return [head, top, imgs, filler, proof, contact, '</main><footer>', `<p>&copy; ${esc(s.name)}</p>`, '</footer></body></html>'].join('\n');
+  return [head, top, imgs, filler, proof, contact, '</main><footer>', ...(s.footerLinks || []).map(([h, x]) => `<a href="${h}">${esc(x)}</a>`), `<p>&copy; ${esc(s.name)}</p>`, '</footer></body></html>'].join('\n');
 }
 
 // Google's speed scores in the shape readPsi() returns.
@@ -90,7 +90,7 @@ const SHOP = {
   domain: 'candles-demo.example', name: 'Demo Candle Co.', platform: 'shopify', ga4: 'gtm', og: true,
   title: 'Demo Candle Co. | Hand-poured soy candles, made in Suffolk', desc: 'Hand-poured soy candles, reed diffusers and gift sets. Free UK delivery over £40.',
   viewport: 'width=device-width, initial-scale=1', h1s: ['Hand-poured soy candles', 'Bestsellers'], intro: 'Made in small batches in Suffolk and sent all over the UK.',
-  topContact: ['/pages/contact', 'Contact'], email: 'hello@candles-demo.example', form: true,
+  topContact: ['/pages/contact', 'Contact'], email: 'hello@candles-demo.example', form: true, footerLinks: [['/policies/shipping-policy', 'Shipping'], ['/pages/faq', 'FAQ']],
   images: 24, altShare: 0.35, reviews: '"Beautiful scent and lovely packaging." 4.9 out of 5 from 1,200 reviews',
   schema: [{ '@context': 'https://schema.org', '@type': 'Organization', name: 'Demo Candle Co.', url: 'https://www.candles-demo.example/', aggregateRating: { '@type': 'AggregateRating', ratingValue: 4.9, reviewCount: 1200 } }],
   llms: false,
@@ -151,7 +151,7 @@ const SITES = { trades: TRADES, salon: SALON, shop: SHOP, clinic: CLINIC, relaun
 export const WEBSITE_DEMOS = [
   { id: 'trades', name: 'Local trade, old site', size: 'Small', model: 'Local service', build: 'Old', note: 'Built years ago and left: no phone layout, not tap-to-call, slow, no tracking, no sitemap.' },
   { id: 'salon', name: 'Salon on a website builder', size: 'Small', model: 'Local service', build: 'Template', note: 'Tidy, with booking at the top, but no reviews, no Maps link and no analytics.' },
-  { id: 'shop', name: 'Online shop on Shopify', size: 'Small', model: 'Online sales', build: 'Template', note: 'Reviews and tracking in place, but heavy apps make it slow; images lack text.' },
+  { id: 'shop', name: 'Online shop on Shopify', size: 'Small', model: 'Online sales', build: 'Template', note: 'Reviews and tracking in place, but heavy apps make it slow, images lack text and no returns policy is linked.' },
   { id: 'clinic', name: 'Clinic, built properly', size: 'Mid', model: 'Local service', build: 'Custom', note: 'Fast, clear and tracked, local details right. The report should lead with good news.' },
   { id: 'relaunch', name: 'Builder after a relaunch', size: 'Mid', model: 'Local service', build: 'Custom', note: 'Launch-day mistakes: still set to noindex, AI assistants blocked, broken schema, two phone numbers.' },
   { id: 'restaurant', name: 'Busy restaurant', size: 'Mid', model: 'Local service', build: 'Template', note: 'Map and reviews, but zoom is off, buttons are small and real visitors find it slow.' },

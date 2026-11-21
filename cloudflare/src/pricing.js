@@ -48,7 +48,7 @@ export const FIX_TYPES = {
 export const WEB_FIX = {
   'speed-mobile': 'web_speed', 'speed-desktop': 'web_speed', 'web-vitals': 'web_speed',
   viewport: 'web_mobile', 'zoom-blocked': 'web_mobile', 'tap-targets': 'web_mobile', 'font-size': 'web_mobile',
-  'what-you-do': 'web_first', where: 'web_first', 'contact-top': 'web_first',
+  'what-you-do': 'web_first', where: 'web_first', 'contact-top': 'web_first', 'delivery-returns': 'web_first',
   'contact-routes': 'web_contact', 'tap-to-call': 'web_contact', consistent: 'web_contact', 'gbp-link': 'web_contact',
   title: 'web_search', description: 'web_search', 'one-heading': 'web_search', 'alt-text': 'web_search', noindex: 'web_search',
   'local-schema': 'web_schema', 'schema-broken': 'web_schema',

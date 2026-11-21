@@ -5,9 +5,14 @@
 // A finding: { id, group, status: 'strength' | 'weakness' | 'note', priority: 'high' | 'medium' | 'low', title, detail,
 //              why, start, link: { href, label } }
 
-export const RULES_VERSION = 4; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
+export const RULES_VERSION = 5; // 2 (17 Nov 2026): quotes credited to a person count as reviews. 3 (18 Nov 2026): UK-wide
 // businesses aren't asked for a town, a Maps link or local business details; "Rated 4.8 on Checkatrade" counts as a review. 4
-// (18 Nov 2026): the report carries a profile of the site (siteProfile)
+// (18 Nov 2026): the report carries a profile of the site (siteProfile). 5 (21 Nov 2026): three kinds of business
+// (MODELS), chosen on the form or detected; local checks only for local businesses, delivery and returns for shops
+
+// What kind of business the check judges the site as (Lewis, 21 Nov 2026: not everyone who runs it is local). The visitor
+// can pick one on the form; otherwise it is detected from the page (detectModel) and the report offers a switch.
+export const MODELS = { local: 'a local business', national: 'a business working across the UK', shop: 'an online shop' };
 
 const LINKS = {
   web: { href: '/web-design/', label: 'Web design' },
@@ -210,13 +215,11 @@ const REACH = { 'a phone number': 'phone', 'an email address': 'email', 'a conta
 const typeWords = t => TYPE_WORDS[t] || t.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^(.)(.*)$/, (m, a, b) => a + b.toLowerCase());
 const list = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
 
-function siteProfile({ p, h1, nodes, types, local, foundPlace, wide, routes, contactTop, postcodes, finalUrl }) {
-  const platform = (PLATFORMS.find(([, re]) => re.test(p.raw)) || [null])[0];
-  const shopSigns = platform === 'Shopify' || types.some(t => /^(Product|Offer|OnlineStore)$/.test(t)) || /\badd to (?:cart|basket|bag)\b/i.test(p.text);
+function siteProfile({ p, h1, nodes, types, local, foundPlace, wide, routes, contactTop, postcodes, finalUrl, platform, shopSigns, model, modelFrom }) {
   const org = nodes.find(n => typesOf(n).some(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t)));
   let kind, kindFrom;
   if (local) { const t = typesOf(local).find(isLocalType); kind = typeWords(t); kindFrom = 'structured data'; }
-  else if (shopSigns) { kind = 'Online shop'; kindFrom = platform === 'Shopify' ? 'Shopify' : 'the page'; }
+  else if (shopSigns || model === 'shop') { kind = 'Online shop'; kindFrom = platform === 'Shopify' ? 'Shopify' : shopSigns ? 'the page' : 'your answer'; }
   else if (org) { kind = 'Company'; kindFrom = 'structured data'; }
   else { kind = null; kindFrom = null; }
   // A postcode alone reads better as the town written before it ("Ely CB7 4AA" gives "Ely").
@@ -230,7 +233,7 @@ function siteProfile({ p, h1, nodes, types, local, foundPlace, wide, routes, con
   const name = (local && local.name) || (org && org.name) || (/^(home|welcome|index|untitled|home page)$/i.test(fromTitle) ? '' : fromTitle) || null;
   return {
     summary: who + where + how,
-    kind, kindFrom, place, wide: !!wide, reach, platform, name: name ? String(name).slice(0, 60) : null,
+    kind, kindFrom, place, wide: !!wide, reach, platform, name: name ? String(name).slice(0, 60) : null, model, modelFrom,
     google: { title: p.title || null, description: p.description || null, url: finalUrl.host.replace(/^www\./, '') + (finalUrl.pathname === '/' ? '' : finalUrl.pathname.replace(/\/$/, '').split('/').join(' \u203a ')) },
     firstScreen: { h1: h1 || null, cta: contactTop ? { text: (contactTop.text || contactTop.href.replace(/^(tel|mailto):/i, '')).slice(0, 40), kind: /^tel:/i.test(contactTop.href) ? 'call' : /^mailto:/i.test(contactTop.href) ? 'email' : 'link' } : null },
   };
@@ -245,6 +248,47 @@ export function analyse(input) {
   const local = nodes.find(n => typesOf(n).some(isLocalType));
   const finalUrl = new URL(input.finalUrl || input.url);
   const textLower = p.text.toLowerCase();
+  const platform = (PLATFORMS.find(([, re]) => re.test(p.raw)) || [null])[0];
+  const shopSigns = platform === 'Shopify' || types.some(t => /^(Product|Offer|OnlineStore)$/.test(t)) || /\badd to (?:cart|basket|bag)\b/i.test(p.text);
+  const postcodes = [...new Set((p.text.match(POSTCODE_G) || []).map(s => s.replace(/\s+/g, ' ').toUpperCase()))];
+  const gbp = p.links.find(l => GBP_LINK.test(l.href)) || (/<iframe\b[^>]*google\.[a-z.]+\/maps/i.test(p.raw) ? { href: 'map' } : null);
+  const orgTypes = types.filter(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t));
+
+  // Where: a town or area near the top. Without a list of every place, look for the business's own locality from its
+  // structured data, a postcode, or "in <Place>" in the title, heading or description.
+  const localities = [];
+  for (const n of nodes) {
+    const addr = n.address && (Array.isArray(n.address) ? n.address : [n.address]);
+    if (addr) for (const a of addr) if (a && a.addressLocality) localities.push(String(a.addressLocality));
+    const area = n.areaServed && (Array.isArray(n.areaServed) ? n.areaServed : [n.areaServed]);
+    if (area) for (const a of area) { const name = typeof a === 'string' ? a : a && a.name; if (name) localities.push(String(name)); }
+  }
+  // Joined with a mark the place pattern can't cross, so a title ending "Suffolk" and a heading starting "Hand-poured"
+  // don't read as a place called "Suffolk Hand" (found by the demo websites, 18 Nov 2026).
+  const topBits = [p.title, p.h1s[0] || '', p.description, p.top.text].join(' \u00b7 ');
+  const foundPlace = localities.find(l => l.length > 2 && topBits.toLowerCase().includes(l.toLowerCase()))
+    || (topBits.match(/\b(?:in|across|around|near|serving|based in|covering)\s+((?:[A-Z][a-z]+)(?:[\s-](?:[A-Z][a-z]+|upon|on|under|in|le))*)/) || [])[1]
+    || (POSTCODE.test(p.top.text) ? 'a postcode' : null);
+  // A business that serves the whole country (an online shop, a national firm) says so instead of naming a town
+  // (found by the demo websites, 18 Nov 2026). Only when the page has no postcode, so a local firm with premises still
+  // gets asked for its town, its Maps link and its local business details.
+  const wide = !POSTCODE.test(p.text) && /\b(?:across|throughout|all over|around) the (?:uk|united kingdom|country)\b|\bnationwide\b|\buk[- ]wide\b|\buk delivery\b|\bdeliver(?:y|ed|ing)? (?:across|to|throughout) the uk\b|\b\d[\d,]* uk \w+/i.test(topBits);
+  const notPlaces = /^(The|Our|Your|Every|All|Business|Home|Stock|Store|Touch|Time|Style|Love|Need|Store|January|February|March|April|May|June|July|August|September|October|November|December)$/;
+  const place = foundPlace && !notPlaces.test(foundPlace.split(/\s/)[0]) ? foundPlace : null;
+  // The kind of business: the visitor's answer, else a shop's tell-tale signs, else a site that says it works across the
+  // UK (or names no place and describes itself as a company), else local, which keeps the local checks for the sites that
+  // most need them (an old trade site rarely has structured data).
+  const detected = shopSigns ? 'shop'
+    : (wide || (!local && !postcodes.length && !place && !gbp && orgTypes.length)) ? 'national' : 'local';
+  const model = MODELS[input.model] ? input.model : detected;
+  const modelFrom = MODELS[input.model] ? 'chosen' : 'detected';
+  const isLocal = model === 'local';
+  // The words that change with the kind of business: what a heading or title should say, and who is looking for proof.
+  const W = {
+    local: { say: 'what you do and where', title: 'your business name, what you do and where you work', who: 'a local business', proofWhy: 'People choosing a local business look for proof that others were happy before they get in touch.', proofStart: 'Ask recent customers for Google reviews and show a few on the page, with a link to read them all.', example: '“Plumber in Ely for boiler repairs and bathrooms”' },
+    national: { say: 'what you do and who it is for', title: 'your business name, what you do and who you help', who: 'a business like yours', proofWhy: 'Buyers look for proof, such as reviews, case studies or client names, before they get in touch.', proofStart: 'Add two or three short case studies or client quotes with names, and a rating from a review site if you have one.', example: '“Payroll software for care homes”' },
+    shop: { say: 'what you sell', title: 'your shop name and what you sell', who: 'products like yours', proofWhy: 'Shoppers look for reviews before they buy from a shop they don’t know.', proofStart: 'Show product reviews and an overall rating from a review service, with a link to read them all.', example: '“Hand-poured soy candles and gift sets”' },
+  }[model];
 
   // Speed (PageSpeed Insights, the same lab test Google's own tool runs, plus real visitors' data when Google has it)
   const m = input.psi && input.psi.mobile;
@@ -260,7 +304,7 @@ export function analyse(input) {
       const lcpNote = lcp != null ? ` The main content took about ${secs(lcp)} to appear on a phone${m.field && m.field.lcp != null ? ' for real visitors' : ' in the test'}.` : '';
       if (ms >= 90) add({ id: 'speed-mobile', group: 'speed', status: 'strength', priority: 'medium', title: 'Fast on a phone',
         detail: `Google’s speed test scores the page ${ms} out of 100 on a phone.${lcpNote}`,
-        why: 'Most local searches happen on a phone, and a fast page keeps people reading.', start: 'Keep new images and add-ons light so it stays this way.', link: LINKS.web });
+        why: isLocal ? 'Most local searches happen on a phone, and a fast page keeps people reading.' : 'Most visitors arrive on a phone, and a fast page keeps people reading.', start: 'Keep new images and add-ons light so it stays this way.', link: LINKS.web });
       else add({ id: 'speed-mobile', group: 'speed', status: 'weakness', priority: ms < 50 ? 'high' : 'medium',
         title: ms < 50 ? 'Slow on a phone' : 'Could be faster on a phone',
         detail: `Google’s speed test scores the page ${ms} out of 100 on a phone (90 or more is good).${lcpNote}`,
@@ -308,36 +352,15 @@ export function analyse(input) {
   // First impression: what you do, where, and how to get in touch, near the top
   const h1 = p.h1s[0] || '';
   if (!h1) add({ id: 'what-you-do', group: 'first', status: 'weakness', priority: 'high', title: 'No main heading saying what you do',
-    detail: 'The page has no main heading (H1).', why: 'Visitors and search engines both look for one clear line that says what the business does.', start: 'Add one heading at the top that says what you do and where, in the words customers search for.', link: LINKS.seo });
+    detail: 'The page has no main heading (H1).', why: 'Visitors and search engines both look for one clear line that says what the business does.', start: `Add one heading at the top that says ${W.say}, in the words customers search for.`, link: LINKS.seo });
   else if (h1.split(/\s+/).length < 3) add({ id: 'what-you-do', group: 'first', status: 'weakness', priority: 'medium', title: 'The main heading doesn’t say much',
-    detail: `The main heading is “${h1.slice(0, 80)}”.`, why: 'A heading of one or two words rarely tells a new visitor what you do.', start: 'Rewrite it to say what you do and where, for example “Plumber in Ely for boiler repairs and bathrooms”.', link: LINKS.seo });
+    detail: `The main heading is “${h1.slice(0, 80)}”.`, why: 'A heading of one or two words rarely tells a new visitor what you do.', start: `Rewrite it to say ${W.say}, for example ${W.example}.`, link: LINKS.seo });
   else add({ id: 'what-you-do', group: 'first', status: 'strength', priority: 'medium', title: 'A clear main heading',
     detail: `The main heading reads “${h1.slice(0, 100)}”.`, why: 'Visitors see straight away what the page is about.', start: 'Check it uses the words your customers would search for.', link: LINKS.seo });
 
-  // Where: a town or area near the top. Without a list of every place, look for the business's own locality from its
-  // structured data, a postcode, or "in <Place>" in the title, heading or description.
-  const localities = [];
-  for (const n of nodes) {
-    const addr = n.address && (Array.isArray(n.address) ? n.address : [n.address]);
-    if (addr) for (const a of addr) if (a && a.addressLocality) localities.push(String(a.addressLocality));
-    const area = n.areaServed && (Array.isArray(n.areaServed) ? n.areaServed : [n.areaServed]);
-    if (area) for (const a of area) { const name = typeof a === 'string' ? a : a && a.name; if (name) localities.push(String(name)); }
-  }
-  // Joined with a mark the place pattern can't cross, so a title ending "Suffolk" and a heading starting "Hand-poured"
-  // don't read as a place called "Suffolk Hand" (found by the demo websites, 18 Nov 2026).
-  const topBits = [p.title, h1, p.description, p.top.text].join(' \u00b7 ');
-  const foundPlace = localities.find(l => l.length > 2 && topBits.toLowerCase().includes(l.toLowerCase()))
-    || (topBits.match(/\b(?:in|across|around|near|serving|based in|covering)\s+((?:[A-Z][a-z]+)(?:[\s-](?:[A-Z][a-z]+|upon|on|under|in|le))*)/) || [])[1]
-    || (POSTCODE.test(p.top.text) ? 'a postcode' : null);
-  // A business that serves the whole country (an online shop, a national firm) says so instead of naming a town
-  // (found by the demo websites, 18 Nov 2026). Only when the page has no postcode, so a local firm with premises still
-  // gets asked for its town, its Maps link and its local business details.
-  const wide = !POSTCODE.test(p.text) && /\b(?:across|throughout|all over|around) the (?:uk|united kingdom|country)\b|\bnationwide\b|\buk[- ]wide\b|\buk delivery\b|\bdeliver(?:y|ed|ing)? (?:across|to|throughout) the uk\b|\b\d[\d,]* uk \w+/i.test(topBits);
-  const notPlaces = /^(The|Our|Your|Every|All|Business|Home|Stock|Store|Touch|Time|Style|Love|Need|Store|January|February|March|April|May|June|July|August|September|October|November|December)$/;
-  if (foundPlace && !notPlaces.test(foundPlace.split(/\s/)[0])) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says where you work',
+  if (!isLocal) { /* a place, a postcode or none: not judged for a UK-wide business or a shop */ }
+  else if (place) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says where you work',
     detail: foundPlace === 'a postcode' ? 'Near the top of the page I found a postcode.' : `Near the top of the page I found “${foundPlace}”.`, why: 'Local customers, Google and AI assistants all look for the place before they trust a local business.', start: 'Keep the town or area in the page title and main heading.', link: LINKS.seo });
-  else if (wide) add({ id: 'where', group: 'first', status: 'strength', priority: 'medium', title: 'Says you work across the UK',
-    detail: 'The top of the page says you serve the whole country, so no town is needed.', why: 'Visitors and Google can tell straight away that you serve them wherever they are.', start: 'If you also have premises customers visit, name the town as well.', link: LINKS.seo });
   else add({ id: 'where', group: 'first', status: 'weakness', priority: 'high', title: 'Doesn’t say where you work near the top',
     detail: 'I couldn’t find a town, area or postcode in the page title, main heading, description or opening lines.',
     why: 'People search for a service plus a place, and a page that never names the place is hard to match to those searches.', start: 'Name your town and the area you cover in the title, the main heading and the first paragraph.', link: LINKS.seo });
@@ -355,7 +378,6 @@ export function analyse(input) {
   const phones = [...new Set([...telLinks, ...textPhones])];
   const mailtos = p.links.filter(l => /^mailto:/i.test(l.href));
   const emails = [...new Set([...(p.text.match(EMAIL_G) || []), ...mailtos.map(l => l.href.slice(7).split('?')[0])].map(e => e.toLowerCase()).filter(e => !/\.(png|jpe?g|gif|webp|svg)$/.test(e) && !/sentry|wixpress|example\./.test(e)))];
-  const postcodes = [...new Set((p.text.match(POSTCODE_G) || []).map(s => s.replace(/\s+/g, ' ').toUpperCase()))];
   const contactForm = p.forms.find(f => /type\s*=\s*["']?(email|tel)|<textarea/i.test(f));
   const routes = [phones.length && 'a phone number', (emails.length || mailtos.length) && 'an email address', contactForm && 'a contact form'].filter(Boolean);
   if (routes.length) add({ id: 'contact-routes', group: 'contact', status: 'strength', priority: 'high', title: 'Contact details on the page',
@@ -365,34 +387,36 @@ export function analyse(input) {
   if (phones.length && !telLinks.length) add({ id: 'tap-to-call', group: 'contact', status: 'weakness', priority: 'medium', title: 'The phone number isn’t tap-to-call',
     detail: 'The number is written on the page but isn’t a link.', why: 'On a phone, one tap to call is the easiest enquiry there is, and a link can be counted in Google Analytics.', start: 'Wrap the number in a tel: link.', link: LINKS.web });
   if (postcodes.length) add({ id: 'address', group: 'contact', status: 'strength', priority: 'low', title: 'An address on the page',
-    detail: `I found the postcode ${postcodes[0]}${postcodes.length > 1 ? ` and ${postcodes.length - 1} more` : ''}.`, why: 'An address helps Google tie the site to the place, and reassures customers you are real.', start: 'Make sure it matches your Google Business Profile exactly.', link: LINKS.seo });
-  else add({ id: 'address', group: 'contact', status: 'note', priority: 'low', title: 'No address on the page',
+    detail: `I found the postcode ${postcodes[0]}${postcodes.length > 1 ? ` and ${postcodes.length - 1} more` : ''}.`,
+    why: isLocal ? 'An address helps Google tie the site to the place, and reassures customers you are real.' : 'It reassures visitors there is a real business behind the site.',
+    start: isLocal ? 'Make sure it matches your Google Business Profile exactly.' : 'Nothing to do here.', link: LINKS.seo });
+  else if (model === 'shop') add({ id: 'address', group: 'contact', status: 'note', priority: 'low', title: 'No business address on this page',
+    detail: 'I couldn’t find a postcode on the page.', why: 'If you sell online to UK consumers, you must give your business address before they order, and shoppers look for one before buying from a shop they don’t know.',
+    start: 'Make sure your full address is on your contact page or in your terms, and link to it from the footer.', link: LINKS.web });
+  else if (isLocal) add({ id: 'address', group: 'contact', status: 'note', priority: 'low', title: 'No address on the page',
     detail: 'I couldn’t find a postcode on the page.', why: 'If customers visit you, an address helps. If you go to them, naming the area you cover is enough.', start: 'If you have premises, add the full address to the footer, written the same way as on your Google Business Profile.', link: LINKS.seo });
   const schemaPhones = [...new Set(nodes.map(n => n.telephone).filter(Boolean).map(normPhone).filter(isPhoneLike))];
   const mismatch = schemaPhones.filter(sp => phones.length && !phones.includes(sp));
   if (mismatch.length) add({ id: 'consistent', group: 'contact', status: 'weakness', priority: 'medium', title: 'The phone number in the page code differs from the one on the page',
-    detail: 'The structured data (the business details written for search engines) has a different phone number from the one visitors see.', why: 'Google and AI assistants trust a business more when its details match everywhere.', start: 'Use one number and update it in the structured data, the page and your Google Business Profile.', link: LINKS.seo });
+    detail: 'The structured data (the business details written for search engines) has a different phone number from the one visitors see.', why: 'Google and AI assistants trust a business more when its details match everywhere.', start: isLocal ? 'Use one number and update it in the structured data, the page and your Google Business Profile.' : 'Use one number and update it in the structured data and on the page.', link: LINKS.seo });
   else if (telLinks.length > 2) add({ id: 'consistent', group: 'contact', status: 'note', priority: 'low', title: `${telLinks.length} different phone numbers`,
     detail: `The page links to ${telLinks.length} different phone numbers.`, why: 'That can be right (an office and a mobile), but too many can confuse customers and search engines.', start: 'Check each one is meant to be there.', link: LINKS.seo });
-  const gbp = p.links.find(l => GBP_LINK.test(l.href)) || (/<iframe\b[^>]*google\.[a-z.]+\/maps/i.test(p.raw) ? { href: 'map' } : null);
-  if (gbp) add({ id: 'gbp-link', group: 'contact', status: 'strength', priority: 'medium', title: 'Links to Google Maps or your Business Profile',
+  if (gbp) add({ id: 'gbp-link', group: 'contact', status: 'strength', priority: isLocal ? 'medium' : 'low', title: 'Links to Google Maps or your Business Profile',
     detail: gbp.href === 'map' ? 'The page has a Google map.' : 'The page links to your Google Maps listing or Business Profile.', why: 'It connects the website and the profile, and makes reviews and directions one tap away.', start: 'Make sure the link opens your own profile.', link: LINKS.seo });
-  else if (wide) add({ id: 'gbp-link', group: 'contact', status: 'note', priority: 'low', title: 'No link to a Google Business Profile',
-    detail: 'I couldn’t find a link to Google Maps or a Google Business Profile.', why: 'A profile matters most to businesses customers visit or that serve one area. For a business that works across the UK it is optional.', start: 'If you have a profile, link it from the footer so Google connects the two.', link: LINKS.seo });
-  else add({ id: 'gbp-link', group: 'contact', status: 'weakness', priority: 'medium', title: 'No link to your Google Business Profile',
+  else if (isLocal) add({ id: 'gbp-link', group: 'contact', status: 'weakness', priority: 'medium', title: 'No link to your Google Business Profile',
     detail: 'I couldn’t find a link to Google Maps or a Google Business Profile.', why: 'The profile is what shows in the map results for local searches. Linking both ways helps Google connect them, and sends customers to your reviews.', start: 'Link to your profile from the footer or contact section. If you don’t have one yet, set it up first.', link: LINKS.seo });
 
   // Search basics: title, description, one heading, structured data, indexing
   const tl = p.title.length;
   if (!tl) add({ id: 'title', group: 'search', status: 'weakness', priority: 'high', title: 'No page title',
-    detail: 'The page has no title.', why: 'The title is the blue headline in Google’s results; without one Google makes one up.', start: 'Write a title of about 50 to 60 characters: what you do, where, and your name.', link: LINKS.seo });
+    detail: 'The page has no title.', why: 'The title is the blue headline in Google’s results; without one Google makes one up.', start: `Write a title of about 50 to 60 characters: ${W.title}.`, link: LINKS.seo });
   else if (tl < 15 || tl > 65) add({ id: 'title', group: 'search', status: 'weakness', priority: 'medium', title: tl < 15 ? 'The page title is very short' : 'The page title is long',
-    detail: `The title is “${p.title.slice(0, 120)}” (${tl} characters).`, why: tl < 15 ? 'A short title wastes the space that tells searchers what you do.' : 'Google cuts titles off at around 60 characters, so the end may not show.', start: 'Aim for about 50 to 60 characters: what you do, where, and your name.', link: LINKS.seo });
+    detail: `The title is “${p.title.slice(0, 120)}” (${tl} characters).`, why: tl < 15 ? 'A short title wastes the space that tells searchers what you do.' : 'Google cuts titles off at around 60 characters, so the end may not show.', start: `Aim for about 50 to 60 characters: ${W.title}.`, link: LINKS.seo });
   else add({ id: 'title', group: 'search', status: 'strength', priority: 'medium', title: 'A page title of a good length',
-    detail: `“${p.title}” (${tl} characters).`, why: 'It fits in Google’s results without being cut off.', start: 'Check it names what you do and where.', link: LINKS.seo });
+    detail: `“${p.title}” (${tl} characters).`, why: 'It fits in Google’s results without being cut off.', start: `Check it names ${W.say}.`, link: LINKS.seo });
   const dl = p.description.length;
   if (!dl) add({ id: 'description', group: 'search', status: 'weakness', priority: 'medium', title: 'No meta description',
-    detail: 'The page has no description for search results.', why: 'Google may show a random bit of the page under your title instead of a line that makes people click.', start: 'Write one or two sentences (up to about 155 characters) on what you do, where and why to choose you.', link: LINKS.seo });
+    detail: 'The page has no description for search results.', why: 'Google may show a random bit of the page under your title instead of a line that makes people click.', start: `Write one or two sentences (up to about 155 characters) on ${W.say} and why to choose you.`, link: LINKS.seo });
   else if (dl < 50 || dl > 170) add({ id: 'description', group: 'search', status: 'weakness', priority: 'low', title: dl < 50 ? 'The meta description is short' : 'The meta description is long',
     detail: `It is ${dl} characters.`, why: dl < 50 ? 'There is room to say more about why someone should click.' : 'Google cuts it off at around 155 characters.', start: 'Aim for about 120 to 155 characters.', link: LINKS.seo });
   else add({ id: 'description', group: 'search', status: 'strength', priority: 'low', title: 'A meta description of a good length',
@@ -400,22 +424,22 @@ export function analyse(input) {
   if (p.h1s.length > 1) add({ id: 'one-heading', group: 'search', status: 'weakness', priority: 'low', title: `${p.h1s.length} main headings`,
     detail: `The page has ${p.h1s.length} H1 headings.`, why: 'One main heading makes the page’s subject clear to search engines and screen readers.', start: 'Keep one H1 and make the others H2.', link: LINKS.seo });
 
-  if (local) {
+  if (local && isLocal) {
     const missing = ['name', 'address', 'telephone', 'url'].filter(k => !local[k]);
     add({ id: 'local-schema', group: 'search', status: missing.length > 1 ? 'weakness' : 'strength', priority: 'medium',
       title: missing.length > 1 ? 'Business details for search engines are incomplete' : 'Business details written for search engines',
       detail: `The page describes the business as ${typesOf(local).join(', ')} in structured data` + (missing.length ? `, without ${missing.join(', ').replace(/, ([^,]*)$/, ' or $1')}.` : '.'),
       why: 'Structured data tells Google and AI assistants your name, area and contact details in a form they read reliably.',
       start: missing.length ? 'Add the missing details to the LocalBusiness structured data.' : 'Keep it matching your Google Business Profile.', link: LINKS.seo });
-  } else if (wide && types.some(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t))) add({ id: 'local-schema', group: 'search', status: 'strength', priority: 'medium',
+  } else if (!isLocal && (orgTypes.length || local)) add({ id: 'local-schema', group: 'search', status: 'strength', priority: 'medium',
     title: 'Business details written for search engines',
-    detail: `The page describes the business as ${[...new Set(types)].filter(t => /^(Organization|Corporation|OnlineStore|OnlineBusiness)$/.test(t)).join(', ')} in structured data, which suits a business that works across the UK.`,
+    detail: `The page describes the business as ${[...new Set(orgTypes.length ? orgTypes : typesOf(local))].join(', ')} in structured data.`,
     why: 'Structured data tells Google and AI assistants your name and details in a form they read reliably.', start: 'Add your logo, contact details and social profiles to it if they aren’t there yet.', link: LINKS.seo });
-  else if (wide) add({ id: 'local-schema', group: 'search', status: 'weakness', priority: 'low',
+  else if (!isLocal) add({ id: 'local-schema', group: 'search', status: 'weakness', priority: 'low',
     title: 'No business details for search engines',
     detail: types.length ? `The page has structured data (${[...new Set(types)].slice(0, 4).join(', ')}) but nothing describing the business itself.` : 'The page has no structured data.',
     why: 'Organization structured data tells Google and AI assistants your name, logo and contact details in a form they read reliably.',
-    start: 'Add Organization structured data with your name, logo, website and contact details.', link: LINKS.seo });
+    start: model === 'shop' ? 'Add Organization (or OnlineStore) structured data with your name, logo, website and contact details.' : 'Add Organization structured data with your name, logo, website and contact details.', link: LINKS.seo });
   else add({ id: 'local-schema', group: 'search', status: 'weakness', priority: 'medium',
     title: 'No local business details for search engines',
     detail: types.length ? `The page has structured data (${[...new Set(types)].slice(0, 4).join(', ')}) but nothing marking it as a local business.` : 'The page has no structured data.',
@@ -452,9 +476,9 @@ export function analyse(input) {
   const blockedSearch = AI_SEARCH_BOTS.filter(b => robotsBlocks(input.robots, b));
   const blockedTraining = AI_TRAINING_BOTS.filter(b => robotsBlocks(input.robots, b));
   if (blockedSearch.length) add({ id: 'ai-search-bots', group: 'ai', status: 'weakness', priority: 'medium', title: 'Some AI assistants are blocked from reading the site',
-    detail: `robots.txt blocks ${blockedSearch.join(', ')}, which fetch pages to answer people’s questions.`, why: 'Customers who ask ChatGPT, Perplexity or Claude for a local business can’t be shown yours if the assistant can’t read it.', start: 'Allow these crawlers in robots.txt (check your host or Cloudflare settings, which sometimes block them for you).', link: LINKS.seo });
+    detail: `robots.txt blocks ${blockedSearch.join(', ')}, which fetch pages to answer people’s questions.`, why: `Customers who ask ChatGPT, Perplexity or Claude about ${W.who} can’t be shown yours if the assistant can’t read it.`, start: 'Allow these crawlers in robots.txt (check your host or Cloudflare settings, which sometimes block them for you).', link: LINKS.seo });
   else add({ id: 'ai-search-bots', group: 'ai', status: 'strength', priority: 'medium', title: 'AI assistants can read the site',
-    detail: 'robots.txt doesn’t block the crawlers that ChatGPT, Perplexity and Claude use to answer questions.', why: 'Your pages can be read and cited when someone asks an assistant for a business like yours.', start: 'Nothing to do here.', link: LINKS.seo });
+    detail: 'robots.txt doesn’t block the crawlers that ChatGPT, Perplexity and Claude use to answer questions.', why: `Your pages can be read and cited when someone asks an assistant about ${W.who}.`, start: 'Nothing to do here.', link: LINKS.seo });
   if (blockedTraining.length) add({ id: 'ai-training-bots', group: 'ai', status: 'note', priority: 'low', title: 'AI training crawlers are blocked',
     detail: `robots.txt blocks ${blockedTraining.join(', ')}, which collect pages to train AI models.`, why: 'That is a reasonable choice and doesn’t stop the assistants above from reading the site to answer questions.', start: 'No change needed unless you want your pages used for training.', link: LINKS.seo });
   if (input.llms) add({ id: 'llms-txt', group: 'ai', status: 'strength', priority: 'low', title: 'An llms.txt file',
@@ -476,6 +500,18 @@ export function analyse(input) {
   if (!measurable.length && routes.length) add({ id: 'measurable', group: 'measure', status: 'weakness', priority: 'low', title: 'Enquiries can’t be counted from this page',
     detail: 'The contact details are plain text rather than a form or links.', why: 'Analytics can count a form sent or a link tapped, but not someone copying a number.', start: 'Use a contact form and tel: and mailto: links.', link: LINKS.systems });
 
+  // Online shops: delivery and returns, the two things shoppers check before they buy (a link or a mention on the page)
+  if (model === 'shop') {
+    const said = re => p.links.some(l => re.test(l.text) || re.test(l.href)) || re.test(p.text);
+    const delivery = said(/\b(deliver(?:y|ies)|shipping|postage)\b/i), returns = said(/\b(returns?|refunds?|exchanges?)\b/i);
+    const missing = [!delivery && 'delivery', !returns && 'returns'].filter(Boolean);
+    if (!missing.length) add({ id: 'delivery-returns', group: 'proof', status: 'strength', priority: 'medium', title: 'Delivery and returns information',
+      detail: 'The page links to or mentions both delivery and returns.', why: 'Shoppers check delivery costs and the returns policy before they buy.', start: 'Keep the costs and timescales up to date.', link: LINKS.web });
+    else add({ id: 'delivery-returns', group: 'proof', status: 'weakness', priority: 'medium', title: `No ${missing.join(' or ')} information on the page`,
+      detail: `I couldn’t find a link to, or a mention of, ${missing.join(' or ')} information.`, why: 'Shoppers check delivery costs and the returns policy before they buy, and many leave a shop that hides them.',
+      start: 'Link your delivery and returns pages from the footer, and mention free delivery or easy returns near the top if you offer them.', link: LINKS.web });
+  }
+
   // Reviews and proof
   const ratingSchema = nodes.some(n => n.aggregateRating || typesOf(n).includes('Review') || typesOf(n).includes('AggregateRating'));
   const cited = p.raw.match(QUOTE_CITE);
@@ -484,9 +520,9 @@ export function analyse(input) {
     || (p.raw.match(REVIEW_CLASS) ? 'a testimonials or reviews block' : null);
   if (ratingSchema || reviewSign) add({ id: 'proof', group: 'proof', status: 'strength', priority: 'medium', title: 'Reviews or proof on the page',
     detail: ratingSchema ? 'The page shows ratings or reviews, marked up for search engines.' : `I found signs of reviews or testimonials (“${String(reviewSign).slice(0, 40)}”).`,
-    why: 'New customers look for proof that others were happy.', start: 'Keep them recent, and link to where people can read more.', link: LINKS.seo });
+    why: model === 'shop' ? 'Shoppers trust a shop more when they can see others were happy.' : 'New customers look for proof that others were happy.', start: 'Keep them recent, and link to where people can read more.', link: LINKS.seo });
   else add({ id: 'proof', group: 'proof', status: 'weakness', priority: 'medium', title: 'No reviews or testimonials on the page',
-    detail: 'I couldn’t find reviews, testimonials, star ratings or a review service on the page.', why: 'People choosing a local business look for proof that others were happy before they get in touch.', start: 'Ask recent customers for Google reviews and show a few on the page, with a link to read them all.', link: LINKS.seo });
+    detail: 'I couldn’t find reviews, testimonials, star ratings or a review service on the page.', why: W.proofWhy, start: W.proofStart, link: LINKS.seo });
 
   const order = { high: 0, medium: 1, low: 2 };
   const strengths = out.filter(f => f.status === 'strength');
@@ -495,7 +531,8 @@ export function analyse(input) {
   return {
     rulesVersion: RULES_VERSION,
     page: { title: p.title, h1, lang: p.lang || null },
-    profile: siteProfile({ p, h1, nodes, types, local, foundPlace, wide, routes, contactTop, postcodes, finalUrl }),
+    model, modelFrom, detected,
+    profile: siteProfile({ p, h1, nodes, types, local, foundPlace: place || (foundPlace === 'a postcode' ? foundPlace : null), wide: wide || (model === 'national' && !place), routes, contactTop, postcodes, finalUrl, platform, shopSigns, model, modelFrom }),
     strengths, weaknesses, notes,
     counts: { strengths: strengths.length, weaknesses: weaknesses.length, high: weaknesses.filter(w => w.priority === 'high').length },
   };

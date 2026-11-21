@@ -11,7 +11,7 @@
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
 <link rel="stylesheet" href="/agency.css?v=24">
 <link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/tools.css?v=21">
+<link rel="stylesheet" href="/tools.css?v=22">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/website-check/">
@@ -110,6 +110,12 @@
       <button type="submit" id="check-go">Check my website</button>
       <div class="check-ts" id="check-ts"></div>
     </form>
+    <fieldset class="wc-kind" id="wc-kind">
+      <legend>Your customers <span>(optional)</span></legend>
+      <label><input type="radio" name="kind" value="local"><span>Local customers</span></label>
+      <label><input type="radio" name="kind" value="national"><span>Customers across the UK</span></label>
+      <label><input type="radio" name="kind" value="shop"><span>Online shoppers</span></label>
+    </fieldset>
     <label class="fresh-opt" id="fresh-opt" hidden><input type="checkbox" id="check-fresh"> Run it fresh (preview only: skips the 24-hour reuse)</label>
     <p class="check-status" id="check-status" role="status" aria-live="polite"></p>
     <ol class="progress" id="progress" hidden>
@@ -127,9 +133,9 @@
        <div><b>Your website</b><small>Speed on a phone: 92 out of 100</small></div>
      </div>
      <ul class="wc-ex-list">
-       <li class="ok">Says what you do and where</li>
+       <li class="ok">Says what you do</li>
        <li class="ok">Tap-to-call at the top</li>
-       <li class="no">No link to your Google profile</li>
+       <li class="no">No reviews on the page</li>
        <li class="ok">AI assistants can read it</li>
      </ul>
    </figure>
@@ -160,6 +166,7 @@
       <span class="eyebrow pf-eyebrow">How I read your site</span>
       <h3 class="pf-h" id="pf-summary"></h3>
       <dl class="pf-facts" id="pf-facts"></dl>
+      <div class="pf-kind" id="pf-kind"></div>
       <div class="wr-views">
         <figure class="wr-view">
           <figcaption>How you look in Google</figcaption>
@@ -267,7 +274,7 @@
       <li><b>Speed</b><span>Google's PageSpeed test on a phone and a computer, and real visitors' Core Web Vitals when Google has them.</span></li>
       <li><b>Phones</b><span>The page fits the screen, text is readable and buttons are easy to tap.</span></li>
       <li><b>First impression</b><span>A clear heading that says what you do and where, and a way to get in touch near the top.</span></li>
-      <li><b>Contact details</b><span>Phone, email and address, written the same everywhere, and a link to your Google Business Profile.</span></li>
+      <li><b>Contact details</b><span>Phone, email and address, written the same everywhere, and for local businesses a link to your Google Business Profile.</span></li>
       <li><b>Search basics</b><span>Page title and description, one main heading and LocalBusiness structured data.</span></li>
       <li><b>Technical</b><span>https, robots.txt and a sitemap.</span></li>
       <li><b>AI search</b><span>Whether ChatGPT, Perplexity and Claude can read the site, and whether it has an llms.txt.</span></li>
@@ -345,7 +352,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-website-check.js?v=8" defer></script>
+<script src="/tool-website-check.js?v=9" defer></script>
 <script src="/motion.js?v=5" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>
