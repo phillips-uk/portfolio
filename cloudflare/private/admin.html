@@ -1106,13 +1106,31 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
     </section>
 
     <!-- Rate card links -->
-    <!-- Products: Phillips. marketing service tools only (Search Desk). Other Phillips Group businesses stay in the admin switcher. -->
+    <!-- Products: the products Phillips. builds and runs (Lewis, 22 Nov 2026: Index Point added), in the group order. Each
+         card wears the product's own tile (the same marks as the admin switcher and the product's site). -->
     <section data-pane="products" hidden>
-      <div class="page-head"><div><h1>Products <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-3" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-3" hidden>The tools Phillips. builds for its marketing services. Each one has its own sign-in.</p></div></div>
+      <div class="page-head"><div><h1>Products <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-3" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-3" hidden>The products Phillips. builds and runs. Each one has its own sign-in.</p></div></div>
       <div class="prods">
         <article class="card prod">
           <div class="prod-top">
-            <svg class="prod-tile" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#985830"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round"><circle cx="106" cy="106" r="44"/><path d="M139 139l37 37"/></g></svg>
+            <svg class="prod-tile" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#1D6A72"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 104V172"/><path d="M88 104H130C142.15 104 152 113.85 152 126C152 138.15 142.15 148 130 148H88"/><path d="M88 68L88 68"/></g></svg>
+            <div><h2>Index Point</h2><div class="where">indexpoint.uk</div></div>
+            <span class="pill good">Live</span>
+          </div>
+          <p>UK company data API built from public records: payment practices, filed accounts, groups, charges, insolvency, vehicle operator licences, public contracts and trade. Company data only, never people.</p>
+          <div class="prod-acts">
+            <a class="btn primary" href="https://indexpoint.uk/" target="_blank" rel="noopener">Open Index Point</a>
+            <a class="btn" href="https://indexpoint.uk/admin" target="_blank" rel="noopener">Admin</a>
+          </div>
+          <div class="prod-more">
+            <a href="https://indexpoint.uk/docs/" target="_blank" rel="noopener">API docs</a>
+            <a href="https://indexpoint.uk/tools/" target="_blank" rel="noopener">Tools</a>
+            <a href="obsidian://open?vault=My%20Brain&amp;file=04_Projects%2FIndex%20Point%2F00_Overview">Notes in Obsidian</a>
+          </div>
+        </article>
+        <article class="card prod">
+          <div class="prod-top">
+            <svg class="prod-tile" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#2A5185"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M152 84A16 16 0 0 0 136 68H120A26 26 0 0 0 120 120A26 26 0 0 1 120 172H104A16 16 0 0 1 88 156"/></g></svg>
             <div><h2>Search Desk</h2><div class="where">phillips-uk.com/desk</div></div>
             <span class="pill good">Live</span>
           </div>
