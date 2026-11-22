@@ -1,0 +1,31 @@
+/* footer.css: the group footer, loaded by every page that has one (after the page's own stylesheet, which carries the
+   tokens). */
+/* Footer: the group template (vault 00_Footer Template - Group Sites.md, 22 Nov 2026). Brand and up to three link
+   columns, the group line, one bottom line with Powered by Phillips., then the legal line. No email address. */
+.gf { background: var(--ink); color: var(--ink-text); font-size: 14px; }
+.gf a { color: inherit; text-decoration: none; transition: color var(--d2); }
+.gf a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.gf-in { max-width: 1200px; margin: 0 auto; padding: 72px 32px 0; }
+.gf-top { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr); gap: 48px; padding-bottom: 56px; }
+.gf-brand img { height: 26px; width: auto; display: block; }
+.gf-brand p { margin: 16px 0 0; font-size: 16px; line-height: 1.5; color: #fff; opacity: .86; max-width: 300px; }
+.gf-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.gf-cols h4 { margin: 0 0 14px; font: 500 11px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); }
+.gf-cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.gf-group { border-top: 1px solid var(--ink-line); padding: 22px 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 22px; }
+.gf-group .k { font: 500 11px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); margin-right: 4px; }
+.gf-group b { color: #fff; font-weight: 700; }
+.gf-base { border-top: 1px solid var(--ink-line); padding: 20px 0 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 12.5px; color: var(--ink-muted); }
+.gf-base .l a { margin-left: 14px; }
+.gf-pb { white-space: nowrap; }
+.gf-legal { margin: 0; padding-bottom: 36px; max-width: 760px; font-size: 12px; line-height: 1.6; color: var(--ink-muted); opacity: .85; }
+@media (max-width: 1024px) {
+  .gf-top { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+}
+@media (max-width: 760px) {
+  .gf-in { padding: 48px 20px 0; }
+  .gf-top { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-bottom: 36px; }
+  .gf-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
+  .gf-base > span { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .gf-base .l a { margin-left: 0; margin-right: 14px; }
+}

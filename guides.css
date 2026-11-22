@@ -195,8 +195,6 @@ h1, h2, h3, h4, .faq-btn, button { font-family: var(--display); }
 .code-block { border-radius: var(--r-nest) !important; box-shadow: var(--e2); }
 .code-block pre, .code-block code { font-family: var(--mono); }
 
-/* the footer: ink */
-.site-footer { background: var(--ink) !important; border-top: 1px solid var(--ink-line); }
 
 /* FAQ: the brand plus turns as it opens */
 .faq-q { font-weight: 700; letter-spacing: -0.015em; }
@@ -217,5 +215,3 @@ h1, h2, h3, h4, .faq-btn, button { font-family: var(--display); }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
 
 /* Footer tagline (brand line, 2026-11-17) */
-.site-footer .footer-left { flex-wrap: wrap; row-gap: 8px; }
-.site-footer .footer-tagline { color: var(--ink-text); }
