@@ -351,6 +351,35 @@ export function areaScores(r) {
   });
 }
 
+// ---------- before and after (v3 item 1, 22 Nov 2026) ----------
+// A short record of a check, kept with the domain for a year so the next check of the same site can say what changed.
+// No page content, only scores and which checks passed.
+export function snapshot(r) {
+  return {
+    id: r.id, checkedAt: r.checkedAt, model: r.model || null, rulesVersion: r.rulesVersion,
+    areas: areaScores(r).map(a => ({ id: a.id, score: a.score })),
+    weak: Object.fromEntries((r.weaknesses || []).map(f => [f.id, f.title])),
+    strong: (r.strengths || []).map(f => f.id),
+  };
+}
+
+// What changed since the last check of the same site, judged as the same kind of business. Fixed: was a fix, now passes
+// (or no longer comes up). New: passed last time, now a fix. A check added since then counts as neither. Scores are only
+// compared when the rules were the same, since new checks move them.
+export function compareChecks(prev, r) {
+  if (!prev || !prev.checkedAt || prev.id === r.id || (prev.model || null) !== (r.model || null)) return null;
+  const nowWeak = new Map((r.weaknesses || []).map(f => [f.id, f.title]));
+  // A fix shows as what passes now ("The canonical tag points to this page"), or the old problem when it no longer comes up
+  const nowStrong = new Map((r.strengths || []).map(f => [f.id, f.title]));
+  const fixed = Object.entries(prev.weak || {}).filter(([id]) => !nowWeak.has(id)).map(([id, title]) => ({ id, title: nowStrong.get(id) || title, was: title }));
+  const added = [...nowWeak].filter(([id]) => (prev.strong || []).includes(id)).map(([id, title]) => ({ id, title }));
+  const still = Object.keys(prev.weak || {}).filter(id => nowWeak.has(id)).length;
+  const sameRules = prev.rulesVersion === r.rulesVersion;
+  const now = Object.fromEntries(areaScores(r).map(a => [a.id, a.score]));
+  const areas = sameRules ? (prev.areas || []).map(a => ({ id: a.id, before: a.score, after: now[a.id] ?? null })).filter(a => a.before != null && a.after != null) : [];
+  return { checkedAt: prev.checkedAt, sameRules, fixed, added, still, areas };
+}
+
 // ---------- the site scan (rules v7, Website Check v2 step 3) ----------
 // Up to 25 pages: the home page, then pages its links lead to (the menu first) and pages from the sitemap. gather()
 // fetches them; pageFacts() keeps what the site-wide rules need, so the report never holds whole pages.

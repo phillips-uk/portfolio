@@ -1,7 +1,7 @@
 // Website Check rules, tested on the demo websites (website-demos.js, the same ones in /admin#demos/web).
 //   node cloudflare/src/website-check.test.mjs
 import assert from 'node:assert/strict';
-import { analyse, readPsi, savingWords, robotsAllows, internalUrl, pageKey, areaScores, AREAS } from './website-check-rules.js';
+import { analyse, readPsi, savingWords, robotsAllows, internalUrl, pageKey, areaScores, AREAS, snapshot, compareChecks } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 import { webQuote, WEB_FIX, getPricing, quote, validate, humanMinutes } from './pricing.js';
 
@@ -164,5 +164,26 @@ for (const d of WEBSITE_DEMOS) {
 assert.ok(areaScores(withSpeed('clinic')).every((x) => x.score === null || x.score >= 94), 'the clinic scores high everywhere');
 assert.equal(areaScores(withSpeed('trades')).find((x) => x.id === 'speed').score, 24, 'speed is Google’s phone score');
 assert.equal(areaScores(withSpeed('relaunch')).find((x) => x.id === 'seo').score, 33, 'two fix-firsts and two smaller ones: 100 - 25 - 25 - 12 - 5');
+
+// v3 item 1 (22 Nov 2026): before and after
+const before = { ...withSpeed('trades'), id: 'a'.repeat(32), checkedAt: '2026-11-01T10:00:00Z' };
+const snap = snapshot(before);
+assert.ok(!JSON.stringify(snap).includes('<'), 'the snapshot holds no page content');
+const fixedIds = ['viewport', 'analytics'];
+const after = { ...before, id: 'b'.repeat(32), checkedAt: '2026-11-22T10:00:00Z',
+  weaknesses: [...before.weaknesses.filter((w) => !fixedIds.includes(w.id))],
+  strengths: [...before.strengths.filter((f) => f.id !== 'contact-top'), ...before.weaknesses.filter((w) => fixedIds.includes(w.id)).map((w) => ({ ...w, status: 'strength' }))] };
+after.weaknesses.push({ ...before.strengths.find((f) => f.id === 'contact-top'), status: 'weakness', priority: 'high' });
+const cmp = compareChecks(snap, after);
+assert.deepEqual(cmp.fixed.map((f) => f.id).sort(), [...fixedIds].sort(), 'two fixes done');
+assert.deepEqual(cmp.added.map((f) => f.id), ['contact-top'], 'one new problem, which passed before');
+assert.equal(cmp.still, before.weaknesses.length - 2, 'the rest still to do');
+assert.ok(cmp.sameRules && cmp.areas.find((a) => a.id === 'technical').after > cmp.areas.find((a) => a.id === 'technical').before, 'Technical went up after adding analytics');
+assert.equal(compareChecks(snap, { ...after, model: 'shop' }), null, 'a different kind of business is not compared');
+assert.equal(compareChecks(snap, before), null, 'a report is not compared with itself');
+const older = compareChecks({ ...snap, rulesVersion: 1 }, after);
+assert.ok(!older.sameRules && older.areas.length === 0 && older.fixed.length === 2, 'older rules: fixes listed, scores not compared');
+const newCheck = compareChecks({ ...snap, strong: snap.strong.filter((id) => id !== 'contact-top') }, after);
+assert.equal(newCheck.added.length, 0, 'a check that wasn’t there before is not called new');
 
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

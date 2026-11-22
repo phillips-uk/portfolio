@@ -18,12 +18,14 @@
 // Storage: R2 (BLOBS), not D1. The tool needs a few small counters and one JSON report per check, the same shape as the
 // contact form's rate limit, so R2 avoids a new database. Keys:
 //   tools/website-check/reports/<id>.json      the report, served for 30 days, then deleted by the weekly clean-up
-//   tools/website-check/domain/<domain>.json   the domain's latest report id (reused for websiteCacheHours)
+//   tools/website-check/domain/<domain>.json   the domain's latest report id (reused for websiteCacheHours), and a short
+//                                              record of its last check per kind of business (scores and which checks
+//                                              passed, no page content) for the next check's before and after; kept a year
 //   tools/website-check/ip/<hash>/<day>.json   checks run from one connection that day (the IP is hashed, never stored)
 //   tools/website-check/day/<day>.json         checks run by every visitor that day (the daily ceiling)
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
-import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS, internalUrl, pageKey, robotsAllows, pageFacts, areaScores, areaOf } from './website-check-rules.js';
+import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS, internalUrl, pageKey, robotsAllows, pageFacts, areaScores, areaOf, snapshot, compareChecks } from './website-check-rules.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, webQuote } from './pricing.js';
@@ -285,7 +287,7 @@ async function gather(env, url) {
 function publicReport(r) {
   return {
     id: r.id, domain: r.domain, url: r.url, finalUrl: r.finalUrl, checkedAt: r.checkedAt,
-    page: r.page, scan: r.scan || null, model: r.model || null, modelFrom: r.modelFrom || null, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
+    page: r.page, scan: r.scan || null, compare: r.compare || null, model: r.model || null, modelFrom: r.modelFrom || null, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
     speed: r.speed, groups: GROUPS,
     // Area scores and each finding's area (v2 step 4), worked out when shown so older reports have them too
     areas: areaScores(r), areaOf: Object.fromEntries([...(r.strengths || []), ...(r.weaknesses || []), ...(r.notes || [])].map(f => [f.id, areaOf(f)])),
@@ -325,7 +327,9 @@ async function run(request, env) {
 
   // The same domain reuses its last result for a while (Lewis can ask for a fresh run from the preview).
   const last = await getJson(env, PREFIX + 'domain/' + n.domain + '.json');
-  const wantFresh = !!(body.fresh && access.admin);
+  // A fresh check (the report's "Check again"): Lewis any time, visitors once the last one is an hour old, so someone
+  // who has just fixed things can see the difference the same day. It still counts towards the daily limits.
+  const wantFresh = !!(body.fresh && (access.admin || (last && Date.now() - Date.parse(last.checkedAt) > 3600000)));
   // A report reused for the same kind of business only: switching the kind re-runs the rules on a fresh fetch.
   const sameKind = last && (!model || model === last.model);
   if (last && sameKind && !wantFresh && Date.now() - Date.parse(last.checkedAt) < L.websiteCacheHours * 3600000) {
@@ -375,8 +379,11 @@ async function run(request, env) {
     speed: { mobile: input.psi.mobile && pick(input.psi.mobile), desktop: input.psi.desktop && pick(input.psi.desktop) },
     preview: !!access.admin,
   };
+  // Before and after: the last check of this site as the same kind of business (v3 item 1)
+  const snaps = (last && last.snaps) || {};
+  report.compare = compareChecks(snaps[result.model], report);
   await put(env, PREFIX + 'reports/' + id + '.json', report);
-  await put(env, PREFIX + 'domain/' + n.domain + '.json', { id, checkedAt: report.checkedAt, model: result.model });
+  await put(env, PREFIX + 'domain/' + n.domain + '.json', { id, checkedAt: report.checkedAt, model: result.model, snaps: { ...snaps, [result.model]: snapshot(report) } });
   const out = await priced(env, report);
   if (!access.admin) {
     // Every completed visitor check is a Lead card in /admin#prospects (tool-leads.js). Lewis's preview makes none.
@@ -452,13 +459,14 @@ export async function websiteCheck(request, url, env) {
 export async function cleanupWebsiteChecks(env) {
   const cutoff = Date.now() - REPORT_DAYS * 86400000;
   const dayCutoff = londonDay(new Date(Date.now() - 2 * 86400000));
+  const yearAgo = Date.now() - 400 * 86400000; // domain records hold the before and after, so they stay about a year
   for (const prefix of ['reports/', 'ip/', 'domain/', 'day/']) {
     let cursor;
     do {
       const page = await env.BLOBS.list({ prefix: PREFIX + prefix, cursor });
       const old = page.objects.filter(o => {
         if (prefix === 'ip/') return (o.key.match(/(\d{4}-\d{2}-\d{2})\.json$/) || [])[1] < dayCutoff;
-        return new Date(o.uploaded).getTime() < cutoff;
+        return new Date(o.uploaded).getTime() < (prefix === 'domain/' ? yearAgo : cutoff);
       }).map(o => o.key);
       if (old.length) await env.BLOBS.delete(old);
       cursor = page.truncated ? page.cursor : undefined;

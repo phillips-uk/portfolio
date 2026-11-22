@@ -81,6 +81,7 @@
 
   function say(msg, err) { status.textContent = msg || ''; status.className = 'check-status' + (err ? ' err' : ''); }
 
+  var askFresh = false; // set by the report's "Check again" (v3 item 1)
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var url = input.value.trim();
@@ -92,7 +93,7 @@
     withToken().then(function (t) {
       return fetch('/tools/website-check/run', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
-        body: JSON.stringify({ url: url, token: t, fresh: preview && $('check-fresh').checked, model: kind() || undefined })
+        body: JSON.stringify({ url: url, token: t, fresh: (preview && $('check-fresh').checked) || askFresh || undefined, model: kind() || undefined })
       });
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, status: r.status, d: d }; });
@@ -101,13 +102,14 @@
         track('website_check_error', { error_type: res.status === 429 ? 'limit' : res.status === 422 ? 'unreachable' : 'other' });
         throw new Error(res.d.error || 'Something went wrong. Please try again.');
       }
-      say(res.d.reused ? 'This site was checked in the last 24 hours, so here is that report.' : '');
+      say(res.d.reused ? (askFresh ? 'This site was checked less than an hour ago, so here is that report. You can check again after an hour.' : 'This site was checked in the last 24 hours, so here is that report.') : '');
       track('website_check_complete', { check_result: res.d.reused ? 'reused' : 'new', weaknesses: res.d.report.counts.weaknesses });
       show(res.d.report, true);
     }).catch(function (err) {
       say(err.message === 'ts' ? 'Please tick the box to show you’re not a bot, then press Check again.' : err.message, true);
     }).then(function () {
       go.disabled = false;
+      askFresh = false;
       progress(false);
       token = '';
       if (widget !== null && window.turnstile) turnstile.reset(widget);
@@ -445,11 +447,11 @@
   function areas(r) {
     var box = $('rep-areas'); box.textContent = '';
     (r.areas || []).forEach(function (a) {
-      var b = el('button', 'tile ar'); b.type = 'button';
+      var b = el('button', 'tile ar'); b.type = 'button'; b.setAttribute('data-area', a.id);
       b.appendChild(el('small', null, a.label));
       b.appendChild(el('b', null, a.score == null ? 'n/a' : String(a.score)));
       var bar = el('i'); bar.style.setProperty('--v', (a.score || 0) + '%'); bar.setAttribute('aria-hidden', 'true'); b.appendChild(bar);
-      b.appendChild(el('span', null, a.fixes ? a.fixes + ' to fix' : 'No fixes found'));
+      b.appendChild(el('span', null, a.fixes ? a.fixes + ' to fix' : a.score == null ? 'Not measured' : 'No fixes found'));
       b.setAttribute('aria-label', a.label + ': ' + (a.score == null ? 'not scored' : a.score + ' out of 100') + ', ' + (a.fixes ? a.fixes + ' to fix' : 'no fixes found'));
       b.addEventListener('click', function () { jumpTo(a.id); track('website_check_area', { area: a.id }); });
       box.appendChild(b);
@@ -484,12 +486,47 @@
     $('sec-weak').hidden = !weak.length;
   }
 
+  // Before and after (v3 item 1): what changed since this site was last checked as the same kind of business
+  function compare(r) {
+    var c = r.compare, box = $('rep-compare'); box.textContent = '';
+    $('rep-fresh').hidden = !!r.sample;
+    box.hidden = !c;
+    if (!c) return;
+    var head = el('div', 'cmp-h');
+    head.appendChild(el('span', 'cmp-k', 'Since the last check on ' + DATE.format(new Date(c.checkedAt))));
+    var parts = [];
+    parts.push(c.fixed.length ? c.fixed.length + ' fixed' : 'Nothing fixed yet');
+    if (c.added.length) parts.push(c.added.length + ' new');
+    if (c.still) parts.push(c.still + ' still to do');
+    head.appendChild(el('b', null, parts.join(' · ')));
+    box.appendChild(head);
+    if (c.fixed.length || c.added.length) {
+      var d = el('details', 'rp-more-info'); d.appendChild(el('summary', null, 'See what changed'));
+      var ul = el('ul', 'cmp-list');
+      c.fixed.forEach(function (f) { var li = el('li', 'fixed'); li.appendChild(el('i', null, '✓')); li.appendChild(document.createTextNode(f.title)); ul.appendChild(li); });
+      c.added.forEach(function (f) { var li = el('li', 'new'); li.appendChild(el('i', null, '!')); li.appendChild(document.createTextNode(f.title)); ul.appendChild(li); });
+      d.appendChild(ul); box.appendChild(d);
+    }
+    if (!c.sameRules) box.appendChild(el('p', 'cmp-note', 'I’ve added checks since then, so the scores aren’t compared.'));
+    // Score changes on the area tiles
+    (c.areas || []).forEach(function (a) {
+      var diff = a.after - a.before;
+      var tileEl = document.querySelector('#rep-areas .ar[data-area="' + a.id + '"] b');
+      if (!tileEl || !diff) return;
+      var t = el('em', 'ar-d', (diff > 0 ? '+' : '−') + Math.abs(diff));
+      t.setAttribute('aria-label', (diff > 0 ? 'up ' : 'down ') + Math.abs(diff) + ' points since the last check');
+      t.title = (diff > 0 ? 'Up ' : 'Down ') + Math.abs(diff) + ' points since the last check';
+      tileEl.appendChild(t);
+    });
+  }
+
   function show(r, scroll) {
     current = r;
     (r.groups || []).forEach(function (g) { GROUP[g[0]] = g[1]; });
     $('rep-domain').textContent = r.domain;
     $('rep-meta').textContent = (r.sample ? 'Demo website, made up · ' : '') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + (r.page && r.page.title ? ' · “' + r.page.title.slice(0, 80) + '”' : '');
     areas(r);
+    compare(r);
     profile(r);
     speed(r);
     var strong = r.strengths || [];
@@ -527,6 +564,16 @@
     var b = this;
     (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { b.textContent = 'Link copied'; }, function () { b.textContent = link; });
     setTimeout(function () { b.textContent = 'Copy the link'; }, 2500);
+  });
+  // A fresh check of the same site as the same kind of business, so the report can show what changed.
+  $('rep-fresh').addEventListener('click', function () {
+    if (!current || current.sample) return;
+    if (current.model && current.modelFrom === 'chosen') setKind(current.model);
+    input.value = current.url || current.domain;
+    askFresh = true;
+    track('website_check_again');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (form.requestSubmit) form.requestSubmit(); else go.click();
   });
   $('rep-again').addEventListener('click', function () {
     history.replaceState(null, '', '/website-check/');

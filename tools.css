@@ -85,6 +85,18 @@
 .areas .ar i::before { content: ""; display: block; height: 100%; width: var(--v, 0%); background: var(--brand); border-radius: 2px; }
 .areas .ar span { display: block; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
 .areas-note { margin-top: 14px; }
+/* Before and after (v3 item 1): ink only, the change shown as a signed number */
+.areas .ar b .ar-d { font: 600 13px/1 var(--mono); letter-spacing: 0; color: var(--brand-text); font-style: normal; margin-left: 8px; vertical-align: 6px; }
+.rep-compare { margin-top: 18px; padding: 16px 18px; border-radius: var(--r-md); background: var(--brand-wash); border: 1px solid var(--brand-line); }
+.rep-compare .cmp-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.rep-compare .cmp-k { font: 500 11px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); }
+.rep-compare .cmp-h b { font-size: 16px; font-weight: 800; }
+.rep-compare details { margin-top: 8px; }
+.rep-compare .cmp-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; }
+.rep-compare .cmp-list li { display: flex; gap: 10px; align-items: baseline; }
+.rep-compare .cmp-list i { font-style: normal; font-weight: 800; width: 14px; flex: none; color: var(--brand-text); }
+.rep-compare .cmp-list li.new i { color: var(--text); }
+.rep-compare .cmp-note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
 .area-rest { display: grid; gap: 10px; margin-top: 28px; }
 .area-rest > details { border-top: 1px solid var(--line); padding-top: 10px; }
 .area-rest > details > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 10px; font-weight: 800; font-size: 16px; padding: 6px 0; }
