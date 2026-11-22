@@ -28,6 +28,18 @@
   "r2_buckets": [
     { "binding": "BLOBS", "bucket_name": "phillips-blobs" }
   ],
+  // Accounts (vault 01_Phillips/04_Products/Accounts Plan.md, 22 Nov 2026): accounts, sign-in links, saved checks and the
+  // monthly email count. Western Europe, since it holds UK visitors' details. Tables: cloudflare/migrations/accounts/.
+  "d1_databases": [
+    { "binding": "ACCOUNTS_DB", "database_name": "phillips-accounts", "database_id": "68a0782f-ef40-4f61-826a-5397dcfa60f3", "migrations_dir": "cloudflare/migrations/accounts" }
+  ],
+  // EMAIL: account emails (sign-in links, report emails) through Cloudflare Email Sending. phillips-uk.com onboarded
+  // 22 Nov 2026 with its records on cf-bounce.phillips-uk.com only (the root's Google Workspace MX, SPF and DMARC are
+  // untouched). Only this sender. Workers Paid includes 3,000 a month across the account (Search Desk shares it), then
+  // $0.35 per 1,000, so accounts.js stops at 2,000 a month (Lewis, 22 Nov 2026: no charges). Locally nothing is sent.
+  "send_email": [
+    { "name": "EMAIL", "allowed_sender_addresses": ["contact@phillips-uk.com"] }
+  ],
   "queues": {
     "producers": [{ "binding": "JOBS", "queue": "phillips-jobs" }],
     "consumers": [{ "queue": "phillips-jobs", "max_batch_size": 1, "max_batch_timeout": 1, "max_retries": 0 }]

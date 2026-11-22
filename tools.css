@@ -657,3 +657,46 @@
 }
 /* Website Check area scores on phones: two columns (after the 900px rule, so it wins) */
 @media (max-width: 560px) { .areas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .areas .ar { padding: 14px 14px 12px; } }
+
+/* Accounts (Accounts Plan step 1, 22 Nov 2026): a centred sign-in card, then the saved checks */
+.acct { padding: 72px 0 96px; }
+.acct-card { max-width: 520px; margin: 0 auto; text-align: center; border-radius: var(--r-lg, 20px); padding: 40px 32px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--e2); }
+.acct-card .eyebrow { display: block; }
+.acct-h { font-size: clamp(28px, 3.4vw, 38px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 10px 0 12px; }
+.acct-lede { color: var(--text-2); font-size: 16px; line-height: 1.55; margin: 0 auto 28px; max-width: 380px; }
+.acct-google { display: grid; justify-items: center; gap: 18px; margin-bottom: 18px; }
+.acct-or { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.acct-form { margin: 0 auto; justify-content: center; }
+.acct-form input[type="email"] { flex: 1 1 260px; min-width: 0; font: inherit; font-size: 16px; min-height: 52px; padding: 0 18px; border-radius: var(--r-pill); border: 1px solid var(--line-2); background: var(--surface); color: var(--text); box-shadow: var(--field-shadow); }
+.acct-form input[type="email"]:focus { outline: none; border-color: var(--brand); box-shadow: var(--field-shadow), 0 0 0 4px var(--brand-ring); }
+.acct-form button { flex: 1 1 auto; }
+.acct-card .check-status { margin-top: 14px; min-height: 1.4em; }
+.acct-more { margin-top: 18px; }
+.acct-more summary { cursor: pointer; list-style: none; display: inline-flex; gap: 6px; font-size: 14px; font-weight: 700; color: var(--brand-text); }
+.acct-more summary::-webkit-details-marker { display: none; }
+.acct-more summary::after { content: "+"; }
+.acct-more[open] summary::after { content: "\2212"; }
+.acct-more p { text-align: left; font-size: 14px; line-height: 1.55; color: var(--text-2); margin: 10px 0 0; }
+.acct-actions { display: flex; justify-content: center; margin-top: 8px; }
+.acct-home { max-width: 960px; margin: 0 auto; }
+.acct-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 28px; }
+.acct-who { color: var(--muted); margin: 0; font-size: 14px; }
+.acct-empty { text-align: center; padding: 40px 24px; border-radius: var(--r-md); border: 1px dashed var(--line-2); color: var(--text-2); }
+.acct-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.acct-item { border-radius: var(--r-md); padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--e1); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 24px; align-items: center; }
+.acct-link { text-decoration: none; color: var(--text); min-width: 0; }
+.acct-link b { display: block; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; word-break: break-all; }
+.acct-link span { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; }
+.acct-link:hover b { color: var(--brand-text); }
+.acct-scores { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(52px, auto)); gap: 4px 14px; }
+.acct-scores li { text-align: left; }
+.acct-scores small { display: block; font: 500 9.5px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.acct-scores b { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) {
+  .acct { padding: 40px 0 64px; }
+  .acct-card { padding: 32px 20px; }
+  .acct-item { grid-template-columns: minmax(0, 1fr); }
+  .acct-scores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .acct-scores small { white-space: normal; }
+}
+

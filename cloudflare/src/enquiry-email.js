@@ -86,13 +86,13 @@ function visitorLinks(s, color) {
 function brandBlock(b) {
   if (b.logo) {
     return `<img src="${esc(b.logo.src)}" width="${b.logo.width}" height="${b.logo.height}" alt="${esc(b.name)}" style="display:block;border:0;outline:none;height:auto;max-width:100%">` +
-      `<p style="margin:10px 0 0;font-family:${FONT};font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${b.headerMuted}">Website contact form</p>`;
+      `<p style="margin:10px 0 0;font-family:${FONT};font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${b.headerMuted}">${esc(b.label || 'Website contact form')}</p>`;
   }
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td style="vertical-align:middle"><img src="${esc(b.tile)}" width="40" height="40" alt="" style="display:block;border:0;outline:none;border-radius:10px"></td>` +
     `<td style="vertical-align:middle;padding-left:12px;font-family:${FONT}">` +
     `<p style="margin:0;font-size:17px;font-weight:800;letter-spacing:-.01em;color:${b.headerText}">${esc(b.name)}</p>` +
-    `<p style="margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${b.headerMuted}">Website contact form</p>` +
+    `<p style="margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${b.headerMuted}">${esc(b.label || 'Website contact form')}</p>` +
     `</td></tr></table>`;
 }
 

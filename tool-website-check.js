@@ -104,6 +104,7 @@
       }
       say(res.d.reused ? (askFresh ? 'This site was checked less than an hour ago, so here is that report. You can check again after an hour.' : 'This site was checked in the last 24 hours, so here is that report.') : '');
       track('website_check_complete', { check_result: res.d.reused ? 'reused' : 'new', weaknesses: res.d.report.counts.weaknesses });
+      acct = res.d.account || null;
       show(res.d.report, true);
     }).catch(function (err) {
       say(err.message === 'ts' ? 'Please tick the box to show you’re not a bot, then press Check again.' : err.message, true);
@@ -486,6 +487,25 @@
     $('sec-weak').hidden = !weak.length;
   }
 
+  // Accounts (Accounts Plan step 1): a signed-in visitor's checks are kept automatically; a report opened from a link can
+  // be saved; while signed out, the button goes to the account page and comes back here. Hidden while accounts are off.
+  var acct = null;
+  function saveUi(r) {
+    var b = $('rep-save');
+    b.hidden = !acct || !!r.sample;
+    if (b.hidden) return;
+    b.disabled = false;
+    if (!acct.signedIn) { b.textContent = 'Sign in to save'; b.onclick = function () { location.href = '/account/?next=' + encodeURIComponent('/website-check/r/' + r.id); }; return; }
+    if (acct.saved) { b.textContent = 'Saved to your account'; b.onclick = function () { location.href = '/account/'; }; return; }
+    b.textContent = 'Save to my account';
+    b.onclick = function () {
+      b.disabled = true;
+      fetch('/account/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ id: r.id }) })
+        .then(function (x) { return x.json().then(function (d) { if (!x.ok) throw new Error(d.error); }); })
+        .then(function () { acct.saved = true; track('website_check_saved'); saveUi(r); }, function (e) { b.disabled = false; say(e.message || 'That didn’t save. Please try again.', true); });
+    };
+  }
+
   // Before and after (v3 item 1): what changed since this site was last checked as the same kind of business
   function compare(r) {
     var c = r.compare, box = $('rep-compare'); box.textContent = '';
@@ -527,6 +547,7 @@
     $('rep-meta').textContent = (r.sample ? 'Demo website, made up · ' : '') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + (r.page && r.page.title ? ' · “' + r.page.title.slice(0, 80) + '”' : '');
     areas(r);
     compare(r);
+    saveUi(r);
     profile(r);
     speed(r);
     var strong = r.strengths || [];
@@ -613,7 +634,7 @@
   if (m) {
     say('Loading the report…');
     fetch('/tools/website-check/report/' + m[1], { credentials: 'same-origin' }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-      .then(function (res) { if (!res.ok) throw new Error(res.d.error || 'That report could not be loaded.'); say(''); show(res.d.report, 'jump'); })
+      .then(function (res) { if (!res.ok) throw new Error(res.d.error || 'That report could not be loaded.'); say(''); acct = res.d.account || null; show(res.d.report, 'jump'); })
       .catch(function (err) { say(err.message, true); });
   }
 })();

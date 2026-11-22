@@ -23,6 +23,7 @@
 //                                              passed, no page content) for the next check's before and after; kept a year
 //   tools/website-check/ip/<hash>/<day>.json   checks run from one connection that day (the IP is hashed, never stored)
 //   tools/website-check/day/<day>.json         checks run by every visitor that day (the daily ceiling)
+//   tools/website-check/kept/<id>.json         a report kept with an account (accounts.js): not deleted after 30 days
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
 import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS, internalUrl, pageKey, robotsAllows, pageFacts, areaScores, areaOf, snapshot, compareChecks } from './website-check-rules.js';
@@ -30,6 +31,7 @@ import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, gua
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, webQuote } from './pricing.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
+import { currentAccount, saveCheck, accountsOn } from './accounts.js';
 
 const PREFIX = 'tools/website-check/';
 const REPORT_DAYS = 30;
@@ -337,7 +339,7 @@ async function run(request, env) {
     if (fresh(r) && r.rulesVersion === RULES_VERSION) { // a rules change re-runs the check
       // A reused report already has its Lead card from the run that made it, so it is only counted.
       if (!access.admin) await countUse(env, TOOL, 'reused');
-      return jsonResponse({ report: await priced(env, r), reused: true });
+      return jsonResponse({ report: await priced(env, r), reused: true, account: await keepForAccount(request, env, r.id) });
     }
   }
 
@@ -395,14 +397,44 @@ async function run(request, env) {
       total: out.quote && out.quote.total,
     });
   }
-  return jsonResponse({ report: out, reused: false });
+  return jsonResponse({ report: out, reused: false, account: await keepForAccount(request, env, id) });
 }
 
 const pick = s => ({ performance: s.performance, accessibility: s.accessibility ?? null, bestPractices: s.bestPractices ?? null, seo: s.seo ?? null, lcp: s.lcp, cls: s.cls, tbt: s.tbt, field: s.field });
 
 async function reportById(env, id) {
   const r = await getJson(env, PREFIX + 'reports/' + id + '.json');
-  return fresh(r) ? r : null;
+  if (fresh(r)) return r;
+  return getJson(env, PREFIX + 'kept/' + id + '.json'); // kept with an account, for as long as the account exists
+}
+
+// Keeps a report with an account (accounts.js): a copy outside the 30-day clean-up, and the line the dashboard lists.
+export async function keepWebsiteReport(env, id) {
+  const r = await reportById(env, id);
+  if (!r) return null;
+  await put(env, PREFIX + 'kept/' + id + '.json', r);
+  return { id, tool: 'website', domain: r.domain, model: r.model || null, checkedAt: r.checkedAt,
+    scores: areaScores(r).map(a => ({ id: a.id, score: a.score })), fixes: (r.weaknesses || []).length };
+}
+
+// What the report page needs to show its Save button: accounts on, signed in, and whether this report is kept.
+async function accountState(request, env, id) {
+  if (!(await accountsOn(request, env))) return null;
+  const acct = await currentAccount(request, env);
+  if (!acct) return { signedIn: false };
+  const row = await env.ACCOUNTS_DB.prepare('SELECT 1 AS k FROM checks WHERE account_id = ? AND id = ?').bind(acct.id, id).first();
+  return { signedIn: true, saved: !!row };
+}
+// A signed-in visitor's checks are kept automatically.
+async function keepForAccount(request, env, id) {
+  try {
+    if (!(await accountsOn(request, env))) return null;
+    const acct = await currentAccount(request, env);
+    if (!acct) return { signedIn: false };
+    const kept = await keepWebsiteReport(env, id);
+    if (kept) await saveCheck(env, acct.id, kept);
+    return { signedIn: true, saved: !!kept };
+  } catch (err) { console.warn('website-check: keep for account', err && err.message); return null; }
 }
 
 export async function websiteCheck(request, url, env) {
@@ -436,7 +468,7 @@ export async function websiteCheck(request, url, env) {
     const access = await toolAccessFor('website-check', request, env);
     if (!access.allowed) return jsonResponse({ error: 'Not found' }, 404);
     const r = await reportById(env, api[1]);
-    return r ? jsonResponse({ report: await priced(env, r) }) : jsonResponse({ error: 'That report has expired or doesn’t exist. Reports are kept for 30 days.' }, 404);
+    return r ? jsonResponse({ report: await priced(env, r), account: await accountState(request, env, r.id) }) : jsonResponse({ error: 'That report has expired or doesn’t exist. Reports are kept for 30 days.' }, 404);
   }
   if (path === '/website-check' || path.startsWith('/website-check/r/')) {
     const access = await toolAccessFor('website-check', request, env);

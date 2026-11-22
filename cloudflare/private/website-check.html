@@ -11,7 +11,7 @@
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
 <link rel="stylesheet" href="/agency.css?v=24">
 <link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/tools.css?v=26">
+<link rel="stylesheet" href="/tools.css?v=27">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/website-check/">
@@ -155,6 +155,7 @@
         </div>
         <div class="rep-acts">
           <button type="button" id="rep-copy">Copy the link</button>
+          <button type="button" id="rep-save" hidden>Save to my account</button>
           <button type="button" id="rep-fresh" hidden>Check again</button>
           <button type="button" id="rep-again">Check another site</button>
         </div>
@@ -370,7 +371,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-website-check.js?v=13" defer></script>
+<script src="/tool-website-check.js?v=14" defer></script>
 <script src="/motion.js?v=5" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>

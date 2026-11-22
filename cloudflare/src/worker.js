@@ -8,7 +8,8 @@ import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
-import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks, setSelfHandler } from './website-check.js';
+import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks, setSelfHandler, keepWebsiteReport } from './website-check.js';
+import { isAccountPath, accounts } from './accounts.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
 import { isSignInPath, googleSignIn } from './google-signin.js';
 import { cleanupToolRates } from './tools-gate.js';
@@ -151,6 +152,13 @@ async function route(request, env, ctx) {
     const res = await websiteCheck(request, url, env);
     if (res) return path.startsWith('/tools/') ? res : withGtm(res);
     return Response.redirect(new URL('/web-design/', url).href, 302);
+  }
+
+  // Accounts (cloudflare/src/accounts.js): Lewis's preview only until the Accounts Plan's step 7; visitors go home
+  if (isAccountPath(path)) {
+    const res = await accounts(request, url, env, { keepWebsiteReport });
+    if (res) return path.startsWith('/account/login/') || path === '/account/me' || path === '/account/save' || path === '/account/logout' ? res : withGtm(res);
+    return Response.redirect(new URL('/', url).href, 302);
   }
 
   // "Sign in with Google" for the Google Ads Check (cloudflare/src/google-signin.js): Lewis only until Google verifies the app
