@@ -392,7 +392,6 @@
   .tu-table .tu-n.zero i { display: none; }
   .tu-i { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--line); font: 600 10px/1 var(--mono, monospace); color: var(--muted); text-transform: none; cursor: help; vertical-align: 1px; }
   @media (max-width: 900px) { .tu-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .pr-group th { text-align: left; font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 18px 12px 8px; }
   .dm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line-soft); }
   .dm-bar h2 { margin: 0; font-size: 16px; }
   .dm-stage { background: var(--line-soft); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 20px; overflow-x: auto; }
@@ -511,28 +510,7 @@
 
   /* Rate card links */
   /* Pricing calculator */
-  .pr-ver { color: var(--muted); margin: -12px 0 18px; font-size: 13.5px; }
-  .pr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
-  .pr-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 18px 20px 4px; }
-  .pr-fields.four { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .pr-note { color: var(--muted); font-size: 12.5px; line-height: 1.5; margin: 10px 20px 16px; }
-  .pr-check { display: flex; gap: 8px; align-items: center; font-weight: 400; color: var(--text); font-size: 13.5px; margin: 12px 20px 0; }
-  .pr-check input { width: auto; }
-  .pr-table input { width: 100%; max-width: 110px; text-align: right; }
-  .pr-table input.item { max-width: none; text-align: left; }
-  .pr-table td { padding: 10px 20px; }
-  .pr-prev-bar { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; padding: 18px 20px; }
-  .pr-prev-bar label { min-width: 260px; }
-  .pr-quote { padding: 0 20px 18px; }
-  .pr-quote:empty { display: none; }
-  .pr-quote table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .pr-quote td, .pr-quote th { padding: 8px 0; border-bottom: 1px solid var(--line-soft); text-align: left; }
-  .pr-quote .r { text-align: right; white-space: nowrap; padding-left: 12px; }
-  .pr-quote tfoot td { font-weight: 700; border-bottom: 0; }
-  .pr-quote p { margin: 12px 0 0; color: var(--muted); font-size: 13px; }
-  .pr-save { display: flex; gap: 12px; align-items: end; padding: 18px 20px; flex-wrap: wrap; }
-  .pr-save label { flex: 1 1 320px; }
-  @media (max-width: 1100px) { .pr-grid { grid-template-columns: minmax(0, 1fr); } .pr-fields.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  /* Pricing: v3 rules live in the block at the end of this stylesheet */
   @media (max-width: 560px) { .pr-fields, .pr-fields.four { grid-template-columns: minmax(0, 1fr); } .pr-prev-bar label { min-width: 0; flex: 1 1 100%; } }
   .create { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 170px 150px 150px auto; gap: 12px; align-items: end; padding: 20px; }
   /* Invite links: archive toggle and the detail panel */
@@ -967,10 +945,103 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
 .fold-note > summary { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--muted); }
 .fold-note > summary::after, .fold-card > summary::after { content: "+"; color: var(--area); font-size: 16px; font-weight: 500; line-height: 1; }
 .fold-note[open] > summary::after, .fold-card[open] > summary::after { content: "\2212"; }
-.pr-more { margin: 4px 20px 16px; }
-.pr-more .pr-note { margin: 8px 0 0; }
 .fold-card:not([open]) > summary { border-bottom: 0; }
 .fold-card > summary h2 { color: var(--text-2); }
+/* Dropdowns (Lewis, 19 Nov 2026): the browser's arrow hidden, a grey chevron about 20px in from the right, text kept clear of it */
+select { -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%236B7480' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; background-size: 14px; padding-right: 46px !important; }
+/* Pricing (Design Spec v3, Part B5 forms; Lewis, 22 Nov 2026): tiles, then a section per setting with its title on the left */
+.pr-kpis { margin: 8px 0 28px; }
+.pr-kpis .kpi span { min-height: 1.3em; }
+#pr-form { display: grid; gap: 20px; }
+.pr-sec { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; padding: 28px 28px 30px; }
+.pr-side h2 { font-size: 18px; font-weight: 800; letter-spacing: -.02em; margin: 0; display: flex; align-items: center; gap: 10px; }
+.pr-side h2::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--area-dot); flex: none; }
+.pr-side > p { color: var(--text-2); font-size: 14px; line-height: 1.5; margin: 8px 0 0; }
+.pr-side .fold-note { margin-top: 14px; }
+.pr-note { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 8px 0 0; }
+.pr-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; align-content: start; }
+.pr-fields label { display: grid; gap: 7px; font-size: 13.5px; font-weight: 700; color: var(--text); align-content: end; }
+.pr-fields input[type=number] { width: 100%; font-variant-numeric: tabular-nums; }
+.pr-wide { grid-column: 1 / -1; }
+.pr-sub { grid-column: 1 / -1; margin: 10px 0 -4px; font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.pr-sub:first-child { margin-top: 0; }
+.pr-fold { border-top: 1px solid var(--line-soft); padding-top: 16px; }
+.pr-fold > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.pr-fold > summary::-webkit-details-marker { display: none; }
+.pr-fold > summary .pr-sub { margin: 0; }
+.pr-fold > summary::after { content: "+"; color: var(--area); font-size: 16px; line-height: 1; margin-left: auto; }
+.pr-fold[open] > summary::after { content: "\2212"; }
+.pr-sum { color: var(--text-2); font-size: 13.5px; }
+.pr-fold > .pr-fields { margin-top: 16px; }
+.pr-fields .pr-check { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-top: 4px; }
+.pr-check input { width: 20px; height: 20px; accent-color: var(--brand); flex: none; }
+.pr-fields > .pr-note { margin: -10px 0 0 30px; }
+.pr-sec-full { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.pr-sec-full .pr-side { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 24px; align-items: start; }
+.pr-sec-full .pr-side > p, .pr-sec-full .pr-side .fold-note { grid-column: 1; }
+.pr-fixwrap { display: grid; gap: 16px; }
+.pr-tool .count { margin-left: 6px; font: 500 11px/1 var(--mono, monospace); color: var(--muted); }
+.pr-table { width: 100%; }
+.pr-table th { white-space: nowrap; }
+.pr-table td { padding: 10px 14px; vertical-align: middle; }
+.pr-table td.pr-fixname { font-weight: 600; }
+.pr-table input { width: 100%; max-width: 96px; text-align: right; }
+.pr-table input.item { max-width: none; min-width: 150px; text-align: left; }
+.pr-try { display: grid; gap: 18px; align-content: start; }
+.pr-prev-bar { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.pr-prev-bar label { display: grid; gap: 7px; font-size: 13.5px; font-weight: 700; flex: 1 1 280px; }
+.pr-quote:empty { display: none; }
+.pr-quote table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.pr-quote td, .pr-quote th { padding: 9px 0; border-bottom: 1px solid var(--line-soft); text-align: left; }
+.pr-quote th { font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pr-quote .r { text-align: right; white-space: nowrap; padding-left: 12px; }
+.pr-quote tfoot td { font-weight: 800; border-bottom: 0; padding-top: 12px; }
+.pr-quote p { margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+#pr-msg:not(:empty) { color: var(--bad); font-weight: 600; margin: 0; }
+#pr-form { padding-bottom: 8px; }
+section[data-pane="pricing"] { padding-bottom: 110px; }
+.pr-vers { margin-top: 20px; }
+.pr-vers .count { font: 500 11px/1 var(--mono, monospace); color: var(--muted); margin-left: 4px; }
+.pr-vers .count:empty { display: none; }
+/* the save bar: an ink pill floating at the bottom, only while there are unsaved changes */
+.pr-savebar { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 90; display: flex; align-items: center; gap: 12px; width: min(760px, calc(100% - 32px)); padding: 8px 8px 8px 22px; border-radius: var(--r-pill); background: linear-gradient(180deg, var(--ink-2), var(--ink)); color: #fff; box-shadow: var(--e3); animation: pr-rise .25s ease; }
+.pr-savebar[hidden] { display: none; }
+.pr-dirty { font-size: 13.5px; font-weight: 700; white-space: nowrap; }
+.pr-dirty::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--attn-dot); margin: 0 10px 1px 0; }
+.pr-savebar input[type=text] { flex: 1 1 auto; min-width: 0; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); color: #fff; box-shadow: none; padding: 9px 14px; border-radius: var(--r-pill); }
+.pr-savebar input[type=text]::placeholder { color: rgba(255, 255, 255, .55); }
+.pr-undo { background: none; border: 0; color: rgba(255, 255, 255, .8); font-weight: 700; font-size: 13.5px; cursor: pointer; padding: 8px 6px; }
+.pr-undo:hover { color: #fff; }
+.pr-savebar .btn.primary { white-space: nowrap; }
+@media (min-width: 901px) { .pr-savebar { left: calc(50% + var(--gm-w) / 2); width: min(760px, calc(100% - var(--gm-w) - 48px)); } }
+@keyframes pr-rise { from { opacity: 0; transform: translate(-50%, 12px); } }
+@media (prefers-reduced-motion: reduce) { .pr-savebar { animation: none; } }
+@media (max-width: 1024px) {
+  .pr-sec { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 22px 22px 24px; }
+  .pr-sec-full .pr-side { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 860px) {
+  .pr-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* each fix becomes a card: its name on top, the five boxes labelled under it */
+  .pr-table thead { display: none; }
+  .pr-table, .pr-table tbody { display: block; }
+  section[data-pane="pricing"] .scroll .pr-table { min-width: 0; }
+  .pr-table tr:not([hidden]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; padding: 16px 0; border-bottom: 1px solid var(--line-soft); }
+  section[data-pane="pricing"] .pr-table td { display: grid; gap: 5px; padding: 0; border: 0; text-align: left; justify-items: stretch; }
+  .pr-table td.pr-fixname { grid-column: 1 / -1; font-size: 15px; }
+  .pr-table td[data-l]::before { content: attr(data-l); font: 500 10.5px/1.3 var(--mono, monospace); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .pr-table td:nth-child(2) { grid-column: 1 / -1; }
+  .pr-table input, .pr-table input.item { max-width: none; min-width: 0; text-align: left; }
+  .pr-table-wrap, section[data-pane="pricing"] .scroll { overflow: visible; }
+}
+@media (max-width: 600px) {
+  .pr-fields { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .pr-sec { padding: 20px 18px 22px; }
+  .pr-savebar { flex-wrap: wrap; border-radius: 22px; padding: 14px; bottom: 12px; }
+  .pr-dirty { flex: 1 1 auto; }
+  .pr-savebar input[type=text] { order: 3; flex-basis: 100%; }
+  .pr-savebar .btn.primary { order: 4; flex: 1 1 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>
@@ -1131,13 +1202,13 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
         <article class="card prod">
           <div class="prod-top">
             <svg class="prod-tile" viewBox="0 0 240 240" aria-hidden="true"><use href="#gm-sq" fill="#2A5185"/><use href="#gm-sq" fill="url(#gm-sheen)"/><g fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M152 84A16 16 0 0 0 136 68H120A26 26 0 0 0 120 120A26 26 0 0 1 120 172H104A16 16 0 0 1 88 156"/></g></svg>
-            <div><h2>Search Desk</h2><div class="where">phillips-uk.com/desk</div></div>
+            <div><h2>Search Desk</h2><div class="where">searchdesk.uk</div></div>
             <span class="pill good">Live</span>
           </div>
           <p>The checks a senior paid search lead runs every morning, run across a company’s own Google Ads account: account health, search terms, negatives, pacing and AI Max. Read-only until the client approves a change.</p>
           <div class="prod-acts">
-            <a class="btn primary" href="/desk" target="_blank" rel="noopener">Open Search Desk</a>
-            <a class="btn" href="/desk#admin" target="_blank" rel="noopener">Workspaces</a>
+            <a class="btn primary" href="https://searchdesk.uk/" target="_blank" rel="noopener">Open Search Desk</a>
+            <a class="btn" href="https://searchdesk.uk/desk#admin" target="_blank" rel="noopener">Workspaces</a>
           </div>
           <div class="prod-more">
             <a href="/search-desk" target="_blank" rel="noopener">Preview the demo</a>
@@ -1273,74 +1344,108 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
         <div><h1>Pricing <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-8" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-8" hidden>Every rate and limit the free tools use. Prices only ever appear inside a private report. Each save is a new version, and a report keeps the version it was priced with.</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/website-check/" target="_blank" rel="noopener">Open the Website Check</a><a class="btn" href="/google-ads-audit" target="_blank" rel="noopener">Open the Google Ads Check</a></div>
       </div>
-      <p class="pr-ver" id="pr-ver">Loading…</p>
+      <!-- Design Spec v3 (Lewis, 22 Nov 2026): four tiles answer "what am I charging", then one section per setting
+           (title and one line on the left, fields on the right), explanations behind a tap, and a save bar only while
+           something has changed. -->
+      <div class="kpis pr-kpis">
+        <div class="kpi"><small>Hourly rate</small><b id="pr-hourly">£–</b><span>day rate ÷ hours</span></div>
+        <div class="kpi"><small>Google Ads monthly</small><b id="pr-k-month">–</b><span id="pr-ret-state">&nbsp;</span></div>
+        <div class="kpi"><small>Website Checks a day</small><b id="pr-k-web">–</b><span>at most, for everyone</span></div>
+        <div class="kpi"><small>Live version</small><b id="pr-k-ver">–</b><span id="pr-ver">Loading…</span></div>
+      </div>
       <form id="pr-form" autocomplete="off">
-        <div class="pr-grid">
-          <div class="card">
-            <div class="card-head"><h2>Hourly rate</h2><span class="pill amber" id="pr-hourly">£–</span></div>
-            <div class="pr-fields">
-              <label>Day rate (£)<input type="number" name="dayRate" min="1" step="1" required></label>
-              <label>Hours in a day<input type="number" name="hoursPerDay" min="1" max="24" step="0.5" required></label>
-              <label>Set-up, charged once per order (minutes)<input type="number" name="startMinutes" min="0" step="5" required></label>
-              <label>Round each job up to (minutes)<input type="number" name="jobRoundMinutes" min="1" step="1" required></label>
-              <label>Shortest job (minutes)<input type="number" name="jobMinMinutes" min="0" step="5" required></label>
-            </div>
-            <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Hourly rate is the day rate divided by the hours. A report adds the set-up once to whatever is ticked, then prices each job on its time. Prices round to the nearest pound. The rate card page shows the day rate in its own page, so update it there too if it changes.</p></details>
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Your rate</h2>
+            <p>What an hour of work costs.</p>
+            <details class="fold-note"><summary>How this works</summary><p class="pr-note">A report adds the set-up once, then prices each job on its time, rounded to the nearest pound. If the day rate changes, update the rate card page too.</p></details>
           </div>
-          <div class="card">
-            <div class="card-head"><h2>Google Ads monthly</h2><span class="pill" id="pr-ret-state">Not set</span></div>
-            <div class="pr-fields">
-              <label>Monthly minimum (£)<input type="number" name="monthlyMin" min="1" step="1" placeholder="Empty hides monthly"></label>
-              <label>Round the monthly fee to (£)<input type="number" name="monthlyRound" min="1" step="1" required></label>
-              <label>Base hours a month<input type="number" name="mh.base" min="0" step="0.25" required></label>
-              <label>Hours per non-brand Search campaign<input type="number" name="mh.search" min="0" step="0.25" required></label>
-              <label>Hours per Performance Max campaign<input type="number" name="mh.pmax" min="0" step="0.25" required></label>
-              <label>Hours per Shopping campaign<input type="number" name="mh.shopping" min="0" step="0.25" required></label>
-              <label>Hours per Display, Demand Gen or Video campaign<input type="number" name="mh.other" min="0" step="0.25" required></label>
-              <label>Hours per brand Search campaign<input type="number" name="mh.brand" min="0" step="0.25" required></label>
-              <label>Spend step (£ a month)<input type="number" name="mh.spendStep" min="1" step="100" required></label>
-              <label>Hours for each spend step above the first<input type="number" name="mh.perStep" min="0" step="0.25" required></label>
-              <label>Minimum term (months)<input type="number" name="retainerMinMonths" min="1" step="1" required></label>
-              <label>Suggest it when one-off fixes cost more than (months of the fee)<input type="number" name="suggestRetainerMonths" min="0" step="0.5" required></label>
-              <label>Quotes hold their price for (days)<input type="number" name="quoteValidDays" min="1" step="1" required></label>
-            </div>
-            <label class="pr-check"><input type="checkbox" name="holdForReview"> Hold quotes for my check (customers see “Lewis will confirm this within one working day”)</label>
-            <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Monthly fee = the account&rsquo;s estimated hours a month &times; the hourly rate, rounded, and never less than the minimum. Hours come from the campaigns that spent in the last 30 days and the 30-day spend. An empty minimum hides the monthly option.</p></details>
+          <div class="pr-fields">
+            <label>Day rate (£)<input type="number" name="dayRate" min="1" step="1" required></label>
+            <label>Hours in a day<input type="number" name="hoursPerDay" min="1" max="24" step="0.5" required></label>
+            <label>Set-up per order (min)<input type="number" name="startMinutes" min="0" step="5" required></label>
+            <label>Round each job up to (min)<input type="number" name="jobRoundMinutes" min="1" step="1" required></label>
+            <label>Shortest job charged (min)<input type="number" name="jobMinMinutes" min="0" step="5" required></label>
           </div>
         </div>
-        <div class="card" style="margin-top:20px">
-          <div class="card-head"><h2>Time per fix</h2><span class="meta">set-up + minutes per item, from the account's own counts</span></div>
-          <div class="scroll"><table class="table pr-table"><thead><tr><th>Fix type</th><th>What counts as an item</th><th class="r">By hand: set-up (min)</th><th class="r">By hand: per item (min)</th><th class="r">With AI: set-up (min)</th><th class="r">With AI: per item (min)</th></tr></thead><tbody id="pr-fix"></tbody></table></div>
-          <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Reports price each job on its AI-assisted time. Leave both AI boxes empty for a job that can't be done quickly with AI: it keeps the time by hand. The hand times are estimates made at build on 16 Nov 2026 and the AI times on 19 Nov 2026; tune both against real jobs.</p></details>
-        </div>
-        <div class="card" style="margin-top:20px">
-          <div class="card-head"><h2>Free-use limits</h2></div>
-          <div class="pr-fields four">
-            <label>Website Checks per connection a day<input type="number" name="l.websiteChecksPerIpPerDay" min="0" step="1" required></label>
-            <label>Website Checks a day, at most<input type="number" name="l.websiteChecksPerDay" min="0" step="1" required></label>
-            <label>Same website reuses its result for (hours)<input type="number" name="l.websiteCacheHours" min="0" step="1" required></label>
-            <label>One Google Ads Check per account every (days)<input type="number" name="l.adsChecksPerAccountDays" min="0" step="1" required></label>
-            <label>Accounts per login or company, per 30 days<input type="number" name="l.adsAccountsPerLogin" min="0" step="1" required></label>
-            <label>Treat as an agency above (accounts under a manager)<input type="number" name="l.agencyAccountThreshold" min="0" step="1" required></label>
-            <label>Google Ads Checks a day, at most<input type="number" name="l.adsChecksPerDay" min="0" step="1" required></label>
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Google Ads monthly</h2>
+            <p>The monthly option in Google Ads reports.</p>
+            <details class="fold-note"><summary>How this works</summary><p class="pr-note">The fee is the account's estimated hours a month times the hourly rate, rounded, and never under the minimum. Hours come from the campaigns that spent in the last 30 days and the 30-day spend. An empty minimum hides the monthly option.</p></details>
           </div>
-          <details class="fold-note pr-more"><summary>How this works</summary><p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved. Each Website Check uses two of Google's free PageSpeed calls (25,000 a day), and a site checked again within the reuse window costs nothing.</p></details>
+          <div class="pr-fields">
+            <h3 class="pr-sub">The fee</h3>
+            <label>Monthly minimum (£)<input type="number" name="monthlyMin" min="1" step="1" placeholder="Empty hides it"></label>
+            <label>Round the fee to (£)<input type="number" name="monthlyRound" min="1" step="1" required></label>
+            <label>Minimum term (months)<input type="number" name="retainerMinMonths" min="1" step="1" required></label>
+            <label>Quotes valid for (days)<input type="number" name="quoteValidDays" min="1" step="1" required></label>
+            <label class="pr-wide">Suggest monthly when one-off fixes cost more than (months of the fee)<input type="number" name="suggestRetainerMonths" min="0" step="0.5" required></label>
+            <details class="pr-wide pr-fold"><summary><span class="pr-sub">Hours a month</span><span class="pr-sum" id="pr-hours-sum"></span></summary><div class="pr-fields">
+            <label>Base<input type="number" name="mh.base" min="0" step="0.25" required></label>
+            <label>Each non-brand Search campaign<input type="number" name="mh.search" min="0" step="0.25" required></label>
+            <label>Each Performance Max campaign<input type="number" name="mh.pmax" min="0" step="0.25" required></label>
+            <label>Each Shopping campaign<input type="number" name="mh.shopping" min="0" step="0.25" required></label>
+            <label>Each Display, Demand Gen or Video<input type="number" name="mh.other" min="0" step="0.25" required></label>
+            <label>Each brand Search campaign<input type="number" name="mh.brand" min="0" step="0.25" required></label>
+            <label>Spend step (£ a month)<input type="number" name="mh.spendStep" min="1" step="1" required></label>
+            <label>Hours per step above the first<input type="number" name="mh.perStep" min="0" step="0.25" required></label>
+            </div></details>
+            <label class="pr-check pr-wide"><input type="checkbox" name="holdForReview"> Check quotes before customers see them <button type="button" class="ph-i" aria-expanded="false" aria-controls="pr-hold-i" aria-label="About holding quotes"></button></label>
+            <p class="pr-note pr-wide" id="pr-hold-i" hidden>Customers see “Lewis will confirm this within one working day”.</p>
+          </div>
         </div>
-        <div class="card" style="margin-top:20px">
-          <div class="card-head"><h2>Preview</h2><span class="meta">uses the numbers above, before you save</span></div>
-          <div class="pr-prev-bar"><label>Price this<select id="pr-sample"></select></label><button type="button" class="btn" id="pr-preview">Preview the quote</button></div>
-          <div id="pr-quote" class="pr-quote"></div>
+        <div class="card pr-sec pr-sec-full">
+          <div class="pr-side">
+            <h2>Time per fix</h2>
+            <p>Set-up plus minutes per item, from the account's own counts.</p>
+            <details class="fold-note"><summary>How this works</summary><p class="pr-note">Reports price each job on its AI-assisted time. Leave both AI boxes empty for a job that can't be done quickly with AI: it keeps the time by hand. Hand times were estimated on 16 Nov 2026 and AI times on 19 Nov 2026; tune both against real jobs.</p></details>
+          </div>
+          <div class="pr-fixwrap">
+            <div class="seg pr-tool" id="pr-tool" role="group" aria-label="Which check"><button type="button" data-tool="ads" aria-pressed="true">Google Ads Check <span class="count" id="pr-n-ads"></span></button><button type="button" data-tool="web" aria-pressed="false">Website Check <span class="count" id="pr-n-web"></span></button></div>
+            <div class="scroll"><table class="table pr-table"><thead><tr><th>Fix</th><th>An item is</th><th class="r">By hand<br>set-up</th><th class="r">By hand<br>per item</th><th class="r">With AI<br>set-up</th><th class="r">With AI<br>per item</th></tr></thead><tbody id="pr-fix"></tbody></table></div>
+          </div>
         </div>
-        <div class="card pr-save" style="margin-top:20px">
-          <label>What changed (for the log)<input type="text" id="pr-note" maxlength="200" placeholder="For example: raised the per-item time for negatives"></label>
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Free-use limits</h2>
+            <p>How much the free checks can be used.</p>
+            <details class="fold-note"><summary>How this works</summary><p class="pr-note">Explorer access allows 2,880 Google Ads operations a day and a check uses about 25 to 60, so keep the daily ceiling under about 48 until Basic access is approved. Each Website Check uses two of Google's free PageSpeed calls (25,000 a day); a site checked again inside the reuse window costs nothing.</p></details>
+          </div>
+          <div class="pr-fields">
+            <h3 class="pr-sub">Website Check</h3>
+            <label>Per connection a day<input type="number" name="l.websiteChecksPerIpPerDay" min="0" step="1" required></label>
+            <label>Daily limit<input type="number" name="l.websiteChecksPerDay" min="0" step="1" required></label>
+            <label>Reuse a result for (hours)<input type="number" name="l.websiteCacheHours" min="0" step="1" required></label>
+            <h3 class="pr-sub">Google Ads Check</h3>
+            <label>One per account every (days)<input type="number" name="l.adsChecksPerAccountDays" min="0" step="1" required></label>
+            <label>Accounts per login, per 30 days<input type="number" name="l.adsAccountsPerLogin" min="0" step="1" required></label>
+            <label>Treat as an agency above (accounts)<input type="number" name="l.agencyAccountThreshold" min="0" step="1" required></label>
+            <label>Daily limit<input type="number" name="l.adsChecksPerDay" min="0" step="1" required></label>
+          </div>
+        </div>
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Try a quote</h2>
+            <p>Uses the numbers above, before you save.</p>
+          </div>
+          <div class="pr-try">
+            <div class="pr-prev-bar"><label>Price this<select id="pr-sample"></select></label><button type="button" class="btn" id="pr-preview">Preview the quote</button></div>
+            <div id="pr-quote" class="pr-quote"></div>
+          </div>
+        </div>
+        <p class="msg" id="pr-msg"></p>
+        <div class="pr-savebar" id="pr-savebar" hidden>
+          <span class="pr-dirty" id="pr-dirty">1 change not saved</span>
+          <input type="text" id="pr-note" maxlength="200" placeholder="What changed (for the log)" aria-label="What changed (for the log)">
+          <button type="button" class="pr-undo" id="pr-undo">Undo</button>
           <button class="btn primary" type="submit" id="pr-go">Save as a new version</button>
         </div>
-        <p class="msg" id="pr-msg" style="margin:12px 0"></p>
       </form>
-      <div class="card" style="margin-top:20px">
-        <div class="card-head"><h2>Versions</h2></div>
+      <details class="card fold-card pr-vers">
+        <summary class="card-head"><h2>Versions <span class="count" id="pr-vcount"></span></h2></summary>
         <div class="scroll"><table class="table"><thead><tr><th>Version</th><th>Saved</th><th>By</th><th>What changed</th></tr></thead><tbody id="pr-versions"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table></div>
-      </div>
+      </details>
     </section>
 
     <!-- Site -->
@@ -3357,6 +3462,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
   }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function field(name) { return form.querySelector('[name="' + name + '"]'); }
+  function prToast(text) { var t = $('toast'); if (!t) return; t.textContent = text; t.className = 'toast show'; setTimeout(function () { t.className = 'toast'; }, 3200); }
 
   function fill(s) {
     ['dayRate', 'hoursPerDay', 'startMinutes', 'jobRoundMinutes', 'jobMinMinutes', 'retainerMinMonths', 'suggestRetainerMonths', 'quoteValidDays'].forEach(function (k) { field(k).value = s[k]; });
@@ -3366,23 +3472,40 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
     field('holdForReview').checked = !!s.holdForReview;
     Object.keys(s.limits).forEach(function (k) { var f = field('l.' + k); if (f) f.value = s.limits[k]; });
     var tb = $('pr-fix'); tb.textContent = '';
-    // Google Ads Check jobs first, then the Website Check's (tool: 'web'), each under its own heading
-    var lastTool = null;
-    Object.keys(s.fixTypes).sort(function (a, b) { return (s.fixTypes[a].tool === 'web') - (s.fixTypes[b].tool === 'web'); }).forEach(function (id) {
+    // One check at a time (the Google Ads Check / Website Check switch above the table)
+    var n = { ads: 0, web: 0 };
+    var LBL = { setup: 'By hand: set-up', perItem: 'By hand: per item', aiSetup: 'With AI: set-up', aiPerItem: 'With AI: per item' };
+    Object.keys(s.fixTypes).forEach(function (id) {
       var ft = s.fixTypes[id], tool = ft.tool === 'web' ? 'web' : 'ads';
-      if (tool !== lastTool) { var hr = el('tr', 'pr-group'), th = el('th', null, tool === 'web' ? 'Website Check jobs' : 'Google Ads Check fixes'); th.colSpan = 6; hr.appendChild(th); tb.appendChild(hr); lastTool = tool; }
-      var tr = el('tr');
-      tr.appendChild(el('td', null, ft.label));
-      var td1 = el('td'), i1 = el('input', 'item'); i1.type = 'text'; i1.value = ft.item; i1.setAttribute('data-ft', id); i1.setAttribute('data-k', 'item'); i1.maxLength = 60; td1.appendChild(i1); tr.appendChild(td1);
+      n[tool]++;
+      var tr = el('tr'); tr.setAttribute('data-tool', tool); tr.hidden = tool !== fixTool;
+      tr.appendChild(el('td', 'pr-fixname', ft.label));
+      var td1 = el('td'); td1.setAttribute('data-l', 'An item is'); var i1 = el('input', 'item'); i1.type = 'text'; i1.value = ft.item; i1.setAttribute('data-ft', id); i1.setAttribute('data-k', 'item'); i1.maxLength = 60; td1.appendChild(i1); tr.appendChild(td1);
       ['setup', 'perItem', 'aiSetup', 'aiPerItem'].forEach(function (k) {
-        var td = el('td', 'r'), i = el('input'); i.type = 'number'; i.min = '0'; i.step = /perItem|PerItem/.test(k) ? 'any' : '5';
+        var td = el('td', 'r'), i = el('input'); td.setAttribute('data-l', LBL[k]); i.type = 'number'; i.min = '0'; i.step = /perItem|PerItem/.test(k) ? 'any' : '5';
         i.value = ft[k] == null ? '' : ft[k]; i.setAttribute('data-ft', id); i.setAttribute('data-k', k);
         if (k.indexOf('ai') === 0) { i.placeholder = 'by hand'; i.setAttribute('aria-label', ft.label + ': with AI, ' + (k === 'aiSetup' ? 'set-up' : 'per item') + ' minutes (empty: by hand only)'); }
         td.appendChild(i); tr.appendChild(td);
       });
       tb.appendChild(tr);
     });
+    $('pr-n-ads').textContent = n.ads; $('pr-n-web').textContent = n.web;
+    form.querySelectorAll('input').forEach(function (f) { f.setAttribute('data-was', f.type === 'checkbox' ? String(f.checked) : f.value); });
     refresh();
+  }
+  // Which check's fixes the table shows
+  var fixTool = 'ads';
+  $('pr-tool').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    fixTool = b.getAttribute('data-tool');
+    $('pr-tool').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    $('pr-fix').querySelectorAll('tr').forEach(function (tr) { tr.hidden = tr.getAttribute('data-tool') !== fixTool; });
+  });
+  // The save bar shows only while something differs from the live version
+  function changed() {
+    var c = 0;
+    form.querySelectorAll('input[data-was]').forEach(function (f) { if ((f.type === 'checkbox' ? String(f.checked) : f.value) !== f.getAttribute('data-was')) c++; });
+    return c;
   }
   function read() {
     var s = { limits: {}, fixTypes: {} };
@@ -3397,15 +3520,25 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
   }
   function refresh() {
     var d = Number(field('dayRate').value), h = Number(field('hoursPerDay').value);
-    $('pr-hourly').textContent = d > 0 && h > 0 ? GBP2.format(d / h) + ' an hour' : '£–';
+    $('pr-hourly').textContent = d > 0 && h > 0 ? GBP2.format(d / h) : '£–';
     var fee = field('monthlyMin').value.trim();
-    $('pr-ret-state').textContent = fee ? 'From ' + GBP.format(Number(fee)) + ' a month' : 'Not set: hidden in reports';
-    $('pr-ret-state').className = 'pill ' + (fee ? 'good' : 'warn');
+    $('pr-k-month').textContent = fee ? GBP.format(Number(fee)) : 'Off';
+    $('pr-ret-state').textContent = fee ? 'the least a month' : 'hidden in reports';
+    $('pr-k-web').textContent = field('l.websiteChecksPerDay').value || '–';
+    $('pr-hours-sum').textContent = 'Base ' + (field('mh.base').value || 0) + ' h, plus ' + (field('mh.search').value || 0) + ' h per Search campaign and more';
+    var c = changed();
+    $('pr-savebar').hidden = !c;
+    $('pr-dirty').textContent = c + (c === 1 ? ' change' : ' changes') + ' not saved';
   }
   form.addEventListener('input', refresh);
+  form.addEventListener('change', refresh);
+  // A box with a problem inside a folded section: open it so the browser can point at it
+  form.addEventListener('invalid', function (e) { var d = e.target.closest('details'); if (d) d.open = true; }, true);
+  $('pr-undo').addEventListener('click', function () { if (data) { fill(data.current.settings); $('pr-note').value = ''; $('pr-msg').textContent = ''; } });
 
   function versions(list) {
     var tb = $('pr-versions'); tb.textContent = '';
+    $('pr-vcount').textContent = list.length || '';
     if (!list.length) { var tr = el('tr'), td = el('td', 'empty', 'Nothing saved yet: the starting values are in use (version 0).'); td.colSpan = 4; tr.appendChild(td); tb.appendChild(tr); return; }
     list.forEach(function (v) {
       var tr = el('tr');
@@ -3418,7 +3551,8 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
   }
   function header() {
     var c = data.current;
-    $('pr-ver').textContent = c.version ? 'Live: version ' + c.version + ', saved ' + WHEN.format(new Date(c.savedAt)) + (c.savedBy ? ' by ' + c.savedBy : '') + '.' : 'Live: the starting values (version 0). Nothing has been saved yet.';
+    $('pr-k-ver').textContent = String(c.version || 0);
+    $('pr-ver').textContent = c.version ? 'saved ' + WHEN.format(new Date(c.savedAt)) : 'the starting values';
   }
   function samples() {
     var sel = $('pr-sample'); sel.textContent = '';
@@ -3427,7 +3561,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
   }
   function load() {
     api('/admin/api/pricing').then(function (d) { data = d; loaded = true; fill(d.current.settings); header(); versions(d.versions); samples(); })
-      .catch(function (e) { $('pr-ver').textContent = e.message; });
+      .catch(function (e) { $('pr-msg').textContent = e.message; });
   }
 
   $('pr-preview').addEventListener('click', function () {
@@ -3474,8 +3608,8 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
     api('/admin/api/pricing', { settings: read(), note: $('pr-note').value }).then(function (d) {
       data.current = d.current; data.versions = d.versions;
       fill(d.current.settings); header(); versions(d.versions); $('pr-note').value = '';
-      $('pr-msg').style.color = 'var(--ok)'; $('pr-msg').textContent = 'Saved as version ' + d.current.version + '. New reports use it from now on.';
-    }).catch(function (err) { $('pr-msg').style.color = ''; $('pr-msg').textContent = err.message; })
+      prToast('Saved as version ' + d.current.version + '. New reports use it from now on.');
+    }).catch(function (err) { $('pr-msg').textContent = err.message; })
       .then(function () { $('pr-go').disabled = false; });
   });
 
