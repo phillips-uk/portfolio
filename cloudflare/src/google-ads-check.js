@@ -16,6 +16,7 @@
 //
 // Storage (R2 BLOBS):
 //   tools/google-ads-check/reports/<id>.json      the report with its quote and pricing version, 30 days
+//   tools/google-ads-check/kept/<id>.json         a report kept with an account (accounts.js): not deleted after 30 days
 //   tools/google-ads-check/account/<hash>.json    when the account last had a free check (the ID is hashed)
 //   tools/google-ads-check/day/<day>.json         checks run that day, for the daily ceiling
 import pageHtml from '../private/google-ads-check.html';
@@ -28,6 +29,7 @@ import { isReviewer, reviewEntry } from './signin-review.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, quote } from './pricing.js';
+import { currentAccount, accountsOn, saveCheck } from './accounts.js';
 
 // Built but switched off until Lewis's set-up is done. Nothing here holds a credential.
 export const FLAGS = {
@@ -157,6 +159,13 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
     quote: q, pricingVersion: pricing.version || 0, operations: m.ops, queryRows: data.__diag, preview: !!access.admin, route,
   };
   await put(env, PREFIX + 'reports/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
+  // Kept with the visitor's account when signed in (Accounts Plan step 2): a copy outside the clean-up and a dashboard line
+  if (opts.accountId) {
+    try {
+      await put(env, PREFIX + 'kept/' + id + '.json', report, { name: report.accountName.slice(0, 100) });
+      await saveCheck(env, opts.accountId, { id, tool: 'ads', domain: report.accountName, checkedAt: report.checkedAt, fixes: report.weaknesses.length });
+    } catch (err) { console.warn('ads-check: keep for account', err && err.message); }
+  }
   if (!access.admin) {
     await put(env, limit.accountKey, { at: report.checkedAt });
     const day = (await getJson(env, limit.dayKey)) || { n: 0 };
@@ -176,6 +185,12 @@ export async function buildReport(readEnv, env, m, customerId, access, pricing, 
 }
 
 export { publicReport };
+
+// The signed-in account's id, when accounts are on for this visitor (else undefined: nothing is kept)
+export async function accountIdFor(request, env) {
+  try { if (!(await accountsOn(request, env))) return undefined; const a = await currentAccount(request, env); return a ? a.id : undefined; }
+  catch { return undefined; }
+}
 
 async function link(request, env) {
   if (!sameOrigin(request)) return jsonResponse({ error: 'Forbidden' }, 403);
@@ -231,7 +246,7 @@ async function run(request, env) {
   try {
     if (s.status === 'PENDING') { await acceptLink(env, m, customerId, s.managerLinkId); accepted = true; }
 
-    const out = await buildReport(env, env, m, customerId, access, pricing, limit, accepted ? 'manager-link' : 'already-linked', readTarget(body));
+    const out = await buildReport(env, env, m, customerId, access, pricing, limit, accepted ? 'manager-link' : 'already-linked', { ...readTarget(body), accountId: await accountIdFor(request, env) });
     return out.error || jsonResponse({ report: publicReport(out.report, access.admin) });
   } catch (err) {
     console.error('ads-check: run failed', err && (err.code || err.message));
@@ -286,8 +301,9 @@ export async function adsCheck(request, url, env) {
   if (api) {
     const access = await toolAccessFor('google-ads-check', request, env);
     if (!access.allowed) return jsonResponse({ error: 'Not found' }, 404);
-    const r = await getJson(env, PREFIX + 'reports/' + api[1] + '.json');
-    if (!r || Date.now() - Date.parse(r.checkedAt) > REPORT_DAYS * 86400000) return jsonResponse({ error: 'That report has expired or doesn’t exist. Reports are kept for 30 days.' }, 404);
+    let r = await getJson(env, PREFIX + 'reports/' + api[1] + '.json');
+    if (!r || Date.now() - Date.parse(r.checkedAt) > REPORT_DAYS * 86400000) r = await getJson(env, PREFIX + 'kept/' + api[1] + '.json');
+    if (!r) return jsonResponse({ error: 'That report has expired or doesn’t exist. Reports are kept for 30 days.' }, 404);
     return jsonResponse({ report: publicReport(r, access.admin) });
   }
   if (path === '/google-ads-audit' || path.startsWith('/google-ads-audit/r/')) {

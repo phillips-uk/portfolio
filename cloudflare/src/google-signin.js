@@ -17,7 +17,7 @@
 //   GET  accounts   the Google Ads accounts that login can reach
 //   POST run        { customerId, via } runs the check on one of them, then forgets the token
 //   POST signout    forgets the token
-import { FLAGS, freeLimits, buildReport, publicReport } from './google-ads-check.js';
+import { FLAGS, freeLimits, buildReport, publicReport, accountIdFor } from './google-ads-check.js';
 import { asVisitor, accessibleAccounts, meter, AdsError } from './ads-check/client.js';
 import { toolAccessFor, jsonResponse, guard } from './tools-gate.js';
 import { countUse } from './tool-leads.js';
@@ -163,7 +163,7 @@ async function run(request, env) {
   const m = meter();
   try {
     // Google checks this login really can reach the account (and through that manager), so nothing else is trusted here.
-    const out = await buildReport(asVisitor(env, t, via), env, m, customerId, access, pricing, limit, 'google-sign-in');
+    const out = await buildReport(asVisitor(env, t, via), env, m, customerId, access, pricing, limit, 'google-sign-in', { accountId: await accountIdFor(request, env) });
     if (out.error) return out.error;
     return jsonResponse({ report: publicReport(out.report, access.admin) }, 200, { 'Set-Cookie': clearToken() });
   } catch (err) {

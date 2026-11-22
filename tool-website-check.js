@@ -81,7 +81,7 @@
 
   function say(msg, err) { status.textContent = msg || ''; status.className = 'check-status' + (err ? ' err' : ''); }
 
-  var askFresh = false; // set by the report's "Check again" (v3 item 1)
+  var askFresh = false; // set by the report's "Check again" (v3 item 1) and the dashboard's
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var url = input.value.trim();
@@ -645,6 +645,19 @@
     if (biz && !biz.value) biz.value = current.domain;
     if (msg && !msg.value) msg.value = 'About my Website Check report: ' + location.origin + '/website-check/r/' + current.id + '\n\n';
   });
+
+  // "Check again" from the account dashboard: /website-check/?check=<domain>&kind=<kind> runs a fresh check of that site as
+  // the same kind of business, so the report shows what changed (Accounts Plan step 2)
+  (function () {
+    var q = new URLSearchParams(location.search), site = q.get('check');
+    if (!site || !/^[a-z0-9.-]{3,253}$/i.test(site)) return;
+    history.replaceState(null, '', '/website-check/');
+    input.value = site;
+    if (q.get('kind') && KINDS[q.get('kind')]) setKind(q.get('kind'));
+    askFresh = true;
+    track('website_check_again_dashboard');
+    setTimeout(function () { if (form.requestSubmit) form.requestSubmit(); else go.click(); }, 50);
+  })();
 
   // A demo website's report (Lewis's preview only)
   var sm = preview && location.search.match(/[?&]sample=([a-z0-9]+)/);

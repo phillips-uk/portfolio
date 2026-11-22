@@ -73,25 +73,96 @@
       .then(function () { b.disabled = false; token = ''; if (widget !== null && window.turnstile) window.turnstile.reset(widget); });
   });
 
-  // ---------- the saved checks ----------
+  // ---------- the dashboard (Accounts Plan step 2): one row per site, scores over time ----------
+  var ORDER = ['seo', 'speed', 'ux', 'technical', 'ai', 'trust'];
+  var KIND = { local: 'local', national: 'regional or UK-wide', shop: 'online shop' };
+  var SHORT = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/London' });
+  var svgNS = 'http://www.w3.org/2000/svg';
+  function svg(tag, attrs) { var e = document.createElementNS(svgNS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+  // A small line of one area's score across checks, oldest to newest (single series: the area name above it says what it is)
+  function spark(points, label) {
+    var w = 120, h = 34, pad = 4;
+    var box = svg('svg', { viewBox: '0 0 ' + w + ' ' + h, width: w, height: h, role: 'img', 'aria-label': label + ': ' + points.map(function (p) { return p.v; }).join(', ') });
+    box.appendChild(svg('line', { x1: 0, x2: w, y1: h - pad, y2: h - pad, class: 'sp-base' }));
+    var step = points.length > 1 ? (w - pad * 2) / (points.length - 1) : 0;
+    var xy = points.map(function (p, i) { return [pad + i * step, pad + (1 - p.v / 100) * (h - pad * 2)]; });
+    if (xy.length > 1) box.appendChild(svg('polyline', { points: xy.map(function (q) { return q.join(','); }).join(' '), class: 'sp-line' }));
+    xy.forEach(function (q, i) {
+      var c = svg('circle', { cx: q[0], cy: q[1], r: i === xy.length - 1 ? 3.5 : 2.5, class: i === xy.length - 1 ? 'sp-dot last' : 'sp-dot' });
+      var t = svg('title', {}); t.textContent = SHORT.format(new Date(points[i].at)) + ': ' + points[i].v; c.appendChild(t);
+      box.appendChild(c);
+    });
+    return box;
+  }
+  function scoreOf(c, id) { var s = (c.scores || []).filter(function (x) { return x.id === id; })[0]; return s && s.score != null ? s.score : null; }
+
+  function siteCard(domain, list) {
+    var latest = list[0];
+    var same = list.filter(function (c) { return (c.model || null) === (latest.model || null); }); // compare like with like
+    var prev = same[1];
+    var li = el('li', 'dash-site');
+    var head = el('div', 'dash-head');
+    var t = el('div');
+    var a = el('a', 'dash-name', domain); a.href = '/website-check/r/' + latest.id; t.appendChild(a);
+    t.appendChild(el('span', 'dash-meta', 'Last checked ' + DATE.format(new Date(latest.checked_at)) + (latest.model && KIND[latest.model] ? ' · as ' + KIND[latest.model] : '') + ' · ' + (latest.fixes ? latest.fixes + ' to fix' : 'nothing to fix')));
+    head.appendChild(t);
+    var acts = el('div', 'dash-acts');
+    var again = el('a', 'btn-filled', 'Check again'); again.href = '/website-check/?check=' + encodeURIComponent(domain) + (latest.model ? '&kind=' + latest.model : '');
+    var open = el('a', 'btn-outline', 'Latest report'); open.href = '/website-check/r/' + latest.id;
+    acts.appendChild(again); acts.appendChild(open); head.appendChild(acts);
+    li.appendChild(head);
+
+    var grid = el('ul', 'dash-areas');
+    ORDER.forEach(function (id) {
+      var v = scoreOf(latest, id); if (v == null) return;
+      var cell = el('li');
+      cell.appendChild(el('small', null, AREAS[id]));
+      var b = el('b', null, String(v));
+      var pv = prev ? scoreOf(prev, id) : null;
+      if (pv != null && pv !== v) { var d = el('em', null, (v > pv ? '+' : '−') + Math.abs(v - pv)); d.title = (v > pv ? 'Up ' : 'Down ') + Math.abs(v - pv) + ' since ' + DATE.format(new Date(prev.checked_at)); b.appendChild(d); }
+      cell.appendChild(b);
+      var pts = same.slice().reverse().map(function (c) { return { v: scoreOf(c, id), at: c.checked_at }; }).filter(function (p) { return p.v != null; });
+      if (pts.length > 1) cell.appendChild(spark(pts, AREAS[id]));
+      grid.appendChild(cell);
+    });
+    li.appendChild(grid);
+    if (same.length < 2) li.appendChild(el('p', 'dash-hint', 'Check again after you’ve made changes and your progress shows here.'));
+
+    if (list.length > 1) {
+      var more = el('details', 'dash-more'); more.appendChild(el('summary', null, 'Earlier reports (' + (list.length - 1) + ')'));
+      var ul = el('ul');
+      list.slice(1).forEach(function (c) { var x = el('li'); var l = el('a', null, DATE.format(new Date(c.checked_at))); l.href = '/website-check/r/' + c.id; x.appendChild(l); x.appendChild(el('span', null, (c.fixes ? c.fixes + ' to fix' : 'nothing to fix') + (c.model && KIND[c.model] ? ' · as ' + KIND[c.model] : ''))); ul.appendChild(x); });
+      more.appendChild(ul); li.appendChild(more);
+    }
+    return li;
+  }
+
+  function adsCard(c) {
+    var li = el('li', 'dash-site dash-ads');
+    var head = el('div', 'dash-head'), t = el('div');
+    var a = el('a', 'dash-name', c.domain); a.href = '/google-ads-audit/r/' + c.id; t.appendChild(a);
+    t.appendChild(el('span', 'dash-meta', 'Google Ads Check · ' + DATE.format(new Date(c.checked_at)) + ' · ' + (c.fixes ? c.fixes + ' to fix' : 'nothing to fix')));
+    head.appendChild(t);
+    var acts = el('div', 'dash-acts'); var o = el('a', 'btn-outline', 'Open report'); o.href = '/google-ads-audit/r/' + c.id; acts.appendChild(o); head.appendChild(acts);
+    li.appendChild(head);
+    return li;
+  }
+
   function home(d) {
     show('acct-home');
     $('acct-who').textContent = 'Signed in as ' + d.account.email;
     var list = $('acct-list'); list.textContent = '';
+    var web = d.checks.filter(function (c) { return c.tool === 'website'; });
+    var ads = d.checks.filter(function (c) { return c.tool === 'ads'; });
     $('acct-empty').hidden = d.checks.length > 0;
-    d.checks.forEach(function (c) {
-      var li = el('li', 'acct-item');
-      var a = el('a', 'acct-link'); a.href = c.tool === 'website' ? '/website-check/r/' + c.id : '/google-ads-audit';
-      a.appendChild(el('b', null, c.domain));
-      a.appendChild(el('span', null, (c.tool === 'website' ? 'Website Check' : 'Google Ads Check') + ' · ' + DATE.format(new Date(c.checked_at)) + (c.fixes != null ? ' · ' + (c.fixes ? c.fixes + ' to fix' : 'nothing to fix') : '')));
-      li.appendChild(a);
-      if (c.scores && c.scores.length) {
-        var sc = el('ul', 'acct-scores');
-        c.scores.forEach(function (s) { if (s.score == null) return; var x = el('li'); x.appendChild(el('small', null, AREAS[s.id] || s.id)); x.appendChild(el('b', null, String(s.score))); sc.appendChild(x); });
-        li.appendChild(sc);
-      }
-      list.appendChild(li);
-    });
+    var sites = {}, order = [];
+    web.forEach(function (c) { if (!sites[c.domain]) { sites[c.domain] = []; order.push(c.domain); } sites[c.domain].push(c); });
+    order.forEach(function (dm) { list.appendChild(siteCard(dm, sites[dm])); });
+    var adsBox = $('acct-ads'); adsBox.textContent = '';
+    $('acct-ads-sec').hidden = !ads.length;
+    var seen = {};
+    ads.forEach(function (c) { if (seen[c.domain]) return; seen[c.domain] = 1; adsBox.appendChild(adsCard(c)); });
   }
   $('acct-out').addEventListener('click', function () {
     api('/account/logout', {}).catch(function () {}).then(function () {
