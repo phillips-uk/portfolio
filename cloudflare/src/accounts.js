@@ -42,6 +42,13 @@ const LINK_MINUTES = 20;
 const FROM = { email: 'contact@phillips-uk.com', name: 'Phillips.' };
 const COOKIE = 'ph_acct';
 
+// Weekly clean-up (the Worker's Monday cron): sign-in link records older than a day are deleted. A link works for 20
+// minutes and the hourly send limit looks back one hour, so nothing needs them after that (privacy notice: accounts).
+export async function cleanupAccounts(env) {
+  if (!env.ACCOUNTS_DB) return;
+  await env.ACCOUNTS_DB.prepare('DELETE FROM login_links WHERE created_at < ?').bind(new Date(Date.now() - 86400000).toISOString()).run();
+}
+
 export const isAccountPath = path => path === '/account' || path.startsWith('/account/');
 
 const enc = new TextEncoder();

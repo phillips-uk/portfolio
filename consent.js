@@ -1,6 +1,6 @@
 // Cookie banner and Cookie settings for phillips-uk.com (22 Nov 2026). A copy of Phillips Group's (phillips-group repo,
 // public/consent.js, approved 16 Nov 2026), which is the group standard (The Director's Office, Before You Pay) without
-// the advertising part: the GTM container (GTM-WS5CP6NW, version 11) fires Google Analytics only, no ad tags, so the
+// the advertising part: the GTM container (GTM-WS5CP6NW, version 12) fires Google Analytics only, no ad tags, so the
 // only optional use is site usage statistics. If advertising tags are ever added to GTM, take the advertising choice
 // from The Director's Office's version first. If the wording changes, raise VERSION.
 // Wording: vault 01_Phillips/02_Website/07_Cookie Banner Copy.md (adapted from Phillips Group's to "I").

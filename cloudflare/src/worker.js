@@ -9,7 +9,7 @@ import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
 import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks, setSelfHandler, keepWebsiteReport } from './website-check.js';
-import { isAccountPath, accounts } from './accounts.js';
+import { isAccountPath, accounts, cleanupAccounts } from './accounts.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
 import { isSignInPath, googleSignIn } from './google-signin.js';
 import { cleanupToolRates } from './tools-gate.js';
@@ -264,8 +264,8 @@ export default {
   async scheduled(controller, env, ctx) {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
     ctx.waitUntil(briefScheduled(controller, env));
-    // Weekly tidy of the free tools' saved reports and counters (Monday's early run only)
-    if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env), cleanupToolRates(env)]).catch(err => console.error('tools cleanup', err && err.message)));
+    // Weekly tidy of the free tools' saved reports and counters, and old account sign-in links (Monday's early run only)
+    if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env), cleanupToolRates(env), cleanupAccounts(env)]).catch(err => console.error('tools cleanup', err && err.message)));
   },
 
   async queue(batch, env, ctx) {

@@ -1,5 +1,5 @@
 // Cookie choices (22 Nov 2026): the group standard (Phillips Group's phillips-group repo, src/worker.js), without
-// advertising, because the GTM container (GTM-WS5CP6NW, version 11) fires Google Analytics only.
+// advertising, because the GTM container (GTM-WS5CP6NW, version 12) fires Google Analytics only.
 // Every HTML page that loads Google gets, as the first thing in its <head> (so before any container or gtag.js):
 // 1. CONSENT_HEAD, an inline script that reads the ph_consent cookie ("<statistics 0|1>.<wording version>") and sets
 //    Google Consent Mode defaults: statistics on unless the visitor turned them off, advertising always denied. With
