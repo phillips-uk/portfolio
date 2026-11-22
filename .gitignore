@@ -13,3 +13,6 @@ package-lock.json
 .dev.vars
 
 # Data service: local keys and wrangler state
+
+# The deploy routine links node_modules into worktrees; a link is a file, which "node_modules/" doesn't match
+node_modules
