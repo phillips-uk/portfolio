@@ -1,5 +1,6 @@
 // Cloudflare Worker entry for phillips-uk.com. Serves the static site from Workers Assets and runs the existing
 // netlify/functions/*.js handlers unchanged through the adapter (same approach as Before You Pay).
+import { syncXero } from './client-billing.js';
 import { toEvent, fromResult } from './netlify-adapter.js';
 import { isRateCardPath, rateCard, invitePing } from './rate-card.js';
 import { isMonumentDataPath, monumentData } from './monument-data.js';
@@ -263,7 +264,10 @@ export default {
   // Cron triggers (wrangler.jsonc): the Monday Brief send at 07:00 UK time and Lewis's Friday and Sunday notes.
   async scheduled(controller, env, ctx) {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
-    ctx.waitUntil(briefScheduled(controller, env));
+    // The daily 05:15 run is the Xero sync only: the Brief's Friday and Sunday notes must not fire on it
+    if (controller.cron !== '15 5 * * *') ctx.waitUntil(briefScheduled(controller, env));
+    // Client billing: the Phillips. invoices from Xero, once a day before Lewis starts
+    if (controller.cron === '15 5 * * *') ctx.waitUntil(syncXero(env).then(r => { if (!r.ok && !/not connected|not set up/.test(r.error)) console.error('xero sync', r.error); }));
     // Weekly tidy of the free tools' saved reports and counters, and old account sign-in links (Monday's early run only)
     if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env), cleanupToolRates(env), cleanupAccounts(env)]).catch(err => console.error('tools cleanup', err && err.message)));
   },

@@ -49,7 +49,7 @@
   // differently from standard cron. Monday 06:00 and 07:00 both fire and only the one that is 07:00 in London sends
   // (BST and GMT). Friday 16:00: tell Lewis if the draft is ready. Sunday 18:00: remind him if it isn't approved.
   // An issue is only ever sent after Lewis approves it in /admin.
-  "triggers": { "crons": ["0 6 * * MON", "0 7 * * MON", "0 16 * * FRI", "0 18 * * SUN"] },
+  "triggers": { "crons": ["0 6 * * MON", "0 7 * * MON", "0 16 * * FRI", "0 18 * * SUN", "15 5 * * *"] },
   // Zone phillips-uk.com is on Cloudflare (nameservers kirk/nataly) since 2026-10-20. The Worker redirects the apex to www.
   "routes": [
     { "pattern": "www.phillips-uk.com", "custom_domain": true },

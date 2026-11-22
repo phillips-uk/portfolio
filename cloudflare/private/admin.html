@@ -1042,6 +1042,29 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
   .pr-savebar input[type=text] { order: 3; flex-basis: 100%; }
   .pr-savebar .btn.primary { order: 4; flex: 1 1 100%; justify-content: center; }
 }
+/* Client billing and revenue (Lewis, 22 Nov 2026) */
+.rev-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 28px 0 12px; }
+.rev-head h2 { font-size: 18px; font-weight: 800; letter-spacing: -.02em; margin: 0; }
+.rev-kpis { margin-bottom: 24px; }
+.xero-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.bill .card-body { display: grid; gap: 18px; }
+.bill-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.bill-form label { display: grid; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--text); }
+.bill-form input[type=number], .bill-form input[type=date] { width: 100%; }
+.bill-form .wide { grid-column: 1 / -1; }
+.bill-acts { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.clients-fee { white-space: nowrap; }
+.bill-msg { color: var(--bad); font-size: 13.5px; font-weight: 600; }
+.bill-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.bill-tile { background: var(--sunk); border-radius: var(--r-nest); padding: 12px 14px; }
+.bill-tile small { display: block; font: 500 10.5px/1.3 var(--mono, monospace); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.bill-tile b { display: block; font-size: 20px; font-weight: 800; letter-spacing: -.03em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.bill-note { color: var(--muted); font-size: 13.5px; margin: 0; }
+.bill-inv li, .cl-former .list li { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
+.cl-former .list { padding: 0 20px 6px; }
+.cl-former { margin-top: 20px; }
+.cl-former .count { font: 500 11px/1 var(--mono, monospace); color: var(--muted); margin-left: 4px; }
+@media (max-width: 600px) { .bill-form { grid-template-columns: minmax(0, 1fr); } .bill-tiles { grid-template-columns: minmax(0, 1fr); } .xero-bar { justify-content: flex-start; } }
 </style>
 </head>
 <body>
@@ -1097,6 +1120,14 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
         <a class="kpi" href="#site"><small>Audits, last 7 days</small><b id="k-audits">–</b><span id="k-audits-s">&nbsp;</span></a>
       </div>
       </div>
+      <!-- Revenue (Lewis, 22 Nov 2026): monthly fees typed on each client's page, invoices from Xero (Phillips. lines only) -->
+      <div class="rev-head"><h2>Revenue</h2><span class="meta" id="r-src"></span></div>
+      <div class="kpis rev-kpis">
+        <a class="kpi" href="#clients"><small>Monthly recurring</small><b id="r-month">–</b><span id="r-month-s">&nbsp;</span></a>
+        <div class="kpi"><small>Invoiced this month</small><b id="r-inv">–</b><span id="r-inv-s">&nbsp;</span></div>
+        <div class="kpi"><small id="r-paid-k">Paid this year</small><b id="r-paid">–</b><span id="r-paid-s">&nbsp;</span></div>
+        <div class="kpi"><small>Owed to you</small><b id="r-owed">–</b><span id="r-owed-s">&nbsp;</span></div>
+      </div>
       <div class="two">
         <div class="card"><div class="card-head"><h2>Needs attention</h2><span class="meta" id="att-n"></span></div><div class="card-body"><ul class="list" id="attention"><li><span></span><span class="s">Loading…</span><span></span></li></ul></div></div>
         <div class="card"><div class="card-head"><h2>Latest activity</h2></div><div class="card-body"><ul class="list" id="activity"><li><span></span><span class="s">Loading…</span><span></span></li></ul></div></div>
@@ -1105,13 +1136,17 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 
     <!-- Clients list -->
     <section data-pane="clients" hidden>
-      <div class="page-head"><div><h1>Clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-1" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-1" hidden>From the client folders in Obsidian. Click a client for health, reports and tasks.</p></div></div>
+      <div class="page-head"><div><h1>Clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-1" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-1" hidden>From the client folders in Obsidian. Click a client for health, reports, tasks and billing. Fees are set on each client's page; invoices come from Xero once a day.</p></div><div class="xero-bar" id="cl-xero"></div></div>
       <div class="card scroll">
         <table class="table">
-          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th id="ads-col">Google Ads this week</th><th>Last report</th><th class="r">Open tasks</th><th></th></tr></thead>
-          <tbody id="clients-rows"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th id="ads-col">Google Ads this week</th><th>Last report</th><th class="r">Fee</th><th class="r">Open tasks</th><th></th></tr></thead>
+          <tbody id="clients-rows"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
         </table>
       </div>
+      <details class="card fold-card cl-former" id="cl-former" hidden>
+        <summary class="card-head"><h2>Former clients <span class="count" id="cl-former-n"></span></h2></summary>
+        <ul class="list" id="cl-former-list"></ul>
+      </details>
     </section>
 
     <!-- Client detail -->
@@ -1132,6 +1167,22 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
       <div class="card perf" id="c-perf"></div>
       <div class="detail-grid">
         <div class="stack">
+          <div class="card bill" id="c-bill">
+            <div class="card-head"><h2>Billing</h2><span class="meta" id="c-bill-meta"></span></div>
+            <div class="card-body">
+              <div class="bill-money" id="c-bill-money"></div>
+              <form id="c-bill-form" class="bill-form" autocomplete="off" novalidate>
+                <label>Fee (£)<input type="number" name="fee" min="0" step="1" placeholder="500"></label>
+                <label>How often<select name="cadence"><option value="monthly">Every month</option><option value="one-off">One-off</option><option value="none">Not paying yet</option></select></label>
+                <label>Invoice day<input type="number" name="day" min="1" max="31" placeholder="23"></label>
+                <label>Xero contact<select name="xeroContactId"></select></label>
+                <label>Started<input type="date" name="start"></label>
+                <label>Ends (optional)<input type="date" name="end"></label>
+                <label class="wide">Note (optional)<input type="text" name="note" maxlength="300" placeholder="For example: paid by bank transfer"></label>
+                <div class="wide bill-acts"><button class="btn" type="submit" id="c-bill-go">Save billing</button><span class="bill-msg" id="c-bill-msg"></span></div>
+              </form>
+            </div>
+          </div>
           <div class="card"><div class="card-head"><h2>Reports and audits</h2><span class="meta">The latest of each opens here, older ones in Obsidian</span></div><div class="card-body"><ul class="list reports" id="c-reports"></ul></div></div>
         </div>
         <div class="stack">
@@ -1791,6 +1842,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
   /* ---------- routing ---------- */
   function route() {
     var h = (location.hash || '#overview').slice(1);
+    if (h.indexOf('?') !== -1) { var q = h.split('?')[1]; h = h.split('?')[0]; history.replaceState(null, '', '#' + h); xeroNotice(q); }
     var view = h.split('/')[0] || 'overview';
     if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'list', 'demos', 'pricing', 'site'].indexOf(view) === -1) view = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== view; });
@@ -1829,11 +1881,13 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
       api('/admin/api/site').catch(function () { return null; }),
       api('/admin/api/deals').catch(function () { return null; }),
       api('/admin/api/brief').catch(function () { return null; }),
-      api('/admin/api/tool-usage').catch(function () { return null; })
+      api('/admin/api/tool-usage').catch(function () { return null; }),
+      api('/admin/api/billing').catch(function () { return null; })
     ]).then(function (r) {
+      state.billing = r[6] || null;
       state.brief = r[4] || null;
       state.toolUsage = r[5] && r[5].weeks ? r[5].weeks : null;
-      if (r[0]) { state.clients = r[0].clients || []; state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
+      if (r[0]) { state.allClients = r[0].clients || []; splitFormer(); state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
       if (r[1]) { state.invites = r[1].invites || []; state.deskDemo = r[1].deskDemo || null; }
       if (r[2]) state.site = r[2];
       if (r[3]) state.prospects = r[3].deals || [];
@@ -1849,7 +1903,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     $('b-clients').textContent = state.clients.length || '';
     $('b-prospects').textContent = openProspects().length || '';
     $('b-links').textContent = state.invites.filter(function (i) { return i.state === 'active' && !i.archived; }).length || '';
-    renderOverview(); renderClients(); renderBoard(); renderInvites(); renderDeskDemo(); renderSite(); renderBrief();
+    renderOverview(); renderRevenue(); renderXeroBar(); renderClients(); renderBoard(); renderInvites(); renderDeskDemo(); renderSite(); renderBrief();
     if ((location.hash || '').indexOf('#client/') === 0) route(); else countPane();
   }
   function openProspects() { return state.prospects.filter(function (p) { return !/won|lost/i.test(p.stage); }); }
@@ -2139,11 +2193,139 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     add(ch ? '. Conversions ' + (ch.dir === 0 ? 'level with ' : (ch.dir > 0 ? 'up ' : 'down ') + ch.text.replace(/^[+-]/, '') + ' on ') + vsText() + '.' : '.');
   }
 
+
+  /* ---------- client billing, revenue and Xero (cloudflare/src/client-billing.js) ---------- */
+  var GBP0 = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+  var GBP2b = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var gbp = function (v) { return Number(v) % 1 ? GBP2b.format(v) : GBP0.format(v || 0); };
+  function billOf(slug) { return (state.billing && state.billing.clients && state.billing.clients[slug]) || {}; }
+  function splitFormer() {
+    var all = state.allClients || [];
+    state.clients = all.filter(function (c) { return !billOf(c.slug).former; });
+    state.formerClients = all.filter(function (c) { return billOf(c.slug).former; });
+  }
+  function shortDay(d) { return d ? new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''; }
+  function renderRevenue() {
+    var b = state.billing; if (!b) { $('r-src').textContent = 'Billing did not load.'; return; }
+    var r = b.revenue, x = b.xero;
+    $('r-paid-k').textContent = 'Paid in ' + b.today.slice(0, 4);
+    $('r-month').textContent = gbp(r.monthly);
+    $('r-month-s').textContent = (r.payers ? plural(r.payers, 'client', 'clients') + ' on a monthly fee' : r.upcoming ? 'No fees running yet' : 'Set fees on each client’s page') + (r.upcoming ? ', ' + gbp(r.upcoming) + ' more from ' + shortDay(r.nextStart) : '');
+    var live = x.connected && x.syncedAt;
+    $('r-inv').textContent = live ? gbp(r.invoicedMonth) : '–';
+    $('r-inv-s').textContent = live ? 'Phillips. lines in Xero' : 'Needs Xero';
+    $('r-paid').textContent = live ? gbp(r.paidYear) : '–';
+    $('r-paid-s').textContent = live ? 'from Xero' : 'Needs Xero';
+    $('r-owed').textContent = live ? gbp(r.owed) : '–';
+    $('r-owed-s').textContent = !live ? 'Needs Xero' : r.overdue ? gbp(r.overdue) + ' past its due date' : r.openCount ? plural(r.openCount, 'invoice', 'invoices') + ', none overdue' : 'Nothing outstanding';
+    $('r-src').textContent = !x.ready ? 'Xero is not set up yet' : !x.connected ? 'Xero not connected: fees only' : x.syncedAt ? 'Xero synced ' + fmt(x.syncedAt, true) : 'Xero connected, not synced yet';
+  }
+  function renderXeroBar() {
+    var box = $('cl-xero'); box.innerHTML = '';
+    var x = state.billing && state.billing.xero; if (!x) return;
+    if (!x.ready) { box.appendChild(el('span', 'pill', 'Xero not set up')); return; }
+    if (!x.connected) { box.appendChild(link('/admin/xero/connect', 'Connect Xero', 'btn')); return; }
+    box.appendChild(el('span', 'pill ' + (x.lastError ? 'warn' : 'good'), x.lastError ? 'Xero: ' + x.lastError : 'Xero: ' + (x.tenantName || 'connected') + (x.syncedAt ? ', synced ' + fmt(x.syncedAt, true) : '')));
+    if (x.untagged) box.appendChild(el('span', 'pill warn', plural(x.untagged, 'invoice', 'invoices') + ' with no Brand'));
+    var sync = el('button', 'btn', 'Sync now'); sync.type = 'button';
+    sync.addEventListener('click', function () {
+      sync.disabled = true; sync.textContent = 'Syncing';
+      api('/admin/api/xero/sync', { method: 'POST', body: {} }).then(function (d) { state.billing = d; toast('Synced with Xero.'); renderAll(); })
+        .catch(function (e) { toast(e.message, true); sync.disabled = false; sync.textContent = 'Sync now'; });
+    });
+    var off = el('button', 'btn', 'Disconnect'); off.type = 'button';
+    off.addEventListener('click', function () {
+      ask('Disconnect Xero?', 'The admin stops reading invoices and forgets the ones it has. Fees you typed stay. You can connect again any time.', 'Keep it', 'Disconnect').then(function (yes) {
+        if (!yes) return;
+        api('/admin/api/xero/disconnect', { method: 'POST', body: {} }).then(function (d) { state.billing = d; toast('Xero disconnected.'); renderAll(); }).catch(function (e) { toast(e.message, true); });
+      });
+    });
+    box.appendChild(sync); box.appendChild(off);
+  }
+  function xeroNotice(q) {
+    var m = (q.match(/(?:^|&)xero=([a-z-]+)/) || [])[1]; if (!m) return;
+    var say = { connected: ['Xero connected. Invoices are in.', false], 'sync-failed': ['Xero connected, but the first read failed. Try Sync now.', true], expired: ['That Xero sign-in took too long. Connect again.', true],
+      cancelled: ['Xero was not connected.', true], failed: ['Xero did not connect. Try again.', true], 'no-organisation': ['That Xero sign-in has no organisation to read.', true], 'not-set-up': ['Xero is not set up on the site yet.', true] }[m];
+    if (say) setTimeout(function () { toast(say[0], say[1]); }, 600);
+  }
+  function renderFormer() {
+    var box = $('cl-former'), list = $('cl-former-list'), f = state.formerClients || [];
+    box.hidden = !f.length; $('cl-former-n').textContent = f.length || ''; list.innerHTML = '';
+    f.forEach(function (c) {
+      var li = el('li'), body = el('div');
+      body.appendChild(el('div', 't', c.name)); body.appendChild(el('div', 's', billOf(c.slug).formerAt ? 'Moved ' + fmt(billOf(c.slug).formerAt) : 'Former client'));
+      li.appendChild(body); li.appendChild(el('span'));
+      var o = el('span'); o.appendChild(link('#client/' + encodeURIComponent(c.slug), 'Open', 'btn')); li.appendChild(o);
+      list.appendChild(li);
+    });
+  }
+  function setFormer(c, former) {
+    var go = function () {
+      api('/admin/api/billing/' + encodeURIComponent(c.slug) + '/former', { method: 'POST', body: { former: former } }).then(function (d) {
+        state.billing = d; splitFormer(); renderAll();
+        toast(former ? c.name + ' moved to former clients.' : c.name + ' is a current client again.');
+        if (former) location.hash = '#clients';
+      }).catch(function (e) { toast(e.message, true); });
+    };
+    if (!former) return go();
+    ask('Move ' + c.name + ' to former clients?', 'They leave the clients list and the monthly revenue. Their Obsidian folder and Xero invoices stay as they are, and you can move them back any time.', 'Keep as client', 'Move to former').then(function (yes) { if (yes) go(); });
+  }
+  function renderBillCard(c) {
+    var b = billOf(c.slug), x = (state.billing && state.billing.xero) || {}, form = $('c-bill-form');
+    form.setAttribute('data-slug', c.slug);
+    form.fee.value = b.fee == null ? '' : b.fee;
+    form.cadence.value = b.cadence || 'monthly';
+    form.day.value = b.day || '';
+    form.start.value = b.start || ''; form.end.value = b.end || ''; form.note.value = b.note || '';
+    var sel = form.xeroContactId; sel.innerHTML = '';
+    var none = el('option', null, x.connected ? 'Not linked' : 'Connect Xero to link'); none.value = ''; sel.appendChild(none);
+    var contacts = (x.contacts || []).slice();
+    if (b.xeroContactId && !contacts.some(function (k) { return k.id === b.xeroContactId; })) contacts.unshift({ id: b.xeroContactId, name: b.xeroContactName || 'Linked contact' });
+    contacts.forEach(function (k) { var o = el('option', null, k.name); o.value = k.id; sel.appendChild(o); });
+    if (!b.xeroContactId) { var guess = contacts.filter(function (k) { return k.name.toLowerCase().replace(/[^a-z]/g, '').indexOf(c.name.toLowerCase().replace(/[^a-z]/g, '').slice(0, 8)) !== -1; })[0]; if (guess) sel.value = guess.id; }
+    else sel.value = b.xeroContactId;
+    sel.disabled = !contacts.length;
+    $('c-bill-msg').textContent = '';
+    $('c-bill-meta').textContent = b.fee ? gbp(b.fee) + (b.cadence === 'monthly' ? ' a month' + (b.day ? ', on the ' + ordinal(b.day) : '') : b.cadence === 'one-off' ? ' one-off' : '') : 'Not set';
+    var m = $('c-bill-money'); m.innerHTML = '';
+    if (b.money) {
+      var tiles = el('div', 'bill-tiles');
+      [['Invoiced, 12 months', gbp(b.money.invoiced12m)], ['Paid, 12 months', gbp(b.money.paid12m)], ['Owed', gbp(b.money.owed)]].forEach(function (t) { var d = el('div', 'bill-tile'); d.appendChild(el('small', null, t[0])); d.appendChild(el('b', null, t[1])); tiles.appendChild(d); });
+      m.appendChild(tiles);
+      if (b.money.recent.length) {
+        var ul = el('ul', 'list bill-inv');
+        b.money.recent.forEach(function (i) {
+          var li = el('li'), body = el('div');
+          body.appendChild(el('div', 't', (i.number || 'Invoice') + ', ' + gbp(i.total)));
+          body.appendChild(el('div', 's', shortDay(i.date) + (i.status === 'PAID' ? ' · paid' : i.due && i.due < state.billing.today ? ' · overdue since ' + shortDay(i.due) : ' · due ' + shortDay(i.due))));
+          li.appendChild(body); li.appendChild(el('span'));
+          var o = el('span'); o.appendChild(link('https://go.xero.com/AccountsReceivable/View.aspx?InvoiceID=' + encodeURIComponent(i.id), 'Xero', 'btn')); li.appendChild(o);
+          ul.appendChild(li);
+        });
+        m.appendChild(ul);
+      } else m.appendChild(el('p', 'bill-note', 'No Phillips. invoices for this contact in Xero yet.'));
+    }
+  }
+  function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  $('c-bill-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var form = e.target, slug = form.getAttribute('data-slug'), sel = form.xeroContactId;
+    var body = { fee: form.fee.value, cadence: form.cadence.value, day: form.day.value, start: form.start.value, end: form.end.value, note: form.note.value,
+      xeroContactId: sel.value, xeroContactName: sel.value ? sel.options[sel.selectedIndex].text : '' };
+    $('c-bill-go').disabled = true; $('c-bill-msg').textContent = '';
+    api('/admin/api/billing/' + encodeURIComponent(slug), { method: 'POST', body: body }).then(function (d) {
+      state.billing = d; toast('Billing saved.'); renderRevenue(); renderClients();
+      var c = (state.allClients || []).filter(function (x) { return x.slug === slug; })[0]; if (c) renderBillCard(c);
+    }).catch(function (err) { $('c-bill-msg').textContent = err.message; })
+      .then(function () { $('c-bill-go').disabled = false; });
+  });
+
   /* ---------- clients ---------- */
   function renderClients() {
     var body = $('clients-rows'); body.innerHTML = '';
     $('ads-col').textContent = state.period && state.period.fullWeek ? 'Google Ads last week' : 'Google Ads this week so far';
-    if (!state.clients.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No clients synced yet.'); td0.colSpan = 7; tr0.appendChild(td0); body.appendChild(tr0); return; }
+    if (!state.clients.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No clients synced yet.'); td0.colSpan = 8; tr0.appendChild(td0); body.appendChild(tr0); renderFormer(); return; }
+    renderFormer();
     state.clients.forEach(function (c, i) {
       var tr = el('tr', 'click'); tr.tabIndex = 0;
       var go = function () { location.hash = '#client/' + encodeURIComponent(c.slug); };
@@ -2162,14 +2344,16 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
       var last = latestReport(c);
       var lr = el('td'); if (last) { lr.appendChild(el('div', null, ago(last.date))); lr.lastChild.style.fontWeight = '700'; lr.appendChild(el('div', 's', last.section)); lr.lastChild.style.cssText = 'color:var(--muted);font-size:13px;margin-top:2px'; } else lr.textContent = '–';
       tr.appendChild(lr);
+      var bf = billOf(c.slug);
+      tr.appendChild(el('td', 'r num clients-fee', bf.fee ? money(bf.fee, 'GBP') + (bf.cadence === 'monthly' ? ' /mo' : bf.cadence === 'one-off' ? ' once' : '') : '–'));
       tr.appendChild(el('td', 'r num', String(c.openTaskCount || 0)));
       var ch = el('td', 'r'); ch.innerHTML = ICON.chev; tr.appendChild(ch);
       body.appendChild(tr);
     });
   }
   function renderClient(slug) {
-    var c = state.clients.filter(function (x) { return x.slug === slug; })[0];
-    if (!c) { $('c-name').textContent = state.clients.length ? 'Client not found' : 'Loading…'; return; }
+    var c = (state.allClients || []).filter(function (x) { return x.slug === slug; })[0];
+    if (!c) { $('c-name').textContent = (state.allClients || []).length ? 'Client not found' : 'Loading…'; return; }
     $('c-name').textContent = c.name;
     var f = $('c-facts'); f.innerHTML = '';
     f.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'good' : 'amber'), c.status || 'Unknown'));
@@ -2181,6 +2365,11 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     else if (c.profileLink) a.appendChild(link(c.profileLink, 'Open profile in Obsidian', 'btn primary'));
     if (c.brainDumpDoc) a.appendChild(link(docLink(c.brainDumpDoc, c.slug), 'Brain dump', 'btn'));
     else if (c.brainDumpLink) a.appendChild(link(c.brainDumpLink, 'Brain dump', 'btn'));
+    var fb = el('button', 'btn', billOf(c.slug).former ? 'Back to current clients' : 'Move to former clients'); fb.type = 'button';
+    fb.addEventListener('click', function () { setFormer(c, !billOf(c.slug).former); });
+    a.appendChild(fb);
+    if (billOf(c.slug).former) f.insertBefore(el('span', 'pill', 'Former client'), f.firstChild);
+    renderBillCard(c);
     renderHero(c);
     renderPerf(c);
 
@@ -2241,7 +2430,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
   }
   function docLink(id, from) { return '#doc/' + id + '/' + (from || ''); }
   function renderDoc(id, from) {
-    var client = state.clients.filter(function (c) { return c.slug === from; })[0];
+    var client = (state.allClients || state.clients).filter(function (c) { return c.slug === from; })[0];
     var crumb = $('d-crumb'); crumb.innerHTML = '';
     if (from === 'p') { crumb.appendChild(link('#prospects', 'Prospects')); crumb.appendChild(document.createTextNode(' /')); }
     else { crumb.appendChild(link('#clients', 'Clients')); crumb.appendChild(document.createTextNode(' / ')); if (client) { crumb.appendChild(link('#client/' + encodeURIComponent(client.slug), client.name)); crumb.appendChild(document.createTextNode(' /')); } }

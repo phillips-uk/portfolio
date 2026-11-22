@@ -2,6 +2,7 @@
 // (pipeline.js: deals made here plus the prospect notes, with comments and files on each card),
 // rate card invite links (Search Desk demo invites each get their own Search Desk share link, desk-demo.js) and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
+import { billingAdmin, xeroRoutes } from './client-billing.js';
 import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, updateInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
 import { deals } from './pipeline.js';
@@ -219,7 +220,7 @@ async function getDoc(env, id) {
 }
 
 export function isAdminPath(path) {
-  return path === '/admin' || path.startsWith('/admin/api/');
+  return path === '/admin' || path.startsWith('/admin/api/') || path.startsWith('/admin/xero/');
 }
 
 export async function admin(request, url, env) {
@@ -240,7 +241,12 @@ export async function admin(request, url, env) {
   }
 
   const email = await adminEmail(request, env);
-  if (!email) return json({ error: 'Signed out' }, 401);
+  if (!email) return path.startsWith('/admin/xero/') ? Response.redirect(url.origin + '/admin', 302) : json({ error: 'Signed out' }, 401);
+
+  // Xero's sign-in round trip for client billing (cloudflare/src/client-billing.js)
+  if (path.startsWith('/admin/xero/') && method === 'GET') return xeroRoutes(request, url, env, email);
+  // Client billing, former clients and the Xero sync
+  if (path.startsWith('/admin/api/billing') || path.startsWith('/admin/api/xero/')) return billingAdmin(request, path, env);
 
   if (path === '/admin/api/me') return json({ email });
   if (path === '/admin/api/invites' && method === 'GET') {
