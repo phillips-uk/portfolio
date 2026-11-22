@@ -11,7 +11,7 @@
 <script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},2500)}</script>
 <link rel="stylesheet" href="/agency.css?v=24">
 <link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/tools.css?v=24">
+<link rel="stylesheet" href="/tools.css?v=25">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.phillips-uk.com/website-check/">
@@ -114,7 +114,7 @@
     <fieldset class="wc-kind" id="wc-kind">
       <legend>Your customers <span>(optional)</span></legend>
       <label><input type="radio" name="kind" value="local"><span>Local customers</span></label>
-      <label><input type="radio" name="kind" value="national"><span>Customers across the UK</span></label>
+      <label><input type="radio" name="kind" value="national"><span>Regional or UK-wide customers</span></label>
       <label><input type="radio" name="kind" value="shop"><span>Online shoppers</span></label>
     </fieldset>
     <label class="fresh-opt" id="fresh-opt" hidden><input type="checkbox" id="check-fresh"> Run it fresh (preview only: skips the 24-hour reuse)</label>
@@ -158,7 +158,8 @@
           <button type="button" id="rep-again">Check another site</button>
         </div>
       </div>
-      <div class="tiles" id="rep-tiles"></div>
+      <div class="areas" id="rep-areas" aria-label="Scores by area"></div>
+      <details class="rp-more-info areas-note"><summary>How the scores work</summary><p>Each area starts at 100 and loses 25, 12 or 5 points for each fix, by how much it matters. Speed is Google's own phone score when its test answers. Select an area to see its fixes.</p></details>
     </div>
   </section>
 
@@ -187,6 +188,15 @@
     </div>
   </section>
 
+  <section class="rp rp-white" id="sec-weak">
+    <div class="page-w">
+      <div class="rp-h rp-tone fix"><span class="rp-ico" aria-hidden="true">!</span><h3>What to fix</h3><span class="rp-count" id="weak-count"></span></div>
+      <p class="rp-lede" id="weak-lede">Most important first. Each one says where to start.</p>
+      <div class="finds" id="rep-weak"></div>
+      <div class="area-rest" id="rep-rest"></div>
+    </div>
+  </section>
+
   <section class="rp rp-white" id="sec-speed" hidden>
     <div class="page-w">
       <div class="rp-h"><h3>How fast it feels</h3></div>
@@ -200,16 +210,8 @@
   <section class="rp rp-paper" id="sec-strong">
     <div class="page-w">
       <div class="rp-h rp-tone good"><span class="rp-ico" aria-hidden="true">&#10003;</span><h3>What's working</h3><span class="rp-count" id="strong-count"></span></div>
-      <p class="rp-lede">Keep these as they are.</p>
-      <ul class="oks" id="rep-strong"></ul>
-    </div>
-  </section>
-
-  <section class="rp rp-white" id="sec-weak">
-    <div class="page-w">
-      <div class="rp-h rp-tone fix"><span class="rp-ico" aria-hidden="true">!</span><h3>What to fix</h3><span class="rp-count" id="weak-count"></span></div>
-      <p class="rp-lede">Most important first. Each one says where to start.</p>
-      <div class="finds" id="rep-weak"></div>
+      <p class="rp-lede" id="strong-lede">Keep these as they are.</p>
+      <details class="rp-more-info"><summary>See them all</summary><ul class="oks" id="rep-strong"></ul></details>
     </div>
   </section>
 
@@ -366,7 +368,7 @@
     a.addEventListener('click', function () { drawer.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
   });
 </script>
-<script src="/tool-website-check.js?v=11" defer></script>
+<script src="/tool-website-check.js?v=12" defer></script>
 <script src="/motion.js?v=5" defer></script>
 <script src="/contact-form.js?v=2" defer></script>
 <script src="/email.js?v=1" defer></script>

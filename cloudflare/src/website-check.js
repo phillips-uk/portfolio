@@ -23,7 +23,7 @@
 //   tools/website-check/day/<day>.json         checks run by every visitor that day (the daily ceiling)
 // Limits come from the pricing settings (pricing.js, editable in /admin#pricing).
 import websiteCheckHtml from '../private/website-check.html';
-import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS, internalUrl, pageKey, robotsAllows, pageFacts } from './website-check-rules.js';
+import { analyse, readPsi, GROUPS, RULES_VERSION, MODELS, internalUrl, pageKey, robotsAllows, pageFacts, areaScores, areaOf } from './website-check-rules.js';
 import { toolAccessFor, jsonResponse, sha, turnstileOk, londonDay, NO_INDEX, guard } from './tools-gate.js';
 import { countUse, addToolLead } from './tool-leads.js';
 import { getPricing, webQuote } from './pricing.js';
@@ -287,6 +287,8 @@ function publicReport(r) {
     id: r.id, domain: r.domain, url: r.url, finalUrl: r.finalUrl, checkedAt: r.checkedAt,
     page: r.page, scan: r.scan || null, model: r.model || null, modelFrom: r.modelFrom || null, profile: r.profile || null, strengths: r.strengths, weaknesses: r.weaknesses, notes: r.notes, counts: r.counts,
     speed: r.speed, groups: GROUPS,
+    // Area scores and each finding's area (v2 step 4), worked out when shown so older reports have them too
+    areas: areaScores(r), areaOf: Object.fromEntries([...(r.strengths || []), ...(r.weaknesses || []), ...(r.notes || [])].map(f => [f.id, areaOf(f)])),
   };
 }
 

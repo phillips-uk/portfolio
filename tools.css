@@ -75,6 +75,25 @@
 .tile b { display: block; font-size: clamp(28px, 2.4vw, 36px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-top: 8px; font-variant-numeric: tabular-nums; }
 .tile span { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; }
 .tile.good b { color: var(--ok); } .tile.warn b { color: var(--attn); } .tile.bad b { color: var(--bad); }
+/* Website Check area scores (v2 step 4): ink numbers and a brand bar, no verdict colours */
+.areas { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.areas .ar { display: block; width: 100%; text-align: left; font: inherit; color: var(--text); cursor: pointer; padding: 16px 16px 14px; }
+.areas .ar:hover { box-shadow: var(--e2); }
+.areas .ar small { display: block; font: 500 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); min-height: 2.6em; }
+.areas .ar b { display: block; font-size: clamp(28px, 2.6vw, 38px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.areas .ar i { display: block; height: 4px; border-radius: 2px; background: var(--line-soft); margin-top: 12px; overflow: hidden; font-style: normal; }
+.areas .ar i::before { content: ""; display: block; height: 100%; width: var(--v, 0%); background: var(--brand); border-radius: 2px; }
+.areas .ar span { display: block; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.areas-note { margin-top: 14px; }
+.area-rest { display: grid; gap: 10px; margin-top: 28px; }
+.area-rest > details { border-top: 1px solid var(--line); padding-top: 10px; }
+.area-rest > details > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 10px; font-weight: 800; font-size: 16px; padding: 6px 0; }
+.area-rest > details > summary::-webkit-details-marker { display: none; }
+.area-rest > details > summary::after { content: "+"; margin-left: auto; color: var(--brand-text); font-weight: 600; }
+.area-rest > details[open] > summary::after { content: "\2212"; }
+.area-rest > details > summary span { font: 500 11px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.area-rest .finds { margin-top: 10px; }
+.area-rest-k { font: 500 11px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 
 .rep-sec { margin-bottom: 56px; }
 .rep-sec > h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 6px; }
@@ -150,6 +169,7 @@
 
 @media (max-width: 900px) {
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .areas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .checks-list { grid-template-columns: minmax(0, 1fr); }
   .options { grid-template-columns: minmax(0, 1fr); }
 }
@@ -623,3 +643,5 @@
   .adsr .plan a { box-shadow: none; }
   .adsr .plan-more > .plan { display: grid; }
 }
+/* Website Check area scores on phones: two columns (after the 900px rule, so it wins) */
+@media (max-width: 560px) { .areas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .areas .ar { padding: 14px 14px 12px; } }

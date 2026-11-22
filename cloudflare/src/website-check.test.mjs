@@ -1,7 +1,7 @@
 // Website Check rules, tested on the demo websites (website-demos.js, the same ones in /admin#demos/web).
 //   node cloudflare/src/website-check.test.mjs
 import assert from 'node:assert/strict';
-import { analyse, readPsi, savingWords, robotsAllows, internalUrl, pageKey } from './website-check-rules.js';
+import { analyse, readPsi, savingWords, robotsAllows, internalUrl, pageKey, areaScores, AREAS } from './website-check-rules.js';
 import { WEBSITE_DEMOS, findWebsiteDemo } from './website-demos.js';
 import { webQuote, WEB_FIX, getPricing, quote, validate, humanMinutes } from './pricing.js';
 
@@ -152,5 +152,17 @@ assert.equal(internalUrl('/about/#team', 'https://www.a.example/'), 'https://www
 assert.equal(internalUrl('https://a.example/x', 'https://www.a.example/'), 'https://a.example/x', 'with or without www is the same site');
 for (const bad of ['https://other.example/', '/brochure.pdf', '/cart', '/search?q=x', 'mailto:a@b.example', '#top']) assert.equal(internalUrl(bad, 'https://www.a.example/'), null, `${bad} is not scanned`);
 assert.equal(pageKey('https://www.a.example/about/'), pageKey('https://a.example/about'), 'one page, one key');
+
+// v2 step 4 (22 Nov 2026): six area scores, out of 100
+const withSpeed = (id) => { const i = findWebsiteDemo(id).input(); return { ...analyse(i), speed: { mobile: i.psi.mobile } }; };
+for (const d of WEBSITE_DEMOS) {
+  const a = areaScores(withSpeed(d.id));
+  assert.deepEqual(a.map((x) => x.id), AREAS.map((x) => x[0]), `${d.id}: six areas in order`);
+  for (const x of a) assert.ok(x.score === null || (x.score >= 0 && x.score <= 100), `${d.id}: ${x.id} between 0 and 100`);
+  assert.equal(a.reduce((n, x) => n + x.fixes, 0), run(d.id).weaknesses.length, `${d.id}: every fix belongs to one area`);
+}
+assert.ok(areaScores(withSpeed('clinic')).every((x) => x.score === null || x.score >= 94), 'the clinic scores high everywhere');
+assert.equal(areaScores(withSpeed('trades')).find((x) => x.id === 'speed').score, 24, 'speed is Google’s phone score');
+assert.equal(areaScores(withSpeed('relaunch')).find((x) => x.id === 'seo').score, 33, 'two fix-firsts and two smaller ones: 100 - 25 - 25 - 12 - 5');
 
 console.log(`website check: ${WEBSITE_DEMOS.length} demo sites pass`);

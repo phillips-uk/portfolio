@@ -69,7 +69,7 @@
 
   // The kind of business (rules v5, Lewis 21 Nov 2026): optional on the form; left blank, the check detects it and the
   // report offers a switch. A chip can be tapped again to clear it.
-  var KINDS = { local: 'a local business', national: 'a business working across the UK', shop: 'an online shop' };
+  var KINDS = { local: 'a local business', national: 'a business with regional or UK-wide customers', shop: 'an online shop' };
   var kindInputs = Array.prototype.slice.call(document.querySelectorAll('#wc-kind input'));
   kindInputs.forEach(function (k) {
     var was = false;
@@ -122,26 +122,19 @@
   var DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
   var GROUP = {};
 
-  function tile(label, value, sub, tone) {
-    var t = el('div', 'tile' + (tone ? ' ' + tone : ''));
-    t.appendChild(el('small', null, label));
-    t.appendChild(el('b', null, value));
-    if (sub) t.appendChild(el('span', null, sub));
-    return t;
-  }
   var tone = function (s) { return s == null ? '' : s >= 90 ? 'good' : s >= 50 ? 'warn' : 'bad'; };
   var secs = function (ms) { return (Math.round(ms / 100) / 10).toFixed(1) + ' s'; };
   var cut = function (s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : s; };
   var all = function (r) { return (r.strengths || []).concat(r.weaknesses || [], r.notes || []); };
   var byId = function (r, id) { return all(r).filter(function (f) { return f.id === id; })[0]; };
 
-  function finding(f) {
+  function finding(f, label) {
     var card = el('article', 'find weak ' + f.priority);
     card.appendChild(el('span', 'mk', '!'));
     var body = el('div', 'fb'); card.appendChild(body);
     var h = el('h4', null, f.title);
     h.appendChild(el('span', 'pr ' + f.priority, f.priority === 'high' ? 'Fix first' : f.priority === 'medium' ? 'Worth fixing' : 'Small'));
-    if (GROUP[f.group]) h.appendChild(el('span', 'grp', GROUP[f.group]));
+    if (label || GROUP[f.group]) h.appendChild(el('span', 'grp', label || GROUP[f.group]));
     body.appendChild(h);
     if (f.start) {
       var sb = el('div', 'start-box'); sb.appendChild(el('span', 'sb-k', 'Start here')); sb.appendChild(el('p', null, f.start));
@@ -178,7 +171,7 @@
       line.appendChild(document.createTextNode((r.modelFrom || p.modelFrom) === 'chosen' ? ', as you chose.' : ', from what the page shows.'));
       pk.appendChild(line); pk.appendChild(el('span', null, 'Not right?'));
       Object.keys(KINDS).filter(function (k) { return k !== m; }).forEach(function (k) {
-        var b = el('button', null, { local: 'Check as local', national: 'Check as UK-wide', shop: 'Check as a shop' }[k]); b.type = 'button';
+        var b = el('button', null, { local: 'Check as local', national: 'Check as regional or UK-wide', shop: 'Check as a shop' }[k]); b.type = 'button';
         b.addEventListener('click', function () { recheck(r, k); });
         pk.appendChild(b);
       });
@@ -294,7 +287,7 @@
     if (!root.classList.contains('motion-ready') || !('IntersectionObserver' in window) || document.visibilityState === 'hidden') return;
     var rings = Array.prototype.slice.call(document.querySelectorAll('#report .g-fg'));
     rings.forEach(function (g) { g.setAttribute('data-to', g.getAttribute('stroke-dashoffset')); g.setAttribute('stroke-dashoffset', g.getAttribute('stroke-dasharray')); });
-    var nums = Array.prototype.slice.call(document.querySelectorAll('#rep-tiles .tile b, #report .g-dial b')).filter(function (b) { return /^\d+$/.test(b.textContent); });
+    var nums = Array.prototype.slice.call(document.querySelectorAll('#rep-areas .ar b, #report .g-dial b')).filter(function (b) { return /^\d+$/.test(b.textContent); });
     nums.forEach(function (b) { b.setAttribute('data-to', b.textContent); b.textContent = '0'; });
     document.querySelectorAll('#report .wj-segs').forEach(function (row) { Array.prototype.forEach.call(row.children, function (i, n) { i.style.setProperty('--i', n); }); });
     function count(b) {
@@ -324,7 +317,7 @@
       tick = setTimeout(function () { tick = null; waiting.slice().forEach(function (el) { if (el.getBoundingClientRect().top < window.innerHeight * 0.94) show1(el); }); }, 120);
     }, { passive: true });
     var seen = new Map();
-    document.querySelectorAll('#rep-tiles > .tile, #pf-summary, #pf-facts > div, #report .wr-view, #wr-journey > .wj, #report .wr-gauge, #wr-field, #rep-strong > li, #rep-weak > .find, #rep-notes > .wr-note, #fix-rows > .fix-row, #options > .option, #report .ask-card').forEach(function (el) {
+    document.querySelectorAll('#rep-areas > .ar, #pf-summary, #pf-facts > div, #report .wr-view, #wr-journey > .wj, #report .wr-gauge, #wr-field, #rep-strong > li, #rep-weak > .find, #rep-notes > .wr-note, #fix-rows > .fix-row, #options > .option, #report .ask-card').forEach(function (el) {
       var i = seen.get(el.parentNode) || 0; seen.set(el.parentNode, i + 1);
       el.style.setProperty('--d', ((i % 6) * 0.045).toFixed(3) + 's');
       el.classList.add('rv');
@@ -445,27 +438,67 @@
     });
   }
 
+  // ---------- v2 step 4 (22 Nov 2026): area scores, top five fixes, the rest by area ----------
+  var TOP = 5;
+  function areaFor(r, f) { return (r.areaOf && r.areaOf[f.id]) || 'technical'; }
+  function areaLabel(r, id) { var a = (r.areas || []).filter(function (x) { return x.id === id; })[0]; return a ? a.label : null; }
+  function areas(r) {
+    var box = $('rep-areas'); box.textContent = '';
+    (r.areas || []).forEach(function (a) {
+      var b = el('button', 'tile ar'); b.type = 'button';
+      b.appendChild(el('small', null, a.label));
+      b.appendChild(el('b', null, a.score == null ? 'n/a' : String(a.score)));
+      var bar = el('i'); bar.style.setProperty('--v', (a.score || 0) + '%'); bar.setAttribute('aria-hidden', 'true'); b.appendChild(bar);
+      b.appendChild(el('span', null, a.fixes ? a.fixes + ' to fix' : 'No fixes found'));
+      b.setAttribute('aria-label', a.label + ': ' + (a.score == null ? 'not scored' : a.score + ' out of 100') + ', ' + (a.fixes ? a.fixes + ' to fix' : 'no fixes found'));
+      b.addEventListener('click', function () { jumpTo(a.id); track('website_check_area', { area: a.id }); });
+      box.appendChild(b);
+    });
+    box.hidden = !(r.areas && r.areas.length);
+  }
+  function jumpTo(id) {
+    var card = document.querySelector('#rep-weak .find[data-area="' + id + '"]');
+    var more = $('area-' + id);
+    var target = card || more || $('sec-weak');
+    if (!card && more) more.open = true;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function fixList(r) {
+    var weak = r.weaknesses || [];
+    var wk = $('rep-weak'), rest = $('rep-rest'); wk.textContent = ''; rest.textContent = '';
+    weak.slice(0, TOP).forEach(function (f) { var c = finding(f, areaLabel(r, areaFor(r, f))); c.setAttribute('data-area', areaFor(r, f)); wk.appendChild(c); });
+    var left = weak.slice(TOP);
+    if (left.length) {
+      rest.appendChild(el('span', 'area-rest-k', 'More fixes, by area'));
+      (r.areas || []).forEach(function (a) {
+        var mine = left.filter(function (f) { return areaFor(r, f) === a.id; });
+        if (!mine.length) return;
+        var d = el('details'); d.id = 'area-' + a.id;
+        var s = el('summary', null, a.label); s.appendChild(el('span', null, mine.length + ' more')); d.appendChild(s);
+        var list = el('div', 'finds'); mine.forEach(function (f) { list.appendChild(finding(f, areaLabel(r, a.id))); }); d.appendChild(list);
+        rest.appendChild(d);
+      });
+    }
+    $('weak-count').textContent = String(weak.length);
+    $('weak-lede').textContent = weak.length > TOP ? 'Most important first: five here, the rest by area below. Each says where to start.' : 'Most important first. Each one says where to start.';
+    $('sec-weak').hidden = !weak.length;
+  }
+
   function show(r, scroll) {
     current = r;
     (r.groups || []).forEach(function (g) { GROUP[g[0]] = g[1]; });
     $('rep-domain').textContent = r.domain;
     $('rep-meta').textContent = (r.sample ? 'Demo website, made up · ' : '') + 'Checked ' + DATE.format(new Date(r.checkedAt)) + (r.page && r.page.title ? ' · “' + r.page.title.slice(0, 80) + '”' : '');
-    var tiles = $('rep-tiles'); tiles.textContent = '';
-    var m = r.speed && r.speed.mobile, d = r.speed && r.speed.desktop;
-    tiles.appendChild(tile('Speed on a phone', m && m.performance != null ? String(m.performance) : 'n/a', 'out of 100', tone(m && m.performance)));
-    tiles.appendChild(tile('Speed on a computer', d && d.performance != null ? String(d.performance) : 'n/a', 'out of 100', tone(d && d.performance)));
-    tiles.appendChild(tile('To fix', String(r.counts.weaknesses), r.counts.high ? r.counts.high + ' to fix first' : 'none urgent', r.counts.high ? 'bad' : r.counts.weaknesses ? 'warn' : 'good'));
-    tiles.appendChild(tile('Working well', String(r.counts.strengths), 'keep these', 'good'));
+    areas(r);
     profile(r);
     speed(r);
+    var strong = r.strengths || [];
     var ok = $('rep-strong'); ok.textContent = '';
-    (r.strengths || []).forEach(function (f) { ok.appendChild(el('li', null, f.title)); });
-    $('strong-count').textContent = String((r.strengths || []).length);
-    $('sec-strong').hidden = !(r.strengths || []).length;
-    var wk = $('rep-weak'); wk.textContent = '';
-    (r.weaknesses || []).forEach(function (f) { wk.appendChild(finding(f)); });
-    $('weak-count').textContent = String((r.weaknesses || []).length);
-    $('sec-weak').hidden = !(r.weaknesses || []).length;
+    strong.forEach(function (f) { ok.appendChild(el('li', null, f.title)); });
+    $('strong-count').textContent = String(strong.length);
+    $('strong-lede').textContent = (strong.length === 1 ? 'One check passed.' : strong.length + ' checks passed.') + ' Keep these as they are.';
+    $('sec-strong').hidden = !strong.length;
+    fixList(r);
     var nt = $('rep-notes'); nt.textContent = '';
     (r.notes || []).forEach(function (f) { var n = el('details', 'wr-note'); n.appendChild(el('summary', null, f.title)); n.appendChild(el('p', null, f.detail)); if (f.start) n.appendChild(el('p', 'why', f.start)); nt.appendChild(n); });
     $('sec-notes').hidden = !(r.notes || []).length;

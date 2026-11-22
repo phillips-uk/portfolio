@@ -16,7 +16,7 @@ export const RULES_VERSION = 7; // 2 (17 Nov 2026): quotes credited to a person 
 
 // What kind of business the check judges the site as (Lewis, 21 Nov 2026: not everyone who runs it is local). The visitor
 // can pick one on the form; otherwise it is detected from the page (detectModel) and the report offers a switch.
-export const MODELS = { local: 'a local business', national: 'a business working across the UK', shop: 'an online shop' };
+export const MODELS = { local: 'a local business', national: 'a business with regional or UK-wide customers', shop: 'an online shop' };
 
 const LINKS = {
   web: { href: '/web-design/', label: 'Web design' },
@@ -321,6 +321,35 @@ export function savingWords(fx) {
 }
 
 const secs = ms => (Math.round(ms / 100) / 10).toFixed(1) + ' seconds';
+
+// ---------- area scores (Website Check v2 step 4, 22 Nov 2026) ----------
+// Six areas out of 100, so people can see progress when they check again after fixes. Each area starts at 100 and loses
+// points for each fix in it (fix first 25, worth fixing 12, small 5), never below 0; an area with no checks has no score.
+// Notes don't count. Speed is Google's own phone score when the test answered. Worked out when a report is shown, so
+// older reports get them too. (A weighted share of checks passed was tried first: too harsh where an area had few passes.)
+export const AREAS = [
+  ['seo', 'Search'], ['speed', 'Speed'], ['ux', 'User experience'], ['technical', 'Technical'], ['ai', 'AI search'], ['trust', 'Trust'],
+];
+const AREA_OF_GROUP = { speed: 'speed', search: 'seo', share: 'seo', site: 'seo', mobile: 'ux', access: 'ux', first: 'ux', contact: 'ux', technical: 'technical', measure: 'technical', ai: 'ai', trust: 'trust', proof: 'trust' };
+const AREA_OF_ID = { 'site-broken-links': 'technical', 'site-redirects': 'technical', 'site-sitemap': 'technical', 'site-key-pages': 'trust', 'local-schema': 'ai', 'schema-broken': 'ai', 'gbp-link': 'trust', address: 'trust', consistent: 'trust', 'delivery-returns': 'trust' };
+export const areaOf = f => AREA_OF_ID[f.id] || AREA_OF_GROUP[f.group] || 'technical';
+const DEDUCT = { high: 25, medium: 12, low: 5 };
+
+export function areaScores(r) {
+  const out = {};
+  for (const [id, label] of AREAS) out[id] = { id, label, checks: 0, lost: 0, fixes: 0, high: 0 };
+  for (const f of [...(r.strengths || []), ...(r.weaknesses || [])]) {
+    const a = out[areaOf(f)];
+    a.checks += 1;
+    if (f.status !== 'strength') { a.fixes += 1; a.lost += DEDUCT[f.priority] || 5; if (f.priority === 'high') a.high += 1; }
+  }
+  const phone = r.speed && r.speed.mobile && r.speed.mobile.performance;
+  return AREAS.map(([id]) => {
+    const a = out[id];
+    const score = id === 'speed' && typeof phone === 'number' ? phone : a.checks ? Math.max(0, 100 - a.lost) : null;
+    return { id, label: a.label, score, fixes: a.fixes, high: a.high, from: id === 'speed' && typeof phone === 'number' ? 'google' : 'checks' };
+  });
+}
 
 // ---------- the site scan (rules v7, Website Check v2 step 3) ----------
 // Up to 25 pages: the home page, then pages its links lead to (the menu first) and pages from the sitemap. gather()
