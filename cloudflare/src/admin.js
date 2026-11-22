@@ -82,7 +82,8 @@ function publicInvite(inv, origin) {
     archivedAt: inv.archivedAt || null,
     views: inv.views || 0,
     previews: inv.previews || 0,
-    browsers: (inv.visitors || []).length,
+    // Devices: the old visitor ids, plus (since ph_vid was dropped, 22 Nov 2026) one per device and place among visits without one
+    browsers: new Set([...(inv.visitors || []), ...(Array.isArray(inv.visits) ? inv.visits : []).filter(v => !v.preview && !v.visitor).map(v => [v.device, v.browser, v.os, v.city, v.country].join('|'))]).size,
     lastViewedAt: inv.lastViewedAt || null,
     lastCountry: inv.lastCountry || '',
     pages: invitePages(inv),

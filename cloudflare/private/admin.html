@@ -1160,7 +1160,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
         <div class="card-head lk-card-head"><h2 id="lk-title">Links</h2><button type="button" class="btn" id="lk-arch" aria-pressed="false" hidden>Archived</button></div>
         <div class="scroll">
           <table class="table">
-            <thead><tr><th>Who</th><th>Status</th><th class="r">Views</th><th class="r">Browsers</th><th>Last opened</th><th>Live</th><th class="r"></th></tr></thead>
+            <thead><tr><th>Who</th><th>Status</th><th class="r">Views</th><th class="r">Devices</th><th>Last opened</th><th>Live</th><th class="r"></th></tr></thead>
             <tbody id="invites"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
           </table>
         </div>
@@ -1982,7 +1982,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
 
     var events = [];
     state.clients.forEach(function (c) { (c.sections || []).forEach(function (s) { (s.items || []).slice(0, 1).forEach(function (it) { events.push({ at: it.date, icon: 'doc', title: c.name + ': ' + it.title, sub: s.name, href: it.doc ? docLink(it.doc, c.slug) : it.link }); }); }); });
-    state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : ({ 'search-desk': 'the Search Desk demo', 'the-loft': 'The Loft prototype', 'monument': 'the Monument website draft' })[i.pages[0]] || 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'browser', 'browsers') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
+    state.invites.forEach(function (i) { if (i.lastViewedAt) events.push({ at: i.lastViewedAt, icon: 'eye', tone: 'amber', title: i.name + ' opened ' + (i.pages.length > 1 ? 'an invite link' : ({ 'search-desk': 'the Search Desk demo', 'the-loft': 'The Loft prototype', 'monument': 'the Monument website draft' })[i.pages[0]] || 'the rate card'), sub: plural(i.views, 'view', 'views') + ', ' + plural(i.browsers, 'device', 'devices') + (i.lastCountry ? ', ' + i.lastCountry : ''), href: '#links' }); });
     state.prospects.forEach(function (p) {
       var noteAt = p.note && p.note.updated || '', cardAt = p.updatedAt || '';
       if (cardAt && cardAt >= noteAt) events.push({ at: cardAt, icon: 'doc', tone: 'amber', title: p.name + ' card updated', sub: stageOf(p.stage), href: '#prospects/' + p.id });
@@ -3006,10 +3006,11 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
     var visits = Array.isArray(d.visits) ? d.visits : [];
     var people = visits.filter(function (v) { return !v.preview; });
     var previews = visits.filter(function (v) { return v.preview; });
-    // Browsers, numbered in the order they first opened the link
+    // Devices, numbered in the order they first opened the link: the old visitor cookie where a visit has one, otherwise
+    // the kind of device and the place (no visitor cookie since 22 Nov 2026), so two people on the same model in one town count once
     var groups = [], byKey = {};
     people.slice().reverse().forEach(function (v) {
-      var k = v.visitor || 'unknown';
+      var k = v.visitor || [v.device, v.browser, v.os, v.city, v.country].join('|');
       if (!byKey[k]) { byKey[k] = { n: groups.length + 1, visits: [] }; groups.push(byKey[k]); }
       byKey[k].visits.unshift(v);
     });
@@ -3020,7 +3021,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
 
     var sum = lkSection(body, 'Summary');
     var k = el('div', 'lk-kpis');
-    [['Views', String(d.views || 0)], ['Browsers', String(d.browsers || 0)], ['Places', people.length ? String(places.length) : '–'], ['Time reading', total ? dur(total) : '–']].forEach(function (x) {
+    [['Views', String(d.views || 0)], ['Devices', String(d.browsers || 0)], ['Places', people.length ? String(places.length) : '–'], ['Time reading', total ? dur(total) : '–']].forEach(function (x) {
       var t = el('div'); t.appendChild(el('small', null, x[0])); t.appendChild(el('b', null, x[1])); k.appendChild(t);
     });
     sum.appendChild(k);
@@ -3032,9 +3033,9 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
     else if (!people.length) read.push('Opened ' + plural(d.views, 'time', 'times') + ', all before visit details began on ' + DETAIL_FROM + ', when only the country was kept. New visits will show the place, device and time read.');
     else {
       var first = groups[0].visits[0];
-      if (groups.length === 1) read.push((earlier ? 'Every visit since details began' : 'Every visit') + ' came from one browser (' + deviceLabel(first) + (places[0] ? ' in ' + places[0] : '') + '), so most likely one person.');
-      else if (places.length > 1) read.push('Opened in ' + groups.length + ' browsers from ' + places.length + ' places (' + places.slice(0, 4).join('; ') + (places.length > 4 ? ' and more' : '') + '), so it has most likely been passed on.');
-      else read.push('Opened in ' + groups.length + ' browsers' + (places[0] ? ', all in ' + places[0] : '') + ': a second device, or someone nearby such as a colleague.');
+      if (groups.length === 1) read.push((earlier ? 'Every visit since details began' : 'Every visit') + ' came from one device (' + deviceLabel(first) + (places[0] ? ' in ' + places[0] : '') + '), so most likely one person.');
+      else if (places.length > 1) read.push('Opened on ' + groups.length + ' devices from ' + places.length + ' places (' + places.slice(0, 4).join('; ') + (places.length > 4 ? ' and more' : '') + '), so it has most likely been passed on.');
+      else read.push('Opened on ' + groups.length + ' devices' + (places[0] ? ', all in ' + places[0] : '') + ': a second device, or someone nearby such as a colleague.');
       if (total) {
         var longest = Math.max.apply(null, people.map(function (v) { return v.secs || 0; }));
         read.push('Read for ' + dur(total) + ' in all; the longest visit was ' + dur(longest) + '.');
@@ -3057,11 +3058,11 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
     }
 
     if (groups.length) {
-      var bs = lkSection(body, groups.length === 1 ? 'The browser' : 'Browsers'), bl = el('ul', 'lk-list');
+      var bs = lkSection(body, groups.length === 1 ? 'The device' : 'Devices'), bl = el('ul', 'lk-list');
       groups.forEach(function (g) {
         var gp = [], pages = [], secs = 0;
         g.visits.forEach(function (v) { var p = placeOf(v); if (p && gp.indexOf(p) === -1) gp.push(p); var pn = PAGE_NAME[v.page] || v.page; if (pages.indexOf(pn) === -1) pages.push(pn); secs += v.secs || 0; });
-        var top = el('span'); top.appendChild(document.createTextNode(deviceLabel(g.visits[0]))); top.appendChild(el('span', 'lk-tag', 'Browser ' + g.n));
+        var top = el('span'); top.appendChild(document.createTextNode(deviceLabel(g.visits[0]))); top.appendChild(el('span', 'lk-tag', 'Device ' + g.n));
         lkItem(bl, top, ago(g.visits[0].at),
           [gp.join('; ') || 'Place unknown', plural(g.visits.length, 'visit', 'visits'), secs ? dur(secs) + ' reading' : '', pages.join(', '), 'first ' + fmt(g.visits[g.visits.length - 1].at)].filter(Boolean).join(' · '));
       });
@@ -3074,7 +3075,7 @@ section[data-pane]:not([data-pane="overview"]) .card-head h2::before { content: 
         visits.slice(shown, shown + n).forEach(function (v) {
           if (v.preview) { lkItem(vl, fmt(v.at, true) + ' · Link preview by ' + v.preview, 'not counted', placeOf(v), 'muted'); return; }
           var top = el('span'); top.appendChild(document.createTextNode(fmt(v.at, true) + ' · ' + (PAGE_NAME[v.page] || v.page)));
-          var g = byKey[v.visitor || 'unknown']; if (g && groups.length > 1) top.appendChild(el('span', 'lk-tag', 'Browser ' + g.n));
+          var g = byKey[v.visitor || [v.device, v.browser, v.os, v.city, v.country].join('|')]; if (g && groups.length > 1) top.appendChild(el('span', 'lk-tag', 'Device ' + g.n));
           lkItem(vl, top, v.secs ? dur(v.secs) : '',
             [placeOf(v) || 'Place unknown', deviceLabel(v), v.scroll ? 'read ' + v.scroll + '% down' : '', v.from ? 'from ' + (FROM[v.from] || v.from) : ''].filter(Boolean).join(' · '));
         });

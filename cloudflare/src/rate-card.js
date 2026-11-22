@@ -31,7 +31,7 @@ export const PAGES = {
   'monument-thank-you': { path: '/monument/thank-you', html: monumentThankYouHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
-const VISITOR = 'ph_vid';
+const VISITOR = 'ph_vid'; // retired 22 Nov 2026: only ever cleared now
 const TOKEN = /^[A-Za-z0-9._-]{8,80}$/;
 const PREFIX = 'rate-card-invites/';
 
@@ -393,13 +393,12 @@ export async function rateCard(request, url, env, ctx) {
     return new Response(locked, { status: 403, headers: PRIVATE_HEADERS });
   }
 
-  let visitor = readCookie(request, VISITOR);
+  // No visitor cookie since 22 Nov 2026 (Lewis: drop it): ph_vid used to tell repeat visits apart, which isn't needed
+  // for the page to work. One left over from before is removed. The admin now groups visits by device and place.
+  const visitor = null;
   const headers = new Headers(PRIVATE_HEADERS);
   const year = 365 * 86400;
-  if (!visitor || !/^[A-Za-z0-9_-]{8,16}$/.test(visitor)) {
-    visitor = randomId(9);
-    headers.append('Set-Cookie', `${VISITOR}=${visitor}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
-  }
+  if (readCookie(request, VISITOR)) headers.append('Set-Cookie', `${VISITOR}=; Path=${PATH}; Max-Age=0; HttpOnly; Secure; SameSite=Lax`);
   if (fromUrl) headers.append('Set-Cookie', `${page.cookie}=${encodeURIComponent(token)}; Path=${PATH}; Max-Age=${year}; HttpOnly; Secure; SameSite=Lax`);
 
   const viewId = randomId(9);
