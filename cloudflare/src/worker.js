@@ -13,6 +13,7 @@ import { isAccountPath, accounts } from './accounts.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
 import { isSignInPath, googleSignIn } from './google-signin.js';
 import { cleanupToolRates } from './tools-gate.js';
+import { CONSENT_HEAD, CONSENT_TAG, consentChoice } from './consent.js';
 
 const loaders = {
   'audit-share':                () => import('../../netlify/functions/audit-share.js'),
@@ -34,6 +35,9 @@ const CANONICAL_HOST = 'www.phillips-uk.com';
 // files (or a /r/ share page) that does not already load the container gets it added on the way out. Pages that carry
 // it already are left as they are. Invite pages (rate-card.js adds gtag.js itself), /admin and Search Desk (/desk)
 // never come through here. Analytics notes: vault 01_Phillips/07_Analytics.
+// Cookie choices (22 Nov 2026, cloudflare/src/consent.js): every page that comes through here also gets the consent
+// defaults as the first thing in its <head>, before any container (a few pages carry the container inline), and the
+// banner script (/consent.js) at the end of it.
 const GTM_ID = 'GTM-WS5CP6NW';
 const GTM_HEAD = `<!-- Google Tag Manager (added by the Worker) --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -53,7 +57,10 @@ function withGtm(res) {
       // Inline script text can arrive in pieces, so look across the joins too.
       text(t) { tail = (tail + t.text).slice(-64); if (tail.includes(GTM_ID)) has = true; if (t.lastInTextNode) tail = ''; },
     })
-    .on('head', { element(el) { el.onEndTag(end => { if (!has) end.before(GTM_HEAD, { html: true }); }); } })
+    .on('head', { element(el) {
+      el.prepend(CONSENT_HEAD, { html: true });
+      el.onEndTag(end => { end.before((has ? '' : GTM_HEAD) + CONSENT_TAG, { html: true }); });
+    } })
     .on('body', { element(el) { if (!has) el.prepend(GTM_BODY, { html: true }); } })
     .transform(res);
 }
@@ -179,6 +186,9 @@ async function route(request, env, ctx) {
   if (direct) return runFunction(direct[1], request, url, {}, env, ctx);
 
   if (path === '/auth/callback') return runFunction('auth-callback', request, url, {}, env, ctx);
+
+  // A cookie choice from the banner (cloudflare/src/consent.js)
+  if (path === '/api/consent') return consentChoice(request, url);
 
   // The "Ask me a question" form (cloudflare/src/enquiry.js)
   if (path === '/enquiry') return request.method === 'POST' ? enquiry(request, env) : new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });

@@ -16,6 +16,7 @@ import monumentCalculatorsHtml from '../private/monument-calculators.html';
 import monumentThankYouHtml from '../private/monument-thank-you.html';
 import { adminEmail } from './admin.js';
 import { openDeskDemo } from './desk-demo.js';
+import { CONSENT_HEAD, CONSENT_TAG } from './consent.js';
 
 export const PAGES = {
   'rate-card': { path: '/rate-card', html: rateCardHtml, cookie: 'ph_rc', title: 'The rate card' },
@@ -268,8 +269,12 @@ function engagementTag(token, viewId) {
 </script>`;
 }
 
+// Cookie choices (cloudflare/src/consent.js, 22 Nov 2026): the consent defaults go before gtag.js, and the banner
+// (/consent.js) goes on pages built on the site's tokens (the rate card); the prospect prototypes have their own look,
+// so they get the defaults only.
 function withAnalytics(html, token, viewId) {
-  const tags = GA_TAG + (token && viewId ? '\n' + engagementTag(token, viewId) : '');
+  const banner = html.includes('tokens:start') ? '\n' + CONSENT_TAG : '';
+  const tags = CONSENT_HEAD + '\n' + GA_TAG + (token && viewId ? '\n' + engagementTag(token, viewId) : '') + banner;
   return html.includes('</head>') ? html.replace('</head>', tags + '\n</head>') : tags + html;
 }
 
@@ -317,6 +322,7 @@ const jsString = s => JSON.stringify(String(s)).replace(/</g, '\\u003c');
 // second guest session.
 function handoffPage(dest) {
   const head = `<noscript><meta http-equiv="refresh" content="0;url=${attr(dest)}"></noscript>
+${CONSENT_HEAD}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
 (function () {
