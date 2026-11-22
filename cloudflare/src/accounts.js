@@ -83,11 +83,14 @@ export async function currentAccount(request, env) {
   return env.ACCOUNTS_DB.prepare('SELECT id, email, name, created_at, emails_ok FROM accounts WHERE id = ?').bind(id).first();
 }
 
-// Who may use accounts now: everyone once FLAGS.open, otherwise Lewis's preview.
+// Who may use accounts now: everyone once FLAGS.open; otherwise Lewis's preview, which is his /admin sign-in or an
+// account he has already signed in to. Sign-in links are only sent from the preview, so an account (and a link) can
+// only exist for someone Lewis let in; that way a link opened in another browser or on a phone still works (22 Nov
+// 2026: the first link opened in a browser without the /admin sign-in and went to the home page).
 async function accountsAllowed(request, env) {
-  if (FLAGS.open) return { allowed: true, admin: !!(await adminEmail(request, env)) };
-  const admin = await adminEmail(request, env);
-  return { allowed: !!admin, admin: !!admin };
+  const admin = !!(await adminEmail(request, env));
+  if (FLAGS.open || admin) return { allowed: true, admin };
+  return { allowed: !!(await currentAccount(request, env)), admin: false };
 }
 export async function accountsOn(request, env) { return (await accountsAllowed(request, env)).allowed; }
 
@@ -220,7 +223,10 @@ export async function saveCheck(env, accountId, c) {
 export async function accounts(request, url, env, { keepWebsiteReport } = {}) {
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const access = await accountsAllowed(request, env);
-  if (!access.allowed) return null; // the caller sends visitors elsewhere while accounts are private
+  // While accounts are private: the page an email link opens, and using the link, work anywhere (the link is the key);
+  // the account calls answer "off" quietly; everything else sends visitors home (the caller).
+  const linkPage = path === '/account/login' || path === '/account/login/confirm';
+  if (!access.allowed && !linkPage) return path === '/account' ? null : jsonResponse({ off: true }, 404);
   if (!env.ACCOUNTS_DB) return jsonResponse({ error: 'Accounts aren’t set up here.' }, 503);
   const post = request.method === 'POST';
   if (path === '/account' || path === '/account/login') {

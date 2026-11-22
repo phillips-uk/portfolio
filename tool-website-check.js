@@ -491,20 +491,49 @@
   // be saved; while signed out, the button goes to the account page and comes back here. Hidden while accounts are off.
   var acct = null;
   function saveUi(r) {
-    var b = $('rep-save');
-    b.hidden = !acct || !!r.sample;
-    if (b.hidden) return;
-    b.disabled = false;
-    if (!acct.signedIn) { b.textContent = 'Sign in to save'; b.onclick = function () { location.href = '/account/?next=' + encodeURIComponent('/website-check/r/' + r.id); }; return; }
-    if (acct.saved) { b.textContent = 'Saved to your account'; b.onclick = function () { location.href = '/account/'; }; return; }
-    b.textContent = 'Save to my account';
-    b.onclick = function () {
-      b.disabled = true;
+    var top = $('rep-save'), keep = $('sec-keep'), ks = $('keep-save');
+    var on = !!acct && !r.sample;
+    top.hidden = !on; keep.hidden = !on;
+    if (!on) return;
+    top.disabled = ks.disabled = false;
+    top.classList.toggle('done', !!(acct.signedIn && acct.saved));
+    function both(label, fn) { top.textContent = ks.textContent = label; top.onclick = ks.onclick = fn; }
+    if (!acct.signedIn) {
+      $('keep-h').textContent = 'Keep this report';
+      $('keep-p').textContent = 'Save it to your free account, then check again after you’ve made changes to see what improved.';
+      both('Sign in to save', function () { track('website_check_signin_to_save'); location.href = '/account/?next=' + encodeURIComponent('/website-check/r/' + r.id); });
+      return;
+    }
+    if (acct.saved) {
+      $('keep-h').textContent = 'Saved to your account';
+      $('keep-p').textContent = 'Check again after you’ve made changes to see what improved.';
+      both('See your checks', function () { location.href = '/account/'; });
+      return;
+    }
+    $('keep-h').textContent = 'Keep this report';
+    $('keep-p').textContent = 'Save it to your account, then check again after you’ve made changes to see what improved.';
+    both('Save to my account', function () {
+      top.disabled = ks.disabled = true;
       fetch('/account/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ id: r.id }) })
         .then(function (x) { return x.json().then(function (d) { if (!x.ok) throw new Error(d.error); }); })
-        .then(function () { acct.saved = true; track('website_check_saved'); saveUi(r); }, function (e) { b.disabled = false; say(e.message || 'That didn’t save. Please try again.', true); });
-    };
+        .then(function () { acct.saved = true; track('website_check_saved'); saveUi(r); }, function (e) { top.disabled = ks.disabled = false; say(e.message || 'That didn’t save. Please try again.', true); });
+    });
   }
+  $('keep-copy').addEventListener('click', function () { $('rep-copy').click(); this.textContent = 'Link copied'; var b = this; setTimeout(function () { b.textContent = 'Copy the link'; }, 2500); });
+
+  // Signed in or not, shown under the check box (only while accounts are on for this visitor)
+  fetch('/account/me', { credentials: 'same-origin' }).then(function (x) { return x.ok ? x.json() : null; }).then(function (d) {
+    if (!d) return;
+    var bar = $('acct-bar'); bar.textContent = '';
+    if (d.account) {
+      bar.appendChild(document.createTextNode('Signed in as ')); bar.appendChild(el('b', null, d.account.email)); bar.appendChild(document.createTextNode('. Your checks are saved.'));
+      var a = el('a', null, 'Your checks →'); a.href = '/account/'; bar.appendChild(a);
+    } else {
+      bar.appendChild(document.createTextNode('Keep your checks and see how your scores change.'));
+      var s2 = el('a', null, 'Sign in →'); s2.href = '/account/?next=/website-check/'; bar.appendChild(s2);
+    }
+    bar.hidden = false;
+  }).catch(function () {});
 
   // Before and after (v3 item 1): what changed since this site was last checked as the same kind of business
   function compare(r) {

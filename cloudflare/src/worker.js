@@ -157,7 +157,7 @@ async function route(request, env, ctx) {
   // Accounts (cloudflare/src/accounts.js): Lewis's preview only until the Accounts Plan's step 7; visitors go home
   if (isAccountPath(path)) {
     const res = await accounts(request, url, env, { keepWebsiteReport });
-    if (res) return path.startsWith('/account/login/') || path === '/account/me' || path === '/account/save' || path === '/account/logout' ? res : withGtm(res);
+    if (res) return withGtm(res);
     return Response.redirect(new URL('/', url).href, 302);
   }
 
