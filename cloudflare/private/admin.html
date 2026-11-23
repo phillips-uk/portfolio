@@ -1082,6 +1082,59 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 .st-meter i { display: block; height: 100%; width: 0; background: var(--brand); border-radius: var(--r-pill); }
 .st-group li { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
 @media (max-width: 600px) { .st-row { grid-template-columns: minmax(0, 1fr); gap: 2px; } .st-group li { grid-template-columns: minmax(0, 1fr) auto; } .st-group li > :first-child { grid-column: 1 / -1; } .st-group li .btn { justify-self: start; } }
+/* Clients (Design Spec v3; Lewis, 23 Nov 2026): one calm row per client; results in ink and brand, no red/amber/green */
+.cl-card { padding: 6px 24px; }
+.cl-list { list-style: none; margin: 0; padding: 0; }
+.cl-list > li { border-bottom: 1px solid var(--line-soft); }
+.cl-list > li:last-child { border-bottom: 0; }
+.cl-list > li.empty { padding: 22px 0; color: var(--muted); }
+.cl-row { display: grid; grid-template-columns: minmax(0, 1.5fr) 120px 130px minmax(0, 1.2fr) 96px 20px; gap: 20px; align-items: center; padding: 18px 0; color: inherit; text-decoration: none; border-radius: 12px; transition: background var(--d1); }
+.cl-row:hover { background: var(--surface-2); }
+.cl-row:focus-visible { outline: 2px solid var(--area-dot); outline-offset: 2px; }
+.cl-who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cl-who b { display: block; font-size: 15px; overflow-wrap: anywhere; }
+.cl-who span:not(.avatar) { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; overflow-wrap: anywhere; }
+.cl-health { display: flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+.cl-health b { font-size: 14px; }
+.cl-health i { flex: 1; height: 6px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
+.cl-health i > span { display: block; height: 100%; background: var(--brand); border-radius: 3px; }
+.cl-ads b, .cl-fee b { display: block; font-size: 14px; font-variant-numeric: tabular-nums; }
+.cl-ads span, .cl-fee span { display: block; margin-top: 3px; font-size: 13px; }
+.cl-fee { text-align: right; }
+.cl-muted { color: var(--muted); font-size: 13px; }
+.cl-flag { color: var(--text); font-weight: 600; }
+.cl-flag::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--attn-dot); margin: 0 7px 1px 0; }
+.cl-chev { color: var(--muted); display: grid; place-items: center; }
+.cl-chev svg { width: 16px; height: 16px; }
+section[data-pane="client"] .bar i { background: var(--brand); }
+section[data-pane="client"] .delta.flat { color: var(--text-2); }
+section[data-pane="client"] .hero-card .delta.flat { color: var(--ink-text); }
+.bill-edit { margin-top: 18px; }
+.bill-money:empty + .bill-edit { margin-top: 0; border-top: 0; padding-top: 0; }
+section[data-pane="client"] .hrow { grid-template-columns: minmax(0, 1fr) 150px minmax(44px, auto); }
+section[data-pane="client"] .hrow b:not(:only-child) { white-space: nowrap; }
+.bill-edit > form { margin-top: 16px; }
+#c-rep-more { margin-top: 14px; }
+@media (max-width: 900px) {
+  .cl-row { grid-template-columns: minmax(0, 1fr) auto 20px; gap: 10px 16px; }
+  .cl-who { grid-column: 1 / 2; } .cl-status { grid-column: 2 / 3; justify-self: end; } .cl-chev { grid-column: 3; grid-row: 1; }
+  .cl-health { grid-column: 1 / 2; max-width: 180px; } .cl-fee { grid-column: 2 / 4; grid-row: 2; }
+  .cl-ads { grid-column: 1 / -1; }
+  .cl-ads b, .cl-ads span { display: inline; } .cl-ads b + span::before { content: " · "; color: var(--muted); }
+  .cl-ads b + .cl-flag::before { content: " · "; width: auto; height: auto; background: none; margin: 0; }
+}
+@media (max-width: 600px) {
+  .cl-card { padding: 4px 18px; }
+  .cl-fee b, .cl-fee span { display: inline; } .cl-fee span { margin-left: 4px; }
+}
+@media (max-width: 600px) {
+  section[data-pane="client"] .bill-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  section[data-pane="client"] .bill-tile { padding: 12px; }
+  section[data-pane="client"] .bill-tile b { font-size: 18px; }
+  #c-reports .n, .rep-meta { display: none; }
+  .bill-edit .pr-sum { display: none; }
+  #c-reports li { grid-template-columns: minmax(0, 1fr) auto; }
+}
 /* Site (Design Spec v3; Lewis, 23 Nov 2026): a column chart of the free checks, audits as a calm list */
 .site-secs { display: grid; gap: 20px; }
 .sc-main { display: grid; gap: 16px; align-content: start; min-width: 0; }
@@ -1202,12 +1255,14 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     <!-- Clients list -->
     <section data-pane="clients" hidden>
       <div class="page-head"><div><h1>Clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-1" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-1" hidden>From the client folders in Obsidian. Click a client for health, reports, tasks and billing. Fees are set on each client's page; invoices come from Xero once a day (Settings).</p></div><div class="xero-bar" id="cl-xero"></div></div>
-      <div class="card scroll">
-        <table class="table">
-          <thead><tr><th>Client</th><th>Status</th><th>Health</th><th id="ads-col">Google Ads this week</th><th>Last report</th><th class="r">Fee</th><th class="r">Open tasks</th><th></th></tr></thead>
-          <tbody id="clients-rows"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
-        </table>
+      <!-- Design Spec v3 (Lewis, 23 Nov 2026): four tiles, then one calm row per client (no wide table to scroll) -->
+      <div class="kpis pr-kpis">
+        <div class="kpi"><small>Current clients</small><b id="cl-k-n">–</b><span id="cl-k-n-s">&nbsp;</span></div>
+        <div class="kpi"><small>Monthly fees</small><b id="cl-k-fees">–</b><span id="cl-k-fees-s">&nbsp;</span></div>
+        <div class="kpi"><small id="ads-col">Google Ads spend last week</small><b id="cl-k-ads">–</b><span id="cl-k-ads-s">&nbsp;</span></div>
+        <div class="kpi"><small>Open tasks</small><b id="cl-k-tasks">–</b><span id="cl-k-tasks-s">&nbsp;</span></div>
       </div>
+      <div class="card cl-card"><ul class="cl-list" id="clients-rows"><li class="empty">Loading…</li></ul></div>
       <details class="card fold-card cl-former" id="cl-former" hidden>
         <summary class="card-head"><h2>Former clients <span class="count" id="cl-former-n"></span></h2></summary>
         <ul class="list" id="cl-former-list"></ul>
@@ -1236,6 +1291,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
             <div class="card-head"><h2>Billing</h2><span class="meta" id="c-bill-meta"></span></div>
             <div class="card-body">
               <div class="bill-money" id="c-bill-money"></div>
+              <details class="pr-fold bill-edit" id="c-bill-edit"><summary><h3 class="pr-sub">Edit billing</h3><span class="pr-sum" id="c-bill-sum"></span></summary>
               <form id="c-bill-form" class="bill-form" autocomplete="off" novalidate>
                 <label>Fee (£)<input type="number" name="fee" min="0" step="1" placeholder="500"></label>
                 <label>How often<select name="cadence"><option value="monthly">Every month</option><option value="one-off">One-off</option><option value="none">Not paying yet</option></select></label>
@@ -1246,9 +1302,10 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
                 <label class="wide">Note (optional)<input type="text" name="note" maxlength="300" placeholder="For example: paid by bank transfer"></label>
                 <div class="wide bill-acts"><button class="btn" type="submit" id="c-bill-go">Save billing</button><span class="bill-msg" id="c-bill-msg"></span></div>
               </form>
+              </details>
             </div>
           </div>
-          <div class="card"><div class="card-head"><h2>Reports and audits</h2><span class="meta">The latest of each opens here, older ones in Obsidian</span></div><div class="card-body"><ul class="list reports" id="c-reports"></ul></div></div>
+          <div class="card"><div class="card-head"><h2>Reports and audits</h2><span class="meta rep-meta">The latest of each opens here, older ones in Obsidian</span></div><div class="card-body"><ul class="list reports" id="c-reports"></ul><button type="button" class="btn sa-more" id="c-rep-more" hidden>Show all</button></div></div>
         </div>
         <div class="stack">
           <div class="card"><div class="card-head"><h2>Account health</h2><div class="big-score" id="c-overall"></div></div><div class="card-body" id="c-health"></div></div>
@@ -1985,7 +2042,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
       state.billing = r[6] || null;
       state.brief = r[4] || null;
       state.toolUsage = r[5] && r[5].weeks ? r[5].weeks : null;
-      if (r[0]) { state.allClients = r[0].clients || []; splitFormer(); state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
+      if (r[0]) { state.allClients = (r[0].clients || []).map(function (c) { c.name = String(c.name || '').replace(/^Client Profile:\s*/i, ''); return c; }); splitFormer(); state.syncedAt = r[0].syncedAt; state.metricsAt = r[0].metricsAt; state.period = r[0].metricsPeriod; }
       if (r[1]) { state.invites = r[1].invites || []; state.deskDemo = r[1].deskDemo || null; }
       if (r[2]) state.site = r[2];
       if (r[3]) state.prospects = r[3].deals || [];
@@ -2109,7 +2166,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
       t.appendChild(el('small', null, m.label));
       var v = el('div', 'v'); v.appendChild(el('b', null, m.show(m.get(weeks[weeks.length - 1]))));
       var ch = change(m, weeks), cls = 'flat';
-      if (ch) { cls = ch.dir === 0 || m.up === 0 ? 'flat' : (ch.dir === m.up ? 'good' : 'bad'); var dl = el('span', 'delta ' + cls, ch.text.replace(/^[+-]/, '')); dl.setAttribute('data-dir', String(ch.dir)); v.appendChild(dl); }
+      if (ch) { cls = 'flat'; var dl = el('span', 'delta ' + cls, ch.text.replace(/^[+-]/, '')); dl.setAttribute('data-dir', String(ch.dir)); v.appendChild(dl); }
       t.appendChild(v);
       t.insertAdjacentHTML('beforeend', spark(weeks.map(m.get), cls, light));
       grid.appendChild(t);
@@ -2127,7 +2184,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     var m = c.metrics;
     var head = el('div', 'card-head'); head.appendChild(el('h2', null, periodTitle()));
     var wk = m && ((m.ads && m.ads.weeks) || (m.ga4 && m.ga4.weeks) || (m.gsc && m.gsc.weeks));
-    if (wk && wk.length > 1) head.appendChild(el('span', 'meta', span(wk[wk.length - 1]) + ', compared with ' + span(wk[wk.length - 2]) + '. Lines show the same days over 8 weeks.'));
+    if (wk && wk.length > 1) head.appendChild(el('span', 'meta', span(wk[wk.length - 1]) + ', against ' + vsText() + '. Lines show 8 weeks.'));
     box.appendChild(head);
     if (!m) { var none = el('div', 'perf-src'); none.appendChild(el('div', 'perf-none', 'No accounts connected for this client yet.')); box.appendChild(none); return; }
     if (m.ads) box.appendChild(perfSource('Google Ads', 'Traffic and cost. Conversions are counted by conversion time', adsDetail(m.ads.currency, m.ads.weeks), m.ads.weeks));
@@ -2160,7 +2217,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
         var t = el('div', 'hkpi'); t.appendChild(el('small', null, mt.label));
         var v = el('div', 'v'); v.appendChild(el('b', null, mt.show(mt.get(wk[wk.length - 1]))));
         var ch = change(mt, wk), cls = 'flat';
-        if (ch) { cls = ch.dir === 0 || mt.up === 0 ? 'flat' : (ch.dir === mt.up ? 'good' : 'bad'); var dl = el('span', 'delta ' + cls, ch.text.replace(/^[+-]/, '')); dl.setAttribute('data-dir', String(ch.dir)); v.appendChild(dl); }
+        if (ch) { cls = 'flat'; var dl = el('span', 'delta ' + cls, ch.text.replace(/^[+-]/, '')); dl.setAttribute('data-dir', String(ch.dir)); v.appendChild(dl); }
         t.appendChild(v);
         t.insertAdjacentHTML('beforeend', spark(wk.map(mt.get), cls, true));
         box.appendChild(t);
@@ -2168,7 +2225,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     }
     var sc = scoreOf(c.overall);
     if (sc != null) {
-      var R = 26, C = 2 * Math.PI * R, col = sc >= 8 ? 'var(--ok-on-ink)' : sc >= 6 ? 'var(--attn-on-ink)' : 'var(--bad-on-ink)';
+      var R = 26, C = 2 * Math.PI * R, col = 'var(--brand-on-ink)';
       var rb = el('div', 'ring-box');
       rb.insertAdjacentHTML('beforeend', '<svg class="ring" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="' + R + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="6"/>' +
         '<circle class="val" cx="32" cy="32" r="' + R + '" fill="none" style="stroke:' + col + '" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + C.toFixed(1) + '" transform="rotate(-90 32 32)"/>' +
@@ -2198,19 +2255,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     if (m.gsc && !m.gsc.noDataYet) { var s = m.gsc.weeks, sa = s[s.length - 1], sb = s[s.length - 2]; if (sb && sb.clicks >= 50 && sa.clicks <= sb.clicks * 0.75) out.push({ tone: 'warn', title: c.name + ': search clicks down ' + Math.round((1 - sa.clicks / sb.clicks) * 100) + '% on ' + vsText(), sub: whole(sb.clicks) + ' to ' + whole(sa.clicks) + ' in Search Console' }); }
     return out;
   }
-  function lastWeekCell(c) {
-    var td = el('td', 'lastwk');
-    var a = c.metrics && c.metrics.ads;
-    if (!a) { td.appendChild(el('span', null, 'Not connected')); td.lastChild.style.color = 'var(--muted)'; return td; }
-    var w = a.weeks, x = w[w.length - 1];
-    td.appendChild(el('b', null, money(x.cost, a.currency) + ' · ' + whole(x.conversions) + (x.conversions === 1 ? ' conversion' : ' conversions')));
-    var streak = 0;
-    for (var i = w.length - 1; i >= 0 && !w[i].conversions && w[i].cost > 0; i--) streak++;
-    if (streak >= 2) { td.appendChild(el('span', 'delta bad', 'No conversions in ' + streak + ' weeks running')); return td; }
-    var ch = change(adsMetrics(a.currency, w)[1], w);
-    if (ch) td.appendChild(el('span', 'delta ' + (ch.dir === 0 ? 'flat' : ch.dir > 0 ? 'good' : 'bad'), ch.dir === 0 ? 'Conversions level with ' + vsText() : 'Conversions ' + ch.text + ' on ' + vsText()));
-    return td;
-  }
+
 
   /* ---------- overview ---------- */
   function renderOverview() {
@@ -2388,6 +2433,8 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     else sel.value = b.xeroContactId;
     sel.disabled = !contacts.length;
     $('c-bill-msg').textContent = '';
+    $('c-bill-edit').open = !b.fee;
+    $('c-bill-sum').textContent = b.fee ? 'fee, invoice day, Xero contact' : 'set the fee to count this client in revenue';
     $('c-bill-meta').textContent = b.fee ? gbp(b.fee) + (b.cadence === 'monthly' ? ' a month' + (b.day ? ', on the ' + ordinal(b.day) : '') : b.cadence === 'one-off' ? ' one-off' : '') : 'Not set';
     var m = $('c-bill-money'); m.innerHTML = '';
     if (b.money) {
@@ -2471,40 +2518,63 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
   /* ---------- clients ---------- */
   function renderClients() {
     var body = $('clients-rows'); body.innerHTML = '';
-    $('ads-col').textContent = state.period && state.period.fullWeek ? 'Google Ads last week' : 'Google Ads this week so far';
-    if (!state.clients.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No clients synced yet.'); td0.colSpan = 8; tr0.appendChild(td0); body.appendChild(tr0); renderFormer(); return; }
+    var full = state.period && state.period.fullWeek;
+    $('ads-col').textContent = full ? 'Google Ads spend last week' : 'Google Ads spend this week';
+    var cs = state.clients, cur = 'GBP', spend = 0, conv = 0, withAds = 0, fees = 0, payers = 0, tasks = 0, most = null;
+    cs.forEach(function (c) {
+      var a = c.metrics && c.metrics.ads; if (a) { var x = a.weeks[a.weeks.length - 1]; spend += x.cost || 0; conv += x.conversions || 0; cur = a.currency || cur; withAds++; }
+      var bf = billOf(c.slug); if (bf.fee && bf.cadence === 'monthly') { fees += Number(bf.fee); payers++; }
+      tasks += c.openTaskCount || 0; if (c.openTaskCount && (!most || c.openTaskCount > most.openTaskCount)) most = c;
+    });
+    var counts = {}; cs.forEach(function (c) { var k = shortStatus(c.status).toLowerCase(); counts[k] = (counts[k] || 0) + 1; });
+    $('cl-k-n').textContent = cs.length;
+    $('cl-k-n-s').textContent = Object.keys(counts).map(function (k) { return counts[k] + ' ' + k; }).join(', ') || 'none yet';
+    $('cl-k-fees').textContent = gbp(fees);
+    $('cl-k-fees-s').textContent = payers ? 'from ' + plural(payers, 'client', 'clients') : 'set on each client';
+    $('cl-k-ads').textContent = withAds ? money(spend, cur) : '–';
+    $('cl-k-ads-s').textContent = withAds ? plural(Math.round(conv), 'conversion', 'conversions') : 'no accounts connected';
+    $('cl-k-tasks').textContent = tasks;
+    $('cl-k-tasks-s').textContent = most ? 'most: ' + most.name.split(/\s+/).slice(0, 2).join(' ') + ', ' + most.openTaskCount : 'all clear';
     renderFormer();
-    state.clients.forEach(function (c, i) {
-      var tr = el('tr', 'click'); tr.tabIndex = 0;
-      var go = function () { location.hash = '#client/' + encodeURIComponent(c.slug); };
-      tr.addEventListener('click', go); tr.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
-      var who = el('td', 'who'), wr = el('div', 'who-row'), wt = el('div');
+    if (!cs.length) { body.appendChild(el('li', 'empty', 'No clients synced yet.')); return; }
+    cs.forEach(function (c, i) {
+      var li = el('li'), a = el('a', 'cl-row'); a.href = '#client/' + encodeURIComponent(c.slug);
+      var who = el('div', 'cl-who');
       var initials = c.name.split(/\s+/).map(function (w) { return w.replace(/[^A-Za-zÀ-ÿ]/g, '').charAt(0); }).filter(Boolean).slice(0, 2).join('').toUpperCase();
-      wr.appendChild(el('span', 'avatar' + ['', ' b2', ' b3'][i % 3], initials));
-      wt.appendChild(el('b', null, c.name)); wt.appendChild(el('span', null, (c.website || '').replace(/^https?:\/\//, '').replace(/\/$/, '') || c.businessType || ''));
-      wr.appendChild(wt); who.appendChild(wr); tr.appendChild(who);
-      var st = el('td'); st.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'good' : 'amber'), (c.status || 'Unknown').split(' · ')[0])); tr.appendChild(st);
-      var hs = el('td'); var sc = scoreOf(c.overall);
-      if (sc != null) { var w = el('div', 'score'); w.appendChild(el('b', null, c.overall.replace(/\s/g, ''))); var bar = el('div', 'bar'); var fill = el('i', tone(sc)); fill.style.width = (sc * 10) + '%'; bar.appendChild(fill); w.appendChild(bar); hs.appendChild(w); }
-      else hs.appendChild(el('span', 'pill', 'Not scored'));
-      tr.appendChild(hs);
-      tr.appendChild(lastWeekCell(c));
-      var last = latestReport(c);
-      var lr = el('td'); if (last) { lr.appendChild(el('div', null, ago(last.date))); lr.lastChild.style.fontWeight = '700'; lr.appendChild(el('div', 's', last.section)); lr.lastChild.style.cssText = 'color:var(--muted);font-size:13px;margin-top:2px'; } else lr.textContent = '–';
-      tr.appendChild(lr);
-      var bf = billOf(c.slug);
-      tr.appendChild(el('td', 'r num clients-fee', bf.fee ? money(bf.fee, 'GBP') + (bf.cadence === 'monthly' ? ' /mo' : bf.cadence === 'one-off' ? ' once' : '') : '–'));
-      tr.appendChild(el('td', 'r num', String(c.openTaskCount || 0)));
-      var ch = el('td', 'r'); ch.innerHTML = ICON.chev; tr.appendChild(ch);
-      body.appendChild(tr);
+      who.appendChild(el('span', 'avatar' + ['', ' b2', ' b3'][i % 3], initials));
+      var wt = el('div'); wt.appendChild(el('b', null, c.name)); wt.appendChild(el('span', null, (c.website || '').replace(/^https?:\/\//, '').replace(/\/$/, '') || c.businessType || ''));
+      who.appendChild(wt); a.appendChild(who);
+      var st = el('div', 'cl-status'); st.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'good' : 'amber'), shortStatus(c.status))); a.appendChild(st);
+      var hs = el('div', 'cl-health'), sc = scoreOf(c.overall);
+      if (sc != null) { hs.appendChild(el('b', null, sc + '/10')); var bar = el('i'), fill = el('span'); fill.style.width = (sc * 10) + '%'; bar.appendChild(fill); hs.appendChild(bar); }
+      else hs.appendChild(el('span', 'cl-muted', 'Not scored'));
+      a.appendChild(hs);
+      var ads = el('div', 'cl-ads'), m = c.metrics && c.metrics.ads;
+      if (!m) ads.appendChild(el('span', 'cl-muted', 'Google Ads not connected'));
+      else {
+        var w = m.weeks, x = w[w.length - 1], streak = 0;
+        ads.appendChild(el('b', null, money(x.cost, m.currency) + ' · ' + plural(Math.round(x.conversions || 0), 'conversion', 'conversions')));
+        for (var k = w.length - 1; k >= 0 && !w[k].conversions && w[k].cost > 0; k--) streak++;
+        if (streak >= 2) ads.appendChild(el('span', 'cl-flag', 'No conversions in ' + streak + ' weeks'));
+        else { var ch = change(adsMetrics(m.currency, w)[1], w); if (ch) ads.appendChild(el('span', 'cl-muted', ch.dir === 0 ? 'Conversions level' : 'Conversions ' + (ch.dir > 0 ? 'up ' : 'down ') + ch.text.replace(/^[+-]/, ''))); }
+      }
+      a.appendChild(ads);
+      var bf = billOf(c.slug), fee = el('div', 'cl-fee');
+      if (bf.fee) { fee.appendChild(el('b', null, gbp(bf.fee))); fee.appendChild(el('span', 'cl-muted', bf.cadence === 'monthly' ? 'a month' : bf.cadence === 'one-off' ? 'one-off' : 'not paying')); }
+      else fee.appendChild(el('span', 'cl-muted', 'No fee set'));
+      a.appendChild(fee);
+      var chev = el('span', 'cl-chev'); chev.innerHTML = ICON.chev; a.appendChild(chev);
+      li.appendChild(a); body.appendChild(li);
     });
   }
+  var REP_SHOW = 4, repAll = false, repFor = null;
+  function shortStatus(s) { return String(s || 'Unknown').split(' · ')[0].replace(/\s*\(.*\)\s*$/, ''); }
   function renderClient(slug) {
     var c = (state.allClients || []).filter(function (x) { return x.slug === slug; })[0];
     if (!c) { $('c-name').textContent = (state.allClients || []).length ? 'Client not found' : 'Loading…'; return; }
     $('c-name').textContent = c.name;
     var f = $('c-facts'); f.innerHTML = '';
-    f.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'good' : 'amber'), c.status || 'Unknown'));
+    f.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'good' : 'amber'), shortStatus(c.status)));
     if (c.website) f.appendChild(link(/^https?:/.test(c.website) ? c.website : 'https://' + c.website, c.website.replace(/^https?:\/\//, '').replace(/\/$/, '')));
     [c.businessType, c.industry].filter(Boolean).forEach(function (x) { f.appendChild(el('span', null, x)); });
     if (c.profileUpdated) f.appendChild(el('span', null, 'Profile updated ' + fmt(c.profileUpdated)));
@@ -2522,7 +2592,11 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     renderPerf(c);
 
     var rep = $('c-reports'); rep.innerHTML = '';
-    (c.sections || []).forEach(function (s) {
+    if (repFor !== c.slug) { repFor = c.slug; repAll = false; }
+    var secs = c.sections || [], more = $('c-rep-more');
+    more.hidden = secs.length <= REP_SHOW; more.textContent = repAll ? 'Show fewer' : 'Show all ' + secs.length;
+    more.onclick = function () { repAll = !repAll; renderClient(c.slug); };
+    secs.slice(0, repAll ? secs.length : REP_SHOW).forEach(function (s) {
       var li = el('li');
       var body = el('div'); body.appendChild(el('div', 't', s.name)); body.appendChild(el('div', 's', s.private ? 'Kept in Obsidian only' : s.items.length ? 'Latest: ' + s.items[0].title + ', ' + fmt(s.items[0].date) : 'Spreadsheets only'));
       li.appendChild(body);
