@@ -11,7 +11,7 @@ import { seal, unseal } from './seal.js';
 const BILLING = 'admin/client-billing.json';
 const XERO = 'admin/xero.json';
 const INVOICES = 'admin/xero-invoices.json';
-const SCOPES = 'offline_access accounting.invoices.read accounting.contacts.read';
+const SCOPES = 'offline_access accounting.invoices.read accounting.contacts.read'; // contacts kept for linking later
 const LOGIN = 'https://login.xero.com/identity/connect/authorize';
 const TOKEN = 'https://identity.xero.com/connect/token';
 const REVOKE = 'https://identity.xero.com/connect/revocation';
@@ -175,15 +175,20 @@ export async function syncXero(env) {
     const since = new Date(Date.now() - 730 * 864e5);
     const where = encodeURIComponent('Type=="ACCREC" AND Date>=DateTime(' + since.getUTCFullYear() + ',' + (since.getUTCMonth() + 1) + ',' + since.getUTCDate() + ')');
     const invoices = [];
+    const seen = new Map(); // everyone invoiced in the window: the contacts a client can be linked to
     let untagged = 0;
     for (let page = 1; page <= MAX_PAGES; page++) {
       const r = await xeroGet(API + '/Invoices?where=' + where + '&Statuses=AUTHORISED,PAID&order=Date%20DESC&page=' + page, c.tokens.access, c.tenantId);
       const list = r.Invoices || [];
-      for (const inv of list) { const p = phillipsPart(inv); if (p.untagged) untagged++; if (p.total > 0 || p.untagged) invoices.push(p); }
+      for (const inv of list) {
+        if (inv.Contact && inv.Contact.ContactID) seen.set(inv.Contact.ContactID, inv.Contact.Name || 'Unnamed contact');
+        const p = phillipsPart(inv); if (p.untagged) untagged++; if (p.total > 0 || p.untagged) invoices.push(p);
+      }
       if (list.length < 100) break;
     }
-    const cr = await xeroGet(API + '/Contacts?where=' + encodeURIComponent('IsCustomer==true') + '&summaryOnly=true', c.tokens.access, c.tenantId);
-    const contacts = (cr.Contacts || []).filter(x => x.ContactStatus !== 'ARCHIVED').map(x => ({ id: x.ContactID, name: x.Name })).sort((a, b) => a.name.localeCompare(b.name));
+    // Xero refuses an IsCustomer filter on organisations with many contacts (23 Nov 2026), so the contacts come from
+    // the invoices themselves: everyone sent a sales invoice in the last two years.
+    const contacts = [...seen].map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name));
     const syncedAt = new Date().toISOString();
     await putJSON(env, INVOICES, { syncedAt, invoices, contacts, untagged });
     await saveConnection(env, { ...c, syncedAt, lastError: null });

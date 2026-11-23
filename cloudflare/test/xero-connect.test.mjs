@@ -15,7 +15,6 @@ globalThis.fetch = async (url, init) => {
   if (url.includes('/connect/token')) return new Response(JSON.stringify({ access_token: 'A', refresh_token: 'R', expires_in: 1800 }));
   if (url.endsWith('/connections')) return new Response(JSON.stringify([{ id: 'conn1', tenantId: 'ten1', tenantName: 'Phillips Group', tenantType: 'ORGANISATION' }]));
   if (url.includes('/Invoices')) return new Response(JSON.stringify({ Invoices: [{ InvoiceID: 'i1', InvoiceNumber: 'PG-2026-001', Contact: { ContactID: 'c1', Name: 'Lee' }, Date: '/Date(1795392000000+0000)/', DueDate: '/Date(1796083200000+0000)/', FullyPaidOnDate: '/Date(1795392000000+0000)/', Status: 'PAID', Total: 500, AmountPaid: 500, AmountDue: 0, LineItems: [{ LineAmount: 500, Tracking: [{ Name: 'Brand', Option: 'Phillips.' }] }] }] }));
-  if (url.includes('/Contacts')) return new Response(JSON.stringify({ Contacts: [{ ContactID: 'c1', Name: 'Lee' }] }));
   throw new Error('unexpected ' + url);
 };
 const U = p => new URL('https://www.phillips-uk.com' + p);
@@ -35,6 +34,7 @@ const back = await xeroRoutes(new Request(U(cb), { headers: { Cookie: 'ph_xero_s
 assert.equal(back.headers.get('Location'), '/admin#clients?xero=connected');
 assert.ok(!store.has('admin/xero-state/' + state + '.json'), 'state is one use');
 const inv = JSON.parse(store.get('admin/xero-invoices.json'));
+assert.deepEqual(inv.contacts, [{ id: 'c1', name: 'Lee' }]);
 assert.equal(inv.invoices[0].number, 'PG-2026-001'); assert.equal(inv.invoices[0].paid, 500); assert.equal(inv.invoices[0].paidOn, '2026-11-23');
 const conn = JSON.parse(store.get('admin/xero.json'));
 assert.equal(conn.tenantName, 'Phillips Group'); assert.equal(conn.connectedBy, 'lewis@phillips-group.uk'); assert.ok(!JSON.stringify(conn).includes('"R"'), 'tokens are sealed');
