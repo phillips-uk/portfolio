@@ -4,6 +4,7 @@
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
 import { EMAIL_CAP } from './accounts.js';
 import { billingAdmin, xeroRoutes } from './client-billing.js';
+import { deskClients } from './desk-clients.js';
 import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, updateInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
 import { deals } from './pipeline.js';
@@ -254,6 +255,13 @@ export async function admin(request, url, env) {
     let sent = null;
     try { const r = env.ACCOUNTS_DB && await env.ACCOUNTS_DB.prepare('SELECT n FROM email_months WHERE month = ?').bind(month).first(); sent = r ? r.n : 0; } catch { /* table missing */ }
     return json({ email: { month, sent, cap: EMAIL_CAP } });
+  }
+  // Search Desk findings for the clients linked on their Billing card (desk-clients.js)
+  if (path === '/admin/api/desk' && method === 'GET') {
+    const o = await env.BLOBS.get('admin/client-billing.json');
+    const billing = o ? await o.json().catch(() => ({})) : {};
+    const ids = Object.values(billing).filter(b => b && !b.former && b.deskId).map(b => b.deskId);
+    return json(await deskClients(env, ids));
   }
   // Client billing, former clients and the Xero sync
   if (path.startsWith('/admin/api/billing') || path.startsWith('/admin/api/xero/')) return billingAdmin(request, path, env);

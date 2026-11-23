@@ -52,6 +52,8 @@ export function cleanBilling(b) {
   if (out.start && out.end && out.end < out.start) return { error: 'The end date is before the start date.' };
   out.xeroContactId = b.xeroContactId && UUID.test(b.xeroContactId) ? String(b.xeroContactId) : null;
   out.xeroContactName = out.xeroContactId ? String(b.xeroContactName || '').slice(0, 120) : null;
+  out.deskId = b.deskId && /^[A-Za-z0-9_-]{6,64}$/.test(String(b.deskId)) ? String(b.deskId) : null;
+  out.deskName = out.deskId ? String(b.deskName || '').slice(0, 120) : null;
   out.note = String(b.note || '').slice(0, 300);
   return { value: out };
 }

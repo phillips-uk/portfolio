@@ -1115,6 +1115,25 @@ section[data-pane="client"] .hrow { grid-template-columns: minmax(0, 1fr) 150px 
 section[data-pane="client"] .hrow b:not(:only-child) { white-space: nowrap; }
 .bill-edit > form { margin-top: 16px; }
 #c-rep-more { margin-top: 14px; }
+/* Search Desk's To check on the client page (23 Nov 2026): ink and brand only */
+.dk-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.dk-head b { display: block; font-size: 22px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.dk-head span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+.dk-list { list-style: none; margin: 18px 0 0; padding: 0; }
+.dk-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line-soft); }
+.dk-list li b { display: block; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.dk-list li span { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.dk-money { text-align: right; font-variant-numeric: tabular-nums; }
+.dk-money b { font-weight: 700; }
+.dk-30 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+.dk-30 small { display: block; color: var(--muted); font-size: 12.5px; }
+.dk-30 b { display: block; margin-top: 4px; font-size: 16px; font-variant-numeric: tabular-nums; }
+.dk-note { color: var(--muted); font-size: 13.5px; margin: 12px 0 0; }
+.dk-note:first-child { margin-top: 0; }
+.dk-scores { margin-top: 18px; }
+.dk-scores > div { margin-top: 8px; }
+.cl-desk b, .cl-desk span { display: block; } .cl-desk b { font-size: 14px; } .cl-desk span { margin-top: 3px; }
+@media (max-width: 600px) { .dk-list li { grid-template-columns: minmax(0, 1fr); gap: 4px; } .dk-money { text-align: left; } .dk-list .dk-money b, .dk-list .dk-money span { display: inline; margin-top: 0; } .dk-list .dk-money span { margin-left: 6px; } .dk-head .btn { width: 100%; justify-content: center; } }
 @media (max-width: 900px) {
   .cl-row { grid-template-columns: minmax(0, 1fr) auto 20px; gap: 10px 16px; }
   .cl-who { grid-column: 1 / 2; } .cl-status { grid-column: 2 / 3; justify-self: end; } .cl-chev { grid-column: 3; grid-row: 1; }
@@ -1297,6 +1316,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
                 <label>How often<select name="cadence"><option value="monthly">Every month</option><option value="one-off">One-off</option><option value="none">Not paying yet</option></select></label>
                 <label>Invoice day<input type="number" name="day" min="1" max="31" placeholder="23"></label>
                 <label>Xero contact<select name="xeroContactId"></select></label>
+                <label class="wide">Search Desk company<select name="deskId"></select></label>
                 <label>Started<input type="date" name="start"></label>
                 <label>Ends (optional)<input type="date" name="end"></label>
                 <label class="wide">Note (optional)<input type="text" name="note" maxlength="300" placeholder="For example: paid by bank transfer"></label>
@@ -1308,7 +1328,7 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
           <div class="card"><div class="card-head"><h2>Reports and audits</h2><span class="meta rep-meta">The latest of each opens here, older ones in Obsidian</span></div><div class="card-body"><ul class="list reports" id="c-reports"></ul><button type="button" class="btn sa-more" id="c-rep-more" hidden>Show all</button></div></div>
         </div>
         <div class="stack">
-          <div class="card"><div class="card-head"><h2>Account health</h2><div class="big-score" id="c-overall"></div></div><div class="card-body" id="c-health"></div></div>
+          <div class="card"><div class="card-head"><h2>Account health</h2><div class="big-score" id="c-overall"></div></div><div class="card-body"><div id="c-desk"></div><div id="c-health"></div></div></div>
           <div class="card"><div class="card-head"><h2>Open tasks</h2><span class="meta" id="c-task-n"></span></div><div class="card-body"><ul class="list" id="c-tasks"></ul></div></div>
         </div>
       </div>
@@ -2049,8 +2069,15 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
       else toast('The funnel did not load. Refresh to try again.', true);
       renderAll();
       if (pendingOpen) { var id = pendingOpen; pendingOpen = null; openDrawer(id); }
+      loadDesk();
     });
   }
+  // Search Desk's Account health for clients linked on their Billing card (read only, cached 10 minutes there)
+  function loadDesk() {
+    return api('/admin/api/desk').then(function (d) { state.desk = d; }).catch(function () { state.desk = { ready: true, error: 'Search Desk did not answer.', companies: [], health: {} }; })
+      .then(function () { renderClients(); if ((location.hash || '').indexOf('#client/') === 0) route(); });
+  }
+  function deskOf(slug) { var id = billOf(slug).deskId, d = state.desk; return id && d && d.health ? d.health[id] || null : null; }
   function renderAll() {
     var stale = !state.syncedAt || daysSince(state.syncedAt) >= 1;
     $('sync-dot').className = 'dot' + (stale ? ' stale' : '');
@@ -2432,9 +2459,16 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     if (!b.xeroContactId) { var guess = contacts.filter(function (k) { return k.name.toLowerCase().replace(/[^a-z]/g, '').indexOf(c.name.toLowerCase().replace(/[^a-z]/g, '').slice(0, 8)) !== -1; })[0]; if (guess) sel.value = guess.id; }
     else sel.value = b.xeroContactId;
     sel.disabled = !contacts.length;
+    var ds = form.deskId, dd = state.desk || {}, comps = (dd.companies || []).slice(); ds.innerHTML = '';
+    var dn = el('option', null, !state.desk ? 'Loading Search Desk…' : dd.ready === false ? 'Search Desk is not linked to this site' : dd.error ? 'Search Desk did not answer' : 'Not linked'); dn.value = ''; ds.appendChild(dn);
+    if (b.deskId && !comps.some(function (k) { return k.id === b.deskId; })) comps.unshift({ id: b.deskId, name: b.deskName || 'Linked company' });
+    comps.forEach(function (k) { var o = el('option', null, k.name); o.value = k.id; ds.appendChild(o); });
+    if (b.deskId) ds.value = b.deskId;
+    else { var dg = comps.filter(function (k) { return k.name.toLowerCase().replace(/[^a-z]/g, '').indexOf(c.name.toLowerCase().replace(/[^a-z]/g, '').slice(0, 8)) !== -1; })[0]; if (dg) ds.value = dg.id; }
+    ds.disabled = !comps.length;
     $('c-bill-msg').textContent = '';
     $('c-bill-edit').open = !b.fee;
-    $('c-bill-sum').textContent = b.fee ? 'fee, invoice day, Xero contact' : 'set the fee to count this client in revenue';
+    $('c-bill-sum').textContent = b.fee ? 'fee, invoice day, Xero and Search Desk' : 'set the fee to count this client in revenue';
     $('c-bill-meta').textContent = b.fee ? gbp(b.fee) + (b.cadence === 'monthly' ? ' a month' + (b.day ? ', on the ' + ordinal(b.day) : '') : b.cadence === 'one-off' ? ' one-off' : '') : 'Not set';
     var m = $('c-bill-money'); m.innerHTML = '';
     if (b.money) {
@@ -2460,11 +2494,14 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     e.preventDefault();
     var form = e.target, slug = form.getAttribute('data-slug'), sel = form.xeroContactId;
     var body = { fee: form.fee.value, cadence: form.cadence.value, day: form.day.value, start: form.start.value, end: form.end.value, note: form.note.value,
-      xeroContactId: sel.value, xeroContactName: sel.value ? sel.options[sel.selectedIndex].text : '' };
+      xeroContactId: sel.value, xeroContactName: sel.value ? sel.options[sel.selectedIndex].text : '',
+      deskId: form.deskId.value, deskName: form.deskId.value ? form.deskId.options[form.deskId.selectedIndex].text : '' };
     $('c-bill-go').disabled = true; $('c-bill-msg').textContent = '';
     api('/admin/api/billing/' + encodeURIComponent(slug), { method: 'POST', body: body }).then(function (d) {
+      var linked = (billOf(slug).deskId || '') !== ((d.clients && d.clients[slug] && d.clients[slug].deskId) || '');
       state.billing = d; toast('Billing saved.'); renderRevenue(); renderClients();
-      var c = (state.allClients || []).filter(function (x) { return x.slug === slug; })[0]; if (c) renderBillCard(c);
+      var c = (state.allClients || []).filter(function (x) { return x.slug === slug; })[0]; if (c) renderClient(c.slug);
+      if (linked) loadDesk();
     }).catch(function (err) { $('c-bill-msg').textContent = err.message; })
       .then(function () { $('c-bill-go').disabled = false; });
   });
@@ -2545,8 +2582,14 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
       var wt = el('div'); wt.appendChild(el('b', null, c.name)); wt.appendChild(el('span', null, (c.website || '').replace(/^https?:\/\//, '').replace(/\/$/, '') || c.businessType || ''));
       who.appendChild(wt); a.appendChild(who);
       var st = el('div', 'cl-status'); st.appendChild(el('span', 'pill ' + (/active/i.test(c.status) ? 'good' : 'amber'), shortStatus(c.status))); a.appendChild(st);
-      var hs = el('div', 'cl-health'), sc = scoreOf(c.overall);
-      if (sc != null) { hs.appendChild(el('b', null, sc + '/10')); var bar = el('i'), fill = el('span'); fill.style.width = (sc * 10) + '%'; bar.appendChild(fill); hs.appendChild(bar); }
+      var hs = el('div', 'cl-health'), sc = scoreOf(c.overall), dh = deskOf(c.slug);
+      if (dh && dh.summary) {
+        hs.classList.add('cl-desk');
+        var dt = el('div'); dt.appendChild(el('b', null, dh.summary.count ? plural(dh.summary.count, 'thing', 'things') + ' to check' : 'Nothing to check'));
+        dt.appendChild(el('span', 'cl-muted', dh.summary.money ? money(dh.summary.money, dh.currency || 'GBP') + ' at stake' : 'Search Desk'));
+        hs.appendChild(dt);
+      }
+      else if (sc != null) { hs.appendChild(el('b', null, sc + '/10')); var bar = el('i'), fill = el('span'); fill.style.width = (sc * 10) + '%'; bar.appendChild(fill); hs.appendChild(bar); }
       else hs.appendChild(el('span', 'cl-muted', 'Not scored'));
       a.appendChild(hs);
       var ads = el('div', 'cl-ads'), m = c.metrics && c.metrics.ads;
@@ -2568,6 +2611,43 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     });
   }
   var REP_SHOW = 4, repAll = false, repFor = null;
+  // Search Desk's To check for this client: what its Daily view shows, ranked by money at stake, and a way in
+  function renderDeskHealth(c, dh) {
+    var box = $('c-desk'); box.innerHTML = '';
+    var b = billOf(c.slug);
+    if (!b.deskId) return;
+    if (!state.desk) { box.appendChild(el('p', 'dk-note', 'Reading Search Desk…')); return; }
+    if (!dh || dh.error || !dh.summary) {
+      box.appendChild(el('p', 'dk-note', state.desk.error || (dh && dh.error === 'not_a_client' ? 'Search Desk no longer counts ' + (b.deskName || 'this company') + ' as an active client. Change the link under Edit billing.' : 'Search Desk had nothing for this company.')));
+      return;
+    }
+    var cur = dh.currency || 'GBP', daily = (dh.findings || []).filter(function (f) { return f.daily; });
+    var head = el('div', 'dk-head');
+    var ht = el('div'); ht.appendChild(el('b', null, dh.summary.money ? money(dh.summary.money, cur) + ' at stake' : daily.length ? plural(daily.length, 'thing', 'things') + ' to check' : 'Nothing to check today'));
+    ht.appendChild(el('span', null, 'Search Desk, ' + (dh.dates ? shortDay(dh.dates.from) + ' to ' + shortDay(dh.dates.to) : 'last 7 days') + (dh.dataOk === false ? '. The last Google Ads read failed, so this may be out of date' : '')));
+    head.appendChild(ht);
+    if (dh.link && /^https:\/\/www\.phillips-uk\.com\/desk\//.test(dh.link)) head.appendChild(link(dh.link, 'Open in Search Desk', 'btn primary'));
+    box.appendChild(head);
+    if (daily.length) {
+      var ul = el('ul', 'dk-list');
+      daily.slice(0, 5).forEach(function (f) {
+        var li = el('li'), t = el('div');
+        t.appendChild(el('b', null, f.head || f.pill || 'Finding'));
+        if (f.campaign) t.appendChild(el('span', null, f.campaign));
+        li.appendChild(t);
+        var m = el('div', 'dk-money');
+        if (f.money != null && Number.isFinite(Number(f.money))) { m.appendChild(el('b', null, money(f.money, cur))); if (f.per) m.appendChild(el('span', null, f.per)); }
+        li.appendChild(m); ul.appendChild(li);
+      });
+      box.appendChild(ul);
+      if (daily.length > 5) box.appendChild(el('p', 'dk-note', plural(daily.length - 5, 'more', 'more') + ' in Search Desk.'));
+    }
+    if (dh.last30) {
+      var l = dh.last30, row = el('div', 'dk-30');
+      [['Spend, 30 days', money(l.spend, cur)], ['Conversions', whole(l.conversions)], l.value != null ? ['Value', money(l.value, cur)] : null].filter(Boolean).forEach(function (x) { var d = el('div'); d.appendChild(el('small', null, x[0])); d.appendChild(el('b', null, x[1])); row.appendChild(d); });
+      box.appendChild(row);
+    }
+  }
   function shortStatus(s) { return String(s || 'Unknown').split(' · ')[0].replace(/\s*\(.*\)\s*$/, ''); }
   function renderClient(slug) {
     var c = (state.allClients || []).filter(function (x) { return x.slug === slug; })[0];
@@ -2608,17 +2688,24 @@ section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
     });
     if (!(c.sections || []).length) rep.appendChild(el('li', 'empty', 'No reports yet.'));
 
-    var sc = scoreOf(c.overall);
+    var sc = scoreOf(c.overall), dh = deskOf(c.slug);
     $('c-overall').innerHTML = '';
-    if (sc != null) { $('c-overall').appendChild(el('b', null, String(sc))); $('c-overall').appendChild(el('span', null, '/ 10 overall')); }
-    var hb = $('c-health'); hb.innerHTML = '';
-    if (!(c.health || []).length) hb.appendChild(el('div', 'empty', 'No health scores in the profile yet.'));
+    var hb = $('c-health'); hb.innerHTML = ''; renderDeskHealth(c, dh);
+    if (dh && dh.summary) { $('c-overall').appendChild(el('b', null, String(dh.summary.count))); $('c-overall').appendChild(el('span', null, 'to check')); }
+    else if (sc != null) { $('c-overall').appendChild(el('b', null, String(sc))); $('c-overall').appendChild(el('span', null, '/ 10 overall')); }
+    var into = hb;
+    if (dh && dh.summary && (c.health || []).length) {
+      var fold = el('details', 'pr-fold dk-scores'), su = el('summary');
+      su.appendChild(el('h3', 'pr-sub', 'Scores from the profile')); su.appendChild(el('span', 'pr-sum', sc != null ? sc + '/10 overall, from Obsidian' : 'from Obsidian'));
+      fold.appendChild(su); hb.appendChild(fold); into = el('div'); fold.appendChild(into);
+    }
+    if (!(c.health || []).length && !(dh && dh.summary)) hb.appendChild(el('div', 'empty', 'No health scores in the profile yet.'));
     (c.health || []).forEach(function (x) {
       var s = scoreOf(x.score);
       var r = el('div', 'hrow'); r.appendChild(el('span', null, x.area));
       var bar = el('div', 'bar'); var fill = el('i', tone(s)); fill.style.width = (s == null ? 0 : s * 10) + '%'; bar.appendChild(fill); r.appendChild(bar);
       r.appendChild(el('b', null, s == null ? (x.status || '–') : String(s)));
-      hb.appendChild(r);
+      into.appendChild(r);
     });
 
     $('c-task-n').textContent = c.openTaskCount ? plural(c.openTaskCount, 'task', 'tasks') : '';

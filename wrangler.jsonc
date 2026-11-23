@@ -23,7 +23,9 @@
   // DemoLinks entrypoint (RPC only, never reachable over HTTP): one demo share link per invite (cloudflare/src/desk-demo.js)
   "services": [
     { "binding": "DESK", "service": "search-desk" },
-    { "binding": "DESK_LINKS", "service": "search-desk", "entrypoint": "DemoLinks" }
+    { "binding": "DESK_LINKS", "service": "search-desk", "entrypoint": "DemoLinks" },
+    // Search Desk's Account health for clients linked on their Billing card, read only (cloudflare/src/desk-clients.js)
+    { "binding": "DESK_CLIENTS", "service": "search-desk", "entrypoint": "ClientDesk" }
   ],
   "r2_buckets": [
     { "binding": "BLOBS", "bucket_name": "phillips-blobs" }

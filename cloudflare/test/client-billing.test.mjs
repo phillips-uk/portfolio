@@ -4,7 +4,7 @@ import { cleanBilling, phillipsPart, revenue, clientMoney } from '../src/client-
 
 // cleaning the form
 assert.deepEqual(cleanBilling({ fee: '500', cadence: 'monthly', day: '23', start: '2026-11-23' }).value,
-  { fee: 500, cadence: 'monthly', day: 23, start: '2026-11-23', end: null, xeroContactId: null, xeroContactName: null, note: '' });
+  { fee: 500, cadence: 'monthly', day: 23, start: '2026-11-23', end: null, xeroContactId: null, xeroContactName: null, deskId: null, deskName: null, note: '' });
 assert.ok(cleanBilling({ fee: 'lots' }).error);
 assert.ok(cleanBilling({ day: '40' }).error);
 assert.ok(cleanBilling({ start: '2026-12-01', end: '2026-11-01' }).error);
