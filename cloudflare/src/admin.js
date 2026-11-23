@@ -240,6 +240,8 @@ export async function admin(request, url, env) {
     return json({ ok: true }, 200, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict` });
   }
 
+  // Xero's return comes from another site, so the Strict admin cookie is not sent: client-billing.js checks it itself
+  if (path === '/admin/xero/callback' && method === 'GET') return xeroRoutes(request, url, env, null);
   const email = await adminEmail(request, env);
   if (!email) return path.startsWith('/admin/xero/') ? Response.redirect(url.origin + '/admin', 302) : json({ error: 'Signed out' }, 401);
 

@@ -192,18 +192,29 @@ const cookieOf = (request, name) => { const m = (request.headers.get('Cookie') |
 const redirect = (to, cookie) => new Response(null, { status: 302, headers: { Location: to, ...NO_STORE, ...(cookie ? { 'Set-Cookie': cookie } : {}) } });
 const callbackUrl = origin => origin + '/admin/xero/callback';
 
-/** GET /admin/xero/connect and /admin/xero/callback (the admin is already signed in; checked by the caller). */
+// The admin's own sign-in cookie is SameSite=Strict, so the browser leaves it off when Xero sends Lewis back here.
+// The return is trusted instead through a one-time state: made by a signed-in admin on /admin/xero/connect, held in R2
+// for ten minutes with who made it, and matched against a SameSite=Lax cookie set on the same browser.
+const STATE_KEY = s => 'admin/xero-state/' + s + '.json';
+
+/** GET /admin/xero/connect (signed-in admin, checked by the caller) and /admin/xero/callback (checked here). */
 export async function xeroRoutes(request, url, env, email) {
   if (!xeroReady(env)) return redirect('/admin#clients?xero=not-set-up');
   if (url.pathname === '/admin/xero/connect') {
+    if (!email) return redirect('/admin');
     const state = crypto.randomUUID();
+    await putJSON(env, STATE_KEY(state), { email, exp: Date.now() + 600e3 });
     const p = new URLSearchParams({ response_type: 'code', client_id: env.XERO_CLIENT_ID, redirect_uri: callbackUrl(url.origin), scope: SCOPES, state });
     return redirect(LOGIN + '?' + p, STATE_COOKIE + '=' + state + '; Path=/admin/xero; Max-Age=600; HttpOnly; Secure; SameSite=Lax');
   }
   if (url.pathname === '/admin/xero/callback') {
     const clear = STATE_COOKIE + '=; Path=/admin/xero; Max-Age=0; HttpOnly; Secure; SameSite=Lax';
     const state = url.searchParams.get('state'), code = url.searchParams.get('code');
-    if (!state || state !== cookieOf(request, STATE_COOKIE)) return redirect('/admin#clients?xero=expired', clear);
+    if (!state || !/^[0-9a-f-]{36}$/.test(state) || state !== cookieOf(request, STATE_COOKIE)) return redirect('/admin#clients?xero=expired', clear);
+    const saved = await getJSON(env, STATE_KEY(state), null);
+    await env.BLOBS.delete(STATE_KEY(state));
+    if (!saved || saved.exp < Date.now()) return redirect('/admin#clients?xero=expired', clear);
+    email = saved.email;
     if (!code) return redirect('/admin#clients?xero=cancelled', clear);
     try {
       const tokens = await tokenCall(env, { grant_type: 'authorization_code', code, redirect_uri: callbackUrl(url.origin) });
