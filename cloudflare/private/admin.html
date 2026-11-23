@@ -1082,6 +1082,53 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 .st-meter i { display: block; height: 100%; width: 0; background: var(--brand); border-radius: var(--r-pill); }
 .st-group li { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
 @media (max-width: 600px) { .st-row { grid-template-columns: minmax(0, 1fr); gap: 2px; } .st-group li { grid-template-columns: minmax(0, 1fr) auto; } .st-group li > :first-child { grid-column: 1 / -1; } .st-group li .btn { justify-self: start; } }
+/* Site (Design Spec v3; Lewis, 23 Nov 2026): a column chart of the free checks, audits as a calm list */
+.site-secs { display: grid; gap: 20px; }
+.sc-main { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.sc-legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--text-2); }
+.sc-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.sc-legend i { width: 10px; height: 10px; border-radius: 3px; }
+.sc-web { background: var(--brand); }
+.sc-ads { background: var(--info-dot); }
+.sc-chart { position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; height: 190px; padding-top: 22px; border-bottom: 1px solid var(--line-2); }
+.sc-wk { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; cursor: default; border-radius: 8px; outline: none; }
+.sc-wk:hover, .sc-wk:focus-visible { background: var(--surface-2); }
+.sc-bars { display: flex; align-items: flex-end; justify-content: center; gap: 2px; height: 100%; }
+.sc-bars i { display: block; width: min(16px, 40%); min-height: 2px; border-radius: 4px 4px 0 0; transition: height var(--d3) var(--ease-out); }
+.sc-bars i.zero { background: var(--line) !important; }
+.sc-wk small { position: absolute; left: 0; right: 0; bottom: -24px; text-align: center; font: 500 11px/1 var(--mono, monospace); color: var(--muted); white-space: nowrap; }
+.sc-wk.now small { color: var(--text); font-weight: 600; }
+.sc-tip { position: absolute; z-index: 3; bottom: calc(100% - 14px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; border-radius: 10px; padding: 8px 11px; font-size: 12.5px; line-height: 1.5; white-space: nowrap; box-shadow: var(--e2); pointer-events: none; opacity: 0; transition: opacity var(--d1); }
+.sc-wk:first-child .sc-tip { left: 0; transform: none; }
+.sc-wk:last-child .sc-tip { left: auto; right: 0; transform: none; }
+.sc-wk:hover .sc-tip, .sc-wk:focus-visible .sc-tip { opacity: 1; }
+.sc-tip b { display: block; font-weight: 700; }
+.sc-chart + .pr-fold { margin-top: 28px; }
+.sc-why { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 0; }
+.sc-why li { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; color: var(--text-2); }
+.sc-why li:last-child { border-bottom: 0; }
+.sc-why li b { color: var(--text); font-variant-numeric: tabular-nums; }
+.pr-fold .scroll { margin-top: 12px; }
+.sa-stats { font: 500 12px/1.5 var(--mono, monospace) !important; color: var(--muted) !important; margin-top: 14px !important; }
+.sa-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.sa-list li { display: grid; grid-template-columns: minmax(0, 1fr) 120px 86px auto; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+.sa-list li:last-child { border-bottom: 0; }
+.sa-list li.empty { display: block; color: var(--muted); }
+.sa-list .sa-site b { display: block; overflow-wrap: anywhere; }
+.sa-list .sa-site span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; overflow-wrap: anywhere; }
+.sa-score { display: flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; font-weight: 700; }
+.sa-score i { flex: 1; height: 6px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
+.sa-score i > span { display: block; height: 100%; background: var(--brand); border-radius: 3px; }
+.sa-date { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.sa-more { justify-self: start; }
+section[data-pane="site"] .shortcuts { padding: 0; align-content: start; }
+@media (max-width: 600px) {
+  .sc-chart { gap: 2px; height: 160px; }
+  .sc-wk small { font-size: 10px; }
+  .sc-wk:not(.now):nth-child(even) small { visibility: hidden; }
+  .sa-list li { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px 12px; }
+  .sa-list .sa-site { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
@@ -1519,40 +1566,60 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 
     <!-- Site -->
     <section data-pane="site" hidden>
-      <div class="page-head"><div><h1>Site <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-9" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-9" hidden>The free checks, week by week, and the old landing page audit tool. Traffic and search live in Google Analytics and Search Console.</p></div></div>
-      <div class="card" style="margin-bottom:20px">
-        <div class="card-head"><h2>Free checks</h2><span class="meta">completed by visitors, week by week; your own runs aren't counted</span></div>
-        <div class="kpis tu-kpis">
-          <div class="kpi"><small>Website Checks this week</small><b id="tu-web">–</b></div>
-          <div class="kpi"><small>Google Ads Checks this week</small><b id="tu-ads">–</b></div>
-          <div class="kpi"><small>Lead cards this week</small><b id="tu-cards">–</b></div>
-          <div class="kpi"><small>Refused this week</small><b id="tu-blocked">–</b></div>
+      <div class="page-head">
+        <div><h1>Site <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-9" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-9" hidden>The free checks, week by week, and the old landing page audit tool. Traffic and search live in Google Analytics and Search Console.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/" target="_blank" rel="noopener">Open the site</a></div>
+      </div>
+      <!-- Design Spec v3 (Lewis, 23 Nov 2026): four tiles for this week, then one section each for the free checks (a chart,
+           the table and the refusals folded), the old landing page audits and the shortcuts. -->
+      <div class="kpis pr-kpis">
+        <div class="kpi"><small>Website Checks this week</small><b id="tu-web">–</b><span id="tu-web-s">&nbsp;</span></div>
+        <div class="kpi"><small>Google Ads Checks this week</small><b id="tu-ads">–</b><span id="tu-ads-s">&nbsp;</span></div>
+        <div class="kpi"><small>Lead cards this week</small><b id="tu-cards">–</b><span id="tu-cards-s">&nbsp;</span></div>
+        <div class="kpi"><small>Audits, last 30 days</small><b id="s-30">–</b><span id="s-30-s">&nbsp;</span></div>
+      </div>
+      <div class="site-secs">
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Free checks</h2>
+            <p>Checks visitors finished, last eight weeks.</p>
+            <details class="fold-note"><summary>How this works</summary><p class="pr-note">Your own runs aren't counted. A Lead card is made when a visitor leaves their details after a check. Refused means the check never ran: crawlers, failed spam checks, too many tries from one connection, or the free-use limits.</p></details>
+          </div>
+          <div class="sc-main">
+            <div class="sc-legend" aria-hidden="true"><span><i class="sc-web"></i>Website Check</span><span><i class="sc-ads"></i>Google Ads Check</span></div>
+            <div class="sc-chart" id="tu-chart" role="img" aria-label="Free checks per week"></div>
+            <details class="pr-fold" id="tu-refused-fold"><summary><h3 class="pr-sub">Refused</h3><span class="pr-sum" id="tu-refused-sum">–</span></summary><ul class="sc-why" id="tu-refused"></ul></details>
+            <details class="pr-fold"><summary><h3 class="pr-sub">Week by week</h3><span class="pr-sum">the numbers</span></summary>
+              <div class="scroll"><table class="table tu-table">
+                <thead><tr><th>Week of</th><th>Website Check</th><th>Google Ads Check</th><th class="r">Lead cards</th><th class="r">Refused</th></tr></thead>
+                <tbody id="tu-rows"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+              </table></div>
+            </details>
+          </div>
         </div>
-        <div class="scroll"><table class="table tu-table">
-          <thead><tr><th>Week of</th><th>Website Check</th><th>Google Ads Check</th><th class="r">Lead cards</th><th class="r">Refused <span class="tu-i" title="Crawlers, failed spam checks, too many tries from one connection, and the free-use limits. Hover a number for the reasons.">i</span></th></tr></thead>
-          <tbody id="tu-rows"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
-        </table></div>
-      </div>
-      <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-        <div class="kpi"><small>Audits, last 7 days</small><b id="s-7">–</b></div>
-        <div class="kpi"><small>Audits, last 30 days</small><b id="s-30">–</b></div>
-        <div class="kpi"><small>Audits since launch</small><b id="s-all">–</b></div>
-      </div>
-      <div class="card scroll" style="margin-bottom:20px">
-        <table class="table">
-          <thead><tr><th>Site audited</th><th>Keyword</th><th>Score</th><th>Date</th><th class="r"></th></tr></thead>
-          <tbody id="audits"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
-        </table>
-      </div>
-      <div class="card">
-        <div class="card-head"><h2>Shortcuts</h2></div>
-        <div class="shortcuts">
-          <a class="btn" href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics</a>
-          <a class="btn" href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a>
-          <a class="btn" href="https://tagmanager.google.com/" target="_blank" rel="noopener">Tag Manager</a>
-          <a class="btn" href="https://dash.cloudflare.com/9cd423eee8986ecc6f22f6fa3a17878b/workers/services/view/phillips-uk/production" target="_blank" rel="noopener">Cloudflare</a>
-          <a class="btn" href="https://github.com/phillips-uk" target="_blank" rel="noopener">GitHub</a>
-          <a class="btn" href="/" target="_blank" rel="noopener">Live site</a>
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Landing page audits</h2>
+            <p>The older audit tool, kept for its reports.</p>
+            <p class="sa-stats" id="sa-stats">–</p>
+          </div>
+          <div class="sc-main">
+            <ul class="sa-list" id="audits"><li class="empty">Loading…</li></ul>
+            <button type="button" class="btn sa-more" id="sa-more" hidden>Show all</button>
+          </div>
+        </div>
+        <div class="card pr-sec">
+          <div class="pr-side">
+            <h2>Shortcuts</h2>
+            <p>Traffic, search and the code behind the site.</p>
+          </div>
+          <div class="shortcuts">
+            <a class="btn" href="https://analytics.google.com/analytics/web/?authuser=lewis@phillips-group.uk" target="_blank" rel="noopener">Google Analytics</a>
+            <a class="btn" href="https://search.google.com/search-console?authuser=lewis@phillips-group.uk" target="_blank" rel="noopener">Search Console</a>
+            <a class="btn" href="https://tagmanager.google.com/?authuser=lewis@phillips-group.uk" target="_blank" rel="noopener">Tag Manager</a>
+            <a class="btn" href="https://dash.cloudflare.com/9cd423eee8986ecc6f22f6fa3a17878b/workers/services/view/phillips-uk/production" target="_blank" rel="noopener">Cloudflare</a>
+            <a class="btn" href="https://github.com/phillips-uk" target="_blank" rel="noopener">GitHub</a>
+          </div>
         </div>
       </div>
     </section>
@@ -3657,25 +3724,53 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
   // what was refused (crawlers, spam checks, rate and free-use limits), with the reasons on hover.
   var REFUSED = { bot: 'crawler or script', turnstile: 'spam check failed', rate: 'too many tries from one connection', origin: 'not from the page', account: 'account had its free check', daily: 'daily limit reached', ceiling: 'busy: every free check for the day used', other: 'other' };
   function renderToolUsage() {
-    var weeks = state.toolUsage, body = $('tu-rows');
+    var weeks = state.toolUsage ? state.toolUsage.slice(0, 8) : null, body = $('tu-rows'), chart = $('tu-chart');
     if (!body) return;
-    body.innerHTML = '';
-    if (!weeks) { var tr0 = el('tr'), td0 = el('td', 'empty', 'Couldn’t load the counts. Refresh to try again.'); td0.colSpan = 5; tr0.appendChild(td0); body.appendChild(tr0); return; }
+    body.innerHTML = ''; chart.innerHTML = '';
+    if (!weeks || !weeks.length) {
+      var tr0 = el('tr'), td0 = el('td', 'empty', 'Couldn’t load the counts. Refresh to try again.'); td0.colSpan = 5; tr0.appendChild(td0); body.appendChild(tr0);
+      $('tu-refused-sum').textContent = '–';
+      return;
+    }
+    var done = function (w, t) { return (w.tools[t] || {}).completed || 0; };
     var blockedOf = function (w) { var n = 0, why = {}; Object.keys(w.tools).forEach(function (t) { var b = w.tools[t].blocked || {}; Object.keys(b).forEach(function (k) { n += b[k]; why[k] = (why[k] || 0) + b[k]; }); }); return { n: n, why: why }; };
+    var now = weeks[0], prev = weeks[1];
+    var tile = function (id, v, last) { $(id).textContent = v; $(id + '-s').textContent = prev ? last + ' last week' : ''; };
+    tile('tu-web', done(now, 'website-check'), prev ? done(prev, 'website-check') : 0);
+    tile('tu-ads', done(now, 'google-ads-check'), prev ? done(prev, 'google-ads-check') : 0);
+    tile('tu-cards', now.cards || 0, prev ? prev.cards || 0 : 0);
+    // Chart: oldest week on the left, this week on the right; one brand column for the Website Check, one slate for Google Ads
     var max = 1;
-    weeks.forEach(function (w) { ['website-check', 'google-ads-check'].forEach(function (t) { max = Math.max(max, (w.tools[t] || {}).completed || 0); }); });
-    var now = weeks[0];
-    $('tu-web').textContent = (now.tools['website-check'] || {}).completed || 0;
-    $('tu-ads').textContent = (now.tools['google-ads-check'] || {}).completed || 0;
-    $('tu-cards').textContent = now.cards || 0;
-    $('tu-blocked').textContent = blockedOf(now).n;
+    weeks.forEach(function (w) { max = Math.max(max, done(w, 'website-check'), done(w, 'google-ads-check')); });
+    weeks.slice().reverse().forEach(function (w, i, arr) {
+      var isNow = i === arr.length - 1, web = done(w, 'website-check'), ads = done(w, 'google-ads-check');
+      var label = isNow ? 'This week' : fmt(w.week + 'T12:00:00Z').replace(/ \d{4}$/, '');
+      var wk = el('div', 'sc-wk' + (isNow ? ' now' : '')); wk.tabIndex = 0;
+      wk.setAttribute('aria-label', label + ': ' + web + ' Website Checks, ' + ads + ' Google Ads Checks, ' + (w.cards || 0) + ' Lead cards');
+      var bars = el('div', 'sc-bars');
+      [[web, 'sc-web'], [ads, 'sc-ads']].forEach(function (v) { var b = el('i', v[1] + (v[0] ? '' : ' zero')); b.style.height = (v[0] ? Math.max(3, v[0] / max * 100) : 1.5) + '%'; bars.appendChild(b); });
+      wk.appendChild(bars); wk.appendChild(el('small', null, isNow ? 'Now' : label));
+      var tip = el('div', 'sc-tip'); tip.appendChild(el('b', null, isNow ? 'This week' : 'Week of ' + label));
+      tip.appendChild(el('div', null, web + ' Website · ' + ads + ' Google Ads'));
+      tip.appendChild(el('div', null, plural(w.cards || 0, 'Lead card', 'Lead cards')));
+      wk.appendChild(tip);
+      chart.appendChild(wk);
+    });
+    // Refused, summed over the weeks shown, reasons largest first
+    var all = { n: 0, why: {} };
+    weeks.forEach(function (w) { var b = blockedOf(w); all.n += b.n; Object.keys(b.why).forEach(function (k) { all.why[k] = (all.why[k] || 0) + b.why[k]; }); });
+    $('tu-refused-sum').textContent = all.n ? all.n + ' in ' + weeks.length + ' weeks, ' + blockedOf(now).n + ' this week' : 'none in ' + weeks.length + ' weeks';
+    var why = $('tu-refused'); why.innerHTML = '';
+    Object.keys(all.why).sort(function (x, y) { return all.why[y] - all.why[x]; }).forEach(function (k) {
+      var li = el('li'); li.appendChild(el('span', null, (REFUSED[k] || k).replace(/^./, function (c) { return c.toUpperCase(); }))); li.appendChild(el('b', null, String(all.why[k]))); why.appendChild(li);
+    });
+    $('tu-refused-fold').hidden = !all.n;
     weeks.forEach(function (w, i) {
       var tr = el('tr');
       tr.appendChild(el('td', null, i === 0 ? 'This week' : fmt(w.week + 'T12:00:00Z')));
       ['website-check', 'google-ads-check'].forEach(function (t) {
         var c = w.tools[t] || {}, n = c.completed || 0, td = el('td'), box = el('div', 'tu-n' + (n ? '' : ' zero'));
         box.appendChild(el('b', null, String(n)));
-        var bar = el('i'); bar.style.width = Math.round(n / max * 120) + 'px'; box.appendChild(bar);
         var extra = [];
         if (c.reused) extra.push(c.reused + ' reused');
         if (c.failed) extra.push(c.failed + ' failed');
@@ -3690,22 +3785,33 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     });
   }
 
+  var SA_SHOW = 5, saAll = false;
   function renderSite() {
     renderToolUsage();
-    if (!state.site) return;
+    var list = $('audits'), more = $('sa-more');
+    if (!state.site) { list.innerHTML = ''; list.appendChild(el('li', 'empty', 'Couldn’t load the audits. Refresh to try again.')); more.hidden = true; return; }
     var d = state.site;
-    $('s-7').textContent = d.audits.last7; $('s-30').textContent = d.audits.last30; $('s-all').textContent = d.audits.total;
-    var body = $('audits'); body.innerHTML = '';
-    if (!d.recent.length) { var tr0 = el('tr'); var td0 = el('td', 'empty', 'No audits yet.'); td0.colSpan = 5; tr0.appendChild(td0); body.appendChild(tr0); return; }
-    d.recent.forEach(function (a) {
-      var tr = el('tr');
-      var who = el('td', 'who'); who.appendChild(el('b', null, a.domain || '–')); tr.appendChild(who);
-      tr.appendChild(el('td', null, a.keyword || '–'));
-      var sc = el('td'); if (a.score != null) { var w = el('div', 'score'); w.appendChild(el('b', null, String(a.score))); var bar = el('div', 'bar'); var fill = el('i', a.score >= 80 ? '' : a.score >= 60 ? 'warn' : 'bad'); fill.style.width = Math.min(100, a.score) + '%'; bar.appendChild(fill); w.appendChild(bar); sc.appendChild(w); } else sc.textContent = '–'; tr.appendChild(sc);
-      tr.appendChild(el('td', null, fmt(a.auditedAt)));
-      var rp = el('td', 'r'); if (a.report) rp.appendChild(link(a.report, 'Open report', 'btn')); tr.appendChild(rp);
-      body.appendChild(tr);
+    $('s-30').textContent = d.audits.last30;
+    $('s-30-s').textContent = d.audits.total + ' since launch';
+    $('sa-stats').textContent = d.audits.last7 + ' in 7 days · ' + d.audits.last30 + ' in 30 · ' + d.audits.total + ' in all';
+    list.innerHTML = '';
+    if (!d.recent.length) { list.appendChild(el('li', 'empty', 'No audits yet.')); more.hidden = true; return; }
+    d.recent.slice(0, saAll ? d.recent.length : SA_SHOW).forEach(function (a) {
+      var li = el('li'), site = el('div', 'sa-site');
+      site.appendChild(el('b', null, a.domain || '–'));
+      if (a.keyword) site.appendChild(el('span', null, a.keyword));
+      li.appendChild(site);
+      var sc = el('div', 'sa-score');
+      if (a.score != null) { sc.appendChild(el('span', null, String(a.score))); var bar = el('i'), fill = el('span'); fill.style.width = Math.max(0, Math.min(100, a.score)) + '%'; bar.appendChild(fill); sc.appendChild(bar); }
+      else sc.appendChild(el('span', null, '–'));
+      li.appendChild(sc);
+      li.appendChild(el('span', 'sa-date', a.auditedAt ? fmt(a.auditedAt) : '–'));
+      if (a.report) li.appendChild(link(a.report, 'Report', 'btn')); else li.appendChild(el('span'));
+      list.appendChild(li);
     });
+    more.hidden = d.recent.length <= SA_SHOW;
+    more.textContent = saAll ? 'Show fewer' : 'Show all ' + d.recent.length;
+    more.onclick = function () { saAll = !saAll; renderSite(); };
   }
 
   /* ---------- start ---------- */
