@@ -141,7 +141,13 @@ async function xeroGet(url, access, tenantId) {
   const res = await fetch(url, { headers });
   if (res.status === 429) throw new Error('Xero asked us to slow down. It tries again tomorrow.');
   if (res.status === 401) throw new Error('Xero refused the connection. Connect it again.');
-  if (!res.ok) throw new Error('Xero error ' + res.status);
+  if (!res.ok) {
+    // Keep Xero's own reason (no tokens in it), and which call it was, so a refusal can be fixed
+    const j = await res.json().catch(() => null);
+    const why = j && (j.Detail || j.Message || (j.Elements && j.Elements[0] && j.Elements[0].ValidationErrors && j.Elements[0].ValidationErrors[0] && j.Elements[0].ValidationErrors[0].Message) || j.Title) || '';
+    const call = url.replace(API, '').split('?')[0] || url;
+    throw new Error('Xero error ' + res.status + ' on ' + call + (why ? ': ' + String(why).slice(0, 200) : ''));
+  }
   return res.json();
 }
 
