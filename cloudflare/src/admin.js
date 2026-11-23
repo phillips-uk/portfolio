@@ -2,6 +2,7 @@
 // (pipeline.js: deals made here plus the prospect notes, with comments and files on each card),
 // rate card invite links (Search Desk demo invites each get their own Search Desk share link, desk-demo.js) and a short summary of the site.
 // Session: an HMAC-signed cookie (ADMIN_SESSION_KEY secret), 12 hours. Only emails on ALLOWED_AUDIT_EMAILS get in.
+import { EMAIL_CAP } from './accounts.js';
 import { billingAdmin, xeroRoutes } from './client-billing.js';
 import adminHtml from '../private/admin.html';
 import { getInvite, putInvite, updateInvite, listInvites, inviteState, invitePages, newToken, PAGES } from './rate-card.js';
@@ -247,6 +248,13 @@ export async function admin(request, url, env) {
 
   // Xero's sign-in round trip for client billing (cloudflare/src/client-billing.js)
   if (path.startsWith('/admin/xero/') && method === 'GET') return xeroRoutes(request, url, env, email);
+  // Settings: this month's emails against the cap (accounts.js), the rest of the page reads the other endpoints
+  if (path === '/admin/api/settings' && method === 'GET') {
+    const month = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' }).slice(0, 7);
+    let sent = null;
+    try { const r = env.ACCOUNTS_DB && await env.ACCOUNTS_DB.prepare('SELECT n FROM email_months WHERE month = ?').bind(month).first(); sent = r ? r.n : 0; } catch { /* table missing */ }
+    return json({ email: { month, sent, cap: EMAIL_CAP } });
+  }
   // Client billing, former clients and the Xero sync
   if (path.startsWith('/admin/api/billing') || path.startsWith('/admin/api/xero/')) return billingAdmin(request, path, env);
 

@@ -913,7 +913,7 @@ html[data-area="off"]   { --area: var(--off);   --area-wash: var(--off-wash);   
 .gm-item[data-view="prospects"] svg, .gm-item[data-view="links"] svg { color: var(--info-dot); }
 .gm-item[data-view="products"] svg, .gm-item[data-view="demos"] svg, .gm-item[data-view="pricing"] svg { color: var(--party-dot); }
 .gm-item[data-view="brief"] svg, .gm-item[data-view="list"] svg { color: var(--attn-dot); }
-.gm-item[data-view="site"] svg { color: var(--off-dot); }
+.gm-item[data-view="site"] svg, .gm-item[data-view="settings"] svg { color: var(--off-dot); }
 /* the title marker, tiles and card headings in the area colour */
 .page-head h1 { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
 section[data-pane]:not([data-pane="overview"]) > .page-head h1::before { content: ""; width: 12px; height: 12px; border-radius: 4px; background: var(--area-dot); box-shadow: 0 0 0 6px var(--area-wash); flex: none; }
@@ -1065,6 +1065,23 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 .cl-former { margin-top: 20px; }
 .cl-former .count { font: 500 11px/1 var(--mono, monospace); color: var(--muted); margin-left: 4px; }
 @media (max-width: 600px) { .bill-form { grid-template-columns: minmax(0, 1fr); } .bill-tiles { grid-template-columns: minmax(0, 1fr); } .xero-bar { justify-content: flex-start; } }
+/* Settings (Lewis, 23 Nov 2026) */
+.st-list { display: grid; gap: 20px; }
+.st-body { display: grid; gap: 16px; align-content: start; }
+.st-rows { display: grid; }
+.st-row { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+.st-row:last-child { border-bottom: 0; }
+.st-row .k { color: var(--muted); }
+.st-row .v { color: var(--text); font-weight: 600; overflow-wrap: anywhere; }
+.st-row .v.ok::before, .st-row .v.bad::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin: 0 8px 1px 0; background: var(--ok-dot); }
+.st-row .v.bad::before { background: var(--attn-dot); }
+.st-acts { justify-content: flex-start; }
+#cl-xero a.pill { text-decoration: none; }
+#cl-xero a.pill:hover { text-decoration: underline; }
+.st-meter { height: 8px; border-radius: var(--r-pill); background: var(--sunk); overflow: hidden; }
+.st-meter i { display: block; height: 100%; width: 0; background: var(--brand); border-radius: var(--r-pill); }
+.st-group li { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
+@media (max-width: 600px) { .st-row { grid-template-columns: minmax(0, 1fr); gap: 2px; } .st-group li { grid-template-columns: minmax(0, 1fr) auto; } .st-group li > :first-child { grid-column: 1 / -1; } .st-group li .btn { justify-self: start; } }
 </style>
 </head>
 <body>
@@ -1098,6 +1115,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
         <a class="gm-item" href="#demos" data-view="demos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="12" rx="2"/><path d="M8 20h8M12 16.5V20"/><path d="m10.5 8.5 4 2-4 2Z"/></svg><span>Demo clients</span></a>
         <a class="gm-item" href="#pricing" data-view="pricing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 11.5h2M13.5 11.5h2M8.5 15h2M13.5 15h2"/></svg><span>Pricing</span></a>
         <a class="gm-item" href="#site" data-view="site"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5Z"/></svg><span>Site</span></a>
+        <a class="gm-item" href="#settings" data-view="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg><span>Settings</span></a>
       </nav>
       <div class="gm-foot">
         <div class="gm-status"><span class="dot" id="sync-dot"></span><span id="sync-text">Not synced yet</span></div>
@@ -1136,7 +1154,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 
     <!-- Clients list -->
     <section data-pane="clients" hidden>
-      <div class="page-head"><div><h1>Clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-1" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-1" hidden>From the client folders in Obsidian. Click a client for health, reports, tasks and billing. Fees are set on each client's page; invoices come from Xero once a day.</p></div><div class="xero-bar" id="cl-xero"></div></div>
+      <div class="page-head"><div><h1>Clients <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-1" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-1" hidden>From the client folders in Obsidian. Click a client for health, reports, tasks and billing. Fees are set on each client's page; invoices come from Xero once a day (Settings).</p></div><div class="xero-bar" id="cl-xero"></div></div>
       <div class="card scroll">
         <table class="table">
           <thead><tr><th>Client</th><th>Status</th><th>Health</th><th id="ads-col">Google Ads this week</th><th>Last report</th><th class="r">Fee</th><th class="r">Open tasks</th><th></th></tr></thead>
@@ -1538,6 +1556,17 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
         </div>
       </div>
     </section>
+    <!-- Settings (Lewis, 23 Nov 2026): every connection in one place, each with its status and its own buttons -->
+    <section data-pane="settings" hidden>
+      <div class="page-head"><div><h1>Settings <button type="button" class="ph-i" aria-expanded="false" aria-controls="lede-st" aria-label="About this page"></button></h1><p class="lede ph-lede" id="lede-st" hidden>What this admin is connected to, and how each connection is doing.</p></div></div>
+      <div class="st-list">
+        <div class="card pr-sec"><div class="pr-side"><h2>Xero</h2><p>Phillips. invoices, read once a day at 05:15.</p></div><div class="st-body"><div class="st-rows" id="st-xero"></div><div class="xero-bar st-acts" id="st-xero-acts"></div></div></div>
+        <div class="card pr-sec"><div class="pr-side"><h2>Obsidian</h2><p>Clients and prospects come from the vault.</p></div><div class="st-body"><div class="st-rows" id="st-obs"></div></div></div>
+        <div class="card pr-sec"><div class="pr-side"><h2>Email sending</h2><p>Account emails, capped so they never cost anything.</p></div><div class="st-body"><div class="st-rows" id="st-email"></div><div class="st-meter"><i id="st-email-bar"></i></div></div></div>
+        <div class="card pr-sec"><div class="pr-side"><h2>Google</h2><p>Sign-in to this admin and the free tools.</p></div><div class="st-body"><div class="st-rows" id="st-google"></div></div></div>
+        <div class="card pr-sec"><div class="pr-side"><h2>Group sites</h2><p>The other Phillips Group businesses and what links them here.</p></div><div class="st-body"><ul class="list st-group" id="st-group"></ul></div></div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -1844,7 +1873,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     var h = (location.hash || '#overview').slice(1);
     if (h.indexOf('?') !== -1) { var q = h.split('?')[1]; h = h.split('?')[0]; history.replaceState(null, '', '#' + h); xeroNotice(q); }
     var view = h.split('/')[0] || 'overview';
-    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'list', 'demos', 'pricing', 'site'].indexOf(view) === -1) view = 'overview';
+    if (['overview', 'clients', 'client', 'doc', 'prospects', 'products', 'links', 'brief', 'list', 'demos', 'pricing', 'site', 'settings'].indexOf(view) === -1) view = 'overview';
     document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== view; });
     closeMenus();
     document.querySelectorAll('.gm-nav a[data-view]').forEach(function (a) {
@@ -1882,8 +1911,10 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
       api('/admin/api/deals').catch(function () { return null; }),
       api('/admin/api/brief').catch(function () { return null; }),
       api('/admin/api/tool-usage').catch(function () { return null; }),
-      api('/admin/api/billing').catch(function () { return null; })
+      api('/admin/api/billing').catch(function () { return null; }),
+      api('/admin/api/settings').catch(function () { return null; })
     ]).then(function (r) {
+      state.settings = r[7] || null;
       state.billing = r[6] || null;
       state.brief = r[4] || null;
       state.toolUsage = r[5] && r[5].weeks ? r[5].weeks : null;
@@ -1903,7 +1934,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     $('b-clients').textContent = state.clients.length || '';
     $('b-prospects').textContent = openProspects().length || '';
     $('b-links').textContent = state.invites.filter(function (i) { return i.state === 'active' && !i.archived; }).length || '';
-    renderOverview(); renderRevenue(); renderXeroBar(); renderClients(); renderBoard(); renderInvites(); renderDeskDemo(); renderSite(); renderBrief();
+    renderOverview(); renderRevenue(); renderXeroBar(); renderSettings(); renderClients(); renderBoard(); renderInvites(); renderDeskDemo(); renderSite(); renderBrief();
     if ((location.hash || '').indexOf('#client/') === 0) route(); else countPane();
   }
   function openProspects() { return state.prospects.filter(function (p) { return !/won|lost/i.test(p.stage); }); }
@@ -2221,12 +2252,16 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     $('r-src').textContent = !x.ready ? 'Xero is not set up yet' : !x.connected ? 'Xero not connected: fees only' : x.syncedAt ? 'Xero synced ' + fmt(x.syncedAt, true) : 'Xero connected, not synced yet';
   }
   function renderXeroBar() {
-    var box = $('cl-xero'); box.innerHTML = '';
+    var cl = $('cl-xero'); cl.innerHTML = '';
+    var xs = state.billing && state.billing.xero;
+    if (xs) {
+      var t = !xs.ready ? 'Xero not set up' : !xs.connected ? 'Connect Xero in Settings' : xs.lastError ? 'Xero needs a look' : xs.syncedAt ? 'Xero synced ' + fmt(xs.syncedAt, true) : 'Xero connected';
+      var a0 = link('#settings', t, 'pill ' + (xs.connected && !xs.lastError ? 'good' : 'warn')); cl.appendChild(a0);
+    }
+    var box = $('st-xero-acts'); box.innerHTML = '';
     var x = state.billing && state.billing.xero; if (!x) return;
-    if (!x.ready) { box.appendChild(el('span', 'pill', 'Xero not set up')); return; }
+    if (!x.ready) return;
     if (!x.connected) { box.appendChild(link('/admin/xero/connect', 'Connect Xero', 'btn')); return; }
-    box.appendChild(el('span', 'pill ' + (x.lastError ? 'warn' : 'good'), x.lastError ? 'Xero: ' + x.lastError : 'Xero: ' + (x.tenantName || 'connected') + (x.syncedAt ? ', synced ' + fmt(x.syncedAt, true) : '')));
-    if (x.untagged) box.appendChild(el('span', 'pill warn', plural(x.untagged, 'invoice', 'invoices') + ' with no Brand'));
     var sync = el('button', 'btn', 'Sync now'); sync.type = 'button';
     sync.addEventListener('click', function () {
       sync.disabled = true; sync.textContent = 'Syncing';
@@ -2319,6 +2354,52 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
     }).catch(function (err) { $('c-bill-msg').textContent = err.message; })
       .then(function () { $('c-bill-go').disabled = false; });
   });
+
+
+  /* ---------- settings ---------- */
+  function stRow(box, k, v, tone) { var r = el('div', 'st-row'); r.appendChild(el('span', 'k', k)); var vv = el('span', 'v' + (tone ? ' ' + tone : ''), v); r.appendChild(vv); box.appendChild(r); return vv; }
+  function renderSettings() {
+    var x = state.billing && state.billing.xero, b = $('st-xero'); b.innerHTML = '';
+    if (!x) stRow(b, 'Status', 'Did not load', 'bad');
+    else if (!x.ready) stRow(b, 'Status', 'Not set up on the site', 'bad');
+    else if (!x.connected) stRow(b, 'Status', 'Not connected');
+    else {
+      stRow(b, 'Status', x.lastError ? x.lastError : 'Connected', x.lastError ? 'bad' : 'ok');
+      stRow(b, 'Organisation', x.tenantName || '–');
+      stRow(b, 'Last synced', x.syncedAt ? fmt(x.syncedAt, true) : 'Not yet');
+      stRow(b, 'Counts', 'Lines tagged Brand: Phillips.');
+      if (x.untagged) stRow(b, 'To check', plural(x.untagged, 'invoice has', 'invoices have') + ' no Brand', 'bad');
+      stRow(b, 'Through', 'The Director’s Office Xero app, read only');
+    }
+    var o = $('st-obs'); o.innerHTML = '';
+    stRow(o, 'Last synced', state.syncedAt ? fmt(state.syncedAt, true) : 'Not yet', state.syncedAt && daysSince(state.syncedAt) < 1 ? 'ok' : 'bad');
+    stRow(o, 'Clients', String((state.allClients || []).length) + (state.formerClients && state.formerClients.length ? ', ' + state.formerClients.length + ' former' : ''));
+    stRow(o, 'From', '03_Clients in the vault, synced from your Mac');
+    var e = $('st-email'); e.innerHTML = '';
+    var em = state.settings && state.settings.email;
+    if (!em) stRow(e, 'This month', 'Did not load', 'bad');
+    else {
+      stRow(e, 'This month', em.sent == null ? 'Not counted yet' : em.sent.toLocaleString('en-GB') + ' of ' + em.cap.toLocaleString('en-GB'), em.sent >= em.cap ? 'bad' : 'ok');
+      stRow(e, 'From', 'contact@phillips-uk.com, Cloudflare Email Sending');
+      stRow(e, 'Shared', '3,000 free a month across the Cloudflare account; Search Desk stops at 900');
+      $('st-email-bar').style.width = em.sent == null ? '0' : Math.min(100, em.sent / em.cap * 100) + '%';
+    }
+    var g = $('st-google'); g.innerHTML = '';
+    stRow(g, 'This admin', 'Google sign-in, as ' + ($('who-email').textContent || 'you'), 'ok');
+    stRow(g, 'Google Ads Check sign-in', 'Waits for Google’s verification');
+    var list = $('st-group'); list.innerHTML = '';
+    var desk = deskIssue && deskIssue();
+    [['The Director’s Office', 'https://thedirectorsoffice.uk/', 'https://app.thedirectorsoffice.uk/control', 'Its Xero app reads Phillips Group for billing'],
+     ['Before You Pay', 'https://beforeyoupay.uk/', 'https://beforeyoupay.uk/admin/home', 'Its own admin'],
+     ['Index Point', 'https://indexpoint.uk/', 'https://indexpoint.uk/admin', 'Company data for the prospect tools'],
+     ['Search Desk', 'https://searchdesk.uk/', 'https://searchdesk.uk/desk#admin', desk ? 'Demo invite links: ' + desk.label.toLowerCase() : 'Demo invite links']
+    ].forEach(function (s) {
+      var li = el('li'), body = el('div');
+      body.appendChild(el('div', 't', s[0])); body.appendChild(el('div', 's', s[3]));
+      li.appendChild(body); li.appendChild(link(s[1], 'Site', 'btn')); li.appendChild(link(s[2], 'Admin', 'btn'));
+      list.appendChild(li);
+    });
+  }
 
   /* ---------- clients ---------- */
   function renderClients() {
@@ -3811,7 +3892,7 @@ section[data-pane="pricing"] { padding-bottom: 110px; }
 <script>
 // v3 refresh: the area colour follows the screen; (i) buttons show their note under the title.
 (function () {
-  var AREA = { overview: 'brand', clients: 'ok', client: 'ok', doc: 'ok', prospects: 'info', links: 'info', products: 'party', demos: 'party', pricing: 'party', brief: 'attn', list: 'attn', site: 'off' };
+  var AREA = { overview: 'brand', clients: 'ok', client: 'ok', doc: 'ok', prospects: 'info', links: 'info', products: 'party', demos: 'party', pricing: 'party', brief: 'attn', list: 'attn', site: 'off', settings: 'off' };
   function setArea() { var v = (location.hash || '#overview').slice(1).split(/[/?&]/)[0]; document.documentElement.setAttribute('data-area', AREA[v] || 'brand'); }
   setArea(); window.addEventListener('hashchange', setArea);
   document.addEventListener('click', function (e) {
