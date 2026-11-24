@@ -57,6 +57,8 @@ const admin = await adminCookie(env.ADMIN_SESSION_KEY, 'tester@example.test');
 const go = (path, init = {}) => { const url = new URL('https://www.phillips-uk.com' + path); return googleSignIn(new Request(url, init), url, env, url.pathname); };
 const cookieOf = (res, name) => (res.headers.getSetCookie().find(c => c.startsWith(name + '=')) || '').split(';')[0];
 
+// 0 to the review link: the gating used before Google verified the app (24 Nov 2026), kept in case it is ever needed again.
+FLAGS.googleSignIn = false;
 // 0. With the preview switch off, not even Lewis gets it.
 FLAGS.googleSignInPreview = false;
 const off = await go('/tools/google-ads-check/oauth/start', { headers: { Cookie: admin } });
@@ -156,4 +158,11 @@ assert.equal(r.status, 404, 'visitors still cannot');
 delete env.SIGNIN_REVIEW_CODE;
 assert.doesNotMatch(await pageFor(rc), /data-signin/, 'without the secret, review access is off');
 console.log('review link: sign-in for the reviewer only, forged or wrong codes ignored');
+// Since Google verified the app: open to visitors, no admin cookie or review link needed.
+FLAGS.googleSignIn = true;
+r = await go('/tools/google-ads-check/oauth/start');
+assert.equal(r.status, 302, 'visitors can start the sign-in');
+assert.match(r.headers.get('Location'), /^https:\/\/accounts\.google\.com\//);
+assert.match(await pageFor(''), /data-signin="1"/, 'the page offers sign-in to visitors');
+console.log('verified: sign-in open to visitors');
 console.log('All sign-in tests passed.');
