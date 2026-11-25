@@ -21,6 +21,12 @@ import monumentTradeHtml from '../private/monument-trade-finance.html';
 import monumentAcqHtml from '../private/monument-acquisitions-and-refinancing.html';
 import monumentRequestHtml from '../private/monument-request-terms.html';
 import monumentIntroduceHtml from '../private/monument-introduce.html';
+import monumentInvoiceHtml from '../private/monument-invoice-discounting.html';
+import monumentLettersHtml from '../private/monument-letters-of-credit.html';
+import monumentRefiHtml from '../private/monument-refinancing.html';
+import monumentLondonHtml from '../private/monument-london.html';
+import monumentCambsHtml from '../private/monument-cambridgeshire.html';
+import monumentDealsHtml from '../private/monument-deals.html';
 import { adminEmail } from './admin.js';
 import { openDeskDemo } from './desk-demo.js';
 import { CONSENT_HEAD, CONSENT_TAG } from './consent.js';
@@ -44,6 +50,12 @@ export const PAGES = {
   'monument-acq': { path: '/monument/acquisitions-and-refinancing', html: monumentAcqHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-request': { path: '/monument/request-terms', html: monumentRequestHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-introduce': { path: '/monument/introduce', html: monumentIntroduceHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-invoice': { path: '/monument/invoice-discounting', html: monumentInvoiceHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-letters': { path: '/monument/letters-of-credit', html: monumentLettersHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-refinancing': { path: '/monument/refinancing', html: monumentRefiHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-london': { path: '/monument/london', html: monumentLondonHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-cambridgeshire': { path: '/monument/cambridgeshire', html: monumentCambsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-deals': { path: '/monument/deals', html: monumentDealsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid'; // retired 22 Nov 2026: only ever cleared now

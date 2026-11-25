@@ -334,12 +334,40 @@ body.m-adv .m-btn-primary:hover{background:#C8A866}
 @media (max-width:1023px){.m-req-grid{grid-template-columns:1fr}.m-req-side{position:static;padding-top:0}.m-req-ben.m-ben-top{display:flex}.m-req-side .m-req-ben{display:none}}
 @media (max-width:767px){.m-req{margin-top:-80px}.m-req-card{padding:24px 20px;gap:32px}.m-q{padding-left:42px}.m-q .m-chips{gap:8px}.m-q .m-chip{padding:0 12px}.m-qn{width:30px;height:30px}.m-q:not(:last-of-type)::after{left:14px;top:38px}}
 
+/* ===== v23 ===== */
+.m-stage .m-rv{opacity:1!important;transform:none!important}
+body.m-adv,.m-advzone{--m-ink:#12251F;--m-ink-2:#1C342C;--m-paper:#F4F3EE;--m-soft:#4A5650;--m-accent-text:#86652D;--m-line:#D8DBD6;--m-brass:#B8954F;--m-on-ink:#F1EFE8;--m-on-ink-soft:#A8B7AF}
+.m-advzone{background:var(--m-ink);color:var(--m-on-ink)}
+.m-strip{display:flex;align-items:center;justify-content:space-between;gap:32px}
+@media (max-width:767px){.m-strip{flex-direction:column;align-items:flex-start}.m-strip .m-btn{width:100%}}
+.m-ticks a{color:inherit;text-decoration:none;border-bottom:1px solid var(--m-line)}
+.m-ticks a:hover{border-bottom-color:var(--m-brass)}
+/* sector cards */
+.m-sector{display:flex;flex-direction:column;gap:12px;padding:var(--m-card);border-radius:4px;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line),0 18px 36px -28px rgba(14,26,43,.4)}
+.m-sector .m-btn-text{margin-top:auto}
+/* deals page: filters and grid */
+.m-filter{display:flex;flex-wrap:wrap;gap:12px}
+.m-filter .m-chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.m-deals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:0 10px 14px 0}
+@media (max-width:1023px){.m-deals-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:767px){.m-deals-grid{grid-template-columns:1fr 1fr;gap:16px 12px}.m-deals-grid .m-deal{padding:16px 14px;gap:6px}.m-deals-grid .m-deal .m-figure{font-size:27px}.m-deals-grid .m-deal .m-btn-text{font-size:var(--t-small)}}
+.m-deals-grid .m-deal[hidden]{display:none}
+@media (max-width:767px){#deals .m-row-head{flex-direction:column;align-items:flex-start;gap:12px}}
+.m-stage .m-diagram .m-dia-row{gap:4px}
+.m-deal .m-btn-text{margin-top:8px;padding:4px 0}
+/* footer with services and places */
+.m-foot-top{flex-wrap:wrap}
+.m-foot-col{display:flex;flex-direction:column;gap:12px;min-width:180px}
+.m-foot-col .m-label{color:var(--m-on-ink)}
+@media (min-width:1024px){.m-foot-top{gap:64px}.m-foot-brand{flex:1 1 260px}}
+
 .review{background:#26292E;color:#ECECE8;font:14px/1.4 var(--f-sans)}
 .review .wrap{max-width:calc(1192px + 2 * var(--m-margin));margin:0 auto;padding:10px var(--m-margin);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .review p{margin:0}.review-btn{background:none;border:1px solid #ECECE8;color:#ECECE8;font:500 13px/1 var(--f-sans);padding:8px 12px;border-radius:2px;cursor:pointer}
 .rnote{display:block;background:#FFFFFF;color:#3D3000;border-left:3px solid #C99A2E;font:400 14px/1.5 var(--f-sans);padding:12px 16px;margin:16px 0;max-width:720px}
 html.notes-off .rnote{display:none}
 </style>
+
 
 </head>
 <body class="m" data-page="thank-you">
@@ -348,7 +376,7 @@ html.notes-off .rnote{display:none}
 <header class="m-head site-head">
   <div class="m-wrap m-head-in">
     <a class="m-logo" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a>
-    <nav class="m-nav" id="siteNav" aria-label="Main"><a href="/monument#facilities">Facilities</a><a href="/monument/calculators">Tools</a><a href="/monument#deals">Deals</a><a href="/monument/about">About Ben</a><a href="/monument/for-advisers">For advisers</a><a class="m-btn m-btn-primary" href="/monument/request-terms?from=thank-you">Request terms</a></nav>
+    <nav class="m-nav" id="siteNav" aria-label="Main"><a href="/monument#facilities">Facilities</a><a href="/monument/calculators">Tools</a><a href="/monument/deals">Deals</a><a href="/monument/about">About Ben</a><a href="/monument/for-advisers">For advisers</a><a class="m-btn m-btn-primary" href="/monument/request-terms?from=thank-you">Request terms</a></nav>
     <button type="button" class="m-menu" id="menuBtn" aria-expanded="false" aria-controls="siteNav">Menu</button>
   </div>
   <div class="m-progress" aria-hidden="true"><span id="progressBar"></span></div>
@@ -374,8 +402,9 @@ html.notes-off .rnote{display:none}
 <footer class="m-foot">
   <div class="m-wrap">
     <div class="m-foot-top">
-      <div class="m-stack" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p></div>
-      <ul class="m-foot-links m-small"><li><a href="/monument#facilities">Facilities</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument#deals">Deals</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=thank-you">Get in touch</a></li></ul>
+      <div class="m-stack m-foot-brand" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p></div>
+      <div class="m-foot-col"><p class="m-label">Services</p><ul class="m-foot-links m-small"><li><a href="/monument/asset-based-lending">Asset-based lending</a></li><li><a href="/monument/invoice-discounting">Invoice discounting</a></li><li><a href="/monument/trade-finance">Trade finance</a></li><li><a href="/monument/letters-of-credit">Letters of credit</a></li><li><a href="/monument/acquisitions-and-refinancing">Acquisition finance</a></li><li><a href="/monument/refinancing">Refinancing</a></li></ul></div><div class="m-foot-col"><p class="m-label">Places</p><ul class="m-foot-links m-small"><li><a href="/monument/london">London</a></li><li><a href="/monument/cambridgeshire">Cambridgeshire and East Anglia</a></li></ul></div>
+      <div class="m-foot-col"><p class="m-label">Monument</p><ul class="m-foot-links m-small"><li><a href="/monument/deals">Deals</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=thank-you">Request terms</a></li></ul></div>
     </div>
     <div class="m-foot-legal m-small m-on-soft">
       <p class="m-small">Monument Corporate Finance Limited, registered in England and Wales, company number 08855574.</p>
@@ -511,6 +540,15 @@ html.notes-off .rnote{display:none}
     location.href = (b.dataset.lead === 'introduction' ? '/monument/introduce' : '/monument/request-terms') + '?from=' + encodeURIComponent(document.body.dataset.page || 'page'); });
   /* the trade cycle line runs once it is in view */
   const c = document.querySelector('.m-cyc'); if (c) { const go = () => c.classList.add('m-in'); if ('IntersectionObserver' in window) { const o = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { go(); o.disconnect(); } })); o.observe(c); } else go(); setTimeout(go, 1200); }
+})();
+
+(function () {
+  'use strict';
+  const f = document.querySelector('.m-filter'); if (!f) return;
+  const cards = Array.from(document.querySelectorAll('.m-deals-grid .m-deal')), count = document.getElementById('dealCount');
+  const apply = v => { let n = 0; cards.forEach(c => { const on = v === 'all' || (c.dataset.kind || '').split(' ').includes(v); c.hidden = !on; if (on) n++; }); if (count) count.textContent = n + (n === 1 ? ' facility' : ' facilities'); };
+  f.addEventListener('change', e => { if (e.target.name === 'kind') { apply(e.target.value); try { history.replaceState(null, '', e.target.value === 'all' ? location.pathname : '?type=' + e.target.value); } catch (x) {} } });
+  const start = new URLSearchParams(location.search).get('type'); const r = start && f.querySelector('input[value="' + start + '"]'); if (r) { r.checked = true; apply(start); }
 })();
 </script><script>
 (function () { var $ = function (s) { return document.querySelector(s); };
