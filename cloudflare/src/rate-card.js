@@ -17,6 +17,8 @@ import monumentThankYouHtml from '../private/monument-thank-you.html';
 import monumentAblHtml from '../private/monument-asset-based-lending.html';
 import monumentAdvisersHtml from '../private/monument-for-advisers.html';
 import monumentAboutHtml from '../private/monument-about.html';
+import monumentTradeHtml from '../private/monument-trade-finance.html';
+import monumentAcqHtml from '../private/monument-acquisitions-and-refinancing.html';
 import { adminEmail } from './admin.js';
 import { openDeskDemo } from './desk-demo.js';
 import { CONSENT_HEAD, CONSENT_TAG } from './consent.js';
@@ -36,6 +38,8 @@ export const PAGES = {
   'monument-abl': { path: '/monument/asset-based-lending', html: monumentAblHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-advisers': { path: '/monument/for-advisers', html: monumentAdvisersHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-about': { path: '/monument/about', html: monumentAboutHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-trade': { path: '/monument/trade-finance', html: monumentTradeHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-acq': { path: '/monument/acquisitions-and-refinancing', html: monumentAcqHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid'; // retired 22 Nov 2026: only ever cleared now
