@@ -14,6 +14,9 @@ import theLoftHtml from '../private/the-loft.html';
 import monumentHtml from '../private/monument.html';
 import monumentCalculatorsHtml from '../private/monument-calculators.html';
 import monumentThankYouHtml from '../private/monument-thank-you.html';
+import monumentAblHtml from '../private/monument-asset-based-lending.html';
+import monumentAdvisersHtml from '../private/monument-for-advisers.html';
+import monumentAboutHtml from '../private/monument-about.html';
 import { adminEmail } from './admin.js';
 import { openDeskDemo } from './desk-demo.js';
 import { CONSENT_HEAD, CONSENT_TAG } from './consent.js';
@@ -24,11 +27,15 @@ export const PAGES = {
   'search-desk': { path: '/search-desk', desk: true, cookie: 'ph_sd', title: 'The Search Desk demo' },
   // The Loft (Nick, Ely): the booking app prototype. Phone frame on desktop, full screen on a phone.
   'the-loft': { path: '/the-loft', html: theLoftHtml, cookie: 'ph_tl', title: 'The Loft prototype' },
-  // Monument Corporate Finance (Ben Boateng): the website draft, a homepage plus its calculators page. One invite opens both.
+  // Monument Corporate Finance (Ben Boateng): the website draft (homepage, tools, asset-based lending, for advisers, about, thank you). One invite opens all of them.
   'monument': { path: '/monument', html: monumentHtml, cookie: 'ph_mcf', cookiePath: '/monument', title: 'The Monument website draft' },
   'monument-calculators': { path: '/monument/calculators', html: monumentCalculatorsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   // Where every enquiry on the draft lands (no details are sent; the page only shows the flow)
   'monument-thank-you': { path: '/monument/thank-you', html: monumentThankYouHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  // v20 (25 Nov 2026): the design system pages. Same invite, same cookie.
+  'monument-abl': { path: '/monument/asset-based-lending', html: monumentAblHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-advisers': { path: '/monument/for-advisers', html: monumentAdvisersHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-about': { path: '/monument/about', html: monumentAboutHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid'; // retired 22 Nov 2026: only ever cleared now
