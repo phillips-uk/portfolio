@@ -27,6 +27,25 @@ import monumentRefiHtml from '../private/monument-refinancing.html';
 import monumentLondonHtml from '../private/monument-london.html';
 import monumentCambsHtml from '../private/monument-cambridgeshire.html';
 import monumentDealsHtml from '../private/monument-deals.html';
+import monumentStockFinHtml from '../private/monument-stock-finance.html';
+import monumentPlantHtml from '../private/monument-plant-and-machinery.html';
+import monumentSupplyHtml from '../private/monument-supply-chain-finance.html';
+import monumentImportFinHtml from '../private/monument-import-finance.html';
+import monumentSecRecruitmentHtml from '../private/monument-sectors-recruitment.html';
+import monumentSecManufacturingAndEngineeringHtml from '../private/monument-sectors-manufacturing-and-engineering.html';
+import monumentSecDistributionHtml from '../private/monument-sectors-distribution.html';
+import monumentSecImportersHtml from '../private/monument-sectors-importers.html';
+import monumentSecCommodityTradeHtml from '../private/monument-sectors-commodity-trade.html';
+import monumentSecFoodAndDrinkHtml from '../private/monument-sectors-food-and-drink.html';
+import monumentGuidesHtml from '../private/monument-guides.html';
+import monumentGuideCashFlowForecastHtml from '../private/monument-guide-cash-flow-forecast.html';
+import monumentGuideRevolvingCreditFacilityHtml from '../private/monument-guide-revolving-credit-facility.html';
+import monumentGuideCashConversionCycleHtml from '../private/monument-guide-cash-conversion-cycle.html';
+import monumentGuideDebtorDaysHtml from '../private/monument-guide-debtor-days.html';
+import monumentGuideOvertradingHtml from '../private/monument-guide-overtrading.html';
+import monumentGuideWhatIsAssetBasedLendingHtml from '../private/monument-guide-what-is-asset-based-lending.html';
+import monumentGuideLettersOfCreditHtml from '../private/monument-guide-letters-of-credit.html';
+import monumentGuideIncotermsForImportersHtml from '../private/monument-guide-incoterms-for-importers.html';
 import { adminEmail } from './admin.js';
 import { openDeskDemo } from './desk-demo.js';
 import { CONSENT_HEAD, CONSENT_TAG } from './consent.js';
@@ -56,6 +75,25 @@ export const PAGES = {
   'monument-london': { path: '/monument/london', html: monumentLondonHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-cambridgeshire': { path: '/monument/cambridgeshire', html: monumentCambsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-deals': { path: '/monument/deals', html: monumentDealsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-stock-finance': { path: '/monument/stock-finance', html: monumentStockFinHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-plant-and-machinery': { path: '/monument/plant-and-machinery', html: monumentPlantHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-supply-chain-finance': { path: '/monument/supply-chain-finance', html: monumentSupplyHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-import-finance': { path: '/monument/import-finance', html: monumentImportFinHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-sectors-recruitment': { path: '/monument/sectors/recruitment', html: monumentSecRecruitmentHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-sectors-manufacturing-and-engineering': { path: '/monument/sectors/manufacturing-and-engineering', html: monumentSecManufacturingAndEngineeringHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-sectors-distribution': { path: '/monument/sectors/distribution', html: monumentSecDistributionHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-sectors-importers': { path: '/monument/sectors/importers', html: monumentSecImportersHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-sectors-commodity-trade': { path: '/monument/sectors/commodity-trade', html: monumentSecCommodityTradeHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-sectors-food-and-drink': { path: '/monument/sectors/food-and-drink', html: monumentSecFoodAndDrinkHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guides': { path: '/monument/guides', html: monumentGuidesHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-cash-flow-forecast': { path: '/monument/guides/cash-flow-forecast', html: monumentGuideCashFlowForecastHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-revolving-credit-facility': { path: '/monument/guides/revolving-credit-facility', html: monumentGuideRevolvingCreditFacilityHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-cash-conversion-cycle': { path: '/monument/guides/cash-conversion-cycle', html: monumentGuideCashConversionCycleHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-debtor-days': { path: '/monument/guides/debtor-days', html: monumentGuideDebtorDaysHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-overtrading': { path: '/monument/guides/overtrading', html: monumentGuideOvertradingHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-what-is-asset-based-lending': { path: '/monument/guides/what-is-asset-based-lending', html: monumentGuideWhatIsAssetBasedLendingHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-letters-of-credit': { path: '/monument/guides/letters-of-credit', html: monumentGuideLettersOfCreditHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-guide-incoterms-for-importers': { path: '/monument/guides/incoterms-for-importers', html: monumentGuideIncotermsForImportersHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
 };
 const BY_PATH = Object.fromEntries(Object.entries(PAGES).map(([key, p]) => [p.path, key]));
 const VISITOR = 'ph_vid'; // retired 22 Nov 2026: only ever cleared now

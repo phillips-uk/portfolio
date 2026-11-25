@@ -361,6 +361,33 @@ body.m-adv,.m-advzone{--m-ink:#12251F;--m-ink-2:#1C342C;--m-paper:#F4F3EE;--m-so
 .m-foot-col .m-label{color:var(--m-on-ink)}
 @media (min-width:1024px){.m-foot-top{gap:64px}.m-foot-brand{flex:1 1 260px}}
 
+/* ===== v24 ===== */
+.m-dstack{display:flex;flex-direction:column;width:min(100%,440px)}
+.m-dstack .m-deal{margin-top:-14px;box-shadow:inset 0 0 0 1px var(--m-line),0 24px 44px -26px rgba(0,0,0,.6)}
+.m-dstack .m-deal:first-child{margin-top:0}
+.m-dstack .m-deal,.m-dstack .m-deal .m-figure,.m-dstack .m-deal .m-label{color:var(--m-ink)}
+.m-dstack .m-deal .m-soft{color:var(--m-soft)}
+.m-dstack .m-deal::after{display:none}
+.m-dstack .m-deal:nth-child(2){margin-left:28px}.m-dstack .m-deal:nth-child(3){margin-left:56px}
+@media (max-width:767px){.m-dstack .m-deal:nth-child(2){margin-left:16px}.m-dstack .m-deal:nth-child(3){margin-left:32px}}
+/* guide articles */
+.m-article{max-width:720px}
+.m-article h2{font:400 var(--t-h3)/1.3 var(--f-serif);margin:40px 0 0}
+.m-article h2:first-child{margin-top:0}
+.m-article p,.m-article ul{font:400 var(--t-body)/1.7 var(--f-sans);margin:16px 0 0}
+.m-article ul{padding-left:22px}
+.m-article li{margin-top:6px}
+.m-article li::marker{color:var(--m-brass)}
+.m-toolcard{margin:40px 0;display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;background:var(--m-ink);color:var(--m-on-ink);padding:28px;border-radius:4px;box-shadow:0 30px 60px -36px rgba(14,26,43,.55)}
+.m-toolcard .m-illo{--illo-ink:var(--m-on-ink-soft);--illo-bg:var(--m-ink)}
+@media (max-width:767px){.m-toolcard{grid-template-columns:1fr;gap:16px}.m-toolcard .m-illo{max-width:150px}}
+.m-guide-meta{display:flex;gap:16px;flex-wrap:wrap}
+/* guides page */
+.m-gcard{display:flex;flex-direction:column;gap:12px;padding:var(--m-card);border-radius:4px;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line),0 18px 36px -28px rgba(14,26,43,.4);text-decoration:none;color:inherit;transition:transform .3s,box-shadow .3s}
+.m-gcard:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--m-line),0 26px 48px -28px rgba(14,26,43,.5)}
+.m-gcard .m-illo{max-width:120px;margin-bottom:4px}
+.m-gcard .m-btn-text{margin-top:auto}
+
 .review{background:#26292E;color:#ECECE8;font:14px/1.4 var(--f-sans)}
 .review .wrap{max-width:calc(1192px + 2 * var(--m-margin));margin:0 auto;padding:10px var(--m-margin);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .review p{margin:0}.review-btn{background:none;border:1px solid #ECECE8;color:#ECECE8;font:500 13px/1 var(--f-sans);padding:8px 12px;border-radius:2px;cursor:pointer}
@@ -415,8 +442,8 @@ html.notes-off .rnote{display:none}
   <div class="m-wrap">
     <div class="m-foot-top">
       <div class="m-stack m-foot-brand" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p></div>
-      <div class="m-foot-col"><p class="m-label">Services</p><ul class="m-foot-links m-small"><li><a href="/monument/asset-based-lending">Asset-based lending</a></li><li><a href="/monument/invoice-discounting">Invoice discounting</a></li><li><a href="/monument/trade-finance">Trade finance</a></li><li><a href="/monument/letters-of-credit">Letters of credit</a></li><li><a href="/monument/acquisitions-and-refinancing">Acquisition finance</a></li><li><a href="/monument/refinancing">Refinancing</a></li></ul></div><div class="m-foot-col"><p class="m-label">Places</p><ul class="m-foot-links m-small"><li><a href="/monument/london">London</a></li><li><a href="/monument/cambridgeshire">Cambridgeshire and East Anglia</a></li></ul></div>
-      <div class="m-foot-col"><p class="m-label">Monument</p><ul class="m-foot-links m-small"><li><a href="/monument/deals">Deals</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=about">Request terms</a></li></ul></div>
+      <div class="m-foot-col"><p class="m-label">Services</p><ul class="m-foot-links m-small"><li><a href="/monument/asset-based-lending">Asset-based lending</a></li><li><a href="/monument/invoice-discounting">Invoice discounting</a></li><li><a href="/monument/stock-finance">Stock finance</a></li><li><a href="/monument/plant-and-machinery">Plant and machinery</a></li><li><a href="/monument/trade-finance">Trade finance</a></li><li><a href="/monument/letters-of-credit">Letters of credit</a></li><li><a href="/monument/import-finance">Import finance</a></li><li><a href="/monument/supply-chain-finance">Supply chain finance</a></li><li><a href="/monument/acquisitions-and-refinancing">Acquisition finance</a></li><li><a href="/monument/refinancing">Refinancing</a></li></ul></div><div class="m-foot-col"><p class="m-label">Sectors</p><ul class="m-foot-links m-small"><li><a href="/monument/sectors/recruitment">Recruitment</a></li><li><a href="/monument/sectors/manufacturing-and-engineering">Manufacturing and engineering</a></li><li><a href="/monument/sectors/distribution">Distribution and wholesale</a></li><li><a href="/monument/sectors/importers">Importers</a></li><li><a href="/monument/sectors/commodity-trade">Commodity trade</a></li><li><a href="/monument/sectors/food-and-drink">Food and drink</a></li></ul></div><div class="m-foot-col"><p class="m-label">Places</p><ul class="m-foot-links m-small"><li><a href="/monument/london">London</a></li><li><a href="/monument/cambridgeshire">Cambridgeshire and East Anglia</a></li></ul></div>
+      <div class="m-foot-col"><p class="m-label">Monument</p><ul class="m-foot-links m-small"><li><a href="/monument/deals">Deals</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument/guides">Guides</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=about">Request terms</a></li></ul></div>
     </div>
     <div class="m-foot-legal m-small m-on-soft">
       <p class="m-small">Monument Corporate Finance Limited, registered in England and Wales, company number 08855574.</p>
@@ -564,6 +591,18 @@ html.notes-off .rnote{display:none}
   const apply = v => { let n = 0; cards.forEach(c => { const on = v === 'all' || (c.dataset.kind || '').split(' ').includes(v); c.hidden = !on; if (on) n++; }); if (count) count.textContent = n + (n === 1 ? ' facility' : ' facilities'); };
   f.addEventListener('change', e => { if (e.target.name === 'kind') { apply(e.target.value); try { history.replaceState(null, '', e.target.value === 'all' ? location.pathname : '?type=' + e.target.value); } catch (x) {} } });
   const start = new URLSearchParams(location.search).get('type'); const r = start && f.querySelector('input[value="' + start + '"]'); if (r) { r.checked = true; apply(start); }
+})();
+
+(function () {
+  'use strict';
+  document.querySelectorAll('[data-csv]').forEach(b => b.addEventListener('click', e => {
+    e.preventDefault();
+    const rows = [['Week', 'Week starting', 'Opening cash', 'Receipts from customers', 'Other receipts', 'Payments to suppliers', 'Wages and salaries', 'Rent and overheads', 'VAT and tax', 'Loan repayments', 'Other payments', 'Net cash flow', 'Closing cash']];
+    for (let w = 1; w <= 13; w++) rows.push([w, '', '', '', '', '', '', '', '', '', '', '', '']);
+    const csv = rows.map(r => r.join(',')).join('\r\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = '13-week-cash-flow-forecast.csv';
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }));
 })();
 </script>
 </body>

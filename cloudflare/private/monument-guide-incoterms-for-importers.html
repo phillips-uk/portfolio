@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en-GB" class="notes-off">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Incoterms 2020 for importers and trade finance | Monument</title><meta name="description" content="Compare the ICC's Incoterms 2020 rules. See who pays for freight, insurance and clearance, when risk transfers and what to include in your cash forecast.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== v20 system: tokens from Figma (Roles mode "Monument", Space and type modes Desktop / Tablet / Phone) ===== */
+:root{color-scheme:light;
+  --m-ink:#0E1A2B;--m-ink-2:#16263C;--m-paper:#F6F4EF;--m-white:#FFFFFF;--m-soft:#4A5567;--m-accent-text:#8A6A35;
+  --m-line:#D9DCE1;--m-brass:#B08A4E;--m-on-ink:#F3F1EC;--m-on-ink-soft:#A9B4C2;--m-error:#A3271F;
+  --m-section:112px;--m-block:48px;--m-stack:24px;--m-card:32px;--m-inline:12px;--m-margin:124px;
+  --t-display:56px;--t-h1:44px;--t-h2:34px;--t-h3:24px;--t-figure:48px;--t-lede:20px;--t-body:17px;--t-small:14px;--t-label:15px;--t-button:16px;--t-nav:15px;--t-mark:28px;
+  --f-serif:"Source Serif 4",Georgia,"Times New Roman",serif;--f-sans:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;--f-mark:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --m-shadow:0 8px 24px rgba(14,26,43,.08)}
+@media (max-width:1023px){:root{--m-section:96px;--m-block:40px;--m-stack:24px;--m-card:32px;--m-margin:32px;
+  --t-display:38px;--t-h1:32px;--t-h2:27px;--t-h3:21px;--t-figure:40px;--t-lede:18px;--t-body:16px;--t-nav:16px;--t-mark:24px}}
+@media (max-width:767px){:root{--m-section:72px;--m-block:32px;--m-stack:20px;--m-card:24px;--m-margin:24px}}
+html{scroll-behavior:smooth}
+body.m{margin:0;background:var(--m-paper);color:var(--m-ink);font-family:var(--f-sans);font-size:var(--t-body);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.m *,.m *::before,.m *::after{box-sizing:border-box}
+.m img{max-width:100%;display:block}
+.m [hidden]{display:none!important}
+.m a{color:inherit}
+.m-wrap{width:100%;max-width:calc(1192px + 2 * var(--m-margin));padding-inline:var(--m-margin);margin-inline:auto}
+.m-skip{position:absolute;left:-9999px}.m-skip:focus{left:16px;top:16px;z-index:100;background:var(--m-white);padding:8px 12px}
+/* type roles */
+.m-display{font:400 var(--t-display)/1.1 var(--f-serif);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.m-h1{font:400 var(--t-h1)/1.15 var(--f-serif);letter-spacing:-.005em;margin:0;text-wrap:balance}
+.m-h2{font:400 var(--t-h2)/1.2 var(--f-serif);letter-spacing:-.005em;margin:0;text-wrap:balance}
+.m-h3{font:600 var(--t-h3)/1.25 var(--f-serif);margin:0}
+.m-figure{font:400 var(--t-figure)/1.05 var(--f-serif);letter-spacing:-.01em;margin:0;font-variant-numeric:tabular-nums lining-nums}
+.m-lede{font:400 var(--t-lede)/1.5 var(--f-sans);margin:0}
+.m-body{font:400 var(--t-body)/1.6 var(--f-sans);margin:0}
+.m-small{font:400 var(--t-small)/1.5 var(--f-sans);margin:0}
+.m-label{font:500 var(--t-label)/1.4 var(--f-sans);margin:0}
+.m-soft{color:var(--m-soft)}
+.m-accent-text{color:var(--m-accent-text)}
+.m-rule{display:block;width:40px;height:2px;background:var(--m-brass);border:0;margin:0}
+/* buttons: 48px tall at every width */
+.m-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:2px;border:0;font:600 var(--t-button)/1 var(--f-sans);text-decoration:none;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.m-btn-primary{background:var(--m-brass);color:var(--m-ink)}
+.m-btn-primary:hover{background:#C29D63}
+.m-btn-sec{background:transparent;color:var(--m-ink);box-shadow:inset 0 0 0 1.5px var(--m-ink)}
+.m-btn-sec-ink{background:transparent;color:var(--m-on-ink);box-shadow:inset 0 0 0 1.5px var(--m-on-ink)}
+.m-btn-text{display:inline-flex;align-items:center;gap:8px;font:600 var(--t-button)/1 var(--f-sans);color:var(--m-ink);text-decoration:none;padding:12px 0}
+.m-btn-text::after{content:"\2192";color:var(--m-accent-text);transition:transform .2s}
+.m-btn-text:hover::after{transform:translateX(3px)}
+.m-btn:focus-visible,.m-btn-text:focus-visible,.m a:focus-visible,.m summary:focus-visible{outline:2px solid var(--m-brass);outline-offset:3px}
+/* header */
+.m-head{position:sticky;top:0;z-index:40;background:var(--m-white);border-bottom:1px solid var(--m-line)}
+.m-head-in{display:flex;align-items:center;justify-content:space-between;height:80px}
+.m-logo{font:500 var(--t-mark)/1 var(--f-mark);letter-spacing:.08em;text-decoration:none;color:var(--m-ink)}
+.m-nav{display:flex;align-items:center;gap:32px}
+.m-nav a:not(.m-btn){font:500 var(--t-nav)/1 var(--f-sans);text-decoration:none;color:var(--m-ink);padding:8px 0;border-bottom:2px solid transparent}
+.m-nav a[aria-current="page"]{border-bottom-color:var(--m-brass)}
+.m-menu{display:none;background:none;border:0;font:500 var(--t-nav)/1 var(--f-sans);color:var(--m-ink);padding:12px 0;cursor:pointer}
+.m-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;pointer-events:none}.m-progress span{display:block;height:100%;background:var(--m-brass);transform-origin:0 50%;transform:scaleX(0)}
+@media (max-width:1023px){.m-head-in{height:64px}.m-menu{display:block}
+  .m-nav{display:none;position:absolute;left:0;right:0;top:64px;flex-direction:column;align-items:stretch;gap:0;background:var(--m-white);border-bottom:1px solid var(--m-line);padding:8px var(--m-margin) 24px}
+  .m-nav.open{display:flex}.m-nav a:not(.m-btn){padding:14px 0;border-bottom:1px solid var(--m-line)}.m-nav .m-btn{margin-top:16px}}
+/* sections */
+.m-section{padding-block:var(--m-section)}
+.m-bg-ink{background:var(--m-ink);color:var(--m-on-ink)}
+.m-bg-ink2{background:var(--m-ink-2);color:var(--m-on-ink)}
+.m-bg-paper{background:var(--m-paper)}
+.m-bg-white{background:var(--m-white)}
+.m-on-soft{color:var(--m-on-ink-soft)}
+.m-stack{display:flex;flex-direction:column;gap:var(--m-stack)}
+.m-blocks{display:flex;flex-direction:column;gap:var(--m-block)}
+/* hero */
+.m-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) min(440px,38%);gap:clamp(48px,6vw,96px);align-items:end}
+.m-hero-photo{height:auto;width:100%;aspect-ratio:440/550;object-fit:cover;object-position:50% 20%}
+@media (max-width:1023px){.m-hero-grid{grid-template-columns:1fr;gap:var(--m-block)}.m-hero-photo{order:-1;width:min(100%,440px);aspect-ratio:327/340}}
+@media (max-width:767px){.m-hero-photo{width:100%}.m-hero .m-btn{width:100%}}
+/* cards */
+.m-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--m-stack);align-items:stretch}
+@media (max-width:1023px){.m-grid3{grid-template-columns:1fr}}
+.m-card{display:flex;flex-direction:column;gap:var(--m-stack);padding:var(--m-card);border-radius:4px}
+.m-card-paper{background:var(--m-paper)}
+.m-card-white{background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line)}
+.m-card .m-btn-text{margin-top:auto}
+.m-deal{display:flex;flex-direction:column;gap:8px;padding:var(--m-card);border-radius:4px;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line)}
+.m-deal .m-rule{width:32px}
+/* split with a diagram or picture */
+.m-split{display:grid;grid-template-columns:minmax(0,1fr) min(480px,42%);gap:clamp(48px,6vw,96px);align-items:center}
+.m-split-photo{grid-template-columns:min(400px,38%) minmax(0,1fr)}
+@media (max-width:1023px){.m-split,.m-split-photo{grid-template-columns:1fr;gap:var(--m-block)}.m-split>.m-diagram{order:-1}}
+.m-about-photo{height:auto;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%}
+@media (max-width:1023px){.m-about-photo{width:min(100%,440px);aspect-ratio:327/340}}
+@media (max-width:767px){.m-about-photo{width:100%}}
+.m-diagram{background:var(--m-ink);color:var(--m-on-ink);padding:32px;display:flex;flex-direction:column;gap:20px;max-width:480px;width:100%}
+.m-dia-row{display:flex;flex-direction:column;gap:8px}
+.m-dia-top{display:flex;justify-content:space-between;gap:12px}
+.m-track{height:10px;box-shadow:inset 0 0 0 1px var(--m-on-ink-soft);position:relative}
+.m-track span{position:absolute;inset:0 auto 0 0;background:var(--m-brass);width:0;transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+.m-in .m-track span{width:var(--w)}
+.m-intro{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.m-intro li{display:grid;grid-template-columns:12px 1fr;column-gap:16px;position:relative;padding-bottom:28px}
+.m-intro li:last-child{padding-bottom:0}
+.m-intro li::before{content:"";width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--m-brass);margin-top:4px}
+.m-intro li.is-ben::before{background:var(--m-brass)}
+.m-intro li:not(:last-child)::after{content:"";position:absolute;left:5px;top:22px;bottom:4px;width:2px;background:var(--m-on-ink-soft)}
+/* FAQ */
+.m-faq{max-width:880px;border-top:1px solid var(--m-line)}
+.m-faq details{border-bottom:1px solid var(--m-line)}
+.m-faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 0;cursor:pointer}
+.m-faq summary::-webkit-details-marker{display:none}
+.m-faq summary::after{content:"+";font:600 var(--t-h3)/1 var(--f-serif);color:var(--m-accent-text)}
+.m-faq details[open] summary::after{content:"\2212"}
+.m-faq .m-body{padding:0 0 24px;max-width:720px}
+/* reading */
+.m-reading{max-width:720px}
+.m-reading .m-h3{margin-top:12px}
+/* closing */
+.m-close{text-align:center;align-items:center;max-width:720px;margin-inline:auto}
+@media (max-width:767px){.m-close .m-btn{width:100%}}
+/* footer */
+.m-foot{background:var(--m-ink);color:var(--m-on-ink);padding:64px 0 32px}
+.m-foot-top{display:flex;gap:64px}
+.m-foot-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.m-foot-links a{text-decoration:none}
+.m-foot-links a:hover{text-decoration:underline;text-decoration-color:var(--m-brass);text-underline-offset:3px}
+.m-footbtn{padding:0;font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
+.m-footbtn:hover{text-decoration:underline;text-decoration-color:var(--m-brass);text-underline-offset:3px}
+.m-foot-legal{margin-top:32px;padding-top:24px;border-top:1px solid var(--m-ink-2);display:flex;flex-direction:column;gap:6px}
+.m-foot-legal a{text-decoration:underline;text-decoration-color:var(--m-brass);text-underline-offset:3px}
+.m-keep{white-space:nowrap}
+@media (max-width:767px){.m-foot{padding-top:48px}.m-foot-top{flex-direction:column;gap:24px}}
+/* phone action bar: fixed to the bottom once the hero has scrolled away */
+.m-bar{display:none}
+@media (max-width:767px){
+  .m-bar{display:flex;gap:12px;position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--m-ink);padding:12px 16px calc(12px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .3s}
+  .m-bar.show{transform:none}.m-bar .m-btn{flex:1}
+  body.m{padding-bottom:88px}}
+/* contact card: a centred dialog */
+.m-dialog{border:0;padding:0;border-radius:4px;max-width:520px;width:calc(100% - 32px);box-shadow:var(--m-shadow);color:var(--m-ink)}
+.m-dialog::backdrop{background:rgba(14,26,43,.55)}
+.m-form{display:flex;flex-direction:column;gap:20px;padding:32px}
+@media (max-width:767px){.m-form{padding:24px}}
+.m-form-head{text-align:center;display:flex;flex-direction:column;gap:8px}
+.m-field{display:flex;flex-direction:column;gap:8px}
+.m-input{font:400 var(--t-body)/1.4 var(--f-sans);color:var(--m-ink);background:var(--m-white);border:1px solid var(--m-soft);border-radius:2px;min-height:52px;padding:12px 16px;width:100%}
+textarea.m-input{min-height:104px;resize:vertical}
+.m-input:focus{outline:none;border:2px solid var(--m-ink);padding:11px 15px}
+.m-chips{display:flex;flex-wrap:wrap;gap:12px}
+.m-chip{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:2px;box-shadow:inset 0 0 0 1px var(--m-line);background:var(--m-white);font:500 var(--t-label)/1 var(--f-sans);cursor:pointer}
+.m-chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.m-chip:has(input:checked){background:var(--m-ink);color:var(--m-on-ink);box-shadow:none}
+.m-chip:has(input:focus-visible){outline:2px solid var(--m-brass);outline-offset:2px}
+.m-check{display:flex;gap:12px;align-items:flex-start;font:400 var(--t-small)/1.5 var(--f-sans)}
+.m-check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--m-ink);flex:none}
+.m-form fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.m-form legend{font:500 var(--t-label)/1.4 var(--f-sans);padding:0;margin-bottom:8px}
+.m-err{color:var(--m-error);font:400 var(--t-small)/1.5 var(--f-sans);margin:0}
+.m-hp{position:absolute;left:-9999px}
+.m-form .m-btn{width:100%}
+.m-not{background:none;border:0;font:500 var(--t-small)/1 var(--f-sans);color:var(--m-soft);cursor:pointer;padding:8px;align-self:center}
+/* motion: small and slow */
+@media (prefers-reduced-motion:no-preference){
+  .m-rv{opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
+  .m-rv.m-in{opacity:1;transform:none}}
+
+/* ===== v21 additions: illustrations and motion ===== */
+.m a.m-btn-primary{color:var(--m-ink)}.m a.m-btn-sec{color:var(--m-ink)}.m a.m-btn-sec-ink{color:var(--m-on-ink)}
+.m-head{transition:box-shadow .3s}
+.m-head-in{transition:height .3s}
+.m-head.m-small{box-shadow:0 4px 18px rgba(14,26,43,.07)}
+@media (min-width:1024px){.m-head.m-small .m-head-in{height:64px}}
+.m-progress{height:3px;bottom:-2px}
+/* line illustrations (v19 style, Figma colours) */
+.m-illo{display:block;width:100%;height:auto;fill:none;stroke:var(--illo-ink,var(--m-ink));stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.m-illo .accent{stroke:var(--illo-accent,var(--m-brass))}
+.m-illo .cover{fill:var(--illo-bg,var(--m-white))}
+.m-bg-ink .m-illo,.m-bg-ink2 .m-illo,.m-diagram .m-illo{--illo-ink:var(--m-on-ink-soft);--illo-accent:var(--m-brass);--illo-bg:var(--m-ink)}
+.m-bg-ink2 .m-illo{--illo-bg:var(--m-ink-2)}
+.m-bg-paper .m-illo{--illo-bg:var(--m-paper)}
+/* hero proof lines and photo badge */
+.m-proof{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.m-proof li{display:flex;gap:12px;align-items:baseline;font:500 var(--t-label)/1.4 var(--f-sans);color:var(--m-on-ink)}
+.m-proof li::before{content:"";flex:none;width:14px;height:2px;background:var(--m-brass);transform:translateY(-4px)}
+.m-hero-fig{margin:0;position:relative}
+.m-hero-fig figcaption{position:absolute;left:16px;bottom:16px;right:16px;max-width:280px;background:var(--m-white);color:var(--m-ink);padding:12px 16px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--m-shadow)}
+@media (max-width:1023px){.m-hero-fig{order:-1;width:min(100%,440px)}.m-hero-fig .m-hero-photo{width:100%}}
+@media (max-width:767px){.m-hero-fig{width:100%}}
+/* figures strip with count-up */
+.m-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--m-stack)}
+.m-stat{display:flex;flex-direction:column;gap:10px;padding-top:20px;border-top:1px solid var(--m-line);position:relative}
+.m-stat::before{content:"";position:absolute;top:-1px;left:0;width:40px;height:2px;background:var(--m-brass);transform-origin:0 50%}
+@media (max-width:1023px){.m-stats{grid-template-columns:repeat(2,1fr);row-gap:var(--m-block)}}
+@media (max-width:767px){.m-stats{column-gap:16px}.m-stats .m-figure{font-size:32px}}
+/* service cards with a picture and a short list */
+.m-svc{display:flex;flex-direction:column;background:var(--m-paper);border-radius:4px;overflow:hidden}
+.m-svc-img{aspect-ratio:16/10;overflow:hidden;background:var(--m-ink)}
+.m-svc-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.6s cubic-bezier(.2,.7,.2,1)}
+.m-svc.m-in .m-svc-img img,.m-nomotion .m-svc-img img{transform:none}
+.m-svc-body{display:flex;flex-direction:column;gap:16px;padding:var(--m-card);flex:1}
+.m-ticks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.m-ticks li{display:flex;gap:12px;align-items:baseline;font:500 var(--t-label)/1.4 var(--f-sans)}
+.m-ticks li::before{content:"";flex:none;width:12px;height:2px;background:var(--m-brass);transform:translateY(-4px)}
+.m-svc .m-btn-text{margin-top:auto}
+/* illustrated steps */
+.m-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--m-block)}
+.m-step{display:flex;flex-direction:column;gap:16px}
+.m-step .m-illo{max-width:220px;margin-bottom:8px}
+.m-num{font:400 var(--t-h3)/1 var(--f-serif);color:var(--m-brass)}
+@media (max-width:1023px){.m-steps{grid-template-columns:1fr}.m-step{display:grid;grid-template-columns:minmax(0,180px) 1fr;column-gap:24px;align-items:center}.m-step .m-illo{grid-row:span 3;margin:0}}
+@media (max-width:767px){.m-step{grid-template-columns:110px 1fr;column-gap:16px}}
+/* deals: a sideways row when there are more than three */
+.m-row-head{display:flex;justify-content:space-between;align-items:end;gap:24px}
+.m-row-btns{display:flex;gap:8px}
+.m-row-btn{width:48px;height:48px;border-radius:50%;border:0;box-shadow:inset 0 0 0 1.5px var(--m-ink);background:transparent;color:var(--m-ink);font:500 var(--t-lede)/1 var(--f-sans);cursor:pointer}
+.m-row-btn:disabled{opacity:.3;cursor:default}
+.m-row{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 2 * var(--m-stack)) / 3);gap:var(--m-stack);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px;overscroll-behavior-x:contain}
+.m-row::-webkit-scrollbar{display:none}
+.m-row>*{scroll-snap-align:start}
+@media (max-width:1023px){.m-row{grid-auto-columns:calc((100% - var(--m-stack)) / 2)}}
+@media (max-width:767px){.m-row{grid-auto-columns:82%}.m-row-btns{display:none}}
+.m-deal .m-tag{font:500 13px/1 var(--f-sans);letter-spacing:.02em;color:var(--m-accent-text)}
+.m-dots{display:flex;gap:6px;justify-content:center}
+.m-dots span{width:6px;height:6px;border-radius:50%;background:var(--m-line);transition:background .3s,width .3s}
+.m-dots span.on{background:var(--m-brass);width:18px;border-radius:3px}
+/* sectors strip: slow and endless */
+.m-sectors{overflow:hidden;border-block:1px solid var(--m-line);padding:16px 0;-webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.m-sectors-in{display:flex;width:max-content}
+.m-sectors ul{list-style:none;margin:0;padding:0;display:flex;flex:none}
+.m-sectors li{font:400 var(--t-h3)/1.2 var(--f-serif);white-space:nowrap;padding-right:40px;display:flex;align-items:center;gap:40px}
+.m-sectors li::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--m-brass)}
+@media (prefers-reduced-motion:no-preference){.m-sectors-in{animation:m-slide 60s linear infinite}.m-sectors:hover .m-sectors-in{animation-play-state:paused}}
+@keyframes m-slide{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.m-sectors-in ul[aria-hidden]{display:none}.m-sectors ul{flex-wrap:wrap;row-gap:8px}.m-sectors{-webkit-mask:none;mask:none}}
+/* places with parallax photos */
+.m-places{display:grid;grid-template-columns:1fr 1fr;gap:var(--m-stack)}
+.m-place{position:relative;overflow:hidden;aspect-ratio:5/4;border-radius:4px;background:var(--m-ink);margin:0}
+.m-place img{position:absolute;left:0;top:-10%;width:100%;height:120%;object-fit:cover;transform:translate3d(0,var(--py,0px),0);will-change:transform}
+.m-place figcaption{position:absolute;inset:auto 0 0 0;padding:var(--m-card);padding-top:96px;background:linear-gradient(180deg,rgba(14,26,43,0),rgba(14,26,43,.88));color:var(--m-on-ink);display:flex;flex-direction:column;gap:6px}
+@media (max-width:767px){.m-places{grid-template-columns:1fr}.m-place{aspect-ratio:4/3}}
+/* split with a photo (product lists) */
+.m-split-img{position:relative;overflow:hidden;aspect-ratio:4/5;border-radius:4px;background:var(--m-ink);margin:0;max-width:480px;width:100%}
+.m-split-img img{position:absolute;left:0;top:-10%;width:100%;height:120%;object-fit:cover;transform:translate3d(0,var(--py,0px),0)}
+@media (max-width:1023px){.m-split>.m-split-img{order:-1;aspect-ratio:16/10;max-width:none}}
+.m-products{display:grid;grid-template-columns:1fr 1fr;gap:var(--m-block) var(--m-stack)}
+.m-product{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid var(--m-line)}
+@media (max-width:767px){.m-products{grid-template-columns:1fr;gap:var(--m-stack)}}
+.m-diagram .m-illo{max-width:260px;margin:0 auto 4px}
+/* motion: reveals, staggered children, wipes for pictures */
+@media (prefers-reduced-motion:no-preference){
+  .m-rv{transition-delay:var(--d,0ms)}
+  .m-wipe>*{clip-path:inset(0 0 100% 0);transition:clip-path 1.1s cubic-bezier(.6,0,.2,1);transition-delay:var(--d,0ms)}
+  .m-wipe.m-in>*{clip-path:inset(0 0 0 0)}
+  .m-hero .m-wipe>*{transition-duration:.8s}
+  .m-stat::before{transform:scaleX(0);transition:transform 1s cubic-bezier(.2,.7,.2,1) .2s}
+  .m-in.m-stat::before,.m-in .m-stat::before{transform:none}
+  .js .m-illo .ln{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1);transition-delay:calc(var(--k,0) * 45ms + 150ms)}
+  .js .m-illo.m-in .ln{stroke-dashoffset:0}
+  .js .m-illo .cover{fill-opacity:0;transition:fill-opacity .6s .6s}
+  .js .m-illo.m-in .cover{fill-opacity:1}
+  .m-btn-primary{position:relative;overflow:hidden}
+  .m-btn:hover{transform:translateY(-1px)}}
+
+/* ===== v22: depth, plinth, hero formats, adviser scheme, form pages ===== */
+.m-bg-ink{background:radial-gradient(120% 90% at 88% 0%,var(--m-ink-2) 0%,var(--m-ink) 62%)}
+.m-plinth{display:block;width:180px;height:auto;margin:0 auto}
+.m-plinth path{stroke-width:1.5}
+/* advisers: green and gold (Figma Roles mode C) */
+body.m-adv{--m-ink:#12251F;--m-ink-2:#1C342C;--m-paper:#F4F3EE;--m-soft:#4A5650;--m-accent-text:#86652D;--m-line:#D8DBD6;--m-brass:#B8954F;--m-on-ink:#F1EFE8;--m-on-ink-soft:#A8B7AF}
+body.m-adv .m-btn-primary:hover{background:#C8A866}
+/* raised figures card over the bottom of the hero */
+.m-hero.m-over{padding-bottom:calc(var(--m-section) + 56px)}
+.m-figs{position:relative;z-index:2;margin-top:-104px;padding-bottom:var(--m-section)}
+.m-figs-card{background:var(--m-white);border-radius:4px;padding:40px 48px;box-shadow:0 1px 0 var(--m-line),0 30px 60px -34px rgba(14,26,43,.5)}
+.m-figs-card .m-stat{border-top-color:var(--m-line)}
+@media (max-width:767px){.m-figs{margin-top:-72px}.m-figs-card{padding:28px 24px}.m-hero.m-over{padding-bottom:calc(var(--m-section) + 32px)}}
+/* stacked term sheets and lifted cards */
+.m-deal{position:relative;isolation:isolate;box-shadow:inset 0 0 0 1px var(--m-line),0 16px 32px -24px rgba(14,26,43,.4)}
+.m-deal::after{content:"";position:absolute;inset:7px -7px -7px 7px;z-index:-1;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line);border-radius:4px}
+.m-grid3:has(.m-deal),.m-row{padding:0 10px 14px 0}
+.m-svc{box-shadow:0 1px 0 var(--m-line),0 22px 44px -32px rgba(14,26,43,.45);transition:transform .35s ease,box-shadow .35s ease}
+.m-svc:hover{transform:translateY(-4px);box-shadow:0 1px 0 var(--m-line),0 30px 56px -30px rgba(14,26,43,.5)}
+.m-diagram{box-shadow:0 34px 70px -36px rgba(0,0,0,.55);border-radius:4px}
+.m-split-img,.m-place{box-shadow:0 30px 60px -36px rgba(14,26,43,.55)}
+/* hero: a visual standing on the plinth */
+.m-stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.m-stage .m-diagram{max-width:460px;background:var(--m-ink-2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),0 34px 70px -30px rgba(0,0,0,.6)}
+.m-stage .m-diagram .m-illo{--illo-bg:var(--m-ink-2)}
+.m-stage .m-plinth{width:min(100%,440px)}
+.m-stage .m-plinth path{stroke:var(--m-brass)}
+@media (max-width:1023px){.m-hero-vis .m-hero-grid{grid-template-columns:1fr}.m-hero-vis .m-stage{order:2}}
+/* hero: full-bleed photo with the trade cycle along the bottom */
+.m-bleed{position:relative;overflow:hidden;color:var(--m-on-ink);background:var(--m-ink)}
+.m-bleed>img{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;transform:translate3d(0,var(--py,0px),0)}
+.m-bleed-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,26,43,.96) 0%,rgba(14,26,43,.86) 42%,rgba(14,26,43,.35) 100%),linear-gradient(0deg,rgba(14,26,43,.9) 0%,rgba(14,26,43,0) 40%)}
+.m-bleed-in{position:relative;padding-block:var(--m-section) 48px;display:flex;flex-direction:column;gap:56px}
+.m-bleed-in .m-stack{max-width:640px}
+.m-cycle{list-style:none;margin:0;padding:22px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative}
+.m-cycle::before{content:"";position:absolute;left:6px;right:6px;top:5px;height:2px;background:rgba(243,241,236,.25)}
+.m-cycle::after{content:"";position:absolute;left:6px;right:6px;top:5px;height:2px;background:var(--m-brass);transform-origin:0 50%;transform:scaleX(var(--cyc,1));transition:transform 2.2s cubic-bezier(.4,0,.2,1) .4s}
+.m-cycle li{position:relative;display:flex;flex-direction:column;gap:4px;padding-top:12px}
+.m-cycle li::before{content:"";position:absolute;top:-22px;left:0;width:12px;height:12px;border-radius:50%;background:var(--m-ink);box-shadow:inset 0 0 0 2px var(--m-brass);z-index:1}
+.m-cycle li:last-child::before{background:var(--m-brass)}
+@media (prefers-reduced-motion:no-preference){.js .m-cycle:not(.m-in){--cyc:0}}
+@media (max-width:767px){.m-bleed-shade{background:linear-gradient(0deg,rgba(14,26,43,.97) 0%,rgba(14,26,43,.86) 60%,rgba(14,26,43,.6) 100%)}.m-cycle{grid-template-columns:repeat(2,1fr);row-gap:28px}.m-cycle::before,.m-cycle::after{display:none}.m-cycle li::before{top:-6px}.m-cycle li{padding-top:14px}}
+/* hero: photo with a deal card overlapping it */
+.m-hero-pic{position:relative;margin:0 0 40px 40px}
+.m-hero-pic img{width:100%;height:auto;aspect-ratio:440/520;object-fit:cover;border-radius:4px;box-shadow:0 34px 70px -36px rgba(0,0,0,.6)}
+.m-hero-pic .m-deal{position:absolute;left:-40px;bottom:-40px;width:min(300px,80%);color:var(--m-ink)}
+@media (max-width:1023px){.m-hero-pic{order:-1;margin:0 0 40px 24px;width:min(100%,460px)}.m-hero-pic img{aspect-ratio:16/11}.m-hero-pic .m-deal{left:-24px}}
+@media (max-width:767px){.m-hero-pic{width:calc(100% - 16px);margin-left:16px}.m-hero-pic .m-deal{left:-16px;bottom:-32px;padding:20px}.m-hero-pic .m-deal .m-figure{font-size:32px}}
+/* closing with the plinth */
+.m-close .m-plinth{width:150px;margin-bottom:4px}
+.m-close .m-plinth path{stroke:var(--m-brass)}
+/* ===== form pages ===== */
+.m-req-head{padding-bottom:calc(var(--m-section) + 48px)}
+.m-req{position:relative;z-index:2;margin-top:-112px;padding-bottom:var(--m-section)}
+.m-req-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:clamp(32px,4vw,64px);align-items:start}
+.m-req-card{background:var(--m-white);border-radius:4px;padding:48px;box-shadow:0 1px 0 var(--m-line),0 40px 80px -40px rgba(14,26,43,.5);display:flex;flex-direction:column;gap:40px}
+.m-q{border:0;margin:0;padding:0 0 0 52px;position:relative;display:flex;flex-direction:column;gap:16px;min-width:0}
+.m-q legend{padding:0;margin:0 0 16px;display:block;float:left;width:100%}
+.m-q legend+*{clear:both}
+.m-qn{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--m-brass);display:flex;align-items:center;justify-content:center;font:500 var(--t-label)/1 var(--f-sans);color:var(--m-accent-text)}
+.m-q:not(:last-of-type)::after{content:"";position:absolute;left:16px;top:44px;bottom:-30px;width:2px;background:var(--m-line)}
+.m-q.m-done .m-qn{background:var(--m-brass);color:var(--m-ink);box-shadow:none}
+.m-chip input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer}
+.m-req-card .m-btn{width:100%}
+
+.m-req-side{position:sticky;top:104px;display:flex;flex-direction:column;gap:24px;padding-top:24px}
+.m-req-ben{display:flex;gap:16px;align-items:center}
+.m-req-ben img{width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:50% 18%;box-shadow:0 0 0 3px var(--m-white),0 10px 24px -12px rgba(14,26,43,.5)}
+.m-next{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;counter-reset:n}
+.m-next li{display:grid;grid-template-columns:28px 1fr;gap:12px;counter-increment:n}
+.m-next li::before{content:counter(n,upper-roman) ".";font:400 var(--t-h3)/1.2 var(--f-serif);color:var(--m-brass)}
+.m-req-side{padding-top:140px}
+.m-req-ben.m-ben-top{display:none}
+@media (max-width:1023px){.m-req-grid{grid-template-columns:1fr}.m-req-side{position:static;padding-top:0}.m-req-ben.m-ben-top{display:flex}.m-req-side .m-req-ben{display:none}}
+@media (max-width:767px){.m-req{margin-top:-80px}.m-req-card{padding:24px 20px;gap:32px}.m-q{padding-left:42px}.m-q .m-chips{gap:8px}.m-q .m-chip{padding:0 12px}.m-qn{width:30px;height:30px}.m-q:not(:last-of-type)::after{left:14px;top:38px}}
+
+/* ===== v23 ===== */
+.m-stage .m-rv{opacity:1!important;transform:none!important}
+body.m-adv,.m-advzone{--m-ink:#12251F;--m-ink-2:#1C342C;--m-paper:#F4F3EE;--m-soft:#4A5650;--m-accent-text:#86652D;--m-line:#D8DBD6;--m-brass:#B8954F;--m-on-ink:#F1EFE8;--m-on-ink-soft:#A8B7AF}
+.m-advzone{background:var(--m-ink);color:var(--m-on-ink)}
+.m-strip{display:flex;align-items:center;justify-content:space-between;gap:32px}
+@media (max-width:767px){.m-strip{flex-direction:column;align-items:flex-start}.m-strip .m-btn{width:100%}}
+.m-ticks a{color:inherit;text-decoration:none;border-bottom:1px solid var(--m-line)}
+.m-ticks a:hover{border-bottom-color:var(--m-brass)}
+/* sector cards */
+.m-sector{display:flex;flex-direction:column;gap:12px;padding:var(--m-card);border-radius:4px;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line),0 18px 36px -28px rgba(14,26,43,.4)}
+.m-sector .m-btn-text{margin-top:auto}
+/* deals page: filters and grid */
+.m-filter{display:flex;flex-wrap:wrap;gap:12px}
+.m-filter .m-chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.m-deals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:0 10px 14px 0}
+@media (max-width:1023px){.m-deals-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:767px){.m-deals-grid{grid-template-columns:1fr 1fr;gap:16px 12px}.m-deals-grid .m-deal{padding:16px 14px;gap:6px}.m-deals-grid .m-deal .m-figure{font-size:27px}.m-deals-grid .m-deal .m-btn-text{font-size:var(--t-small)}}
+.m-deals-grid .m-deal[hidden]{display:none}
+@media (max-width:767px){#deals .m-row-head{flex-direction:column;align-items:flex-start;gap:12px}}
+.m-stage .m-diagram .m-dia-row{gap:4px}
+.m-deal .m-btn-text{margin-top:8px;padding:4px 0}
+/* footer with services and places */
+.m-foot-top{flex-wrap:wrap}
+.m-foot-col{display:flex;flex-direction:column;gap:12px;min-width:180px}
+.m-foot-col .m-label{color:var(--m-on-ink)}
+@media (min-width:1024px){.m-foot-top{gap:64px}.m-foot-brand{flex:1 1 260px}}
+
+/* ===== v24 ===== */
+.m-dstack{display:flex;flex-direction:column;width:min(100%,440px)}
+.m-dstack .m-deal{margin-top:-14px;box-shadow:inset 0 0 0 1px var(--m-line),0 24px 44px -26px rgba(0,0,0,.6)}
+.m-dstack .m-deal:first-child{margin-top:0}
+.m-dstack .m-deal,.m-dstack .m-deal .m-figure,.m-dstack .m-deal .m-label{color:var(--m-ink)}
+.m-dstack .m-deal .m-soft{color:var(--m-soft)}
+.m-dstack .m-deal::after{display:none}
+.m-dstack .m-deal:nth-child(2){margin-left:28px}.m-dstack .m-deal:nth-child(3){margin-left:56px}
+@media (max-width:767px){.m-dstack .m-deal:nth-child(2){margin-left:16px}.m-dstack .m-deal:nth-child(3){margin-left:32px}}
+/* guide articles */
+.m-article{max-width:720px}
+.m-article h2{font:400 var(--t-h3)/1.3 var(--f-serif);margin:40px 0 0}
+.m-article h2:first-child{margin-top:0}
+.m-article p,.m-article ul{font:400 var(--t-body)/1.7 var(--f-sans);margin:16px 0 0}
+.m-article ul{padding-left:22px}
+.m-article li{margin-top:6px}
+.m-article li::marker{color:var(--m-brass)}
+.m-toolcard{margin:40px 0;display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;background:var(--m-ink);color:var(--m-on-ink);padding:28px;border-radius:4px;box-shadow:0 30px 60px -36px rgba(14,26,43,.55)}
+.m-toolcard .m-illo{--illo-ink:var(--m-on-ink-soft);--illo-bg:var(--m-ink)}
+@media (max-width:767px){.m-toolcard{grid-template-columns:1fr;gap:16px}.m-toolcard .m-illo{max-width:150px}}
+.m-guide-meta{display:flex;gap:16px;flex-wrap:wrap}
+/* guides page */
+.m-gcard{display:flex;flex-direction:column;gap:12px;padding:var(--m-card);border-radius:4px;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line),0 18px 36px -28px rgba(14,26,43,.4);text-decoration:none;color:inherit;transition:transform .3s,box-shadow .3s}
+.m-gcard:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--m-line),0 26px 48px -28px rgba(14,26,43,.5)}
+.m-gcard .m-illo{max-width:120px;margin-bottom:4px}
+.m-gcard .m-btn-text{margin-top:auto}
+
+.review{background:#26292E;color:#ECECE8;font:14px/1.4 var(--f-sans)}
+.review .wrap{max-width:calc(1192px + 2 * var(--m-margin));margin:0 auto;padding:10px var(--m-margin);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.review p{margin:0}.review-btn{background:none;border:1px solid #ECECE8;color:#ECECE8;font:500 13px/1 var(--f-sans);padding:8px 12px;border-radius:2px;cursor:pointer}
+.rnote{display:block;background:#FFFFFF;color:#3D3000;border-left:3px solid #C99A2E;font:400 14px/1.5 var(--f-sans);padding:12px 16px;margin:16px 0;max-width:720px}
+html.notes-off .rnote{display:none}
+</style>
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "FinancialService", "@id": "https://www.phillips-uk.com/monument#organisation", "name": "Monument Corporate Finance", "legalName": "Monument Corporate Finance Limited", "url": "https://www.phillips-uk.com/monument", "foundingDate": "2014", "identifier": {"@type": "PropertyValue", "propertyID": "Companies House company number", "value": "08855574"}, "areaServed": [{"@type": "City", "name": "London"}, {"@type": "AdministrativeArea", "name": "Cambridgeshire"}, {"@type": "Country", "name": "United Kingdom"}], "founder": {"@type": "Person", "@id": "https://www.phillips-uk.com/monument/about#ben", "name": "Ben Boateng", "jobTitle": "Director", "worksFor": {"@id": "https://www.phillips-uk.com/monument#organisation"}}, "knowsAbout": ["Asset-based lending", "Invoice discounting", "Trade finance", "Letters of credit", "Acquisition finance", "Management buyouts", "Refinancing"]}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.phillips-uk.com/monument"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://www.phillips-uk.com/monument/guides"}, {"@type": "ListItem", "position": 3, "name": "Incoterms 2020 for importers", "item": "https://www.phillips-uk.com/monument/guides/incoterms-for-importers"}]}, {"@type": "Article", "headline": "Incoterms 2020 for importers", "description": "Compare the ICC's Incoterms 2020 rules. See who pays for freight, insurance and clearance, when risk transfers and what to include in your cash forecast.", "url": "https://www.phillips-uk.com/monument/guides/incoterms-for-importers", "publisher": {"@id": "https://www.phillips-uk.com/monument#organisation"}, "inLanguage": "en-GB"}]}</script>
+</head>
+<body class="m" data-page="guide-incoterms-for-importers">
+<div class="review" role="region" aria-label="About this draft"><div class="wrap review-in"><p class="review-text"><strong>Draft for review</strong>: prepared by Phillips. for Monument Corporate Finance. Not a live site; the words are drafts and the rates in the tools are examples.</p></div></div>
+<a class="m-skip" href="#main">Skip to content</a>
+<header class="m-head site-head">
+  <div class="m-wrap m-head-in">
+    <a class="m-logo" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a>
+    <nav class="m-nav" id="siteNav" aria-label="Main"><a href="/monument#facilities">Facilities</a><a href="/monument/calculators">Tools</a><a href="/monument/deals">Deals</a><a href="/monument/about">About Ben</a><a href="/monument/for-advisers">For advisers</a><a class="m-btn m-btn-primary" href="/monument/request-terms?from=guide-incoterms-for-importers">Request terms</a></nav>
+    <button type="button" class="m-menu" id="menuBtn" aria-expanded="false" aria-controls="siteNav">Menu</button>
+  </div>
+  <div class="m-progress" aria-hidden="true"><span id="progressBar"></span></div>
+</header>
+<main id="main">
+<section class="m-section m-bg-ink m-hero m-hero-vis" id="hero" aria-labelledby="h1">
+  <div class="m-wrap m-hero-grid">
+    <div class="m-stack">
+      <span class="m-rule" aria-hidden="true"></span>
+      <h1 class="m-display" id="h1">Incoterms 2020 for importers</h1>
+      <p class="m-lede m-on-soft">Compare where delivery takes place, when risk passes and which costs an importer needs to fund under the Incoterms 2020 rules.</p>
+      <p class="m-small m-on-soft m-guide-meta">4 minute read</p><div><a class="m-btn m-btn-primary" href="/monument/request-terms?from=guide-incoterms-for-importers">Request terms</a></div>
+    </div>
+    <div class="m-stage"><figure class="m-diagram m-rv" style="margin:0" aria-label="Incoterms 2020 for importers"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M10 110 c 8 -5 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0 s 16 -5 24 0 s 16 5 24 0"/><path d="M18 86 H204 L190 102 H32 Z"/><path d="M26 86 V56 h24 v30"/><line x1="31" y1="64" x2="45" y2="64"/><line x1="31" y1="71" x2="45" y2="71"/><path class="accent" d="M34 56 V46 h8 v10"/><rect x="56" y="74" width="20" height="12"/><rect x="78" y="74" width="20" height="12"/><rect x="100" y="74" width="20" height="12"/><rect x="122" y="74" width="20" height="12"/><rect x="144" y="74" width="20" height="12"/><rect x="166" y="74" width="20" height="12"/><rect class="accent" x="67" y="62" width="20" height="12"/><rect class="accent" x="89" y="62" width="20" height="12"/><rect class="accent" x="111" y="62" width="20" height="12"/><rect class="accent" x="133" y="62" width="20" height="12"/><rect class="accent" x="155" y="62" width="20" height="12"/></svg></figure><svg class="m-illo m-plinth" viewBox="0 0 240 26" aria-hidden="true" focusable="false"><path class="accent" d="M64 2 H176"/><path class="accent" d="M46 9 H194"/><path class="accent" d="M28 16 H212"/><path class="accent" d="M8 23 H232"/></svg></div>
+  </div>
+</section>
+<section class="m-section m-bg-white" id="explained" aria-label="Guide"><div class="m-wrap"><article class="m-article"><h2>Identify the delivery point</h2><p>The International Chamber of Commerce's Incoterms 2020 rules allocate tasks, costs and risk between buyer and seller when goods are delivered. Check the sale contract for the chosen rule, the named place or port and the version of the rules. A precise point within a port, terminal or warehouse matters when the parties need to know who arranges the next move.</p><p>The payment date and when ownership changes are matters for the contract and applicable law. Check the contract for payment terms, inspection requirements and arrangements if goods are delayed or damaged. The date risk passes can be earlier than the date to which the seller pays for transport.</p><h2>Collection and handover to a carrier</h2><ul><li>EXW, Ex Works. The seller makes the goods available at the named place. The buyer normally arranges collection, loading, carriage and customs clearance at both ends. Risk passes when the goods are placed at the buyer's disposal as agreed.</li><li>FCA, Free Carrier. The seller clears the goods for export and delivers them to the carrier or other party nominated by the buyer at the agreed point. The buyer pays for the main carriage and takes risk from delivery there. At the seller's premises, the seller loads the collecting vehicle.</li></ul><p>For an importer buying on FCA terms, check when the carrier needs paying and what the freight quotation covers. A later charge for handling at the arrival terminal may come due before goods can be released. Confirm the documentation the carrier can provide, especially where payment depends on a letter of credit.</p><aside class="m-toolcard"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M38 6 h56 v80 h-56 z"/><path class="cover" d="M28 16 h56 v84 h-56 z"/><path class="cover" d="M18 26 h56 v88 h-56 z"/><line x1="26" y1="40" x2="50" y2="40"/><line x1="26" y1="56" x2="66" y2="56"/><line x1="26" y1="66" x2="66" y2="66"/><line x1="26" y1="76" x2="58" y2="76"/><line class="accent" x1="42" y1="100" x2="66" y2="100"/><path class="accent" d="M92 70 C 112 48, 132 48, 150 64"/><path class="accent" d="M141 63 L151 66 L148 56"/><ellipse class="accent" cx="184" cy="80" rx="22" ry="7"/><path d="M162 80 V104 M206 80 V104"/><path d="M162 88 A22 7 0 0 0 206 88"/><path d="M162 96 A22 7 0 0 0 206 96"/><path d="M162 104 A22 7 0 0 0 206 104"/></svg><div class="m-stack" style="gap:12px"><p class="m-h3">Cash conversion cycle</p><p class="m-small m-on-soft">One of four tools built on UK payment reports and filed accounts.</p><div><a class="m-btn m-btn-primary" href="/monument/calculators#cash-conversion-cycle">Open cash conversion cycle</a></div></div></aside><h2>Seller pays the carriage</h2><ul><li>CPT, Carriage Paid To. The seller pays for carriage to the named destination. Risk passes when the goods are handed to the carrier at the agreed delivery point. The buyer handles import clearance.</li><li>CIP, Carriage and Insurance Paid To. The seller also arranges insurance to the named destination. Risk passes on delivery to the carrier as under CPT. Check the cover and how the buyer can claim.</li></ul><p>For both rules, establish the delivery point and the destination. They can be in different countries. Budget for import charges and any onward movement beyond the destination covered in the price. Under CPT, decide what insurance to arrange from the point where the company takes the risk.</p><h2>Delivery at the destination</h2><ul><li>DAP, Delivered at Place. The seller pays for carriage and carries the risk to the agreed place, with the goods ready to unload. The buyer handles unloading and import clearance.</li><li>DPU, Delivered at Place Unloaded. The seller also unloads at the agreed place and carries the risk through unloading. The buyer handles import clearance.</li><li>DDP, Delivered Duty Paid. The seller also handles import clearance and bears the applicable import duties and taxes under the rule. Delivery takes place with the goods ready to unload, and the buyer handles unloading.</li></ul><p>Check who can carry out the customs formalities in practice and which charges the contract price covers. Even where the seller pays most transport costs, the buyer may owe a deposit or an instalment before delivery.</p><h2>Sea and inland waterway rules</h2><ul><li>FAS, Free Alongside Ship. The seller delivers alongside the vessel at the shipment port and clears the goods for export. Risk passes there. The buyer arranges loading and main carriage.</li><li>FOB, Free On Board. The seller clears the goods for export and delivers them on board. The buyer takes risk from that point and pays for main carriage.</li><li>CFR, Cost and Freight. The seller pays freight to the named destination port. Risk passes when the goods are on board at the shipment port.</li><li>CIF, Cost, Insurance and Freight. The seller also arranges insurance to the destination port. Risk passes on board at shipment. Check the cover, which differs from the default under CIP.</li></ul><p>Under all four rules the buyer handles import clearance. Check whether unloading at the destination port is included in the seller’s freight contract under CFR or CIF, and who must pay any charge that falls outside it. These four rules are for sea or inland waterway transport. When container goods are handed over to a carrier at a terminal before loading, check whether FCA, CPT or CIP better reflects the handover and carriage arrangements.</p><h2>Put the costs on the funding calendar</h2><p>List the purchase price and when each instalment is due. Add any freight, insurance, clearance and local transport costs payable by the company. Get due dates from the contract and each provider. Compare those dates with when the company expects to sell the goods and collect the proceeds. Check how a delay at either end changes the peak cash requirement.</p><p>Use the cash conversion cycle tool to estimate how long cash is tied up in trading. Then use the shipment and payment dates to forecast the gap on this order. Request terms with the contract terms, named delivery point, expected landed costs and customer payment dates so the funding requirement can be assessed.</p></article></div></section>
+<section class="m-section m-bg-ink" id="close" aria-labelledby="closeTitle">
+  <div class="m-wrap"><div class="m-close m-stack"><svg class="m-illo m-plinth" viewBox="0 0 240 26" aria-hidden="true" focusable="false"><path class="accent" d="M64 2 H176"/><path class="accent" d="M46 9 H194"/><path class="accent" d="M28 16 H212"/><path class="accent" d="M8 23 H232"/></svg><h2 class="m-h2" id="closeTitle">Speak to Ben about a facility</h2><p class="m-lede m-on-soft">Tell Ben how much your company needs, what it is for and when you need it.</p><div><a class="m-btn m-btn-primary" href="/monument/request-terms?from=guide-incoterms-for-importers">Request terms</a></div></div></div>
+</section>
+</main>
+<footer class="m-foot">
+  <div class="m-wrap">
+    <div class="m-foot-top">
+      <div class="m-stack m-foot-brand" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p></div>
+      <div class="m-foot-col"><p class="m-label">Services</p><ul class="m-foot-links m-small"><li><a href="/monument/asset-based-lending">Asset-based lending</a></li><li><a href="/monument/invoice-discounting">Invoice discounting</a></li><li><a href="/monument/stock-finance">Stock finance</a></li><li><a href="/monument/plant-and-machinery">Plant and machinery</a></li><li><a href="/monument/trade-finance">Trade finance</a></li><li><a href="/monument/letters-of-credit">Letters of credit</a></li><li><a href="/monument/import-finance">Import finance</a></li><li><a href="/monument/supply-chain-finance">Supply chain finance</a></li><li><a href="/monument/acquisitions-and-refinancing">Acquisition finance</a></li><li><a href="/monument/refinancing">Refinancing</a></li></ul></div><div class="m-foot-col"><p class="m-label">Sectors</p><ul class="m-foot-links m-small"><li><a href="/monument/sectors/recruitment">Recruitment</a></li><li><a href="/monument/sectors/manufacturing-and-engineering">Manufacturing and engineering</a></li><li><a href="/monument/sectors/distribution">Distribution and wholesale</a></li><li><a href="/monument/sectors/importers">Importers</a></li><li><a href="/monument/sectors/commodity-trade">Commodity trade</a></li><li><a href="/monument/sectors/food-and-drink">Food and drink</a></li></ul></div><div class="m-foot-col"><p class="m-label">Places</p><ul class="m-foot-links m-small"><li><a href="/monument/london">London</a></li><li><a href="/monument/cambridgeshire">Cambridgeshire and East Anglia</a></li></ul></div>
+      <div class="m-foot-col"><p class="m-label">Monument</p><ul class="m-foot-links m-small"><li><a href="/monument/deals">Deals</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument/guides">Guides</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=guide-incoterms-for-importers">Request terms</a></li></ul></div>
+    </div>
+    <div class="m-foot-legal m-small m-on-soft">
+      <p class="m-small">Monument Corporate Finance Limited, registered in England and Wales, company number 08855574.</p>
+      <p class="m-small">&copy; 2026 Monument Corporate Finance &middot; <span class="m-keep">Powered by <a href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Phillips.</a></span></p>
+    </div>
+  </div>
+</footer>
+<nav class="m-bar mbar" id="mbar" aria-label="Quick contact">
+  <a class="m-btn m-btn-sec-ink ph" href="/monument" data-ph-call="Call Ben" data-ph-show="Show number">Call Ben</a>
+  <a class="m-btn m-btn-primary" href="/monument/request-terms?from=guide-incoterms-for-importers">Request terms</a>
+</nav>
+<script>
+(function () {
+  'use strict';
+  const $ = (s, el) => (el || document).querySelector(s), $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const THANKS = '/monument/thank-you';
+  /* Review notes (vault copy only) */
+  const notesBtn = $('#notesToggle');
+  if (notesBtn && !window.MCF_TOOLS) notesBtn.addEventListener('click', () => { const off = document.documentElement.classList.toggle('notes-off'); notesBtn.setAttribute('aria-pressed', String(!off)); notesBtn.textContent = off ? 'Show review notes' : 'Hide review notes'; });
+  /* Menu (the tools page wires its own) */
+  const menuBtn = $('#menuBtn'), nav = $('#siteNav');
+  if (menuBtn && nav && !window.MCF_TOOLS) { const close = () => { nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.textContent = 'Menu'; };
+    menuBtn.addEventListener('click', () => { const o = nav.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', String(o)); menuBtn.textContent = o ? 'Close' : 'Menu'; });
+    $$('a', nav).forEach(a => a.addEventListener('click', close)); }
+  /* Reveal on scroll: small and slow */
+  const rv = $$('.m-rv');
+  if (reduceMotion || !('IntersectionObserver' in window)) rv.forEach(e => e.classList.add('m-in'));
+  else { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('m-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: .12 }); rv.forEach(e => io.observe(e)); }
+  /* Phone bar shows once the hero has gone; header progress line */
+  const bar = $('#mbar'), hero = $('#hero'), prog = $('#progressBar');
+  const onScroll = () => { const y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+    if (prog && !window.MCF_TOOLS) prog.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0).toFixed(4) + ')';
+    if (bar) bar.classList.toggle('show', !hero || hero.getBoundingClientRect().bottom < 0); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* Ben's number stays out of the page: phones tap to call, desktops reveal it */
+  if (!window.MCF_TOOLS) {
+    const PH = ['+44', '7903', '877970'], TEL = 'tel:' + PH.join(''), SHOW = '0' + PH[1] + ' ' + PH[2];
+    const canCall = !!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+    $$('a.ph').forEach(a => { if (canCall) { a.href = TEL; a.textContent = a.dataset.phCall; }
+      a.addEventListener('click', e => { if (canCall || a.dataset.shown) return; e.preventDefault(); a.dataset.shown = '1'; a.href = TEL; a.textContent = 'Call ' + SHOW; }); });
+  }
+  /* The contact card: one centred dialog, opened by every Request terms or Introduce a client button */
+  const dlg = $('#mLead'), form = $('#mLeadForm');
+  if (!dlg || !form) return;
+  const TS_KEY = '1x00000000000000000000AA';
+  const captcha = () => { const el = $('.m-captcha', form); if (!el || el.dataset.done) return;
+    const go = () => { if (!window.turnstile) return false; el.dataset.done = '1'; window.turnstile.render(el, { sitekey: TS_KEY, appearance: 'interaction-only', theme: 'light', action: 'enquiry' }); return true; };
+    if (!go()) { const t = setInterval(() => { if (go()) clearInterval(t); }, 300); setTimeout(() => clearInterval(t), 10000); } };
+  let from = 'page';
+  const open = src => { from = src || 'page'; if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', ''); captcha(); setTimeout(() => $('#mName').focus(), 30); };
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-lead]'); if (!b || b.closest('#mLead')) return; e.preventDefault(); open(b.dataset.from || document.body.dataset.page || 'page'); });
+  $('#mLeadClose').addEventListener('click', () => dlg.close ? dlg.close() : dlg.removeAttribute('open'));
+  const show = () => $$('[data-by]', form).forEach(r => { r.hidden = !$('input[name="by"][value="' + r.dataset.by + '"]', form).checked; });
+  $$('input[name="by"]', form).forEach(i => i.addEventListener('change', () => { show(); $('.m-err', form).hidden = true; const r = $('[data-by="' + i.value + '"]', form); if (i.checked && r) $('input', r).focus(); }));
+  show();
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const q = n => $('[name="' + n + '"]', form), intro = dlg.dataset.kind === 'introduction';
+    if (q('website').value) { location.href = THANKS; return; }
+    const name = q('name').value.trim(), company = q('company').value.trim(), by = $$('input[name="by"]:checked', form).map(i => i.value);
+    const phone = q('phone').value.trim(), email = q('email').value.trim(), note = q('note') ? q('note').value.trim() : '', client = q('client') ? q('client').value.trim() : '';
+    let err = '', bad = null;
+    if (!name) { err = 'Add your name so Ben knows who to contact.'; bad = q('name'); }
+    else if (!company) { err = intro ? 'Add your firm.' : 'Add your company name so Ben can look it up.'; bad = q('company'); }
+    else if (intro && !client) { err = 'Add the client company.'; bad = q('client'); }
+    else if (!by.length) { err = 'Choose phone, email or both.'; bad = $('input[name="by"]', form); }
+    else if (by.includes('phone') && phone.replace(/\D/g, '').length < 10) { err = 'Add a phone number Ben can call, such as 07700 900123.'; bad = q('phone'); }
+    else if (by.includes('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err = 'Add an email address Ben can reply to, such as name@company.co.uk.'; bad = q('email'); }
+    else if (intro && !q('agree').checked) { err = 'Confirm the client has agreed to be introduced.'; bad = q('agree'); }
+    const box = $('.m-err', form);
+    if (err) { box.textContent = err; box.hidden = false; bad.focus(); return; }
+    const lead = { name, company, by, phone: by.includes('phone') ? phone : '', email: by.includes('email') ? email : '', note: client ? 'Client: ' + client + (note ? '. ' + note : '') : note, kind: intro ? 'introduction' : 'enquiry' };
+    try { sessionStorage.setItem('mcfLead', JSON.stringify(lead)); } catch (x) { /* private window: the thank-you page still works */ }
+    location.href = THANKS + '?from=' + encodeURIComponent(from) + '&by=' + encodeURIComponent(by.join('-'));
+  });
+})();
+
+(function () {
+  'use strict';
+  const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const io = ('IntersectionObserver' in window) && !reduce;
+  document.documentElement.classList.add('js');
+  if (reduce) document.documentElement.classList.add('m-nomotion');
+  const pending = [];
+  const run = (el, fn) => { if (el._mDone) return; el._mDone = true; fn(el); };
+  const watch = (els, fn, opts) => { if (!io) { els.forEach(e => run(e, fn)); return; }
+    const o = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { run(e.target, fn); o.unobserve(e.target); } }), opts || { rootMargin: '0px 0px -10% 0px', threshold: .15 });
+    els.forEach(e => { o.observe(e); pending.push([e, fn]); }); };
+  /* Backstop: anything already on screen is shown, even if the observer misses it */
+  const sweep = () => { const vh = innerHeight; for (let i = pending.length - 1; i >= 0; i--) { const [e, fn] = pending[i]; if (e._mDone) { pending.splice(i, 1); continue; }
+    const r = e.getBoundingClientRect(); if (r.top < vh * .92 && r.bottom > 0) { run(e, fn); pending.splice(i, 1); } } };
+  /* Line illustrations draw themselves when they come into view */
+  $$('.m-illo').forEach(svg => { let k = 0;
+    $$('path, line, rect, circle, ellipse, polyline', svg).forEach(p => { let len = 0; try { len = Math.ceil(p.getTotalLength()); } catch (x) {} if (!len) return;
+      p.style.setProperty('--len', len); p.style.setProperty('--k', k++); p.classList.add('ln'); }); });
+  watch($$('.m-illo'), el => el.classList.add('m-in'));
+  watch($$('.m-wipe, .m-stat'), el => el.classList.add('m-in'));
+  /* Figures count up once */
+  const fmt = (v, d) => v.toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: v >= 10000 });
+  const counters = $$('[data-count]');
+  if (!reduce) counters.forEach(c => { c.textContent = fmt(0, +c.dataset.dec || 0); });
+  watch(counters, c => { const to = +c.dataset.count, d = +c.dataset.dec || 0;
+    if (reduce) { c.textContent = fmt(to, d); return; }
+    const from = to >= 1900 && to <= 2100 ? to - 40 : 0, t0 = performance.now(), dur = 1700;
+    const step = t => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); c.textContent = fmt(from + (to - from) * e, p < 1 && to >= 1900 && to <= 2100 ? 0 : d);
+      if (p < 1) requestAnimationFrame(step); else c.textContent = fmt(to, d); };
+    requestAnimationFrame(step); }, { threshold: .6 });
+  /* Header condenses after the first scroll; photos drift slower than the page */
+  const head = document.querySelector('.m-head'), par = $$('.m-par img');
+  let ticking = false;
+  const frame = () => { ticking = false; sweep();
+    if (head) head.classList.toggle('m-small', scrollY > 40);
+    if (reduce) return;
+    const vh = innerHeight;
+    par.forEach(img => { const r = img.parentElement.getBoundingClientRect(); if (r.bottom < -100 || r.top > vh + 100) return;
+      const c = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2); img.style.setProperty('--py', (c * -r.height * 0.08).toFixed(1) + 'px'); }); };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener('resize', frame); frame(); addEventListener('load', frame); setTimeout(frame, 400);
+  /* Deals row: arrows on wider screens, dots everywhere */
+  $$('.m-row').forEach(row => { const sec = row.closest('section'), btns = $$('[data-row]', sec), dots = $$('.m-dots span', sec);
+    const card = () => { const c = row.firstElementChild; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(row).columnGap || 24) : 300; };
+    btns.forEach(b => b.addEventListener('click', () => row.scrollBy({ left: +b.dataset.row * card(), behavior: reduce ? 'auto' : 'smooth' })));
+    const upd = () => { const max = row.scrollWidth - row.clientWidth;
+      if (btns[0]) btns[0].disabled = row.scrollLeft < 4; if (btns[1]) btns[1].disabled = row.scrollLeft > max - 4;
+      const i = Math.round(row.scrollLeft / card()); dots.forEach((d, j) => d.classList.toggle('on', j === Math.min(i, dots.length - 1) || (row.scrollLeft > max - 4 && j === dots.length - 1 && false))); };
+    row.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd(); });
+})();
+
+(function () {
+  'use strict';
+  /* No pop-up any more: anything still marked data-lead goes to the right form page */
+  if (document.getElementById('mLead')) return;
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-lead]'); if (!b) return; e.preventDefault();
+    location.href = (b.dataset.lead === 'introduction' ? '/monument/introduce' : '/monument/request-terms') + '?from=' + encodeURIComponent(document.body.dataset.page || 'page'); });
+  /* the trade cycle line runs once it is in view */
+  const c = document.querySelector('.m-cyc'); if (c) { const go = () => c.classList.add('m-in'); if ('IntersectionObserver' in window) { const o = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { go(); o.disconnect(); } })); o.observe(c); } else go(); setTimeout(go, 1200); }
+})();
+
+(function () {
+  'use strict';
+  const f = document.querySelector('.m-filter'); if (!f) return;
+  const cards = Array.from(document.querySelectorAll('.m-deals-grid .m-deal')), count = document.getElementById('dealCount');
+  const apply = v => { let n = 0; cards.forEach(c => { const on = v === 'all' || (c.dataset.kind || '').split(' ').includes(v); c.hidden = !on; if (on) n++; }); if (count) count.textContent = n + (n === 1 ? ' facility' : ' facilities'); };
+  f.addEventListener('change', e => { if (e.target.name === 'kind') { apply(e.target.value); try { history.replaceState(null, '', e.target.value === 'all' ? location.pathname : '?type=' + e.target.value); } catch (x) {} } });
+  const start = new URLSearchParams(location.search).get('type'); const r = start && f.querySelector('input[value="' + start + '"]'); if (r) { r.checked = true; apply(start); }
+})();
+
+(function () {
+  'use strict';
+  document.querySelectorAll('[data-csv]').forEach(b => b.addEventListener('click', e => {
+    e.preventDefault();
+    const rows = [['Week', 'Week starting', 'Opening cash', 'Receipts from customers', 'Other receipts', 'Payments to suppliers', 'Wages and salaries', 'Rent and overheads', 'VAT and tax', 'Loan repayments', 'Other payments', 'Net cash flow', 'Closing cash']];
+    for (let w = 1; w <= 13; w++) rows.push([w, '', '', '', '', '', '', '', '', '', '', '', '']);
+    const csv = rows.map(r => r.join(',')).join('\r\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = '13-week-cash-flow-forecast.csv';
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }));
+})();
+</script>
+</body>
+</html>
