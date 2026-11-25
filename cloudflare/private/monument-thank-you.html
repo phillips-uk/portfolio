@@ -258,13 +258,89 @@ textarea.m-input{min-height:104px;resize:vertical}
   .m-btn-primary{position:relative;overflow:hidden}
   .m-btn:hover{transform:translateY(-1px)}}
 
+/* ===== v22: depth, plinth, hero formats, adviser scheme, form pages ===== */
+.m-bg-ink{background:radial-gradient(120% 90% at 88% 0%,var(--m-ink-2) 0%,var(--m-ink) 62%)}
+.m-plinth{display:block;width:180px;height:auto;margin:0 auto}
+.m-plinth path{stroke-width:1.5}
+/* advisers: green and gold (Figma Roles mode C) */
+body.m-adv{--m-ink:#12251F;--m-ink-2:#1C342C;--m-paper:#F4F3EE;--m-soft:#4A5650;--m-accent-text:#86652D;--m-line:#D8DBD6;--m-brass:#B8954F;--m-on-ink:#F1EFE8;--m-on-ink-soft:#A8B7AF}
+body.m-adv .m-btn-primary:hover{background:#C8A866}
+/* raised figures card over the bottom of the hero */
+.m-hero.m-over{padding-bottom:calc(var(--m-section) + 56px)}
+.m-figs{position:relative;z-index:2;margin-top:-104px;padding-bottom:var(--m-section)}
+.m-figs-card{background:var(--m-white);border-radius:4px;padding:40px 48px;box-shadow:0 1px 0 var(--m-line),0 30px 60px -34px rgba(14,26,43,.5)}
+.m-figs-card .m-stat{border-top-color:var(--m-line)}
+@media (max-width:767px){.m-figs{margin-top:-72px}.m-figs-card{padding:28px 24px}.m-hero.m-over{padding-bottom:calc(var(--m-section) + 32px)}}
+/* stacked term sheets and lifted cards */
+.m-deal{position:relative;isolation:isolate;box-shadow:inset 0 0 0 1px var(--m-line),0 16px 32px -24px rgba(14,26,43,.4)}
+.m-deal::after{content:"";position:absolute;inset:7px -7px -7px 7px;z-index:-1;background:var(--m-white);box-shadow:inset 0 0 0 1px var(--m-line);border-radius:4px}
+.m-grid3:has(.m-deal),.m-row{padding:0 10px 14px 0}
+.m-svc{box-shadow:0 1px 0 var(--m-line),0 22px 44px -32px rgba(14,26,43,.45);transition:transform .35s ease,box-shadow .35s ease}
+.m-svc:hover{transform:translateY(-4px);box-shadow:0 1px 0 var(--m-line),0 30px 56px -30px rgba(14,26,43,.5)}
+.m-diagram{box-shadow:0 34px 70px -36px rgba(0,0,0,.55);border-radius:4px}
+.m-split-img,.m-place{box-shadow:0 30px 60px -36px rgba(14,26,43,.55)}
+/* hero: a visual standing on the plinth */
+.m-stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.m-stage .m-diagram{max-width:460px;background:var(--m-ink-2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),0 34px 70px -30px rgba(0,0,0,.6)}
+.m-stage .m-diagram .m-illo{--illo-bg:var(--m-ink-2)}
+.m-stage .m-plinth{width:min(100%,440px)}
+.m-stage .m-plinth path{stroke:var(--m-brass)}
+@media (max-width:1023px){.m-hero-vis .m-hero-grid{grid-template-columns:1fr}.m-hero-vis .m-stage{order:2}}
+/* hero: full-bleed photo with the trade cycle along the bottom */
+.m-bleed{position:relative;overflow:hidden;color:var(--m-on-ink);background:var(--m-ink)}
+.m-bleed>img{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;transform:translate3d(0,var(--py,0px),0)}
+.m-bleed-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,26,43,.96) 0%,rgba(14,26,43,.86) 42%,rgba(14,26,43,.35) 100%),linear-gradient(0deg,rgba(14,26,43,.9) 0%,rgba(14,26,43,0) 40%)}
+.m-bleed-in{position:relative;padding-block:var(--m-section) 48px;display:flex;flex-direction:column;gap:56px}
+.m-bleed-in .m-stack{max-width:640px}
+.m-cycle{list-style:none;margin:0;padding:22px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative}
+.m-cycle::before{content:"";position:absolute;left:6px;right:6px;top:5px;height:2px;background:rgba(243,241,236,.25)}
+.m-cycle::after{content:"";position:absolute;left:6px;right:6px;top:5px;height:2px;background:var(--m-brass);transform-origin:0 50%;transform:scaleX(var(--cyc,1));transition:transform 2.2s cubic-bezier(.4,0,.2,1) .4s}
+.m-cycle li{position:relative;display:flex;flex-direction:column;gap:4px;padding-top:12px}
+.m-cycle li::before{content:"";position:absolute;top:-22px;left:0;width:12px;height:12px;border-radius:50%;background:var(--m-ink);box-shadow:inset 0 0 0 2px var(--m-brass);z-index:1}
+.m-cycle li:last-child::before{background:var(--m-brass)}
+@media (prefers-reduced-motion:no-preference){.js .m-cycle:not(.m-in){--cyc:0}}
+@media (max-width:767px){.m-bleed-shade{background:linear-gradient(0deg,rgba(14,26,43,.97) 0%,rgba(14,26,43,.86) 60%,rgba(14,26,43,.6) 100%)}.m-cycle{grid-template-columns:repeat(2,1fr);row-gap:28px}.m-cycle::before,.m-cycle::after{display:none}.m-cycle li::before{top:-6px}.m-cycle li{padding-top:14px}}
+/* hero: photo with a deal card overlapping it */
+.m-hero-pic{position:relative;margin:0 0 40px 40px}
+.m-hero-pic img{width:100%;height:auto;aspect-ratio:440/520;object-fit:cover;border-radius:4px;box-shadow:0 34px 70px -36px rgba(0,0,0,.6)}
+.m-hero-pic .m-deal{position:absolute;left:-40px;bottom:-40px;width:min(300px,80%);color:var(--m-ink)}
+@media (max-width:1023px){.m-hero-pic{order:-1;margin:0 0 40px 24px;width:min(100%,460px)}.m-hero-pic img{aspect-ratio:16/11}.m-hero-pic .m-deal{left:-24px}}
+@media (max-width:767px){.m-hero-pic{width:calc(100% - 16px);margin-left:16px}.m-hero-pic .m-deal{left:-16px;bottom:-32px;padding:20px}.m-hero-pic .m-deal .m-figure{font-size:32px}}
+/* closing with the plinth */
+.m-close .m-plinth{width:150px;margin-bottom:4px}
+.m-close .m-plinth path{stroke:var(--m-brass)}
+/* ===== form pages ===== */
+.m-req-head{padding-bottom:calc(var(--m-section) + 48px)}
+.m-req{position:relative;z-index:2;margin-top:-112px;padding-bottom:var(--m-section)}
+.m-req-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:clamp(32px,4vw,64px);align-items:start}
+.m-req-card{background:var(--m-white);border-radius:4px;padding:48px;box-shadow:0 1px 0 var(--m-line),0 40px 80px -40px rgba(14,26,43,.5);display:flex;flex-direction:column;gap:40px}
+.m-q{border:0;margin:0;padding:0 0 0 52px;position:relative;display:flex;flex-direction:column;gap:16px;min-width:0}
+.m-q legend{padding:0;margin:0 0 16px;display:block;float:left;width:100%}
+.m-q legend+*{clear:both}
+.m-qn{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--m-brass);display:flex;align-items:center;justify-content:center;font:500 var(--t-label)/1 var(--f-sans);color:var(--m-accent-text)}
+.m-q:not(:last-of-type)::after{content:"";position:absolute;left:16px;top:44px;bottom:-30px;width:2px;background:var(--m-line)}
+.m-q.m-done .m-qn{background:var(--m-brass);color:var(--m-ink);box-shadow:none}
+.m-chip input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer}
+.m-req-card .m-btn{width:100%}
+
+.m-req-side{position:sticky;top:104px;display:flex;flex-direction:column;gap:24px;padding-top:24px}
+.m-req-ben{display:flex;gap:16px;align-items:center}
+.m-req-ben img{width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:50% 18%;box-shadow:0 0 0 3px var(--m-white),0 10px 24px -12px rgba(14,26,43,.5)}
+.m-next{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;counter-reset:n}
+.m-next li{display:grid;grid-template-columns:28px 1fr;gap:12px;counter-increment:n}
+.m-next li::before{content:counter(n,upper-roman) ".";font:400 var(--t-h3)/1.2 var(--f-serif);color:var(--m-brass)}
+.m-req-side{padding-top:140px}
+.m-req-ben.m-ben-top{display:none}
+@media (max-width:1023px){.m-req-grid{grid-template-columns:1fr}.m-req-side{position:static;padding-top:0}.m-req-ben.m-ben-top{display:flex}.m-req-side .m-req-ben{display:none}}
+@media (max-width:767px){.m-req{margin-top:-80px}.m-req-card{padding:24px 20px;gap:32px}.m-q{padding-left:42px}.m-q .m-chips{gap:8px}.m-q .m-chip{padding:0 12px}.m-qn{width:30px;height:30px}.m-q:not(:last-of-type)::after{left:14px;top:38px}}
+
 .review{background:#26292E;color:#ECECE8;font:14px/1.4 var(--f-sans)}
 .review .wrap{max-width:calc(1192px + 2 * var(--m-margin));margin:0 auto;padding:10px var(--m-margin);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .review p{margin:0}.review-btn{background:none;border:1px solid #ECECE8;color:#ECECE8;font:500 13px/1 var(--f-sans);padding:8px 12px;border-radius:2px;cursor:pointer}
 .rnote{display:block;background:#FFFFFF;color:#3D3000;border-left:3px solid #C99A2E;font:400 14px/1.5 var(--f-sans);padding:12px 16px;margin:16px 0;max-width:720px}
 html.notes-off .rnote{display:none}
 </style>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
 </head>
 <body class="m" data-page="thank-you">
 <div class="review" role="region" aria-label="About this draft"><div class="wrap review-in"><p class="review-text"><strong>Draft for review</strong>: prepared by Phillips. for Monument Corporate Finance. Not a live site; the words are drafts and the rates in the tools are examples.</p></div></div>
@@ -272,12 +348,13 @@ html.notes-off .rnote{display:none}
 <header class="m-head site-head">
   <div class="m-wrap m-head-in">
     <a class="m-logo" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a>
-    <nav class="m-nav" id="siteNav" aria-label="Main"><a href="/monument#facilities">Facilities</a><a href="/monument/calculators">Tools</a><a href="/monument#deals">Deals</a><a href="/monument/about">About Ben</a><a href="/monument/for-advisers">For advisers</a><button type="button" class="m-btn m-btn-primary" data-lead="enquiry">Request terms</button></nav>
+    <nav class="m-nav" id="siteNav" aria-label="Main"><a href="/monument#facilities">Facilities</a><a href="/monument/calculators">Tools</a><a href="/monument#deals">Deals</a><a href="/monument/about">About Ben</a><a href="/monument/for-advisers">For advisers</a><a class="m-btn m-btn-primary" href="/monument/request-terms?from=thank-you">Request terms</a></nav>
     <button type="button" class="m-menu" id="menuBtn" aria-expanded="false" aria-controls="siteNav">Menu</button>
   </div>
   <div class="m-progress" aria-hidden="true"><span id="progressBar"></span></div>
 </header>
 <main id="main">
+
 
 <section class="m-section m-bg-ink" id="hero" aria-labelledby="h1"><div class="m-wrap"><div class="m-close m-stack">
 <h1 class="m-h2" id="h1">Thank you. Ben has your details.</h1><p class="m-lede m-on-soft" role="status">Ben will be in touch about the details you sent.</p>
@@ -292,12 +369,13 @@ html.notes-off .rnote{display:none}
 <section class="m-section m-bg-ink2" id="process" aria-labelledby="processTitle">
   <div class="m-wrap m-blocks"><h2 class="m-h2" id="processTitle">What happens next</h2><ol class="m-steps" style="list-style:none;margin:0;padding:0"><li class="m-step m-rv" style="--d:0ms"><svg class="m-illo" viewBox="0 0 200 120" aria-hidden="true" focusable="false"><path d="M20 14 h84 a8 8 0 0 1 8 8 v34 a8 8 0 0 1 -8 8 h-52 l-16 14 v-14 h-16 a8 8 0 0 1 -8 -8 v-34 a8 8 0 0 1 8 -8 z"/><line x1="32" y1="30" x2="94" y2="30"/><line x1="32" y1="40" x2="86" y2="40"/><line x1="32" y1="50" x2="70" y2="50"/><path class="accent cover" d="M100 44 h72 a8 8 0 0 1 8 8 v30 a8 8 0 0 1 -8 8 h-12 v14 l-16 -14 h-44 a8 8 0 0 1 -8 -8 v-30 a8 8 0 0 1 8 -8 z"/><line class="accent" x1="112" y1="60" x2="166" y2="60"/><line class="accent" x1="112" y1="70" x2="152" y2="70"/><line x1="6" y1="116" x2="194" y2="116"/></svg><span class="m-num" aria-hidden="true">I.</span><h3 class="m-h3">First conversation</h3><p class="m-body m-on-soft">Discuss how much the company needs, what for and when.</p></li><li class="m-step m-rv" style="--d:160ms"><svg class="m-illo" viewBox="0 0 200 120" aria-hidden="true" focusable="false"><path d="M16 30 h32 l14 14 v48 h-46 z"/><path d="M48 30 v14 h14"/><line x1="24" y1="56" x2="54" y2="56"/><line x1="24" y1="66" x2="54" y2="66"/><line x1="24" y1="76" x2="44" y2="76"/><path class="accent" d="M66 61 C 100 61, 104 22, 134 22"/><path class="accent" d="M66 61 C 100 61, 104 60, 134 60"/><path class="accent" d="M66 61 C 100 61, 104 98, 134 98"/><path class="accent" d="M142 17 L163 6 L184 17 Z"/><path d="M144 20 H182"/><line x1="149" y1="22" x2="149" y2="35"/><line x1="158" y1="22" x2="158" y2="35"/><line x1="168" y1="22" x2="168" y2="35"/><line x1="177" y1="22" x2="177" y2="35"/><path d="M142 37 H184"/><path class="accent" d="M142 55 L163 44 L184 55 Z"/><path d="M144 58 H182"/><line x1="149" y1="60" x2="149" y2="73"/><line x1="158" y1="60" x2="158" y2="73"/><line x1="168" y1="60" x2="168" y2="73"/><line x1="177" y1="60" x2="177" y2="73"/><path d="M142 75 H184"/><path class="accent" d="M142 93 L163 82 L184 93 Z"/><path d="M144 96 H182"/><line x1="149" y1="98" x2="149" y2="111"/><line x1="158" y1="98" x2="158" y2="111"/><line x1="168" y1="98" x2="168" y2="111"/><line x1="177" y1="98" x2="177" y2="111"/><path d="M142 113 H184"/></svg><span class="m-num" aria-hidden="true">II.</span><h3 class="m-h3">Structuring the facility</h3><p class="m-body m-on-soft">Review the company’s finances and consider which lenders could fund it.</p></li><li class="m-step m-rv" style="--d:320ms"><svg class="m-illo" viewBox="0 0 200 120" aria-hidden="true" focusable="false"><path d="M50 6 h78 v108 h-78 z"/><line x1="62" y1="22" x2="116" y2="22"/><line x1="62" y1="32" x2="110" y2="32"/><line x1="62" y1="42" x2="116" y2="42"/><line x1="62" y1="52" x2="96" y2="52"/><path class="accent" d="M64 86 c 6 -14, 12 -14, 10 0 s 6 10, 12 -6 s 8 4, 16 -2"/><line x1="62" y1="94" x2="112" y2="94"/><path class="accent" d="M130 102 l -6 15 l 7 -3 l 4 6 l 4 -14"/><path class="accent" d="M146 102 l 6 15 l -7 -3 l -4 6 l -4 -14"/><circle class="accent cover" cx="138" cy="90" r="15"/><circle class="accent" cx="138" cy="90" r="10"/><path d="M176 10 l 8 8 l -40 44 l -11 4 l 3 -11 z"/><path d="M136 55 l 8 7"/></svg><span class="m-num" aria-hidden="true">III.</span><h3 class="m-h3">Terms and drawdown</h3><p class="m-body m-on-soft">Review the lender’s terms, complete due diligence and agree the documents before drawdown.</p></li></ol></div>
 </section>
+
 </main>
 <footer class="m-foot">
   <div class="m-wrap">
     <div class="m-foot-top">
       <div class="m-stack" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p></div>
-      <ul class="m-foot-links m-small"><li><a href="/monument#facilities">Facilities</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument#deals">Deals</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><button type="button" class="m-footbtn" data-lead="enquiry">Get in touch</button></li></ul>
+      <ul class="m-foot-links m-small"><li><a href="/monument#facilities">Facilities</a></li><li><a href="/monument/calculators">Tools</a></li><li><a href="/monument#deals">Deals</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=thank-you">Get in touch</a></li></ul>
     </div>
     <div class="m-foot-legal m-small m-on-soft">
       <p class="m-small">Monument Corporate Finance Limited, registered in England and Wales, company number 08855574.</p>
@@ -306,24 +384,6 @@ html.notes-off .rnote{display:none}
   </div>
 </footer>
 
-<dialog class="m-dialog" id="mLead" aria-labelledby="mLeadTitle" data-kind="enquiry">
-  <form class="m-form" id="mLeadForm" method="dialog" novalidate>
-    <div class="m-form-head" id="mLeadTitle"><p class="m-h3">Request terms</p><p class="m-small m-soft">Tell Ben how much your company needs, what it is for and when you need it.</p></div>
-    <div class="m-field"><label class="m-label" for="mName">Your name</label><input class="m-input" id="mName" name="name" autocomplete="name"></div>
-<div class="m-field"><label class="m-label" for="mCompany">Company</label><input class="m-input" id="mCompany" name="company" autocomplete="organization"></div>
-<div class="m-field"><label class="m-label" for="mNote">What you need <span class="m-soft">(optional)</span></label><textarea class="m-input" id="mNote" name="note" placeholder="For example: £4m against debtors and stock, to fund growth this spring"></textarea></div>
-    <div class="m-hp" aria-hidden="true"><label for="mWebsite">Leave this empty</label><input id="mWebsite" name="website" tabindex="-1" autocomplete="off"></div>
-    <fieldset><legend>How should Ben get in touch?</legend><div class="m-chips"><label class="m-chip"><input type="checkbox" name="by" value="phone">Phone</label><label class="m-chip"><input type="checkbox" name="by" value="email">Email</label></div></fieldset>
-    <div class="m-field" data-by="phone" hidden><label class="m-label" for="mPhone">Phone number</label><input class="m-input" id="mPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel"></div>
-    <div class="m-field" data-by="email" hidden><label class="m-label" for="mEmail">Email</label><input class="m-input" id="mEmail" name="email" type="email" autocomplete="email"></div>
-    
-    <div class="m-captcha"></div>
-    <p class="m-err" role="alert" hidden></p>
-    <button type="submit" class="m-btn m-btn-primary">Send to Ben</button>
-    <button type="button" class="m-not" id="mLeadClose">Not now</button>
-    <p class="m-small m-soft" style="text-align:center">Only Ben sees this. No mailing lists.</p>
-  </form>
-</dialog>
 <script>
 (function () {
   'use strict';
@@ -441,6 +501,16 @@ html.notes-off .rnote{display:none}
       if (btns[0]) btns[0].disabled = row.scrollLeft < 4; if (btns[1]) btns[1].disabled = row.scrollLeft > max - 4;
       const i = Math.round(row.scrollLeft / card()); dots.forEach((d, j) => d.classList.toggle('on', j === Math.min(i, dots.length - 1) || (row.scrollLeft > max - 4 && j === dots.length - 1 && false))); };
     row.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd(); });
+})();
+
+(function () {
+  'use strict';
+  /* No pop-up any more: anything still marked data-lead goes to the right form page */
+  if (document.getElementById('mLead')) return;
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-lead]'); if (!b) return; e.preventDefault();
+    location.href = (b.dataset.lead === 'introduction' ? '/monument/introduce' : '/monument/request-terms') + '?from=' + encodeURIComponent(document.body.dataset.page || 'page'); });
+  /* the trade cycle line runs once it is in view */
+  const c = document.querySelector('.m-cyc'); if (c) { const go = () => c.classList.add('m-in'); if ('IntersectionObserver' in window) { const o = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { go(); o.disconnect(); } })); o.observe(c); } else go(); setTimeout(go, 1200); }
 })();
 </script><script>
 (function () { var $ = function (s) { return document.querySelector(s); };
