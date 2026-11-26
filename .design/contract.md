@@ -449,10 +449,10 @@ File: `404.html` (page)
 
 File: `guides/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: `#filter-heading`, `#guide-count`, `#guide-grid`, `#empty-state`
-- Classes: `.active`, `.page-w`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`, `.filter-pill`, `.guide-card`
-- Data attributes: `data-hero`, `data-location`, `data-filter`, `data-cat`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#guides`, `#filter-heading`, `#guide-count`, `#guide-grid`, `#empty-state`, `#check`, `#site-footer`
+- Classes: `.v5`, `.brief-signup`, `.brief-status`, `.filter-pill`, `.active`, `.vt`
+- Data attributes: `data-v5`, `data-location`, `data-filter`, `data-list`, `data-cat`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guides-hub`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/`, OG 3/3
