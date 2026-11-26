@@ -555,9 +555,9 @@ File: `guides/target-cpa-few-conversions/index.html` (page)
 
 File: `cloudflare/private/brief-page.html` (shell)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: `#nav-toggle`, `#nav-drawer`
-- Classes: none
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`
 - Data attributes: `data-cookie-settings`
 - Forms: none
 - GA4 events: `newsletter_signup`
