@@ -8,7 +8,8 @@
 // 4. The site and admin ask only for token names: no hex colour in their CSS (white text and color-mix recipes aside,
 //    and the named object colours of the drawn MacBook/iPhone/Safari and Google's own sign-in button), no old palette
 //    names, and every var() they use is defined somewhere or has a fallback.
-// 5. The shared admin menu block (the same in the Phillips., BYP and TDO admins) is byte-for-byte unchanged.
+// 5. The group admin switcher block (the v5 Admin Kit switcher, meant to be the same in all five group admins) is
+//    byte-for-byte unchanged.
 //   node scripts/test-tokens.cjs
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -41,12 +42,14 @@ const PAGES = ['index.html',
   ...walk('guides').filter(f => f.endsWith('index.html')),
   ...['admin', 'rate-card', 'brief-page', 'google-ads-check', 'website-check'].map(n => `cloudflare/private/${n}.html`)];
 
-// the shared admin menu: its CSS block, and the per-brand line after it, are the menu's own business
-const GM_START = '/* ===== Shared admin menu, liquid glass', GM_END = '/* ===== end of shared admin menu ===== */';
-const GM_HASH = '393bbfa01c114bee8c6d145f6982d9e1162903c83fff4391eebb6a52a65f821f';   // = before-you-pay admin/shell.css, 16 Nov 2026
+// the group admin switcher: its CSS block is the switcher's own business. It replaced the liquid-glass menu on 26 Nov 2026
+// (Admin Kit, Figma page 15); until the other four admins (TDO Control Room, Before You Pay, Index Point, Search Desk)
+// move to it, they still carry the old menu block, so this hash is the Phillips. copy, the one the others should match.
+const GM_START = '/* ===== Group admin switcher, v5', GM_END = '/* ===== end of group admin switcher ===== */';
+const GM_HASH = '02f1c968f146591840afe2f0cb8f8bd2ff237f19e39ad0809d48c70da6f0bef9';   // = cloudflare/private/admin.html, 26 Nov 2026 (real app icons)
 const admin = R('cloudflare/private/admin.html');
 const gm = admin.slice(admin.indexOf(GM_START), admin.indexOf(GM_END) + GM_END.length);
-assert.equal(crypto.createHash('sha256').update(gm).digest('hex'), GM_HASH, 'the shared admin menu block must stay byte-for-byte as it is in all three admins');
+assert.equal(crypto.createHash('sha256').update(gm).digest('hex'), GM_HASH, 'the group admin switcher block must stay byte-for-byte as it is (each group admin carries the same copy)');
 const withoutMenu = s => s.includes(GM_START) ? s.slice(0, s.indexOf(GM_START)) + s.slice(s.indexOf(GM_END) + GM_END.length).replace(/:root \{ --gm-[^}]*\}/, '') : s;
 
 const styleOf = html => [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('\n')
@@ -76,7 +79,7 @@ const scriptsOf = html => [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g
 for (const f of PAGES) { const m = scriptsOf(R(f)).match(OLD); assert.ok(!m, `${f} (script): ${m && m[0]} is an old colour name`); }
 // 4c. every var() is defined (the tokens, a declaration in the site's CSS, or set at run time with a fallback)
 const declared = s => new Set([...s.matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]));
-const names = new Set([...['system', 'modes', 'brand'].flatMap(n => [...declared(R(`tokens/${n}.css`))]), ...sources.flatMap(([, s]) => [...declared(s)]), ...declared(gm)]);   // the menu's own --gm-* names are used by the admin's shell grid
+const names = new Set([...['system', 'modes', 'brand'].flatMap(n => [...declared(R(`tokens/${n}.css`))]), ...sources.flatMap(([, s]) => [...declared(s)]), ...declared(gm)]);   // any names the switcher block declares count as defined
 for (const [f, src] of sources) for (const m of src.matchAll(/var\((--[\w-]+)\s*([,)])/g)) assert.ok(names.has(m[1]) || m[2] === ',', `${f}: var(${m[1]}) is not defined`);
 
 // every live page gets the tokens: from agency.css, guides.css or its own copy
@@ -87,4 +90,4 @@ for (const f of PAGES) {
 
 execFile();
 function execFile() { require('node:child_process').execFileSync(process.execPath, [path.join(__dirname, 'build-tokens.js'), '--check'], { stdio: 'pipe' }); }
-console.log(`tokens: all checks passed (${T.TARGETS.length} targets up to date; ${sources.length} stylesheets and pages on tokens, light only; shared admin menu unchanged)`);
+console.log(`tokens: all checks passed (${T.TARGETS.length} targets up to date; ${sources.length} stylesheets and pages on tokens, light only; group admin switcher unchanged)`);

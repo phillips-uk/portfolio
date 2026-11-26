@@ -157,6 +157,8 @@ for (const f of page.children.filter(n => n.type === 'FRAME' && new RegExp('^' +
     if (prev && prev.type === 'TEXT' && num(prev.fontSize) && prev.fontSize <= 15 && prev.characters.trim() && h.parent.layoutMode !== 'HORIZONTAL') { out.push(`${s.name}: small label "${prev.characters.slice(0, 20)}" above a card title (no labels)`); break; } }
   const lastSec = secs[secs.length - 1]; if (lastSec && isStrip(lastSec) && fillKey(lastSec) !== 'f6f4ee') out.push(`${lastSec.name}: the closing strip is always on cream`);
   for (let i = 1; i < secs.length; i++) if (fillKey(secs[i]) === fillKey(secs[i - 1]) && !isPanel(secs[i]) && !isPanel(secs[i - 1]) && !/^(Card wrap)$/.test(secs[i].name)) out.push(`${secs[i - 1].name} and ${secs[i].name} share a background`);
+  // a panel straight after the hero or a section of another colour needs its space above it (.vp-gap in code: 120, 96 or 48), or it sits on that section (Lewis, 26 Nov 2026)
+  for (let i = 1; i < secs.length; i++) if (isPanel(secs[i]) && secs[i].paddingTop === 0 && fillKey(secs[i]) !== fillKey(secs[i - 1])) out.push(`${secs[i].name}: sits straight on ${secs[i - 1].name}, give it its space above (.vp-gap)`);
   if (out.length) result[f.name.replace(new RegExp('^' + PREFIX + ' '), '') + ' @' + Math.round(f.width)] = out;
 }
 return { checked, findings: result };

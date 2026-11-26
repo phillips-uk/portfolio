@@ -67,7 +67,9 @@ async function chrome() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'v5check-'));
   const proc = spawn(CHROME, ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${dir}`, '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', 'about:blank'], { stdio: 'ignore' });
   const portFile = path.join(dir, 'DevToolsActivePort');
-  for (let i = 0; i < 100 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
+  // Up to 90s: a busy Mac took about 30s to start Chrome on 26 Nov 2026; the check carries on as soon as Chrome is ready.
+  for (let i = 0; i < 900 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
+  if (!fs.existsSync(portFile)) { proc.kill(); throw new Error('headless Chrome did not start within 90 seconds: the Mac may be very busy, try again shortly'); }
   const port = fs.readFileSync(portFile, 'utf8').split('\n')[0];
   const list = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
   const pageT = list.find(t => t.type === 'page');
@@ -105,6 +107,8 @@ const AUDIT = async (SYS) => {
   // neighbouring sections change background (a tinted panel inside a section counts as the change)
   const bg = el => { let c = getComputedStyle(el).backgroundColor; return c === 'rgba(0, 0, 0, 0)' ? getComputedStyle(document.body).backgroundColor : c; };
   for (let i = 1; i < secs.length; i++) if (bg(secs[i]) === bg(secs[i - 1]) && ![secs[i], secs[i - 1]].some(x => x.querySelector('.vp') || x.matches('.vp-sec'))) out.push(`sections ${where(secs[i - 1])} and ${where(secs[i])} share a background`);
+  // a wash panel straight after the hero or a section of another colour needs its own space above it (.vp-gap), or it sits on that section (Lewis, 26 Nov 2026, on every site)
+  for (let i = 1; i < secs.length; i++) if (secs[i].matches('.vp-sec') && !secs[i].matches('.vp-gap') && bg(secs[i]) !== bg(secs[i - 1])) out.push(`panel ${where(secs[i])} sits straight on ${where(secs[i - 1])}: add .vp-gap for space above it`);
   // neighbouring sections never share a layout (Lewis, 26 Nov 2026: "everything is very left to right ... it needs a bit of
   // visual diversity, especially the ones next to each other"). Heading-left splits, FAQs and the contact form are one
   // family; a mirrored split (.vf-grid.flip), a stacked FAQ (.vq.stack), panels, and each grid (trio, cards, figures) are

@@ -2,6 +2,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "phillips-uk",
+  // The Cloudflare account that holds this Worker and its D1. Named here because Lewis's wrangler login sees
+  // several accounts (since 26 Nov 2026), and without it wrangler stops to ask which one.
+  "account_id": "9cd423eee8986ecc6f22f6fa3a17878b",
   "main": "cloudflare/src/worker.js",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
