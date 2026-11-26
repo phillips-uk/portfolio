@@ -46,7 +46,7 @@ const PAGES = ['index.html',
 // (Admin Kit, Figma page 15); until the other four admins (TDO Control Room, Before You Pay, Index Point, Search Desk)
 // move to it, they still carry the old menu block, so this hash is the Phillips. copy, the one the others should match.
 const GM_START = '/* ===== Group admin switcher, v5', GM_END = '/* ===== end of group admin switcher ===== */';
-const GM_HASH = 'e779be85855adf01a2e75d5ff97b5c810e082fd46ba22b0526f88ddd726b222b';   // = cloudflare/private/admin.html, 26 Nov 2026
+const GM_HASH = '02f1c968f146591840afe2f0cb8f8bd2ff237f19e39ad0809d48c70da6f0bef9';   // = cloudflare/private/admin.html, 26 Nov 2026 (real app icons)
 const admin = R('cloudflare/private/admin.html');
 const gm = admin.slice(admin.indexOf(GM_START), admin.indexOf(GM_END) + GM_END.length);
 assert.equal(crypto.createHash('sha256').update(gm).digest('hex'), GM_HASH, 'the group admin switcher block must stay byte-for-byte as it is (each group admin carries the same copy)');
