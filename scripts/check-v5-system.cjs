@@ -105,6 +105,8 @@ const AUDIT = async (SYS) => {
   // neighbouring sections change background (a tinted panel inside a section counts as the change)
   const bg = el => { let c = getComputedStyle(el).backgroundColor; return c === 'rgba(0, 0, 0, 0)' ? getComputedStyle(document.body).backgroundColor : c; };
   for (let i = 1; i < secs.length; i++) if (bg(secs[i]) === bg(secs[i - 1]) && ![secs[i], secs[i - 1]].some(x => x.querySelector('.vp') || x.matches('.vp-sec'))) out.push(`sections ${where(secs[i - 1])} and ${where(secs[i])} share a background`);
+  // a wash panel straight after the hero or a section of another colour needs its own space above it (.vp-gap), or it sits on that section (Lewis, 26 Nov 2026, on every site)
+  for (let i = 1; i < secs.length; i++) if (secs[i].matches('.vp-sec') && !secs[i].matches('.vp-gap') && bg(secs[i]) !== bg(secs[i - 1])) out.push(`panel ${where(secs[i])} sits straight on ${where(secs[i - 1])}: add .vp-gap for space above it`);
   // neighbouring sections never share a layout (Lewis, 26 Nov 2026: "everything is very left to right ... it needs a bit of
   // visual diversity, especially the ones next to each other"). Heading-left splits, FAQs and the contact form are one
   // family; a mirrored split (.vf-grid.flip), a stacked FAQ (.vq.stack), panels, and each grid (trio, cards, figures) are
