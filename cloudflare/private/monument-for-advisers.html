@@ -393,6 +393,20 @@ body.m-adv,.m-advzone{--m-ink:#12251F;--m-ink-2:#1C342C;--m-paper:#F4F3EE;--m-so
 .review p{margin:0}.review-btn{background:none;border:1px solid #ECECE8;color:#ECECE8;font:500 13px/1 var(--f-sans);padding:8px 12px;border-radius:2px;cursor:pointer}
 .rnote{display:block;background:#FFFFFF;color:#3D3000;border-left:3px solid #C99A2E;font:400 14px/1.5 var(--f-sans);padding:12px 16px;margin:16px 0;max-width:720px}
 html.notes-off .rnote{display:none}
+
+/* footer, 26 Nov: four groups, each calculator linked on its own; on phones each group sits behind a tap */
+.m-foot-top{display:grid;grid-template-columns:minmax(220px,1.2fr) repeat(4,minmax(0,1fr));gap:48px}
+.m-foot-brand .m-btn{align-self:flex-start;margin-top:8px}
+.m-foot-col{min-width:0}
+.m-foot-col>summary{list-style:none;cursor:default;pointer-events:none;color:var(--m-on-ink);margin-bottom:4px}
+.m-foot-col>summary::-webkit-details-marker{display:none}
+@media (max-width:1023px){.m-foot-top{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}.m-foot-brand{grid-column:1/-1}}
+@media (max-width:767px){.m-foot-top{display:flex;flex-direction:column;gap:0}.m-foot-brand{margin-bottom:24px}
+.m-foot-col{border-top:1px solid var(--m-ink-2);gap:0}
+.m-foot-col>summary{pointer-events:auto;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin:0}
+.m-foot-col>summary::after{content:"+";color:var(--m-brass);font-size:20px;line-height:1}
+.m-foot-col[open]>summary::after{content:"−"}
+.m-foot-col .m-foot-links{padding:0 0 18px}}
 </style>
 
 
@@ -437,9 +451,8 @@ html.notes-off .rnote{display:none}
 <footer class="m-foot">
   <div class="m-wrap">
     <div class="m-foot-top">
-      <div class="m-stack m-foot-brand" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p></div>
-      <div class="m-foot-col"><p class="m-label">Services</p><ul class="m-foot-links m-small"><li><a href="/monument/asset-based-lending">Asset-based lending</a></li><li><a href="/monument/invoice-discounting">Invoice discounting</a></li><li><a href="/monument/stock-finance">Stock finance</a></li><li><a href="/monument/plant-and-machinery">Plant and machinery</a></li><li><a href="/monument/trade-finance">Trade finance</a></li><li><a href="/monument/letters-of-credit">Letters of credit</a></li><li><a href="/monument/import-finance">Import finance</a></li><li><a href="/monument/supply-chain-finance">Supply chain finance</a></li><li><a href="/monument/acquisitions-and-refinancing">Acquisition finance</a></li><li><a href="/monument/refinancing">Refinancing</a></li></ul></div><div class="m-foot-col"><p class="m-label">Sectors</p><ul class="m-foot-links m-small"><li><a href="/monument/sectors/recruitment">Recruitment</a></li><li><a href="/monument/sectors/manufacturing-and-engineering">Manufacturing and engineering</a></li><li><a href="/monument/sectors/distribution">Distribution and wholesale</a></li><li><a href="/monument/sectors/importers">Importers</a></li><li><a href="/monument/sectors/commodity-trade">Commodity trade</a></li><li><a href="/monument/sectors/food-and-drink">Food and drink</a></li></ul></div><div class="m-foot-col"><p class="m-label">Places</p><ul class="m-foot-links m-small"><li><a href="/monument/london">London</a></li><li><a href="/monument/cambridgeshire">Cambridgeshire and East Anglia</a></li></ul></div>
-      <div class="m-foot-col"><p class="m-label">Monument</p><ul class="m-foot-links m-small"><li><a href="/monument/deals">Deals</a></li><li><a href="/monument/tools">Tools</a></li><li><a href="/monument/guides">Guides</a></li><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a class="m-footbtn" href="/monument/request-terms?from=for-advisers">Request terms</a></li></ul></div>
+      <div class="m-stack m-foot-brand" style="gap:12px"><a class="m-logo" style="color:var(--m-on-ink)" href="/monument" aria-label="Monument Corporate Finance, home">MCF</a><p class="m-small m-on-soft">Asset-based lending and trade finance.<br>London and Cambridgeshire.</p><a class="m-btn m-btn-primary" href="/monument/request-terms?from=for-advisers">Request terms</a></div>
+      <details class="m-foot-col" open><summary class="m-label">Services</summary><ul class="m-foot-links m-small"><li><a href="/monument/asset-based-lending">Asset-based lending</a></li><li><a href="/monument/invoice-discounting">Invoice discounting</a></li><li><a href="/monument/stock-finance">Stock finance</a></li><li><a href="/monument/plant-and-machinery">Plant and machinery</a></li><li><a href="/monument/trade-finance">Trade finance</a></li><li><a href="/monument/letters-of-credit">Letters of credit</a></li><li><a href="/monument/import-finance">Import finance</a></li><li><a href="/monument/supply-chain-finance">Supply chain finance</a></li><li><a href="/monument/acquisitions-and-refinancing">Acquisition finance</a></li><li><a href="/monument/refinancing">Refinancing</a></li></ul></details><details class="m-foot-col" open><summary class="m-label">Sectors and places</summary><ul class="m-foot-links m-small"><li><a href="/monument/sectors/recruitment">Recruitment</a></li><li><a href="/monument/sectors/manufacturing-and-engineering">Manufacturing and engineering</a></li><li><a href="/monument/sectors/distribution">Distribution and wholesale</a></li><li><a href="/monument/sectors/importers">Importers</a></li><li><a href="/monument/sectors/commodity-trade">Commodity trade</a></li><li><a href="/monument/sectors/food-and-drink">Food and drink</a></li><li><a href="/monument/london">London</a></li><li><a href="/monument/cambridgeshire">Cambridgeshire and East Anglia</a></li></ul></details><details class="m-foot-col" open><summary class="m-label">Tools</summary><ul class="m-foot-links m-small"><li><a href="/monument/tools/debtor-days-calculator">Debtor days calculator</a></li><li><a href="/monument/tools/cash-conversion-cycle-calculator">Cash conversion cycle calculator</a></li><li><a href="/monument/tools/asset-based-lending-calculator">Asset-based lending calculator</a></li><li><a href="/monument/tools/funding-gap-calculator">Funding gap calculator</a></li><li><a href="/monument/tools">All tools</a></li></ul></details><details class="m-foot-col" open><summary class="m-label">Monument</summary><ul class="m-foot-links m-small"><li><a href="/monument/about">About Ben</a></li><li><a href="/monument/deals">Deals</a></li><li><a href="/monument/guides">Guides</a></li><li><a href="/monument/for-advisers">For advisers</a></li><li><a href="/monument/introduce">Introduce a client</a></li></ul></details>
     </div>
     <div class="m-foot-legal m-small m-on-soft">
       <p class="m-small">Monument Corporate Finance Limited, registered in England and Wales, company number 08855574.</p>
@@ -447,6 +460,7 @@ html.notes-off .rnote{display:none}
     </div>
   </div>
 </footer>
+<script>if(matchMedia("(max-width:767px)").matches)document.querySelectorAll(".m-foot-col[open]").forEach(function(d){d.removeAttribute("open")})</script>
 <nav class="m-bar mbar" id="mbar" aria-label="Quick contact">
   <a class="m-btn m-btn-sec-ink ph" href="/monument" data-ph-call="Call Ben" data-ph-show="Show number">Call Ben</a>
   <a class="m-btn m-btn-primary" href="/monument/introduce?from=for-advisers">Introduce a client</a>
