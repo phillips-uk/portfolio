@@ -273,7 +273,7 @@ Checked on every run, whatever the page looks like. The rules behind them: `CLAU
 
 Every page: one `<h1>`, one `<main>`, a canonical on `https://www.phillips-uk.com/`, `og:url`, `og:title`, `og:description`, and the JSON-LD `@id`s it carries today (`#business` and `/about/#lewis` are the two entities; new pages point at them). Known gaps, which the v5 build closes and then removes from `EXCEPT`:
 
-- `cloudflare/private/account.html`: h1: three states (sign in, confirm, your websites) each carry an <h1>; two are hidden at a time; main: a stray second <main id="main"> before the menu drawer (bug, fixed in the v5 build); seo: noindex, private to each visitor: no canonical or OG tags
+- `cloudflare/private/account.html`: seo: noindex, private to each visitor: no canonical or OG tags
 - `404.html`: seo: noindex: no canonical or OG tags
 - `cloudflare/private/brief-page.html`: h1: the <h1> comes from brief.js in {{MAIN}}; seo: brief.js fills canonical and OG per page
 
@@ -570,10 +570,10 @@ File: `cloudflare/private/brief-page.html` (shell)
 
 File: `cloudflare/private/google-ads-check.html` (template)
 
-- Scripts: `/consent.js (added by the Worker)`, `/tool-google-ads-check.js`, `/contact-form.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#preview-flag`, `#step-google`, `#step-pick`, `#pick-list`, `#pick-other`, `#pick-cancel`, `#step-id`, `#id-form`, `#cid`, `#t-type`, `#t-value`, `#t-brand`, `#step-invite`, `#sent`, `#back`, `#check-ts`, `#check-status`, `#progress`, `#report`, `#rep-top`, `#rep-name`, `#rep-meta`, `#rep-copy`, `#rep-print`, `#rep-tiles`, `#sec-summary`, `#sum-lede`, `#sum-meta`, `#sum-plan-box`, `#sum-plan`, `#sum-more`, `#sum-plan-rest`, `#sec-profile`, `#pf-summary`, `#pf-facts`, `#pf-split`, `#pf-tree`, `#sec-trend`, `#tr-lede`, `#tr-funnel`, `#tr-chart-card`, `#tr-chart`, `#tr-key`, `#tr-seg`, `#tr-seg-k`, `#tr-seg-rows`, `#tr-chg`, `#tr-chg-text`, `#sec-ngrams`, `#ng-lede`, `#ng-kind`, `#ng-len`, `#ng-rows`, `#ng-note`, `#sec-heat`, `#hm-lede`, `#hm-grid`, `#sec-strong`, `#strong-count`, `#rep-strong`, `#sec-weak`, `#weak-count`, `#rep-weak`, `#sec-fix`, `#fix-all`, `#fix-none`, `#fix-rows`, `#options`, `#fix-fine`, `#checkout-preview`, `#rep-ask`, `#contact`
-- Classes: `.site-header`, `.report`, `.rp`, `.rp-paper`, `.rep-head`, `.rp-white`, `.plan`, `.rp-ink`, `.funnel`, `.rep`, `.ok`, `.checks-list`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-kind`, `data-n`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/tool-google-ads-check.js`, `/contact-form.js`
+- Ids: `#preview-flag`, `#tool-choice`, `#step-google`, `#step-pick`, `#pick-list`, `#pick-other`, `#pick-cancel`, `#step-id`, `#id-form`, `#cid`, `#t-type`, `#t-value`, `#t-brand`, `#step-invite`, `#sent`, `#back`, `#check-ts`, `#check-status`, `#progress`, `#report`, `#rep-top`, `#rep-name`, `#rep-meta`, `#rep-copy`, `#rep-print`, `#rep-tiles`, `#sec-summary`, `#sum-lede`, `#sum-meta`, `#sum-plan-box`, `#sum-plan`, `#sum-more`, `#sum-plan-rest`, `#sec-profile`, `#pf-summary`, `#pf-facts`, `#pf-split`, `#pf-tree`, `#sec-trend`, `#tr-lede`, `#tr-funnel`, `#tr-chart-card`, `#tr-chart`, `#tr-key`, `#tr-seg`, `#tr-seg-k`, `#tr-seg-rows`, `#tr-chg`, `#tr-chg-text`, `#sec-ngrams`, `#ng-lede`, `#ng-kind`, `#ng-len`, `#ng-rows`, `#ng-note`, `#sec-heat`, `#hm-lede`, `#hm-grid`, `#sec-strong`, `#strong-count`, `#rep-strong`, `#sec-weak`, `#weak-count`, `#rep-weak`, `#sec-fix`, `#fix-all`, `#fix-none`, `#fix-rows`, `#options`, `#fix-fine`, `#checkout-preview`, `#rep-ask`, `#contact`, `#site-footer`
+- Classes: `.vtool`, `.report`, `.rp`, `.rp-paper`, `.rep-head`, `.rp-white`, `.plan`, `.rp-ink`, `.funnel`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-choice`, `data-kind`, `data-n`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `#id-form` `.check-form` GET `(script)` (fields: none); `.enquiry` POST `/enquiry` (form_location `google-ads-check`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `ads_check_start`, `ads_check_error`, `ads_check_complete`, `ads_check_fix_select`, `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/google-ads-audit`, OG 3/3
@@ -583,10 +583,10 @@ File: `cloudflare/private/google-ads-check.html` (template)
 
 File: `cloudflare/private/website-check.html` (template)
 
-- Scripts: `/consent.js (added by the Worker)`, `/tool-website-check.js`, `/motion.js`, `/contact-form.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#preview-flag`, `#check-form`, `#check-url`, `#check-go`, `#check-ts`, `#wc-kind`, `#fresh-opt`, `#check-fresh`, `#check-status`, `#acct-bar`, `#progress`, `#report`, `#rep-top`, `#rep-domain`, `#rep-meta`, `#rep-save`, `#rep-copy`, `#rep-fresh`, `#rep-again`, `#rep-areas`, `#rep-compare`, `#sec-profile`, `#pf-summary`, `#pf-facts`, `#pf-kind`, `#wr-serp`, `#wr-serp-chips`, `#wr-screen`, `#wr-phone-chips`, `#wr-journey`, `#sec-weak`, `#weak-count`, `#weak-lede`, `#rep-weak`, `#rep-rest`, `#sec-speed`, `#sp-lede`, `#wr-gauges`, `#wr-field`, `#sec-strong`, `#strong-count`, `#strong-lede`, `#rep-strong`, `#sec-notes`, `#rep-notes`, `#sec-pages`, `#pages-count`, `#pages-lede`, `#pages-rows`, `#sec-fix`, `#fix-rows`, `#options`, `#fix-fine`, `#rep-ask-2`, `#sec-keep`, `#keep-h`, `#keep-p`, `#keep-save`, `#keep-copy`, `#sec-ask`, `#rep-ask`, `#contact`
-- Classes: `.site-header`, `.hero`, `.g-fg`, `.ok`, `.no`, `.report`, `.rp`, `.rp-paper`, `.page-w`, `.rep-head`, `.areas`, `.rp-ink`, `.wr-view`, `.rp-white`, `.fix`, `.fixes`, `.ask-card`, `.sec-cream`, `.sec-white`, `.checks-list`, `.faq`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-step`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/tool-website-check.js`, `/contact-form.js`
+- Ids: `#preview-flag`, `#check-form`, `#check-url`, `#check-go`, `#check-ts`, `#wc-kind`, `#fresh-opt`, `#check-fresh`, `#check-status`, `#acct-bar`, `#progress`, `#report`, `#rep-top`, `#rep-domain`, `#rep-meta`, `#rep-save`, `#rep-copy`, `#rep-fresh`, `#rep-again`, `#rep-areas`, `#rep-compare`, `#sec-profile`, `#pf-summary`, `#pf-facts`, `#pf-kind`, `#wr-serp`, `#wr-serp-chips`, `#wr-screen`, `#wr-phone-chips`, `#wr-journey`, `#sec-weak`, `#weak-count`, `#weak-lede`, `#rep-weak`, `#rep-rest`, `#sec-speed`, `#sp-lede`, `#wr-gauges`, `#wr-field`, `#sec-strong`, `#strong-count`, `#strong-lede`, `#rep-strong`, `#sec-notes`, `#rep-notes`, `#sec-pages`, `#pages-count`, `#pages-lede`, `#pages-rows`, `#sec-fix`, `#fix-rows`, `#options`, `#fix-fine`, `#rep-ask-2`, `#sec-keep`, `#keep-h`, `#keep-p`, `#keep-save`, `#keep-copy`, `#sec-ask`, `#rep-ask`, `#contact`, `#site-footer`
+- Classes: `.g-fg`, `.ok`, `.no`, `.report`, `.rp`, `.rp-paper`, `.rep-head`, `.areas`, `.rp-ink`, `.wr-view`, `.rp-white`, `.fix`, `.fixes`, `.ask-card`, `.enquiry`, `.field`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-step`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `#check-form` `.check-form` GET `(script)` (fields: `url`); `.enquiry` POST `/enquiry` (form_location `website-check`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `website_check_start`, `website_check_error`, `website_check_complete`, `website_check_fix_select`, `website_check_fix_ask`, `website_check_switch_kind`, `website_check_area`, `website_check_signin_to_save`, `website_check_saved`, `website_check_again`, `website_check_again_dashboard`, `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/website-check/`, OG 3/3
@@ -596,12 +596,12 @@ File: `cloudflare/private/website-check.html` (template)
 
 File: `cloudflare/private/account.html` (template)
 
-- Scripts: `/consent.js (added by the Worker)`, `https://accounts.google.com/gsi/client`, `/tool-account.js`, `/email.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#acct-signin`, `#preview-flag`, `#acct-google`, `#gsi-btn`, `#acct-form`, `#acct-email`, `#acct-go`, `#acct-ts`, `#acct-status`, `#acct-confirm`, `#acct-confirm-go`, `#acct-confirm-status`, `#acct-home`, `#acct-who`, `#acct-out`, `#acct-empty`, `#acct-list`, `#acct-ads-sec`, `#acct-ads`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `https://accounts.google.com/gsi/client`, `/tool-account.js`
+- Ids: `#acct-signin`, `#preview-flag`, `#acct-google`, `#gsi-btn`, `#acct-form`, `#acct-email`, `#acct-go`, `#acct-ts`, `#acct-status`, `#acct-confirm`, `#acct-confirm-go`, `#acct-confirm-status`, `#acct-home`, `#acct-who`, `#acct-out`, `#acct-empty`, `#acct-list`, `#acct-ads-sec`, `#acct-ads`, `#site-footer`
 - Classes: none
 - Data attributes: `data-cookie-settings`
 - Forms: `#acct-form` `.check-form` GET `(script)` (fields: `email`)
 - GA4 events: none
-- Structure: 3 h1, 2 main, canonical none, OG 0/3
+- Structure: 1 h1, 1 main, canonical none, OG 0/3
 - JSON-LD @ids: none
 

@@ -98,6 +98,10 @@ const PAGES = {
   'consultancy/index.html': page('consultancy', { contact: { h: 'Talk about what you need.', l: 'Write a few lines about the company, the channels and what you need help with. I’ll reply by email.', loc: 'consultancy' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Consultancy']]) } }),
   'free-checks/index.html': page('free-checks', { contact: { h: 'Ask me a question.', l: 'Tell me about the business and what you’d like to change. If you’ve run a check, mention it. I’ll reply by email.', loc: 'free-checks' } }),
   'guides/index.html': page('guides', { brief: { loc: 'guides-hub', h: 'What changed in marketing this week.', l: 'Every Monday: the week’s changes to Google Ads, GA4, SEO, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads, and what each one could affect in your account.', latest: true } }),
+  // the tools (Worker templates; <body> stays bare for the Worker, v5 comes from the page's first script)
+  'cloudflare/private/google-ads-check.html': page('free-checks', { contact: { h: 'Questions about your Google Ads?', l: 'Tell me about the business and what you’d like the ads to do. If you ran a check, the report link is added for you. I’ll reply by email.', loc: 'google-ads-check' }, parts: { crumb: () => V.crumb([['Free checks', '/free-checks/'], ['Google Ads Check']]) } }),
+  'cloudflare/private/website-check.html': page('free-checks', { contact: { h: 'Questions about your website?', l: 'Tell me about the business and what you’d like the website to do. If you ran a check, the report link is added for you. I’ll reply by email.', loc: 'website-check' }, parts: { crumb: () => V.crumb([['Free checks', '/free-checks/'], ['Website Check']]) } }),
+  'cloudflare/private/account.html': page('account'),
   // The Monday Brief shell (the Worker fills {{MAIN}}; the footer's contact link goes to the homepage form)
   'cloudflare/private/brief-page.html': page('updates'),
   // the 7 guides: crumb under Insights, the Brief sign-up (form_location guide, as live)

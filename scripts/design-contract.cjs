@@ -128,8 +128,6 @@ keep('cloudflare/src/worker.js',
 // EXCEPT with the reason; the v5 build removes them, and then the entry comes out of this list.
 const EXCEPT = {
   'cloudflare/private/account.html': {
-    h1: 'three states (sign in, confirm, your websites) each carry an <h1>; two are hidden at a time',
-    main: 'a stray second <main id="main"> before the menu drawer (bug, fixed in the v5 build)',
     seo: 'noindex, private to each visitor: no canonical or OG tags',
   },
   '404.html': { seo: 'noindex: no canonical or OG tags' },

@@ -5,7 +5,8 @@
 // library (Obsidian 147: the home and For tradespeople sections are the only section designs). Lewis 24 Nov 2026.
 // Phillips Group copy (25 Nov 2026), from Before You Pay main 6f444df041; this is the phillips-uk.com copy (26 Nov 2026).
 // Changed only where the playbook says: the page finder and the server (this site's pages are *.html and */index.html at
-// the repo root, served from the root; the Worker-served tool templates map to their addresses, TEMPLATES below), and the
+// the repo root, served from the root; the Worker-served tool templates map to their addresses, TEMPLATES below, and are
+// found by the script that adds v5 to their bare <body>, which the Worker writes attributes onto), and the
 // header button selector (the group header .vhd .vb as well as BYP's nav#site-nav .btn). SYS is unchanged.
 // Run it before showing Lewis a design built in code and before every deploy of v5 pages:
 //   node scripts/check-v5-system.cjs            every v5 page
@@ -43,7 +44,7 @@ const WIDTHS = [1440, 768, 375];
 function pages() {
   const args = process.argv.slice(2);
   if (args.length) return args;
-  const files = execSync(`grep -rlE --include='*.html' '<body class="([a-z0-9 -]* )?v5( [a-z0-9 -]*)?"' "${ROOT}" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.claude --exclude-dir=_design || true`, { encoding: 'utf8' }).trim().split('\n').filter(Boolean).map(f => path.relative(ROOT, f));
+  const files = execSync(`grep -rlE --include='*.html' '<body class="([a-z0-9 -]* )?v5( [a-z0-9 -]*)?"|classList\\.add\\(.v5.\\)' "${ROOT}" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.claude --exclude-dir=_design || true`, { encoding: 'utf8' }).trim().split('\n').filter(Boolean).map(f => path.relative(ROOT, f));
   return files.filter(f => !f.startsWith('cloudflare/') || Object.values(TEMPLATES).includes(f));
 }
 
