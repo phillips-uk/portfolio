@@ -1,11 +1,10 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
-<!-- End Google Tag Manager -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GA4 Imports and Smart Bidding: What to Fix | Phillips.</title>
+<meta name="description" content="GA4 imports can distort Smart Bidding if they duplicate native tags or you bid on engagement alongside purchases. See how to set up Google Ads.">
 <link rel="canonical" href="https://www.phillips-uk.com/guides/ga4-imports-break-smart-bidding/">
 <meta property="og:title" content="Why GA4 Imports Can Break Smart Bidding | Phillips.">
 <meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png?v=2">
@@ -15,17 +14,6 @@
 <meta property="og:url" content="https://www.phillips-uk.com/guides/ga4-imports-break-smart-bidding/">
 <meta property="og:type" content="article">
 <meta name="twitter:card" content="summary">
-<title>GA4 Imports and Smart Bidding: What to Fix | Phillips.</title>
-<meta name="description" content="GA4 imports can distort Smart Bidding if they duplicate native tags or you bid on engagement alongside purchases. See how to set up Google Ads.">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
-<script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},3000)}</script>
-<link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/brief.css?v=6">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- JSON-LD: Article -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -47,8 +35,6 @@
   "url": "https://www.phillips-uk.com/guides/ga4-imports-break-smart-bidding/"
 }
 </script>
-
-<!-- JSON-LD: HowTo -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -79,8 +65,6 @@
   ]
 }
 </script>
-
-<!-- JSON-LD: FAQPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -129,512 +113,150 @@
   ]
 }
 </script>
-
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="preload" href="/fonts/manrope-latin-v20.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/v5.css?v=1">
 <style>
-  /* ── Reset & base ── */
-  html, body { margin: 0; padding: 0; }
-  body {
-    font-family: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-    color: var(--text); background: var(--surface);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  ::selection { background: var(--brand); color: #fff; }
-  html { scroll-behavior: smooth; }
-  [id] { scroll-margin-top: 96px; }
-
-  /* ── Layout ── */
-  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
-
-  /* ── Article body typography ── */
-  .article-body p {
-    font-size: 17px; line-height: 1.7;
-    color: var(--text); margin: 0 0 22px;
-    letter-spacing: -0.003em;
-  }
-  .article-body p:last-child { margin-bottom: 0; }
-  .article-body h2 {
-    font-size: 26px; font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.2;
-    color: var(--text); margin: 56px 0 18px;
-    text-wrap: balance;
-  }
-  .article-body h2:first-child { margin-top: 0; }
-  .article-body h3 {
-    font-size: 20px; font-weight: 700;
-    letter-spacing: -0.015em; line-height: 1.25;
-    color: var(--text); margin: 36px 0 12px;
-    text-wrap: balance;
-  }
-  .article-body strong { font-weight: 700; color: var(--text); }
-  .article-body em { font-style: italic; color: var(--brand-text); }
-  .article-body a {
-    color: var(--brand-text); text-decoration: underline;
-    text-decoration-thickness: 1px; text-underline-offset: 3px;
-    text-decoration-color: color-mix(in oklab, var(--brand) 40%, transparent);
-    transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .article-body a:hover { text-decoration-color: var(--brand); }
-  .article-body ul, .article-body ol { padding-left: 22px; margin: 0 0 22px; }
-  .article-body li {
-    font-size: 17px; line-height: 1.7; color: var(--text);
-    margin-bottom: 8px; letter-spacing: -0.003em;
-  }
-  .article-body li::marker { color: var(--brand-text); }
-  .article-body code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.92em; background: var(--bg);
-    border: 1px solid var(--line); padding: 1px 6px;
-    border-radius: 3px; color: var(--brand-hover);
-  }
-
-  /* ── Nav ── */
-  .site-nav {
-    position: sticky; top: 0; z-index: 50;
-    background: color-mix(in oklab, var(--surface) 88%, transparent);
-    backdrop-filter: saturate(120%);
-    border-bottom: 1px solid var(--line); height: 64px;
-  }
-  .site-nav-inner {
-    max-width: 1200px; margin: 0 auto; height: 100%;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px;
-  }
-  .nav-logo {
-    text-decoration: none; font-size: 24px; font-weight: 700;
-    letter-spacing: -0.01em; color: var(--text); line-height: 1;
-  }
-  .nav-logo .dot { color: var(--brand-text); }
-  .nav-links { display: flex; align-items: center; gap: 28px; }
-  .nav-link {
-    font-size: 14px; font-weight: 500; color: var(--muted);
-    text-decoration: none;
-    transition: color 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .nav-link:hover { color: var(--text); }
-  .btn-nav {
-    background: var(--brand); color: #fff; border: 0;
-    padding: 10px 20px; font-size: 13px; font-weight: 600;
-    border-radius: 4px; cursor: pointer; font-family: inherit;
-    text-decoration: none; display: inline-block;
-    transition: background 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .btn-nav:hover { background: var(--brand-hover); }
-
-  /* ── Eyebrow ── */
-  .eyebrow {
-    display: inline-block; font-size: 11px; font-weight: 700;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-text);
-  }
-
-  /* ── Category pill ── */
-  .category-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--brand-wash); color: var(--brand-text); border: 1px solid var(--line);
-    padding: 4px 11px; border-radius: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; line-height: 1; white-space: nowrap;
-  }
-  .pill-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--brand); display: inline-block;
-  }
-
-  /* ── Article header ── */
-  .article-header { background: var(--surface); padding: 64px 0 48px; }
-  .breadcrumb { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; margin-bottom: 28px; }
-  .breadcrumb a { color: var(--muted); text-decoration: none; }
-  .breadcrumb .sep { margin: 0 8px; color: var(--line-2); }
-  .breadcrumb .cur { color: var(--brand-text); font-weight: 600; }
-  .article-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-  .article-readtime { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; }
-  .article-h1 {
-    font-size: clamp(36px, 4.8vw, 52px); font-weight: 700;
-    letter-spacing: -0.025em; line-height: 1.06;
-    color: var(--text); margin: 0 0 24px; text-wrap: balance;
-  }
-  .article-byline {
-    font-size: 13px; color: var(--muted); letter-spacing: -0.005em;
-    padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px;
-  }
-  .article-lede {
-    font-size: 20px; line-height: 1.55; color: var(--text);
-    margin: 0; letter-spacing: -0.005em; font-weight: 500; text-wrap: pretty;
-  }
-
-  /* ── Article section ── */
-  .article-section { background: var(--surface); padding: 8px 0 96px; }
-
-  /* ── Diagram wrapper ── */
-  .diagram-wrap { margin: 32px 0 56px; }
-  .diagram-label { margin-bottom: 16px; }
-
-  /* ── Signal architecture table ── */
-  .signal-table {
-    border: 1px solid var(--line); border-radius: 6px;
-    background: var(--surface); overflow: hidden;
-  }
-  .signal-head {
-    display: grid;
+/* this guide's own tables and diagrams (the v3 page chrome rules are gone) */
+.diagram-wrap {margin: 32px 0 56px;}
+.diagram-label {margin-bottom: 16px;}
+.signal-table {border: 1px solid var(--line); border-radius:20px;
+    background: var(--surface); overflow: hidden;}
+.signal-head {display: grid;
     grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
     background: var(--bg); border-bottom: 1px solid var(--line);
     padding: 14px 24px; gap: 16px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .signal-row {
-    display: grid;
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);}
+.signal-row {display: grid;
     grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
     padding: 18px 24px; border-bottom: 1px solid var(--line-soft);
-    align-items: start; gap: 16px;
-  }
-  .signal-row:last-child { border-bottom: none; }
-  .signal-row.highlight { background: var(--bg); }
-  .signal-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em; }
-  .signal-cell { font-size: 14px; color: var(--text-2); line-height: 1.5; }
-  .signal-status-on {
-    display: inline-flex; align-items: center; gap: 6px;
+    align-items: start; gap: 16px;}
+.signal-row:last-child {border-bottom: none;}
+.signal-row.highlight {background: var(--bg);}
+.signal-name {font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em;}
+.signal-cell {font-size: 14px; color: var(--text-2); line-height: 1.5;}
+.signal-status-on {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--ok);
     background: var(--ok-wash); border: 1px solid var(--ok-line);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-status-off {
-    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-status-off {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--muted);
     background: var(--off-wash); border: 1px solid var(--line-2);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-status-bad {
-    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-status-bad {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--bad);
     background: var(--bad-wash); border: 1px solid var(--bad-line);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-foot {
-    padding: 12px 24px; font-size: 12px; color: var(--muted);
-    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);
-  }
-
-  /* ── Comp table (diagnosis) ── */
-  .comp-table {
-    border: 1px solid var(--line); border-radius: 6px;
-    background: var(--surface); overflow: hidden;
-  }
-  .comp-head {
-    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-foot {padding: 12px 24px; font-size: 12px; color: var(--muted);
+    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);}
+.comp-table {border: 1px solid var(--line); border-radius:20px;
+    background: var(--surface); overflow: hidden;}
+.comp-head {display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
     background: var(--bg); border-bottom: 1px solid var(--line);
     padding: 14px 24px; gap: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .comp-row {
-    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);}
+.comp-row {display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
     padding: 16px 24px; border-bottom: 1px solid var(--line-soft);
-    align-items: start; gap: 20px;
-  }
-  .comp-row:last-child { border-bottom: none; }
-  .comp-symptom { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
-  .comp-cause { font-size: 14px; color: var(--text-2); line-height: 1.5; }
-  .comp-fix { font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5; }
-
-  /* ── Issue block ── */
-  .issue-block { margin: 56px 0 24px; }
-  .issue-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
-  .issue-num {
-    font-size: 14px; font-weight: 700; color: var(--brand-text);
-    letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
-  }
-  .issue-title {
-    font-size: 22px; font-weight: 700; letter-spacing: -0.018em;
-    line-height: 1.25; color: var(--text); margin: 0; text-wrap: balance;
-  }
-
-  /* ── 2-column card grid ── */
-  .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
-
-  /* ── Setup verdict cards ── */
-  .verdict-card { border-radius: 6px; background: var(--surface); overflow: hidden; }
-  .verdict-card-head {
-    padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .verdict-badge {
-    width: 18px; height: 18px; border-radius: 50%; color: #fff;
+    align-items: start; gap: 20px;}
+.comp-row:last-child {border-bottom: none;}
+.comp-symptom {font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45;}
+.comp-cause {font-size: 14px; color: var(--text-2); line-height: 1.5;}
+.comp-fix {font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5;}
+.cards-2col {display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.verdict-card {border-radius:20px; background: var(--surface); overflow: hidden;}
+.verdict-card-head {padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
+    display: flex; align-items: center; gap: 10px;}
+.verdict-badge {width: 18px; height: 18px; border-radius: 50%; color: #fff;
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; flex-shrink: 0;
-  }
-  .verdict-label {
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;
-  }
-  .verdict-card-body { padding: 20px 22px; }
-  .verdict-note { font-size: 13px; line-height: 1.55; color: var(--muted); }
-
-  /* ── Conversion action list ── */
-  .conv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .conv-item {
-    display: flex; align-items: center; justify-content: space-between;
+    font-size:12px; font-weight: 700; flex-shrink: 0;}
+.verdict-label {font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;}
+.verdict-card-body {padding: 20px 22px;}
+.verdict-note {font-size: 13px; line-height: 1.55; color: var(--muted);}
+.conv-list {display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;}
+.conv-item {display: flex; align-items: center; justify-content: space-between;
     gap: 10px; padding: 9px 12px; background: var(--surface-2);
-    border: 1px solid var(--line-soft); border-radius: 4px;
-  }
-  .conv-item-name { font-size: 13px; color: var(--text); letter-spacing: -0.005em; }
-  .conv-badge-on {
-    font-size: 10px; font-weight: 700; color: var(--ok);
+    border: 1px solid var(--line-soft); border-radius:20px;}
+.conv-item-name {font-size: 13px; color: var(--text); letter-spacing: -0.005em;}
+.conv-badge-on {font-size:12px; font-weight: 700; color: var(--ok);
     background: var(--ok-wash); border: 1px solid var(--ok-line);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-badge-off {
-    font-size: 10px; font-weight: 700; color: var(--muted);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-badge-off {font-size:12px; font-weight: 700; color: var(--muted);
     background: var(--off-wash); border: 1px solid var(--line-2);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-badge-bad {
-    font-size: 10px; font-weight: 700; color: var(--bad);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-badge-bad {font-size:12px; font-weight: 700; color: var(--bad);
     background: var(--bad-wash); border: 1px solid var(--bad-line);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-card-note {
-    border-top: 1px dashed var(--line); padding-top: 12px;
-    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;
-  }
-
-  /* ── 2026 dark callout ── */
-  .dark-callout-wrap { margin: 56px 0; }
-  .dark-callout {
-    background: var(--ink-panel);
-    border-radius: 6px; padding: 32px 36px; color: #fff;
-  }
-  .dark-callout-badge {
-    display: inline-flex; align-items: center; gap: 8px;
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-card-note {border-top: 1px dashed var(--line); padding-top: 12px;
+    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;}
+.dark-callout-wrap {margin: 56px 0;}
+.dark-callout {background: var(--ink-panel);
+    border-radius:20px; padding: 32px 36px; color: #fff;}
+.dark-callout-badge {display: inline-flex; align-items: center; gap: 8px;
     padding: 4px 11px; border-radius: 20px;
     background: color-mix(in oklab, var(--brand) 18%, transparent); border: 1px solid color-mix(in oklab, var(--brand) 40%, transparent);
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;
-  }
-  .dark-callout-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
-  .dark-callout h3 {
-    font-size: 22px; font-weight: 700; color: #fff;
-    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;
-  }
-  .dark-callout p { font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px; }
-  .dark-callout p:last-child { margin-bottom: 0; }
-  .dark-callout a { color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms; }
-  .dark-callout a:hover { text-decoration-color: var(--brand-on-ink); }
-
-  /* ── FAQ ── */
-  .faq-list {
-    border: 1px solid var(--line); border-radius: 6px;
-    overflow: hidden; background: var(--surface); margin: 8px 0 56px;
-  }
-  .faq-item { border-bottom: 1px solid var(--line-soft); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-btn {
-    width: 100%; text-align: left; background: transparent; border: 0;
-    cursor: pointer; padding: 20px 24px; font-family: inherit;
-    display: grid; grid-template-columns: 1fr 24px; gap: 16px; align-items: center;
-  }
-  .faq-q { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.008em; line-height: 1.4; }
-  .faq-icon {
-    font-size: 20px; color: var(--brand-text); line-height: 1; text-align: center;
-    transition: transform 180ms cubic-bezier(0.2,0,0,1); user-select: none;
-  }
-  .faq-icon.is-open { transform: rotate(45deg); }
-  .faq-answer { display: none; padding: 0 24px 22px; font-size: 15px; line-height: 1.65; color: var(--text-2); }
-  .faq-answer.is-open { display: block; }
-
-  /* ── Author block ── */
-  .author-block {
-    background: var(--bg); border: 1px solid var(--line);
-    border-radius: 6px; padding: 28px 32px;
-    display: grid; grid-template-columns: 64px 1fr;
-    gap: 22px; align-items: start; margin-top: 56px;
-  }
-  .author-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
-  .author-name { font-size: 16px; font-weight: 700; color: var(--text); }
-  .author-role { font-size: 13px; color: var(--muted); margin-left: 12px; }
-  .author-bio { font-size: 14px; line-height: 1.65; color: var(--text-2); margin: 8px 0 14px; max-width: 620px; }
-  .author-link { font-size: 13px; font-weight: 600; color: var(--brand-text); text-decoration: none; }
-  .author-link:hover { text-decoration: underline; }
-
-  /* ── Related section ── */
-  .related-section { background: var(--bg); padding: 72px 0 96px; }
-  .related-heading-wrap { border-left: 3px solid var(--brand); padding-left: 24px; margin-bottom: 28px; }
-  .related-heading {
-    font-size: clamp(24px, 2.6vw, 30px); font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.15;
-    color: var(--text); margin: 10px 0 0;
-  }
-  .related-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-  .related-card {
-    display: flex; flex-direction: column; text-decoration: none; color: inherit;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-    padding: 24px 26px; min-height: 220px;
-    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms, border-color 200ms;
-  }
-  .related-card:hover { transform: translateY(-3px); box-shadow: var(--e2); border-color: var(--brand); }
-  .related-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-  .related-card-readtime { font-size: 11px; color: var(--muted); letter-spacing: -0.005em; }
-  .related-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; color: var(--text); margin: 0 0 12px; text-wrap: pretty; }
-  .related-card-desc { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0 0 24px; }
-  .related-card-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--brand-text); letter-spacing: -0.005em; }
-
-  /* ── End CTA ── */
-  .end-cta { background: var(--ink-panel); padding: 96px 32px; }
-  .end-cta-inner { max-width: 880px; margin: 0 auto; text-align: center; }
-  .end-cta h2 {
-    font-size: clamp(36px, 4.6vw, 52px); font-weight: 700;
-    letter-spacing: -0.025em; line-height: 1.06; color: #fff;
-    margin: 20px 0 32px;
-  }
-  .end-cta h2 em { font-style: italic; color: var(--brand-text); }
-  .end-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn-cta-filled {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
-    background: var(--brand); border: 1.5px solid var(--brand);
-    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
-    transition: background 150ms;
-  }
-  .btn-cta-filled:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
-  .btn-cta-outline {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
-    background: transparent; border: 1.5px solid rgba(255,255,255,0.3);
-    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
-    transition: border-color 150ms;
-  }
-  .btn-cta-outline:hover { border-color: rgba(255,255,255,0.7); }
-  .end-cta-note { margin-top: 32px; font-size: 13px; color: var(--ink-muted); }
-
-  /* ── Footer ── */
-  .site-footer { background: var(--ink-panel); padding: 28px 32px; }
-  .site-footer-inner {
-    max-width: 1200px; margin: 0 auto;
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 12px;
-  }
-  .footer-left { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--ink-muted); }
-  .footer-logo { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; text-decoration: none; }
-  .footer-logo .dot { color: var(--brand-text); }
-  .footer-right { display: flex; gap: 20px; }
-  .footer-link { font-size: 12px; color: var(--ink-muted); text-decoration: none; }
-
-  /* ── Mobile nav ── */
-  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); line-height: 1; }
-  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
-  .ph-drawer.open { display: block; }
-  .ph-drawer-backdrop { position: absolute; inset: 0; background: var(--scrim); }
-  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: var(--surface); padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
-  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text); padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
-  .ph-drawer-link { font-size: 15px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line-soft); display: block; }
-  .ph-drawer-link:hover, .ph-drawer-link.active { color: var(--text); }
-  .ph-drawer-cta { margin-top: 16px; background: var(--brand); color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
-  .ph-drawer-cta:hover { background: var(--brand-hover); }
-
-  /* ── Responsive ── */
-  @media (max-width: 780px) {
-    .nav-links { display: none !important; }
-    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
-    .read-w { padding: 0 20px; }
-    .page-w  { padding: 0 20px; }
-    .cards-2col { grid-template-columns: 1fr; }
-    /* Tables: stacked card layout instead of horizontal scroll */
-    .signal-head, .comp-head { display: none !important; }
-    .signal-row, .comp-row {
-      display: flex !important; flex-direction: column !important;
-      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;
-    }
-    .signal-row > span[data-label]::before,
-    .comp-row > span[data-label]::before {
-      content: attr(data-label); display: block;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
-      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;
-    }
-    .author-block { grid-template-columns: 1fr; }
-    .author-role { margin-left: 0; flex-basis: 100%; margin-top: 2px; }
-    .article-h1 { font-size: 32px; }
-    /* Section heading: restore top margin when article-body follows article-body */
-    .article-body + .article-body { margin-top: 48px; }
-    /* Issue numbers: stack above title, larger on mobile */
-    .issue-header { flex-direction: column; gap: 4px; }
-    .issue-num { font-size: 32px; letter-spacing: -0.02em; }
-  }
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;}
+.dark-callout-badge-dot {width: 6px; height: 6px; border-radius: 50%; background: var(--brand);}
+.dark-callout h3 {font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;}
+.dark-callout p {font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px;}
+.dark-callout p:last-child {margin-bottom: 0;}
+.dark-callout a {color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms;}
+.dark-callout a:hover {text-decoration-color: var(--brand-on-ink);}
+@media (max-width: 780px) {
+.cards-2col {grid-template-columns: 1fr;}
+.signal-head, .comp-head {display: none !important;}
+.signal-row, .comp-row {display: flex !important; flex-direction: column !important;
+      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;}
+.signal-row > span[data-label]::before, .comp-row > span[data-label]::before {content: attr(data-label); display: block;
+      font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;}
+}
 </style>
-<link rel="stylesheet" href="/guides.css?v=3">
-<link rel="stylesheet" href="/footer.css?v=2">
 </head>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-<!-- ═══════════════════════════════════════════ NAV -->
-<header class="site-nav">
-  <div class="site-nav-inner">
-    <a href="/" class="nav-logo"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
-    <nav class="nav-links">
-      <a href="/#services" class="nav-link">Services</a>
-      <a href="/work/" class="nav-link">Work</a>
-      <a href="/about/" class="nav-link">About</a>
-      <a href="/guides/" class="nav-link">Insights</a>
-      <a href="/free-checks/" class="btn-nav">Free checks</a>
-    </nav>
-    <button class="ph-hamburger" onclick="document.getElementById('ph-art2-drawer').classList.add('open')" aria-label="Open menu">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="currentColor"/><rect y="10" width="22" height="2" rx="1" fill="currentColor"/><rect y="16" width="22" height="2" rx="1" fill="currentColor"/></svg>
-    </button>
+<body class="v5" data-page="article">
+<!-- v5:defs --><svg class="sr" width="0" height="0" aria-hidden="true"><symbol id="px-mark" viewBox="0 0 240 240"><path d="M240.0 120.0L239.9 160.3L239.6 173.1L239.1 182.4L238.3 189.9L237.4 196.2L236.3 201.7L234.9 206.6L233.3 210.9L231.5 214.9L229.4 218.4L227.1 221.6L224.5 224.5L221.6 227.1L218.4 229.4L214.9 231.5L210.9 233.3L206.6 234.9L201.7 236.3L196.2 237.4L189.9 238.3L182.4 239.1L173.1 239.6L160.3 239.9L120.0 240.0L79.7 239.9L66.9 239.6L57.6 239.1L50.1 238.3L43.8 237.4L38.3 236.3L33.4 234.9L29.1 233.3L25.1 231.5L21.6 229.4L18.4 227.1L15.5 224.5L12.9 221.6L10.6 218.4L8.5 214.9L6.7 210.9L5.1 206.6L3.7 201.7L2.6 196.2L1.7 189.9L0.9 182.4L0.4 173.1L0.1 160.3L0.0 120.0L0.1 79.7L0.4 66.9L0.9 57.6L1.7 50.1L2.6 43.8L3.7 38.3L5.1 33.4L6.7 29.1L8.5 25.1L10.6 21.6L12.9 18.4L15.5 15.5L18.4 12.9L21.6 10.6L25.1 8.5L29.1 6.7L33.4 5.1L38.3 3.7L43.8 2.6L50.1 1.7L57.6 0.9L66.9 0.4L79.7 0.1L120.0 0.0L160.3 0.1L173.1 0.4L182.4 0.9L189.9 1.7L196.2 2.6L201.7 3.7L206.6 5.1L210.9 6.7L214.9 8.5L218.4 10.6L221.6 12.9L224.5 15.5L227.1 18.4L229.4 21.6L231.5 25.1L233.3 29.1L234.9 33.4L236.3 38.3L237.4 43.8L238.3 50.1L239.1 57.6L239.6 66.9L239.9 79.7Z" fill="#985830"/><g transform="translate(40 40) scale(1) translate(-40 -40)"><g fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 124C88 140 88 156 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/></g><circle cx="88" cy="76" r="14" fill="#FFFFFF"/></g></symbol></svg><!-- /v5:defs -->
+<!-- v5:header --><header class="vhd">
+  <div class="vhd-in">
+    <a class="vhd-logo" href="/" aria-label="Phillips. home"><svg class="mark" viewBox="0 0 240 240" width="32" height="32" aria-hidden="true"><use href="#px-mark"/></svg><span>Phillips.</span></a>
+    <nav class="vhd-nav" aria-label="Main"><a class="vb vb-p" href="/free-checks/">Free checks</a></nav>
   </div>
-</header>
+</header><!-- /v5:header -->
 <main id="main">
-<div id="ph-art2-drawer" class="ph-drawer">
-  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')"></div>
-  <div class="ph-drawer-panel">
-    <button class="ph-drawer-close" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')">&#x2715;</button>
-    <a href="/#services" class="ph-drawer-link">Services</a>
-    <a href="/work/" class="ph-drawer-link">Work</a>
-    <a href="/about/" class="ph-drawer-link">About</a>
-    <a href="/guides/" class="ph-drawer-link active">Insights</a>
-    <a href="/free-checks/" class="ph-drawer-cta">Free checks</a>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════ ARTICLE HEADER -->
-<header class="article-header">
-  <div class="read-w">
-    <div class="breadcrumb">
-      <a href="/guides/">Guides</a>
-      <span class="sep">/</span>
-      <span class="cur">Tracking</span>
+<!-- This guide on v5 (Figma "PX Guide"). The words, tables and diagrams are the live ones; only the shell changed. Diagrams sit in figure.vdiagram blocks with the guide's own styles below. -->
+<header class="vh vd-hero">
+  <div class="v-wrap">
+    <!-- v5:crumb --><nav class="vd-crumb" aria-label="Breadcrumb"><a href="/guides/">Insights</a><span aria-hidden="true">/</span><span class="here">GA4 imports</span></nav><!-- /v5:crumb -->
+    <div class="vh-grid">
+    <div class="vh-text">
+      <h1 class="v-h1">Why GA4 Imports Can Break Smart Bidding</h1>
+      <p class="v-lede">Smart Bidding can use conversions from GA4 or a native Google Ads tag. Problems arise when the campaign counts the same purchase twice, bids towards engagement events you only wanted to report on, or relies on an action that poorly measures the outcome you want.</p>
+      <div class="v-actions"><a class="vb vb-p" href="/google-ads-audit">Check my Google Ads</a></div><p class="v-fine vbyline">Lewis Phillips · 27 May 2026 · Updated 21 Nov 2026 · 11 min read</p>
     </div>
-    <div class="article-meta">
-      <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-      <span class="article-readtime">11 min read</span>
-    </div>
-    <h1 class="article-h1">Why GA4 Imports Can Break Smart Bidding</h1>
-    <div class="article-byline">Lewis Phillips &middot; 27 May 2026 &middot; Updated 21 Nov 2026 &middot; 11 min read</div>
-    <p class="article-lede">Smart Bidding can use conversions from GA4 or a native Google Ads tag. Problems arise when the campaign counts the same purchase twice, bids towards engagement events you only wanted to report on, or relies on an action that poorly measures the outcome you want.</p>
-
-    <!-- Quick Answer -->
-    <div style="margin-top:32px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:20px 24px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">Quick answer</div>
-      <p style="font-size:16px;line-height:1.6;color:var(--text);margin:0;">Use one bidding action per outcome. A <strong>native Google Ads purchase or lead tag</strong> is usually the better Primary action because it records the event directly in Google Ads&rsquo; measurement path. If a GA4 import tracks the same outcome, set it to <strong>Secondary action</strong> for reporting and keep it out of custom goals used for bidding.</p>
+    <figure class="vh-photo shot"><img src="/images/shots/ads-check-trend.jpg" srcset="/images/shots/ads-check-trend.jpg 1100w" sizes="(max-width:960px) 92vw, 420px" width="1100" height="895" alt="Thirteen months of spend and cost per conversion, from a Google Ads Check report for a made-up account" fetchpriority="high"></figure>
     </div>
   </div>
 </header>
-
-<!-- ═══════════════════════════════════════════ ARTICLE BODY -->
-<section class="article-section">
-  <div class="read-w">
-
-    <div class="article-body">
-      <h2>What Smart Bidding actually trains on</h2>
-      <p>Smart Bidding (Target CPA, Target ROAS, Maximise Conversions, Maximise Conversion Value) learns by identifying patterns in the auction signals that preceded conversions. It needs conversions to learn from. The accuracy of those conversions as a signal is the most important variable in whether the algorithm performs.</p>
+<section class="v-sec vp-sec vp-gap" id="quick-answer" data-reading>
+  <div class="v-wrap">
+    <div class="vp solo" data-v5>
+      <div class="vp-text">
+        <h2 class="v-h2">Quick answer</h2>
+        <p class="v-body">Use one bidding action per outcome. A <strong>native Google Ads purchase or lead tag</strong> is usually the better Primary action because it records the event directly in Google Ads’ measurement path. If a GA4 import tracks the same outcome, set it to <strong>Secondary action</strong> for reporting and keep it out of custom goals used for bidding.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">What Smart Bidding actually trains on</h2>
+    <p>Smart Bidding (Target CPA, Target ROAS, Maximise Conversions, Maximise Conversion Value) learns by identifying patterns in the auction signals that preceded conversions. It needs conversions to learn from. The accuracy of those conversions as a signal is the most important variable in whether the algorithm performs.</p>
       <p>Under <strong>Action optimisation</strong>, Primary actions count in Conversions and guide bidding when the campaign uses their standard goal through account-default or campaign-specific settings. Secondary actions normally appear in All conversions. A campaign using a custom goal bids towards every action in that goal, including Secondary actions.</p>
       <p>Linking GA4 to Google Ads and choosing which events to use as conversion actions are separate steps. Actions created through the Analytics interface start as Secondary. Check or change their Action optimisation setting in Google Ads.</p>
-    </div>
-
-    <!-- Signal architecture table -->
-    <div class="diagram-wrap">
+    <figure class="vdiagram" data-drawing><div class="diagram-wrap">
       <div class="diagram-label"><span class="eyebrow">Correct conversion architecture</span></div>
       <div class="signal-table">
         <div class="signal-head">
@@ -657,54 +279,45 @@
         </div>
         <div class="signal-foot">This setup gives bidding one action for each purchase. The GA4 import remains available for reporting and attribution comparison.</div>
       </div>
-    </div>
-
-    <!-- Exception callout -->
-    <div style="background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:0 6px 6px 0;padding:20px 24px;margin:0 0 40px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">When can a GA4 import be Primary?</div>
+    </div></figure>
+    <figure class="vdiagram" data-drawing><div style="background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:0 6px 6px 0;padding:20px 24px;margin:0 0 40px;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">When can a GA4 import be Primary?</div>
       <p style="font-size:15px;line-height:1.65;color:var(--text-2);margin:0;">A GA4 import can be Primary if it reliably measures the outcome the campaign should drive. If you switch to a native tag or an offline conversion import for the same outcome, confirm the replacement records correctly before moving the GA4 import to Secondary.</p>
-    </div>
-
-    <!-- Native tags vs GA4 imports -->
-    <div class="article-body">
-      <h2>Native tags vs GA4 imports: what the difference actually is</h2>
-      <p>Configure the native tag to fire when the purchase completes and send the transaction ID and order value with the event. Google Ads receives the conversion directly within its own measurement path and handles attribution to the earlier ad interaction separately.</p>
-      <p>A GA4 conversion reaches Google Ads after GA4 collects and processes the event. The native tag avoids GA4&rsquo;s attribution step and processing delays.</p>
+    </div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Native tags vs GA4 imports: what the difference actually is</h2>
+    <p>Configure the native tag to fire when the purchase completes and send the transaction ID and order value with the event. Google Ads receives the conversion directly within its own measurement path and handles attribution to the earlier ad interaction separately.</p>
+      <p>A GA4 conversion reaches Google Ads after GA4 collects and processes the event. The native tag avoids GA4’s attribution step and processing delays.</p>
       <p>Both Google Ads website conversions and GA4-based conversions can combine observed and modelled data. The totals can differ because the two sources collect and attribute events differently. Smart Bidding can use either source when the campaign bids towards that action.</p>
-      <p>GA4 is useful for full-funnel reporting, attribution comparison and building audiences. When both sources track the same purchase, use one for bidding so a single order counts once towards the campaign&rsquo;s goals.</p>
-    </div>
-
-    <!-- Three problems intro -->
-    <div class="article-body">
-      <h2>Three ways GA4 imports can distort Smart Bidding</h2>
-      <p>Check what each action measures, whether it duplicates another action and whether the campaign uses it for bidding.</p>
-    </div>
-
-    <!-- Issue 01 -->
-    <div class="issue-block" id="problem-1">
-      <div class="issue-header">
-        <span class="issue-num">01</span>
-        <h3 class="issue-title">GA4 import set as Primary with no native tag</h3>
-      </div>
-      <div class="article-body">
-        <p>An action created through GA4 starts as Secondary. The configuration to check is where someone has made the import Primary and the campaign relies on it for purchase measurement.</p>
+      <p>GA4 is useful for full-funnel reporting, attribution comparison and building audiences. When both sources track the same purchase, use one for bidding so a single order counts once towards the campaign’s goals.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Three ways GA4 imports can distort Smart Bidding</h2>
+    <p>Check what each action measures, whether it duplicates another action and whether the campaign uses it for bidding.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="problem-1" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">01 GA4 import set as Primary with no native tag</h2>
+    <p>An action created through GA4 starts as Secondary. The configuration to check is where someone has made the import Primary and the campaign relies on it for purchase measurement.</p>
         <p>Check that the import records completed orders and passes the correct values. Compare the underlying purchase events with shop records and account for differences in attribution and reporting dates when reviewing Google Ads totals.</p>
         <p>If the campaign needs a more direct purchase measurement path, validate a native tag before switching the bidding goal.</p>
-      </div>
-    </div>
-
-    <!-- Setup cards: wrong vs right -->
-    <div class="cards-2col">
+    <figure class="vdiagram" data-drawing><div class="cards-2col">
       <div class="verdict-card" style="border:1px solid var(--bad-line);">
         <div class="verdict-card-head" style="background:var(--bad-wash);border-bottom-color:var(--bad-line);">
-          <span class="verdict-badge" style="background:var(--bad-dot);">&#x2715;</span>
+          <span class="verdict-badge" style="background:var(--bad-dot);">✕</span>
           <span class="verdict-label" style="color:var(--bad);">GA4-only setup</span>
         </div>
         <div class="verdict-card-body">
           <div class="conv-list">
             <div class="conv-item">
               <span class="conv-item-name">GA4: Purchase (imported)</span>
-              <span class="conv-badge-bad">Primary &uarr;</span>
+              <span class="conv-badge-bad">Primary ↑</span>
             </div>
           </div>
           <div class="conv-card-note">The campaign bids towards the GA4 purchase action. Check that the import reliably measures completed purchases and their values.</div>
@@ -712,14 +325,14 @@
       </div>
       <div class="verdict-card" style="border:1px solid var(--ok-line);">
         <div class="verdict-card-head" style="background:var(--ok-wash);border-bottom-color:var(--ok-line);">
-          <span class="verdict-badge" style="background:var(--ok-dot);">&#x2713;</span>
+          <span class="verdict-badge" style="background:var(--ok-dot);">✓</span>
           <span class="verdict-label" style="color:var(--ok);">Correct setup</span>
         </div>
         <div class="verdict-card-body">
           <div class="conv-list">
             <div class="conv-item">
               <span class="conv-item-name">Google Ads tag: Purchase (GTM)</span>
-              <span class="conv-badge-on">Primary &uarr;</span>
+              <span class="conv-badge-on">Primary ↑</span>
             </div>
             <div class="conv-item">
               <span class="conv-item-name">GA4: Purchase (imported)</span>
@@ -729,41 +342,30 @@
           <div class="conv-card-note">The campaign bids towards the Google Ads purchase action. The duplicate GA4 import stays in All conversions for reporting and attribution comparison.</div>
         </div>
       </div>
-    </div>
-
-    <!-- Issue 02 -->
-    <div class="issue-block" id="problem-2">
-      <div class="issue-header">
-        <span class="issue-num">02</span>
-        <h3 class="issue-title">Both GA4 import and native tag set as Primary (double counting)</h3>
-      </div>
-      <div class="article-body">
-        <p>A native Google Ads action and a GA4 import can both record the same purchase. If both are Primary and their standard goal is in use, the same purchase can count twice. A custom goal can also cause duplication if it includes both actions.</p>
-        <p>If both actions count the same purchase towards the campaign&rsquo;s goals, reported conversions rise and reported CPA falls at the same spend. That can distort bidding.</p>
-        <p>Identifying this: compare the Conversions column in Google Ads against actual order volume in your ecommerce platform for the same date range. Some natural variance exists (cross-device journeys, different attribution windows), but in my experience, if Google Ads shows far more conversions than you have orders, it&rsquo;s usually counting some of them twice. You can also check by looking at the Source column in your Conversions table: if you see both <code>Google Analytics</code> and <code>Website</code> for the same event category, both may be Primary.</p>
-      </div>
-    </div>
-
-    <!-- Issue 03 -->
-    <div class="issue-block" id="problem-3">
-      <div class="issue-header">
-        <span class="issue-num">03</span>
-        <h3 class="issue-title">Non-purchase events included as Primary conversions</h3>
-      </div>
-      <div class="article-body">
-        <p>The hardest to catch. A campaign can bid towards imported engagement events (<code>view_item</code>, <code>add_to_cart</code>, <code>begin_checkout</code>) alongside purchases. If it does, the Conversions column mixes purchases with earlier steps. Count-based bidding works towards conversion volume, while value-based bidding can distinguish between actions by the values they report.</p>
+    </div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="problem-2" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">02 Both GA4 import and native tag set as Primary (double counting)</h2>
+    <p>A native Google Ads action and a GA4 import can both record the same purchase. If both are Primary and their standard goal is in use, the same purchase can count twice. A custom goal can also cause duplication if it includes both actions.</p>
+        <p>If both actions count the same purchase towards the campaign’s goals, reported conversions rise and reported CPA falls at the same spend. That can distort bidding.</p>
+        <p>Identifying this: compare the Conversions column in Google Ads against actual order volume in your ecommerce platform for the same date range. Some natural variance exists (cross-device journeys, different attribution windows), but in my experience, if Google Ads shows far more conversions than you have orders, it’s usually counting some of them twice. You can also check by looking at the Source column in your Conversions table: if you see both <code>Google Analytics</code> and <code>Website</code> for the same event category, both may be Primary.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="problem-3" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">03 Non-purchase events included as Primary conversions</h2>
+    <p>The hardest to catch. A campaign can bid towards imported engagement events (<code>view_item</code>, <code>add_to_cart</code>, <code>begin_checkout</code>) alongside purchases. If it does, the Conversions column mixes purchases with earlier steps. Count-based bidding works towards conversion volume, while value-based bidding can distinguish between actions by the values they report.</p>
         <p>If the campaign bids towards <code>view_item</code> as well as purchases, product views can dominate the reported conversion count. Segment the report by conversion action to see the actual mix.</p>
-        <p>Go to Goals &rarr; Conversions &rarr; Summary and check Action optimisation. Keep the actions that measure the outcomes the campaign is meant to drive. Set engagement actions you only want to report on to Secondary action and exclude them from custom goals used for bidding.</p>
-      </div>
-    </div>
-
-    <!-- Diagnosis table -->
-    <div class="article-body">
-      <h2>How to diagnose the problem in your account</h2>
-      <p>The quickest way to identify which version you have is to audit the Conversions table directly. Navigate to <strong>Goals &rarr; Conversions &rarr; Summary</strong>. Check each action&rsquo;s source and Action optimisation setting, then review which goals each campaign uses.</p>
-    </div>
-
-    <div class="diagram-wrap">
+        <p>Go to Goals → Conversions → Summary and check Action optimisation. Keep the actions that measure the outcomes the campaign is meant to drive. Set engagement actions you only want to report on to Secondary action and exclude them from custom goals used for bidding.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">How to diagnose the problem in your account</h2>
+    <p>The quickest way to identify which version you have is to audit the Conversions table directly. Navigate to <strong>Goals → Conversions → Summary</strong>. Check each action’s source and Action optimisation setting, then review which goals each campaign uses.</p>
+    <figure class="vdiagram" data-drawing><div class="diagram-wrap">
       <div class="diagram-label"><span class="eyebrow">Diagnostic reference</span></div>
       <div class="comp-table">
         <div class="comp-head">
@@ -793,227 +395,102 @@
         </div>
         <div class="comp-row">
           <span class="comp-symptom">Conversion column shows only one GA4 import and no other actions</span>
-          <span class="comp-cause">One GA4 action supplies the campaign&rsquo;s reported conversions</span>
+          <span class="comp-cause">One GA4 action supplies the campaign’s reported conversions</span>
           <span class="comp-fix">Check purchase counts and values before deciding whether to switch</span>
         </div>
       </div>
-    </div>
-
-    <!-- The fix heading -->
-    <div class="article-body">
-      <h2>How to fix it</h2>
-      <p>Keep a reliable bidding action in place while making changes. If you need a replacement action, validate it before switching. Enhanced Conversions can improve measurement coverage.</p>
-    </div>
-
-    <!-- Fix 01 -->
-    <div class="issue-block" id="fix-1">
-      <div class="issue-header">
-        <span class="issue-num">01</span>
-        <h3 class="issue-title">Set duplicate GA4 imports to Secondary</h3>
-      </div>
-      <div class="article-body">
-        <p>Open <strong>Goals &rarr; Conversions &rarr; Summary</strong> in Google Ads. Select the duplicate GA4 action, choose <strong>Edit settings</strong> and set Action optimisation to Secondary action. Remove it from any custom goal where it would duplicate the bidding action you are keeping.</p>
+    </div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">How to fix it</h2>
+    <p>Keep a reliable bidding action in place while making changes. If you need a replacement action, validate it before switching. Enhanced Conversions can improve measurement coverage.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="fix-1" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">01 Set duplicate GA4 imports to Secondary</h2>
+    <p>Open <strong>Goals → Conversions → Summary</strong> in Google Ads. Select the duplicate GA4 action, choose <strong>Edit settings</strong> and set Action optimisation to Secondary action. Remove it from any custom goal where it would duplicate the bidding action you are keeping.</p>
         <p>Do the same for events you only want to report on (<code>add_to_cart</code>, <code>view_item</code>, <code>begin_checkout</code>, <code>sign_up</code>). They still record and appear in All conversions. Check custom goals too, since they can include Secondary actions in bidding.</p>
-        <p><strong>Important:</strong> if the GA4 import is the campaign&rsquo;s only bidding action and you plan to replace it, implement the native tag first (step 02) and confirm it records correctly. Switch the campaign to the replacement action and move the duplicate import to Secondary as part of the same change.</p>
-      </div>
-    </div>
-
-    <!-- Fix 02 -->
-    <div class="issue-block" id="fix-2">
-      <div class="issue-header">
-        <span class="issue-num">02</span>
-        <h3 class="issue-title">Implement a native Google Ads conversion tag via GTM</h3>
-      </div>
-      <div class="article-body">
-        <p>In Google Ads, open <strong>Goals &rarr; Conversions &rarr; Summary</strong>, select <strong>+ Create conversion action</strong>, then choose <strong>Conversions on a website</strong>. Set the category to Purchase, enter a conversion name, and set the value to use a variable (dynamic conversion value). Note the Conversion ID and Conversion Label that are generated.</p>
+        <p><strong>Important:</strong> if the GA4 import is the campaign’s only bidding action and you plan to replace it, implement the native tag first (step 02) and confirm it records correctly. Switch the campaign to the replacement action and move the duplicate import to Secondary as part of the same change.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="fix-2" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">02 Implement a native Google Ads conversion tag via GTM</h2>
+    <p>In Google Ads, open <strong>Goals → Conversions → Summary</strong>, select <strong>+ Create conversion action</strong>, then choose <strong>Conversions on a website</strong>. Set the category to Purchase, enter a conversion name, and set the value to use a variable (dynamic conversion value). Note the Conversion ID and Conversion Label that are generated.</p>
         <p>In GTM, create a new tag of type <strong>Google Ads Conversion Tracking</strong>. Enter the Conversion ID and Conversion Label from the step above. Set the Conversion Value to your transaction revenue data layer variable (e.g. <code>{{DLV - transaction_revenue}}</code>). Map Transaction ID to your unique order ID variable. Set the tag to fire when the purchase completes.</p>
         <p>Once published, the tag sends the transaction ID and value when the purchase completes. Google Ads handles attribution to the earlier ad interaction separately. Set Action optimisation to Primary action and include its standard goal in the campaigns that should bid towards purchases.</p>
         <p>For lead generation accounts, the same principle applies: optimise toward the deepest reliable macro-conversion available. A native form-submission tag is usually the right starting point. If CRM data is available and GCLID matching is reliable, a clean offline qualified-lead import can be a stronger Primary signal than a form-submit alone, because it reflects lead quality, not just lead volume. If a GA4 form-submit action duplicates the lead outcome you use for bidding, keep it Secondary for reporting and exclude it from any custom bidding goal.</p>
-        <p>For a step-by-step walkthrough of the full conversion tracking setup and common errors, see the <a href="/guides/fix-google-ads-conversion-tracking/">conversion tracking fix guide</a>.</p>
-      </div>
-    </div>
-
-    <!-- Fix 03 -->
-    <div class="issue-block" id="fix-3">
-      <div class="issue-header">
-        <span class="issue-num">03</span>
-        <h3 class="issue-title">Enable Enhanced Conversions on the native tag</h3>
-      </div>
-      <div class="article-body">
-        <p>Enhanced Conversions supplements the native tag by sending a hashed first-party data signal (typically a hashed email address from the purchase confirmation page) alongside the conversion event. When Google can match that hash to a signed-in Google account, it can attribute conversions that would otherwise be missed due to cookie restrictions, ITP, or iOS privacy controls.</p>
-        <p>Go to <strong>Goals &rarr; Settings</strong> and turn on Enhanced conversions, then finish the setup in Google Tag Manager. Configure GTM to collect eligible customer data, such as the customer&rsquo;s email address. GTM hashes the data using SHA-256 before sending it.</p>
+        <p>For a step-by-step walkthrough of the full conversion tracking setup and common errors, see the conversion tracking fix guide.</p><p class="vgo-row"><a class="v-go" href="/guides/fix-google-ads-conversion-tracking/">Conversion tracking fix guide <span aria-hidden="true">→</span></a></p>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="fix-3" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">03 Enable Enhanced Conversions on the native tag</h2>
+    <p>Enhanced Conversions supplements the native tag by sending a hashed first-party data signal (typically a hashed email address from the purchase confirmation page) alongside the conversion event. When Google can match that hash to a signed-in Google account, it can attribute conversions that would otherwise be missed due to cookie restrictions, ITP, or iOS privacy controls.</p>
+        <p>Go to <strong>Goals → Settings</strong> and turn on Enhanced conversions, then finish the setup in Google Tag Manager. Configure GTM to collect eligible customer data, such as the customer’s email address. GTM hashes the data using SHA-256 before sending it.</p>
         <p>Enhanced Conversions supplements the native tag and can improve attribution where cookies are restricted.</p>
-      </div>
-    </div>
-
-    <!-- What to expect -->
-    <div class="article-body">
-      <h2>What to expect after the fix</h2>
-      <p>Smart Bidding retrains when the conversion signal changes. After setting the GA4 import to Secondary and establishing the native tag as Primary, expect a learning phase. During this period, Smart Bidding is re-calibrating to the new signal: bids may fluctuate and conversion volume may look different from the previous baseline.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">What to expect after the fix</h2>
+    <p>Smart Bidding retrains when the conversion signal changes. After setting the GA4 import to Secondary and establishing the native tag as Primary, expect a learning phase. During this period, Smart Bidding is re-calibrating to the new signal: bids may fluctuate and conversion volume may look different from the previous baseline.</p>
       <p>The Conversions column will likely report fewer conversions than before if you have removed micro-conversions from the Primary set. That is the number correcting to reflect actual purchases rather than a mix of purchases and engagement events. The All Conversions column will continue to show the full picture.</p>
-      <p>Reported CPA or ROAS can shift when you change which actions count towards the campaign&rsquo;s goals. Allow one to two conversion cycles for bidding to adjust and compare campaign reporting with actual orders or qualified leads before judging performance.</p>
-    </div>
-
-    <!-- 2026 context -->
-    <div class="dark-callout-wrap">
+      <p>Reported CPA or ROAS can shift when you change which actions count towards the campaign’s goals. Allow one to two conversion cycles for bidding to adjust and compare campaign reporting with actual orders or qualified leads before judging performance.</p>
+    <figure class="vdiagram" data-drawing><div class="dark-callout-wrap">
       <div class="dark-callout">
-        <div class="dark-callout-badge">
-          <span class="dark-callout-badge-dot"></span>
-          2026 Context
-        </div>
+        
         <h3>Consent Mode and the modelling gap</h3>
         <p>Where eligible, GA4 uses behavioural modelling to estimate otherwise unobservable user behaviour and key-event modelling to estimate attribution when it cannot observe the link directly. Google Ads can also model conversions to cover eligible gaps, including those related to consent or cross-device activity.</p>
-        <p>Consent affects what each source can observe directly and what it can model. For Google Ads bidding, the practical advantage of a native tag is that it records the event in Google Ads&rsquo; own measurement path and avoids GA4&rsquo;s attribution and processing delays. Enhanced Conversions can improve measurement coverage where eligible first-party data is available. For more on tracking architecture and common gaps, the <a href="/guides/fix-google-ads-conversion-tracking/">conversion tracking guide</a> covers the full diagnostic.</p>
+        <p>Consent affects what each source can observe directly and what it can model. For Google Ads bidding, the practical advantage of a native tag is that it records the event in Google Ads’ own measurement path and avoids GA4’s attribution and processing delays. Enhanced Conversions can improve measurement coverage where eligible first-party data is available. For more on tracking architecture and common gaps, the conversion tracking guide covers the full diagnostic.</p><p class="vgo-row"><a class="v-go" href="/guides/fix-google-ads-conversion-tracking/">Conversion tracking guide <span aria-hidden="true">→</span></a></p>
       </div>
-    </div>
-
-    <!-- FAQ heading -->
-    <div class="article-body">
-      <h2>FAQ</h2>
-    </div>
-
-    <!-- FAQ accordion -->
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="true">
-          <span class="faq-q">What does Action optimisation mean in Google Ads?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Action optimisation sets a conversion action to Primary action or Secondary action. Primary actions count in Conversions and guide bidding when the campaign uses their standard goal through account-default or campaign-specific settings. Secondary actions normally appear in All conversions. A campaign using a custom goal bids towards every action in that goal, including Secondary actions.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">Will making GA4 imports Secondary hurt my conversion reporting?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">The import continues to record and remains visible in All conversions. For standard goals, the action drops out of the Conversions column and Smart Bidding stops bidding towards it. If a campaign uses a custom goal that includes the import, remove it from that goal too if you want bidding to stop using it.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">How do I know if Smart Bidding is training on the right signal?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Go to Goals &rarr; Conversions &rarr; Summary and check Action optimisation. Then check which goals the campaign uses, including any custom goal. Choose one reliable bidding action per outcome. If a native Google Ads tag and a GA4 import record the same purchase, usually bid towards the native action and keep the import for reporting.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">What is Enhanced Conversions and do I need it?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Enhanced Conversions supplements your Google Ads tag with eligible first-party data, such as a customer email address. Google Tag Manager hashes the data using SHA-256 before sending it. If Google can match the hash to a signed-in Google account, it can help attribute conversions that cookie-based measurement might miss. For most ecommerce accounts, it is worth enabling when setting up the native tag.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">My GA4 conversion count is much higher than my actual orders. Why?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Check whether the Google Ads total includes engagement events such as <code>view_item</code>, <code>add_to_cart</code> or <code>begin_checkout</code>, or counts the same purchase through two sources. Go to Goals &rarr; Conversions &rarr; Summary and check the totals by conversion action. If the campaign is meant to drive purchases, use one reliable purchase action for bidding and keep engagement events out of its bidding goals.</div>
-      </div>
-    </div>
-
-    <!-- Author block -->
-    <div class="author-block">
-      <img src="/images/profile.jpg" alt="Lewis Phillips" class="author-avatar">
-      <div>
-        <div style="display:flex;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;">
-          <span class="author-name">Lewis Phillips</span>
-          <span class="author-role">Performance marketer &middot; 11 years</span>
-        </div>
-        <p class="author-bio">I audit Google Ads accounts across ecommerce and lead generation. When I review conversion tracking, I check which outcomes each campaign bids towards and whether it counts any of them twice.</p>
-        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="author-link">LinkedIn &rarr;</a>
-      </div>
-    </div>
-
-  </div><!-- /read-w -->
+    </div></figure>
+  </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ RELATED -->
-<section class="related-section">
-  <div class="page-w">
-    <div class="related-heading-wrap">
-      <span class="eyebrow">Related guides</span>
-      <h2 class="related-heading">Keep reading.</h2>
-    </div>
-    <div class="related-cards">
-      <a href="/guides/fix-google-ads-conversion-tracking/" class="related-card">
-        <div class="related-card-meta">
-          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-          <span class="related-card-readtime">12 min read</span>
-        </div>
-        <h3 class="related-card-title">How to Fix Google Ads Conversion Tracking</h3>
-        <p class="related-card-desc">The seven most common causes of broken conversion tracking: inactive actions, duplicate counting, wrong primary/secondary setup and more.</p>
-        <span class="related-card-cta">Read guide &rarr;</span>
-      </a>
-      <a href="/guides/improve-google-ads-quality-score/" class="related-card">
-        <div class="related-card-meta">
-          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-          <span class="related-card-readtime">10 min read</span>
-        </div>
-        <h3 class="related-card-title">Google Ads Quality Score Low? How to Improve It</h3>
-        <p class="related-card-desc">Use Quality Score to diagnose issues with expected click-through rate, ad relevance and landing page experience, and see what to improve for each.</p>
-        <span class="related-card-cta">Read guide &rarr;</span>
-      </a>
+<section class="v-sec" id="faq" data-reading>
+  <div class="v-wrap vq">
+    <h2 class="v-h2" data-v5>Questions</h2>
+    <div data-v5>
+      <details><summary>What does Action optimisation mean in Google Ads?</summary><p>Action optimisation sets a conversion action to Primary action or Secondary action. Primary actions count in Conversions and guide bidding when the campaign uses their standard goal through account-default or campaign-specific settings. Secondary actions normally appear in All conversions. A campaign using a custom goal bids towards every action in that goal, including Secondary actions.</p></details>
+      <details><summary>Will making GA4 imports Secondary hurt my conversion reporting?</summary><p>The import continues to record and remains visible in All conversions. For standard goals, the action drops out of the Conversions column and Smart Bidding stops bidding towards it. If a campaign uses a custom goal that includes the import, remove it from that goal too if you want bidding to stop using it.</p></details>
+      <details><summary>How do I know if Smart Bidding is training on the right signal?</summary><p>Go to Goals → Conversions → Summary and check Action optimisation. Then check which goals the campaign uses, including any custom goal. Choose one reliable bidding action per outcome. If a native Google Ads tag and a GA4 import record the same purchase, usually bid towards the native action and keep the import for reporting.</p></details>
+      <details><summary>What is Enhanced Conversions and do I need it?</summary><p>Enhanced Conversions supplements your Google Ads tag with eligible first-party data, such as a customer email address. Google Tag Manager hashes the data using SHA-256 before sending it. If Google can match the hash to a signed-in Google account, it can help attribute conversions that cookie-based measurement might miss. For most ecommerce accounts, it is worth enabling when setting up the native tag.</p></details>
+      <details><summary>My GA4 conversion count is much higher than my actual orders. Why?</summary><p>Check whether the Google Ads total includes engagement events such as <code>view_item</code>, <code>add_to_cart</code> or <code>begin_checkout</code>, or counts the same purchase through two sources. Go to Goals → Conversions → Summary and check the totals by conversion action. If the campaign is meant to drive purchases, use one reliable purchase action for bidding and keep engagement events out of its bidding goals.</p></details>
     </div>
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ END CTA -->
-<section class="end-cta">
-  <div class="end-cta-inner">
-    <span class="eyebrow" style="color:var(--brand-on-ink);">Want a second pair of eyes?</span>
-    <h2>Ask me <em>about your account.</em></h2>
-    <div class="end-cta-btns">
-      <a href="/#contact" class="btn-cta-filled">Ask me a question &rarr;</a>
-      <a href="/google-ads/" class="btn-cta-outline">Google Ads management &rarr;</a>
+<section class="v-sec tight bg-stone" id="keep-reading">
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Keep reading.</h2>
+    <nav class="vguides" aria-label="Related guides"><a class="v-go" href="/guides/fix-google-ads-conversion-tracking/">How to Fix Google Ads Conversion Tracking <span aria-hidden="true">→</span></a><a class="v-go" href="/guides/improve-google-ads-quality-score/">Google Ads Quality Score Low? How to Improve It <span aria-hidden="true">→</span></a></nav>
+  </div>
+</section>
+<!-- v5:brief --><section class="v-sec" id="brief">
+  <div class="v-wrap vf-grid">
+    <div data-v5>
+      <h2 class="v-h2" id="brief-title">What changed in marketing last week, every Monday.</h2>
+      <p class="v-body">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account.</p>
     </div>
-    <div class="end-cta-note">Free &middot; No obligation &middot; I reply myself</div>
-    <div class="end-cta-note">Or run the <a href="/google-ads-audit" style="color:inherit;text-decoration:underline">free Google Ads Check</a> on your account first.</div>
+    <div data-v5>
+      <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate aria-labelledby="brief-title">
+        <div class="brief-row"><div class="vfield field"><label for="brief-email-guide">Email</label><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required></div><button type="submit" class="vb vb-p brief-btn">Get the Brief</button></div>
+        <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
+        <p class="v-fine">I email you first to confirm. Unsubscribe any time.</p>
+        <p class="v-fine"><a class="v-go" href="/privacy/">Privacy notice <span aria-hidden="true">→</span></a></p>
+        <p class="brief-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section><!-- /v5:brief -->
+<section class="v-sec tight bg-stone" id="ask">
+  <div class="v-wrap vt">
+    <p>Ask me about your account.</p>
+    <a class="vb vb-w" href="/#contact">Ask me a question</a>
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ THE MONDAY BRIEF -->
-<section class="brief-guide" aria-labelledby="brief-guide-h">
-  <div class="brief-guide-inner">
-    <span class="brief-eyebrow">The Monday Brief</span>
-    <h2 id="brief-guide-h">What changed in marketing last week, every Monday.</h2>
-    <p class="brief-guide-body">One email at 7am on the week's changes to Google Ads, GA4, SEO, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads, and what each one could affect in your account. <a href="/updates/">See past issues</a>.</p>
-    <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate>
-      <label class="brief-label" for="brief-email-guide">Your email address</label>
-      <div class="brief-row"><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required placeholder="you@yourbusiness.co.uk"><button type="submit" class="brief-btn">Get the Brief</button></div>
-      <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
-      <p class="brief-note">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account. I email you first to confirm. Unsubscribe any time. <a href="/privacy/">Privacy notice</a>.</p>
-      <p class="brief-status" role="status" aria-live="polite"></p>
-    </form>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ FOOTER -->
-</main>
-<footer class="gf"><div class="gf-in">
-  <div class="gf-top">
-    <div class="gf-brand"><img src="/logo/phillips-lockup-reversed.svg" alt="Phillips." width="120" height="26"><p>I plan the marketing, then I do the work.</p></div>
-    <nav class="gf-cols" aria-label="Footer"><div><h4>Services</h4><ul><li><a href="/web-design/">Web design</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/marketing-systems/">Marketing systems</a></li><li><a href="/consultancy/">Consultancy</a></li></ul></div><div><h4>Free checks</h4><ul><li><a href="/website-check/">Website Check</a></li><li><a href="/google-ads-audit">Google Ads Check</a></li><li><a href="/guides/">Guides</a></li><li><a href="/updates/">The Monday Brief</a></li></ul></div><div><h4>Phillips.</h4><ul><li><a href="/work/">Work</a></li><li><a href="/about/">About</a></li><li><a href="/#contact">Ask me a question</a></li></ul></div></nav>
-  </div>
-  <nav class="gf-group" aria-label="Phillips Group of Companies"><a class="k" href="https://phillips-group.uk/">Phillips Group</a> <a href="https://thedirectorsoffice.uk/">The Director’s Office</a> <b>Phillips.</b> <a href="https://beforeyoupay.uk/">Before You Pay</a> <a href="https://indexpoint.uk/">Index Point</a> <a href="https://searchdesk.uk/">Search Desk</a></nav>
-  <div class="gf-base"><span>© 2026 Phillips. <span class="l"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/privacy/#cookies" data-cookie-settings>Cookie settings</a></span></span><a class="gf-pb" href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Powered by Phillips.</a></div>
-  <p class="gf-legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, registered in England and Wales, company number 17567515. Registered office: 124-128 City Road, London, EC1V 2NX.</p>
-</div></footer>
-
-<script>
-// FAQ accordion
-document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
-  var answer = btn.nextElementSibling;
-  var icon = btn.querySelector('.faq-icon');
-  if (i === 0) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
-  btn.addEventListener('click', function() {
-    var open = answer.classList.contains('is-open');
-    document.querySelectorAll('.faq-answer').forEach(function(a){ a.classList.remove('is-open'); });
-    document.querySelectorAll('.faq-icon').forEach(function(ic){ ic.classList.remove('is-open'); });
-    document.querySelectorAll('.faq-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
-    if (!open) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
-  });
-});
-</script>
 <script>
 (function(){
   // signal-table: class-based head/row
@@ -1035,8 +512,19 @@ document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
   });
 })();
 </script>
+</main>
+<!-- v5:footer --><footer class="vgf" id="site-footer">
+  <div class="vgf-in">
+    <div class="vgf-top">
+      <div class="vgf-brand"><a class="vhd-logo" href="/" aria-label="Phillips. home"><svg class="mark" viewBox="0 0 240 240" width="32" height="32" aria-hidden="true"><use href="#px-mark"/></svg><span>Phillips.</span></a><p>I plan the marketing, then I do the work.</p></div>
+      <nav class="vgf-cols" aria-label="Footer"><div><h2 class="vgf-h">Services</h2><ul><li><a href="/web-design/">Web design</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/marketing-systems/">Marketing systems</a></li><li><a href="/consultancy/">Consultancy</a></li></ul></div><div><h2 class="vgf-h">Free checks</h2><ul><li><a href="/google-ads-audit">Google Ads Check</a></li><li><a href="/website-check/">Website Check</a></li><li><a href="/guides/">Guides</a></li><li><a href="/updates/">The Monday Brief</a></li></ul></div><div><h2 class="vgf-h">Phillips.</h2><ul><li><a href="/work/">Work</a></li><li><a href="/about/">About</a></li><li><a href="/#contact">Ask me a question</a></li></ul></div></nav>
+    </div>
+    <nav class="vgf-group" aria-label="Phillips Group"><span class="k">Part of Phillips Group</span> <a href="https://thedirectorsoffice.uk/">The Director’s Office</a> <b>Phillips.</b> <a href="https://beforeyoupay.uk/">Before You Pay</a> <a href="https://indexpoint.uk/">Index Point</a> <a href="https://searchdesk.uk/">Search Desk</a></nav>
+    <div class="vgf-base"><span>&copy; 2026 Phillips. <span class="l"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/privacy/#cookies" data-cookie-settings>Cookie settings</a></span></span><a class="vgf-pb" href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Powered by Phillips.</a></div>
+    <p class="vgf-legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, registered in England and Wales, company number 17567515. Registered office: 124-128 City Road, London, EC1V 2NX.</p>
+  </div>
+</footer><!-- /v5:footer -->
+<script src="/v5.js?v=1" defer></script>
 <script src="/brief-form.js?v=1" defer></script>
-<script src="/motion.js?v=5" defer></script>
-<script src="/email.js?v=1" defer></script>
 </body>
 </html>

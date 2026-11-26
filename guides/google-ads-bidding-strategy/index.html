@@ -1,11 +1,10 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
-<!-- End Google Tag Manager -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google Ads Bidding Strategy: Which to Use | Phillips.</title>
+<meta name="description" content="Target CPA, Target ROAS, Maximise conversions or Manual CPC? How to choose a Google Ads bidding strategy, and what Smart Bidding needs to work.">
 <link rel="canonical" href="https://www.phillips-uk.com/guides/google-ads-bidding-strategy/">
 <meta property="og:title" content="Google Ads Bidding Strategy: Which to Use and When | Phillips.">
 <meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png?v=2">
@@ -15,17 +14,6 @@
 <meta property="og:url" content="https://www.phillips-uk.com/guides/google-ads-bidding-strategy/">
 <meta property="og:type" content="article">
 <meta name="twitter:card" content="summary">
-<title>Google Ads Bidding Strategy: Which to Use | Phillips.</title>
-<meta name="description" content="Target CPA, Target ROAS, Maximise conversions or Manual CPC? How to choose a Google Ads bidding strategy, and what Smart Bidding needs to work.">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
-<script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},3000)}</script>
-<link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/brief.css?v=6">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- JSON-LD: Article -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -47,8 +35,6 @@
   "url": "https://www.phillips-uk.com/guides/google-ads-bidding-strategy/"
 }
 </script>
-
-<!-- JSON-LD: FAQPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -97,520 +83,158 @@
   ]
 }
 </script>
-
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="preload" href="/fonts/manrope-latin-v20.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/v5.css?v=1">
 <style>
-  /* ── Reset & base ── */
-  html, body { margin: 0; padding: 0; }
-  body {
-    font-family: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-    color: var(--text); background: var(--surface);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  ::selection { background: var(--brand); color: #fff; }
-  html { scroll-behavior: smooth; }
-  [id] { scroll-margin-top: 96px; }
-
-  /* ── Layout ── */
-  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
-
-  /* ── Article body typography ── */
-  .article-body p {
-    font-size: 17px; line-height: 1.7;
-    color: var(--text); margin: 0 0 22px;
-    letter-spacing: -0.003em;
-  }
-  .article-body p:last-child { margin-bottom: 0; }
-  .article-body h2 {
-    font-size: 26px; font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.2;
-    color: var(--text); margin: 56px 0 18px;
-    text-wrap: balance;
-  }
-  .article-body h2:first-child { margin-top: 0; }
-  .article-body + .article-body { margin-top: 48px; }
-  .issue-block + .article-body { margin-top: 48px; }
-  .article-body h3 {
-    font-size: 20px; font-weight: 700;
-    letter-spacing: -0.015em; line-height: 1.25;
-    color: var(--text); margin: 36px 0 12px;
-    text-wrap: balance;
-  }
-  .article-body strong { font-weight: 700; color: var(--text); }
-  .article-body em { font-style: italic; color: var(--brand-text); }
-  .article-body a {
-    color: var(--brand-text); text-decoration: underline;
-    text-decoration-thickness: 1px; text-underline-offset: 3px;
-    text-decoration-color: color-mix(in oklab, var(--brand) 40%, transparent);
-    transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .article-body a:hover { text-decoration-color: var(--brand); }
-  .article-body ul, .article-body ol { padding-left: 22px; margin: 0 0 22px; }
-  .article-body li {
-    font-size: 17px; line-height: 1.7; color: var(--text);
-    margin-bottom: 8px; letter-spacing: -0.003em;
-  }
-  .article-body li::marker { color: var(--brand-text); }
-  .article-body code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.92em; background: var(--bg);
-    border: 1px solid var(--line); padding: 1px 6px;
-    border-radius: 3px; color: var(--brand-hover);
-  }
-
-  /* ── Nav ── */
-  .site-nav {
-    position: sticky; top: 0; z-index: 50;
-    background: color-mix(in oklab, var(--surface) 88%, transparent);
-    backdrop-filter: saturate(120%);
-    border-bottom: 1px solid var(--line); height: 64px;
-  }
-  .site-nav-inner {
-    max-width: 1200px; margin: 0 auto; height: 100%;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px;
-  }
-  .nav-logo {
-    text-decoration: none; font-size: 24px; font-weight: 700;
-    letter-spacing: -0.01em; color: var(--text); line-height: 1;
-  }
-  .nav-logo .dot { color: var(--brand-text); }
-  .nav-links { display: flex; align-items: center; gap: 28px; }
-  .nav-link {
-    font-size: 14px; font-weight: 500; color: var(--muted);
-    text-decoration: none;
-    transition: color 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .nav-link:hover { color: var(--text); }
-  .btn-nav {
-    background: var(--brand); color: #fff; border: 0;
-    padding: 10px 20px; font-size: 13px; font-weight: 600;
-    border-radius: 4px; cursor: pointer; font-family: inherit;
-    text-decoration: none; display: inline-block;
-    transition: background 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .btn-nav:hover { background: var(--brand-hover); }
-
-  /* ── Eyebrow ── */
-  .eyebrow {
-    display: inline-block; font-size: 11px; font-weight: 700;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-text);
-  }
-
-  /* ── Category pill ── */
-  .category-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--brand-wash); color: var(--brand-text); border: 1px solid var(--line);
-    padding: 4px 11px; border-radius: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; line-height: 1; white-space: nowrap;
-  }
-  .pill-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--brand); display: inline-block;
-  }
-
-  /* ── Article header ── */
-  .article-header { background: var(--surface); padding: 64px 0 48px; }
-  .breadcrumb { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; margin-bottom: 28px; }
-  .breadcrumb a { color: var(--muted); text-decoration: none; }
-  .breadcrumb .sep { margin: 0 8px; color: var(--line-2); }
-  .breadcrumb .cur { color: var(--brand-text); font-weight: 600; }
-  .article-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-  .article-readtime { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; }
-  .article-h1 {
-    font-size: clamp(36px, 4.8vw, 52px); font-weight: 700;
-    letter-spacing: -0.025em; line-height: 1.06;
-    color: var(--text); margin: 0 0 24px; text-wrap: balance;
-  }
-  .article-byline {
-    font-size: 13px; color: var(--muted); letter-spacing: -0.005em;
-    padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px;
-  }
-  .article-lede {
-    font-size: 20px; line-height: 1.55; color: var(--text);
-    margin: 0; letter-spacing: -0.005em; font-weight: 500; text-wrap: pretty;
-  }
-
-  /* ── Article section ── */
-  .article-section { background: var(--surface); padding: 8px 0 96px; }
-
-  /* ── Diagram wrapper ── */
-  .diagram-wrap { margin: 32px 0 56px; }
-  .diagram-label { margin-bottom: 16px; }
-
-  /* ── Signal architecture table ── */
-  .signal-table {
-    border: 1px solid var(--line); border-radius: 6px;
-    background: var(--surface); overflow: hidden;
-  }
-  .signal-head {
-    display: grid;
+/* this guide's own tables and diagrams (the v3 page chrome rules are gone) */
+.diagram-wrap {margin: 32px 0 56px;}
+.diagram-label {margin-bottom: 16px;}
+.signal-table {border: 1px solid var(--line); border-radius:20px;
+    background: var(--surface); overflow: hidden;}
+.signal-head {display: grid;
     grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
     background: var(--bg); border-bottom: 1px solid var(--line);
     padding: 14px 24px; gap: 16px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .signal-row {
-    display: grid;
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);}
+.signal-row {display: grid;
     grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
     padding: 18px 24px; border-bottom: 1px solid var(--line-soft);
-    align-items: start; gap: 16px;
-  }
-  .signal-row:last-child { border-bottom: none; }
-  .signal-row.highlight { background: var(--bg); }
-  .signal-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em; }
-  .signal-cell { font-size: 14px; color: var(--text-2); line-height: 1.5; }
-  .signal-status-on {
-    display: inline-flex; align-items: center; gap: 6px;
+    align-items: start; gap: 16px;}
+.signal-row:last-child {border-bottom: none;}
+.signal-row.highlight {background: var(--bg);}
+.signal-name {font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em;}
+.signal-cell {font-size: 14px; color: var(--text-2); line-height: 1.5;}
+.signal-status-on {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--ok);
     background: var(--ok-wash); border: 1px solid var(--ok-line);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-status-off {
-    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-status-off {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--muted);
     background: var(--off-wash); border: 1px solid var(--line-2);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-status-bad {
-    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-status-bad {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--bad);
     background: var(--bad-wash); border: 1px solid var(--bad-line);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-foot {
-    padding: 12px 24px; font-size: 12px; color: var(--muted);
-    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);
-  }
-
-  /* ── Comp table (diagnosis) ── */
-  .comp-table {
-    border: 1px solid var(--line); border-radius: 6px;
-    background: var(--surface); overflow: hidden;
-  }
-  .comp-head {
-    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-foot {padding: 12px 24px; font-size: 12px; color: var(--muted);
+    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);}
+.comp-table {border: 1px solid var(--line); border-radius:20px;
+    background: var(--surface); overflow: hidden;}
+.comp-head {display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
     background: var(--bg); border-bottom: 1px solid var(--line);
     padding: 14px 24px; gap: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .comp-row {
-    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);}
+.comp-row {display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
     padding: 16px 24px; border-bottom: 1px solid var(--line-soft);
-    align-items: start; gap: 20px;
-  }
-  .comp-row:last-child { border-bottom: none; }
-  .comp-symptom { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
-  .comp-cause { font-size: 14px; color: var(--text-2); line-height: 1.5; }
-  .comp-fix { font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5; }
-
-  /* ── Issue block ── */
-  .issue-block { margin: 56px 0 24px; }
-  .issue-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
-  .issue-num {
-    font-size: 14px; font-weight: 700; color: var(--brand-text);
-    letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
-  }
-  .issue-title {
-    font-size: 22px; font-weight: 700; letter-spacing: -0.018em;
-    line-height: 1.25; color: var(--text); margin: 0; text-wrap: balance;
-  }
-
-  /* ── 2-column card grid ── */
-  .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
-
-  /* ── Setup verdict cards ── */
-  .verdict-card { border-radius: 6px; background: var(--surface); overflow: hidden; }
-  .verdict-card-head {
-    padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .verdict-badge {
-    width: 18px; height: 18px; border-radius: 50%; color: #fff;
+    align-items: start; gap: 20px;}
+.comp-row:last-child {border-bottom: none;}
+.comp-symptom {font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45;}
+.comp-cause {font-size: 14px; color: var(--text-2); line-height: 1.5;}
+.comp-fix {font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5;}
+.cards-2col {display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.verdict-card {border-radius:20px; background: var(--surface); overflow: hidden;}
+.verdict-card-head {padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
+    display: flex; align-items: center; gap: 10px;}
+.verdict-badge {width: 18px; height: 18px; border-radius: 50%; color: #fff;
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; flex-shrink: 0;
-  }
-  .verdict-label {
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;
-  }
-  .verdict-card-body { padding: 20px 22px; }
-  .verdict-note { font-size: 13px; line-height: 1.55; color: var(--muted); }
-
-  /* ── Conversion action list ── */
-  .conv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .conv-item {
-    display: flex; align-items: center; justify-content: space-between;
+    font-size:12px; font-weight: 700; flex-shrink: 0;}
+.verdict-label {font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;}
+.verdict-card-body {padding: 20px 22px;}
+.verdict-note {font-size: 13px; line-height: 1.55; color: var(--muted);}
+.conv-list {display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;}
+.conv-item {display: flex; align-items: center; justify-content: space-between;
     gap: 10px; padding: 9px 12px; background: var(--surface-2);
-    border: 1px solid var(--line-soft); border-radius: 4px;
-  }
-  .conv-item-name { font-size: 13px; color: var(--text); letter-spacing: -0.005em; }
-  .conv-badge-on {
-    font-size: 10px; font-weight: 700; color: var(--ok);
+    border: 1px solid var(--line-soft); border-radius:20px;}
+.conv-item-name {font-size: 13px; color: var(--text); letter-spacing: -0.005em;}
+.conv-badge-on {font-size:12px; font-weight: 700; color: var(--ok);
     background: var(--ok-wash); border: 1px solid var(--ok-line);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-badge-off {
-    font-size: 10px; font-weight: 700; color: var(--muted);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-badge-off {font-size:12px; font-weight: 700; color: var(--muted);
     background: var(--off-wash); border: 1px solid var(--line-2);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-badge-bad {
-    font-size: 10px; font-weight: 700; color: var(--bad);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-badge-bad {font-size:12px; font-weight: 700; color: var(--bad);
     background: var(--bad-wash); border: 1px solid var(--bad-line);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-card-note {
-    border-top: 1px dashed var(--line); padding-top: 12px;
-    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;
-  }
-
-  /* ── 2026 dark callout ── */
-  .dark-callout-wrap { margin: 56px 0; }
-  .dark-callout {
-    background: var(--ink-panel);
-    border-radius: 6px; padding: 32px 36px; color: #fff;
-  }
-  .dark-callout-badge {
-    display: inline-flex; align-items: center; gap: 8px;
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-card-note {border-top: 1px dashed var(--line); padding-top: 12px;
+    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;}
+.dark-callout-wrap {margin: 56px 0;}
+.dark-callout {background: var(--ink-panel);
+    border-radius:20px; padding: 32px 36px; color: #fff;}
+.dark-callout-badge {display: inline-flex; align-items: center; gap: 8px;
     padding: 4px 11px; border-radius: 20px;
     background: color-mix(in oklab, var(--brand) 18%, transparent); border: 1px solid color-mix(in oklab, var(--brand) 40%, transparent);
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;
-  }
-  .dark-callout-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
-  .dark-callout h3 {
-    font-size: 22px; font-weight: 700; color: #fff;
-    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;
-  }
-  .dark-callout p { font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px; }
-  .dark-callout p:last-child { margin-bottom: 0; }
-  .dark-callout a { color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms; }
-  .dark-callout a:hover { text-decoration-color: var(--brand-on-ink); }
-
-  /* ── FAQ ── */
-  .faq-list {
-    border: 1px solid var(--line); border-radius: 6px;
-    overflow: hidden; background: var(--surface); margin: 8px 0 56px;
-  }
-  .faq-item { border-bottom: 1px solid var(--line-soft); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-btn {
-    width: 100%; text-align: left; background: transparent; border: 0;
-    cursor: pointer; padding: 20px 24px; font-family: inherit;
-    display: grid; grid-template-columns: 1fr 24px; gap: 16px; align-items: center;
-  }
-  .faq-q { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.008em; line-height: 1.4; }
-  .faq-icon {
-    font-size: 20px; color: var(--brand-text); line-height: 1; text-align: center;
-    transition: transform 180ms cubic-bezier(0.2,0,0,1); user-select: none;
-  }
-  .faq-icon.is-open { transform: rotate(45deg); }
-  .faq-answer { display: none; padding: 0 24px 22px; font-size: 15px; line-height: 1.65; color: var(--text-2); }
-  .faq-answer.is-open { display: block; }
-
-  /* ── Author block ── */
-  .author-block {
-    background: var(--bg); border: 1px solid var(--line);
-    border-radius: 6px; padding: 28px 32px;
-    display: grid; grid-template-columns: 64px 1fr;
-    gap: 22px; align-items: start; margin-top: 56px;
-  }
-  .author-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
-  .author-name { font-size: 16px; font-weight: 700; color: var(--text); }
-  .author-role { font-size: 13px; color: var(--muted); margin-left: 12px; }
-  .author-bio { font-size: 14px; line-height: 1.65; color: var(--text-2); margin: 8px 0 14px; max-width: 620px; }
-  .author-link { font-size: 13px; font-weight: 600; color: var(--brand-text); text-decoration: none; }
-  .author-link:hover { text-decoration: underline; }
-
-  /* ── Related section ── */
-  .related-section { background: var(--bg); padding: 72px 0 96px; }
-  .related-heading-wrap { border-left: 3px solid var(--brand); padding-left: 24px; margin-bottom: 28px; }
-  .related-heading {
-    font-size: clamp(24px, 2.6vw, 30px); font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.15;
-    color: var(--text); margin: 10px 0 0;
-  }
-  .related-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-  .related-card {
-    display: flex; flex-direction: column; text-decoration: none; color: inherit;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-    padding: 24px 26px; min-height: 220px;
-    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms, border-color 200ms;
-  }
-  .related-card:hover { transform: translateY(-3px); box-shadow: var(--e2); border-color: var(--brand); }
-  .related-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-  .related-card-readtime { font-size: 11px; color: var(--muted); letter-spacing: -0.005em; }
-  .related-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; color: var(--text); margin: 0 0 12px; text-wrap: pretty; }
-  .related-card-desc { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0 0 24px; }
-  .related-card-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--brand-text); letter-spacing: -0.005em; }
-
-  /* ── End CTA ── */
-  .end-cta { background: var(--ink-panel); padding: 96px 32px; }
-  .end-cta-inner { max-width: 880px; margin: 0 auto; text-align: center; }
-  .end-cta h2 {
-    font-size: clamp(36px, 4.6vw, 52px); font-weight: 700;
-    letter-spacing: -0.025em; line-height: 1.06; color: #fff;
-    margin: 20px 0 32px;
-  }
-  .end-cta h2 em { font-style: italic; color: var(--brand-text); }
-  .end-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn-cta-filled {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
-    background: var(--brand); border: 1.5px solid var(--brand);
-    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
-    transition: background 150ms;
-  }
-  .btn-cta-filled:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
-  .btn-cta-outline {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
-    background: transparent; border: 1.5px solid rgba(255,255,255,0.3);
-    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
-    transition: border-color 150ms;
-  }
-  .btn-cta-outline:hover { border-color: rgba(255,255,255,0.7); }
-  .end-cta-note { margin-top: 32px; font-size: 13px; color: var(--ink-muted); }
-
-  /* ── Footer ── */
-  .site-footer { background: var(--ink-panel); padding: 28px 32px; }
-  .site-footer-inner {
-    max-width: 1200px; margin: 0 auto;
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 12px;
-  }
-  .footer-left { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--ink-muted); }
-  .footer-logo { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; text-decoration: none; }
-  .footer-logo .dot { color: var(--brand-text); }
-  .footer-right { display: flex; gap: 20px; }
-  .footer-link { font-size: 12px; color: var(--ink-muted); text-decoration: none; }
-
-  /* ── Mobile nav ── */
-  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); line-height: 1; }
-  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
-  .ph-drawer.open { display: block; }
-  .ph-drawer-backdrop { position: absolute; inset: 0; background: var(--scrim); }
-  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: var(--surface); padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
-  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text); padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
-  .ph-drawer-link { font-size: 15px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line-soft); display: block; }
-  .ph-drawer-link:hover, .ph-drawer-link.active { color: var(--text); }
-  .ph-drawer-cta { margin-top: 16px; background: var(--brand); color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
-  .ph-drawer-cta:hover { background: var(--brand-hover); }
-
-  /* ── Responsive ── */
-  @media (max-width: 780px) {
-    .nav-links { display: none !important; }
-    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
-    .read-w { padding: 0 20px; }
-    .page-w  { padding: 0 20px; }
-    .cards-2col { grid-template-columns: 1fr; }
-    /* Tables: stacked card layout instead of horizontal scroll */
-    .signal-head, .comp-head { display: none !important; }
-    .signal-row, .comp-row {
-      display: flex !important; flex-direction: column !important;
-      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;
-    }
-    .signal-row > span[data-label]::before,
-    .comp-row > span[data-label]::before {
-      content: attr(data-label); display: block;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
-      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;
-    }
-    .author-block { grid-template-columns: 1fr; }
-    .author-role { margin-left: 0; flex-basis: 100%; margin-top: 2px; }
-    .article-h1 { font-size: 32px; }
-    /* Section heading: restore top margin when article-body follows article-body */
-    .article-body + .article-body { margin-top: 48px; }
-    /* Issue numbers: stack above title, larger on mobile */
-    .issue-header { flex-direction: column; gap: 4px; }
-    .issue-num { font-size: 32px; letter-spacing: -0.02em; }
-  }
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;}
+.dark-callout-badge-dot {width: 6px; height: 6px; border-radius: 50%; background: var(--brand);}
+.dark-callout h3 {font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;}
+.dark-callout p {font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px;}
+.dark-callout p:last-child {margin-bottom: 0;}
+.dark-callout a {color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms;}
+.dark-callout a:hover {text-decoration-color: var(--brand-on-ink);}
+@media (max-width: 780px) {
+.cards-2col {grid-template-columns: 1fr;}
+.signal-head, .comp-head {display: none !important;}
+.signal-row, .comp-row {display: flex !important; flex-direction: column !important;
+      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;}
+.signal-row > span[data-label]::before, .comp-row > span[data-label]::before {content: attr(data-label); display: block;
+      font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;}
+}
 </style>
-<link rel="stylesheet" href="/guides.css?v=3">
-<link rel="stylesheet" href="/footer.css?v=2">
 </head>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-<!-- ═══════════════════════════════════════════ NAV -->
-<header class="site-nav">
-  <div class="site-nav-inner">
-    <a href="/" class="nav-logo"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
-    <nav class="nav-links">
-      <a href="/#services" class="nav-link">Services</a>
-      <a href="/work/" class="nav-link">Work</a>
-      <a href="/about/" class="nav-link">About</a>
-      <a href="/guides/" class="nav-link">Insights</a>
-      <a href="/free-checks/" class="btn-nav">Free checks</a>
-    </nav>
-    <button class="ph-hamburger" onclick="document.getElementById('ph-art2-drawer').classList.add('open')" aria-label="Open menu">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="currentColor"/><rect y="10" width="22" height="2" rx="1" fill="currentColor"/><rect y="16" width="22" height="2" rx="1" fill="currentColor"/></svg>
-    </button>
+<body class="v5" data-page="article">
+<!-- v5:defs --><svg class="sr" width="0" height="0" aria-hidden="true"><symbol id="px-mark" viewBox="0 0 240 240"><path d="M240.0 120.0L239.9 160.3L239.6 173.1L239.1 182.4L238.3 189.9L237.4 196.2L236.3 201.7L234.9 206.6L233.3 210.9L231.5 214.9L229.4 218.4L227.1 221.6L224.5 224.5L221.6 227.1L218.4 229.4L214.9 231.5L210.9 233.3L206.6 234.9L201.7 236.3L196.2 237.4L189.9 238.3L182.4 239.1L173.1 239.6L160.3 239.9L120.0 240.0L79.7 239.9L66.9 239.6L57.6 239.1L50.1 238.3L43.8 237.4L38.3 236.3L33.4 234.9L29.1 233.3L25.1 231.5L21.6 229.4L18.4 227.1L15.5 224.5L12.9 221.6L10.6 218.4L8.5 214.9L6.7 210.9L5.1 206.6L3.7 201.7L2.6 196.2L1.7 189.9L0.9 182.4L0.4 173.1L0.1 160.3L0.0 120.0L0.1 79.7L0.4 66.9L0.9 57.6L1.7 50.1L2.6 43.8L3.7 38.3L5.1 33.4L6.7 29.1L8.5 25.1L10.6 21.6L12.9 18.4L15.5 15.5L18.4 12.9L21.6 10.6L25.1 8.5L29.1 6.7L33.4 5.1L38.3 3.7L43.8 2.6L50.1 1.7L57.6 0.9L66.9 0.4L79.7 0.1L120.0 0.0L160.3 0.1L173.1 0.4L182.4 0.9L189.9 1.7L196.2 2.6L201.7 3.7L206.6 5.1L210.9 6.7L214.9 8.5L218.4 10.6L221.6 12.9L224.5 15.5L227.1 18.4L229.4 21.6L231.5 25.1L233.3 29.1L234.9 33.4L236.3 38.3L237.4 43.8L238.3 50.1L239.1 57.6L239.6 66.9L239.9 79.7Z" fill="#985830"/><g transform="translate(40 40) scale(1) translate(-40 -40)"><g fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 124C88 140 88 156 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/></g><circle cx="88" cy="76" r="14" fill="#FFFFFF"/></g></symbol></svg><!-- /v5:defs -->
+<!-- v5:header --><header class="vhd">
+  <div class="vhd-in">
+    <a class="vhd-logo" href="/" aria-label="Phillips. home"><svg class="mark" viewBox="0 0 240 240" width="32" height="32" aria-hidden="true"><use href="#px-mark"/></svg><span>Phillips.</span></a>
+    <nav class="vhd-nav" aria-label="Main"><a class="vb vb-p" href="/free-checks/">Free checks</a></nav>
   </div>
-</header>
+</header><!-- /v5:header -->
 <main id="main">
-<div id="ph-art2-drawer" class="ph-drawer">
-  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')"></div>
-  <div class="ph-drawer-panel">
-    <button class="ph-drawer-close" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')">&#x2715;</button>
-    <a href="/#services" class="ph-drawer-link">Services</a>
-    <a href="/work/" class="ph-drawer-link">Work</a>
-    <a href="/about/" class="ph-drawer-link">About</a>
-    <a href="/guides/" class="ph-drawer-link active">Insights</a>
-    <a href="/free-checks/" class="ph-drawer-cta">Free checks</a>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════ ARTICLE HEADER -->
-<header class="article-header">
-  <div class="read-w">
-    <div class="breadcrumb">
-      <a href="/guides/">Guides</a>
-      <span class="sep">/</span>
-      <span class="cur">Google Ads</span>
+<!-- This guide on v5 (Figma "PX Guide"). The words, tables and diagrams are the live ones; only the shell changed. Diagrams sit in figure.vdiagram blocks with the guide's own styles below. -->
+<header class="vh vd-hero">
+  <div class="v-wrap">
+    <!-- v5:crumb --><nav class="vd-crumb" aria-label="Breadcrumb"><a href="/guides/">Insights</a><span aria-hidden="true">/</span><span class="here">Bidding strategy</span></nav><!-- /v5:crumb -->
+    <div class="vh-grid">
+    <div class="vh-text">
+      <h1 class="v-h1">Google Ads Bidding Strategy: Which to Use and When</h1>
+      <p class="v-lede">A bidding strategy tells Google what you want your money to buy: conversions, conversion value, clicks or a place on the page. The right one depends on the business goal and on how much you can trust your conversion data, in that order.</p>
+      <div class="v-actions"><a class="vb vb-p" href="/google-ads-audit">Check my Google Ads</a></div><p class="v-fine vbyline">Lewis Phillips · 14 Nov 2026 · Updated 21 Nov 2026 · 11 min read</p>
     </div>
-    <div class="article-meta">
-      <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-      <span class="article-readtime">11 min read</span>
-    </div>
-    <h1 class="article-h1">Google Ads Bidding Strategy: Which to Use and When</h1>
-    <div class="article-byline">Lewis Phillips &middot; 14 Nov 2026 &middot; Updated 21 Nov 2026 &middot; 11 min read</div>
-    <p class="article-lede">A bidding strategy tells Google what you want your money to buy: conversions, conversion value, clicks or a place on the page. The right one depends on the business goal and on how much you can trust your conversion data, in that order.</p>
-
-    <!-- Quick Answer -->
-    <div style="margin-top:32px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:20px 24px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">Quick answer</div>
-      <p style="font-size:16px;line-height:1.6;color:var(--text);margin:0;">If your tracking is reliable and conversions are coming in, I usually start with Maximise conversions, or Maximise conversion value when some conversions are worth more than others. I add a Target CPA or Target ROAS once I know what a customer is worth and the volume is steady. If the tracking isn't reliable, fix it first and use Maximise clicks or Manual CPC in the meantime. Target impression share is for visibility, not conversions.</p>
+    <figure class="vh-photo shot"><img src="/images/shots/ads-check-trend.jpg" srcset="/images/shots/ads-check-trend.jpg 1100w" sizes="(max-width:960px) 92vw, 420px" width="1100" height="895" alt="Thirteen months of spend and cost per conversion, from a Google Ads Check report for a made-up account" fetchpriority="high"></figure>
     </div>
   </div>
 </header>
-
-<!-- ═══════════════════════════════════════════ ARTICLE BODY -->
-<section class="article-section">
-  <div class="read-w">
-
-    <div class="article-body">
-      <h2>Pick the goal first, then the strategy</h2>
-      <p>Before changing a bidding setting, decide what a good result looks like. For a local service business that is usually an enquiry or a booking. For an online shop it is sales, and often the value of those sales.</p>
+<section class="v-sec vp-sec vp-gap" id="quick-answer" data-reading>
+  <div class="v-wrap">
+    <div class="vp solo" data-v5>
+      <div class="vp-text">
+        <h2 class="v-h2">Quick answer</h2>
+        <p class="v-body">If your tracking is reliable and conversions are coming in, I usually start with Maximise conversions, or Maximise conversion value when some conversions are worth more than others. I add a Target CPA or Target ROAS once I know what a customer is worth and the volume is steady. If the tracking isn't reliable, fix it first and use Maximise clicks or Manual CPC in the meantime. Target impression share is for visibility, not conversions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Pick the goal first, then the strategy</h2>
+    <p>Before changing a bidding setting, decide what a good result looks like. For a local service business that is usually an enquiry or a booking. For an online shop it is sales, and often the value of those sales.</p>
       <p>Each strategy works towards a different thing. A clicks strategy has done its job when it brings traffic within the budget, even if nobody enquires. A visibility strategy has done its job when your ad appears where you asked. Only the conversion and value strategies aim at conversions or conversion value.</p>
       <p>Those four are the Smart Bidding strategies: Maximise conversions, Target CPA, Maximise conversion value and Target ROAS. They optimise towards actions set to Primary action under Action optimisation when the campaign uses their standard goal. Secondary actions are available for reporting. If the campaign uses a custom goal, it bids towards all actions in that goal, including Secondary actions.</p>
-      <p>That makes your conversion setup part of the bidding decision. If the Primary actions are wrong, duplicated or missing, Smart Bidding optimises towards the wrong thing. I check that those actions are real business outcomes before judging any strategy. If you are not sure yours are right, start with <a href="/guides/fix-google-ads-conversion-tracking/">how to fix Google Ads conversion tracking</a> and <a href="/guides/ga4-imports-break-smart-bidding/">why GA4 imports can break Smart Bidding</a>.</p>
-    </div>
-
-    <div class="article-body">
-      <h2>The options in 2026</h2>
-      <p>Google began renaming two strategies in June 2026, so you may see either name for now. &ldquo;Maximise conversions with a Target CPA&rdquo; becomes &ldquo;Target CPA&rdquo;, and &ldquo;Maximise conversion value with a Target ROAS&rdquo; becomes &ldquo;Target ROAS&rdquo;. Google says the bidding behaviour itself is unchanged, and accounts needed no action.</p>
+      <p>That makes your conversion setup part of the bidding decision. If the Primary actions are wrong, duplicated or missing, Smart Bidding optimises towards the wrong thing. I check that those actions are real business outcomes before judging any strategy. If you are not sure yours are right, start with how to fix Google Ads conversion tracking and why GA4 imports can break Smart Bidding.</p><p class="vgo-row"><a class="v-go" href="/guides/fix-google-ads-conversion-tracking/">How to fix Google Ads conversion tracking <span aria-hidden="true">→</span></a><a class="v-go" href="/guides/ga4-imports-break-smart-bidding/">Why GA4 imports can break Smart Bidding <span aria-hidden="true">→</span></a></p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">The options in 2026</h2>
+    <p>Google began renaming two strategies in June 2026, so you may see either name for now. “Maximise conversions with a Target CPA” becomes “Target CPA”, and “Maximise conversion value with a Target ROAS” becomes “Target ROAS”. Google says the bidding behaviour itself is unchanged, and accounts needed no action.</p>
       <p>Enhanced CPC has gone from Search and Display. It stopped being available from the week of 24 March 2025, and campaigns that were not moved to another strategy are now effectively on Manual CPC.</p>
-    </div>
-
-    <div class="diagram-wrap">
+    <figure class="vdiagram" data-drawing><div class="diagram-wrap">
       <div class="diagram-label"><span class="eyebrow">The bid strategies at a glance</span></div>
       <div class="signal-table">
         <div class="signal-head"><span>Strategy</span><span>What it aims for</span><span>Fits when</span><span>What it needs</span></div>
@@ -622,247 +246,142 @@
         <div class="signal-row"><span class="signal-name">Manual CPC</span><span class="signal-cell">Clicks, at bids you set</span><span class="signal-cell">You want control of individual bids</span><span class="signal-cell">Time to manage bids by ad group or keyword</span></div>
         <div class="signal-row"><span class="signal-name">Target impression share</span><span class="signal-cell">A chosen position on the results page</span><span class="signal-cell">Visibility is the goal, such as your own brand name</span><span class="signal-cell">A placement goal and a sensible maximum CPC limit</span></div>
       </div>
-    </div>
-
-    <div class="article-body">
-      <h2>Each strategy, and when I use it</h2>
-    </div>
-
-    <div class="issue-block">
-      <div class="issue-header"><span class="issue-num">01</span><h3 class="issue-title">Maximise conversions</h3></div>
-    <div class="article-body">
-      <p>This is where I usually start once tracking is right and the goal is more enquiries, bookings or sales. Google sets bids to get the most conversions while spending your budget, so the budget is the control.</p>
+    </div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Each strategy, and when I use it</h2>
+    
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">01 Maximise conversions</h2>
+    <p>This is where I usually start once tracking is right and the goal is more enquiries, bookings or sales. Google sets bids to get the most conversions while spending your budget, so the budget is the control.</p>
       <p>It is designed to spend the full daily budget. If a campaign has been spending well under its budget, switching to Maximise conversions can raise spend sharply, so set the budget at a level you are happy to spend before you switch.</p>
       <p>Watch the cost per conversion it produces, and watch what those conversions are. A form submission only matters if it is the kind of enquiry the business wants. I compare the cost per conversion with what that conversion is worth to the business; if the conversion is an enquiry, that means also knowing how often enquiries become customers.</p>
       <p>If it costs more to win a customer than the business can support, I look at the offer, the landing page and the targeting as well as the bidding.</p>
-    </div>
-    </div>
-
-    <div class="issue-block">
-      <div class="issue-header"><span class="issue-num">02</span><h3 class="issue-title">Target CPA</h3></div>
-    <div class="article-body">
-      <p>Target CPA sets bids to get as many conversions as possible at the average cost per conversion you set. Some will cost more and some less. I use it when there is a clear, defensible answer to what a lead or sale can cost.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">02 Target CPA</h2>
+    <p>Target CPA sets bids to get as many conversions as possible at the average cost per conversion you set. Some will cost more and some less. I use it when there is a clear, defensible answer to what a lead or sale can cost.</p>
       <p>You can start it with no conversion history, using a target based on business goals. Where there is history, Google suggests starting from the last 30 days' average CPA, adjusted for conversion delays.</p>
       <p>Start from the evidence. For example, if recent leads have cost about £50 each, a £20 target is unlikely to be a realistic starting point. A target set too tight can hold back volume, so I start close to what the account already achieves and move it in steps.</p>
       <p>Google's guidance for judging Target CPA results refers to at least 30 conversions in the last 30 days. That is a reference for evaluation, not a requirement to switch it on.</p>
-    </div>
-    </div>
-
-    <div class="issue-block">
-      <div class="issue-header"><span class="issue-num">03</span><h3 class="issue-title">Maximise conversion value and Target ROAS</h3></div>
-    <div class="article-body">
-      <p>When conversions are worth different amounts, counting them all the same is a poor fit. An online shop cares about sales value. A lead business might value an enquiry for a full kitchen refit well above one for a small repair.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">03 Maximise conversion value and Target ROAS</h2>
+    <p>When conversions are worth different amounts, counting them all the same is a poor fit. An online shop cares about sales value. A lead business might value an enquiry for a full kitchen refit well above one for a small repair.</p>
       <p>Maximise conversion value spends the budget to get the most conversion value. Target ROAS predicts the value of potential conversions and sets bids to get as much conversion value as possible at the return on ad spend you set.</p>
       <p>The values have to mean something. Use real order values or defensible lead values, and check the assumptions behind them before asking Google to optimise towards them.</p>
       <p>For Target ROAS, Google lists at least 15 conversions in the past 30 days for Search and Shopping. Base the target on your business goals and your historical ROAS, which you can work out from the account:</p>
       <p style="text-align:center;font-size:17px;"><strong>Conv. value ÷ cost × 100 = historical ROAS (%)</strong></p>
       <p>For example, £4,000 of conversion value from £1,000 of spend is a 400% ROAS. Whether that is profitable depends on your margins, so check what the values represent before treating it as a good result. Google warns that a target set too high may limit how much traffic your ads get.</p>
-    </div>
-    </div>
-
-    <div class="issue-block">
-      <div class="issue-header"><span class="issue-num">04</span><h3 class="issue-title">Maximise clicks and Manual CPC</h3></div>
-    <div class="article-body">
-      <p>Maximise clicks sets bids to get as many clicks as possible within the budget. It suits a traffic goal, a new campaign without enough conversion data, or a holding position while tracking is fixed.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">04 Maximise clicks and Manual CPC</h2>
+    <p>Maximise clicks sets bids to get as many clicks as possible within the budget. It suits a traffic goal, a new campaign without enough conversion data, or a holding position while tracking is fixed.</p>
       <p>Manual CPC lets you set your own maximum cost per click for each ad group, with keyword-level bids if you want them. It suits someone who wants that control and has the time to use it.</p>
       <p>Neither aims at conversions. If the real goal is enquiries or sales, give either one a clear purpose and a date to review it.</p>
       <p>Enhanced CPC is no longer an option for Search and Display. If an older guide recommends it, that advice is out of date.</p>
-    </div>
-    </div>
-
-    <div class="issue-block">
-      <div class="issue-header"><span class="issue-num">05</span><h3 class="issue-title">Target impression share</h3></div>
-    <div class="article-body">
-      <p>Target impression share is for a deliberate visibility goal, such as aiming to appear prominently when someone searches your business name.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">05 Target impression share</h2>
+    <p>Target impression share is for a deliberate visibility goal, such as aiming to appear prominently when someone searches your business name.</p>
       <p>You choose where to aim: absolute top (the first ad in the top group), top (any ad in that group, usually above the unpaid results) or anywhere on the results page. It works on the Search Network only, and its impression share excludes Search Partners.</p>
       <p>It has a maximum CPC bid limit, and Google warns against setting it too low. Choose a limit that makes sense for the visibility you are buying, then judge the campaign on that. It aims for the position, not for conversions.</p>
-    </div>
-    </div>
-
-    <div class="article-body">
-      <h2>When conversions are thin</h2>
-      <p>If the business only gets a few conversions a month, plan around that, rather than expecting the account to behave like a large online retailer's.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">When conversions are thin</h2>
+    <p>If the business only gets a few conversions a month, plan around that, rather than expecting the account to behave like a large online retailer's.</p>
       <p>First, check the Primary actions. For an enquiry-led business that usually means calls, form submissions and bookings. Don't make page views or other light actions Primary just to raise the count: if page views are Primary, Smart Bidding optimises towards page views.</p>
       <p>Next, look at the structure. Splitting a small budget across many campaigns spreads the same few conversions more thinly, so I keep campaigns few and focused unless there is a clear commercial reason to split them.</p>
       <p>Then start with Maximise conversions before adding a target, and judge results over longer windows. With a handful of enquiries a month, one extra conversion can make a short period look very different.</p>
-    </div>
-
-    <div style="background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:0 6px 6px 0;padding:20px 24px;margin:0 0 40px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">Keep the conversion meaningful</div>
+    <figure class="vdiagram" data-drawing><div style="background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:0 6px 6px 0;padding:20px 24px;margin:0 0 40px;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">Keep the conversion meaningful</div>
       <p style="font-size:15px;line-height:1.65;color:var(--text-2);margin:0;">A small number of real enquiries is a better signal than a large number of actions nobody would pay for. Check what the conversion count represents before trying to increase it.</p>
-    </div>
-
-    <div class="article-body">
-      <h2>Changing strategy without starting from scratch</h2>
-      <p>Not every change sends a strategy back to learning. Changes to budgets, targets, creative or targeting settings don't remove historical data and don't trigger Google's &ldquo;Learning&rdquo; status.</p>
+    </div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Changing strategy without starting from scratch</h2>
+    <p>Not every change sends a strategy back to learning. Changes to budgets, targets, creative or targeting settings don't remove historical data and don't trigger Google's “Learning” status.</p>
       <p>That status can appear after a new bid strategy, a change in what the strategy covers (campaigns, ad groups or keywords added or removed), or a significant change to conversion goals or actions. Applying a new portfolio strategy can show it for up to seven days.</p>
       <p>The status never lasts more than seven days, but performance takes one to two conversion cycles to settle. A conversion cycle is roughly how long it usually takes for a click to become a conversion. I judge results over two conversion cycles or two weeks, whichever is longer.</p>
       <p>Move targets in steps rather than big jumps, so you can tell whether each new target is realistic. And don't judge a change on the next morning's numbers.</p>
       <p>Keep cash flow in view: most campaigns can spend up to twice their average daily budget on any one day. Google also advises against bid limits on Target CPA and Target ROAS, so I don't add them as a routine precaution.</p>
-    </div>
-
-    <div class="article-body">
-      <h2>Two tools for unusual weeks</h2>
-      <p><strong>Seasonality adjustments</strong> tell Smart Bidding to expect a major change in conversion rate during a short future event, such as a sale. Google says normal seasonality is already handled, so keep them for big, expected changes.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Two tools for unusual weeks</h2>
+    <p><strong>Seasonality adjustments</strong> tell Smart Bidding to expect a major change in conversion rate during a short future event, such as a sale. Google says normal seasonality is already handled, so keep them for big, expected changes.</p>
       <p>They work best for events of one to seven days and may work less well beyond 14 days. They are available for Search, Shopping, Demand Gen and Display campaigns using Target CPA or Target ROAS, and for Performance Max with all strategies.</p>
       <p><strong>Data exclusions</strong> do a different job. When tracking breaks (a broken tag, a website outage or a failed import), they reduce the impact on Smart Bidding for the period you select.</p>
       <p>They apply to clicks in that period and don't change your conversion reporting. They work with conversion and value-based Smart Bidding in Search, Display, Shopping and Performance Max. Google advises against using them often or for long periods.</p>
-    </div>
-
-    <div class="article-body">
-      <h2>A simple way to choose</h2>
-      <p>I work through these in order:</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">A simple way to choose</h2>
+    <p>I work through these in order:</p>
       <ol><li><strong>Is the tracking right?</strong> If not, fix it. Use Maximise clicks or Manual CPC if campaigns need to keep running meanwhile.</li><li><strong>Are useful conversions coming in?</strong> If so, Maximise conversions is my usual starting point.</li><li><strong>Are some conversions worth more than others?</strong> If the values are real, consider Maximise conversion value.</li><li><strong>Do you know your target?</strong> With a realistic cost per acquisition or return target and steady volume, consider Target CPA or Target ROAS.</li><li><strong>Is the goal visibility?</strong> If visibility on Search is what you need, consider Target impression share.</li></ol>
       <p>Then judge the result against the goal you started with. Keep a strategy because it brings useful results at a cost the business can support, not because its name sounds more advanced.</p>
-    </div>
-
-    <!-- FAQ heading -->
-    <div class="article-body">
-      <h2>FAQ</h2>
-    </div>
-
-    <!-- FAQ accordion -->
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">Is Target CPA better than Maximise conversions?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Not better, just more controlled. Maximise conversions sets bids to get the most conversions while spending the budget; Target CPA aims for as many conversions as possible at the average cost per conversion you set. I add the target once there is a realistic figure from the account's own results.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">How many conversions do I need for Smart Bidding?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">There is no single number for every strategy. Target CPA can start with no conversion history, although Google's guidance for judging results refers to at least 30 conversions in the last 30 days. For Target ROAS on Search and Shopping, Google lists at least 15 conversions in the past 30 days.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">What happened to Enhanced CPC?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">It stopped being available for Search and Display from the week of 24 March 2025. Campaigns that were not moved to another strategy are now effectively on Manual CPC. If you still have one, choose a replacement based on what the campaign is for.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">How long does the learning period last?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Google's &ldquo;Learning&rdquo; status never lasts more than seven days. Performance takes one to two conversion cycles to settle, so I judge it over two conversion cycles or two weeks, whichever is longer, allowing for the delay between a click and its conversion.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">Should a small local business use Smart Bidding?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Usually, once the tracking reliably records the enquiries and bookings that matter. With only a few conversions a month, I start with Maximise conversions, keep the campaigns few and focused, and judge results over longer periods. If the tracking isn't reliable, fix that before worrying about the bidding.</div>
-      </div>
-    </div>
-
-    <!-- Author block -->
-    <div class="author-block">
-      <img src="/images/profile.jpg" alt="Lewis Phillips" class="author-avatar">
-      <div>
-        <div style="display:flex;align-items:baseline;flex-wrap:wrap;margin-bottom:4px;">
-          <span class="author-name">Lewis Phillips</span>
-          <span class="author-role">Marketing consultant &middot; 11 years</span>
-        </div>
-        <p class="author-bio">I have spent 11 years in performance marketing, including paid media across 8 international markets. I now work as a marketing consultant with businesses in Ely, Cambridgeshire and beyond.</p>
-        <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" class="author-link">LinkedIn &rarr;</a>
-      </div>
-    </div>
-
-  </div><!-- /read-w -->
+  </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ RELATED -->
-<section class="related-section">
-  <div class="page-w">
-    <div class="related-heading-wrap">
-      <span class="eyebrow">Related guides</span>
-      <h2 class="related-heading">Keep reading.</h2>
-    </div>
-    <div class="related-cards">
-      <a href="/guides/fix-google-ads-conversion-tracking/" class="related-card">
-        <div class="related-card-meta">
-          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-          <span class="related-card-readtime">12 min read</span>
-        </div>
-        <h3 class="related-card-title">How to Fix Google Ads Conversion Tracking</h3>
-        <p class="related-card-desc">Smart Bidding is only as good as the conversions it learns from. The seven most common causes of broken tracking, and how to fix each one.</p>
-        <span class="related-card-cta">Read guide &rarr;</span>
-      </a>
-      <a href="/guides/target-cpa-few-conversions/" class="related-card">
-        <div class="related-card-meta">
-          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-          <span class="related-card-readtime">9 min read</span>
-        </div>
-        <h3 class="related-card-title">Target CPA With Few Conversions: How to Tell If It&rsquo;s Working</h3>
-        <p class="related-card-desc">With only a handful of conversions, Target CPA results are noisy and the latest days look worse than they are. How to judge it, and when to change the target.</p>
-        <span class="related-card-cta">Read guide &rarr;</span>
-      </a>
+<section class="v-sec" id="faq" data-reading>
+  <div class="v-wrap vq">
+    <h2 class="v-h2" data-v5>Questions</h2>
+    <div data-v5>
+      <details><summary>Is Target CPA better than Maximise conversions?</summary><p>Not better, just more controlled. Maximise conversions sets bids to get the most conversions while spending the budget; Target CPA aims for as many conversions as possible at the average cost per conversion you set. I add the target once there is a realistic figure from the account's own results.</p></details>
+      <details><summary>How many conversions do I need for Smart Bidding?</summary><p>There is no single number for every strategy. Target CPA can start with no conversion history, although Google's guidance for judging results refers to at least 30 conversions in the last 30 days. For Target ROAS on Search and Shopping, Google lists at least 15 conversions in the past 30 days.</p></details>
+      <details><summary>What happened to Enhanced CPC?</summary><p>It stopped being available for Search and Display from the week of 24 March 2025. Campaigns that were not moved to another strategy are now effectively on Manual CPC. If you still have one, choose a replacement based on what the campaign is for.</p></details>
+      <details><summary>How long does the learning period last?</summary><p>Google's “Learning” status never lasts more than seven days. Performance takes one to two conversion cycles to settle, so I judge it over two conversion cycles or two weeks, whichever is longer, allowing for the delay between a click and its conversion.</p></details>
+      <details><summary>Should a small local business use Smart Bidding?</summary><p>Usually, once the tracking reliably records the enquiries and bookings that matter. With only a few conversions a month, I start with Maximise conversions, keep the campaigns few and focused, and judge results over longer periods. If the tracking isn't reliable, fix that before worrying about the bidding.</p></details>
     </div>
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ END CTA -->
-<section class="end-cta">
-  <div class="end-cta-inner">
-    <span class="eyebrow" style="color:var(--brand-on-ink);">Want a second pair of eyes?</span>
-    <h2>Ask me <em>about your account.</em></h2>
-    <div class="end-cta-btns">
-      <a href="/#contact" class="btn-cta-filled">Ask me a question &rarr;</a>
-      <a href="/google-ads/" class="btn-cta-outline">Google Ads management &rarr;</a>
+<section class="v-sec tight bg-stone" id="keep-reading">
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Keep reading.</h2>
+    <nav class="vguides" aria-label="Related guides"><a class="v-go" href="/guides/fix-google-ads-conversion-tracking/">How to Fix Google Ads Conversion Tracking <span aria-hidden="true">→</span></a><a class="v-go" href="/guides/target-cpa-few-conversions/">Target CPA With Few Conversions: How to Tell If It’s Working <span aria-hidden="true">→</span></a></nav>
+  </div>
+</section>
+<!-- v5:brief --><section class="v-sec" id="brief">
+  <div class="v-wrap vf-grid">
+    <div data-v5>
+      <h2 class="v-h2" id="brief-title">What changed in marketing last week, every Monday.</h2>
+      <p class="v-body">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account.</p>
     </div>
-    <div class="end-cta-note">Free &middot; No obligation &middot; I reply myself</div>
-    <div class="end-cta-note">Or run the <a href="/google-ads-audit" style="color:inherit;text-decoration:underline">free Google Ads Check</a> on your account first.</div>
+    <div data-v5>
+      <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate aria-labelledby="brief-title">
+        <div class="brief-row"><div class="vfield field"><label for="brief-email-guide">Email</label><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required></div><button type="submit" class="vb vb-p brief-btn">Get the Brief</button></div>
+        <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
+        <p class="v-fine">I email you first to confirm. Unsubscribe any time.</p>
+        <p class="v-fine"><a class="v-go" href="/privacy/">Privacy notice <span aria-hidden="true">→</span></a></p>
+        <p class="brief-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section><!-- /v5:brief -->
+<section class="v-sec tight bg-stone" id="ask">
+  <div class="v-wrap vt">
+    <p>Ask me about your account.</p>
+    <a class="vb vb-w" href="/#contact">Ask me a question</a>
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ THE MONDAY BRIEF -->
-<section class="brief-guide" aria-labelledby="brief-guide-h">
-  <div class="brief-guide-inner">
-    <span class="brief-eyebrow">The Monday Brief</span>
-    <h2 id="brief-guide-h">What changed in marketing last week, every Monday.</h2>
-    <p class="brief-guide-body">One email at 7am on the week's changes to Google Ads, GA4, SEO, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads, and what each one could affect in your account. <a href="/updates/">See past issues</a>.</p>
-    <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate>
-      <label class="brief-label" for="brief-email-guide">Your email address</label>
-      <div class="brief-row"><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required placeholder="you@yourbusiness.co.uk"><button type="submit" class="brief-btn">Get the Brief</button></div>
-      <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
-      <p class="brief-note">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account. I email you first to confirm. Unsubscribe any time. <a href="/privacy/">Privacy notice</a>.</p>
-      <p class="brief-status" role="status" aria-live="polite"></p>
-    </form>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ FOOTER -->
-</main>
-<footer class="gf"><div class="gf-in">
-  <div class="gf-top">
-    <div class="gf-brand"><img src="/logo/phillips-lockup-reversed.svg" alt="Phillips." width="120" height="26"><p>I plan the marketing, then I do the work.</p></div>
-    <nav class="gf-cols" aria-label="Footer"><div><h4>Services</h4><ul><li><a href="/web-design/">Web design</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/marketing-systems/">Marketing systems</a></li><li><a href="/consultancy/">Consultancy</a></li></ul></div><div><h4>Free checks</h4><ul><li><a href="/website-check/">Website Check</a></li><li><a href="/google-ads-audit">Google Ads Check</a></li><li><a href="/guides/">Guides</a></li><li><a href="/updates/">The Monday Brief</a></li></ul></div><div><h4>Phillips.</h4><ul><li><a href="/work/">Work</a></li><li><a href="/about/">About</a></li><li><a href="/#contact">Ask me a question</a></li></ul></div></nav>
-  </div>
-  <nav class="gf-group" aria-label="Phillips Group of Companies"><a class="k" href="https://phillips-group.uk/">Phillips Group</a> <a href="https://thedirectorsoffice.uk/">The Director’s Office</a> <b>Phillips.</b> <a href="https://beforeyoupay.uk/">Before You Pay</a> <a href="https://indexpoint.uk/">Index Point</a> <a href="https://searchdesk.uk/">Search Desk</a></nav>
-  <div class="gf-base"><span>© 2026 Phillips. <span class="l"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/privacy/#cookies" data-cookie-settings>Cookie settings</a></span></span><a class="gf-pb" href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Powered by Phillips.</a></div>
-  <p class="gf-legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, registered in England and Wales, company number 17567515. Registered office: 124-128 City Road, London, EC1V 2NX.</p>
-</div></footer>
-
-<script>
-// FAQ accordion
-document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
-  var answer = btn.nextElementSibling;
-  var icon = btn.querySelector('.faq-icon');
-  if (i === 0) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
-  btn.addEventListener('click', function() {
-    var open = answer.classList.contains('is-open');
-    document.querySelectorAll('.faq-answer').forEach(function(a){ a.classList.remove('is-open'); });
-    document.querySelectorAll('.faq-icon').forEach(function(ic){ ic.classList.remove('is-open'); });
-    document.querySelectorAll('.faq-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
-    if (!open) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
-  });
-});
-</script>
 <script>
 (function(){
   // signal-table: class-based head/row
@@ -884,8 +403,19 @@ document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
   });
 })();
 </script>
+</main>
+<!-- v5:footer --><footer class="vgf" id="site-footer">
+  <div class="vgf-in">
+    <div class="vgf-top">
+      <div class="vgf-brand"><a class="vhd-logo" href="/" aria-label="Phillips. home"><svg class="mark" viewBox="0 0 240 240" width="32" height="32" aria-hidden="true"><use href="#px-mark"/></svg><span>Phillips.</span></a><p>I plan the marketing, then I do the work.</p></div>
+      <nav class="vgf-cols" aria-label="Footer"><div><h2 class="vgf-h">Services</h2><ul><li><a href="/web-design/">Web design</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/marketing-systems/">Marketing systems</a></li><li><a href="/consultancy/">Consultancy</a></li></ul></div><div><h2 class="vgf-h">Free checks</h2><ul><li><a href="/google-ads-audit">Google Ads Check</a></li><li><a href="/website-check/">Website Check</a></li><li><a href="/guides/">Guides</a></li><li><a href="/updates/">The Monday Brief</a></li></ul></div><div><h2 class="vgf-h">Phillips.</h2><ul><li><a href="/work/">Work</a></li><li><a href="/about/">About</a></li><li><a href="/#contact">Ask me a question</a></li></ul></div></nav>
+    </div>
+    <nav class="vgf-group" aria-label="Phillips Group"><span class="k">Part of Phillips Group</span> <a href="https://thedirectorsoffice.uk/">The Director’s Office</a> <b>Phillips.</b> <a href="https://beforeyoupay.uk/">Before You Pay</a> <a href="https://indexpoint.uk/">Index Point</a> <a href="https://searchdesk.uk/">Search Desk</a></nav>
+    <div class="vgf-base"><span>&copy; 2026 Phillips. <span class="l"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/privacy/#cookies" data-cookie-settings>Cookie settings</a></span></span><a class="vgf-pb" href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Powered by Phillips.</a></div>
+    <p class="vgf-legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, registered in England and Wales, company number 17567515. Registered office: 124-128 City Road, London, EC1V 2NX.</p>
+  </div>
+</footer><!-- /v5:footer -->
+<script src="/v5.js?v=1" defer></script>
 <script src="/brief-form.js?v=1" defer></script>
-<script src="/motion.js?v=5" defer></script>
-<script src="/email.js?v=1" defer></script>
 </body>
 </html>

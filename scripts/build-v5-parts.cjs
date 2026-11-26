@@ -66,7 +66,7 @@ const brief = ({ loc, h = 'What changed in marketing last week, every Monday.', 
       <form class="brief-signup" action="/subscribe" method="post" data-location="${loc}" novalidate aria-labelledby="brief-title">
         <div class="brief-row"><div class="vfield field"><label for="brief-email-${loc}">Email</label><input id="brief-email-${loc}" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required></div><button type="submit" class="vb vb-p brief-btn">Get the Brief</button></div>
         <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
-        <p class="v-fine">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account. I email you first to confirm. Unsubscribe any time.</p>
+        <p class="v-fine">I email you first to confirm. Unsubscribe any time.</p>
         <p class="v-fine"><a class="v-go" href="/privacy/">Privacy notice <span aria-hidden="true">→</span></a></p>
         <p class="brief-status" role="status" aria-live="polite"></p>
       </form>
@@ -96,6 +96,14 @@ const PAGES = {
   'marketing-systems/index.html': page('marketing-systems', { contact: { h: 'Tell me where things slip.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'marketing-systems' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Marketing systems']]) } }),
   'consultancy/index.html': page('consultancy', { contact: { h: 'Talk about what you need.', l: 'Write a few lines about the company, the channels and what you need help with. I’ll reply by email.', loc: 'consultancy' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Consultancy']]) } }),
   'free-checks/index.html': page('free-checks', { contact: { h: 'Ask me a question.', l: 'Tell me about the business and what you’d like to change. If you’ve run a check, mention it. I’ll reply by email.', loc: 'free-checks' } }),
+  // the 7 guides: crumb under Insights, the Brief sign-up (form_location guide, as live)
+  'guides/google-ads-audit-checklist/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['Audit checklist']]) } }),
+  'guides/fix-google-ads-conversion-tracking/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['Conversion tracking']]) } }),
+  'guides/fix-performance-max-assets/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['Performance Max assets']]) } }),
+  'guides/ga4-imports-break-smart-bidding/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['GA4 imports']]) } }),
+  'guides/google-ads-bidding-strategy/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['Bidding strategy']]) } }),
+  'guides/improve-google-ads-quality-score/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['Quality Score']]) } }),
+  'guides/target-cpa-few-conversions/index.html': page('guides', { brief: { loc: 'guide' }, parts: { crumb: () => V.crumb([['Insights', '/guides/'], ['Target CPA']]) } }),
 };
 
 function build(rel, html) {

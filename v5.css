@@ -1188,6 +1188,15 @@ html:has(body.v5){scroll-padding-top:92px}
 @media (max-width: 960px) { .v5 .vcalc { padding-bottom: 0; } }
 @media (max-width: 760px) { .v5 .vcalc-out b { font-size: 28px; } }
 
+/* the guides (Figma "PX Guide"): each guide's own tables and diagrams sit in figure.vdiagram in the reading column */
+.v5 .vread .vdiagram { margin: 32px 0 0; }
+.v5 .vread .vdiagram > :first-child { margin-top: 0; }
+.v5 .vq .vkeep { margin-top: 32px; }
+.v5 .vread .vgo-row { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.v5 .vread p.vgo-row { margin-top: 8px; }
+.v5 .vread .vgo-row .v-go { margin: 0; }
+.v5 .vbyline { margin: 16px 0 0; }
+
 /* the guides list in a service page's FAQ ("Fix it yourself first") */
 .v5 .vguides { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .v5 .vguides .v-go { margin: 0; }

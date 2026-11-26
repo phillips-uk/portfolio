@@ -462,10 +462,10 @@ File: `guides/index.html` (page)
 
 File: `guides/fix-google-ads-conversion-tracking/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.symptoms-table`, `.data-table`, `.priority-item`, `.issue-block`, `.arch-cell`, `.trigger-step`, `.consent-step`, `.best-table`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.author-block`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.data-table`, `.best-table`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/fix-google-ads-conversion-tracking/`, OG 3/3
@@ -475,10 +475,10 @@ File: `guides/fix-google-ads-conversion-tracking/index.html` (page)
 
 File: `guides/fix-performance-max-assets/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.issue-block`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-l`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-l`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/fix-performance-max-assets/`, OG 3/3
@@ -488,10 +488,10 @@ File: `guides/fix-performance-max-assets/index.html` (page)
 
 File: `guides/ga4-imports-break-smart-bidding/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.signal-head`, `.signal-row`, `.issue-block`, `.comp-table`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.author-block`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.signal-head`, `.signal-row`, `.comp-table`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/ga4-imports-break-smart-bidding/`, OG 3/3
@@ -501,10 +501,10 @@ File: `guides/ga4-imports-break-smart-bidding/index.html` (page)
 
 File: `guides/google-ads-audit-checklist/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.issue-block`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.author-block`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-l`, `data-driven`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-l`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/google-ads-audit-checklist/`, OG 3/3
@@ -514,10 +514,10 @@ File: `guides/google-ads-audit-checklist/index.html` (page)
 
 File: `guides/google-ads-bidding-strategy/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.signal-head`, `.signal-row`, `.issue-block`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.author-block`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.signal-head`, `.signal-row`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/google-ads-bidding-strategy/`, OG 3/3
@@ -527,10 +527,10 @@ File: `guides/google-ads-bidding-strategy/index.html` (page)
 
 File: `guides/improve-google-ads-quality-score/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.adrank-head`, `.adrank-row`, `.comp-table`, `.issue-block`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.author-block`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.adrank-head`, `.adrank-row`, `.comp-table`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/improve-google-ads-quality-score/`, OG 3/3
@@ -540,10 +540,10 @@ File: `guides/improve-google-ads-quality-score/index.html` (page)
 
 File: `guides/target-cpa-few-conversions/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/brief-form.js`, `/motion.js`, `/email.js`
-- Ids: none
-- Classes: `.read-w`, `.article-body`, `.issue-block`, `.faq-item`, `.faq-btn`, `.faq-icon`, `.faq-answer`, `.author-block`, `.related-section`, `.page-w`, `.related-card`, `.end-cta`, `.brief-guide`, `.brief-guide-inner`, `.brief-signup`, `.brief-status`
-- Data attributes: `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/brief-form.js`
+- Ids: `#brief`, `#site-footer`
+- Classes: `.v5`, `.brief-signup`, `.brief-status`, `.vt`
+- Data attributes: `data-page`, `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.brief-signup` POST `/subscribe` (form_location `guide`) (fields: `email`, `company_url`)
 - GA4 events: `newsletter_signup`
 - Structure: 1 h1, 1 main, canonical `/guides/target-cpa-few-conversions/`, OG 3/3

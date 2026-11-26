@@ -1,11 +1,10 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WS5CP6NW');</script>
-<!-- End Google Tag Manager -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix Performance Max Assets in Google Ads | Phillips.</title>
+<meta name="description" content="Performance Max asset requirements, what Ad Strength can tell you and fixes for nine common issues with videos, images, logos, copy, landing pages and reports.">
 <link rel="canonical" href="https://www.phillips-uk.com/guides/fix-performance-max-assets/">
 <meta property="og:title" content="How to Fix Performance Max Asset Issues in Google Ads (2026) | Phillips.">
 <meta property="og:image" content="https://www.phillips-uk.com/images/og-image.png?v=2">
@@ -15,17 +14,6 @@
 <meta property="og:url" content="https://www.phillips-uk.com/guides/fix-performance-max-assets/">
 <meta property="og:type" content="article">
 <meta name="twitter:card" content="summary">
-<title>Fix Performance Max Assets in Google Ads | Phillips.</title>
-<meta name="description" content="Performance Max asset requirements, what Ad Strength can tell you and fixes for nine common issues with videos, images, logos, copy, landing pages and reports.">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
-<script>if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.documentElement.classList.add("motion-ready");setTimeout(function(){if(!window.__phMotion)document.documentElement.classList.remove("motion-ready")},3000)}</script>
-<link rel="stylesheet" href="/motion.css?v=5">
-<link rel="stylesheet" href="/brief.css?v=6">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- JSON-LD: Article -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -47,8 +35,6 @@
   "url": "https://www.phillips-uk.com/guides/fix-performance-max-assets/"
 }
 </script>
-
-<!-- JSON-LD: FAQPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -97,550 +83,186 @@
   ]
 }
 </script>
-
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="preload" href="/fonts/manrope-latin-v20.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/v5.css?v=1">
 <style>
-  /* ── Reset & base ── */
-  html, body { margin: 0; padding: 0; }
-  body {
-    font-family: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-    color: var(--text); background: var(--surface);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  ::selection { background: var(--brand); color: #fff; }
-  html { scroll-behavior: smooth; }
-  [id] { scroll-margin-top: 96px; }
-
-  /* ── Layout ── */
-  .page-w  { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .read-w  { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
-
-  /* ── Article body typography ── */
-  .article-body p {
-    font-size: 17px; line-height: 1.7;
-    color: var(--text); margin: 0 0 22px;
-    letter-spacing: -0.003em;
-  }
-  .article-body p:last-child { margin-bottom: 0; }
-  .article-body h2 {
-    font-size: 26px; font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.2;
-    color: var(--text); margin: 56px 0 18px;
-    text-wrap: balance;
-  }
-  .article-body h2:first-child { margin-top: 0; }
-  .article-body + .article-body { margin-top: 48px; }
-  .issue-block + .article-body { margin-top: 48px; }
-  .article-body h3 {
-    font-size: 20px; font-weight: 700;
-    letter-spacing: -0.015em; line-height: 1.25;
-    color: var(--text); margin: 36px 0 12px;
-    text-wrap: balance;
-  }
-  .article-body strong { font-weight: 700; color: var(--text); }
-  .article-body em { font-style: italic; color: var(--brand-text); }
-  .article-body a {
-    color: var(--brand-text); text-decoration: underline;
-    text-decoration-thickness: 1px; text-underline-offset: 3px;
-    text-decoration-color: color-mix(in oklab, var(--brand) 40%, transparent);
-    transition: text-decoration-color 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .article-body a:hover { text-decoration-color: var(--brand); }
-  .article-body ul, .article-body ol { padding-left: 22px; margin: 0 0 22px; }
-  .article-body li {
-    font-size: 17px; line-height: 1.7; color: var(--text);
-    margin-bottom: 8px; letter-spacing: -0.003em;
-  }
-  .article-body li::marker { color: var(--brand-text); }
-  .article-body code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.92em; background: var(--bg);
-    border: 1px solid var(--line); padding: 1px 6px;
-    border-radius: 3px; color: var(--brand-hover);
-  }
-
-  /* ── Nav ── */
-  .site-nav {
-    position: sticky; top: 0; z-index: 50;
-    background: color-mix(in oklab, var(--surface) 88%, transparent);
-    backdrop-filter: saturate(120%);
-    border-bottom: 1px solid var(--line); height: 64px;
-  }
-  .site-nav-inner {
-    max-width: 1200px; margin: 0 auto; height: 100%;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px;
-  }
-  .nav-logo {
-    text-decoration: none; font-size: 24px; font-weight: 700;
-    letter-spacing: -0.01em; color: var(--text); line-height: 1;
-  }
-  .nav-logo .dot { color: var(--brand-text); }
-  .nav-links { display: flex; align-items: center; gap: 28px; }
-  .nav-link {
-    font-size: 14px; font-weight: 500; color: var(--muted);
-    text-decoration: none;
-    transition: color 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .nav-link:hover { color: var(--text); }
-  .btn-nav {
-    background: var(--brand); color: #fff; border: 0;
-    padding: 10px 20px; font-size: 13px; font-weight: 600;
-    border-radius: 4px; cursor: pointer; font-family: inherit;
-    text-decoration: none; display: inline-block;
-    transition: background 150ms cubic-bezier(0.2,0,0,1);
-  }
-  .btn-nav:hover { background: var(--brand-hover); }
-
-  /* ── Eyebrow ── */
-  .eyebrow {
-    display: inline-block; font-size: 11px; font-weight: 700;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-text);
-  }
-
-  /* ── Category pill ── */
-  .category-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--brand-wash); color: var(--brand-text); border: 1px solid var(--line);
-    padding: 4px 11px; border-radius: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; line-height: 1; white-space: nowrap;
-  }
-  .pill-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--brand); display: inline-block;
-  }
-
-  /* ── Article header ── */
-  .article-header { background: var(--surface); padding: 64px 0 48px; }
-  .breadcrumb { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; margin-bottom: 28px; }
-  .breadcrumb a { color: var(--muted); text-decoration: none; }
-  .breadcrumb .sep { margin: 0 8px; color: var(--line-2); }
-  .breadcrumb .cur { color: var(--brand-text); font-weight: 600; }
-  .article-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-  .article-readtime { font-size: 12px; color: var(--muted); letter-spacing: -0.005em; }
-  .article-h1 {
-    font-size: clamp(36px, 4.8vw, 52px); font-weight: 700;
-    letter-spacing: -0.025em; line-height: 1.06;
-    color: var(--text); margin: 0 0 24px; text-wrap: balance;
-  }
-  .article-byline {
-    font-size: 13px; color: var(--muted); letter-spacing: -0.005em;
-    padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px;
-  }
-  .article-lede {
-    font-size: 20px; line-height: 1.55; color: var(--text);
-    margin: 0; letter-spacing: -0.005em; font-weight: 500; text-wrap: pretty;
-  }
-
-  /* ── Article section ── */
-  .article-section { background: var(--surface); padding: 8px 0 96px; }
-
-  /* ── Diagram wrapper ── */
-  .diagram-wrap { margin: 32px 0 56px; }
-  .diagram-label { margin-bottom: 16px; }
-
-  /* ── Signal architecture table ── */
-  .signal-table {
-    border: 1px solid var(--line); border-radius: 6px;
-    background: var(--surface); overflow: hidden;
-  }
-  .signal-head {
-    display: grid;
+/* this guide's own tables and diagrams (the v3 page chrome rules are gone) */
+.diagram-wrap {margin: 32px 0 56px;}
+.diagram-label {margin-bottom: 16px;}
+.signal-table {border: 1px solid var(--line); border-radius:20px;
+    background: var(--surface); overflow: hidden;}
+.signal-head {display: grid;
     grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
     background: var(--bg); border-bottom: 1px solid var(--line);
     padding: 14px 24px; gap: 16px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .signal-row {
-    display: grid;
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);}
+.signal-row {display: grid;
     grid-template-columns: 1.4fr 1.6fr 1.4fr 1fr;
     padding: 18px 24px; border-bottom: 1px solid var(--line-soft);
-    align-items: start; gap: 16px;
-  }
-  .signal-row:last-child { border-bottom: none; }
-  .signal-row.highlight { background: var(--bg); }
-  .signal-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em; }
-  .signal-cell { font-size: 14px; color: var(--text-2); line-height: 1.5; }
-  .signal-status-on {
-    display: inline-flex; align-items: center; gap: 6px;
+    align-items: start; gap: 16px;}
+.signal-row:last-child {border-bottom: none;}
+.signal-row.highlight {background: var(--bg);}
+.signal-name {font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em;}
+.signal-cell {font-size: 14px; color: var(--text-2); line-height: 1.5;}
+.signal-status-on {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--ok);
     background: var(--ok-wash); border: 1px solid var(--ok-line);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-status-off {
-    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-status-off {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--muted);
     background: var(--off-wash); border: 1px solid var(--line-2);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-status-bad {
-    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-status-bad {display: inline-flex; align-items: center; gap: 6px;
     font-size: 12px; font-weight: 700; color: var(--bad);
     background: var(--bad-wash); border: 1px solid var(--bad-line);
-    padding: 3px 9px; border-radius: 4px; letter-spacing: 0.03em;
-  }
-  .signal-foot {
-    padding: 12px 24px; font-size: 12px; color: var(--muted);
-    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);
-  }
-
-  /* ── Comp table (diagnosis) ── */
-  .comp-table {
-    border: 1px solid var(--line); border-radius: 6px;
-    background: var(--surface); overflow: hidden;
-  }
-  .comp-head {
-    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    padding: 3px 9px; border-radius:20px; letter-spacing: 0.03em;}
+.signal-foot {padding: 12px 24px; font-size: 12px; color: var(--muted);
+    line-height: 1.55; border-top: 1px solid var(--line-soft); background: var(--surface-2);}
+.comp-table {border: 1px solid var(--line); border-radius:20px;
+    background: var(--surface); overflow: hidden;}
+.comp-head {display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
     background: var(--bg); border-bottom: 1px solid var(--line);
     padding: 14px 24px; gap: 20px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .comp-row {
-    display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--muted);}
+.comp-row {display: grid; grid-template-columns: 1.5fr 1.5fr 1.4fr;
     padding: 16px 24px; border-bottom: 1px solid var(--line-soft);
-    align-items: start; gap: 20px;
-  }
-  .comp-row:last-child { border-bottom: none; }
-  .comp-symptom { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
-  .comp-cause { font-size: 14px; color: var(--text-2); line-height: 1.5; }
-  .comp-fix { font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5; }
-
-  /* ── Issue block ── */
-  .issue-block { margin: 56px 0 24px; }
-  .issue-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
-  .issue-num {
-    font-size: 14px; font-weight: 700; color: var(--brand-text);
-    letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
-  }
-  .issue-title {
-    font-size: 22px; font-weight: 700; letter-spacing: -0.018em;
-    line-height: 1.25; color: var(--text); margin: 0; text-wrap: balance;
-  }
-
-  /* ── 2-column card grid ── */
-  .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
-
-  /* ── Setup verdict cards ── */
-  .verdict-card { border-radius: 6px; background: var(--surface); overflow: hidden; }
-  .verdict-card-head {
-    padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .verdict-badge {
-    width: 18px; height: 18px; border-radius: 50%; color: #fff;
+    align-items: start; gap: 20px;}
+.comp-row:last-child {border-bottom: none;}
+.comp-symptom {font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45;}
+.comp-cause {font-size: 14px; color: var(--text-2); line-height: 1.5;}
+.comp-fix {font-size: 13px; color: var(--brand-text); font-weight: 500; line-height: 1.5;}
+.cards-2col {display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.verdict-card {border-radius:20px; background: var(--surface); overflow: hidden;}
+.verdict-card-head {padding: 12px 18px; border-bottom-width: 1px; border-bottom-style: solid;
+    display: flex; align-items: center; gap: 10px;}
+.verdict-badge {width: 18px; height: 18px; border-radius: 50%; color: #fff;
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; flex-shrink: 0;
-  }
-  .verdict-label {
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;
-  }
-  .verdict-card-body { padding: 20px 22px; }
-  .verdict-note { font-size: 13px; line-height: 1.55; color: var(--muted); }
-
-  /* ── Conversion action list ── */
-  .conv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .conv-item {
-    display: flex; align-items: center; justify-content: space-between;
+    font-size:12px; font-weight: 700; flex-shrink: 0;}
+.verdict-label {font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em;}
+.verdict-card-body {padding: 20px 22px;}
+.verdict-note {font-size: 13px; line-height: 1.55; color: var(--muted);}
+.conv-list {display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;}
+.conv-item {display: flex; align-items: center; justify-content: space-between;
     gap: 10px; padding: 9px 12px; background: var(--surface-2);
-    border: 1px solid var(--line-soft); border-radius: 4px;
-  }
-  .conv-item-name { font-size: 13px; color: var(--text); letter-spacing: -0.005em; }
-  .conv-badge-on {
-    font-size: 10px; font-weight: 700; color: var(--ok);
+    border: 1px solid var(--line-soft); border-radius:20px;}
+.conv-item-name {font-size: 13px; color: var(--text); letter-spacing: -0.005em;}
+.conv-badge-on {font-size:12px; font-weight: 700; color: var(--ok);
     background: var(--ok-wash); border: 1px solid var(--ok-line);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-badge-off {
-    font-size: 10px; font-weight: 700; color: var(--muted);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-badge-off {font-size:12px; font-weight: 700; color: var(--muted);
     background: var(--off-wash); border: 1px solid var(--line-2);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-badge-bad {
-    font-size: 10px; font-weight: 700; color: var(--bad);
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-badge-bad {font-size:12px; font-weight: 700; color: var(--bad);
     background: var(--bad-wash); border: 1px solid var(--bad-line);
-    padding: 2px 7px; border-radius: 3px; white-space: nowrap;
-  }
-  .conv-card-note {
-    border-top: 1px dashed var(--line); padding-top: 12px;
-    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;
-  }
-
-  /* ── 2026 dark callout ── */
-  .dark-callout-wrap { margin: 56px 0; }
-  .dark-callout {
-    background: var(--ink-panel);
-    border-radius: 6px; padding: 32px 36px; color: #fff;
-  }
-  .dark-callout-badge {
-    display: inline-flex; align-items: center; gap: 8px;
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap;}
+.conv-card-note {border-top: 1px dashed var(--line); padding-top: 12px;
+    font-size: 12px; color: var(--muted); line-height: 1.55; font-style: italic;}
+.dark-callout-wrap {margin: 56px 0;}
+.dark-callout {background: var(--ink-panel);
+    border-radius:20px; padding: 32px 36px; color: #fff;}
+.dark-callout-badge {display: inline-flex; align-items: center; gap: 8px;
     padding: 4px 11px; border-radius: 20px;
     background: color-mix(in oklab, var(--brand) 18%, transparent); border: 1px solid color-mix(in oklab, var(--brand) 40%, transparent);
-    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;
-  }
-  .dark-callout-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
-  .dark-callout h3 {
-    font-size: 22px; font-weight: 700; color: #fff;
-    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;
-  }
-  .dark-callout p { font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px; }
-  .dark-callout p:last-child { margin-bottom: 0; }
-  .dark-callout a { color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms; }
-  .dark-callout a:hover { text-decoration-color: var(--brand-on-ink); }
-
-  /* ── FAQ ── */
-  .faq-list {
-    border: 1px solid var(--line); border-radius: 6px;
-    overflow: hidden; background: var(--surface); margin: 8px 0 56px;
-  }
-  .faq-item { border-bottom: 1px solid var(--line-soft); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-btn {
-    width: 100%; text-align: left; background: transparent; border: 0;
-    cursor: pointer; padding: 20px 24px; font-family: inherit;
-    display: grid; grid-template-columns: 1fr 24px; gap: 16px; align-items: center;
-  }
-  .faq-q { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.008em; line-height: 1.4; }
-  .faq-icon {
-    font-size: 20px; color: var(--brand-text); line-height: 1; text-align: center;
-    transition: transform 180ms cubic-bezier(0.2,0,0,1); user-select: none;
-  }
-  .faq-icon.is-open { transform: rotate(45deg); }
-  .faq-answer { display: none; padding: 0 24px 22px; font-size: 15px; line-height: 1.65; color: var(--text-2); }
-  .faq-answer.is-open { display: block; }
-
-  /* ── Author block ── */
-  .author-block {
-    background: var(--bg); border: 1px solid var(--line);
-    border-radius: 6px; padding: 28px 32px;
-    display: grid; grid-template-columns: 64px 1fr;
-    gap: 22px; align-items: start; margin-top: 56px;
-  }
-  .author-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
-  .author-name { font-size: 16px; font-weight: 700; color: var(--text); }
-  .author-role { font-size: 13px; color: var(--muted); margin-left: 12px; }
-  .author-bio { font-size: 14px; line-height: 1.65; color: var(--text-2); margin: 8px 0 14px; max-width: 620px; }
-  .author-link { font-size: 13px; font-weight: 600; color: var(--brand-text); text-decoration: none; }
-  .author-link:hover { text-decoration: underline; }
-
-  /* ── Related section ── */
-  .related-section { background: var(--bg); padding: 72px 0 96px; }
-  .related-heading-wrap { border-left: 3px solid var(--brand); padding-left: 24px; margin-bottom: 28px; }
-  .related-heading {
-    font-size: clamp(24px, 2.6vw, 30px); font-weight: 700;
-    letter-spacing: -0.02em; line-height: 1.15;
-    color: var(--text); margin: 10px 0 0;
-  }
-  .related-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-  .related-card {
-    display: flex; flex-direction: column; text-decoration: none; color: inherit;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-    padding: 24px 26px; min-height: 220px;
-    transition: transform 200ms cubic-bezier(0.2,0,0,1), box-shadow 200ms, border-color 200ms;
-  }
-  .related-card:hover { transform: translateY(-3px); box-shadow: var(--e2); border-color: var(--brand); }
-  .related-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-  .related-card-readtime { font-size: 11px; color: var(--muted); letter-spacing: -0.005em; }
-  .related-card-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; color: var(--text); margin: 0 0 12px; text-wrap: pretty; }
-  .related-card-desc { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0 0 24px; }
-  .related-card-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--brand-text); letter-spacing: -0.005em; }
-
-  /* ── End CTA ── */
-  .end-cta { background: var(--ink-panel); padding: 96px 32px; }
-  .end-cta-inner { max-width: 880px; margin: 0 auto; text-align: center; }
-  .end-cta h2 {
-    font-size: clamp(36px, 4.6vw, 52px); font-weight: 700;
-    letter-spacing: -0.025em; line-height: 1.06; color: #fff;
-    margin: 20px 0 32px;
-  }
-  .end-cta h2 em { font-style: italic; color: var(--brand-text); }
-  .end-cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn-cta-filled {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
-    background: var(--brand); border: 1.5px solid var(--brand);
-    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
-    transition: background 150ms;
-  }
-  .btn-cta-filled:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
-  .btn-cta-outline {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 32px; font-size: 15px; font-weight: 600; color: #fff;
-    background: transparent; border: 1.5px solid rgba(255,255,255,0.3);
-    border-radius: 4px; text-decoration: none; letter-spacing: -0.005em;
-    transition: border-color 150ms;
-  }
-  .btn-cta-outline:hover { border-color: rgba(255,255,255,0.7); }
-  .end-cta-note { margin-top: 32px; font-size: 13px; color: var(--ink-muted); }
-
-  /* ── Footer ── */
-  .site-footer { background: var(--ink-panel); padding: 28px 32px; }
-  .site-footer-inner {
-    max-width: 1200px; margin: 0 auto;
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 12px;
-  }
-  .footer-left { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--ink-muted); }
-  .footer-logo { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; text-decoration: none; }
-  .footer-logo .dot { color: var(--brand-text); }
-  .footer-right { display: flex; gap: 20px; }
-  .footer-link { font-size: 12px; color: var(--ink-muted); text-decoration: none; }
-
-  /* ── Mobile nav ── */
-  .ph-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); line-height: 1; }
-  .ph-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
-  .ph-drawer.open { display: block; }
-  .ph-drawer-backdrop { position: absolute; inset: 0; background: var(--scrim); }
-  .ph-drawer-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: var(--surface); padding: 24px; display: flex; flex-direction: column; gap: 4px; box-shadow: -8px 0 32px rgba(0,0,0,0.12); }
-  .ph-drawer-close { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text); padding: 4px 8px; margin-bottom: 12px; font-family: inherit; }
-  .ph-drawer-link { font-size: 15px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line-soft); display: block; }
-  .ph-drawer-link:hover, .ph-drawer-link.active { color: var(--text); }
-  .ph-drawer-cta { margin-top: 16px; background: var(--brand); color: #fff; border: 0; padding: 14px; font-size: 14px; font-weight: 600; border-radius: 4px; font-family: inherit; text-align: center; text-decoration: none; display: block; }
-  .ph-drawer-cta:hover { background: var(--brand-hover); }
-
-  /* ── Responsive ── */
-  @media (max-width: 780px) {
-    .nav-links { display: none !important; }
-    .ph-hamburger { display: flex !important; align-items: center; justify-content: center; }
-    .read-w { padding: 0 20px; }
-    .page-w  { padding: 0 20px; }
-    .cards-2col { grid-template-columns: 1fr; }
-    /* Tables: stacked card layout instead of horizontal scroll */
-    .signal-head, .comp-head { display: none !important; }
-    .signal-row, .comp-row {
-      display: flex !important; flex-direction: column !important;
-      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;
-    }
-    .signal-row > span[data-label]::before,
-    .comp-row > span[data-label]::before {
-      content: attr(data-label); display: block;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
-      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;
-    }
-    .author-block { grid-template-columns: 1fr; }
-    .author-role { margin-left: 0; flex-basis: 100%; margin-top: 2px; }
-    .article-h1 { font-size: 32px; }
-    /* Section heading: restore top margin when article-body follows article-body */
-    .article-body + .article-body { margin-top: 48px; }
-    /* Issue numbers: stack above title, larger on mobile */
-    .issue-header { flex-direction: column; gap: 4px; }
-    .issue-num { font-size: 32px; letter-spacing: -0.02em; }
-  }
-
-  /* ── Audit checklist tables (2026-11-17) ── */
-  .ck-map { list-style: none; margin: 8px 0 48px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 8px; }
-  .ck-map li { display: flex; }
-  .ck-map a { flex: 1; display: flex; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); text-decoration: none; font-weight: 700; font-size: 14.5px; line-height: 1.3; transition: border-color .2s, box-shadow .2s; }
-  .ck-map a:hover { border-color: var(--brand); box-shadow: var(--e1); }
-  .ck-map span { font: 500 11px/1 var(--mono, monospace); letter-spacing: .1em; color: var(--brand-text); }
-  .ck { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 8px 0 var(--s10); background: var(--surface); }
-  .ck-row { display: grid; grid-template-columns: 0.9fr 1.3fr 1.3fr; border-top: 1px solid var(--line); }
-  .ck-row:first-child { border-top: 0; }
-  .ck-row > div { padding: 14px 16px; font-size: 14.5px; line-height: 1.55; color: var(--text-2); }
-  .ck-row .ck-c { font-weight: 700; color: var(--text); }
-  .ck-head > div { font: 500 11px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--bg); padding: 10px 16px; }
-  .ck-p { border-left: 3px solid var(--ok); }
-  .ck-r { border-left: 3px solid var(--line); }
-  .ck-f { border-left: 3px solid var(--bad); }
-  .ck-note { background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: 0 6px 6px 0; padding: 20px 24px; margin: var(--s10) 0; }
-  .ck-note-k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); margin-bottom: 10px; }
-  .ck-note p { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 0; }
-  h2.issue-title { font-size: 26px; margin: 0; }
-  .sd-tip { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px 18px; margin: var(--s10) 0; box-shadow: var(--e1); }
-  .sd-tip img { width: 40px; height: 40px; border-radius: 9px; display: block; }
-  .sd-tip-k { font: 500 10.5px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .sd-tip p { font-size: 14.5px; line-height: 1.6; color: var(--text-2); margin: 0; }
-  .sd-tip a { color: var(--brand-text); font-weight: 700; text-decoration: none; white-space: nowrap; }
-  .sd-tip a:hover { text-decoration: underline; }
-  @media (max-width: 640px) {
-    .ck-map { grid-template-columns: 1fr 1fr; }
-    .ck-head { display: none; }
-    .ck-row { grid-template-columns: 1fr; padding: 14px 16px; gap: 8px; }
-    .ck-row > div { padding: 0 0 0 12px; }
-    .ck-row .ck-c { padding: 0; }
-    .ck-p::before, .ck-f::before, .ck-r::before { content: attr(data-l); display: block; font: 500 10.5px/1.4 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-  }
+    font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--brand-on-ink); margin-bottom: 20px;}
+.dark-callout-badge-dot {width: 6px; height: 6px; border-radius: 50%; background: var(--brand);}
+.dark-callout h3 {font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -0.018em; line-height: 1.3; margin: 0 0 16px;}
+.dark-callout p {font-size: 15px; line-height: 1.65; color: var(--ink-text); margin: 0 0 14px;}
+.dark-callout p:last-child {margin-bottom: 0;}
+.dark-callout a {color: var(--brand-on-ink); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--brand-on-ink) 40%, transparent); transition: text-decoration-color 150ms;}
+.dark-callout a:hover {text-decoration-color: var(--brand-on-ink);}
+@media (max-width: 780px) {
+.cards-2col {grid-template-columns: 1fr;}
+.signal-head, .comp-head {display: none !important;}
+.signal-row, .comp-row {display: flex !important; flex-direction: column !important;
+      gap: 12px; min-width: 0 !important; padding: 16px 20px !important;}
+.signal-row > span[data-label]::before, .comp-row > span[data-label]::before {content: attr(data-label); display: block;
+      font-size:12px; font-weight: 700; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--brand-text); margin-bottom: 3px;}
+}
+.ck-map {list-style: none; margin: 8px 0 48px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 8px;}
+.ck-map li {display: flex;}
+.ck-map a {flex: 1; display: flex; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius:20px; background: var(--surface); color: var(--text); text-decoration: none; font-weight: 700; font-size: 14.5px; line-height: 1.3; transition: border-color .2s, box-shadow .2s;}
+.ck-map a:hover {border-color: var(--brand); box-shadow: var(--e1);}
+.ck-map span {font: 500 12px/1 var(--mono, monospace); letter-spacing: .1em; color: var(--brand-text);}
+.ck {border: 1px solid var(--line); border-radius:20px; overflow: hidden; margin: 8px 0 var(--s10); background: var(--surface);}
+.ck-row {display: grid; grid-template-columns: 0.9fr 1.3fr 1.3fr; border-top: 1px solid var(--line);}
+.ck-row:first-child {border-top: 0;}
+.ck-row > div {padding: 14px 16px; font-size: 14.5px; line-height: 1.55; color: var(--text-2);}
+.ck-row .ck-c {font-weight: 700; color: var(--text);}
+.ck-head > div {font: 500 12px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--bg); padding: 10px 16px;}
+.ck-p {border-left: 3px solid var(--ok);}
+.ck-r {border-left: 3px solid var(--line);}
+.ck-f {border-left: 3px solid var(--bad);}
+.ck-note {background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: 0 6px 6px 0; padding: 20px 24px; margin: var(--s10) 0;}
+.ck-note-k {font-size:12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-text); margin-bottom: 10px;}
+.ck-note p {font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 0;}
+.sd-tip {display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; border: 1px solid var(--line); border-radius:20px; background: var(--surface); padding: 16px 18px; margin: var(--s10) 0; box-shadow: var(--e1);}
+.sd-tip img {width: 40px; height: 40px; border-radius:20px; display: block;}
+.sd-tip-k {font: 500 12px/1.3 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;}
+.sd-tip p {font-size: 14.5px; line-height: 1.6; color: var(--text-2); margin: 0;}
+.sd-tip a {color: var(--brand-text); font-weight: 700; text-decoration: none; white-space: nowrap;}
+.sd-tip a:hover {text-decoration: underline;}
+@media (max-width: 640px) {
+.ck-map {grid-template-columns: 1fr 1fr;}
+.ck-head {display: none;}
+.ck-row {grid-template-columns: 1fr; padding: 14px 16px; gap: 8px;}
+.ck-row > div {padding: 0 0 0 12px;}
+.ck-row .ck-c {padding: 0;}
+.ck-p::before, .ck-f::before, .ck-r::before {content: attr(data-l); display: block; font: 500 12px/1.4 var(--mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: var(--muted);}
+}
 </style>
-<link rel="stylesheet" href="/guides.css?v=3">
-<link rel="stylesheet" href="/footer.css?v=2">
 </head>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WS5CP6NW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-<!-- ═══════════════════════════════════════════ NAV -->
-<header class="site-nav">
-  <div class="site-nav-inner">
-    <a href="/" class="nav-logo"><img src="/logo/phillips-lockup.svg" alt="Phillips." style="height:1.43em;width:auto;vertical-align:-0.355em;display:inline-block"></a>
-    <nav class="nav-links">
-      <a href="/#services" class="nav-link">Services</a>
-      <a href="/work/" class="nav-link">Work</a>
-      <a href="/about/" class="nav-link">About</a>
-      <a href="/guides/" class="nav-link">Insights</a>
-      <a href="/free-checks/" class="btn-nav">Free checks</a>
-    </nav>
-    <button class="ph-hamburger" onclick="document.getElementById('ph-art2-drawer').classList.add('open')" aria-label="Open menu">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" rx="1" fill="currentColor"/><rect y="10" width="22" height="2" rx="1" fill="currentColor"/><rect y="16" width="22" height="2" rx="1" fill="currentColor"/></svg>
-    </button>
+<body class="v5" data-page="article">
+<!-- v5:defs --><svg class="sr" width="0" height="0" aria-hidden="true"><symbol id="px-mark" viewBox="0 0 240 240"><path d="M240.0 120.0L239.9 160.3L239.6 173.1L239.1 182.4L238.3 189.9L237.4 196.2L236.3 201.7L234.9 206.6L233.3 210.9L231.5 214.9L229.4 218.4L227.1 221.6L224.5 224.5L221.6 227.1L218.4 229.4L214.9 231.5L210.9 233.3L206.6 234.9L201.7 236.3L196.2 237.4L189.9 238.3L182.4 239.1L173.1 239.6L160.3 239.9L120.0 240.0L79.7 239.9L66.9 239.6L57.6 239.1L50.1 238.3L43.8 237.4L38.3 236.3L33.4 234.9L29.1 233.3L25.1 231.5L21.6 229.4L18.4 227.1L15.5 224.5L12.9 221.6L10.6 218.4L8.5 214.9L6.7 210.9L5.1 206.6L3.7 201.7L2.6 196.2L1.7 189.9L0.9 182.4L0.4 173.1L0.1 160.3L0.0 120.0L0.1 79.7L0.4 66.9L0.9 57.6L1.7 50.1L2.6 43.8L3.7 38.3L5.1 33.4L6.7 29.1L8.5 25.1L10.6 21.6L12.9 18.4L15.5 15.5L18.4 12.9L21.6 10.6L25.1 8.5L29.1 6.7L33.4 5.1L38.3 3.7L43.8 2.6L50.1 1.7L57.6 0.9L66.9 0.4L79.7 0.1L120.0 0.0L160.3 0.1L173.1 0.4L182.4 0.9L189.9 1.7L196.2 2.6L201.7 3.7L206.6 5.1L210.9 6.7L214.9 8.5L218.4 10.6L221.6 12.9L224.5 15.5L227.1 18.4L229.4 21.6L231.5 25.1L233.3 29.1L234.9 33.4L236.3 38.3L237.4 43.8L238.3 50.1L239.1 57.6L239.6 66.9L239.9 79.7Z" fill="#985830"/><g transform="translate(40 40) scale(1) translate(-40 -40)"><g fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"><path d="M88 124C88 140 88 156 88 172"/><path d="M152 68C152 102.67 152 137.33 152 172"/></g><circle cx="88" cy="76" r="14" fill="#FFFFFF"/></g></symbol></svg><!-- /v5:defs -->
+<!-- v5:header --><header class="vhd">
+  <div class="vhd-in">
+    <a class="vhd-logo" href="/" aria-label="Phillips. home"><svg class="mark" viewBox="0 0 240 240" width="32" height="32" aria-hidden="true"><use href="#px-mark"/></svg><span>Phillips.</span></a>
+    <nav class="vhd-nav" aria-label="Main"><a class="vb vb-p" href="/free-checks/">Free checks</a></nav>
   </div>
-</header>
+</header><!-- /v5:header -->
 <main id="main">
-<div id="ph-art2-drawer" class="ph-drawer">
-  <div class="ph-drawer-backdrop" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')"></div>
-  <div class="ph-drawer-panel">
-    <button class="ph-drawer-close" onclick="document.getElementById('ph-art2-drawer').classList.remove('open')">&#x2715;</button>
-    <a href="/#services" class="ph-drawer-link">Services</a>
-    <a href="/work/" class="ph-drawer-link">Work</a>
-    <a href="/about/" class="ph-drawer-link">About</a>
-    <a href="/guides/" class="ph-drawer-link active">Insights</a>
-    <a href="/free-checks/" class="ph-drawer-cta">Free checks</a>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════ ARTICLE HEADER -->
-<header class="article-header">
-  <div class="read-w">
-    <div class="breadcrumb">
-      <a href="/guides/">Guides</a>
-      <span class="sep">/</span>
-      <span class="cur">Google Ads</span>
+<!-- This guide on v5 (Figma "PX Guide"). The words, tables and diagrams are the live ones; only the shell changed. Diagrams sit in figure.vdiagram blocks with the guide's own styles below. -->
+<header class="vh vd-hero">
+  <div class="v-wrap">
+    <!-- v5:crumb --><nav class="vd-crumb" aria-label="Breadcrumb"><a href="/guides/">Insights</a><span aria-hidden="true">/</span><span class="here">Performance Max assets</span></nav><!-- /v5:crumb -->
+    <div class="vh-grid">
+    <div class="vh-text">
+      <h1 class="v-h1">How to Fix Performance Max Asset Issues in Google Ads (2026)</h1>
+      <p class="v-lede">Performance Max builds its ads from what you give it. Leave a gap and it fills it itself, with its own videos, its own copy and its own choice of landing page. This guide puts Google's asset requirements in one place, explains what Ad Strength really tells you, and fixes the nine asset issues that come up most.</p>
+      <div class="v-actions"><a class="vb vb-p" href="/google-ads-audit">Check my Google Ads</a></div><p class="v-fine vbyline">Lewis Phillips · 17 Nov 2026 · Updated 21 Nov 2026 · 10 min read</p>
     </div>
-    <div class="article-meta">
-      <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-      <span class="article-readtime">10 min read</span>
-    </div>
-    <h1 class="article-h1">How to Fix Performance Max Asset Issues in Google Ads (2026)</h1>
-    <div class="article-byline">Lewis Phillips &middot; 17 Nov 2026 &middot; Updated 21 Nov 2026 &middot; 10 min read</div>
-    <p class="article-lede">Performance Max builds its ads from what you give it. Leave a gap and it fills it itself, with its own videos, its own copy and its own choice of landing page. This guide puts Google's asset requirements in one place, explains what Ad Strength really tells you, and fixes the nine asset issues that come up most.</p>
-
-    <!-- Quick Answer -->
-    <div style="margin-top:32px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:20px 24px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--brand-text);margin-bottom:10px;">Quick answer</div>
-      <p style="font-size:16px;line-height:1.6;color:var(--text);margin:0;">Fill every asset group to Google's recommended counts: 11 or more headlines, 2 long headlines, 4 descriptions, 4 landscape and 4 square images, 2 portrait images, a logo, and your own video in horizontal, square and vertical. Then check the settings Google switches on for you: auto-generated video, Final URL expansion, text customisation and image enhancements. Treat Ad Strength as a coverage check, not a score to chase.</p>
+    <figure class="vh-photo shot"><img src="/images/shots/ads-check-account.jpg" srcset="/images/shots/ads-check-account.jpg 1100w" sizes="(max-width:960px) 92vw, 420px" width="1100" height="802" alt="How an account’s budget splits across its campaigns, from a Google Ads Check report for a made-up account" fetchpriority="high"></figure>
     </div>
   </div>
 </header>
-
-<!-- ═══════════════════════════════════════════ ARTICLE BODY -->
-<section class="article-section">
-  <div class="read-w">
-
-    <div class="article-body">
-      <h2>What an asset group is, and why it matters</h2>
-      <p>An asset group is the set of headlines, descriptions, images, logos and videos Performance Max builds its ads from, around one theme or one set of products. Google mixes and matches them into ads for Search, YouTube, Display, Discover, Gmail and Maps.</p>
+<section class="v-sec vp-sec vp-gap" id="quick-answer" data-reading>
+  <div class="v-wrap">
+    <div class="vp solo" data-v5>
+      <div class="vp-text">
+        <h2 class="v-h2">Quick answer</h2>
+        <p class="v-body">Fill every asset group to Google's recommended counts: 11 or more headlines, 2 long headlines, 4 descriptions, 4 landscape and 4 square images, 2 portrait images, a logo, and your own video in horizontal, square and vertical. Then check the settings Google switches on for you: auto-generated video, Final URL expansion, text customisation and image enhancements. Treat Ad Strength as a coverage check, not a score to chase.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">What an asset group is, and why it matters</h2>
+    <p>An asset group is the set of headlines, descriptions, images, logos and videos Performance Max builds its ads from, around one theme or one set of products. Google mixes and matches them into ads for Search, YouTube, Display, Discover, Gmail and Maps.</p>
       <p>That makes the assets the brief. A Search campaign mixes the headlines and descriptions you wrote. Performance Max chooses the combination it thinks will work. Depending on your settings, Google can generate eligible videos or copy and choose a different landing page. Most asset issues come down to one of those gaps, or to a setting Google switched on for you.</p>
-    </div>
-
-    <div class="article-body">
-      <h2>Google's asset requirements, in one place</h2>
-      <p>The table shows the standard creative requirements. Campaigns linked to a Merchant Center feed can launch without additional creative assets. You can add up to 20 landscape, 20 square and 20 portrait images per asset group. I aim for the recommended numbers in every asset group.</p>
-    </div>
-      <div class="ck" role="table" aria-label="Performance Max asset requirements">
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Google's asset requirements, in one place</h2>
+    <p>The table shows the standard creative requirements. Campaigns linked to a Merchant Center feed can launch without additional creative assets. You can add up to 20 landscape, 20 square and 20 portrait images per asset group. I aim for the recommended numbers in every asset group.</p>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Performance Max asset requirements">
       <div class="ck-row ck-head" role="row"><div role="columnheader">Asset</div><div role="columnheader">Google's rule</div><div role="columnheader">What I add</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Headlines</div><div class="ck-r" role="cell" data-l="Google's rule">3 to 15, up to 30 characters each.</div><div class="ck-p" role="cell" data-l="What I add">11 or more, with at least one of 15 characters or fewer, as Google suggests. Each one says something different.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Long headlines</div><div class="ck-r" role="cell" data-l="Google's rule">1 to 5, up to 90 characters.</div><div class="ck-p" role="cell" data-l="What I add">2 or more, each at least 30 characters.</div></div>
@@ -652,113 +274,126 @@
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Logos</div><div class="ck-r" role="cell" data-l="Google's rule">Square (1:1) required, 1200 x 1200 recommended, 128 x 128 minimum. Landscape (4:1) optional, 1200 x 300 recommended. Up to 5.</div><div class="ck-p" role="cell" data-l="What I add">Both shapes. No white logo on a transparent background, which Google warns can vanish on white.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Videos</div><div class="ck-r" role="cell" data-l="Google's rule">Optional. Videos must be at least 10 seconds long. For Shorts eligibility, add a vertical video of 10 to 60 seconds. Up to 15 videos.</div><div class="ck-p" role="cell" data-l="What I add">One of each shape, made by you. Without an active video, Google can generate one.</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Sitelinks</div><div class="ck-r" role="cell" data-l="Google's rule">Optional.</div><div class="ck-p" role="cell" data-l="What I add">6 or more. Google lists them as part of an Excellent rating.</div></div>
-      </div>
-    <div class="ck-note"><div class="ck-note-k">Worth knowing</div><p>Images and logos can be up to 5,120 KB each. Since 2025, the business name and logos sit in brand guidelines at campaign level for most accounts, rather than in each asset group. If you can't find them in the asset group, look there.</p></div>
-
-    <div class="article-body">
-      <h2>What Ad Strength tells you, and what it doesn't</h2>
-      <p>Every asset group gets an Ad Strength rating. Google scores it on the asset types you have, how varied they are, how different your text is, and how many assets there are in total.</p>
+      </div></figure>
+    <figure class="vdiagram" data-drawing><div class="ck-note"><div class="ck-note-k">Worth knowing</div><p>Images and logos can be up to 5,120 KB each. Since 2025, the business name and logos sit in brand guidelines at campaign level for most accounts, rather than in each asset group. If you can't find them in the asset group, look there.</p></div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">What Ad Strength tells you, and what it doesn't</h2>
+    <p>Every asset group gets an Ad Strength rating. Google scores it on the asset types you have, how varied they are, how different your text is, and how many assets there are in total.</p>
       <ul>
-        <li><strong>Incomplete:</strong> missing required creative or a call or lead form asset required by the primary bidding goal. The asset group can&rsquo;t run.</li>
+        <li><strong>Incomplete:</strong> missing required creative or a call or lead form asset required by the primary bidding goal. The asset group can’t run.</li>
         <li><strong>Poor:</strong> the minimum only, so it can serve on some placements but not all.</li>
         <li><strong>Average:</strong> every asset type is there, with little variety.</li>
         <li><strong>Good:</strong> every type, with good variety and different text.</li>
         <li><strong>Excellent:</strong> every type including the optional ones, 6 or more sitelinks, your own videos in all three shapes, and all 15 headline and 5 description slots used.</li>
       </ul>
       <p>Google calls it an indicator. It has found that higher Ad Strength goes with better performance, but the rating itself isn't a bid or an auction score. I use it as a coverage check: Poor or Average almost always means a missing asset type, or headlines that repeat each other. Two details catch people out. Text that Google writes for you counts towards the rating. Videos Google makes for you don't count towards Excellent.</p>
-    </div>
-
-    <div class="article-body">
-      <h2>Nine common asset issues, and how to fix each</h2>
-      <p>Each one below has what you see in the account, why it happens and the fix. Settings live under each campaign's <strong>Settings</strong>, in the <strong>Asset optimisation</strong> section, unless I say otherwise.</p>
-    </div>
-    <ol class="ck-map" aria-label="The nine issues"><li><a href="#i01"><span>01</span>Ad Strength stuck low</a></li><li><a href="#i02"><span>02</span>Google's videos, not yours</a></li><li><a href="#i03"><span>03</span>Ads landing on the wrong pages</a></li><li><a href="#i04"><span>04</span>Copy you didn't write</a></li><li><a href="#i05"><span>05</span>Images limited or disapproved</a></li><li><a href="#i06"><span>06</span>Wrong name or logo</a></li><li><a href="#i07"><span>07</span>Images Google changed or added</a></li><li><a href="#i08"><span>08</span>One asset group doing every job</a></li><li><a href="#i09"><span>09</span>No idea which assets work</a></li></ol>
-
-    <div class="issue-block" id="i01">
-      <div class="issue-header"><span class="issue-num">01</span><h2 class="issue-title">Ad Strength stuck at Poor or Average</h2></div>
-      <div class="ck" role="table" aria-label="Issue 01">
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Nine common asset issues, and how to fix each</h2>
+    <p>Each one below has what you see in the account, why it happens and the fix. Settings live under each campaign's <strong>Settings</strong>, in the <strong>Asset optimisation</strong> section, unless I say otherwise.</p>
+    <figure class="vdiagram" data-drawing><ol class="ck-map" aria-label="The nine issues"><li><a href="#i01"><span>01</span>Ad Strength stuck low</a></li><li><a href="#i02"><span>02</span>Google's videos, not yours</a></li><li><a href="#i03"><span>03</span>Ads landing on the wrong pages</a></li><li><a href="#i04"><span>04</span>Copy you didn't write</a></li><li><a href="#i05"><span>05</span>Images limited or disapproved</a></li><li><a href="#i06"><span>06</span>Wrong name or logo</a></li><li><a href="#i07"><span>07</span>Images Google changed or added</a></li><li><a href="#i08"><span>08</span>One asset group doing every job</a></li><li><a href="#i09"><span>09</span>No idea which assets work</a></li></ol></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="i01" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">01 Ad Strength stuck at Poor or Average</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 01">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Poor or Average on the asset group, with a list of suggestions.</div><div class="ck-f" role="cell" data-l="Why">A missing type (often portrait images, video or long headlines), or text that says the same thing ten ways.</div><div class="ck-p" role="cell" data-l="The fix">Fill each type to the recommended count in the table above, then rewrite near-duplicates so each headline makes a different point.</div></div>
-      </div>
-      <div class="article-body"><p>A simple test for variety: read the headlines out loud. If three of them are the brand name with a different adjective, merge them and use the space for a price, a guarantee, a location or a review.</p></div>
-    </div>
-
-    <div class="issue-block" id="i02">
-      <div class="issue-header"><span class="issue-num">02</span><h2 class="issue-title">Google's videos running instead of yours</h2></div>
-      <div class="ck" role="table" aria-label="Issue 02">
+      </div></figure>
+    <p>A simple test for variety: read the headlines out loud. If three of them are the brand name with a different adjective, merge them and use the space for a price, a guarantee, a location or a review.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="i02" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">02 Google's videos running instead of yours</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 02">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Videos on YouTube that you never made, stitched from your images and text.</div><div class="ck-f" role="cell" data-l="Why">The asset group has no active video of its own, so Google builds them where it can.</div><div class="ck-p" role="cell" data-l="The fix">Upload one horizontal, one square and one vertical video, each at least 10 seconds long. Keep the vertical video between 10 and 60 seconds for Shorts eligibility.</div></div>
-      </div>
-      <div class="article-body"><p>There is no separate switch for this. Google's own guidance is that uploading your own videos in all three shapes is what stops auto-generated ones. If you have no video at all, the video creation tool inside Google Ads can build a simple one from your own images, which at least keeps the content yours.</p><p>Video enhancements are a different setting: these are Google's reworked versions and shorter cuts of videos you uploaded. You can untick them under Asset optimisation, then Video.</p></div>
-    </div>
-
-    <div class="issue-block" id="i03">
-      <div class="issue-header"><span class="issue-num">03</span><h2 class="issue-title">Ads sending people to the wrong pages</h2></div>
-      <div class="ck" role="table" aria-label="Issue 03">
+      </div></figure>
+    <p>There is no separate switch for this. Google's own guidance is that uploading your own videos in all three shapes is what stops auto-generated ones. If you have no video at all, the video creation tool inside Google Ads can build a simple one from your own images, which at least keeps the content yours.</p><p>Video enhancements are a different setting: these are Google's reworked versions and shorter cuts of videos you uploaded. You can untick them under Asset optimisation, then Video.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="i03" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">03 Ads sending people to the wrong pages</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 03">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
-      <div class="ck-row" role="row"><div class="ck-c" role="cell">Clicks landing on blog posts, job pages, old offers or pages you'd never advertise.</div><div class="ck-f" role="cell" data-l="Why">Final URL expansion is on by default where supported and is unavailable in Performance Max campaigns that use store goals only. When it&rsquo;s on, Google can send people to another page on your site if it fits the search better.</div><div class="ck-p" role="cell" data-l="The fix">Keep it on and exclude the pages you don't want, or turn it off if one page is the only route to a sale or enquiry.</div></div>
-      </div>
-      <div class="article-body"><p>Google's own advice for a business with one landing page is to keep text customisation on and turn Final URL expansion off. Where several pages are fair game, keep expansion on and add individual URLs or rules under Asset optimisation, such as excluding anything under /blog/. You can also exclude pages by label if you use a page feed in place of a Merchant Center, vehicle or hotel feed.</p><p>Three things to know. Exclusions only work while expansion is on. You can't exclude the asset group's own final URL. Changes can take 24 to 48 hours to apply. To see where traffic actually went, open the Expanded Final URL assets view for the campaign.</p></div>
-    </div>
-
-    <div class="issue-block" id="i04">
-      <div class="issue-header"><span class="issue-num">04</span><h2 class="issue-title">Copy you didn't write</h2></div>
-      <div class="ck" role="table" aria-label="Issue 04">
+      <div class="ck-row" role="row"><div class="ck-c" role="cell">Clicks landing on blog posts, job pages, old offers or pages you'd never advertise.</div><div class="ck-f" role="cell" data-l="Why">Final URL expansion is on by default where supported and is unavailable in Performance Max campaigns that use store goals only. When it’s on, Google can send people to another page on your site if it fits the search better.</div><div class="ck-p" role="cell" data-l="The fix">Keep it on and exclude the pages you don't want, or turn it off if one page is the only route to a sale or enquiry.</div></div>
+      </div></figure>
+    <p>Google's own advice for a business with one landing page is to keep text customisation on and turn Final URL expansion off. Where several pages are fair game, keep expansion on and add individual URLs or rules under Asset optimisation, such as excluding anything under /blog/. You can also exclude pages by label if you use a page feed in place of a Merchant Center, vehicle or hotel feed.</p><p>Three things to know. Exclusions only work while expansion is on. You can't exclude the asset group's own final URL. Changes can take 24 to 48 hours to apply. To see where traffic actually went, open the Expanded Final URL assets view for the campaign.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="i04" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">04 Copy you didn't write</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 04">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Headlines and descriptions marked "Google AI" in the Added by column.</div><div class="ck-f" role="cell" data-l="Why">Text customisation (once called automatically created assets) writes extra text from your landing page and assets.</div><div class="ck-p" role="cell" data-l="The fix">Read every one. Remove any that are wrong, or set text guidelines. Turn it off if the copy can't be trusted.</div></div>
-      </div>
-      <div class="article-body"><p>Removing a single Google-written asset is permanent for that asset. To switch the whole feature off, untick it under Asset optimisation, Text customisation. Text guidelines, where your account has them, are a gentler option: you can exclude up to 25 terms per campaign (a competitor's name, a word your industry can't use) and add plain-English messaging restrictions such as "don't mention discounts". I leave text customisation on where the site is accurate and current, and switch it off for regulated businesses where one wrong phrase is a compliance problem.</p></div>
-    </div>
-
-    <div class="issue-block" id="i05">
-      <div class="issue-header"><span class="issue-num">05</span><h2 class="issue-title">Images limited or disapproved</h2></div>
-      <div class="ck" role="table" aria-label="Issue 05">
+      </div></figure>
+    <p>Removing a single Google-written asset is permanent for that asset. To switch the whole feature off, untick it under Asset optimisation, Text customisation. Text guidelines, where your account has them, are a gentler option: you can exclude up to 25 terms per campaign (a competitor's name, a word your industry can't use) and add plain-English messaging restrictions such as "don't mention discounts". I leave text customisation on where the site is accurate and current, and switch it off for regulated businesses where one wrong phrase is a compliance problem.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="i05" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">05 Images limited or disapproved</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 05">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Images marked Limited or Disapproved in the policy column.</div><div class="ck-f" role="cell" data-l="Why">Google's image rules: no collages made in editing, no blurry, distorted or badly cropped images, no images that are sideways, don't fill the frame, or carry text you can't read.</div><div class="ck-p" role="cell" data-l="The fix">Replace or edit the image. An edited asset is reviewed again. If you think the decision is wrong, appeal.</div></div>
-      </div>
-      <div class="article-body"><p>Text and logos laid over an image are allowed in Performance Max, with limits. Google recommends at least one clean image without overlays for each shape, and keeping the important part of the picture in the middle 80%, because placements crop the edges. A clear, single photo of the product or the work usually beats a designed banner.</p></div>
-    </div>
-
-    <div class="issue-block" id="i06">
-      <div class="issue-header"><span class="issue-num">06</span><h2 class="issue-title">The wrong business name or logo</h2></div>
-      <div class="ck" role="table" aria-label="Issue 06">
+      </div></figure>
+    <p>Text and logos laid over an image are allowed in Performance Max, with limits. Google recommends at least one clean image without overlays for each shape, and keeping the important part of the picture in the middle 80%, because placements crop the edges. A clear, single photo of the product or the work usually beats a designed banner.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="i06" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">06 The wrong business name or logo</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 06">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">An old logo, a trading name you've dropped, or a name rejected in review.</div><div class="ck-f" role="cell" data-l="Why">Brand guidelines moved the name and logos to campaign level. Google filled them from your best asset group if nobody updated them.</div><div class="ck-p" role="cell" data-l="The fix">Open brand guidelines for each campaign and set the name, 1 to 5 logos, and your colours and font if you want them.</div></div>
-      </div>
-      <div class="article-body"><p>The name must match your domain or your verified legal name, and the logo must appear on your landing page. Allow up to two working days for Google to review uploaded business information assets. If old logos keep appearing, check the account-level Dynamic business logos setting. Colours and fonts only apply to Google's own videos and to display ads, so they matter most when issue 02 isn't fixed yet.</p></div>
-    </div>
-
-    <div class="issue-block" id="i07">
-      <div class="issue-header"><span class="issue-num">07</span><h2 class="issue-title">Images Google changed or added</h2></div>
-      <div class="ck" role="table" aria-label="Issue 07">
+      </div></figure>
+    <p>The name must match your domain or your verified legal name, and the logo must appear on your landing page. Allow up to two working days for Google to review uploaded business information assets. If old logos keep appearing, check the account-level Dynamic business logos setting. Colours and fonts only apply to Google's own videos and to display ads, so they matter most when issue 02 isn't fixed yet.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="i07" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">07 Images Google changed or added</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 07">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Crops of your images you didn't make, or pictures pulled from your website.</div><div class="ck-f" role="cell" data-l="Why">Image enhancements create extra cropped versions. Landing page images take pictures from your site when the campaign setting allows it.</div><div class="ck-p" role="cell" data-l="The fix">Check the asset report, remove any image you don't want and set the image options per campaign.</div></div>
-      </div>
-      <div class="ck-note"><div class="ck-note-k">Landing page images in new campaigns</div><p>From 4 December 2026, new Performance Max campaigns use images from your landing pages by default, even if Dynamic images is off for the account. Existing campaigns keep their settings. Turn off Dynamic images in the campaign settings if you only want your own images.</p></div>
-    </div>
-
-    <div class="issue-block" id="i08">
-      <div class="issue-header"><span class="issue-num">08</span><h2 class="issue-title">One asset group doing every job</h2></div>
-      <div class="ck" role="table" aria-label="Issue 08">
+      </div></figure>
+    <figure class="vdiagram" data-drawing><div class="ck-note"><div class="ck-note-k">Landing page images in new campaigns</div><p>From 4 December 2026, new Performance Max campaigns use images from your landing pages by default, even if Dynamic images is off for the account. Existing campaigns keep their settings. Turn off Dynamic images in the campaign settings if you only want your own images.</p></div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide" id="i08" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">08 One asset group doing every job</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 08">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">One asset group covering every product and service, with copy so general it fits none of them.</div><div class="ck-f" role="cell" data-l="Why">It was quicker to set up, and the campaign still spends.</div><div class="ck-p" role="cell" data-l="The fix">One asset group per theme that needs its own message and landing page, each with its own assets and search themes.</div></div>
-      </div>
-      <div class="article-body"><p>A jeweller selling rings and cufflinks, or a firm offering two different services, is selling to different people with different words. Separate asset groups let each set of assets, images and landing pages match. Each can take up to 50 search themes, which tell Google what the group is about. Don't split so far that each group has too little to learn from: themes should differ in message, not just in name.</p></div>
-    </div>
-
-    <div class="issue-block" id="i09">
-      <div class="issue-header"><span class="issue-num">09</span><h2 class="issue-title">No idea which assets work</h2></div>
-      <div class="ck" role="table" aria-label="Issue 09">
+      </div></figure>
+    <p>A jeweller selling rings and cufflinks, or a firm offering two different services, is selling to different people with different words. Separate asset groups let each set of assets, images and landing pages match. Each can take up to 50 search themes, which tell Google what the group is about. Don't split so far that each group has too little to learn from: themes should differ in message, not just in name.</p>
+  </div>
+</section>
+<section class="v-sec tight vguide bg-stone" id="i09" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">09 No idea which assets work</h2>
+    <figure class="vdiagram" data-drawing><div class="ck" role="table" aria-label="Issue 09">
       <div class="ck-row ck-head" role="row"><div role="columnheader">What you see</div><div role="columnheader">Why</div><div role="columnheader">The fix</div></div>
       <div class="ck-row" role="row"><div class="ck-c" role="cell">Assets replaced on instinct, or never replaced at all.</div><div class="ck-f" role="cell" data-l="Why">Performance Max reporting used to show very little. It now shows a lot more, in places people don't look.</div><div class="ck-p" role="cell" data-l="The fix">Use the asset report (Campaigns, then Assets) for impressions, clicks, cost and conversions by asset, and the Channel performance page for where the money went.</div></div>
-      </div>
-      <div class="article-body"><p>Read the conversion numbers carefully. Google doesn't split a conversion between the assets that made the ad, so the asset totals add up to more than the asset group's. Plenty of assets show no conversions simply because they rarely served. I compare assets of the same type over a few weeks, and replace the ones that get impressions and nothing else.</p></div>
-      <div class="sd-tip"><img src="/logos/group/sd-tile.png" alt="" width="40" height="40" loading="lazy"><div><div class="sd-tip-k">Between checks</div><p>Search Desk, the monitoring product I built, breaks Performance Max down every morning by channel, product and asset group, so a weak asset group shows up without a manual dig. <a href="https://searchdesk.uk/performance-max-reporting">Performance Max reporting &rarr;</a></p></div></div>
-    </div>
-
-    <div class="article-body">
-      <h2>How I check an asset group</h2>
-      <p>This is the order I go through when I open a Performance Max campaign. It takes each issue above in turn.</p>
+      </div></figure>
+    <p>Read the conversion numbers carefully. Google doesn't split a conversion between the assets that made the ad, so the asset totals add up to more than the asset group's. Plenty of assets show no conversions simply because they rarely served. I compare assets of the same type over a few weeks, and replace the ones that get impressions and nothing else.</p>
+    <figure class="vdiagram" data-drawing><div class="sd-tip"><img src="/logos/group/sd-tile.png" alt="" width="40" height="40" loading="lazy"><div><div class="sd-tip-k">Between checks</div><p>Search Desk, the monitoring product I built, breaks Performance Max down every morning by channel, product and asset group, so a weak asset group shows up without a manual dig. <a href="https://searchdesk.uk/performance-max-reporting">Performance Max reporting →</a></p></div></div></figure>
+  </div>
+</section>
+<section class="v-sec tight vguide" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">How I check an asset group</h2>
+    <p>This is the order I go through when I open a Performance Max campaign. It takes each issue above in turn.</p>
       <ol>
         <li><strong>Status and Ad Strength</strong> for every asset group. Anything Incomplete or Poor goes to the top of the list.</li>
         <li><strong>Count each asset type</strong> against the table above, including portrait images, long headlines and sitelinks.</li>
@@ -768,149 +403,56 @@
         <li><strong>Policy:</strong> anything Limited or Disapproved, fixed or appealed.</li>
         <li><strong>The asset report:</strong> what served, what converted, and what to replace next.</li>
       </ol>
-    </div>
-
-    <div class="ck-note"><div class="ck-note-k">One rule above the rest</div><p>Give Performance Max your own material for every slot it has. Google can generate eligible assets where the relevant automation applies. Missing assets can still limit where your ads show, so start with the material you know sells.</p></div>
-
-    <div class="article-body">
-      <h2>Check it automatically</h2>
-      <p>The free <a href="/google-ads-audit">Google Ads Check</a> on this site reads Performance Max alongside the rest of the account, using fixed written rules, and lists what to fix first. For the wider account, the <a href="/guides/google-ads-audit-checklist/">Google Ads audit checklist</a> covers the eight other areas I check.</p>
-    </div>
-
-    <!-- FAQ heading -->
-    <div class="article-body">
-      <h2>FAQ</h2>
-    </div>
-
-    <!-- FAQ accordion -->
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">Does Ad Strength affect how Performance Max performs?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Not directly. Google calls Ad Strength an indicator of how complete and varied your assets are, not an auction factor. It has found that higher Ad Strength goes with better performance, so a low rating is worth fixing, but by adding real, varied assets rather than writing to the score. An Incomplete asset group can&rsquo;t run. Check for missing required creative and for any call or lead form asset required by the primary bidding goal.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">How do I stop Performance Max making its own videos?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Upload your own. Google makes videos when an asset group has no active video of its own, and its guidance is that uploading your own in all three shapes (horizontal, square and vertical, each at least 10 seconds long) stops that. Keep the vertical video between 10 and 60 seconds for Shorts eligibility. There is no separate off switch for auto-generated video.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">Should I turn off Final URL expansion?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">Turn it off if one page is the only route to a sale or enquiry: that is Google's own advice, with text customisation left on. If several pages on your site are good landing pages, keep it on and exclude the ones you don't want, such as blog posts, job pages and old offers. Final URL expansion is unavailable in campaigns that use store goals only.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">How many headlines does Performance Max need?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">The standard requirement is 3 to 15 headlines, each up to 30 characters. Google recommends 11 or more, with at least one of 15 characters or fewer. The standard requirements also include 1 to 5 long headlines and 2 to 5 descriptions, each up to 90 characters. Campaigns linked to a Merchant Center feed can launch without additional creative assets.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">
-          <span class="faq-q">What image sizes does Performance Max need?</span>
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-answer">For a standard asset group, landscape 1.91:1 (1200 x 628 recommended) and square 1:1 (1200 x 1200 recommended) are required. Portrait 4:5 (960 x 1200 recommended) is optional. You can add up to 20 images of each format per asset group, each up to 5,120 KB. The standard logo requirement is a square 1:1 version, with an optional landscape 4:1 version. Campaigns linked to a Merchant Center feed can launch without additional creative assets.</div>
-      </div>
-    </div>
-
-  </div><!-- /read-w -->
+    <figure class="vdiagram" data-drawing><div class="ck-note"><div class="ck-note-k">One rule above the rest</div><p>Give Performance Max your own material for every slot it has. Google can generate eligible assets where the relevant automation applies. Missing assets can still limit where your ads show, so start with the material you know sells.</p></div></figure>
+  </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ RELATED -->
-<section class="related-section">
-  <div class="page-w">
-    <div class="related-heading-wrap">
-      <span class="eyebrow">Related guides</span>
-      <h2 class="related-heading">Keep reading.</h2>
-    </div>
-    <div class="related-cards">
-      <a href="/guides/google-ads-audit-checklist/" class="related-card">
-        <div class="related-card-meta">
-          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-          <span class="related-card-readtime">11 min read</span>
-        </div>
-        <h3 class="related-card-title">Google Ads Audit Checklist: 9 Areas to Check, in Order</h3>
-        <p class="related-card-desc">The checklist I use when I take on an account, with what a pass and a fail look like in each area.</p>
-        <span class="related-card-cta">Read guide &rarr;</span>
-      </a>
-      <a href="/guides/fix-google-ads-conversion-tracking/" class="related-card">
-        <div class="related-card-meta">
-          <span class="category-pill"><span class="pill-dot"></span>Google Ads</span>
-          <span class="related-card-readtime">12 min read</span>
-        </div>
-        <h3 class="related-card-title">How to Fix Google Ads Conversion Tracking</h3>
-        <p class="related-card-desc">Performance Max learns from your conversions. The seven most common causes of broken tracking, and how to fix each one.</p>
-        <span class="related-card-cta">Read guide &rarr;</span>
-      </a>
+<section class="v-sec tight vguide bg-stone" data-reading>
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Check it automatically</h2>
+    <p>The free Google Ads Check on this site reads Performance Max alongside the rest of the account, using fixed written rules, and lists what to fix first. For the wider account, the Google Ads audit checklist covers the eight other areas I check.</p><p class="vgo-row"><a class="v-go" href="/google-ads-audit">Google Ads Check <span aria-hidden="true">→</span></a><a class="v-go" href="/guides/google-ads-audit-checklist/">Google Ads audit checklist <span aria-hidden="true">→</span></a></p>
+  </div>
+</section>
+<section class="v-sec" id="faq" data-reading>
+  <div class="v-wrap vq">
+    <h2 class="v-h2" data-v5>Questions</h2>
+    <div data-v5>
+      <details><summary>Does Ad Strength affect how Performance Max performs?</summary><p>Not directly. Google calls Ad Strength an indicator of how complete and varied your assets are, not an auction factor. It has found that higher Ad Strength goes with better performance, so a low rating is worth fixing, but by adding real, varied assets rather than writing to the score. An Incomplete asset group can’t run. Check for missing required creative and for any call or lead form asset required by the primary bidding goal.</p></details>
+      <details><summary>How do I stop Performance Max making its own videos?</summary><p>Upload your own. Google makes videos when an asset group has no active video of its own, and its guidance is that uploading your own in all three shapes (horizontal, square and vertical, each at least 10 seconds long) stops that. Keep the vertical video between 10 and 60 seconds for Shorts eligibility. There is no separate off switch for auto-generated video.</p></details>
+      <details><summary>Should I turn off Final URL expansion?</summary><p>Turn it off if one page is the only route to a sale or enquiry: that is Google's own advice, with text customisation left on. If several pages on your site are good landing pages, keep it on and exclude the ones you don't want, such as blog posts, job pages and old offers. Final URL expansion is unavailable in campaigns that use store goals only.</p></details>
+      <details><summary>How many headlines does Performance Max need?</summary><p>The standard requirement is 3 to 15 headlines, each up to 30 characters. Google recommends 11 or more, with at least one of 15 characters or fewer. The standard requirements also include 1 to 5 long headlines and 2 to 5 descriptions, each up to 90 characters. Campaigns linked to a Merchant Center feed can launch without additional creative assets.</p></details>
+      <details><summary>What image sizes does Performance Max need?</summary><p>For a standard asset group, landscape 1.91:1 (1200 x 628 recommended) and square 1:1 (1200 x 1200 recommended) are required. Portrait 4:5 (960 x 1200 recommended) is optional. You can add up to 20 images of each format per asset group, each up to 5,120 KB. The standard logo requirement is a square 1:1 version, with an optional landscape 4:1 version. Campaigns linked to a Merchant Center feed can launch without additional creative assets.</p></details>
     </div>
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ END CTA -->
-<section class="end-cta">
-  <div class="end-cta-inner">
-    <span class="eyebrow" style="color:var(--brand-on-ink);">Want a second pair of eyes?</span>
-    <h2>Ask me <em>about your account.</em></h2>
-    <div class="end-cta-btns">
-      <a href="/#contact" class="btn-cta-filled">Ask me a question &rarr;</a>
-      <a href="/google-ads/" class="btn-cta-outline">Google Ads management &rarr;</a>
+<section class="v-sec tight bg-stone" id="keep-reading">
+  <div class="v-wrap vread">
+    <h2 class="v-h2">Keep reading.</h2>
+    <nav class="vguides" aria-label="Related guides"><a class="v-go" href="/guides/google-ads-audit-checklist/">Google Ads Audit Checklist: 9 Areas to Check, in Order <span aria-hidden="true">→</span></a><a class="v-go" href="/guides/fix-google-ads-conversion-tracking/">How to Fix Google Ads Conversion Tracking <span aria-hidden="true">→</span></a></nav>
+  </div>
+</section>
+<!-- v5:brief --><section class="v-sec" id="brief">
+  <div class="v-wrap vf-grid">
+    <div data-v5>
+      <h2 class="v-h2" id="brief-title">What changed in marketing last week, every Monday.</h2>
+      <p class="v-body">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account.</p>
     </div>
-    <div class="end-cta-note">Free &middot; No obligation &middot; I reply myself</div>
-    <div class="end-cta-note">Or run the <a href="/google-ads-audit" style="color:inherit;text-decoration:underline">free Google Ads Check</a> on your account first.</div>
+    <div data-v5>
+      <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate aria-labelledby="brief-title">
+        <div class="brief-row"><div class="vfield field"><label for="brief-email-guide">Email</label><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required></div><button type="submit" class="vb vb-p brief-btn">Get the Brief</button></div>
+        <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
+        <p class="v-fine">I email you first to confirm. Unsubscribe any time.</p>
+        <p class="v-fine"><a class="v-go" href="/privacy/">Privacy notice <span aria-hidden="true">→</span></a></p>
+        <p class="brief-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section><!-- /v5:brief -->
+<section class="v-sec tight bg-stone" id="ask">
+  <div class="v-wrap vt">
+    <p>Ask me about your account.</p>
+    <a class="vb vb-w" href="/#contact">Ask me a question</a>
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ THE MONDAY BRIEF -->
-<section class="brief-guide" aria-labelledby="brief-guide-h">
-  <div class="brief-guide-inner">
-    <span class="brief-eyebrow">The Monday Brief</span>
-    <h2 id="brief-guide-h">What changed in marketing last week, every Monday.</h2>
-    <p class="brief-guide-body">One email at 7am on the week's changes to Google Ads, GA4, SEO, Meta, Microsoft Ads, Apple Ads and LinkedIn Ads, and what each one could affect in your account. <a href="/updates/">See past issues</a>.</p>
-    <form class="brief-signup" action="/subscribe" method="post" data-location="guide" novalidate>
-      <label class="brief-label" for="brief-email-guide">Your email address</label>
-      <div class="brief-row"><input id="brief-email-guide" name="email" type="email" autocomplete="email" inputmode="email" maxlength="160" required placeholder="you@yourbusiness.co.uk"><button type="submit" class="brief-btn">Get the Brief</button></div>
-      <label class="brief-trap" aria-hidden="true">Leave this empty <input name="company_url" tabindex="-1" autocomplete="off"></label>
-      <p class="brief-note">One email every Monday morning on what changed in the ad and search platforms, and what it means for your account. I email you first to confirm. Unsubscribe any time. <a href="/privacy/">Privacy notice</a>.</p>
-      <p class="brief-status" role="status" aria-live="polite"></p>
-    </form>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ FOOTER -->
-</main>
-<footer class="gf"><div class="gf-in">
-  <div class="gf-top">
-    <div class="gf-brand"><img src="/logo/phillips-lockup-reversed.svg" alt="Phillips." width="120" height="26"><p>I plan the marketing, then I do the work.</p></div>
-    <nav class="gf-cols" aria-label="Footer"><div><h4>Services</h4><ul><li><a href="/web-design/">Web design</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/marketing-systems/">Marketing systems</a></li><li><a href="/consultancy/">Consultancy</a></li></ul></div><div><h4>Free checks</h4><ul><li><a href="/website-check/">Website Check</a></li><li><a href="/google-ads-audit">Google Ads Check</a></li><li><a href="/guides/">Guides</a></li><li><a href="/updates/">The Monday Brief</a></li></ul></div><div><h4>Phillips.</h4><ul><li><a href="/work/">Work</a></li><li><a href="/about/">About</a></li><li><a href="/#contact">Ask me a question</a></li></ul></div></nav>
-  </div>
-  <nav class="gf-group" aria-label="Phillips Group of Companies"><a class="k" href="https://phillips-group.uk/">Phillips Group</a> <a href="https://thedirectorsoffice.uk/">The Director’s Office</a> <b>Phillips.</b> <a href="https://beforeyoupay.uk/">Before You Pay</a> <a href="https://indexpoint.uk/">Index Point</a> <a href="https://searchdesk.uk/">Search Desk</a></nav>
-  <div class="gf-base"><span>© 2026 Phillips. <span class="l"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/privacy/#cookies" data-cookie-settings>Cookie settings</a></span></span><a class="gf-pb" href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Powered by Phillips.</a></div>
-  <p class="gf-legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, registered in England and Wales, company number 17567515. Registered office: 124-128 City Road, London, EC1V 2NX.</p>
-</div></footer>
-
-<script>
-// FAQ accordion
-document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
-  var answer = btn.nextElementSibling;
-  var icon = btn.querySelector('.faq-icon');
-  if (i === 0) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
-  btn.addEventListener('click', function() {
-    var open = answer.classList.contains('is-open');
-    document.querySelectorAll('.faq-answer').forEach(function(a){ a.classList.remove('is-open'); });
-    document.querySelectorAll('.faq-icon').forEach(function(ic){ ic.classList.remove('is-open'); });
-    document.querySelectorAll('.faq-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
-    if (!open) { answer.classList.add('is-open'); icon.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); }
-  });
-});
-</script>
 <script>
 (function(){
   // signal-table: class-based head/row
@@ -932,8 +474,19 @@ document.querySelectorAll('.faq-btn').forEach(function(btn, i) {
   });
 })();
 </script>
+</main>
+<!-- v5:footer --><footer class="vgf" id="site-footer">
+  <div class="vgf-in">
+    <div class="vgf-top">
+      <div class="vgf-brand"><a class="vhd-logo" href="/" aria-label="Phillips. home"><svg class="mark" viewBox="0 0 240 240" width="32" height="32" aria-hidden="true"><use href="#px-mark"/></svg><span>Phillips.</span></a><p>I plan the marketing, then I do the work.</p></div>
+      <nav class="vgf-cols" aria-label="Footer"><div><h2 class="vgf-h">Services</h2><ul><li><a href="/web-design/">Web design</a></li><li><a href="/local-seo/">Local SEO</a></li><li><a href="/google-ads/">Google Ads</a></li><li><a href="/marketing-systems/">Marketing systems</a></li><li><a href="/consultancy/">Consultancy</a></li></ul></div><div><h2 class="vgf-h">Free checks</h2><ul><li><a href="/google-ads-audit">Google Ads Check</a></li><li><a href="/website-check/">Website Check</a></li><li><a href="/guides/">Guides</a></li><li><a href="/updates/">The Monday Brief</a></li></ul></div><div><h2 class="vgf-h">Phillips.</h2><ul><li><a href="/work/">Work</a></li><li><a href="/about/">About</a></li><li><a href="/#contact">Ask me a question</a></li></ul></div></nav>
+    </div>
+    <nav class="vgf-group" aria-label="Phillips Group"><span class="k">Part of Phillips Group</span> <a href="https://thedirectorsoffice.uk/">The Director’s Office</a> <b>Phillips.</b> <a href="https://beforeyoupay.uk/">Before You Pay</a> <a href="https://indexpoint.uk/">Index Point</a> <a href="https://searchdesk.uk/">Search Desk</a></nav>
+    <div class="vgf-base"><span>&copy; 2026 Phillips. <span class="l"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/privacy/#cookies" data-cookie-settings>Cookie settings</a></span></span><a class="vgf-pb" href="https://www.phillips-uk.com/" target="_blank" rel="noopener">Powered by Phillips.</a></div>
+    <p class="vgf-legal">Phillips. is a trading name of PHILLIPSGROUPUK LIMITED, registered in England and Wales, company number 17567515. Registered office: 124-128 City Road, London, EC1V 2NX.</p>
+  </div>
+</footer><!-- /v5:footer -->
+<script src="/v5.js?v=1" defer></script>
 <script src="/brief-form.js?v=1" defer></script>
-<script src="/motion.js?v=5" defer></script>
-<script src="/email.js?v=1" defer></script>
 </body>
 </html>
