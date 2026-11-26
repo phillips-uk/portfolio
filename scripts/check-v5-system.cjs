@@ -44,7 +44,7 @@ const WIDTHS = [1440, 768, 375];
 function pages() {
   const args = process.argv.slice(2);
   if (args.length) return args;
-  const files = execSync(`grep -rlE --include='*.html' '<body class="([a-z0-9 -]* )?v5( [a-z0-9 -]*)?"|classList\\.add\\(.v5.\\)' "${ROOT}" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.claude --exclude-dir=_design || true`, { encoding: 'utf8' }).trim().split('\n').filter(Boolean).map(f => path.relative(ROOT, f));
+  const files = execSync(`grep -rlE --include='*.html' '<body class="([a-z0-9 -]* )?v5( [a-z0-9 -]*)?"|classList\\.add\\(.v5.\\)' "${ROOT}" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.claude --exclude-dir=_design --exclude-dir=.wrangler || true`, { encoding: 'utf8' }).trim().split('\n').filter(Boolean).map(f => path.relative(ROOT, f));
   return files.filter(f => !f.startsWith('cloudflare/') || Object.values(TEMPLATES).includes(f));
 }
 
