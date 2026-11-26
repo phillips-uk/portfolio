@@ -1369,3 +1369,42 @@ html:has(body.v5){scroll-padding-top:92px}
   .v5 .vsteps li { font-size: 16px; grid-template-columns: 36px minmax(0, 1fr); }
   .v5 .vsteps li::before { width: 36px; height: 36px; font-size: 16px; }
 }
+/* Page flow, rolled out (Lewis, 26 Nov 2026: "Yes, roll it out"): dark versions of the trio, split and quote, a numbered
+   process row, and three choice cards. Each page takes its own mix so the pages don't repeat each other. */
+.v5 .bg-ink .vm .v-h3, .v5 .bg-ink .vf b, .v5 .bg-ink .vquote blockquote { color: #fff; }
+.v5 .bg-ink .vm p, .v5 .bg-ink .vf span, .v5 .bg-ink .v-body, .v5 .bg-ink .vquote figcaption { color: var(--ink-text); }
+.v5 .bg-ink .vf li { border-color: var(--ink-line); }
+.v5 .bg-ink .vf li::before { border-color: var(--brand-on-ink); }
+.v5 .bg-ink .vsplit-pic.shot img { border-color: var(--ink-line); }
+.v5 .bg-ink .v-fine { color: var(--ink-muted); }
+.v5 .vproc { list-style: none; counter-reset: proc; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.v5 .vproc > li { counter-increment: proc; display: flex; flex-direction: column; gap: 8px; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.v5 .vproc > li::before { content: counter(proc, decimal-leading-zero); margin-bottom: 12px; font: 800 40px/1 var(--display); letter-spacing: -.03em; color: var(--brand); }
+.v5 .vproc b { font: 700 19px/1.3 var(--display); color: var(--text); }
+.v5 .vproc span { font: 400 17px/1.5 var(--body); color: var(--text-2); }
+.v5 .vproc + .vband { margin-top: 24px; }
+.v5 .vways.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.v5 .vco-grid.four > li { flex-basis: calc((100% - 40px) / 2); }
+@media (max-width: 960px) {
+  .v5 .vproc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .v5 .vways.three { grid-template-columns: minmax(0, 1fr); }
+  .v5 .vco-grid.four > li { flex-basis: calc((100% - 24px) / 2); }
+}
+@media (max-width: 760px) {
+  .v5 .vproc { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 32px; }
+  .v5 .vproc > li { padding: 20px; }
+  .v5 .vproc > li::before { font-size: 28px; margin-bottom: 4px; }
+  .v5 .vproc b { font-size: 18px; }
+  .v5 .vproc span { font-size: 16px; }
+  .v5 .vco-grid.four > li { flex-basis: 100%; }
+}
+.v5 .vproc-split { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 48px; }
+.v5 .vproc-split .vsplit-pic { margin: 0; }
+.v5 .vproc-split .vproc { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 960px) { .v5 .vproc-split { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .v5 .vproc-split { margin-top: 32px; } .v5 .vproc-split .vproc { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) {
+  .v5 .vproc { gap: 0; border-top: 1px solid var(--line); }
+  .v5 .vproc > li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; padding: 16px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: none; }
+  .v5 .vproc > li::before { grid-row: span 2; margin: 0; font-size: 24px; }
+}
