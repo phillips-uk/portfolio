@@ -304,10 +304,10 @@ File: `index.html` (page)
 
 File: `about/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/showcase.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.stats`, `.stat`, `.stat-n`, `.sec-white`, `.page-w`, `.shot-view`, `.pg`, `.is-on`, `.sec-cream`, `.features`, `.feature`, `.timeline`, `.t-org`, `.card`, `.grid-2`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-showcase`, `data-src`, `data-tab`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `about`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/about/`, OG 3/3
@@ -317,10 +317,10 @@ File: `about/index.html` (page)
 
 File: `work/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/showcase.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.grid-2`, `.card`, `.work-card`, `.kpis`, `.kpi-n`, `.shot-view`, `.pg`, `.is-on`, `.wip-card`, `.ph`, `.tile`, `.analysis-tags`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-showcase`, `data-src`, `data-tab`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `work`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/work/`, OG 3/3
@@ -330,10 +330,10 @@ File: `work/index.html` (page)
 
 File: `free-checks/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.grid-2`, `.card`, `.tool-card`, `.sec-cream`, `.sd`, `.sd-tools`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `free-checks`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/free-checks/`, OG 3/3

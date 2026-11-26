@@ -1153,6 +1153,10 @@ html:has(body.v5){scroll-padding-top:92px}
 .v5 .vh-photo img, .v5 .vp-shot img { background: var(--sunk); }
 .v5 .vh-photo.shot img { object-position: left top; }
 .v5 .vf span:empty { display: none; }
+/* tick rows as mocked for Phillips. (Figma "PX" frames, Lewis's yes 26 Nov 2026): one column beside the heading, and the
+   line kept on phones, because a row title such as "Founder" or "Go City" says nothing on its own */
+.v5 .vf { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 760px) { .v5 .vf span { display: block; } }
 .v5 .v-small a.v-go, .v5 p a.v-go { font-weight: 600; }
 
 /* the logo: the P. tile and the name */
@@ -1192,6 +1196,23 @@ html:has(body.v5){scroll-padding-top:92px}
 
 /* legal pages: the official post sentence and the reviewed cross-reference links stay inside the reading text */
 .v5 .vread .addr { white-space: nowrap; }
+
+/* cards with a real screenshot (Figma "V5 Company card", the Phillips Group pilot's part): three across, the last row centred */
+.v5 .vco-grid { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin: 48px 0 0; padding: 0; }
+.v5 .vco-grid > li { flex: 0 0 calc((100% - 80px) / 3); min-width: 0; display: flex; }
+.v5 .vco { display: flex; flex-direction: column; width: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--text); text-decoration: none; transition: border-color var(--d2); }
+.v5 a.vco:hover { border-color: var(--brand); }
+.v5 .vco-shot { margin: 0; aspect-ratio: 3 / 2; overflow: hidden; background: var(--sunk); border-bottom: 1px solid var(--line); }
+.v5 .vco-shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.v5 .vco-body { display: flex; flex-direction: column; gap: 12px; flex: 1; padding: 24px; }
+.v5 .vco-name { margin: 0; font: 700 19px/1.3 var(--display); letter-spacing: -.01em; color: var(--text); }
+.v5 .vco-body p { margin: 0; font: 400 15px/1.5 var(--body); color: var(--text-2); }
+.v5 .vco-go { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; font: 600 15px/1.4 var(--body); color: var(--text); }
+.v5 .vco-go span { color: var(--brand); transition: transform var(--d2); }
+.v5 a.vco:hover .vco-go span { transform: translateX(3px); }
+@media (max-width: 960px) { .v5 .vco-grid { gap: 24px; } .v5 .vco-grid > li { flex-basis: calc((100% - 24px) / 2); } }
+@media (max-width: 760px) { .v5 .vco-grid { margin-top: 32px; } .v5 .vco-grid > li { flex-basis: 100%; } .v5 .vco-body { padding: 20px; } .v5 .vco-name { font-size: 17px; } .v5 .vco-body p, .v5 .vco-go { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) { .v5 .vco, .v5 .vco-go span { transition: none; } }
 
 @media (max-width: 760px) {
   .v5 .vsplit-pic { margin-top: 24px; }

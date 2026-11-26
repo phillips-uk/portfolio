@@ -50,7 +50,7 @@ const contact = ({ h, l, loc }) => `<section class="v-sec bg-stone" id="contact"
         <div class="enquiry-foot"><button type="submit" class="vb vb-p enquiry-btn">Send my question</button><p class="enquiry-note">I use these details only to reply to you.</p></div>
         <p class="enquiry-status" role="status" aria-live="polite"></p>
       </form>
-      <p class="contact-alt">Prefer LinkedIn? <a href="https://www.linkedin.com/in/lewis-p-153b2119a/" target="_blank" rel="noopener noreferrer">Message me there <span aria-hidden="true">→</span></a></p>
+      <p class="contact-alt">Prefer LinkedIn? ${V.go('https://www.linkedin.com/in/lewis-p-153b2119a/', 'Message me there', ' target="_blank" rel="noopener noreferrer"')}</p>
     </div>
   </div>
 </section>`;
@@ -88,6 +88,9 @@ const PAGES = {
   'privacy/index.html': page('privacy', { parts: { crumb: () => V.crumb([['Home', '/'], ['Privacy']]) } }),
   'terms/index.html': page('terms', { parts: { crumb: () => V.crumb([['Home', '/'], ['Terms']]) } }),
   '404.html': page('404'),
+  'about/index.html': page('about', { contact: { h: 'Ask me a question.', l: 'I can do the marketing instead of a hire, or work alongside your team. Tell me about the business and what you want to change, and I’ll reply by email.', loc: 'about' } }),
+  'work/index.html': page('work', { contact: { h: 'Want work like this?', l: 'Write a few lines about your business and what you’d like to change, and anything you want to ask. I’ll reply by email.', loc: 'work' } }),
+  'free-checks/index.html': page('free-checks', { contact: { h: 'Ask me a question.', l: 'Tell me about the business and what you’d like to change. If you’ve run a check, mention it. I’ll reply by email.', loc: 'free-checks' } }),
 };
 
 function build(rel, html) {
