@@ -1168,6 +1168,30 @@ html:has(body.v5){scroll-padding-top:92px}
 .v5 .vsplit-pic.shot img { object-position: left top; border: 1px solid var(--line); }
 .v5 .vf-grid .v-go { display: inline-flex; margin-top: 20px; }
 
+/* a credit under a hero photo (CC BY-SA photos), clear of the offset outline */
+.v5 .vh-credit { margin: 36px 0 0; text-align: right; }
+@media (max-width: 760px) { .v5 .vh-credit { margin-top: 20px; } }
+
+/* the quote calculator on Marketing systems (#tools): the panel's right side, ids and script unchanged */
+.v5 .vp:has(.vcalc) { align-items: center; }
+.v5 .vp:has(.vcalc) .vp-text { padding-bottom: 72px; }
+.v5 .vcalc { align-self: center; width: 100%; padding-bottom: 72px; }
+.v5 .vcalc .vd-card { display: flex; flex-direction: column; gap: 0; }
+.v5 .vcalc .vcheck { margin: 0 0 24px; }
+.v5 .vcalc .vcheck[hidden] { display: none; }
+.v5 .vcalc-out { display: flex; flex-direction: column; gap: 4px; padding: 20px; margin: 0 0 20px; border-radius: 20px; background: var(--brand-wash); }
+.v5 .vcalc-out > span:first-child { font: 600 14px/1.4 var(--body); color: var(--text-2); }
+.v5 .vcalc-out b { font: 800 32px/1.2 var(--display); letter-spacing: -.01em; color: var(--text); }
+.v5 .vcalc .vb { width: 100%; }
+.v5 .vcalc .vb[disabled] { opacity: .55; pointer-events: none; }
+.v5 .vcalc .v-fine { margin: 12px 0 0; }
+@media (max-width: 960px) { .v5 .vcalc { padding-bottom: 0; } }
+@media (max-width: 760px) { .v5 .vcalc-out b { font-size: 28px; } }
+
+/* the guides list in a service page's FAQ ("Fix it yourself first") */
+.v5 .vguides { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.v5 .vguides .v-go { margin: 0; }
+
 /* "Ask me a question" (#contact): the shared field part draws the fields; these are the form's own states */
 .v5 .enquiry-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .v5 .enquiry-ts { margin: 0; }

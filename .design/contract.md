@@ -343,10 +343,10 @@ File: `free-checks/index.html` (page)
 
 File: `consultancy/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.engage`, `.card`, `.sec-cream`, `.why`, `.kpis`, `.kpi-n`, `.why-points`, `.why-point`, `.features`, `.feature`, `.grid-2`, `.analysis-tags`, `.steps`, `.step`, `.work-card`, `.tile`, `.faq`, `.related`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `consultancy`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/consultancy/`, OG 3/3
@@ -356,10 +356,10 @@ File: `consultancy/index.html` (page)
 
 File: `google-ads/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.why`, `.kpis`, `.kpi-n`, `.why-points`, `.why-point`, `.sec-cream`, `.grid-2`, `.card`, `.work-card`, `.tile`, `.features`, `.feature`, `.note`, `.rep`, `.ok`, `.steps`, `.step`, `.faq`, `.related`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `google-ads`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/google-ads/`, OG 3/3
@@ -369,10 +369,10 @@ File: `google-ads/index.html` (page)
 
 File: `local-seo/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.why`, `.why-points`, `.why-point`, `.sec-cream`, `.features`, `.feature`, `.note`, `.engage`, `.card`, `.steps`, `.step`, `.grid-2`, `.work-card`, `.tile`, `.faq`, `.related`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `local-seo`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/local-seo/`, OG 3/3
@@ -382,11 +382,11 @@ File: `local-seo/index.html` (page)
 
 File: `marketing-systems/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#dc-size`, `#dc-surface`, `#dc-seal-row`, `#dc-seal`, `#dc-price`, `#dc-note`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.why`, `.kpis`, `.kpi-n`, `.why-points`, `.why-point`, `.sec-cream`, `.card`, `.flow`, `.flow-node`, `.features`, `.feature`, `.steps`, `.step`, `.grid-2`, `.work-card`, `.tile`, `.faq`, `.related`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-location`, `data-cookie-settings`
-- Forms: `#drive-calc` `.calc` GET `(script)` (fields: none); `.enquiry` POST `/enquiry` (form_location `marketing-systems`) (fields: `name`, `email`, `business`, `message`, `company_url`)
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#dc-size`, `#dc-surface`, `#dc-seal-row`, `#dc-seal`, `#dc-price`, `#dc-note`, `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
+- Forms: `#drive-calc` `.vd-card` GET `(script)` (fields: none); `.enquiry` POST `/enquiry` (form_location `marketing-systems`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/marketing-systems/`, OG 3/3
 - JSON-LD @ids: `https://www.phillips-uk.com/#business`
@@ -395,10 +395,10 @@ File: `marketing-systems/index.html` (page)
 
 File: `web-design/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/showcase.js`, `/motion.js`, `/email.js`, `/fold.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.sec-white`, `.page-w`, `.why`, `.kpis`, `.kpi-n`, `.shot-view`, `.sec-cream`, `.pg`, `.is-on`, `.grid-2`, `.card`, `.work-card`, `.tile`, `.features`, `.feature`, `.flow`, `.flow-node`, `.steps`, `.step`, `.faq`, `.related`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-showcase`, `data-src`, `data-tab`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `web-design`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/web-design/`, OG 3/3

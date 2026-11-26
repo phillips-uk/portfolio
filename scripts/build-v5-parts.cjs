@@ -90,6 +90,11 @@ const PAGES = {
   '404.html': page('404'),
   'about/index.html': page('about', { contact: { h: 'Ask me a question.', l: 'I can do the marketing instead of a hire, or work alongside your team. Tell me about the business and what you want to change, and I’ll reply by email.', loc: 'about' } }),
   'work/index.html': page('work', { contact: { h: 'Want work like this?', l: 'Write a few lines about your business and what you’d like to change, and anything you want to ask. I’ll reply by email.', loc: 'work' } }),
+  'google-ads/index.html': page('google-ads', { contact: { h: 'Ask me a question about Google Ads.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'google-ads' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Google Ads']]) } }),
+  'web-design/index.html': page('web-design', { contact: { h: 'Tell me about your website.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'web-design' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Web design']]) } }),
+  'local-seo/index.html': page('local-seo', { contact: { h: 'Find out where you stand.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'local-seo' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Local SEO']]) } }),
+  'marketing-systems/index.html': page('marketing-systems', { contact: { h: 'Tell me where things slip.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'marketing-systems' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Marketing systems']]) } }),
+  'consultancy/index.html': page('consultancy', { contact: { h: 'Talk about what you need.', l: 'Write a few lines about the company, the channels and what you need help with. I’ll reply by email.', loc: 'consultancy' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Consultancy']]) } }),
   'free-checks/index.html': page('free-checks', { contact: { h: 'Ask me a question.', l: 'Tell me about the business and what you’d like to change. If you’ve run a check, mention it. I’ll reply by email.', loc: 'free-checks' } }),
 };
 
