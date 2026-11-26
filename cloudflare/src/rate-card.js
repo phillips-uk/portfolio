@@ -12,7 +12,11 @@
 import rateCardHtml from '../private/rate-card.html';
 import theLoftHtml from '../private/the-loft.html';
 import monumentHtml from '../private/monument.html';
-import monumentCalculatorsHtml from '../private/monument-calculators.html';
+import monumentToolsHtml from '../private/monument-tools.html';
+import monumentToolDebtorHtml from '../private/monument-tool-debtor-days-calculator.html';
+import monumentToolCycleHtml from '../private/monument-tool-cash-conversion-cycle-calculator.html';
+import monumentToolAblHtml from '../private/monument-tool-asset-based-lending-calculator.html';
+import monumentToolGapHtml from '../private/monument-tool-funding-gap-calculator.html';
 import monumentThankYouHtml from '../private/monument-thank-you.html';
 import monumentAblHtml from '../private/monument-asset-based-lending.html';
 import monumentAdvisersHtml from '../private/monument-for-advisers.html';
@@ -58,7 +62,7 @@ export const PAGES = {
   'the-loft': { path: '/the-loft', html: theLoftHtml, cookie: 'ph_tl', title: 'The Loft prototype' },
   // Monument Corporate Finance (Ben Boateng): the website draft (homepage, tools, asset-based lending, for advisers, about, thank you). One invite opens all of them.
   'monument': { path: '/monument', html: monumentHtml, cookie: 'ph_mcf', cookiePath: '/monument', title: 'The Monument website draft' },
-  'monument-calculators': { path: '/monument/calculators', html: monumentCalculatorsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-calculators': { path: '/monument/calculators', html: monumentToolsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   // Where every enquiry on the draft lands (no details are sent; the page only shows the flow)
   'monument-thank-you': { path: '/monument/thank-you', html: monumentThankYouHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   // v20 (25 Nov 2026): the design system pages. Same invite, same cookie.
@@ -75,6 +79,11 @@ export const PAGES = {
   'monument-london': { path: '/monument/london', html: monumentLondonHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-cambridgeshire': { path: '/monument/cambridgeshire', html: monumentCambsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-deals': { path: '/monument/deals', html: monumentDealsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-tools': { path: '/monument/tools', html: monumentToolsHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-tool-debtor-days-calculator': { path: '/monument/tools/debtor-days-calculator', html: monumentToolDebtorHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-tool-cash-conversion-cycle-calculator': { path: '/monument/tools/cash-conversion-cycle-calculator', html: monumentToolCycleHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-tool-asset-based-lending-calculator': { path: '/monument/tools/asset-based-lending-calculator', html: monumentToolAblHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
+  'monument-tool-funding-gap-calculator': { path: '/monument/tools/funding-gap-calculator', html: monumentToolGapHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-stock-finance': { path: '/monument/stock-finance', html: monumentStockFinHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-plant-and-machinery': { path: '/monument/plant-and-machinery', html: monumentPlantHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
   'monument-supply-chain-finance': { path: '/monument/supply-chain-finance', html: monumentSupplyHtml, cookie: 'ph_mcf', cookiePath: '/monument', access: 'monument', title: 'The Monument website draft' },
