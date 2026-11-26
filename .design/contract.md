@@ -408,10 +408,10 @@ File: `web-design/index.html` (page)
 
 File: `privacy/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/motion.js`, `/email.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#cookies`
-- Classes: `.privacy`
-- Data attributes: `data-hero`, `data-email`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/email.js`
+- Ids: `#cookies`, `#site-footer`
+- Classes: `.v5`
+- Data attributes: `data-page`, `data-email`, `data-cookie-settings`
 - Forms: none
 - GA4 events: none
 - Structure: 1 h1, 1 main, canonical `/privacy/`, OG 3/3
@@ -421,10 +421,10 @@ File: `privacy/index.html` (page)
 
 File: `terms/index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/motion.js`, `/email.js`
-- Ids: `#nav-toggle`, `#nav-drawer`
-- Classes: `.privacy`
-- Data attributes: `data-hero`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`
+- Ids: `#site-footer`
+- Classes: `.v5`
+- Data attributes: `data-page`, `data-cookie-settings`
 - Forms: none
 - GA4 events: none
 - Structure: 1 h1, 1 main, canonical `/terms/`, OG 3/3
@@ -434,10 +434,10 @@ File: `terms/index.html` (page)
 
 File: `404.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/motion.js`, `/email.js`
-- Ids: `#nav-toggle`, `#nav-drawer`
-- Classes: none
-- Data attributes: `data-hero`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.vt`
+- Data attributes: `data-v5`, `data-cookie-settings`
 - Forms: none
 - GA4 events: none
 - Structure: 1 h1, 1 main, canonical none, OG 0/3

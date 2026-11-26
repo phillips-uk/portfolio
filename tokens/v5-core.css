@@ -1,0 +1,1034 @@
+/* v5-core.css: the group's v5 stylesheet ("plain and proven", Before You Pay notes 145 to 148), assembled by
+   scripts/build-v5-core.cjs from Before You Pay's assets/v5.css (21 sections) and assets/v5-forms.css (7 form
+   sections), copied unchanged, then the group chrome (tokens/v5-group.css). Never edit this file: change the source, rerun
+   the script, and copy the file to the other group sites (shared notes v5-kit.md). Pages opt in with <body class="v5">.
+   Sections, in order: Page; Buttons; Seals; Hero; Marks; Panels; Included features; Straight answers; Strips; More links; Phone action bar; Motion; Tablet; Phone; Directory; Quote tool pages; Check my quote pages; Type scale; One pattern library; Content pages; Case files; field; choice card; checkbox row; upload zone; code entry; order summary; phones; Group chrome. */
+
+/* ===== From assets/v5.css ===== */
+
+/* ── Page ── */
+body.v5{background:var(--surface);color:var(--text)}
+.v5 main{display:block}
+.v5 .v-wrap{max-width:var(--maxw,1240px);margin:0 auto;padding:0 var(--gutter,24px)}
+.v5 .v-sec{padding:120px 0}
+.v5 .v-sec.tight{padding:72px 0}
+.v5 .bg-stone{background:var(--bg)}
+.v5 .bg-wash{background:var(--brand-wash)}
+.v5 .bg-brand{background:var(--brand);color:var(--brand-ink)}
+
+/* type: one colour per headline, Manrope, tracked slightly tight */
+.v5 .v-h1{margin:0;font:800 clamp(40px,4.3vw,60px)/1.04 var(--display);letter-spacing:-.025em;color:inherit;text-wrap:balance}
+.v5 .v-h2{margin:0;font:800 clamp(28px,3.4vw,48px)/1.06 var(--display);letter-spacing:-.02em;color:var(--text);text-wrap:balance}
+.v5 .v-h3{margin:0;font:700 22px/1.25 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .v-lede{margin:0;font:400 clamp(18px,1.5vw,21px)/1.45 var(--body);color:var(--text-2);max-width:48ch}
+.v5 .v-body{margin:0;font:400 17px/1.55 var(--body);color:var(--text-2)}
+.v5 .v-small{margin:0;font:500 15px/1.45 var(--body);color:var(--text-2)}
+.v5 .v-fine{margin:0;font:400 13px/1.5 var(--body);color:var(--muted)}
+
+/* ── Buttons: flat pills. Primary brand, Tint (the secondary), White on brand or outlined on stone ── */
+.v5 .vb{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:14px 28px;border-radius:var(--r-pill);border:1px solid transparent;font:600 17px/1 var(--body);letter-spacing:0;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background var(--d2,.2s),color var(--d2,.2s),border-color var(--d2,.2s)}
+.v5 .vb-p,body.v5 a.vb-p{background:var(--brand);color:var(--brand-ink)}
+.v5 .vb-p:hover{background:var(--brand-hover)}
+.v5 .vb-t,body.v5 a.vb-t{background:var(--brand-wash);color:var(--brand)}
+.v5 .vb-t:hover{background:color-mix(in oklab,var(--brand-wash),var(--brand) 8%)}
+.v5 .vb-w,body.v5 a.vb-w{background:var(--surface);color:var(--brand);border-color:var(--line-2)}
+.v5 .vb-w:hover{border-color:var(--brand)}
+.v5 .bg-brand .vb-w{border-color:transparent}
+.v5 .vb-s{min-height:40px;padding:10px 20px;font-size:15px}
+.v5 .vb:focus-visible{outline:3px solid var(--brand-ring);outline-offset:3px}
+.v5 .v-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+
+/* ── Seals: our own marks (Record, Source, Ask, Identity, Quote) ── */
+.v5 .seal{flex:none;display:grid;place-items:center;width:72px;height:72px;border-radius:22px;background:var(--brand);color:var(--brand-ink)}
+.v5 .seal svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.v5 .seal svg .f{fill:currentColor;stroke:none}
+.v5 .seal.sm{width:52px;height:52px;border-radius:16px}
+.v5 .seal.sm svg{width:26px;height:26px}
+.v5 .seal.inv{background:var(--surface);color:var(--brand)}
+
+/* ── Hero ── */
+.v5 .vh{padding:88px 0 104px;background:var(--bg)}
+.v5 .vh.bg-brand{background:var(--brand);color:var(--brand-ink)}
+.v5 .vh-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:56px;align-items:center}
+.v5 .vh-text{min-width:0}
+.v5 .vh .v-h1{color:var(--text)}
+.v5 .vh.bg-brand .v-h1{color:var(--brand-ink)}
+.v5 .vh .v-lede{margin-top:20px}
+.v5 .vh.bg-brand .v-lede{color:var(--brand-ink);opacity:.88}
+.v5 .vh-note{margin:0;font:500 15px/1.4 var(--body);color:var(--brand-ink);opacity:.8;max-width:24ch}
+.v5 .vh .v-actions{margin-top:36px}
+.v5 .vh-photo{position:relative;margin:0}
+.v5 .vh-photo img{display:block;width:100%;aspect-ratio:420/480;object-fit:cover;border-radius:28px}
+.v5 .vh-photo .seal{position:absolute;left:-24px;top:36px;box-shadow:0 10px 24px -6px rgba(20,25,31,.18)}
+
+/* the search: one field, the button inside it */
+.v5 .vs{display:flex;align-items:center;gap:8px;margin-top:32px;max-width:600px;padding:8px 8px 8px 28px;background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-pill);box-shadow:0 8px 24px -8px rgba(20,25,31,.08)}
+.v5 .vs:focus-within{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-ring)}
+.v5 .vs label{flex:1;min-width:0}
+.v5 .vs input{width:100%;border:0;outline:0;background:none;padding:12px 0;font:400 17px/1.2 var(--body);color:var(--text)}
+.v5 .vs input::placeholder{color:var(--muted)}
+.v5 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* trust facts: chips on desktop, one quiet line on phones */
+.v5 .vc{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding:0}
+.v5 .vc li{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);font:600 14px/1.2 var(--body);color:var(--text-2)}
+.v5 .vc li[hidden]{display:none}
+.v5 .vc li::before{content:"";flex:none;width:12px;height:7px;margin-top:-3px;border-left:2.5px solid var(--brand);border-bottom:2.5px solid var(--brand);transform:rotate(-45deg)}
+
+/* ── Marks: what a report tells you / what customers see ── */
+.v5 .vm-head{text-align:center}
+.v5 .vm{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;margin:64px 0 0;padding:0;text-align:center}
+.v5 .vm li{display:flex;flex-direction:column;align-items:center;gap:20px}
+.v5 .vm .v-body{max-width:34ch}
+.v5 .vm .ph{display:none}
+
+/* ── Panels: big rounded colour panels, one job each ── */
+.v5 .vp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:64px;align-items:end;padding:72px 72px 0;border-radius:32px;background:var(--brand-wash);overflow:hidden}
+.v5 .vp.rev{grid-template-columns:minmax(0,480px) minmax(0,1fr)}
+.v5 .vp .v-h2{font-size:clamp(28px,3vw,40px)}
+.v5 .vh.bg-brand .v-h1{font-size:clamp(34px,3.6vw,52px)}
+.v5 .vp-text{padding-bottom:72px;display:flex;flex-direction:column;gap:24px;align-items:flex-start}
+.v5 .vp-shot{margin:0;align-self:end}
+.v5 .vp-shot img{display:block;width:100%;height:420px;object-fit:cover;object-position:left top;border-radius:20px 20px 0 0;box-shadow:0 -4px 30px -6px rgba(20,25,31,.12)}
+
+/* ── Included features (trades) ── */
+.v5 .vf-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:96px;align-items:start}
+.v5 .vf-grid .v-body{margin-top:20px}
+.v5 .vf{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px;margin:0;padding:0}
+.v5 .vf li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px 14px;padding:24px 0;border-top:1px solid var(--line)}
+.v5 .vf li::before{content:"";grid-row:span 2;width:12px;height:7px;margin:6px 0 0 3px;border-left:2.5px solid var(--brand);border-bottom:2.5px solid var(--brand);transform:rotate(-45deg)}
+.v5 .vf b{font:700 19px/1.3 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .vf span{font:400 15px/1.5 var(--body);color:var(--text-2)}
+
+/* ── Straight answers ── */
+.v5 .vq{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:96px;align-items:start}
+.v5 .vq details{border-bottom:1px solid var(--line);padding:24px 0}
+.v5 .vq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font:600 19px/1.35 var(--body);color:var(--text)}
+.v5 .vq summary::-webkit-details-marker{display:none}
+.v5 .vq summary::after{content:"";flex:none;width:9px;height:9px;margin-top:-5px;border-right:2px solid var(--text-2);border-bottom:2px solid var(--text-2);transform:rotate(45deg);transition:transform var(--d2,.2s)}
+.v5 .vq details[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.v5 .vq details p{margin:12px 0 0;font:400 17px/1.55 var(--body);color:var(--text-2);max-width:62ch}
+
+/* ── Strips: a line for the other audience, on stone ── */
+.v5 .vt{display:flex;align-items:center;justify-content:space-between;gap:48px}
+.v5 .vt p{margin:0;font:700 32px/1.2 var(--display);letter-spacing:-.015em;color:var(--text);max-width:30ch}
+
+/* ── More links (guide, recently researched) under the report ── */
+.v5 .v-more{list-style:none;display:flex;flex-wrap:wrap;gap:12px 28px;margin:28px 0 0;padding:0}
+.v5 .v-more a{font:600 17px/1.4 var(--body);color:var(--brand);text-decoration:none}
+.v5 .v-more a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* the example quote (built by scripts/build-quote-tool.cjs) sits under the quote panel */
+.v5 .vp-after{margin-top:32px}
+
+/* ── Phone action bar: shows once the hero action has scrolled away, never over the footer ── */
+.v5 .vbar{display:none}
+
+/* ── Motion: a soft fade as blocks come into view; nothing tilts, drifts or rises line by line ── */
+.v5.js [data-v5]{opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease-out,ease),transform .5s var(--ease-out,ease)}
+.v5.js [data-v5].in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.v5.js [data-v5]{opacity:1;transform:none;transition:none}}
+
+/* ── Tablet: the hero and panels stack ── */
+@media (max-width:960px){
+  .v5 .v-sec{padding:96px 0}
+  .v5 .vh{padding:56px 0 72px}
+  .v5 .vh-grid{grid-template-columns:minmax(0,1fr);gap:40px}
+  .v5 .vh-photo img{aspect-ratio:16/10}
+  .v5 .vh-photo .seal{left:-16px;top:24px}
+  .v5 .vm{gap:24px}
+  .v5 .vp,.v5 .vp.rev{grid-template-columns:minmax(0,1fr);gap:40px;padding:56px 48px 0}
+  .v5 .vp-text{padding-bottom:0}
+  .v5 .vp.rev .vp-shot{order:2}
+  .v5 .vp-shot img{height:360px}
+  .v5 .vf-grid,.v5 .vq{grid-template-columns:minmax(0,1fr);gap:40px}
+  .v5 .vt{flex-direction:column;align-items:flex-start;gap:24px}
+  body.v5 footer#site-footer .gf-group .k{margin-right:0;flex-basis:100%}
+}
+
+/* ── Phone: one 20px gutter, one idea per screen ── */
+@media (max-width:760px){
+  .v5 .v-wrap{padding:0 20px}
+  .v5 .v-sec{padding:64px 0}
+  .v5 .v-sec.tight{padding:56px 0}
+  .v5 .vh{padding:36px 0 40px}
+  .v5 .v-h1{font-size:34px;line-height:1.06}
+  .v5 .v-h2{font-size:28px;line-height:1.1}
+  .v5 .vh .v-lede{margin-top:16px;font-size:18px}
+  .v5 .vh .v-actions{margin-top:28px;flex-direction:column;align-items:stretch;gap:12px}
+  .v5 .vh .v-actions .vb{width:100%}
+  .v5 .vh-note{max-width:none;font-size:14px}
+  .v5 .vh-photo img{aspect-ratio:335/260;border-radius:22px}
+  .v5 .vh-photo .seal{left:12px;top:12px;width:56px;height:56px;border-radius:17px}
+  .v5 .vh-photo .seal svg{width:28px;height:28px}
+  .v5 .vs{flex-direction:column;align-items:stretch;gap:10px;margin-top:28px;padding:0;background:none;border:0;box-shadow:none}
+  .v5 .vs:focus-within{box-shadow:none}
+  .v5 .vs label{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-pill);padding:4px 22px}
+  .v5 .vs label:focus-within{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-ring)}
+  .v5 .vs input{font-size:17px}
+  .v5 .vs .vb{width:100%}
+  .v5 .vc{display:block;margin-top:12px;font:500 14px/1.5 var(--body);color:var(--text-2)}
+  .v5 .vc li{display:inline;padding:0;border:0;background:none;font:inherit;color:inherit}
+  .v5 .vc li::before{display:none}
+  .v5 .vc li:not([hidden])~li::before{content:" · ";display:inline;width:auto;height:auto;margin:0;border:0;transform:none}
+  .v5 .vm-head{text-align:left}
+  .v5 .vm{grid-template-columns:minmax(0,1fr);gap:40px;margin-top:40px;text-align:left}
+  .v5 .vm li{flex-direction:row;align-items:flex-start;gap:16px}
+  .v5 .vm li>div{display:flex;flex-direction:column;gap:6px}
+  .v5 .vm .seal{width:52px;height:52px;border-radius:16px}
+  .v5 .vm .seal svg{width:26px;height:26px}
+  .v5 .vm .v-h3{font-size:19px}
+  .v5 .vm .v-body{font-size:16px}
+  .v5 .vm .dt{display:none}
+  .v5 .vm .ph{display:block}
+  .v5 .vp-sec{padding:0}
+  .v5 .vp-sec .v-wrap{padding:0}
+  .v5 .vp,.v5 .vp.rev{border-radius:0;padding:48px 20px;gap:20px}
+  .v5 .vp-text{gap:20px;align-items:stretch}
+  .v5 .vp-text .vb{width:100%}
+  .v5 .vp-shot img{height:200px;border-radius:16px;box-shadow:none;border:1px solid var(--line)}
+  .v5 .vf li{grid-template-columns:20px minmax(0,1fr);padding:16px 0}
+  .v5 .vf{grid-template-columns:minmax(0,1fr)}
+  .v5 .vf span{display:none}
+  .v5 .vf b{font-size:17px;font-weight:600}
+  .v5 .vq summary{font-size:17px}
+  .v5 .vt p{font-size:24px}
+  .v5 .vt .vb{width:100%}
+  .v5 .vbar{display:block;position:fixed;left:0;right:0;bottom:0;z-index:40;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);transform:translateY(110%);transition:transform var(--d3,.32s) var(--ease-out,ease)}
+  .v5 .vbar.on{transform:none}
+  .v5 .vbar .vb{width:100%}
+  body.v5 footer#site-footer{--gf-clear:110px}
+  body.v5 nav#site-nav .aud{display:none}
+  body.v5 nav#site-nav .aud-row{display:block;padding:10px 16px;border-top:1px solid var(--line)}
+  body.v5 nav#site-nav .aud-row .aud{display:flex}
+  body.v5 nav#site-nav .aud-row .aud a{flex:1}
+  body.v5 nav#site-nav .inner{height:64px;padding:0 16px}
+  body.v5 nav#site-nav .btn{padding:10px 14px}
+  body.v5 nav#site-nav{min-height:0}
+}
+@media (prefers-reduced-motion:reduce){.v5 .vbar{transition:none}}
+@media (max-width:820px){body.v5 nav#site-nav .nav-link.wide{display:none}}
+@media (min-width:761px) and (max-width:1040px){body.v5 nav#site-nav .inner{gap:16px}body.v5 nav#site-nav .aud a{padding:8px 12px}}
+.v5 .seal svg.s34{width:34px;height:34px}.v5 .seal.sm svg.s34{width:24.5px;height:24.5px}@media (max-width:760px){.v5 .vm .seal svg.s34{width:24.5px;height:24.5px}}
+.v5 .vp-sec{padding-top:0}@media (max-width:760px){.v5 .vp-sec{padding:0}}
+/* A panel that follows a tinted section needs its own space above it. */
+.v5 .vp-sec.vp-gap{padding-top:120px}
+@media (max-width:760px){.v5 .vp-sec.vp-gap{padding-top:48px}}
+
+/* ── Directory: trade, town, region and recently researched pages (netlify/functions/trade-directory.js; Figma "Directory") ── */
+.v5 .vd-hero{padding:48px 0 88px}
+.v5 .vd-crumb{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px;font:500 14px/1.4 var(--body);color:var(--muted)}
+.v5 .vd-crumb a{color:var(--text-2);text-decoration:none}
+.v5 .vd-crumb a:hover{color:var(--brand);text-decoration:underline}
+.v5 .vd-crumb .here{color:var(--text)}
+.v5 .vd-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:56px;align-items:end}
+.v5 .vd-hero-grid.solo{grid-template-columns:minmax(0,1fr)}
+.v5 .vd-hero .v-lede{margin-top:20px}
+.v5 .vd-hero .v-actions{margin-top:32px}
+.v5 .vd-figs{list-style:none;margin:0;padding:0;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:12px}
+.v5 .vd-figs li{min-width:0;padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.v5 .vd-figs b{display:block;font:800 40px/1 var(--display);letter-spacing:-.02em;color:var(--text)}
+.v5 .vd-figs span{display:block;margin-top:14px;font:500 14px/1.3 var(--body);color:var(--text-2)}
+.v5 .vd-msg{max-width:56ch}
+.v5 .vd-msg a,.v5 .vd-note a,.v5 .dir-none a,.v5 .vt p a{color:var(--brand);font-weight:600}
+/* the town search on the trade page */
+.v5 .vd-search{max-width:540px;padding-left:24px}
+.v5 .vd-search .clear{display:none;flex:none;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--bg);color:var(--text-2);font-size:15px;cursor:pointer}
+.v5 .vd-search input::-webkit-search-cancel-button{display:none}
+.v5 .vd-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}
+.v5 .vd-chips .k{margin-right:4px;font:600 14px/1 var(--body);color:var(--text-2)}
+.v5 .vd-chips a{padding:8px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-pill);font:500 14px/1.2 var(--body);color:var(--text);text-decoration:none;cursor:pointer}
+.v5 .vd-chips a:hover{border-color:var(--brand);color:var(--brand)}
+/* two columns: the main column and a side column of cards or links */
+.v5 .vd-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:72px;align-items:start}
+.v5 .vd-main,.v5 .vd-side{min-width:0}
+.v5 .vd-side{display:grid;gap:16px}
+.v5 .vd-card{padding:32px;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.v5 .vd-card.bg-wash,.v5 .vd-card.bg-stone{border-color:transparent}
+.v5 .vd-card .v-small{margin-top:10px}
+.v5 .vd-card .vb{width:100%;margin-top:20px}
+.v5 .vd-card .v-fine{margin-top:16px}
+.v5 .vd-link{display:inline-block;margin-top:14px;font:600 15px/1.4 var(--body);color:var(--brand);text-decoration:none}
+.v5 .vd-link:hover{text-decoration:underline}
+.v5 .vd-sub{margin-top:12px;max-width:68ch}
+.v5 .vd-note{margin-top:12px;max-width:68ch}
+.v5 .dir-cities+.vd-note,.v5 .vd-steps+.vd-note,.v5 .dir-list+.vd-note{margin-top:32px}
+/* business lists: two columns of rows, the whole row is the link */
+.v5 .dir-list{display:block;columns:2;column-gap:32px;margin-top:28px}
+.v5 .dir-list.rich{columns:1}
+.v5 .dir-list li{break-inside:avoid}
+.v5 .dir-list li{position:relative;gap:12px;padding:14px 28px 14px 0}
+.v5 .dir-list li::after{content:"";position:absolute;right:6px;top:50%;width:7px;height:7px;border-top:1.75px solid var(--muted);border-right:1.75px solid var(--muted);transform:translateY(-50%) rotate(45deg)}
+.v5 .dir-list a.nm{font:500 15px/1.35 var(--body);color:var(--text)}
+.v5 .dir-list a.nm::before{content:"";position:absolute;inset:0}
+.v5 .dir-list li:hover a.nm{color:var(--brand)}
+.v5 .dir-list .meta{position:relative;z-index:1}
+.v5 .dir-list .meta a{font:600 14px/1.3 var(--body)}
+.v5 .dir-list .pc,.v5 .dir-list .ph{flex:none;font:500 12px/1.2 var(--body);color:var(--text-2)}
+.v5 .dir-list .pc{padding:4px 8px;background:var(--bg);border-radius:6px}
+.v5 .dir-list .tag{font:600 12px/1.2 var(--body);letter-spacing:0;text-transform:none}
+.v5 .dir-list.cap li:nth-child(n+21){display:none}
+.v5 .vd-showall{margin-top:28px}
+.v5 .vd-grp{margin-top:40px}
+.v5 .vd-grp-hd{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:0;padding-bottom:12px;border-bottom:1px solid var(--line-2);font:700 18px/1.3 var(--display);color:var(--text)}
+.v5 .vd-grp-hd span+span{font:500 14px/1 var(--body);color:var(--muted)}
+.v5 .vd-grp .dir-list{margin-top:0}
+/* the town in figures: one paragraph and a bar chart by postcode district */
+.v5 .vd-facts{margin-top:24px;max-width:62ch}
+.v5 .vd-bars{margin-top:40px;max-width:640px}
+.v5 .vd-bars ul{list-style:none;display:grid;gap:12px;margin:24px 0 0;padding:0}
+.v5 .vd-bars li{display:grid;grid-template-columns:52px minmax(0,1fr) 40px;align-items:center;gap:16px;font:600 14px/1 var(--body);color:var(--text)}
+.v5 .vd-bars i{display:block;height:8px;background:var(--bg);border-radius:4px}
+.v5 .vd-bars s{display:block;height:100%;background:var(--brand);border-radius:4px}
+.v5 .vd-bars b{font-weight:500;color:var(--text-2);text-align:right}
+.v5 .vd-bars .vd-bars-more{margin-top:20px}
+/* link chips: nearby towns, other trades, every trade */
+.v5 .vd-k{margin:0 0 14px;font:700 19px/1.3 var(--display);color:var(--text)}
+.v5 .dir-trades+.vd-k,.v5 .vd-k-gap{margin-top:40px}
+.v5 .dir-trades{margin-top:0}
+.v5 .dir-trades a{padding:8px 14px;border-color:var(--line-2);font:500 14px/1.2 var(--body);color:var(--brand)}
+.v5 .dir-trades.cap a:nth-of-type(n+12){display:none}
+.v5 .vd-more{padding:8px 14px;background:none;border:1px solid var(--line-2);border-radius:var(--r-pill);font:500 14px/1.2 var(--body);color:var(--text-2);cursor:pointer}
+.v5 .vd-more:hover{border-color:var(--brand);color:var(--brand)}
+/* town cards, regions and steps on the trade and region pages */
+.v5 .dir-cities{margin-top:32px}
+.v5 .dir-city{padding:20px;border-radius:16px}
+.v5 .dir-city b{font:700 18px/1.25 var(--display);letter-spacing:-.01em}
+.v5 .dir-city span{font:500 14px/1.3 var(--body);color:var(--text-2)}
+.v5 .dir-city span em{font-weight:700}
+.v5 .dir-head{align-items:center;margin-bottom:24px}
+.v5 .dir-toggle{font:600 15px/1 var(--body)}
+.v5 .dir-region summary b{font:700 20px/1.3 var(--display);letter-spacing:-.01em}
+.v5 .dir-region summary span{font:500 14px/1.3 var(--body);color:var(--text-2)}
+.v5 .dir-towns a span{font:500 13px/1.3 var(--body)}
+.v5 .dir-more{background:var(--surface);border-color:var(--line-2);font:600 14px/1 var(--body)}
+.v5 .vd-steps{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;margin:40px 0 0;padding:0}
+.v5 .vd-steps li{min-width:0}
+.v5 .vd-steps .n{display:grid;place-items:center;width:40px;height:40px;background:var(--brand-wash);border-radius:50%;font:700 16px/1 var(--display);color:var(--brand)}
+.v5 .vd-steps .v-h3{margin-top:18px}
+.v5 .vd-steps .v-body{margin-top:8px}
+.v5 .vd-strip p{max-width:40ch}
+.v5 .vt p span{display:block;margin-top:8px;font:400 17px/1.5 var(--body);letter-spacing:0;color:var(--text-2)}
+@media (max-width:960px){
+  .v5 .vd-hero-grid{grid-template-columns:minmax(0,1fr);gap:40px;align-items:start}
+  .v5 .vd-cols{grid-template-columns:minmax(0,1fr);gap:48px}
+  .v5 .dir-cities{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .v5 .vd-hero{padding:28px 0 56px}
+  .v5 .vd-crumb{margin-bottom:20px}
+  .v5 .vd-figs{grid-auto-flow:row;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .v5 .vd-figs li{padding:16px 14px;border-radius:16px}
+  .v5 .vd-figs b{font-size:24px}
+  .v5 .vd-figs span{margin-top:8px;font-size:13px}
+  .v5 .dir-list{columns:1}
+  .v5 .dir-list.cap li:nth-child(n+11){display:none}
+  .v5 .vd-showall{width:100%}
+  .v5 .vd-card{padding:24px}
+  .v5 .vd-bars li{grid-template-columns:44px minmax(0,1fr) 32px;gap:12px}
+  .v5 .vd-steps{grid-template-columns:minmax(0,1fr);gap:28px}
+  .v5 .dir-cities{grid-template-columns:1fr 1fr}
+  .v5 .vt p span{font-size:16px}
+}
+/* phones: the town search stays one pill (the homepage search stacks its button, this one has none) */
+@media (max-width:760px){
+  .v5 .vd-search{flex-direction:row;align-items:center;gap:8px;padding:4px 6px 4px 20px;background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-pill)}
+  .v5 .vd-search:focus-within{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-ring)}
+  .v5 .vd-search label{padding:0;background:none;border:0;border-radius:0}
+  .v5 .vd-search label:focus-within{box-shadow:none}
+}
+@media (max-width:760px){.v5 .vd-steps li{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:16px;align-items:start}.v5 .vd-steps .n{grid-row:span 2}.v5 .vd-steps .v-h3{margin-top:8px}}
+.v5 .vd-strip-h{margin:0;font:700 clamp(22px,2.2vw,32px)/1.2 var(--display);letter-spacing:-.015em;color:var(--text)}
+.v5 .vd-strip div .v-small{margin-top:8px;max-width:none;font:400 17px/1.5 var(--body);letter-spacing:0;color:var(--text-2)}
+/* A product screenshot is shown whole, at its own shape: never cropped or squashed (the quote tool, Lewis 24 Nov 2026) */
+.v5 .vp-shot.full img{height:auto;aspect-ratio:auto;object-fit:contain}
+/* One system (Lewis, 24 Nov 2026): deeper pages (with a breadcrumb) have a 52px title; the header button is the small size, 40px */
+.v5 .vd-hero .v-h1{font-size:clamp(34px,3.6vw,52px)}
+body.v5 nav#site-nav .btn{min-height:40px;height:40px;padding:0 18px;font-size:15px;line-height:1}
+@media (max-width:760px){body.v5 nav#site-nav .btn{padding:0 14px}.v5 .vt p,.v5 .vd-strip-h{font-size:24px}}
+.v5 .qx-example-tag{font-size:12px}
+@media (min-width:761px) and (max-width:960px){.v5 .vp-sec.vp-gap{padding-top:96px}}
+@media (min-width:761px) and (max-width:960px){.v5 .vt p,.v5 .vd-strip-h{font-size:28px}}
+
+/* ── Quote tool pages (scripts/build-quote-tool.cjs; Figma "Quote tool page (draft)") ── */
+.v5 .bg-brand .vd-crumb,.v5 .bg-brand .vd-crumb a,.v5 .bg-brand .vd-crumb .here{color:var(--brand-ink)}
+.v5 .bg-brand .vd-crumb{opacity:.85}
+.v5 .vm-sub{margin:16px auto 0;max-width:52ch;text-align:center}
+.v5 .vsub{margin-top:20px;max-width:62ch}
+.v5 .vm.four{grid-template-columns:repeat(4,minmax(0,1fr));gap:40px}
+.v5 .vm.four .v-h3{font-size:22px}
+/* how a trade uses it: one column of jobs, and a tip */
+.v5 .vtip{margin-top:24px}
+.v5 .vtip b{display:block;color:var(--text);font-weight:700}
+.v5 .vj{list-style:none;margin:0;padding:0}
+.v5 .vj li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:14px;padding:20px 0;border-top:1px solid var(--line);font:600 19px/1.35 var(--body);color:var(--text)}
+.v5 .vj li:last-child{border-bottom:1px solid var(--line)}
+.v5 .vj li::before{content:"";width:12px;height:7px;margin:7px 0 0 3px;border-left:2.5px solid var(--brand);border-bottom:2.5px solid var(--brand);transform:rotate(-45deg)}
+/* the six steps: numbered, each opens to its line */
+.v5 .vk{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 24px;margin:0;padding:0;width:100%}
+.v5 .vk summary{list-style:none;display:flex;align-items:center;gap:12px;padding:8px 0;font:600 17px/1.35 var(--body);color:var(--text);cursor:pointer}
+.v5 .vk summary::-webkit-details-marker{display:none}
+.v5 .vk .n{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--surface);font:700 14px/1 var(--display);color:var(--brand)}
+.v5 .vk details p{margin:0 0 8px 44px;font:400 15px/1.5 var(--body);color:var(--text-2)}
+.v5 .vp.solo{grid-template-columns:minmax(0,1fr);padding-bottom:72px}
+.v5 .vp.solo .vp-text{padding-bottom:0}
+.v5 .vp.solo .vk{grid-template-columns:repeat(3,minmax(0,1fr))}
+.v5 .vp-text .qx-example{width:100%}
+/* the customer's questions, and where the quote answers each */
+.v5 .vask{margin:0}
+.v5 .vask>div{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:24px;padding:18px 0;border-top:1px solid var(--line)}
+.v5 .vask>div:last-child{border-bottom:1px solid var(--line)}
+.v5 .vask dt{font:600 17px/1.4 var(--body);color:var(--text)}
+.v5 .vask dd{margin:0;font:400 15px/1.5 var(--body);color:var(--text-2)}
+/* two cards with tick lists */
+.v5 .vcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:48px}
+.v5 .vcard-k{color:var(--brand);font-weight:700}
+.v5 .vcards .v-h3{margin-top:8px}
+.v5 .vchk{list-style:none;display:grid;gap:14px;margin:20px 0 0;padding:0}
+.v5 .vchk li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;font:400 17px/1.5 var(--body);color:var(--text-2)}
+.v5 .vchk li::before{content:"";width:12px;height:7px;margin:7px 0 0 3px;border-left:2.5px solid var(--brand);border-bottom:2.5px solid var(--brand);transform:rotate(-45deg)}
+.v5 .vchk-more{display:none}
+.v5 .vcards+.vd-note{margin-top:32px}
+/* the quote becomes the project: five stages */
+.v5 .vst{list-style:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;margin:48px 0 0;padding:0}
+.v5 .vst li{padding-top:24px;border-top:2px solid var(--line-2)}
+.v5 .vst .v-h3{font-size:22px}
+.v5 .vst .v-body{margin-top:10px;font-size:17px}
+.v5 .vqt-trades{list-style:none;margin:32px 0 0;padding:0}
+.v5 .vqt-trades a[aria-current]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+@media (max-width:960px){
+  .v5 .vm.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .v5 .vst{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .v5 .vp.solo .vk{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .v5 .vm.four{grid-template-columns:minmax(0,1fr)}
+  .v5 .vm-sub{text-align:left;margin-left:0}
+  .v5 .vk,.v5 .vp.solo .vk{grid-template-columns:minmax(0,1fr)}
+  .v5 .vp.solo{padding-bottom:48px}
+  .v5 .vask>div{grid-template-columns:minmax(0,1fr);gap:4px}
+  .v5 .vcards{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:32px}
+  .v5 .vchk li{font-size:15px}
+  .v5 .vchk.cap li:nth-child(n+4){display:none}
+  .v5 .vchk.cap+.vchk-more{display:inline-flex;margin-top:16px}
+  .v5 .vst{grid-template-columns:minmax(0,1fr);gap:0;margin-top:24px}
+  .v5 .vst li{padding:16px 0;border-top-width:1px}
+  .v5 .vst .v-h3{font-size:19px}
+  .v5 .vst .v-body{margin-top:4px;font-size:16px}
+  .v5 .vj li{font-size:16px;padding:16px 0}
+}
+.v5 .vp-text .qx-example{text-align:left;margin:8px 0 0}
+.v5 .vp-text .qx-example>summary{margin:0}
+.v5 .vm.four .v-body{margin-top:8px}
+@media (max-width:760px){.v5 .vqt-trades.cap li:nth-child(n+9){display:none}.v5 .vqt-trades.cap+.vchk-more{display:inline-flex;margin-top:16px}}
+
+/* ── Check my quote pages (scripts/build-check-my-quote.cjs; Figma "Check my quote page (draft)") ──
+   The interactive check keeps its own stylesheet and script (assets/check-my-quote.css/.js); these rules place it in v5. */
+body.v5{--mono:var(--body)}
+.v5.qc-page,.v5 .qc-page{padding-bottom:0}
+.v5 .qa-sec,.v5 .qm-sec,.v5 .qc-short-hd,.v5 .qc-stamp,.v5 .qc-prog-lbl,.v5 .qp-res i,.v5 .qc-phones .when,.v5 .qc-mk,.v5 .qc-row legend::after,.v5 .qa-head b,.v5 .qm-head b,.v5 .qm-total,.v5 .qc-pb span{text-transform:none;letter-spacing:0}
+.v5 .vh .qc-stamp{display:flex;margin:24px 0 0;font:500 14px/1.4 var(--body);color:var(--text-2)}
+.v5 .vh .qc-dot{background:var(--brand);box-shadow:0 0 0 4px var(--brand-wash)}
+.v5 .qc-from{margin:8px 0 0;font:500 14px/1.45 var(--body);color:var(--text-2)}
+.v5 .qc-from a,.v5 .qc-src{color:var(--brand);font-weight:600;text-decoration:none}
+.v5 .qc-from a:hover{text-decoration:underline}
+.v5 .qc-hint-tip{margin-top:16px}
+/* the check and its checklist */
+.v5 .qc-toolgrid{grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:32px;margin-top:40px}
+.v5 .qc-tool{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:32px}
+.v5 .qc-toolgrid .qc-short{background:var(--bg);border:0;border-radius:20px;padding:32px}
+/* the reading section: the points beside a sketch of a quote */
+.v5 .qc-anat{grid-template-columns:minmax(0,720px) minmax(0,1fr);gap:72px;margin-top:40px}
+.v5 .qa-col{position:sticky;top:120px}
+.v5 .qc-check{border-top:0}
+.v5 .qc-check li{grid-template-columns:minmax(0,1fr);padding:22px 0;border-bottom:0;border-top:1px solid var(--line-2)}
+.v5 .qc-check li:first-child{border-top:0}
+.v5 .qc-check li::before{display:none}
+.v5 .qc-check summary b{font:700 20px/1.3 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .qc-check .tap-body p:not(.qc-from){margin:8px 0 0;font:400 17px/1.55 var(--body);color:var(--text-2)}
+.v5 .qc-anat .qc-check li.on{background:var(--surface);padding-inline:20px;margin-inline:-20px;border-radius:16px}
+.v5 .qa-paper{border-radius:20px}
+/* certificates and the three stages */
+.v5 .vcards{list-style:none;padding:0}
+.v5 .vcards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.v5 .vcards .v-body{margin-top:10px}
+.v5 .qc-regs.vcards{margin-top:40px}
+.v5 .qc-regs .vd-card{display:flex;flex-direction:column;align-items:flex-start}
+.v5 .vpay{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:40px 0 0;padding:0}
+.v5 .vpay li{padding:32px;background:var(--surface);border-radius:20px}
+.v5 .vpay span{display:block;font:600 15px/1.3 var(--body);color:var(--text-2)}
+.v5 .vpay b{display:block;margin-top:8px;font:800 32px/1.15 var(--display);letter-spacing:-.015em;color:var(--text)}
+.v5 .vpay i{display:block;margin-top:8px;font:500 14px/1.3 var(--body);font-style:normal;color:var(--muted)}
+.v5 .vread{max-width:720px;margin-top:40px}
+.v5 .vfold{margin-top:24px;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.v5 .vfold summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 0;font:600 19px/1.35 var(--body);color:var(--text);cursor:pointer}
+.v5 .vfold summary::-webkit-details-marker{display:none}
+.v5 .vfold summary::after{content:"";flex:none;width:9px;height:9px;margin-top:-5px;border-right:2px solid var(--text-2);border-bottom:2px solid var(--text-2);transform:rotate(45deg)}
+.v5 .vfold[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.v5 .vfold>div,.v5 .vfold>ol{padding-bottom:20px}
+.v5 .vfold .v-body+.qc-from+.v-body{margin-top:20px}
+/* questions to ask */
+.v5 .vqs{list-style:none;margin:0;padding:0}
+.v5 .vqs li{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-top:1px solid var(--line)}
+.v5 .vqs li:first-child{border-top:0}
+.v5 .vqs .seal.sm{width:36px;height:36px;border-radius:12px;background:var(--brand-wash);color:var(--brand)}
+.v5 .vqs .seal.sm svg{width:20px;height:20px}
+.v5 .vqs p:not(.qc-from){margin:0;font:600 17px/1.4 var(--body);color:var(--text)}
+.v5 .vqs .qc-from{margin-top:4px}
+/* FAQ: questions are h3 for search, styled as the FAQ */
+.v5 .vq summary h3{margin:0;font:inherit;color:inherit}
+.v5 .vq details .qc-from{margin-top:8px}
+.v5 .qc-note{margin:48px 0 0;max-width:720px;font-size:14px;color:var(--muted)}
+/* the landing page: job cards and the three steps */
+.v5 #jobs .qc-jobs{margin-top:40px}
+.v5 .qc-jobs a{border-radius:20px}
+.v5 .qc-phones{margin-top:40px}
+.v5 .qc-phones .when{font:600 15px/1 var(--body);color:var(--brand)}
+.v5 .qc-phones .v-h3{margin-top:12px}
+.v5 .qc-phones .v-body{margin-top:8px}
+.v5 .vh .qc-markup{margin:0;order:0}
+.v5 .qm-row .tag{text-transform:none;letter-spacing:0}
+@media (max-width:760px){.v5 .vh .qc-markup{justify-self:stretch;max-width:none;padding-right:8px}}
+@media (min-width:961px){.v5 .qc-check .more-pm{display:none}.v5 .qc-check summary{pointer-events:none}}
+@media (max-width:960px){
+  .v5 .qc-toolgrid,.v5 .qc-anat{grid-template-columns:minmax(0,1fr)}
+  .v5 .qa-col,.v5 .qa-lede{display:none}
+  .v5 .vcards.three,.v5 .vpay{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  .v5 .qc-tool{padding:24px;margin:0}
+  .v5 .qc-toolgrid .qc-short{padding:24px}
+  .v5 .qa-col{display:none}
+  .v5 .qc-check summary b{font-size:17px}
+  .v5 .qc-check li{padding:16px 0}
+  .v5 .vpay li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 20px;border-radius:0;border-top:1px solid var(--line)}
+  .v5 .vpay{gap:0;background:var(--surface);border-radius:16px;overflow:hidden}
+  .v5 .vpay li:first-child{border-top:0}
+  .v5 .vpay b{margin:0;font-size:18px;text-align:right}
+  .v5 .vpay i{display:none}
+  .v5 .vqs p:not(.qc-from){font-size:16px}
+}
+/* v5 minimum text size is 12 (note 146): lift the Check my quote labels and figure captions that were 9 to 11.5 */
+.v5 .qa-sec,.v5 .qm-sec,.v5 .qc-short-hd,.v5 .qc-stamp,.v5 .qc-prog-lbl,.v5 .qp-res i,.v5 .qc-phones .when,.v5 .qc-mk,.v5 .qa-head b,.v5 .qm-head b,.v5 .qm-total,.v5 .qc-pb span,.v5 .qa-row i,.v5 .qa-head i,.v5 .qp-row i,.v5 .qc-eg-pay,.v5 .qc-row[data-auto] legend::after,.v5 .qm-row .tag{font-size:12px}
+
+/* ── Type scale (note 146, Lewis 24 Nov 2026: "some sizes wrong"). Desktop 60 52 48 40 32 22 21 19 17 15 14 13; phone 34 28 24 19
+   18 17 16 14 13. Anything else fails scripts/check-v5-system.cjs. Phone roles first, then the leftovers from older stylesheets. ── */
+@media (max-width:760px){
+  .v5 .v-h3{font-size:19px}
+  .v5 .v-body,.v5 .vq details p,.v5 .v-more a,.v5 .vst .v-body,.v5 .dir-list a.nm,.v5 .qc-faq details p{font-size:16px}
+  .v5 .v-small,.v5 .vf span,.v5 .vask dd,.v5 .qc-jt em,.v5 .qc-hint,.v5 .qc-manual,.v5 .qc-n,.v5 details.tip>summary,.v5 .vpay span{font-size:14px}
+  .v5 .vfold summary,.v5 .qc-tap summary b{font-size:17px}
+  .v5 .qc-sh h3,.v5 .vd-k{font-size:19px}
+}
+.v5 .qx-example-tag,.v5 .dir-list .pc,.v5 figure figcaption,.v5 .qc-side-note,.v5 .qa-sec,.v5 .qm-sec,.v5 .qc-short-hd,.v5 .qc-stamp,.v5 .qc-prog-lbl,.v5 .qp-res i,.v5 .qc-phones .when,.v5 .qc-mk,.v5 .qa-head b,.v5 .qm-head b,.v5 .qm-total,.v5 .qc-pb span,.v5 .qa-row i,.v5 .qa-head i,.v5 .qp-row i,.v5 .qc-eg-pay,.v5 .qc-row[data-auto] legend::after,.v5 .qm-row .tag{font-size:13px}
+.v5 .qc-jt span{font-size:14px}
+.v5 .qc-short-q,.v5 .qc-actions .b,.v5 .qc-faq details p{font-size:17px}
+.v5 .qc-from,.v5 .qc-from a,.v5 .tip-body p{font-size:15px}
+.v5 .qc-tap summary b{font-size:19px}
+.v5 .vqs li p,.v5 .vqs li div p{font-size:17px}
+.v5 .dir-city b,.v5 .dir-region summary b{font-size:19px}
+.v5 .vd-strip-h{font-size:32px}
+.v5 .qc-toolgrid .qc-short .qc-side-note{font-size:13px}
+@media (min-width:761px) and (max-width:960px){.v5 .vd-strip-h{font-size:28px}}
+@media (max-width:760px){
+  .v5 .vm.four .v-h3,.v5 .vst .v-h3,.v5 .vm .v-h3{font-size:19px}
+  .v5 .vqs li p,.v5 .vqs li div p,.v5 .vchk li{font-size:16px}
+  .v5 .vk details p,.v5 .qc-from,.v5 .qc-from a,.v5 .tip-body p,.v5 .vd-link,.v5 .dir-toggle,.v5 .citychips a{font-size:14px}
+  .v5 .dir-region summary b{font-size:17px}
+  .v5 .vd-strip-h{font-size:24px}
+}
+@media (max-width:760px){.v5 .vqs p:not(.qc-from){font-size:16px}}
+
+/* V4 page rules on the quote tool pages (24 Nov 2026): a picture beside the section heading, lists capped at every width */
+.v5 .vsplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:72px;align-items:center;margin-bottom:56px}
+.v5 .vsplit .vm-head,.v5 .vsplit .vm-sub{margin-bottom:0}.v5 .vsplit .vm-sub{margin-top:16px}
+.v5 .vsplit-pic{margin:0}.v5 .vsplit-pic img{display:block;width:100%;height:auto;border-radius:20px}
+.v5 .vsplit-pic.shot img{border:1px solid var(--line);box-shadow:0 12px 32px rgba(20,25,31,.08)}
+.v5 .vchk.cap li:nth-child(n+4){display:none}.v5 .vchk.cap+.vchk-more{display:inline-flex;margin-top:16px}
+@media (max-width:960px){.v5 .vsplit{grid-template-columns:minmax(0,1fr);gap:28px;margin-bottom:40px}}
+.v5 .vtip-row{display:flex;gap:16px;align-items:flex-start;margin-top:20px}.v5 .vtip-row .vtip{margin:0}
+.v5 .vcards .vd-card>.seal{margin-bottom:20px}
+.v5 .vq-head{display:flex;align-items:center;gap:20px}.v5 .vq-head .v-h2{margin:0}
+.v5 .vf-pic{margin-top:32px}
+.v5 .vcards .vd-card>.seal{margin-bottom:20px}
+/* directory hero: the trade's own photo above the figures (24 Nov 2026, V4: a picture every two screens) */
+.v5 .vd-hero-side{display:grid;gap:20px;align-content:start}
+.v5 .vd-hero-photo{margin:0}.v5 .vd-hero-photo img{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;border-radius:20px}
+.v5 .vd-steps .seal{margin:0}.v5 .vd-bars+*,.v5 .vd-side .vd-card>.seal{margin-bottom:16px}
+@media (max-width:760px){.v5 .vd-steps .seal{grid-row:span 2}}
+.v5 .dir-cities+.vd-bars,.v5 .v-h2+.vd-bars{margin-top:40px}.v5 .vd-bars+.dir-cities{margin-top:40px}
+@media (max-width:760px){.v5 .dir-cities.cap>a:nth-child(n+9){display:none}.v5 .dir-cities.cap+.vchk-more{display:inline-flex;margin-top:16px}}
+.v5 .dir-head+.vd-bars{margin:32px 0 32px}
+.v5 .vd-hero-photo.shot img{aspect-ratio:auto;object-fit:contain;max-height:420px;object-position:top;border:1px solid var(--line);background:#fff}
+@media (max-width:760px){.v5 .vd-rr.cap li:nth-child(n+7){display:none}.v5 .vd-rr.cap+.vchk-more{display:inline-flex;margin-top:16px}.v5 .vd-hero-photo.shot img{max-height:260px;object-fit:cover}}
+.v5 .vd-rr.cap20 li:nth-child(n+21){display:none}.v5 .vd-rr.cap20+.vchk-more.all{display:inline-flex;margin-top:24px}
+.v5 .vtip-row .vd-sub{margin:0;align-self:center}
+.v5 .vsplit .vm-head,.v5 .vsplit .vm-sub{text-align:left;margin-left:0;margin-right:0;max-width:none}
+/* No green links inside sentences (Lewis 24 Nov 2026: "hyperlinked green text ... shouldn't be part of the design").
+   A note is a plain sentence; its action sits after it as .v-go (ink, an arrow, no underline) or as a button. */
+.v5 .v-note{margin-top:32px}.v5 .v-note .v-small{margin:0}
+.v5 .v-go{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font:600 15px/1.4 var(--body);color:var(--text);text-decoration:none}
+.v5 .v-go span{color:var(--brand);transition:transform .2s}.v5 .v-go:hover span{transform:translateX(3px)}
+.v5 .vt-acts{display:flex;flex-wrap:wrap;gap:12px;flex:none}
+.v5 .vd-msg+.v-actions{margin-top:28px}
+@media (max-width:760px){.v5 .v-go{font-size:14px}.v5 .vt-acts{width:100%}.v5 .vt-acts .vb{flex:1 1 100%}}
+.v5 .vd-link{color:var(--text);text-decoration:none;font-weight:600}.v5 .vd-link span,.v5 .vd-link::after{color:var(--brand)}
+
+/* ── One pattern library (Lewis 24 Nov 2026: "check if the rest of the pages follow the exact same design protocol"; Obsidian
+   147). The home and For tradespeople pages are the baseline. Every section is one of: hero (.vh, a portrait photo with a seal),
+   trio (.vm-head + .vm, centred), split (.vf-grid or .vq: heading left, content right), panel (.vp, wash, radius 32), list
+   (.vf, .vj, .vchk ticks), strip (.vt on cream). Cards are radius 20, panels 32, the hero photo 28, chips and buttons pills.
+   Text is 400 weight; no labels above titles; no seal beside a heading. scripts/check-v5-system.cjs checks all of it. ── */
+.v5 .v-small{font-weight:400}
+.v5 .vd-sub,.v5 .vtip{margin-top:20px;max-width:62ch}
+.v5 .vtip b{display:inline;font-weight:600}
+/* split: two plain tick lists in the right column (the quote tool's "Clearer for you") */
+.v5 .vlists{display:grid;gap:48px;align-content:start}
+.v5 .vlists .vchk{margin-top:16px}
+.v5 .vf-grid .v-note{margin-top:24px}
+.v5 .vf-grid nav .dir-trades{margin-top:0}
+/* the panel can hold a tick list in its text column (the directory's three steps) */
+.v5 .vp .vf{grid-template-columns:minmax(0,1fr);width:100%}
+.v5 .vp .vf li{border-top-color:color-mix(in oklab,var(--brand-wash),var(--text) 10%)}
+.v5 .vp .v-note{margin-top:0}
+/* a panel with two columns of text (the town in figures) */
+.v5 .vp.solo.vd-cols{grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:72px;align-items:start}
+.v5 .vp .vd-bars{background:var(--surface)}
+/* hero: the deeper pages use the homepage's grid and photo; a screenshot shows its top */
+.v5 .vd-hero .vh-grid{align-items:center}
+.v5 .vh-photo.shot img{object-position:top;border:1px solid var(--line);background:var(--surface)}
+.v5 .vd-hero .vc{margin-top:20px}
+/* chips: ink text, brand on hover (no green text standing on its own) */
+.v5 .dir-trades a{color:var(--text);font-weight:500}
+.v5 .dir-trades a:hover{color:var(--brand)}
+.v5 .dir-toggle{color:var(--text);font:600 15px/1 var(--body)}
+.v5 .dir-toggle:hover{color:var(--brand)}
+/* cards: radius 20 */
+.v5 .dir-city,.v5 .qc-anat .qc-check li.on{border-radius:20px}
+.v5 .dir-list .pc{border-radius:var(--r-pill)}
+/* Check my quote: the side card's title, the three payments (title first, then its line), ticked questions, sources */
+.v5 .qc-short .v-h3{margin:0 0 8px}
+.v5 .vpay b{margin-top:0}
+.v5 .vpay span{margin-top:8px;font:400 15px/1.4 var(--body);color:var(--text-2)}
+.v5 .vqs li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:14px}
+.v5 .vqs li::before{content:"";width:12px;height:7px;margin:7px 0 0 3px;border-left:2.5px solid var(--brand);border-bottom:2.5px solid var(--brand);transform:rotate(-45deg)}
+.v5 .qc-from,.v5 .qc-from a,.v5 .qc-src{color:var(--muted);font-weight:400}
+.v5 .vq .qc-note{margin:32px 0 0;max-width:62ch}
+.v5 .vsources{margin-top:32px}
+.v5 .vsources ul{list-style:none;display:grid;gap:12px;margin:0;padding:0 0 20px}
+.v5 .vsources a{font:500 15px/1.4 var(--body);color:var(--text);text-decoration:none}
+.v5 .vsources a span{color:var(--brand)}
+.v5 .vsources a:hover{color:var(--brand)}
+@media (min-width:961px){.v5 #how .qc-phones{text-align:center}.v5 #how .qc-phones .qp{margin-inline:auto}}
+@media (max-width:960px){.v5 .vp.solo.vd-cols{grid-template-columns:minmax(0,1fr);gap:40px}}
+@media (max-width:760px){
+  .v5 .vpay span{order:-1;margin:0;font-size:14px}
+  .v5 .vlists{gap:32px}
+  .v5 .vsources a{font-size:14px}
+}
+/* Check my quote: when you pay, drawn from the brand tokens (a diagram, not data); the quote sketch shows on phones too */
+.v5 .vpay-fig{margin:0;align-self:center;padding-bottom:72px}
+.v5 .vpay-fig svg{display:block;width:100%;height:auto;font-family:var(--body)}
+.v5 .vpay-fig .pf-track{fill:var(--surface)}
+.v5 .vpay-fig .pf-dep{fill:var(--brand)}
+.v5 .vpay-fig .pf-mid{fill:color-mix(in oklab,var(--brand),var(--surface) 55%)}
+.v5 .vpay-fig .pf-end{fill:color-mix(in oklab,var(--brand),var(--surface) 25%)}
+.v5 .vpay-fig .pf-dot{fill:var(--text)}
+.v5 .vpay-fig .pf-k{font-size:15px;font-weight:600;fill:var(--text-2)}
+.v5 .vpay-fig .pf-b{font-size:22px;font-weight:800;fill:var(--text);letter-spacing:-.01em}
+.v5 .vpay-fig .pf-s{font-size:15px;font-weight:400;fill:var(--text-2)}
+.v5 .vpay-fig .pf-n{font-size:13px;fill:var(--muted)}
+.v5 #paying .vp-text>div .qc-from{margin-top:8px}
+.v5 #paying .vfold{width:100%;margin-top:0}
+@media (max-width:960px){
+  .v5 .vpay-fig{padding-bottom:56px}
+  .v5 .qc-anat .qa-col,.v5 .qc-anat .qa-lede{display:block;position:static;order:-1;max-width:420px}
+}
+@media (max-width:760px){
+  .v5 .vpay-fig{padding-bottom:0}
+  .v5 .qc-anat .qa-col{max-width:none}
+  .v5 .dir-toggle{font-size:14px}
+}
+/* the town page's side card shows the report it sells; the hub's questions are capped on phones; the questions photo
+   follows the list on phones */
+.v5 .vd-card-shot{margin:0 0 24px}
+.v5 .vd-card-shot img{display:block;width:100%;height:180px;object-fit:cover;object-position:top;border-radius:20px;border:1px solid var(--line);background:var(--surface)}
+.v5 .vask+.vchk-more{display:none}
+.v5 .dir-trades.cap>.vd-more{display:inline-flex}
+@media (max-width:760px){
+  .v5 .vask.cap>div:nth-child(n+5){display:none}
+  .v5 .vask.cap>div:nth-child(4){border-bottom:1px solid var(--line)}
+  .v5 .vask.cap+.vchk-more{display:inline-flex;margin-top:16px}
+  .v5 #questions .vf-grid{display:flex;flex-direction:column;gap:24px}
+  .v5 #questions .vf-grid>div:first-child{display:contents}
+  .v5 #questions .vf-grid .vf-pic{order:3;margin-top:8px}
+}
+@media (max-width:760px){
+  .v5 #questions .vf-grid>div{display:contents}
+  .v5 #questions .vf-grid .v-h2{order:1}.v5 #questions .vf-grid .vqs{order:2}.v5 #questions .vf-grid .vf-pic{order:3;margin-top:0}.v5 #questions .vf-grid>div>.vfold{order:4;margin-top:0}
+}
+.v5 details.tip>summary{color:var(--text)}
+
+/* ── Content pages (batch 4: About, 404, the guide, Privacy, Terms, case files; Figma 05 Templates) ── */
+/* Record card: a drawn record used as the picture for a point (Figma "V5 Record card") */
+.v5 .vrec{margin:0;padding:32px;background:var(--surface);border:1px solid var(--line);border-radius:20px;min-width:0}
+.v5 .vrec .vrec-hd{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:0 0 12px}
+.v5 .vrec-hd b{font:700 19px/1.3 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .vrec-hd span{font:400 13px/1.4 var(--body);color:var(--muted);white-space:nowrap}
+.v5 .vrec dl{margin:0}
+.v5 .vrec dl>div{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.v5 .vrec dt{font:400 15px/1.45 var(--body);color:var(--text-2)}
+.v5 .vrec dd{margin:0;font:600 15px/1.45 var(--body);color:var(--text)}
+.v5 .vrec dd a{color:var(--text);text-decoration:none}.v5 .vrec dd a:hover{color:var(--brand)}
+/* the five source labels read as plain ink on v5 (a calm record: no verdict colours) */
+.v5 .vrec .tag,.v5 .vread .tag{background:none;border:0;padding:0;font:inherit;color:inherit;text-transform:none;letter-spacing:0}
+.v5 .vp .vrec{width:100%;max-width:520px;align-self:center;margin-bottom:72px}
+/* Figures: real, dated figures (Figma "Section · Figures") */
+.v5 .vfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:48px;margin-top:48px}
+.v5 .vfigs.three{grid-template-columns:repeat(3,minmax(0,1fr))}.v5 .vfigs.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.v5 .vfigs b{display:block;font:800 32px/1.15 var(--display);letter-spacing:-.015em;color:var(--text)}
+.v5 .vfigs p{margin:8px 0 0;font:400 15px/1.45 var(--body);color:var(--text-2)}
+.v5 .vfigs-note{margin-top:32px}
+/* Reading sections: real text on a 720 column, for search (data-reading) */
+.v5 .vread{max-width:720px}
+.v5 .vread>.v-h2{margin-bottom:24px}
+.v5 .vread h3{margin:32px 0 0;font:700 19px/1.3 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .vread p,.v5 .vread li{font:400 17px/1.6 var(--body);color:var(--text-2)}
+.v5 .vread p{margin:12px 0 0}
+.v5 .vread ul,.v5 .vread ol{margin:12px 0 0;padding-left:22px}.v5 .vread li+li{margin-top:8px}
+.v5 .vread strong,.v5 .vread b{color:var(--text);font-weight:600}
+.v5 .vread a{color:var(--text);text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px}
+.v5 .vread a:hover{text-decoration-color:var(--brand)}
+.v5 .vtable{margin:20px 0 0;overflow-x:auto;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+.v5 .vtable table{width:100%;border-collapse:collapse}
+.v5 .vtable th,.v5 .vtable td{padding:14px 18px;text-align:left;vertical-align:top;border-top:1px solid var(--line);font:400 15px/1.5 var(--body);color:var(--text-2)}
+.v5 .vtable th{border-top:0;font-weight:600;color:var(--text);background:var(--bg)}
+.v5 .vtable td:first-child{color:var(--text);font-weight:600}
+.v5 .vread .vfold{margin-top:24px}
+.v5 .vfold>div>p:first-child,.v5 .vfold>div>ul:first-child{margin-top:0}
+/* a hero with no picture (legal pages only: exempt from the picture rule) */
+.v5 .vh-grid.solo{grid-template-columns:minmax(0,1fr)}.v5 .vh-grid.solo .vh-text{max-width:760px}
+.v5 .vh-meta{margin:16px 0 0;font:400 14px/1.4 var(--body);color:var(--text-2)}
+/* contents: chips that jump to each part */
+.v5 .vtoc{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.v5 .vtoc a{display:inline-flex;padding:8px 14px;border:1px solid var(--line-2);border-radius:var(--r-pill);background:var(--surface);font:500 14px/1.2 var(--body);color:var(--text);text-decoration:none}
+.v5 .vtoc a:hover{border-color:var(--brand);color:var(--brand)}
+.v5 .vm .v-go{margin-top:12px}
+@media (max-width:960px){.v5 .vfigs{grid-template-columns:repeat(2,minmax(0,1fr))}.v5 .vp .vrec{margin-bottom:56px}}
+@media (max-width:760px){
+  .v5 .vrec{padding:24px}.v5 .vrec-hd b{font-size:17px}.v5 .vrec dl>div{grid-template-columns:minmax(0,1fr);gap:2px}.v5 .vrec dt,.v5 .vrec dd{font-size:14px}
+  .v5 .vp .vrec{margin-bottom:0}
+  .v5 .vfigs{gap:24px;margin-top:32px}.v5 .vfigs b{font-size:24px}.v5 .vfigs p{font-size:14px}
+  .v5 .vread p,.v5 .vread li{font-size:16px}.v5 .vread h3{font-size:17px}
+  .v5 .vtable th,.v5 .vtable td{padding:12px 14px;font-size:14px}
+}
+/* About: the Phillips Group lockup in the "Run by" panel (the file carries its own clear space) */
+.v5 .ab-pg{display:inline-block;margin:24px 0 0 -6px;line-height:0}.v5 .ab-pg img{display:block;height:44px;width:auto}
+.v5 .vp-text .v-body+.v-body{margin-top:-12px}.v5 .vp-text .v-go{margin-top:0}
+@media (max-width:760px){.v5 .ab-pg img{height:38px}}
+/* the hero note reads in ink on a light hero (it is white-on-brand by default) */
+.v5 .vh:not(.bg-brand) .vh-note{color:var(--text-2);opacity:1}
+/* source labels on a record: plain ink, no coloured dot */
+.v5 .vrec .tag::before,.v5 .vread .tag::before{display:none}
+.v5 .vfigs-head .v-body{margin-top:20px;max-width:62ch}
+/* the guide: a picture inside a reading column, the check number read out but shown as a short "1." */
+.v5 .vread>.vrec,.v5 .vread>.vread-pic{margin:32px 0 0;max-width:560px}
+.v5 .vread-pic img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:20px}
+.v5 main{counter-reset:chk}.v5 .vread .v-h2 .n{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.v5 .vread .v-h2:has(.n)::before{counter-increment:chk;content:counter(chk) ". "}
+.v5 .vtoc-nav{margin-top:32px}
+.v5 .v-sec[data-reading]+.v-sec[data-reading]{border-top:0}
+.v5 .vt .v-actions{display:flex;flex-wrap:wrap;gap:12px}
+@media (max-width:760px){.v5 .vt .v-actions{flex-direction:column;width:100%}}
+.v5 .toc{position:static;font-size:inherit}.v5 .toc ol.vtoc{border-left:0}.v5 .toc .vtoc a{margin-left:0;line-height:1.2}
+/* legal pages: one reading column, a quiet rule between parts */
+.v5 .vread .vchk{margin-top:16px;padding-left:0}
+.v5 .vlegal .vtoc-nav{margin-top:32px}
+.v5 .vlegal-ask{margin-top:48px;padding-top:32px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+.v5 .vread .vlegal-ask p{margin:0}
+@media (max-width:760px){.v5 .vlegal-ask .vb{width:100%}}
+
+/* ── Case files (batch 4; Figma "BYP Case files hub", "BYP Case file") ── */
+.v5 .vread .vread-lead{font-size:21px;line-height:1.5;color:var(--text)}
+.v5 .vread .vchk+.vread-lead{margin-top:32px}
+.v5 .vrec-sub{display:block;margin-top:2px;font-weight:400;color:var(--text-2)}
+.v5 .vquote{margin:32px 0 0;padding:4px 0 4px 24px;border-left:3px solid var(--brand)}
+.v5 .vread .vquote p{margin:0;font:600 19px/1.5 var(--display);color:var(--text)}
+.v5 .vquote cite{display:block;margin-top:12px;font:400 15px/1.4 var(--body);font-style:normal;color:var(--text-2)}
+.v5 .vnote{margin-top:32px;padding:24px;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+.v5 .vread .vnote h3{margin:0}
+.v5 .vsources{list-style:none;margin:24px 0 0;padding:0}
+.v5 .vsources li{display:grid;gap:4px;padding:20px 0;border-top:1px solid var(--line)}
+.v5 .vread .vsources li{font-size:15px}
+.v5 .vsources b{font:700 17px/1.4 var(--display);color:var(--text)}
+.v5 .vsources span{font:400 15px/1.45 var(--body);color:var(--text-2)}
+.v5 .vsource-note{margin-top:20px}.v5 .vsource-note p{margin:8px 0 0;font-size:inherit}
+.v5 .vp-text .vf{margin-top:0;width:100%}
+.v5 .vp-after .vreport-fold{margin-top:32px}
+.v5 .vreport{margin-top:20px;max-height:720px;overflow:auto;border:1px solid var(--line);border-radius:20px;background:var(--bg)}
+.v5 .vm-foot{margin:40px 0 0;text-align:center}
+/* the case card: photo, title, a line, then the outcome and date (Figma "V5 Case card") */
+.v5 .cs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:40px}
+.v5 .cs-card{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:20px;background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .2s}
+.v5 .cs-card:hover{border-color:var(--brand)}
+.v5 .cs-card[hidden]{display:none}
+.v5 .cs-img{aspect-ratio:3/2;overflow:hidden;background:var(--bg)}.v5 .cs-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%}
+.v5 .cs-body{display:flex;flex-direction:column;gap:12px;flex:1;padding:24px}
+.v5 .cs-body h3{margin:0;font:700 19px/1.3 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .cs-body p{margin:0;font:400 15px/1.5 var(--body);color:var(--text-2)}
+.v5 .cs-meta{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:8px;font:400 13px/1.4 var(--body);color:var(--muted)}
+.v5 .cs-filters{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:32px}
+.v5 .cs-filters button{font:500 14px/1.2 var(--body);padding:8px 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:var(--surface);color:var(--text);cursor:pointer}
+.v5 .cs-filters button.active{border-color:var(--brand);color:var(--brand)}
+.v5 .cs-filters+.cs-grid{margin-top:32px}
+@media (max-width:960px){.v5 .cs-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+  .v5 .cs-grid{grid-template-columns:minmax(0,1fr);gap:16px}.v5 .cs-body{padding:20px}.v5 .cs-body h3{font-size:17px}.v5 .cs-body p{font-size:14px}
+  .v5 .vread .vread-lead{font-size:18px}.v5 .vread .vquote p{font-size:17px}.v5 .vsources b{font-size:16px}
+  .v5 .vm-foot{text-align:left}.v5 .cs-filters{justify-content:flex-start}
+}
+@media (max-width:760px){.v5 .vquote cite,.v5 .vsources span{font-size:14px}}
+/* the report embedded in a case file: its subject reads as a heading without being the page's second h1 */
+.v5 .vreport .rdoc .subject .rdoc-h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.1;color:var(--ink)}
+
+/* phone details (Lewis, 24 Nov 2026: "review the fine details") */
+.v5 .vrec dd a{text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px}
+.v5 .vread .vfold+.vfold{margin-top:0;border-top:0}
+.v5 .vread p.v-fine{font-size:14px;line-height:1.5;color:var(--muted)}
+.v5 .vread .vsources{padding-left:0}
+.v5 .vp-after .vreport-fold{margin-top:32px}
+@media (max-width:760px){
+  .v5 .vt p br{display:none}
+  .v5 .vfigs.three{grid-template-columns:minmax(0,1fr);gap:20px}
+  .v5 .vd-crumb:has(a+span+a) span[aria-hidden]:has(+.here),.v5 .vd-crumb:has(a+span+a) .here{display:none}
+  .v5 .vp-after .vreport-fold{margin:32px 20px 0}
+  .v5 .vlegal .toc,.v5 .vread .toc,.v5 #short .toc{display:block}
+}
+/* Hero photo outline (Lewis, 24 Nov 2026, option A): the photo's shape, offset down and right, in the brand colour.
+   Replaces the seal on the corner. On a brand-coloured hero it is drawn in the brand's light tint. */
+.v5 .vh-photo{isolation:isolate}
+.v5 .vh-photo .seal{display:none}
+.v5 .vh-photo::before{content:"";position:absolute;inset:24px -24px -24px 24px;z-index:-1;border:2px solid var(--brand);border-radius:28px;pointer-events:none}
+.v5 .bg-brand .vh-photo::before{border-color:var(--brand-wash)}
+@media (max-width:960px){.v5 .vh-photo::before{inset:16px -16px -16px 16px}}
+@media (max-width:760px){.v5 .vh-photo::before{inset:12px -12px -12px 12px;border-radius:22px}}
+
+/* ===== From assets/v5-forms.css ===== */
+
+/* ── field (Figma "V5 Field", "V5 Select", "V5 Text area") ── */
+.v5 .field,.v5 .vfield{display:flex;flex-direction:column;margin:0 0 24px;gap:0}
+.v5 .field>label,.v5 .vfield>label{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font:600 15px/1.4 var(--body);color:var(--text)}
+.v5 .field .opt,.v5 .vfield .opt{font:400 15px/1.4 var(--body);color:var(--muted);margin:0}
+.v5 .field input:not([type=checkbox]):not([type=radio]):not([type=file]),.v5 .field select,.v5 .vfield input:not([type=checkbox]):not([type=radio]):not([type=file]),.v5 .vfield select{
+  box-sizing:border-box;width:100%;height:56px;padding:0 20px;font:400 17px/1.3 var(--body);color:var(--text);background:var(--surface);
+  border:1px solid var(--line-2);border-radius:999px;box-shadow:none;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
+.v5 .field textarea,.v5 .vfield textarea{box-sizing:border-box;width:100%;min-height:144px;padding:16px 20px;font:400 17px/1.5 var(--body);color:var(--text);background:var(--surface);border:1px solid var(--line-2);border-radius:20px;box-shadow:none;outline:none;resize:vertical}
+.v5 .field input::placeholder,.v5 .field textarea::placeholder,.v5 .vfield input::placeholder,.v5 .vfield textarea::placeholder{color:var(--muted)}
+.v5 .field input:focus,.v5 .field select:focus,.v5 .field textarea:focus,.v5 .vfield input:focus,.v5 .vfield select:focus,.v5 .vfield textarea:focus{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand)}
+/* the dropdown arrow sits 20 in from the right edge, never against it (Lewis, 19 Nov 2026) */
+.v5 .field select,.v5 .vfield select{padding-right:52px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%233A434E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 20px center;background-size:12px 8px}
+.v5 .helper,.v5 .field-hint,.v5 .vfield .hint{margin:8px 0 0;font:400 15px/1.45 var(--body);color:var(--text-2)}
+/* errors: a red ring and one plain line under the field (Lewis kept red for form errors, 24 Nov 2026) */
+.v5 .field input.error,.v5 .field select.error,.v5 .field textarea.error,.v5 .field input.err,.v5 .field select.err,.v5 .field textarea.err,.v5 .field .error input,.v5 .vfield .error,.v5 .field input.error:not([type]),.v5 .field input:is(.error,.err):not([type="checkbox"]):not([type="radio"]):not([type="file"]),.v5 .vfield input:is(.error,.err):not([type="checkbox"]):not([type="radio"]):not([type="file"]){border-color:#A8321F;box-shadow:0 0 0 1px #A8321F}
+.v5 .err-msg{margin:8px 0 0;font:400 15px/1.45 var(--body);color:#A8321F}
+.v5 .field input.ok,.v5 .field input.ok:not([type="checkbox"]):not([type="radio"]):not([type="file"]){border-color:var(--brand)}
+.v5 .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+
+/* ── choice card (Figma "V5 Choice card") ── */
+.v5 .radio-group{display:flex;flex-direction:column;gap:12px}
+.v5 .radio-card,.v5 .vchoice{display:flex;align-items:flex-start;gap:16px;padding:20px 24px;background:var(--surface);border:1px solid var(--line-2);border-radius:20px;box-shadow:none;cursor:pointer;transition:border-color .15s,background .15s}
+.v5 .radio-card:hover{border-color:var(--text-2)}
+.v5 .radio-card.sel,.v5 .vchoice.on,.v5 .radio-card[aria-checked="true"]{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);background:var(--brand-wash)}
+.v5 .radio-card .rc-dot{flex:none;width:22px;height:22px;margin-top:1px;border:1.5px solid var(--line-2);border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center}
+.v5 .radio-card.sel .rc-dot,.v5 .radio-card[aria-checked="true"] .rc-dot{border-color:var(--brand)}
+.v5 .radio-card.sel .rc-dot::after,.v5 .radio-card[aria-checked="true"] .rc-dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--brand)}
+.v5 .radio-card .rc-t{font:700 19px/1.3 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .radio-card .rc-s{margin-top:4px;font:400 15px/1.45 var(--body);color:var(--text-2)}
+
+/* ── checkbox row (Figma "V5 Checkbox row") ── */
+.v5 .vcheck,.v5 .field label.check,.v5 label.check{display:flex;align-items:center;gap:12px;font:400 17px/1.45 var(--body);color:var(--text);cursor:pointer}
+.v5 .vcheck input[type=checkbox],.v5 label.check input[type=checkbox],.v5 .field input[type=checkbox]{flex:none;width:22px;height:22px;margin:0;accent-color:var(--brand)}
+
+/* ── upload zone (Figma "V5 Upload zone") ── */
+.v5 .upload-zone,.v5 .vupload{display:flex;flex-direction:column;align-items:center;gap:8px;padding:32px 24px;text-align:center;background:var(--surface);border:1.5px dashed var(--line-2);border-radius:20px;cursor:pointer;box-shadow:none}
+.v5 .upload-zone:hover{border-color:var(--brand)}
+.v5 .upload-zone.has-file,.v5 .upload-zone.done,.v5 .vupload.added{border-style:solid;border-color:var(--brand);background:var(--brand-wash)}
+.v5 .upload-title{font:700 19px/1.3 var(--display);color:var(--text)}
+.v5 .upload-sub{font:400 15px/1.45 var(--body);color:var(--text-2)}
+.v5 .upload-icon{display:none}
+.v5 .upload-filename{font:600 15px/1.4 var(--body);color:var(--text)}
+
+/* ── code entry (Figma "V5 Code entry") ── */
+.v5 .vcode input,.v5 #code{letter-spacing:.5em;text-align:center;font:700 22px/1 var(--display)}
+
+/* ── order summary (Figma "V5 Order summary") and done card (Figma "V5 Done card") ── */
+.v5 .vorder{padding:32px;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.v5 .vdone{max-width:560px;margin:0 auto;padding:48px 40px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.v5 .vdone h1,.v5 .vdone h2{margin:0;font:700 22px/1.25 var(--display);letter-spacing:-.01em;color:var(--text)}
+.v5 .vdone p{margin:12px auto 0;max-width:44ch;font:400 17px/1.55 var(--body);color:var(--text-2)}
+.v5 .vdone .v-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
+
+/* ── phones ── */
+@media (max-width:760px){
+  .v5 .vform-page{padding:28px 20px 56px}
+  .v5 .funnel{padding:0 20px}
+  .v5 .funnel .shell{padding:28px 0 56px}
+  .v5 .funnel .why{margin-bottom:56px;padding:24px}
+  .v5 .q,.v5 .vform-col h1{font-size:34px}
+  .v5 .qsub,.v5 .vform-lede{font-size:16px;margin-bottom:28px}
+  .v5 .steplabel,.v5 .vsteps,.v5 .helper,.v5 .field-hint,.v5 .err-msg,.v5 .vfield .hint,.v5 .radio-card .rc-s,.v5 .upload-sub,.v5 .note-amber,.v5 .note-muted,.v5 .error-banner{font-size:14px}
+  .v5 .field>label,.v5 .vfield>label,.v5 .field .opt{font-size:14px}
+  .v5 .field input:not([type=checkbox]):not([type=radio]):not([type=file]),.v5 .field select,.v5 .field textarea{font-size:16px}
+  .v5 .radio-card .rc-t{font-size:17px}
+  .v5 .row2{grid-template-columns:minmax(0,1fr)}
+  .v5 .nav{flex-direction:column;align-items:stretch}
+  .v5 .nav .btn{width:100%}
+  .v5 .nav .btn-primary{order:-1}
+  .v5 .vdone{padding:40px 24px}
+}
+/* the done card's "what happens next": a short numbered list, left-aligned inside the centred card */
+.v5 .vdone .vdone-sub{margin:32px 0 0;font:700 17px/1.3 var(--display);color:var(--text)}
+.v5 .vdone .vdone-steps{margin:12px auto 0;padding:0 0 0 22px;max-width:44ch;text-align:left;display:flex;flex-direction:column;gap:10px}
+.v5 .vdone .vdone-steps li{font:400 15px/1.55 var(--body);color:var(--text-2)}
+.v5 .vdone .vdone-steps strong{color:var(--text);font-weight:600}
+@media (max-width:760px){.v5 .vdone h1,.v5 .vdone h2:not(.vdone-sub){font-size:19px}.v5 .vdone .vdone-steps li{font-size:14px}.v5 .vdone .vdone-sub{font-size:16px}}
+/* research flow specifics: the quote drop zone (.drop) is the Upload zone; text links read as ink, never green underlines */
+.v5 .drop{padding:32px 24px;background:var(--surface);border:1.5px dashed var(--line-2);border-radius:20px;box-shadow:none}
+.v5 .drop:hover,.v5 .drop.over{border-color:var(--brand);background:var(--surface)}
+.v5 .drop .di{display:none}
+.v5 .drop .dt{font:700 19px/1.3 var(--display);color:var(--text)}
+.v5 .drop .dh{margin-top:8px;font:400 15px/1.45 var(--body);color:var(--text-2)}
+.v5 .upload-zone .upload-icon,.v5 .upload-zone svg:first-child{display:none}
+.v5 .txt-link{font:600 15px/1.4 var(--body);color:var(--text);text-decoration:none;border:0;cursor:pointer}
+.v5 .txt-link.muted{color:var(--text-2)}
+.v5 .txt-link:hover{color:var(--brand)}
+.v5 .btn{width:auto}
+@media (max-width:760px){.v5 .btn-primary,.v5 .btn-ghost{width:100%}.v5 .drop .dt{font-size:17px}.v5 .drop .dh,.v5 .txt-link{font-size:14px}}
+/* small print in v5: Manrope, sentence case, muted (no mono, no capitals) */
+.v5 .reassure-foot,.v5 .reassure-foot span{font:400 13px/1.5 var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}
+.v5 .reassure-foot{margin-top:16px;justify-content:flex-start}
+.v5 .reassure-foot .d{background:var(--line-2)}
+.v5 .summary{padding:24px 32px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:none}
+.v5 .summary .sname{font:700 19px/1.3 var(--display);color:var(--text)}
+.v5 .summary .sprice{font:800 22px/1.2 var(--display);color:var(--text)}
+@media (max-width:760px){.v5 .reassure-foot{justify-content:center}.v5 .summary{padding:20px 24px}.v5 .summary .sname{font-size:17px}.v5 .summary .sprice{font-size:19px}}
+/* the match details card: the Record card look (Figma "V5 Record card"): label in grey, value in ink, Manrope */
+.v5 .kvcard{padding:8px 32px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:none}
+.v5 .kvrow{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--line);font-family:var(--body)}
+.v5 .kvrow:first-child{border-top:0}
+.v5 .kvrow .kk{font:400 15px/1.45 var(--body);letter-spacing:0;text-transform:none;color:var(--text-2)}
+.v5 .kvrow .kvv{font:600 15px/1.45 var(--body);color:var(--text);overflow-wrap:anywhere}
+.v5 .kvrow .kvv a{color:var(--text);text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px}
+/* one button row: side by side from the left on desktop, stacked full width on phones */
+.v5 .nav{justify-content:flex-start}
+.v5 .nav .btn{flex:0 0 auto;width:auto}
+@media (max-width:760px){.v5 .kvcard{padding:4px 24px}.v5 .kvrow{grid-template-columns:minmax(0,1fr);gap:2px}.v5 .kvrow .kk,.v5 .kvrow .kvv{font-size:14px}.v5 .nav .btn{width:100%}}
+/* could-not-match note: a calm card, no amber wash */
+.v5 .unable-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px 28px;box-shadow:none}
+.v5 .unable-card p{font:400 17px/1.55 var(--body);color:var(--text-2);margin:0 0 12px}
+.v5 .unable-card p:last-child{margin-bottom:0}
+.v5 .unable-card b{color:var(--text);font-weight:600}
+/* closing screen (said no to the report): the Done card look */
+.v5 .closing-screen{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:40px;text-align:left}
+.v5 .closing-screen .ct{width:48px;height:48px;border-radius:50%;background:var(--brand-wash);color:var(--brand);display:grid;place-items:center;margin:0 0 20px}
+.v5 .closing-screen h1{font:700 22px/1.25 var(--display);letter-spacing:-.01em;color:var(--text);margin:0 0 12px}
+.v5 .closing-screen .cintro{font:400 17px/1.55 var(--body);color:var(--text-2);margin:0 0 16px}
+.v5 .closing-screen .ask-list{margin:0 0 24px;padding:0;list-style:none;counter-reset:ask}
+.v5 .closing-screen .ask-list li{counter-increment:ask;position:relative;padding:12px 0 12px 40px;border-top:1px solid var(--line);font:400 17px/1.5 var(--body);color:var(--text)}
+.v5 .closing-screen .ask-list li::before{content:counter(ask);position:absolute;left:0;top:12px;width:26px;height:26px;border-radius:50%;background:var(--brand-wash);color:var(--brand);font:600 14px/26px var(--body);text-align:center}
+.v5 .closing-screen .closing-foot{font:400 15px/1.5 var(--body);color:var(--text-2);margin:0 0 8px}
+@media (max-width:760px){.v5 .closing-screen{padding:28px 24px}.v5 .closing-screen h1{font-size:19px}.v5 .closing-screen .cintro,.v5 .closing-screen .ask-list li,.v5 .unable-card p{font-size:15px}.v5 .unable-card{padding:20px}}
+/* report sent: the Done card with the address and a short list of what is in the report */
+.v5 .vdone .vdone-email{margin-top:4px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
+.v5 .vdone .vdone-list{max-width:44ch;margin:12px auto 0;text-align:left;gap:10px}
+.v5 .vdone .vdone-list li{font-size:15px}
+.v5 .vdone .vdone-note{font-size:15px;margin-top:20px}
+@media (max-width:760px){.v5 .vdone .vdone-list li,.v5 .vdone .vdone-note{font-size:14px}}
+.v5 .kvrow .kvv::before{content:none}
+.v5 .q+.unable-card{margin-top:24px}
+@media (max-width:760px){.v5 .nav .btn{font-size:16px;line-height:1.3;white-space:normal;height:auto;min-height:52px;padding-top:12px;padding-bottom:12px}}
+/* a sub-heading inside a form step (was a mono capital eyebrow) */
+.v5 .section-head{margin:32px 0 12px;font:700 17px/1.3 var(--display);letter-spacing:0;text-transform:none;color:var(--text)}
+/* notes inside a form: calm cards, no amber or grey washes (spec v3, calm record) */
+.v5 .note-amber,.v5 .note-muted{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:12px;padding:14px 18px;font:400 15px/1.55 var(--body);color:var(--text-2)}
+.v5 .note-amber b,.v5 .note-muted b{color:var(--text);font-weight:600}
+.v5 .helper+.v-go{display:inline-flex;margin-top:8px;font-size:15px}
+@media (max-width:760px){.v5 .note-amber,.v5 .note-muted{font-size:14px}}
+/* a page-state message (loading, closed, not found): the Done card look */
+.v5 .card-msg{max-width:560px;margin:0 auto;padding:48px 40px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.v5 .card-msg .q{font:700 22px/1.25 var(--display);letter-spacing:-.01em;margin:0 0 12px}
+.v5 .card-msg .qsub{font:400 17px/1.55 var(--body);color:var(--text-2);max-width:44ch;margin:0 auto!important}
+@media (max-width:760px){.v5 .card-msg{padding:40px 24px}.v5 .card-msg .q{font-size:19px}.v5 .card-msg .qsub{font-size:16px}}
+/* code help: a short line, then the two actions as ink links after it (no links inside the sentence) */
+.v5 .vcode-help{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;margin-top:24px}
+.v5 .vcode-help p{margin:0;width:100%;font:400 15px/1.5 var(--body);color:var(--text-2)}
+.v5 .vcode-help .linkbtn{padding:0;border:0;background:none;cursor:pointer;font:600 15px/1.4 var(--body);color:var(--text);text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px}
+
+/* ===== Group chrome (tokens/v5-group.css) ===== */
+
+/* ── Group chrome: the v5 header and the light group footer (the Phillips Group pilot, 25 Nov 2026) ──
+   Before You Pay draws its own header and footer (site-nav.js, site-footer.js), so its v5.css only restyles them. Every
+   other group site uses these two parts instead. Figma: "V5 Header" and "V5 Footer" with "V5 Group footer row" (page 03
+   Components, file 7YVrt8qdoW6C1K0arY6aXI). The footer follows the group footer template (vault
+   00_Footer Template - Group Sites.md, light since 24 Nov 2026): brand and up to three link columns, the group row with the
+   five businesses in the agreed order, the bottom line with Privacy, Terms, Cookie settings and "Powered by Phillips.",
+   then the legal line. Tokens only, light only. Markup: the footer template note. */
+
+/* base: what Before You Pay's byp.css gives its pages and the v5 parts take for granted (an image with width and height
+   attributes keeps the shape its part sets) */
+body.v5{margin:0;font-family:var(--body);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body.v5 *,body.v5 *::before,body.v5 *::after{box-sizing:border-box}
+body.v5 img{max-width:100%;height:auto}
+
+/* header: the logo, the site's own links, one small button (40 high) */
+.v5 .vhd{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.v5 .vhd-in{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:var(--maxw,1240px);height:76px;margin:0 auto;padding:0 var(--gutter,24px)}
+.v5 .vhd-logo{display:inline-flex;align-items:center;gap:10px;font:700 18px/1 var(--display);letter-spacing:-.02em;color:var(--text);text-decoration:none;white-space:nowrap}
+.v5 .vhd-logo svg{display:block;flex:none;width:32px;height:32px}
+.v5 .vhd-nav{display:flex;align-items:center;gap:28px}
+.v5 .vhd-nav a:not(.vb){font:500 15px/1 var(--body);color:var(--text-2);text-decoration:none}
+.v5 .vhd-nav a:not(.vb):hover,.v5 .vhd-nav a[aria-current]:not(.vb){color:var(--text)}
+.v5 .vhd .vb{min-height:40px;height:40px;padding:0 18px;font-size:15px}
+.v5 .vhd a:focus-visible{outline:3px solid var(--brand-ring);outline-offset:3px;border-radius:6px}
+html:has(body.v5){scroll-padding-top:92px}
+@media (max-width:760px){
+  .v5 .vhd-in{height:64px;padding:0 16px}
+  .v5 .vhd-nav{gap:16px}
+  .v5 .vhd-nav a.wide:not(.vb){display:none}
+  .v5 .vhd .vb{padding:0 14px}
+  html:has(body.v5){scroll-padding-top:76px}
+}
+
+/* footer: light, normal logo, sentence-case heads, the group row between thin lines */
+.v5 .vgf{background:var(--bg);color:var(--text-2);border-top:1px solid var(--line);font:400 15px/1.5 var(--body)}
+.v5 .vgf-in{max-width:var(--maxw,1240px);margin:0 auto;padding:72px var(--gutter,24px) 40px}
+.v5 .vgf a{color:inherit;text-decoration:none;transition:color var(--d2,.2s)}
+.v5 .vgf a:hover{color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.v5 .vgf a:focus-visible{outline:3px solid var(--brand-ring);outline-offset:3px;border-radius:4px}
+.v5 .vgf-top{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr);gap:48px;padding-bottom:56px}
+.v5 .vgf-brand .vhd-logo{color:var(--text)}
+.v5 .vgf-brand p{margin:16px 0 0;max-width:34ch;color:var(--text-2)}
+.v5 .vgf-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.v5 .vgf-h{margin:0 0 12px;font:600 15px/1.3 var(--body);color:var(--text)}
+.v5 .vgf-cols ul{list-style:none;display:grid;gap:10px;margin:0;padding:0}
+.v5 .vgf-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 32px;padding:32px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:14px}
+.v5 .vgf-group .k{margin-right:auto;font-weight:600;color:var(--text-2)}
+.v5 .vgf-group a{font-weight:500;color:var(--text-2)}
+.v5 .vgf-group b{font-weight:600;color:var(--text)}
+.v5 .vgf-base{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 24px;padding-top:24px;font-size:13px;color:var(--muted)}
+.v5 .vgf-base .l{display:inline}
+.v5 .vgf-base .l a::before{content:"·";display:inline-block;margin:0 8px;color:var(--muted)}
+.v5 .vgf-pb{white-space:nowrap}
+.v5 .vgf-note,.v5 .vgf-legal{margin:16px 0 0;max-width:110ch;font-size:13px;line-height:1.55;color:var(--muted)}
+.v5 .vgf-note+.vgf-legal{margin-top:6px}
+@media (max-width:960px){
+  .v5 .vgf-top{grid-template-columns:minmax(0,1fr);gap:40px}
+  .v5 .vgf-group .k{flex-basis:100%;margin-right:0}
+}
+@media (max-width:760px){
+  .v5 .vgf-in{padding:48px 20px 40px}
+  .v5 .vgf-top{padding-bottom:40px}
+  .v5 .vgf-cols{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 20px}
+  .v5 .vgf-group{gap:8px 20px;padding:24px 0}
+  .v5 .vgf-base{flex-direction:column;gap:8px}
+}

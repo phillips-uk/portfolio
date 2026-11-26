@@ -35,7 +35,7 @@ assert.ok(/:root\s*,\s*\[data-theme="light"\]/.test(modes), 'modes.css has the l
 // the files in scope: the website's stylesheets and every live page (the retired tool pages and the prospect prototypes,
 // which carry other businesses' brands, are not part of the Phillips. design)
 const walk = d => fs.readdirSync(path.join(ROOT, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(`${d}/${e.name}`) : [`${d}/${e.name}`]);
-const SHEETS = ['agency.css', 'tools.css', 'brief.css', 'motion.css', 'guides.css'];
+const SHEETS = ['agency.css', 'tools.css', 'brief.css', 'motion.css', 'guides.css', 'v5.css'];
 const PAGES = ['index.html',
   ...fs.readdirSync(ROOT, { withFileTypes: true }).filter(e => e.isDirectory() && fs.existsSync(path.join(ROOT, e.name, 'index.html')) && e.name !== 'guides').map(e => `${e.name}/index.html`),
   ...walk('guides').filter(f => f.endsWith('index.html')),
@@ -82,7 +82,7 @@ for (const [f, src] of sources) for (const m of src.matchAll(/var\((--[\w-]+)\s*
 // every live page gets the tokens: from agency.css, guides.css or its own copy
 for (const f of PAGES) {
   const h = R(f);
-  assert.ok(/\/agency\.css\?v=\d+/.test(h) || /\/guides\.css\?v=\d+/.test(h) || h.includes(T.START), `${f} loads no token layer`);
+  assert.ok(/\/agency\.css\?v=\d+/.test(h) || /\/guides\.css\?v=\d+/.test(h) || /\/v5\.css\?v=\d+/.test(h) || h.includes(T.START), `${f} loads no token layer`);
 }
 
 execFile();
