@@ -67,7 +67,9 @@ async function chrome() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'v5check-'));
   const proc = spawn(CHROME, ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${dir}`, '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', 'about:blank'], { stdio: 'ignore' });
   const portFile = path.join(dir, 'DevToolsActivePort');
-  for (let i = 0; i < 100 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
+  // Up to 90s: a busy Mac took about 30s to start Chrome on 26 Nov 2026; the check carries on as soon as Chrome is ready.
+  for (let i = 0; i < 900 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
+  if (!fs.existsSync(portFile)) { proc.kill(); throw new Error('headless Chrome did not start within 90 seconds: the Mac may be very busy, try again shortly'); }
   const port = fs.readFileSync(portFile, 'utf8').split('\n')[0];
   const list = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
   const pageT = list.find(t => t.type === 'page');
