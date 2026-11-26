@@ -89,6 +89,7 @@ const PAGES = {
   'privacy/index.html': page('privacy', { parts: { crumb: () => V.crumb([['Home', '/'], ['Privacy']]) } }),
   'terms/index.html': page('terms', { parts: { crumb: () => V.crumb([['Home', '/'], ['Terms']]) } }),
   '404.html': page('404'),
+  'index.html': page('home', { contact: { h: 'Tell me about your business.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'home' } }),
   'about/index.html': page('about', { contact: { h: 'Ask me a question.', l: 'I can do the marketing instead of a hire, or work alongside your team. Tell me about the business and what you want to change, and I’ll reply by email.', loc: 'about' } }),
   'work/index.html': page('work', { contact: { h: 'Want work like this?', l: 'Write a few lines about your business and what you’d like to change, and anything you want to ask. I’ll reply by email.', loc: 'work' } }),
   'google-ads/index.html': page('google-ads', { contact: { h: 'Ask me a question about Google Ads.', l: 'Write a few lines about the business, what you’d like to change and anything you want to ask. I’ll reply by email.', loc: 'google-ads' }, parts: { crumb: () => V.crumb([['Home', '/'], ['Google Ads']]) } }),

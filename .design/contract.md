@@ -291,10 +291,10 @@ The scripts each page loads (the Worker adds `/consent.js` to every page it tags
 
 File: `index.html` (page)
 
-- Scripts: `/consent.js (added by the Worker)`, `/contact-form.js`, `/motion.js`, `/email.js`
-- Ids: `#nav-toggle`, `#nav-drawer`, `#contact`
-- Classes: `.hero`, `.stats`, `.stat`, `.stat-n`, `.tip`, `.info`, `.sec-white`, `.page-w`, `.card`, `.feature`, `.sec-cream`, `.proof`, `.work-card`, `.kpis`, `.kpi-n`, `.step`, `.faq`, `.contact-header`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
-- Data attributes: `data-hero`, `data-location`, `data-cookie-settings`
+- Scripts: `/consent.js (added by the Worker)`, `/v5.js`, `/contact-form.js`
+- Ids: `#site-footer`
+- Classes: `.v5`, `.enquiry`, `.enquiry-foot`, `.enquiry-status`
+- Data attributes: `data-v5`, `data-location`, `data-cookie-settings`
 - Forms: `.enquiry` POST `/enquiry` (form_location `home`) (fields: `name`, `email`, `business`, `message`, `company_url`)
 - GA4 events: `generate_lead`
 - Structure: 1 h1, 1 main, canonical `/`, OG 3/3
