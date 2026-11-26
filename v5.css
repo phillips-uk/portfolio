@@ -1300,3 +1300,12 @@ html:has(body.v5){scroll-padding-top:92px}
   .v5 .brief-done { font-size: 16px; }
   .v5 .brief-done b { font-size: 17px; }
 }
+
+/* Sweep (Lewis, 26 Nov 2026: "make sure all padding is correct, the images make sense and are readable").
+   Guides: the dark callouts keep their light text; the reading column's own colours (.vread p, h3, a) were winning. */
+.v5 .vread .dark-callout h3 { color: #fff; }
+.v5 .vread .dark-callout p, .v5 .vread .dark-callout li { color: var(--ink-text); }
+.v5 .vread .dark-callout a, .v5 .vread .dark-callout .v-go { color: var(--brand-on-ink); }
+.v5 .vread .dark-callout .v-go span { color: var(--brand-on-ink); }
+/* small labels inside guide diagrams: readable contrast at 12px */
+.v5 .verify-row-label { color: var(--text-2); }

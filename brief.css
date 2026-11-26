@@ -6,10 +6,24 @@
    item's platform line sits under its title. The markup changes that would make this simpler are listed for the backend
    session in the v5 hand-over ("For the backend session", item 2). */
 
-/* Layout: the v5 wrap, with a reading column on the left as on the other v5 reading pages */
+/* Layout: the v5 wrap. Each issue, the issue list and the sign-up card read in one centred column, as the guides do; the
+   sign-up hero on /updates/ has a picture of an issue beside the text on a computer and below it on smaller screens
+   (sweep, Lewis, 26 Nov 2026: the old left-hand column left half of a wide screen empty). */
 .brief-w { max-width: var(--maxw, 1240px); margin: 0 auto; padding: 0 var(--gutter, 24px); }
 .brief-w > * { max-width: 760px; }
 .brief-w > .brief-center { max-width: 560px; }
+.brief-hero:not(.brief-hero-top) .brief-w, .brief-body .brief-w, .brief-cta .brief-w { max-width: calc(760px + 2 * var(--gutter, 24px)); }
+.brief-hero-top .brief-w::after { content: ""; display: block; aspect-ratio: 420 / 480; border: 1px solid var(--line); border-radius: 28px; background: var(--surface) url(/images/shots/brief-issue.jpg) left top / cover no-repeat; box-shadow: 24px 24px 0 -2px var(--bg), 24px 24px 0 0 var(--brand); }
+@media (min-width: 961px) {
+  .brief-hero-top .brief-w { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 504px; padding-right: calc(var(--gutter, 24px) + 524px); }
+  .brief-hero-top .brief-w::after { position: absolute; top: 0; right: calc(var(--gutter, 24px) + 24px); width: 420px; }
+}
+@media (max-width: 960px) {
+  .brief-hero-top .brief-w::after { max-width: 560px; aspect-ratio: 16 / 10; margin: 48px 16px 16px 0; box-shadow: 16px 16px 0 -2px var(--bg), 16px 16px 0 0 var(--brand); }
+}
+@media (max-width: 760px) {
+  .brief-hero-top .brief-w::after { aspect-ratio: 335 / 260; margin: 40px 12px 12px 0; border-radius: 22px; box-shadow: 12px 12px 0 -2px var(--bg), 12px 12px 0 0 var(--brand); }
+}
 
 /* Hero and issue header (the deeper hero on the cream background) */
 .brief-hero { padding: 48px 0 88px; background: var(--bg); }
