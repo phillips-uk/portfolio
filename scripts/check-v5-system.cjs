@@ -161,6 +161,18 @@ const AUDIT = async (SYS) => {
     else if (!hero.querySelector('.vh-photo img')) out.push('hero has no photo: every hero has the portrait photo with its outline (.vh-photo)');
     else { const o = getComputedStyle(hero.querySelector('.vh-photo'), '::before'); if (o.content === 'none' || !(parseFloat(o.borderTopWidth) > 0)) out.push('hero photo has no brand outline behind it (Lewis, 24 Nov 2026: option A)'); }
   }
+  // ── the homepage template (Lewis, 26 Nov 2026: "BYP is the template that should be followed for all websites", the three
+  // selling points second; scope "Selling points second"). Every group homepage: the hero with three short checks under its
+  // action (ul.vc, three li), then straight after it one heading and a trio of three (ul.vm, not .four), each a seal, a
+  // title and a line. After that the site keeps its own sections. The same block runs on every group site's check
+  // (copied from phillips-group 417a0f1 into phillips-uk.com, 27 Nov 2026). ──
+  if (hero && location.pathname === '/') {
+    const vc = hero.querySelector('ul.vc');
+    if (!vc || vc.querySelectorAll(':scope > li').length !== 3) out.push(`homepage template: the hero needs three short checks under its action (ul.vc), it has ${vc ? vc.querySelectorAll(':scope > li').length : 'none'}`);
+    const next = secs[secs.indexOf(hero) + 1], vm = next && next.querySelector('ul.vm'), items = vm ? [...vm.querySelectorAll(':scope > li')] : [];
+    if (!next || !vm || vm.matches('.four') || items.length !== 3 || items.some(li => !li.querySelector('.seal') || !li.querySelector('h3'))) out.push(`homepage template: the section after the hero (${next ? where(next) : 'none'}) must be the three selling points: one heading and a trio of three, each a seal, a title and a line`);
+    else if ([...next.querySelectorAll('.v-h2')].length !== 1 || next.querySelector('.vb, .v-body:not(.vm .v-body)')) out.push(`homepage template: the selling points section ${where(next)} holds only its heading and the trio (no intro, no button)`);
+  }
   for (const h of [...main.querySelectorAll('.v-h2')].filter(vis)) { const p = h.previousElementSibling;
     if (p && p.matches('.seal')) out.push(`seal beside the heading "${h.textContent.trim().slice(0, 24)}": the baseline has none`); }
   if (size === 'desk') for (const m of [...main.querySelectorAll('.vm')].filter(vis)) { const s = m.closest('section'), h = s && s.querySelector('.v-h2');

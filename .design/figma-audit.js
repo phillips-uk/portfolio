@@ -38,7 +38,8 @@ const SYS = {
   scale: { desk: [60, 52, 48, 40, 32, 22, 21, 19, 17, 15, 14, 13], phone: [34, 28, 24, 19, 18, 17, 16, 14, 13] },
   // C. V4 page rules
   words: { phone: 60, desk: 90 }, screen: { phone: 812, tab: 1024, desk: 900 },
-  palette: ['f6f4ee', 'f5f2eb', 'ffffff', '14191f', '3a434e', '6e746c', '985830', 'f5ebd9', 'cfcbbf', 'e2dfd5'],
+  // the v5 dark moments (--ink, --ink-text, --ink-muted, --ink-line), used by the dark sections since 26 Nov 2026
+  palette: ['f6f4ee', 'f5f2eb', 'ffffff', '14191f', '3a434e', '6e746c', '985830', 'f5ebd9', 'cfcbbf', 'e2dfd5', '12171d', 'b7c0ca', '8995a2', '2c3744'],
   // status colours (tone/* dot and text): allowed only inside a "Tag" frame, the small dot-and-word status mark on a
   // report or profile row. Never as a wash behind a row or card: the record stays calm (Lewis, 25 Nov 2026: "the useful
   // colours"; memory feedback-calm-record-no-verdict-colours)
