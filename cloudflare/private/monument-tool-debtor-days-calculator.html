@@ -1345,11 +1345,18 @@ html.notes-off .rnote{display:none}
 
 /* v25 tool pages: heading on the tool's own band, so the tool starts in the first screen */
 .m-toolband{padding-top:56px}
-.m-toolhead{max-width:760px;margin:0 0 32px;gap:12px}
+.m-toolrow{display:flex;align-items:flex-end;justify-content:space-between;gap:48px;margin:0 0 32px}
+.m-toolhead{max-width:760px;margin:0;gap:12px}
+.m-toolart{flex:none;width:220px}
+.m-toolart .m-illo,.m-meanart .m-illo{max-width:none;margin:0}
+.m-toolband .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--mist)}
+.m-meanart{display:none}
+@media (max-width:1023px){.m-toolart{width:170px}}
 .m-toolhead .m-h1{margin:0}
 .m-related{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:8px}
 .m-toolband [data-rv],.m-toolband .m-rv{opacity:1!important;transform:none!important}
-@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolhead{margin-bottom:20px}}
+@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolrow{margin-bottom:20px}.m-toolart{display:none}
+.m-meanart{display:block;width:200px;margin-bottom:8px}.m-meanart .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--m-white)}}
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Debtor days calculator", "url": "https://www.phillips-uk.com/monument/tools/debtor-days-calculator", "description": "Calculate debtor days from your trade debtors and annual credit sales. Compare your result with UK payment reports by industry, region or customer.", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "inLanguage": "en-GB", "provider": {"@id": "https://www.phillips-uk.com/monument#organisation"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.phillips-uk.com/monument"}, {"@type": "ListItem", "position": 2, "name": "Tools", "item": "https://www.phillips-uk.com/monument/tools"}, {"@type": "ListItem", "position": 3, "name": "Debtor days calculator", "item": "https://www.phillips-uk.com/monument/tools/debtor-days-calculator"}]}]}</script>
@@ -1373,7 +1380,7 @@ html.notes-off .rnote{display:none}
 
   <section class="band band-mist m-toolband" id="hero" aria-labelledby="h1">
     <div class="wrap">
-<div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Debtor days calculator</h1><p class="m-lede m-soft">Calculate debtor days and compare them with UK payment reports by industry, region or customer.</p></div>
+<div class="m-toolrow"><div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Debtor days calculator</h1><p class="m-lede m-soft">Calculate debtor days and compare them with UK payment reports by industry, region or customer.</p></div><div class="m-toolart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path class="cover" d="M18 12 h62 v96 h-62 z"/><line x1="28" y1="28" x2="52" y2="28"/><line x1="28" y1="44" x2="70" y2="44"/><line x1="28" y1="54" x2="70" y2="54"/><line x1="28" y1="64" x2="62" y2="64"/><line x1="28" y1="88" x2="46" y2="88"/><line class="accent" x1="52" y1="88" x2="70" y2="88"/><path class="accent" d="M84 60 h14"/><path class="accent" d="M93 55 l6 5 l-6 5"/><path class="cover" d="M104 20 h98 v88 h-98 z"/><line x1="104" y1="36" x2="202" y2="36"/><line x1="122" y1="14" x2="122" y2="26"/><line x1="184" y1="14" x2="184" y2="26"/><path d="M114 48 l8 8 M122 48 l-8 8 M132 48 l8 8 M140 48 l-8 8 M150 48 l8 8 M158 48 l-8 8 M168 48 l8 8 M176 48 l-8 8 M186 48 l8 8 M194 48 l-8 8"/><path d="M114 68 l8 8 M122 68 l-8 8 M132 68 l8 8 M140 68 l-8 8 M150 68 l8 8 M158 68 l-8 8 M168 68 l8 8 M176 68 l-8 8 M186 68 l8 8 M194 68 l-8 8"/><path d="M114 88 l8 8 M122 88 l-8 8 M132 88 l8 8 M140 88 l-8 8"/><circle class="accent" cx="154" cy="92" r="8"/><path class="accent" d="M150 92 l3 3 l6 -6"/></svg></div></div>
 <div class="calc" data-rv>
         <!-- 1. Debtor days -->
         <div class="calc-body" id="panel-debtors" data-mode="industry" data-api="/monument/api">
@@ -1687,7 +1694,7 @@ html.notes-off .rnote{display:none}
   </section>
 
   <section class="m-section m-bg-white" id="meaning" aria-label="What your result means">
-  <div class="m-wrap"><div class="m-reading m-stack"><h2 class="m-h2">Reading your debtor days</h2><p class="m-body">Debtor days estimate how long cash sits in unpaid invoices. A higher balance increases the figure if credit sales stay the same. Invoice discounting can bring forward cash against eligible invoices while customers pay.</p></div></div>
+  <div class="m-wrap"><div class="m-reading m-stack"><div class="m-meanart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path class="cover" d="M18 12 h62 v96 h-62 z"/><line x1="28" y1="28" x2="52" y2="28"/><line x1="28" y1="44" x2="70" y2="44"/><line x1="28" y1="54" x2="70" y2="54"/><line x1="28" y1="64" x2="62" y2="64"/><line x1="28" y1="88" x2="46" y2="88"/><line class="accent" x1="52" y1="88" x2="70" y2="88"/><path class="accent" d="M84 60 h14"/><path class="accent" d="M93 55 l6 5 l-6 5"/><path class="cover" d="M104 20 h98 v88 h-98 z"/><line x1="104" y1="36" x2="202" y2="36"/><line x1="122" y1="14" x2="122" y2="26"/><line x1="184" y1="14" x2="184" y2="26"/><path d="M114 48 l8 8 M122 48 l-8 8 M132 48 l8 8 M140 48 l-8 8 M150 48 l8 8 M158 48 l-8 8 M168 48 l8 8 M176 48 l-8 8 M186 48 l8 8 M194 48 l-8 8"/><path d="M114 68 l8 8 M122 68 l-8 8 M132 68 l8 8 M140 68 l-8 8 M150 68 l8 8 M158 68 l-8 8 M168 68 l8 8 M176 68 l-8 8 M186 68 l8 8 M194 68 l-8 8"/><path d="M114 88 l8 8 M122 88 l-8 8 M132 88 l8 8 M140 88 l-8 8"/><circle class="accent" cx="154" cy="92" r="8"/><path class="accent" d="M150 92 l3 3 l6 -6"/></svg></div><h2 class="m-h2">Reading your debtor days</h2><p class="m-body">Debtor days estimate how long cash sits in unpaid invoices. A higher balance increases the figure if credit sales stay the same. Invoice discounting can bring forward cash against eligible invoices while customers pay.</p></div></div>
 </section>
 <section class="m-section m-bg-paper" id="faqs" aria-labelledby="faqTitle">
   <div class="m-wrap m-blocks"><h2 class="m-h2" id="faqTitle">Questions about this calculator</h2><div class="m-faq"><details><summary><span class="m-h3">How do you calculate debtor days?</span></summary><p class="m-body m-soft">Divide current trade debtors by credit sales over the last 12 months and multiply by 365. The result estimates the average collection period. Use sales made on credit and compare the figure with your usual payment terms.</p></details><details><summary><span class="m-h3">Is DSO the same as debtor days?</span></summary><p class="m-body m-soft">Yes. Days sales outstanding, or DSO, is another name for debtor days. Both estimate the time it takes to collect credit sales. A balance taken just after a large invoicing run can give a different result from one taken after customers have paid.</p></details><details><summary><span class="m-h3">How can I check how quickly a customer pays?</span></summary><p class="m-body m-soft">Search for the customer in the calculator to see figures from its latest published UK payment practices report, where available. Its reported average covers the invoices in that report. Compare it with the terms on your own invoices and check which reporting period it covers.</p></details></div></div>

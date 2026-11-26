@@ -1345,11 +1345,18 @@ html.notes-off .rnote{display:none}
 
 /* v25 tool pages: heading on the tool's own band, so the tool starts in the first screen */
 .m-toolband{padding-top:56px}
-.m-toolhead{max-width:760px;margin:0 0 32px;gap:12px}
+.m-toolrow{display:flex;align-items:flex-end;justify-content:space-between;gap:48px;margin:0 0 32px}
+.m-toolhead{max-width:760px;margin:0;gap:12px}
+.m-toolart{flex:none;width:220px}
+.m-toolart .m-illo,.m-meanart .m-illo{max-width:none;margin:0}
+.m-toolband .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--mist)}
+.m-meanart{display:none}
+@media (max-width:1023px){.m-toolart{width:170px}}
 .m-toolhead .m-h1{margin:0}
 .m-related{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:8px}
 .m-toolband [data-rv],.m-toolband .m-rv{opacity:1!important;transform:none!important}
-@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolhead{margin-bottom:20px}}
+@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolrow{margin-bottom:20px}.m-toolart{display:none}
+.m-meanart{display:block;width:200px;margin-bottom:8px}.m-meanart .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--m-white)}}
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Cash conversion cycle calculator", "url": "https://www.phillips-uk.com/monument/tools/cash-conversion-cycle-calculator", "description": "Calculate your cash conversion cycle from accounts figures or enter debtor, stock and creditor days. See how long cash is tied up in trading.", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "inLanguage": "en-GB", "provider": {"@id": "https://www.phillips-uk.com/monument#organisation"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.phillips-uk.com/monument"}, {"@type": "ListItem", "position": 2, "name": "Tools", "item": "https://www.phillips-uk.com/monument/tools"}, {"@type": "ListItem", "position": 3, "name": "Cash conversion cycle calculator", "item": "https://www.phillips-uk.com/monument/tools/cash-conversion-cycle-calculator"}]}]}</script>
@@ -1373,7 +1380,7 @@ html.notes-off .rnote{display:none}
 
   <section class="band band-mist m-toolband" id="hero" aria-labelledby="h1">
     <div class="wrap">
-<div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Cash conversion cycle calculator</h1><p class="m-lede m-soft">Use filed accounts or enter your own figures to see how long cash is tied up in trading.</p></div>
+<div class="m-toolrow"><div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Cash conversion cycle calculator</h1><p class="m-lede m-soft">Use filed accounts or enter your own figures to see how long cash is tied up in trading.</p></div><div class="m-toolart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path class="accent" d="M131 24 A44 44 0 0 1 154 64"/><path class="accent" d="M148 59 l6 6 l3 -8"/><path class="accent" d="M130 104 A44 44 0 0 1 88 104"/><path class="accent" d="M94 100 l-7 4 l6 5"/><path class="accent" d="M68 84 A44 44 0 0 1 89 26"/><path class="accent" d="M82 26 l8 0 l-3 7"/><ellipse class="cover" cx="110" cy="18" rx="18" ry="6"/><path d="M92 18 V30 M128 18 V30"/><path d="M92 24 A18 6 0 0 0 128 24"/><path d="M92 30 A18 6 0 0 0 128 30"/><path class="cover" d="M146 72 h34 v44 h-34 z"/><line x1="152" y1="84" x2="170" y2="84"/><line x1="152" y1="94" x2="174" y2="94"/><line x1="152" y1="104" x2="166" y2="104"/><path class="cover" d="M38 82 l18 -8 l18 8 v26 l-18 8 l-18 -8 z"/><path d="M38 82 l18 8 l18 -8 M56 90 v26"/></svg></div></div>
 <div class="calc" data-rv>
         <!-- 3. Cash conversion cycle -->
         <div class="calc-body" id="panel-cycle" data-api="/monument/api">
@@ -1485,7 +1492,7 @@ html.notes-off .rnote{display:none}
   </section>
 
   <section class="m-section m-bg-white" id="meaning" aria-label="What your result means">
-  <div class="m-wrap"><div class="m-reading m-stack"><h2 class="m-h2">Reading your cash conversion cycle</h2><p class="m-body">A longer cycle means cash takes longer to come back into the business. Holding stock longer or collecting more slowly adds days. A facility against debtors and stock can cover part of the cash tied up.</p></div></div>
+  <div class="m-wrap"><div class="m-reading m-stack"><div class="m-meanart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path class="accent" d="M131 24 A44 44 0 0 1 154 64"/><path class="accent" d="M148 59 l6 6 l3 -8"/><path class="accent" d="M130 104 A44 44 0 0 1 88 104"/><path class="accent" d="M94 100 l-7 4 l6 5"/><path class="accent" d="M68 84 A44 44 0 0 1 89 26"/><path class="accent" d="M82 26 l8 0 l-3 7"/><ellipse class="cover" cx="110" cy="18" rx="18" ry="6"/><path d="M92 18 V30 M128 18 V30"/><path d="M92 24 A18 6 0 0 0 128 24"/><path d="M92 30 A18 6 0 0 0 128 30"/><path class="cover" d="M146 72 h34 v44 h-34 z"/><line x1="152" y1="84" x2="170" y2="84"/><line x1="152" y1="94" x2="174" y2="94"/><line x1="152" y1="104" x2="166" y2="104"/><path class="cover" d="M38 82 l18 -8 l18 8 v26 l-18 8 l-18 -8 z"/><path d="M38 82 l18 8 l18 -8 M56 90 v26"/></svg></div><h2 class="m-h2">Reading your cash conversion cycle</h2><p class="m-body">A longer cycle means cash takes longer to come back into the business. Holding stock longer or collecting more slowly adds days. A facility against debtors and stock can cover part of the cash tied up.</p></div></div>
 </section>
 <section class="m-section m-bg-paper" id="faqs" aria-labelledby="faqTitle">
   <div class="m-wrap m-blocks"><h2 class="m-h2" id="faqTitle">Questions about this calculator</h2><div class="m-faq"><details><summary><span class="m-h3">How do you calculate the cash conversion cycle?</span></summary><p class="m-body m-soft">Add debtor days and stock days, then subtract creditor days. The result estimates how long the business has to fund trading before it collects cash from customers. Use turnover to calculate debtor days and cost of sales for stock and creditor days.</p></details><details><summary><span class="m-h3">How do you calculate inventory days?</span></summary><p class="m-body m-soft">Divide stock by annual cost of sales and multiply by 365. The result, also called stock days, shows how many days of cost of sales the stock balance represents. Compare the same point in the trading year if your stock builds up seasonally.</p></details><details><summary><span class="m-h3">How do you calculate creditor days?</span></summary><p class="m-body m-soft">Divide trade creditors by annual cost of sales and multiply by 365. This gives an estimate of how long supplier balances remain unpaid. Compare it with your agreed supplier terms and check the aged creditors report for overdue bills.</p></details></div></div>

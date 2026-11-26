@@ -1345,11 +1345,18 @@ html.notes-off .rnote{display:none}
 
 /* v25 tool pages: heading on the tool's own band, so the tool starts in the first screen */
 .m-toolband{padding-top:56px}
-.m-toolhead{max-width:760px;margin:0 0 32px;gap:12px}
+.m-toolrow{display:flex;align-items:flex-end;justify-content:space-between;gap:48px;margin:0 0 32px}
+.m-toolhead{max-width:760px;margin:0;gap:12px}
+.m-toolart{flex:none;width:220px}
+.m-toolart .m-illo,.m-meanart .m-illo{max-width:none;margin:0}
+.m-toolband .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--mist)}
+.m-meanart{display:none}
+@media (max-width:1023px){.m-toolart{width:170px}}
 .m-toolhead .m-h1{margin:0}
 .m-related{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:8px}
 .m-toolband [data-rv],.m-toolband .m-rv{opacity:1!important;transform:none!important}
-@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolhead{margin-bottom:20px}}
+@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolrow{margin-bottom:20px}.m-toolart{display:none}
+.m-meanart{display:block;width:200px;margin-bottom:8px}.m-meanart .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--m-white)}}
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Funding gap calculator", "url": "https://www.phillips-uk.com/monument/tools/funding-gap-calculator", "description": "Estimate the extra working capital your company needs as sales grow. See how debtor days, stock days and supplier payment terms affect the gap.", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "inLanguage": "en-GB", "provider": {"@id": "https://www.phillips-uk.com/monument#organisation"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.phillips-uk.com/monument"}, {"@type": "ListItem", "position": 2, "name": "Tools", "item": "https://www.phillips-uk.com/monument/tools"}, {"@type": "ListItem", "position": 3, "name": "Funding gap calculator", "item": "https://www.phillips-uk.com/monument/tools/funding-gap-calculator"}]}]}</script>
@@ -1373,7 +1380,7 @@ html.notes-off .rnote{display:none}
 
   <section class="band band-mist m-toolband" id="hero" aria-labelledby="h1">
     <div class="wrap">
-<div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Funding gap calculator</h1><p class="m-lede m-soft">Use filed accounts or your own figures to estimate how much extra working capital growth could need.</p></div>
+<div class="m-toolrow"><div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Funding gap calculator</h1><p class="m-lede m-soft">Use filed accounts or your own figures to estimate how much extra working capital growth could need.</p></div><div class="m-toolart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M8 112 h204"/><rect x="34" y="88" width="46" height="24"/><rect x="34" y="70" width="46" height="18"/><rect x="34" y="52" width="46" height="18"/><rect x="118" y="88" width="46" height="24"/><rect x="118" y="70" width="46" height="18"/><rect x="118" y="52" width="46" height="18"/><rect class="accent" x="118" y="34" width="46" height="18"/><rect class="accent" x="118" y="16" width="46" height="18"/><path d="M80 52 h38" stroke-dasharray="3 4"/><path class="accent" d="M176 52 h8 v-36 h-8"/><path class="accent" d="M184 34 h10"/><path class="accent" d="M44 40 C 66 22, 88 18, 108 14"/><path class="accent" d="M100 9 l9 5 l-7 7"/></svg></div></div>
 <div class="calc" data-rv>
         <!-- 4. Growth funding gap -->
         <div class="calc-body" id="panel-growth" data-api="/monument/api">
@@ -1462,7 +1469,7 @@ html.notes-off .rnote{display:none}
   </section>
 
   <section class="m-section m-bg-white" id="meaning" aria-label="What your result means">
-  <div class="m-wrap"><div class="m-reading m-stack"><h2 class="m-h2">Reading your funding gap</h2><p class="m-body">The result shows how much extra cash your target turnover would tie up at the margin and payment days entered. A facility against eligible debtors and stock could cover part of the additional need.</p></div></div>
+  <div class="m-wrap"><div class="m-reading m-stack"><div class="m-meanart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M8 112 h204"/><rect x="34" y="88" width="46" height="24"/><rect x="34" y="70" width="46" height="18"/><rect x="34" y="52" width="46" height="18"/><rect x="118" y="88" width="46" height="24"/><rect x="118" y="70" width="46" height="18"/><rect x="118" y="52" width="46" height="18"/><rect class="accent" x="118" y="34" width="46" height="18"/><rect class="accent" x="118" y="16" width="46" height="18"/><path d="M80 52 h38" stroke-dasharray="3 4"/><path class="accent" d="M176 52 h8 v-36 h-8"/><path class="accent" d="M184 34 h10"/><path class="accent" d="M44 40 C 66 22, 88 18, 108 14"/><path class="accent" d="M100 9 l9 5 l-7 7"/></svg></div><h2 class="m-h2">Reading your funding gap</h2><p class="m-body">The result shows how much extra cash your target turnover would tie up at the margin and payment days entered. A facility against eligible debtors and stock could cover part of the additional need.</p></div></div>
 </section>
 <section class="m-section m-bg-paper" id="faqs" aria-labelledby="faqTitle">
   <div class="m-wrap m-blocks"><h2 class="m-h2" id="faqTitle">Questions about this calculator</h2><div class="m-faq"><details><summary><span class="m-h3">How do you calculate a working capital funding gap?</span></summary><p class="m-body m-soft">Estimate the trade debtors and stock needed at your target turnover and subtract expected trade creditors. Do the same at current turnover, then take the current requirement away from the target requirement. The difference is the extra working capital the growth would require.</p></details><details><summary><span class="m-h3">What is overtrading?</span></summary><p class="m-body m-soft">Overtrading is when a company grows beyond the working capital it has available. It can happen when more sales mean buying stock or paying suppliers before the new invoices are collected. A profitable order book can still leave the company short of cash.</p></details><details><summary><span class="m-h3">Can asset-based lending cover a funding gap?</span></summary><p class="m-body m-soft">Asset-based lending can cover part of a funding gap where the company has eligible debtors or stock. The amount depends on those assets and the lender’s advance rates. Compare the estimate with the full gap to see how much may need to come from other sources.</p></details></div></div>

@@ -1345,11 +1345,18 @@ html.notes-off .rnote{display:none}
 
 /* v25 tool pages: heading on the tool's own band, so the tool starts in the first screen */
 .m-toolband{padding-top:56px}
-.m-toolhead{max-width:760px;margin:0 0 32px;gap:12px}
+.m-toolrow{display:flex;align-items:flex-end;justify-content:space-between;gap:48px;margin:0 0 32px}
+.m-toolhead{max-width:760px;margin:0;gap:12px}
+.m-toolart{flex:none;width:220px}
+.m-toolart .m-illo,.m-meanart .m-illo{max-width:none;margin:0}
+.m-toolband .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--mist)}
+.m-meanart{display:none}
+@media (max-width:1023px){.m-toolart{width:170px}}
 .m-toolhead .m-h1{margin:0}
 .m-related{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:8px}
 .m-toolband [data-rv],.m-toolband .m-rv{opacity:1!important;transform:none!important}
-@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolhead{margin-bottom:20px}}
+@media (max-width:767px){.m-toolband{padding-top:32px}.m-toolrow{margin-bottom:20px}.m-toolart{display:none}
+.m-meanart{display:block;width:200px;margin-bottom:8px}.m-meanart .m-illo{--illo-ink:var(--m-ink);--illo-accent:var(--m-brass);--illo-bg:var(--m-white)}}
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Asset-based lending calculator", "url": "https://www.phillips-uk.com/monument/tools/asset-based-lending-calculator", "description": "Estimate how much your company could borrow against debtors, stock, plant and property. See an indicative borrowing base and compare your current limit.", "applicationCategory": "FinanceApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "inLanguage": "en-GB", "provider": {"@id": "https://www.phillips-uk.com/monument#organisation"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.phillips-uk.com/monument"}, {"@type": "ListItem", "position": 2, "name": "Tools", "item": "https://www.phillips-uk.com/monument/tools"}, {"@type": "ListItem", "position": 3, "name": "Asset-based lending calculator", "item": "https://www.phillips-uk.com/monument/tools/asset-based-lending-calculator"}]}]}</script>
@@ -1373,7 +1380,7 @@ html.notes-off .rnote{display:none}
 
   <section class="band band-mist m-toolband" id="hero" aria-labelledby="h1">
     <div class="wrap">
-<div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Asset-based lending calculator</h1><p class="m-lede m-soft">Use filed accounts or your own figures to estimate how much your company could borrow against its assets.</p></div>
+<div class="m-toolrow"><div class="m-toolhead m-stack"><h1 class="m-h1" id="h1">Asset-based lending calculator</h1><p class="m-lede m-soft">Use filed accounts or your own figures to estimate how much your company could borrow against its assets.</p></div><div class="m-toolart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M8 112 h204"/><path class="cover" d="M22 84 h28 v28 h-28 z"/><path class="cover" d="M18 88 h28 v24 h-28 z"/><line x1="23" y1="96" x2="39" y2="96"/><line x1="23" y1="104" x2="34" y2="104"/><path d="M68 112 v-24 h34 v24 M68 96 h34 M85 88 v24"/><circle cx="135" cy="100" r="11"/><circle cx="135" cy="100" r="4"/><path d="M135 85 v4 M135 111 v1 M120 100 h4 M146 100 h4 M124 89 l3 3 M143 108 l3 3 M146 89 l-3 3 M127 108 l-3 3"/><path d="M168 112 v-28 l15 -10 l15 10 v28"/><path d="M177 112 v-11 h12 v11"/><path d="M173 89 h6 M187 89 h6"/><rect class="accent" x="22" y="18" width="24" height="44"/><rect class="accent" x="73" y="50" width="24" height="12"/><rect class="accent" x="123" y="38" width="24" height="24"/><rect class="accent" x="171" y="44" width="24" height="18"/><path class="accent" d="M34 80 v-12 M30 72 l4 -4 l4 4"/><path class="accent" d="M85 84 v-16 M81 72 l4 -4 l4 4"/><path class="accent" d="M135 84 v-16 M131 72 l4 -4 l4 4"/><path class="accent" d="M183 70 v-2 M179 72 l4 -4 l4 4"/></svg></div></div>
 <div class="calc" data-rv>
         <!-- 2. Asset-based lending estimate -->
         <div class="calc-body" id="panel-abl" data-api="/monument/api">
@@ -1469,7 +1476,7 @@ html.notes-off .rnote{display:none}
   </section>
 
   <section class="m-section m-bg-white" id="meaning" aria-label="What your result means">
-  <div class="m-wrap"><div class="m-reading m-stack"><h2 class="m-h2">Reading your borrowing base</h2><p class="m-body">The range estimates what your assets could support using example advance rates. Debts more than 90 days old are deducted before the estimate. Compare the range with your current facility limit if you are looking for more headroom.</p></div></div>
+  <div class="m-wrap"><div class="m-reading m-stack"><div class="m-meanart"><svg class="m-illo" viewBox="0 0 220 120" aria-hidden="true" focusable="false"><path d="M8 112 h204"/><path class="cover" d="M22 84 h28 v28 h-28 z"/><path class="cover" d="M18 88 h28 v24 h-28 z"/><line x1="23" y1="96" x2="39" y2="96"/><line x1="23" y1="104" x2="34" y2="104"/><path d="M68 112 v-24 h34 v24 M68 96 h34 M85 88 v24"/><circle cx="135" cy="100" r="11"/><circle cx="135" cy="100" r="4"/><path d="M135 85 v4 M135 111 v1 M120 100 h4 M146 100 h4 M124 89 l3 3 M143 108 l3 3 M146 89 l-3 3 M127 108 l-3 3"/><path d="M168 112 v-28 l15 -10 l15 10 v28"/><path d="M177 112 v-11 h12 v11"/><path d="M173 89 h6 M187 89 h6"/><rect class="accent" x="22" y="18" width="24" height="44"/><rect class="accent" x="73" y="50" width="24" height="12"/><rect class="accent" x="123" y="38" width="24" height="24"/><rect class="accent" x="171" y="44" width="24" height="18"/><path class="accent" d="M34 80 v-12 M30 72 l4 -4 l4 4"/><path class="accent" d="M85 84 v-16 M81 72 l4 -4 l4 4"/><path class="accent" d="M135 84 v-16 M131 72 l4 -4 l4 4"/><path class="accent" d="M183 70 v-2 M179 72 l4 -4 l4 4"/></svg></div><h2 class="m-h2">Reading your borrowing base</h2><p class="m-body">The range estimates what your assets could support using example advance rates. Debts more than 90 days old are deducted before the estimate. Compare the range with your current facility limit if you are looking for more headroom.</p></div></div>
 </section>
 <section class="m-section m-bg-paper" id="faqs" aria-labelledby="faqTitle">
   <div class="m-wrap m-blocks"><h2 class="m-h2" id="faqTitle">Questions about this calculator</h2><div class="m-faq"><details><summary><span class="m-h3">How much could I borrow against business assets?</span></summary><p class="m-body m-soft">The amount depends on the eligible value of your trade debtors, stock, plant and machinery and property, and the advance rates a lender sets. The calculator applies example rates to the assets you enter to give an indicative range for your company.</p></details><details><summary><span class="m-h3">How do you calculate a borrowing base?</span></summary><p class="m-body m-soft">Multiply the eligible value of each asset class by its advance rate, then add the amounts together. The calculator deducts debts more than 90 days old from trade debtors before applying its example rates. A lender assesses eligibility when reviewing the assets.</p></details><details><summary><span class="m-h3">Can I use this as an invoice finance calculator?</span></summary><p class="m-body m-soft">Yes. Enter your trade debtors and the amount more than 90 days old to estimate the part a facility could raise against invoices. The result uses example advance rates. A lender will review the age and eligibility of those invoices before setting a limit.</p></details></div></div>
