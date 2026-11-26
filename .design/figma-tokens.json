@@ -1,0 +1,17 @@
+{
+  "figmaFile": "7YVrt8qdoW6C1K0arY6aXI",
+  "brandMode": "Phillips.",
+  "exported": "2026-11-25",
+  "note": "Exported by Claude from the group design file's variables (code syntax = the CSS name). Never edited by hand. Brand mode Phillips. wash and hover set to the site's pins on 25 Nov 2026.",
+  "collections": {
+    "Brand": {
+      "Phillips.": { "--brand": "#985830", "--brand-hover": "#7A3F1F", "--brand-top": "#A56B49", "--brand-wash": "#F5EBD9", "--brand-line": "#E1CBBF", "--brand-on-ink": "#D9925E", "--brand-ink": "#FFFFFF", "--brand-button-on-ink": "#985830", "--brand-button-on-ink-text": "#FFFFFF" }
+    },
+    "Colour": {
+      "Light": { "--ink": "#12171D", "--ink-2": "#1C242D", "--ink-line": "#2C3744", "--ink-text": "#B7C0CA", "--ink-muted": "#8995A2", "--bg": "#F6F4EE", "--surface": "#FFFFFF", "--stone": "#EFEEE8", "--stage": "#E9E5DA", "--text": "#14191F", "--text-2": "#3A434E", "--muted": "#6E746C", "--line": "#E2DFD5", "--line-2": "#CFCBBF", "--line-soft": "#F0EEE7", "--ok": "#0B7E58", "--ok-wash": "#E9F6F0", "--ok-dot": "#10A877", "--ok-on-ink": "#5FD0AA", "--info": "#4E6683", "--info-wash": "#ECF0F5", "--attn": "#835B03", "--attn-wash": "#FBF3E0", "--attn-dot": "#E0A11A", "--bad": "#A8321F", "--bad-wash": "#FBEDEA", "--party": "#7A4F68", "--party-wash": "#F3ECF0", "--party-dot": "#9C6A87", "--off": "#4A4F49", "--off-wash": "#EFEEE8", "--off-dot": "#8B9088", "--icon": "#3A434E", "--icon-muted": "#6E746C", "--scrim": "#14191F66" }
+    },
+    "Space": {
+      "Value": { "--s1": "4px", "--s2": "8px", "--s3": "12px", "--s4": "16px", "--s5": "20px", "--s6": "24px", "--s8": "32px", "--s10": "40px", "--s12": "48px", "--sec": "150px", "--sec-tight": "96px", "--gutter": "24px", "--maxw": "1240px", "--r-sm": "12px", "--r-nest": "16px", "--r-md": "22px", "--r-lg": "28px", "--r-pill": "999px", "--dash-sidebar": "264px", "--dash-topbar": "72px", "--dash-tabbar": "84px", "--dash-content-max": "1120px", "--dash-row": "56px", "--dash-control": "40px", "--dash-page-pad": "40px", "--dash-page-pad-phone": "20px", "--dash-panel-pad": "24px", "--dash-panel-pad-phone": "20px", "--dash-block-gap": "24px", "--dash-block-gap-phone": "16px" }
+    }
+  }
+}
