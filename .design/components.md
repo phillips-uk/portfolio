@@ -1,6 +1,6 @@
 # Figma to code: components map, Phillips. (phillips-uk.com)
 
-Which Figma component is which piece of code, and which v5 template each page family uses. Figma file: the group design file (`7YVrt8qdoW6C1K0arY6aXI`), components on page "03 Components", sections on "04 Sections", this site's templates on **"05 Templates · Phillips."** (page `355:13241`, frames named `PX ... (draft)`), Brand mode **"Phillips."** (amber `#985830`). Written 25 Nov 2026 for the v5 redesign (prep only: nothing is built yet, so every row is **to build**).
+Which Figma component is which piece of code, and which v5 template each page family uses. Figma file: the group design file (`7YVrt8qdoW6C1K0arY6aXI`), components on page "03 Components", sections on "04 Sections", this site's templates on **"05 Templates · Phillips."** (page `355:13241`, frames named `PX ... (draft)`), Brand mode **"Phillips."** (amber `#985830`). Written 25 Nov 2026 for the v5 redesign (prep only: nothing is built yet, so every row is **to build**). Lewis's answers on the mock-ups (26 Nov 2026, relayed from the coordinating session in his words: "yes to all, real pictures, Go City is just there from a CV perspective so is fine in its current capacity") are under "Decided" below.
 
 When Lewis changes a component in Figma, look it up here, change the code named on the right, run the checks at the end of this file, and update this map if a class or file moves. When code changes something you can see, change the Figma component to match and note the date here.
 
@@ -14,6 +14,16 @@ Status: **same** (the code matches), **close** (the code exists, details in the 
 | Variables: Colour (Light), Space | `tokens/modes.css`, `tokens/system.css` (copied unchanged from Before You Pay) | Same. |
 | Text styles `v5/*` | the v5 core (`tokens/v5-core.css`, copied from the phillips-group repo, never edited) | To build: the core goes inside the tokens block of the page stylesheets through `scripts/build-tokens.js`. |
 | Logo (Brand=Phillips., Tone=On paper) | the P. tile and the name (`/logo/phillips-lockup.svg` today) | To build: the v5 header and footer use the lockup on paper; the reversed lockup goes. |
+
+## Decided (Lewis, 25 and 26 Nov 2026)
+
+- **Phone hero order:** the v5 order (headline, lede and buttons, then the photo).
+- **No mono:** DM Mono comes out of v5 pages; labels and tags in Manrope.
+- **No motion.js or motion.css** on v5 pages, guides included; the core's fade stays.
+- **Pictures:** our own work and tools first; free-licence stock photos are fine, credited and edited to the brand. Service page heroes take real pictures, not the drawn illustrations.
+- **Header:** logo and "Free checks" only.
+- **Go City:** stays as it is on the live site now, a CV mention only (the homepage work entry with its role and dates, and the About story line). Nothing beyond that, and never Go City account names, figures, campaign names, IDs or screenshots.
+- **New words** in the mock-ups ("Where to next.", "What you get" and its line, "Ask me about these fixes", the condensed rows): approved, and they go through Codex before the build ships them.
 
 ## Page templates
 
@@ -38,8 +48,8 @@ Each page family to its v5 template (Figma frames at 1440, 768 and 375):
 
 | Figma component | Code | Status | Phillips. notes |
 |---|---|---|---|
-| V5 Header (Size=Desktop, Phone) | `.vhd` from `scripts/v5-chrome.cjs` `header()` | To build | Logo left, one small button **"Free checks"** (40 high). Today's Services, Work, About and Insights links move to the footer (as on The Director's Office), unless Lewis wants two of them back through the header's optional text links (Search Desk's addition, logged in `figma-new-parts.md`). The hamburger drawer (`#nav-toggle`, `#nav-drawer`) goes. |
-| Section · Hero (Tone=Light) with V5 Hero photo | `.vh.hero`, `.vh-grid`, `.vh-photo` from `heroPhoto()` | To build | Homepage, About, 404: Lewis's photo. Service pages, hub and guides: a screenshot of the site's own reports (Kind=Screenshot), cropped from the top left. Phones: text first, photo second (decision for Lewis). |
+| V5 Header (Size=Desktop, Phone) | `.vhd` from `scripts/v5-chrome.cjs` `header()` | To build | Logo left, one small button **"Free checks"** (40 high). Services, Work, About and Insights move to the footer, as on the other group sites (decided 26 Nov 2026). The hamburger drawer (`#nav-toggle`, `#nav-drawer`) goes. |
+| Section · Hero (Tone=Light) with V5 Hero photo | `.vh.hero`, `.vh-grid`, `.vh-photo` from `heroPhoto()` | To build | Homepage, About, 404: Lewis's photo. Service pages, hub and guides: a real picture of our own work, no drawn `.ill` illustrations (decided 26 Nov 2026): report screenshots for Google Ads, the hub and guides; client sites for web design, the Website Check for local SEO, the quote calculator for marketing systems, Lewis's photo for consultancy. Screenshots are cropped from the top left. Phones: the v5 order, headline then photo (decided 25 Nov 2026). |
 | Section · Hero with V5 Breadcrumb (the deeper hero) | `.vh.vd-hero.hero` + `.vd-crumb` from `crumb()` | To build | Service pages, tools, report, guides. H1 52 on desktop. |
 | Section · Trio with V5 Trio item and V5 Seal | `.vm` from `trio()` | To build | Service pages and 404. Seals: Chart, Record, Identity, Source, Quote and Learning (The Director's Office's marks, free for any site). No Phillips. seals drawn yet. |
 | Section · Split (White, Cream) with V5 Split picture and V5 Tick row | `.vf-grid`, `.vf` from `tickRows()` | To build | The main pattern on every page. Up to six rows; the picture is a photo or a screenshot. |
