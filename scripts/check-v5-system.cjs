@@ -105,6 +105,18 @@ const AUDIT = async (SYS) => {
   // neighbouring sections change background (a tinted panel inside a section counts as the change)
   const bg = el => { let c = getComputedStyle(el).backgroundColor; return c === 'rgba(0, 0, 0, 0)' ? getComputedStyle(document.body).backgroundColor : c; };
   for (let i = 1; i < secs.length; i++) if (bg(secs[i]) === bg(secs[i - 1]) && ![secs[i], secs[i - 1]].some(x => x.querySelector('.vp') || x.matches('.vp-sec'))) out.push(`sections ${where(secs[i - 1])} and ${where(secs[i])} share a background`);
+  // neighbouring sections never share a layout (Lewis, 26 Nov 2026: "everything is very left to right ... it needs a bit of
+  // visual diversity, especially the ones next to each other"). Heading-left splits, FAQs and the contact form are one
+  // family; a mirrored split (.vf-grid.flip), a stacked FAQ (.vq.stack), panels, and each grid (trio, cards, figures) are
+  // their own. Reading sections (legal pages, guide text) are left out.
+  { const layout = s => { if (s.matches('[data-reading]') && !s.querySelector('.vq')) return null;
+      if (s.querySelector('.vp')) return s.querySelector('.vp.rev') ? 'panel, picture first' : 'panel';
+      const g = s.querySelector('.vf-grid'), q = s.querySelector('.vq');
+      if (g && g.matches('.flip')) return 'mirrored split'; if (q && q.matches('.stack')) return 'stacked';
+      if (g || q || s.id === 'contact') return 'heading left, content right';
+      const k = ['.vm', '.vcards', '.vco-grid', '.vfigs', '.vt'].find(c => s.querySelector(c)); return k ? 'grid ' + k : null; };
+    for (let i = 1; i < secs.length; i++) { const a = layout(secs[i - 1]), b = layout(secs[i]);
+      if (a && a === b) out.push(`sections ${where(secs[i - 1])} and ${where(secs[i])} share a layout (${a}): neighbours differ`); } }
   // headings
   const h1 = document.querySelector('main h1');
   if (h1 && !h1.closest('.vdone, .card-msg')) { const want = size === 'phone' ? SYS.h1.phone : size === 'tab' ? null : (h1.closest('.vd-hero, .bg-brand, .vform-page, .funnel') ? SYS.h1.other : SYS.h1.home); const f = px(getComputedStyle(h1).fontSize); if (want && !near(f, want)) out.push(`h1 is ${f}px, system says ${want}`); }

@@ -1172,6 +1172,26 @@ html:has(body.v5){scroll-padding-top:92px}
 .v5 .vh-credit { margin: 36px 0 0; text-align: right; }
 @media (max-width: 760px) { .v5 .vh-credit { margin-top: 20px; } }
 
+/* layout rhythm (Lewis, 26 Nov 2026: "everything is very left to right ... it needs a bit of visual diversity, especially the
+   ones next to each other"): neighbouring sections never share a layout. Variants of existing parts only:
+   .vf-grid.flip  the split mirrored on desktop: the rows left, the heading and picture right (phones keep the reading order)
+   .vq.stack      the FAQ stacked: the heading centred above one centred column of questions
+   .vp.rev        the core's panel with the picture first
+   .vcards        the core's card grid (.vd-card) under a centred heading (.vm-head), for short lists */
+@media (min-width: 961px) {
+  .v5 .vf-grid.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); }
+  .v5 .vf-grid.flip > :first-child { order: 2; }
+  .v5 .vp.rev .vp-shot { order: -1; }
+}
+.v5 .vq.stack { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.v5 .vq.stack > .v-h2 { text-align: center; }
+.v5 .vq.stack > div { width: 100%; max-width: 760px; margin: 0 auto; }
+.v5 .vm-head .v-body { max-width: 60ch; margin: 16px auto 0; }
+.v5 .vcards .vd-card { display: flex; flex-direction: column; }
+.v5 .vcards .vd-card .v-h3 { margin-top: 0; }
+@media (max-width: 960px) { .v5 .vq.stack { gap: 40px; } }
+@media (max-width: 760px) { .v5 .vq.stack > .v-h2 { text-align: left; } .v5 .vm-head .v-body { margin-left: 0; } }
+
 /* the quote calculator on Marketing systems (#tools): the panel's right side, ids and script unchanged */
 .v5 .vp:has(.vcalc) { align-items: center; }
 .v5 .vp:has(.vcalc) .vp-text { padding-bottom: 72px; }
