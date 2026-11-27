@@ -3,7 +3,7 @@
 // 01_Admin Kit.md; its Figma half is dash-audit.js v2 in that folder). Copied from Before You Pay's
 // scripts/check-dash-system.cjs (the client kit's check, 25 Nov 2026) and changed only for the admin: the shell rule (G)
 // and the screens. It serves /admin with made-up data (scripts/preview-admin.cjs), opens every place in this Mac's
-// Chrome, headless, at 1440, 768 and 375, and fails on anything off the kit (Lewis 26 Nov 2026, "Yes build it"):
+// Chrome, headless, at 2000, 1440, 768 and 375, and fails on anything off the kit (Lewis 26 Nov 2026, "Yes build it"):
 //   A. type scale: every visible text size is on the scale for its width (desktop and tablet 60 52 48 40 32 22 21 19 17 15 14
 //      13; phone 34 28 24 19 18 17 16 14 13, note 146);
 //   B. calm record: no red, amber or green (the --ok, --attn and --bad tones) in text, fills or borders: status is in words;
@@ -13,10 +13,13 @@
 //   F. less text: words a screen outside lists, tables, facts and the shell, 90 on desktop and tablet, 60 on phones;
 //   G. the admin shell: from 1024 the sidebar (14 places at most, in named groups) and the top bar, no tab bar; below
 //      1024 the top bar and the tab bar (four places and Menu), the sidebar only as the Menu sheet;
-//   H. no link inside a sentence; and no sideways scroll.
+//   H. no link inside a sentence; and no sideways scroll;
+//   I. wide windows: from 1024 the page fills the room beside the sidebar up to 1600 of content, then sits in the middle
+//      (Lewis, 27 Nov 2026: "wide windows make sense to do if the right isn't used"; the same rule as Before You Pay's).
 // Example data only, nothing sent, no cost. Run it before Lewis sees an admin change and before every deploy of one:
 //   node scripts/check-admin-system.cjs              every screen below
 //   node scripts/check-admin-system.cjs prospects    the screens whose name contains "prospects"
+//   node scripts/check-admin-system.cjs --shots <folder>   also saves a picture of each screen it checks
 // Exit code 1 on any finding.
 'use strict';
 const fs = require('fs'), path = require('path'), os = require('os');
@@ -30,8 +33,9 @@ const SYS = {
   words: { desk: 90, phone: 60 }, screen: { desk: 900, tab: 1024, phone: 812 },
   panel: { pad: 24, padPhone: 20, radius: 20 },
   places: 14, tabs: 5,
+  wide: 1600,   // the admin's content cap on wide windows (--adm-content-max in admin.html, section 2)
 };
-const WIDTHS = [1440, 768, 375];
+const WIDTHS = [2000, 1440, 768, 375];
 // every place in the admin; "act" opens a drawer, a card or a menu first
 const SCREENS = [
   ['overview'], ['clients'], ['clients', 'former tab', "document.querySelector('#cl-tabs [data-t=former]').click()"],
@@ -77,6 +81,14 @@ const AUDIT = async (SYS) => {
   const app = document.querySelector('#app');
   if (!app || app.hidden) return ['the admin did not open (signed-out screen showing)'];
   if (document.documentElement.scrollWidth > W + 1) out.push(`sideways scroll: page is ${document.documentElement.scrollWidth}px wide`);
+  // I. wide windows: the page uses the room beside the sidebar (up to the cap) and sits in the middle of it
+  { const pg = document.querySelector('#adm-page'), mn = document.querySelector('.app > .main');
+    if (W >= 1024 && pg && mn) {
+      const m = mn.getBoundingClientRect(), r = pg.getBoundingClientRect(), padX = px(getComputedStyle(pg).paddingLeft) + px(getComputedStyle(pg).paddingRight);
+      const want = Math.min(m.width, SYS.wide + padX);
+      if (r.width < want - 2) out.push(`wide window: the page is ${Math.round(r.width)}px wide where ${Math.round(want)}px fits`);
+      if (Math.abs((r.left - m.left) - (m.right - r.right)) > 2) out.push(`wide window: the page sits ${Math.round(r.left - m.left)}px from the left and ${Math.round(m.right - r.right)}px from the right`);
+    } }
   // an open drawer or centred card is the screen: only it is checked for main buttons and words
   const layer = [...document.querySelectorAll('#cf, .adm-dw-wrap')].filter(e => !e.hidden).pop() || null;
   const texts = []; { const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -135,7 +147,9 @@ const AUDIT = async (SYS) => {
 };
 
 (async () => {
-  const want = process.argv.slice(2);
+  const args = process.argv.slice(2), si = args.indexOf('--shots'), shots = si === -1 ? null : args.splice(si, 2)[1];
+  if (shots) fs.mkdirSync(shots, { recursive: true });
+  const want = args;
   const list = SCREENS.filter(s => !want.length || want.some(w => (s[0] + ' ' + (s[1] || '')).includes(w)));
   const srv = server(); await new Promise(r => srv.listen(0, '127.0.0.1', r));
   const base = `http://127.0.0.1:${srv.address().port}/admin`;
@@ -153,6 +167,7 @@ const AUDIT = async (SYS) => {
         const r = await c.send('Runtime.evaluate', { expression: `(${AUDIT.toString()})(${JSON.stringify(SYS)})`, awaitPromise: true, returnByValue: true });
         const found = (r.result && r.result.result && r.result.result.value) || [`could not measure: ${JSON.stringify(r.result && r.result.exceptionDetails || r.error).slice(0, 300)}`];
         total += found.length;
+        if (shots) { const img = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false }); if (img.result) fs.writeFileSync(path.join(shots, `${(hash + (label ? '-' + label : '')).replace(/[^a-z0-9]+/gi, '-').replace(/-+$/, '')}@${w}.png`), Buffer.from(img.result.data, 'base64')); }
         console.log(`${found.length ? 'FAIL' : 'ok  '} ${hash}${label ? ' (' + label + ')' : ''} @${w}${found.length ? '\n  - ' + found.join('\n  - ') : ''}`);
       }
     }

@@ -427,6 +427,14 @@ a.dash-stat:hover { border-color: var(--line-2); }
    the grouped sidebar, the phone shell with its Menu sheet, the table with select boxes, bulk bar, spark and More menu,
    the queue item, change row, health row, deal card and stage, and the form drawer. Tokens only. ═══ */
 
+/* Wide windows (Lewis, 27 Nov 2026: "wide windows make sense to do if the right isn't used"; the same rule as Before You
+   Pay's admin/shell.css): from 1024 the page grows with the window up to 1600 of content, then sits in the middle of the
+   room beside the sidebar. Up to about 1460 nothing changes (the kit's 1120 still fits). Two columns keep 420 on the right
+   at 1440 and share the extra room on wider windows. */
+.dash.adm { --adm-content-max: 1600px; }   /* the admin kit's wide cap; the client kit keeps dash/content-max 1120 */
+@media (min-width: 1024px) { .dash.adm .page { width: 100%; max-width: calc(var(--adm-content-max) + 2 * var(--dash-page-pad)); margin-inline: auto; } }
+@media (min-width: 1200px) { .dash.adm .dash-cols:not(.adm-one) { grid-template-columns: minmax(0, 1.6fr) minmax(420px, 1fr); } }
+
 /* V5 Admin sidebar: the switcher, places in named groups (sentence case) with a count where something waits, Settings
    and the signed-in staff member at the foot. Sheet: the same, full screen on phones, from the tab bar's Menu. */
 .adm-side-top { display: flex; align-items: center; gap: 8px; padding: 0 0 16px; }
@@ -944,6 +952,7 @@ body.dragging, body.dragging * { cursor: grabbing !important; user-select: none;
 .pr-side > p { font: 400 15px/1.5 var(--body); color: var(--text-2); }
 .pr-note { font: 400 13px/1.55 var(--body); color: var(--muted); }
 .pr-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; align-content: start; }
+@media (min-width: 1700px) { .pr-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); } }   /* wide windows: three short fields a row, not two long ones */
 .pr-fields > label:not(.pr-check) { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; font: 600 15px/1.3 var(--body); color: var(--text); }
 .pr-wide { grid-column: 1 / -1; }
 .pr-sub { grid-column: 1 / -1; font: 700 17px/1.35 var(--display); color: var(--text); }
