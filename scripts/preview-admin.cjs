@@ -71,7 +71,7 @@ function fixtures() {
     deal(5, 'Example Hotel Ltd', 'Proposal drafted', { contact: 'Chris Example', nextStep: 'Finish the draft', nextDate: day(4), values: [{ id: 'f5', label: 'Website rebuild', amount: 2400, basis: 'one-off' }], files: [{ id: 'fl1', kind: 'file', name: 'Brief.pdf', type: 'application/pdf', size: 240000, at: at(-5) }] }),
     deal(6, 'Example Brewery Ltd', 'Proposal sent', { contact: 'Robin Example', email: 'robin@example.com', nextStep: 'Follow up', nextDate: day(-2), values: [{ id: 'f6', label: 'Shopping feed', amount: 700, basis: 'one-off' }], history: [{ to: 'Lead', at: at(-20) }, { from: 'Talking', to: 'Proposal sent', at: at(-3, 15, 40) }], updatedAt: at(-3, 15, 40) }),
     deal(7, 'Example Opticians', 'Proposal sent', { contact: 'Lee Example', nextStep: 'Waiting on their reply', values: [{ id: 'f7', label: 'Google Ads', amount: 900, basis: 'one-off' }] }),
-    deal(8, 'Example Estate Agents', 'Refining proposal', { contact: 'Kim Example', nextStep: 'Revised proposal', nextDate: day(7), values: [{ id: 'f8', label: 'Ads and tracking', amount: 1300, basis: 'one-off' }] }),
+    deal(8, 'Example Estate Agents', 'Refining proposal', { contact: 'Kim Example', nextStep: 'Revised proposal with the second option priced on its own, plus the tracking audit as a one-off; they want it before their board meets on Thursday so the figures can go in the pack', nextDate: day(7), values: [{ id: 'f8', label: 'Ads and tracking', amount: 1300, basis: 'one-off' }] }),
     deal(9, 'Example Kitchens Ltd', 'Won', { contact: 'Dee Example', values: [{ id: 'f9', label: 'Google Ads', amount: 500, basis: 'monthly' }] }),
     deal(10, 'Example Tutors', 'Lost', { contact: 'Mo Example', nextStep: 'Went with someone else' }),
   ];

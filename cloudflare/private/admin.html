@@ -598,6 +598,12 @@ button.adm-h:hover .adm-h-body b { color: var(--brand); }
 
 /* V5 Admin stage and deal card: a pipeline column (stage, how many, total) holding its deals. Drag a card to move it. */
 .adm-board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(206px, 1fr); gap: 16px; align-items: start; overflow-x: auto; padding-bottom: 8px; }
+/* this admin's board (live check, 27 Nov 2026): a column is never under 240, so a long next step isn't squeezed into a
+   narrow strip; below about 1530 the board scrolls sideways in its own space, faded on the side that has more */
+#board { grid-auto-columns: minmax(240px, 1fr); }
+#board.more-r { -webkit-mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); mask-image: linear-gradient(to right, black calc(100% - 48px), transparent); }
+#board.more-l { -webkit-mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); mask-image: linear-gradient(to left, black calc(100% - 48px), transparent); }
+#board.more-l.more-r { -webkit-mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); mask-image: linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent); }
 .adm-board.one { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); }
 .adm-stage { min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: var(--r-nest); background: var(--sunk); transition: box-shadow var(--d2); }
 .adm-stage.over { box-shadow: inset 0 0 0 2px var(--brand); }
@@ -616,6 +622,11 @@ button.adm-h:hover .adm-h-body b { color: var(--brand); }
 .adm-deal > b { font: 600 15px/1.35 var(--body); color: var(--text); overflow-wrap: anywhere; }
 .adm-deal > p { font: 400 15px/1.45 var(--body); color: var(--text-2); overflow-wrap: anywhere; }
 .adm-deal-nx { display: flex; align-items: flex-start; gap: 8px; font: 400 13px/1.5 var(--body); color: var(--muted); }
+/* a card shows the start of its contact line (2 lines) and next step (3 lines), ending in an ellipsis; the drawer has it all */
+.adm-deal > p, .adm-deal-nx > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; min-width: 0; }
+.adm-deal-nx > span { -webkit-line-clamp: 3; line-clamp: 3; overflow-wrap: anywhere; }
+/* words for a desk or a phone (Prospects): a phone can't drag a card to another stage, so it says to open the card */
+.on-phone { display: none; }
 .adm-deal-nx svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--muted); }
 .adm-deal-nx.due { color: var(--text); }
 .adm-deal-nx.due svg { color: var(--brand); }
@@ -817,6 +828,9 @@ body.dragging, body.dragging * { cursor: grabbing !important; user-select: none;
   .adm-board .adm-stage:not(.cur) { display: none; }
   .adm-board .adm-stage-h { display: none; }
   .adm-board.one .adm-stage-list { grid-template-columns: minmax(0, 1fr); }
+  .on-desk { display: none; }
+  .on-phone { display: inline; }
+  #board.more-l, #board.more-r { -webkit-mask-image: none; mask-image: none; }
 }
 
 /* the card editor: fees, comments, files, the record */
@@ -1263,7 +1277,7 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
 
       <!-- Prospects: the sales funnel -->
       <section data-pane="prospects" hidden>
-        <div class="ph"><div><h1>Prospects</h1><p class="lede">Your sales funnel. Drag a card to the next stage, or open it to edit.</p></div><div class="acts"><button type="button" class="btn primary" id="p-new">New lead</button></div></div>
+        <div class="ph"><div><h1>Prospects</h1><p class="lede">Your sales funnel. <span class="on-desk">Drag a card to the next stage, or open it to edit.</span><span class="on-phone">Open a card to edit it or change its stage.</span></p></div><div class="acts"><button type="button" class="btn primary" id="p-new">New lead</button></div></div>
         <div class="adm-tabrow">
           <div class="dash-tabs adm-opentabs" role="tablist" aria-label="Deals" id="p-tabs"><button type="button" role="tab" data-t="open" aria-selected="true">Open <em id="p-n-open"></em></button><button type="button" role="tab" data-t="won" aria-selected="false">Won <em id="p-n-won"></em></button><button type="button" role="tab" data-t="lost" aria-selected="false">Lost <em id="p-n-lost"></em></button></div>
           <div class="dash-tabs adm-stagetabs" role="tablist" aria-label="Stage" id="p-stagetabs"></div>
@@ -2793,6 +2807,7 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
     link: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6.8 9.2a2.8 2.8 0 0 0 4 0l2-2a2.8 2.8 0 0 0-4-4l-.9.9"/><path d="M9.2 6.8a2.8 2.8 0 0 0-4 0l-2 2a2.8 2.8 0 0 0 4 4l.9-.9"/></svg>'
   };
   var pTab = 'open', pStage = 'Lead', findText = '', pendingOpen = null;   // the Open, Won or Lost tab; on phones one stage at a time
+  var pStageChosen = false;   // phones: until a stage tab is tapped, show the first stage in the tab that has cards
   try { pTab = { open: 1, won: 1, lost: 1 }[localStorage.getItem('ph_admin_ptab')] ? localStorage.getItem('ph_admin_ptab') : 'open'; } catch (e) { /* private window */ }
   var SHORT = { 'Proposal drafted': 'Drafted', 'Proposal sent': 'Sent', 'Refining proposal': 'Refining' };
 
@@ -2857,6 +2872,7 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
     var board = $('board'), keep = board.scrollLeft; board.innerHTML = '';
     board.setAttribute('data-tab', pTab);
     var st = $('p-stagetabs'); st.innerHTML = '';
+    if (!pStageChosen) pStage = firstStage();
     STAGES.forEach(function (stage) {
       var all = effRank(state.prospects.filter(function (d) { return stageOf(d.stage) === stage; }));
       var items = all.filter(matches);
@@ -2872,12 +2888,17 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
       col.appendChild(head);
       var list = el('div', 'adm-stage-list');
       items.forEach(function (d) { list.appendChild(prospectCard(d)); });
-      if (!items.length) list.appendChild(el('div', 'adm-stage-empty', findText && all.length ? 'No matches' : 'Drop a card here'));
+      if (!items.length) {
+        var empty = el('div', 'adm-stage-empty');
+        if (findText && all.length) empty.textContent = 'No matches';
+        else { empty.appendChild(el('span', 'on-desk', 'Drop a card here')); empty.appendChild(el('span', 'on-phone', 'No cards in this stage.')); }
+        list.appendChild(empty);
+      }
       col.appendChild(list);
       board.appendChild(col);
       var t = el('button', null, SHORT[stage] || stage); t.type = 'button'; t.setAttribute('role', 'tab'); t.setAttribute('aria-selected', String(stage === pStage));
       t.appendChild(el('em', null, String(items.length)));
-      t.addEventListener('click', function () { pStage = stage; pTab = stage === 'Won' ? 'won' : stage === 'Lost' ? 'lost' : 'open'; renderBoard(); });
+      t.addEventListener('click', function () { pStage = stage; pStageChosen = true; pTab = stage === 'Won' ? 'won' : stage === 'Lost' ? 'lost' : 'open'; renderBoard(); });
       st.appendChild(t);
     });
     $('p-tabs').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-selected', String(b.getAttribute('data-t') === pTab)); });
@@ -2885,10 +2906,25 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
     boardEdges();
     renderFunnelKpis();
   }
-  function boardEdges() { /* the kit's board scrolls on its own; nothing to mark */ }
+  // the first stage of the current tab with cards (matching the search when there is one), else its first stage
+  function firstStage() {
+    if (pTab === 'won') return 'Won';
+    if (pTab === 'lost') return 'Lost';
+    var open = STAGES.filter(isOpenStage);
+    return open.filter(function (stage) { return state.prospects.some(function (d) { return stageOf(d.stage) === stage && matches(d); }); })[0] || open[0];
+  }
+  // fade the side of the board that has more to scroll to
+  function boardEdges() {
+    var b = $('board'); if (!b) return;
+    var max = b.scrollWidth - b.clientWidth;
+    b.classList.toggle('more-l', max > 1 && b.scrollLeft > 1);
+    b.classList.toggle('more-r', max > 1 && b.scrollLeft < max - 1);
+  }
+  $('board').addEventListener('scroll', boardEdges, { passive: true });
+  window.addEventListener('resize', boardEdges);
   $('p-tabs').addEventListener('click', function (e) {
     var t = e.target.closest('button[data-t]'); if (!t) return;
-    pTab = t.getAttribute('data-t'); pStage = pTab === 'won' ? 'Won' : pTab === 'lost' ? 'Lost' : 'Lead';
+    pTab = t.getAttribute('data-t'); pStageChosen = false;
     try { localStorage.setItem('ph_admin_ptab', pTab); } catch (er) { /* ignore */ }
     renderBoard();
   });
@@ -2905,10 +2941,10 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
     card.setAttribute('aria-label', d.name + ', ' + stageOf(d.stage) + ((d.comments || []).length ? ', ' + plural(d.comments.length, 'comment', 'comments') : '') + '. Open to edit.');
     card.appendChild(el('b', null, d.name || 'No name'));
     var who = [d.contact, d.role].filter(Boolean).join(', ');
-    card.appendChild(el('p', null, who || d.email || d.phone || 'No contact yet'));
+    var cp = el('p', null, who || d.email || d.phone || 'No contact yet'); cp.title = cp.textContent; card.appendChild(cp);
     var late = dueTone(d), nx = el('div', 'adm-deal-nx' + (late ? ' due' : ''));
     nx.innerHTML = icon('clock');
-    nx.appendChild(el('span', null, (d.nextStep || 'No next step') + (d.nextDate ? (late ? ', due ' : ', ') + fmt(d.nextDate) : '')));
+    var nxt = el('span', null, (d.nextStep || 'No next step') + (d.nextDate ? (late ? ', due ' : ', ') + fmt(d.nextDate) : '')); nxt.title = nxt.textContent; nx.appendChild(nxt);
     card.appendChild(nx);
     var bt = el('div', 'adm-deal-bt'), val = cardValue(d);
     bt.appendChild(el('b', val ? null : 'none', val || 'No value yet'));
