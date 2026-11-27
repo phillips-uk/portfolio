@@ -118,9 +118,15 @@ const AUDIT = async (SYS) => {
       const g = s.querySelector('.vf-grid'), q = s.querySelector('.vq');
       if (g && g.matches('.flip')) return 'mirrored split'; if (q && q.matches('.stack')) return 'stacked';
       if (g || q || s.id === 'contact') return 'heading left, content right';
-      const k = ['.vm', '.vcards', '.vco-grid', '.vfigs', '.vt'].find(c => s.querySelector(c)); return k ? 'grid ' + k : null; };
+      // the page-flow types (Lewis, 26 to 27 Nov 2026: "all seems very repeatable visually"): picture cards, choice cards,
+      // a large quote and the numbered process are their own layouts too, so two of one kind never sit side by side
+      if (s.querySelector('.vquote')) return 'quote'; if (s.querySelector('.vproc-split')) return 'process beside a picture';
+      const k = ['.vbento', '.vways', '.vproc', '.vm', '.vcards', '.vco-grid', '.vfigs', '.vt'].find(c => s.querySelector(c)); return k ? 'grid ' + k : null; };
     for (let i = 1; i < secs.length; i++) { const a = layout(secs[i - 1]), b = layout(secs[i]);
-      if (a && a === b) out.push(`sections ${where(secs[i - 1])} and ${where(secs[i])} share a layout (${a}): neighbours differ`); } }
+      if (a && a === b) out.push(`sections ${where(secs[i - 1])} and ${where(secs[i])} share a layout (${a}): neighbours differ`); }
+    // ...and a page is not a run of heading-and-tick-list splits: at most two (Lewis, 27 Nov 2026, the page flow on every main page)
+    const ticks = secs.filter(s => s.id !== 'contact' && s.querySelector('.vf-grid .vf'));
+    if (ticks.length > 2) out.push(`${ticks.length} heading-and-tick-list splits (${ticks.map(where).join(', ')}): at most two a page, use the other section types`); }
   // headings
   const h1 = document.querySelector('main h1');
   if (h1 && !h1.closest('.vdone, .card-msg')) { const want = size === 'phone' ? SYS.h1.phone : size === 'tab' ? null : (h1.closest('.vd-hero, .bg-brand, .vform-page, .funnel') ? SYS.h1.other : SYS.h1.home); const f = px(getComputedStyle(h1).fontSize); if (want && !near(f, want)) out.push(`h1 is ${f}px, system says ${want}`); }
