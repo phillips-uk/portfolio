@@ -9,6 +9,7 @@ import { isAdminPath, admin } from './admin.js';
 import { enquiry } from './enquiry.js';
 import { toolAccess } from './tool-access.js';
 import { isBriefPath, brief, sitemapWithIssues, withLatestIssue, scheduled as briefScheduled } from './brief.js';
+import { runShapeCheck } from './shape-check.js';
 import { isWebsiteCheckPath, websiteCheck, cleanupWebsiteChecks, setSelfHandler, keepWebsiteReport } from './website-check.js';
 import { isAccountPath, accounts, cleanupAccounts } from './accounts.js';
 import { isAdsCheckPath, adsCheck, cleanupAdsChecks } from './google-ads-check.js';
@@ -264,10 +265,12 @@ export default {
   // Cron triggers (wrangler.jsonc): the Monday Brief send at 07:00 UK time and Lewis's Friday and Sunday notes.
   async scheduled(controller, env, ctx) {
     globalThis.__phEnv = env; globalThis.__phCtx = ctx;
-    // The daily 05:15 run is the Xero sync only: the Brief's Friday and Sunday notes must not fire on it
+    // The daily 05:15 run is the Xero sync and the data shape check only: the Brief's Friday and Sunday notes must not fire on it
     if (controller.cron !== '15 5 * * *') ctx.waitUntil(briefScheduled(controller, env));
     // Client billing: the Phillips. invoices from Xero, once a day before Lewis starts
     if (controller.cron === '15 5 * * *') ctx.waitUntil(syncXero(env).then(r => { if (!r.ok && !/not connected|not set up/.test(r.error)) console.error('xero sync', r.error); }));
+    // The admin's data shape check (shape-check.js): the funnel's cards and the accounts database, read in pieces
+    if (controller.cron === '15 5 * * *') ctx.waitUntil(runShapeCheck(env, { by: 'daily' }).catch(err => console.error('shape check', err && err.message)));
     // Weekly tidy of the free tools' saved reports and counters, and old account sign-in links (Monday's early run only)
     if (controller.cron === '0 6 * * MON') ctx.waitUntil(Promise.all([cleanupWebsiteChecks(env), cleanupAdsChecks(env), cleanupToolRates(env), cleanupAccounts(env)]).catch(err => console.error('tools cleanup', err && err.message)));
   },

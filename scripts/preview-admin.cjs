@@ -114,7 +114,20 @@ function fixtures() {
     findings: [{ daily: true, head: 'Search terms to add as negatives', campaign: 'Search, Builders', money: 120, per: 'a month' }, { daily: true, head: 'Budget runs out before 3pm', campaign: 'Search, Extensions', money: 80, per: 'a week' }], summary: { count: 2, money: 200 } } } };
   const docs = {};
   for (const c of clients) for (const s of c.sections) for (const it of s.items) if (it.doc) docs[it.doc] = { title: it.title, date: it.date, path: '03_Clients/' + c.name + '/' + s.name + '/' + it.title + '.md', obsidian: 'obsidian://open?vault=Example', markdown: '# ' + it.title + '\n\nAn example report. Every figure on this page is made up.\n\n## What changed\n\n- Spend held level on the week before.\n- Two new search terms added as negatives.\n\n| Campaign | Spend | Conversions |\n|---|---|---|\n| Search, Builders | £820 | 21 |\n| Search, Extensions | £380 | 10 |\n\n> **Next week**\n> Check the Christmas budget.\n' };
-  return { clients, billing, deals, invites, brief, subscribers, weeks, site, desk, docs };
+  // the data shape check's last result, in the shape cloudflare/src/shape-check.js stores (made-up rows only)
+  const fld = (field, label, expect, examples = []) => ({ field, label, expect, count: examples.length, examples });
+  const shape = { ranAt: at(0, 5, 15), by: 'daily', ms: 1840, calls: 3, tables: [
+    { key: 'prospects', label: 'Prospects', where: 'Saved cards in the funnel (R2)', unit: ['card', 'cards'], checked: true, rows: deals.length, checkedAt: at(0, 5, 15), odd: 2, fields: [
+      fld('id', 'Card ID', 'd_ and 16 letters or figures'), fld('name', 'Name', 'the company or person'),
+      fld('stage', 'Stage', 'one of the seven stages on the board', [{ id: deals[6].id, name: deals[6].name, href: '#prospects/' + deals[6].id, found: '"Negotiating"' }]),
+      fld('values', 'Fees', 'a list of fees, amounts as numbers', [{ id: deals[2].id, name: deals[2].name, href: '#prospects/' + deals[2].id, found: 'amount saved as text' }]),
+      fld('nextDate', 'Next step date', 'empty or a date'), fld('email', 'Email', 'empty or an email address'), fld('lists', 'Comments, files, history', 'each a list')] },
+    { key: 'accounts', label: 'Accounts', where: 'Visitors’ accounts (D1)', unit: ['account', 'accounts'], checked: true, rows: 37, checkedAt: at(0, 5, 15), odd: 0, fields: [
+      fld('email', 'Email', 'a lower-case email address'), fld('created_at', 'Created', 'a date and time')] },
+    { key: 'checks', label: 'Saved checks', where: 'Checks kept with an account (D1)', unit: ['check', 'checks'], checked: false, rowsRead: 0,
+      reason: 'the read failed after 0 rows, even in small pieces (query took too long)', last: { checkedAt: at(-1, 5, 15), odd: 0, rows: 112 } },
+  ] };
+  return { clients, billing, deals, invites, brief, subscribers, weeks, site, desk, docs, shape };
 }
 
 async function pricingData() {
@@ -174,6 +187,8 @@ function server() {
     if (m && post) { const b = await readBody(req); F.billing.clients[m[1]] = m[2] ? { ...F.billing.clients[m[1]], former: b.former, formerAt: b.former ? new Date().toISOString() : null } : { ...F.billing.clients[m[1]], ...b, fee: b.fee === '' ? null : Number(b.fee), day: Number(b.day) || null }; return json(res, F.billing); }
     if (p === '/admin/api/xero/sync') return json(res, F.billing);
     if (p === '/admin/api/settings') return json(res, { email: { month: day(0).slice(0, 7), sent: 142, cap: 900 } });
+    // the data shape check (cloudflare/src/shape-check.js): one table to fix, one as expected, one not checked
+    if (p === '/admin/api/health/shape') { if (post) F.shape.ranAt = new Date().toISOString(), F.shape.by = 'now'; return json(res, { result: F.shape }); }
     if (p === '/admin/api/desk') return json(res, F.desk);
     m = p.match(/^\/admin\/api\/doc\/([a-f0-9]{16})$/);
     if (m) return F.docs[m[1]] ? json(res, { id: m[1], ...F.docs[m[1]], syncedAt: at(0, 6) }) : json(res, { error: 'That document is no longer in the latest sync. Open it in Obsidian instead.' }, 404);

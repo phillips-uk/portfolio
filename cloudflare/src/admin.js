@@ -12,6 +12,7 @@ import { getDeskDemo, deskDemoSummary, revokeDeskDemo } from './desk-demo.js';
 import { briefAdmin } from './brief.js';
 import { getPricing, getVersion, listVersions, savePricing, validate, quote, hourlyRate, SAMPLES } from './pricing.js';
 import { usageByWeek } from './tool-leads.js';
+import { runShapeCheck, getShapeCheck } from './shape-check.js';
 
 const COOKIE = 'ph_admin';
 const SESSION_SECONDS = 12 * 3600;
@@ -256,6 +257,9 @@ export async function admin(request, url, env) {
     try { const r = env.ACCOUNTS_DB && await env.ACCOUNTS_DB.prepare('SELECT n FROM email_months WHERE month = ?').bind(month).first(); sent = r ? r.n : 0; } catch { /* table missing */ }
     return json({ email: { month, sent, cap: EMAIL_CAP } });
   }
+  // The data shape check (shape-check.js): the latest result, or run it now from Settings ("Check now")
+  if (path === '/admin/api/health/shape' && method === 'GET') return json({ result: await getShapeCheck(env) });
+  if (path === '/admin/api/health/shape' && method === 'POST') return json({ result: await runShapeCheck(env, { by: 'now', budgetMs: 25000 }) });
   // Search Desk findings for the clients linked on their Billing card (desk-clients.js)
   if (path === '/admin/api/desk' && method === 'GET') {
     const o = await env.BLOBS.get('admin/client-billing.json');

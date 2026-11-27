@@ -50,6 +50,7 @@ const SCREENS = [
   ['links', 'new link drawer', "document.getElementById('lk-new').click()"],
   ['brief'], ['brief', 'confirm card', "document.querySelector('#br-next-a .btn.primary').click()"],
   ['list'], ['demos'], ['pricing'], ['site'], ['settings'], ['settings', 'Xero open', "document.querySelector('#st-conns button.adm-h').click()"],
+  ['settings', 'data shape open', "document.querySelectorAll('#st-shape button.adm-h').forEach(b => b.click())"],
   ['overview', 'switcher open', "document.querySelector((innerWidth < 1024 ? '#adm-sw-top' : '#adm-sw') + ' .adm-sw-btn').click()"],
   ['overview', 'menu sheet', "innerWidth < 1024 ? document.getElementById('adm-menu-tab').click() : 0"],
 ];

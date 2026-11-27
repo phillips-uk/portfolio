@@ -1471,7 +1471,9 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
       <section data-pane="settings" hidden>
         <div class="ph"><div><h1>Settings</h1><p class="lede">What this admin is connected to, and how each connection is doing.</p></div></div>
         <div class="dash-cols">
-          <div class="dash-col"><section class="dash-panel"><h2 class="dash-ph2">Connections</h2><div class="adm-hs" id="st-conns"></div></section></div>
+          <div class="dash-col"><section class="dash-panel"><h2 class="dash-ph2">Connections</h2><div class="adm-hs" id="st-conns"></div></section>
+            <!-- the data shape check (cloudflare/src/shape-check.js): saved rows not in the shape the code reads -->
+            <section class="dash-panel" id="st-shape-panel"><h2 class="dash-ph2">Data shape <button type="button" id="st-shape-run">Check now</button></h2><p class="dash-line" id="st-shape-sum">Loading…</p><div class="adm-hs" id="st-shape"></div></section></div>
           <div class="dash-col"><section class="dash-panel"><h2 class="dash-ph2">Staff</h2><ul class="dash-rows"><li class="dash-row"><span class="dash-av sm">LP</span><span class="dash-row-tx"><b>Lewis Phillips</b><span id="st-staff">Owner: can change everything</span></span></li></ul></section></div>
         </div>
       </section>
@@ -1983,6 +1985,7 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
       renderAll();
       if (pendingOpen) { var id = pendingOpen; pendingOpen = null; openDrawer(id); }
       loadDesk();
+      loadShape();
     });
   }
   // Search Desk's Account health for clients linked on their Billing card (read only, cached 10 minutes there)
@@ -2500,6 +2503,55 @@ section[data-pane="pricing"] { padding-bottom: 96px; }
     });
     $('st-staff').textContent = 'Owner, signed in as ' + ($('who-email').textContent || 'you');
   }
+
+  /* ---------- settings: the data shape check (cloudflare/src/shape-check.js), a health row per table, details behind a
+     tap: each field's count and up to 20 rows to fix, linked to where they are fixed. A table that was not read to the
+     end says "Not checked" and why, never a pass. ---------- */
+  function loadShape() {
+    return api('/admin/api/health/shape').then(function (d) { state.shape = d.result || null; }).catch(function () { state.shape = false; }).then(renderShape);
+  }
+  function renderShape() {
+    var box = $('st-shape'), sum = $('st-shape-sum'), s = state.shape; box.innerHTML = '';
+    if (s === undefined) { sum.textContent = 'Loading…'; return; }
+    if (s === false) { sum.textContent = 'The last result did not load. Try again.'; return; }
+    if (!s) { sum.textContent = 'Not run yet. It runs every day at 05:15 UTC.'; return; }
+    sum.textContent = 'Last run ' + fmt(s.ranAt, true) + (s.by === 'now' ? ', by hand' : '') + '. It runs every day at 05:15 UTC. Each count is rows to fix.';
+    (s.tables || []).forEach(function (t) {
+      var unit = t.unit || ['row', 'rows'], odd = t.checked ? t.odd || 0 : null;
+      stConn(box, 'shape-' + t.key, {
+        icon: t.key === 'prospects' ? 'board' : t.key === 'accounts' ? 'people' : 'db', title: t.label, line: t.where,
+        state: !t.checked ? 'Not checked' : odd ? odd + ' to fix' : 'As expected', kind: !t.checked || odd ? 'brand' : '',
+        when: t.checked ? plural(t.rows || 0, unit[0], unit[1]) + ' read' : 'Did not finish'
+      }, function (more) {
+        var dl = el('dl', 'dash-facts');
+        if (!t.checked) {
+          var why = String(t.reason || 'it did not finish');
+          stRow(dl, 'Why', why.charAt(0).toUpperCase() + why.slice(1) + '.');
+          stRow(dl, 'Last full check', t.last ? fmt(t.last.checkedAt, true) + ', ' + (t.last.odd ? t.last.odd + ' to fix' : 'all as expected') : 'None yet');
+          more.appendChild(dl); return;
+        }
+        (t.fields || []).forEach(function (f) {
+          var d = el('div'), dd = el('dd', null, f.count ? f.count + ' to fix' : 'As expected');
+          dd.appendChild(el('small', null, 'Should be ' + f.expect));
+          d.appendChild(el('dt', null, f.label)); d.appendChild(dd); dl.appendChild(d);
+        });
+        more.appendChild(dl);
+        (t.fields || []).filter(function (f) { return f.examples && f.examples.length; }).forEach(function (f) {
+          var ul = el('ul', 'dash-rows');
+          f.examples.forEach(function (x) { ul.appendChild(listRow({ title: x.name, sub: f.label + ': ' + x.found + (x.ref ? ', ' + x.ref : ''), href: x.href })); });
+          more.appendChild(ul);
+          if (f.count > f.examples.length) more.appendChild(el('p', 'dash-fine', 'Showing ' + f.examples.length + ' of ' + f.count + '.'));
+        });
+      });
+    });
+  }
+  $('st-shape-run').addEventListener('click', function () {
+    var b = this; b.disabled = true; b.textContent = 'Checking…';
+    api('/admin/api/health/shape', { method: 'POST' })
+      .then(function (d) { state.shape = d.result || null; renderShape(); toast('Check ran in ' + Math.max(1, Math.round(((d.result && d.result.ms) || 0) / 1000)) + 's'); })
+      .catch(function (e) { toast(e.message, true); })
+      .then(function () { b.disabled = false; b.textContent = 'Check now'; });
+  });
 
   /* ---------- clients: the table (the list on phones), Current and Former as tabs ---------- */
   var clTab = 'current';
