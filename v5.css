@@ -1407,3 +1407,30 @@ html:has(body.v5){scroll-padding-top:92px}
   .v5 .vproc > li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; padding: 16px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: none; }
   .v5 .vproc > li::before { grid-row: span 2; margin: 0; font-size: 24px; }
 }
+/* Page flow, every main page (Lewis, 27 Nov 2026: the homepage flow rolled out to the service pages, About, Work and Free
+   checks). Each page holds at most one heading-and-tick-list split; the rest are the homepage's section types. Variants
+   for the pages that need them: a dark process row, titled steps in a panel, a text tile in the picture cards, links in
+   picture cards, an arrow link on dark. */
+.v5 .bg-ink .v-go { color: #fff; }
+.v5 .bg-ink .v-go span { color: var(--brand-on-ink); }
+.v5 .bg-ink .vproc > li { border-color: var(--ink-line); background: var(--ink-panel); }
+.v5 .bg-ink .vproc > li::before { color: var(--brand-on-ink); }
+.v5 .bg-ink .vproc b { color: #fff; }
+.v5 .bg-ink .vproc span { color: var(--ink-text); }
+.v5 .vsteps.titled li { align-items: start; }
+.v5 .vsteps.titled li > span { display: flex; flex-direction: column; gap: 4px; padding-top: 9px; }
+.v5 .vsteps.titled b { font: 700 19px/1.3 var(--display); color: var(--text); }
+.v5 .vsteps.titled small { font: 400 17px/1.5 var(--body); color: var(--text-2); }
+.v5 .vbento > li.note { justify-content: center; border-color: transparent; background: var(--brand-wash); }
+.v5 .vbento > li.note > div { padding: 40px; }
+.v5 .vbento.two > li, .v5 .vbento.two > li.wide { grid-column: span 3; flex-direction: column; }
+.v5 .vbento .v-go { margin-top: auto; padding-top: 4px; }
+@media (max-width: 760px) {
+  .v5 .bg-ink .vproc { border-top-color: var(--ink-line); }
+  .v5 .bg-ink .vproc > li { border-color: var(--ink-line); background: none; }
+  .v5 .vsteps.titled li > span { padding-top: 6px; }
+  .v5 .vsteps.titled b { font-size: 17px; }
+  .v5 .vsteps.titled small { font-size: 16px; }
+  .v5 .vbento > li.note > div { padding: 24px; }
+}
+@media (max-width: 760px) { .v5 .vbento.two > li, .v5 .vbento.two > li.wide { grid-column: auto; } }
